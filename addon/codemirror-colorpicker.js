@@ -171,6 +171,18 @@ var math = {
     caculateAngle: caculateAngle
 };
 
+/**
+ * @method RGBtoHSV
+ *
+ * convert rgb to hsv
+ *
+ * 		color.RGBtoHSV(0, 0, 255) === { h : 240, s : 1, v : 1 } === '#FFFF00'
+ *
+ * @param {Number} R  red color value
+ * @param {Number} G  green color value
+ * @param {Number} B  blue color value
+ * @return {Object}  hsv color code
+ */
 function RGBtoHSV(r, g, b) {
 
     if (arguments.length == 1) {
@@ -482,6 +494,18 @@ var fromLAB = {
     LABtoXYZ: LABtoXYZ
 };
 
+/**
+ * @method HSVtoRGB
+ *
+ * convert hsv to rgb
+ *
+ * 		color.HSVtoRGB(0,0,1) === #FFFFF === { r : 255, g : 0, b : 0 }
+ *
+ * @param {Number} H  hue color number  (min : 0, max : 360)
+ * @param {Number} S  Saturation number  (min : 0, max : 1)
+ * @param {Number} V  Value number 		(min : 0, max : 1 )
+ * @returns {Object}
+ */
 function HSVtoRGB(h, s, v) {
 
     if (arguments.length == 1) {
@@ -1099,6 +1123,15 @@ var parser = {
     color_split: color_split
 };
 
+/**
+ * @deprecated 
+ * 
+ * instead of this,  use blend function 
+ *  
+ * @param {*} startColor 
+ * @param {*} endColor 
+ * @param {*} t 
+ */
 function interpolateRGB(startColor, endColor) {
     var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
     var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
@@ -1919,6 +1952,7 @@ function crop() {
     };
 }
 
+// Image manupulate 
 function resize(dstWidth, dstHeight) {
     return function (bitmap, done) {
         var c = Canvas.drawPixels(bitmap);
@@ -2144,6 +2178,9 @@ function bitonal(darkColor, lightColor) {
     });
 }
 
+/*
+ * @param {Number} amount  -100..100  ,  value < 0  is darken, value > 0 is brighten 
+ */
 function brightness$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -2171,6 +2208,10 @@ function brownie() {
     });
 }
 
+/**
+ * 
+ * @param {Number} amount from 0 to 100 
+ */
 function clip() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -2185,6 +2226,10 @@ function clip() {
     }, { $C: $C });
 }
 
+/**
+ * 
+ * @param {*} amount   min = -128, max = 128 
+ */
 function contrast$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -2209,6 +2254,10 @@ function gamma() {
     }, { $C: $C });
 }
 
+/**
+ * F.gradient('red', 'blue', 'yellow', 'white', 10)
+ * F.gradient('red, blue, yellow, white, 10')
+ */
 function gradient$1() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
@@ -2280,6 +2329,9 @@ function grayscale(amount) {
     });
 }
 
+/*
+ * @param {Number} amount   0..360  
+ */
 function hue() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 360;
 
@@ -2363,6 +2415,10 @@ function matrix() {
     });
 }
 
+/**
+ * 
+ * @param {Number} amount 1..100
+ */
 function noise() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -2406,6 +2462,9 @@ function polaroid() {
     });
 }
 
+/*
+ * @param {Number} amount  -100..100 
+ */
 function saturation() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
 
@@ -2425,6 +2484,9 @@ function saturation() {
     });
 }
 
+/*
+ * @param {Number} amount  0..1 
+ */
 function sepia() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -2477,6 +2539,12 @@ function shift() {
     });
 }
 
+/**
+ * change the relative darkness of (a part of an image) by overexposure to light.
+ * @param {*} r 
+ * @param {*} g 
+ * @param {*} b 
+ */
 function solarize(redValue, greenValue, blueValue) {
     var $redValue = parseParamNumber$1(redValue);
     var $greenValue = parseParamNumber$1(greenValue);
@@ -2536,6 +2604,9 @@ function thresholdColor() {
     });
 }
 
+/*
+ * @param {Number} amount  0..100 
+ */
 function threshold() {
   var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
   var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
@@ -2597,6 +2668,11 @@ function blur () {
     return convolution(createBlurMatrix(amount));
 }
 
+/*
+ * carve, mold, or stamp a design on (a surface) so that it stands out in relief.
+ * 
+ * @param {Number} amount   0.0 .. 4.0 
+ */
 function emboss() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
@@ -4169,6 +4245,11 @@ function normal () {
     return convolution$1([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 }
 
+/*
+ * carve, mold, or stamp a design on (a surface) so that it stands out in relief.
+ * 
+ * @param {Number} amount   0.0 .. 4.0 
+ */
 function emboss$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
@@ -4176,6 +4257,10 @@ function emboss$1() {
     return convolution$1([amount * -2.0, -amount, 0.0, -amount, 1.0, amount, 0.0, amount, amount * 2.0]);
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function gaussianBlur$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4292,6 +4377,9 @@ function bitonal$1(darkColor, lightColor) {
     return shader('\n        if ((pixelColor.r + pixelColor.g + pixelColor.b) > ' + checkVlue + ') {\n            outColor = vec4(' + lightColorString + '.rgb, pixelColor.a);\n        } else {\n            outColor = vec4(' + darkColorString + '.rgb, pixelColor.a);\n        }\n    ');
 }
 
+/*
+ * @param {Number} amount  -1..1  ,  value < 0  is darken, value > 0 is brighten 
+ */
 function brightness$2() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4329,6 +4417,9 @@ function brownie$1() {
     return matrix$3(0.5997023498159715, 0.34553243048391263, -0.2708298674538042, 0, -0.037703249837783157, 0.8609577587992641, 0.15059552388459913, 0, 0.24113635128153335, -0.07441037908422492, 0.44972182064877153, 0, 0, 0, 0, 1);
 }
 
+/*
+ * @param {Number} amount 0..1
+ */
 function clip$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -4345,6 +4436,9 @@ function chaos() {
     return shader('\n        vec2 st = pixelColor.st;\n        st *= ' + C + ';\n        \n        vec2 ipos = floor(st);  // get the integer coords\n\n        vec3 color = vec3(random( ipos ));\n\n        outColor = vec4(color, pixelColor.a);\n    ');
 }
 
+/*
+ * @param {Number} amount  0..1
+ */
 function contrast$2() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4353,6 +4447,9 @@ function contrast$2() {
     return shader('\n        outColor = pixelColor * ' + C + ';\n    ');
 }
 
+/*
+ * @param {Number} amount  -1..1  ,  value < 0  is darken, value > 0 is brighten 
+ */
 function gamma$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4361,6 +4458,10 @@ function gamma$1() {
     return shader('\n        outColor = vec4(pow(pixelColor.r, ' + C + '), pow(pixelColor.g, ' + C + '), pow(pixelColor.b, ' + C + '), pixelColor.a );\n    ');
 }
 
+/**
+ * F.gradient('red', 'blue', 'yellow', 'white', 10)
+ * F.gradient('red, blue, yellow, white, 10')
+ */
 function gradient$2() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
@@ -4408,6 +4509,10 @@ function gradient$2() {
     return shader('\n        float rate = (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722); \n\n        ' + temp.join('\n') + '        \n    ');
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function grayscale$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4419,6 +4524,9 @@ function grayscale$1() {
 }
 
 //http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
+/*
+ * @param {Number} amount  0..1  ,  (real value 0..360)
+ */
 function hue$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4440,6 +4548,10 @@ function kodachrome$1() {
     return matrix$3(1.1285582396593525, -0.3967382283601348, -0.03992559172921793, 0, -0.16404339962244616, 1.0835251566291304, -0.05498805115633132, 0, -0.16786010706155763, -0.5603416277695248, 1.6014850761964943, 0, 0, 0, 0, 1);
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function noise$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4450,6 +4562,10 @@ function noise$1() {
     return shader('\n        float rnd = ' + min + ' + random( pixelColor.st ) * (' + max + ' - ' + min + ');\n\n        outColor = vec4(pixelColor.rgb + rnd, 1.0);\n    ');
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function opacity$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4463,6 +4579,9 @@ function polaroid$1() {
     return matrix$3(1.438, -0.062, -0.062, 0, -0.122, 1.378, -0.122, 0, -0.016, -0.016, 1.483, 0, 0, 0, 0, 1);
 }
 
+/*
+ * @param {Number} amount  0..1 
+ */
 function saturation$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -4471,6 +4590,9 @@ function saturation$1() {
     return matrix$3(L, 0, 0, 0, 0, L, 0, 0, 0, 0, L, 0, 0, 0, 0, L);
 }
 
+/*
+ * @param {Number} amount  0..100 
+ */
 function sepia$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4518,6 +4640,9 @@ function thresholdColor$1() {
     return shader('\n        float c = ( (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722) ) >= ' + scale + ' ? 1.0 : 0.0;\n\n        outColor = vec4(c, c, c, pixelColor.a);\n    ');
 }
 
+/*
+ * @param {Number} amount  0..100 
+ */
 function threshold$1() {
   var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
   var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
@@ -4525,6 +4650,12 @@ function threshold$1() {
   return thresholdColor$1(scale, amount, false);
 }
 
+/**
+ * 
+ * @param {*} redTint  0..1
+ * @param {*} greenTint 0..1
+ * @param {*} blueTint 0..1
+ */
 function tint$1 () {
     var redTint = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     var greenTint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -9353,8 +9484,9 @@ var DEFINED_POSITIONS = {
 };
 
 var defaultObject$1 = {
-    type: 'linear',
+    type: 'static',
     angle: 90,
+    color: 'red',
     colorsteps: [],
     radialType: 'circle',
     radialPosition: 'center',
@@ -9461,6 +9593,14 @@ var ImageManager = function (_BaseModule) {
             // 현재 layer 설정 
             $store.dispatch('/image/set', newImage, index);
         }
+    }, {
+        key: '/image/change/color',
+        value: function imageChangeColor($store, color) {
+            if ($store.read('/image/isStaticType')) {
+                $store.dispatch('/tool/changeColor', color);
+                $store.dispatch('/image/change', { color: color });
+            }
+        }
 
         // 이미지 설정하기 , 이벤트 까지 
 
@@ -9472,6 +9612,13 @@ var ImageManager = function (_BaseModule) {
             current = Object.assign({}, current, newImage);
 
             var currentIndex = $store.read('/image/currentIndex', index);
+
+            if (current.type == 'image') {} else if (current.type == 'static') {} else {
+                // gradient type 일 때 colorsteps 이 없으면 자동으로 셋팅해준다. 
+                if (!current.colorsteps.length) {
+                    current.colorsteps = [{ color: 'red', percent: 0 }, { color: 'black', percent: 100 }];
+                }
+            }
 
             $store.dispatch('/layer/set/image', current, currentIndex);
         }
@@ -9601,6 +9748,11 @@ var ImageManager = function (_BaseModule) {
             }
         }
     }, {
+        key: '/image/isGradientType',
+        value: function imageIsGradientType($store) {
+            return $store.read('/image/isLinearType') || $store.read('/image/isRadialType');
+        }
+    }, {
         key: '/image/isLinearType',
         value: function imageIsLinearType($store) {
             return ['linear', 'repeating-linear'].includes($store.read('/image/get', 'type'));
@@ -9614,6 +9766,11 @@ var ImageManager = function (_BaseModule) {
         key: '/image/isImageType',
         value: function imageIsImageType($store) {
             return ['image'].includes($store.read('/image/get', 'type'));
+        }
+    }, {
+        key: '/image/isStaticType',
+        value: function imageIsStaticType($store) {
+            return ['static'].includes($store.read('/image/get', 'type'));
         }
     }, {
         key: '/image/angle',
@@ -9670,6 +9827,8 @@ var ImageManager = function (_BaseModule) {
                 return $store.read('/image/toRadial', image);
             } else if (type == 'image') {
                 return $store.read('/image/toImage', image);
+            } else if (type == 'static') {
+                return $store.read('/image/toStatic', image);
             }
         }
     }, {
@@ -9725,6 +9884,17 @@ var ImageManager = function (_BaseModule) {
             }
 
             return gradientType + '-gradient(' + opt + ', ' + colors + ')';
+        }
+    }, {
+        key: '/image/toStatic',
+        value: function imageToStatic($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('/image/toLinear', {
+                type: 'linear',
+                angle: 0,
+                colorsteps: [{ color: image.color, percent: 0 }, { color: image.color, percent: 100 }]
+            });
         }
     }, {
         key: '/image/toLinearRight',
@@ -10252,7 +10422,61 @@ var GradientManager = function (_BaseModule) {
     return GradientManager;
 }(BaseModule);
 
-var ModuleList = [ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager];
+var material = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B'];
+
+var types = [{ id: 'material', title: 'Material Colors' }];
+
+var list = {
+    material: material
+};
+
+var ColorList = {
+    list: list,
+    types: types
+};
+
+var ColorManager$2 = function (_BaseModule) {
+    inherits(ColorManager, _BaseModule);
+
+    function ColorManager() {
+        classCallCheck(this, ColorManager);
+        return possibleConstructorReturn(this, (ColorManager.__proto__ || Object.getPrototypeOf(ColorManager)).apply(this, arguments));
+    }
+
+    createClass(ColorManager, [{
+        key: 'initialize',
+        value: function initialize() {
+            get(ColorManager.prototype.__proto__ || Object.getPrototypeOf(ColorManager.prototype), 'initialize', this).call(this);
+
+            this.$store.selectedColorType = 'material';
+        }
+    }, {
+        key: '/color/get/type',
+        value: function colorGetType($store) {
+            return $store.selectedColorType;
+        }
+    }, {
+        key: '/color/change/type',
+        value: function colorChangeType($store, type) {
+            $store.selectedColorType = type;
+
+            $store.emit('changeColorType');
+        }
+    }, {
+        key: '/color/list/type',
+        value: function colorListType($store) {
+            return ColorList.types;
+        }
+    }, {
+        key: '/color/list',
+        value: function colorList($store) {
+            return ColorList.list[$store.selectedColorType || 'material'];
+        }
+    }]);
+    return ColorManager;
+}(BaseModule);
+
+var ModuleList = [ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, ColorManager$2];
 
 var BaseImageEditor = function (_UIElement) {
     inherits(BaseImageEditor, _UIElement);
@@ -10776,6 +11000,103 @@ var GradientSteps = function (_UIElement) {
     return GradientSteps;
 }(UIElement);
 
+var GradientSampleList = function (_UIElement) {
+    inherits(GradientSampleList, _UIElement);
+
+    function GradientSampleList() {
+        classCallCheck(this, GradientSampleList);
+        return possibleConstructorReturn(this, (GradientSampleList.__proto__ || Object.getPrototypeOf(GradientSampleList)).apply(this, arguments));
+    }
+
+    createClass(GradientSampleList, [{
+        key: 'template',
+        value: function template() {
+            var _this2 = this;
+
+            var list = this.read('/gradient/list/sample');
+
+            return '\n        <div class="gradient-sample-list">\n                 ' + list.map(function (it, index) {
+                return '<div class=\'gradient-sample-item\' style=\'' + _this2.read('/image/toString', it) + '\' data-index="' + index + '"></div>';
+            }).join('') + '\n        </div>\n        ';
+        }
+    }, {
+        key: '@changeLayer',
+        value: function changeLayer() {
+            this.$el.toggle(this.read('/image/isGradientType'));
+        }
+    }, {
+        key: 'click $el .gradient-sample-item',
+        value: function click$elGradientSampleItem(e) {
+            var index = +e.$delegateTarget.attr('data-index');
+
+            this.dispatch('/gradient/select', index);
+        }
+    }]);
+    return GradientSampleList;
+}(UIElement);
+
+var ColorList$1 = function (_UIElement) {
+    inherits(ColorList, _UIElement);
+
+    function ColorList() {
+        classCallCheck(this, ColorList);
+        return possibleConstructorReturn(this, (ColorList.__proto__ || Object.getPrototypeOf(ColorList)).apply(this, arguments));
+    }
+
+    createClass(ColorList, [{
+        key: 'template',
+        value: function template() {
+
+            var list = this.read('/color/list');
+            return '\n            <div class=\'color-list\'>\n                <div class=\'color-type\'>\n                    <div ref="$colorTypeList">\n                    </div>\n                </div>\n                <div class=\'color-sample-list\' ref="$colorSampleList">\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'load $colorTypeList',
+        value: function load$colorTypeList() {
+            var colorTypeList = this.read('/color/list/type');
+            var type = this.read('/color/get/type');
+            return '<select ref="$colorType">\n            ' + colorTypeList.map(function (obj) {
+                var selected = type == obj.id ? 'selected' : '';
+                return '<option value=\'' + obj.id + '\' ' + selected + '>' + obj.title + '</option>';
+            }).join('') + '\n            </select>';
+        }
+    }, {
+        key: 'load $colorSampleList',
+        value: function load$colorSampleList() {
+            var list = this.read('/color/list');
+            return '<div>\n                ' + list.map(function (color) {
+                return '<div class=\'color-item\' style=\'background-color: ' + color + '\' data-color="' + color + '"></div>';
+            }).join('') + '\n            </div>';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: '@changeColorType',
+        value: function changeColorType() {
+            this.refresh();
+        }
+    }, {
+        key: 'change $colorType',
+        value: function change$colorType(e) {
+            var type = this.refs.$colorType.val();
+
+            this.dispatch('/color/set/type', type);
+            this.refresh();
+        }
+    }, {
+        key: 'click $colorSampleList .color-item',
+        value: function click$colorSampleListColorItem(e) {
+            var color = e.$delegateTarget.attr('data-color');
+
+            this.dispatch('/image/change/color', color);
+        }
+    }]);
+    return ColorList;
+}(UIElement);
+
 var ColorStepsTab = function (_BaseTab) {
     inherits(ColorStepsTab, _BaseTab);
 
@@ -10787,19 +11108,25 @@ var ColorStepsTab = function (_BaseTab) {
     createClass(ColorStepsTab, [{
         key: "template",
         value: function template() {
-            return "\n            <div class=\"tab color-steps-tab\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"colorstep\">Color Steps</div>\n                    <div class=\"tab-item\" data-id=\"image\">Image</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"colorstep\">\n                        <GradientSteps></GradientSteps>\n                        <GradientInfo></GradientInfo>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"image\">\n                        <ImageForm></ImageForm>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class=\"tab color-steps-tab\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"colorstep\">Color Steps</div>\n                    <div class=\"tab-item\" data-id=\"color\">Color</div>\n                    <div class=\"tab-item\" data-id=\"image\">Image</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"colorstep\">\n                        <GradientSteps></GradientSteps>\n                        <div class=\"layout-flow gradient-list-layout\"> \n                            <GradientInfo></GradientInfo>\n                            <GradientSampleList></GradientSampleList>                          \n                        </div>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"image\">\n                        <ImageForm></ImageForm>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"color\">\n                        <ColorList></ColorList>\n                    </div>\n                </div> \n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return { GradientInfo: GradientInfo, GradientSteps: GradientSteps };
+            return { GradientInfo: GradientInfo, GradientSteps: GradientSteps, GradientSampleList: GradientSampleList, ColorList: ColorList$1 };
         }
     }, {
         key: "refresh",
         value: function refresh() {
-            var isImageType = this.read('/image/isImageType');
+            var selectedId = 'colorstep';
 
-            this.selectTab(isImageType ? 'image' : 'colorstep');
+            if (this.read('/image/isImageType')) {
+                selectedId = 'image';
+            } else if (this.read('/image/isStaticType')) {
+                selectedId = 'color';
+            }
+
+            this.selectTab(selectedId);
         }
     }, {
         key: '@changeLayer',
@@ -10904,91 +11231,6 @@ var GradientLayers = function (_UIElement) {
     return GradientLayers;
 }(UIElement);
 
-var LayersMenu = function (_UIElement) {
-    inherits(LayersMenu, _UIElement);
-
-    function LayersMenu() {
-        classCallCheck(this, LayersMenu);
-        return possibleConstructorReturn(this, (LayersMenu.__proto__ || Object.getPrototypeOf(LayersMenu)).apply(this, arguments));
-    }
-
-    createClass(LayersMenu, [{
-        key: 'template',
-        value: function template() {
-            return ' \n            <div class=\'gradient-layers-menu\'>\n                <div class=\'left\'>\n                    <h1>Image Editor</h1>\n                </div>\n                <div class="right">\n                    <span class="divider">|</span>                    \n                    <button type="button" ref="$stackView" class="stack-view" title="Stack View"></button>\n                    <button type="button" ref="$onlyView" class="only-view" title="Only View"></button>\n                    <span class="divider">|</span>\n                    <button type="button" ref="$showAngle" class=\'show-angle\' title="Show angle guide"></button>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            // this.refs.$show.toggleClass('selected', this.dispatch('/getGradientLayerVisible'))
-        }
-    }, {
-        key: '@changeLayer',
-        value: function changeLayer() {
-            this.refresh();
-        }
-    }, {
-        key: '@initLayer',
-        value: function initLayer() {
-            this.refresh();
-        }
-    }, {
-        key: 'click $left',
-        value: function click$left(e) {
-            this.dispatch('/moveLayerToLeft');
-        }
-    }, {
-        key: 'click $first',
-        value: function click$first(e) {
-            this.dispatch('/moveLayerToFirst');
-        }
-    }, {
-        key: 'click $last',
-        value: function click$last(e) {
-            this.dispatch('/moveLayerToLast');
-        }
-    }, {
-        key: 'click $right',
-        value: function click$right(e) {
-            this.dispatch('/moveLayerToRight');
-        }
-    }, {
-        key: 'click $delete',
-        value: function click$delete(e) {
-            this.dispatch('/removeLayer');
-        }
-    }, {
-        key: 'click $show',
-        value: function click$show(e) {
-            // TODO: 매끈하게 만들어봅시다. 
-            var isVisible = this.refs.$show.hasClass('selected');
-            this.dispatch('/setLayerVisible', isVisible);
-            this.refresh();
-        }
-    }, {
-        key: 'click $showPosition',
-        value: function click$showPosition(e) {
-            this.dispatch('/tool/toggle', 'guide.position');
-        }
-    }, {
-        key: 'click $showAngle',
-        value: function click$showAngle(e) {
-            this.dispatch('/tool/toggle', 'guide.angle');
-        }
-    }, {
-        key: 'click $onlyView',
-        value: function click$onlyView(e) {
-            this.dispatch('/tool/set', 'guide.only', true);
-        }
-    }, {
-        key: 'click $stackView',
-        value: function click$stackView(e) {
-            this.dispatch('/tool/set', 'guide.only', false);
-        }
-    }]);
-    return LayersMenu;
-}(UIElement);
-
 var LayerManagerTab = function (_BaseTab) {
     inherits(LayerManagerTab, _BaseTab);
 
@@ -11005,126 +11247,11 @@ var LayerManagerTab = function (_BaseTab) {
     }, {
         key: "components",
         value: function components() {
-            return { GradientLayers: GradientLayers, GradientLayersMenu: LayersMenu };
+            return { GradientLayers: GradientLayers };
         }
     }]);
     return LayerManagerTab;
 }(BaseTab);
-
-var PredefinedRadialGradientAngle = function (_UIElement) {
-    inherits(PredefinedRadialGradientAngle, _UIElement);
-
-    function PredefinedRadialGradientAngle() {
-        classCallCheck(this, PredefinedRadialGradientAngle);
-        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedRadialGradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-angluar-group">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="circle">circle</option>\n                    <option value="ellipse">ellipse</option>\n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                </select>\n            </div>\n        ';
-        }
-    }, {
-        key: 'change $select',
-        value: function change$select(e) {
-            this.dispatch('/image/change', { radialType: this.refs.$select.val() });
-        }
-    }, {
-        key: 'click $center',
-        value: function click$center(e) {
-            this.dispatch('/image/change', { radialPosition: 'center' });
-        }
-    }]);
-    return PredefinedRadialGradientAngle;
-}(UIElement);
-
-var GradientType = function (_UIElement) {
-    inherits(GradientType, _UIElement);
-
-    function GradientType() {
-        classCallCheck(this, GradientType);
-        return possibleConstructorReturn(this, (GradientType.__proto__ || Object.getPrototypeOf(GradientType)).apply(this, arguments));
-    }
-
-    createClass(GradientType, [{
-        key: 'components',
-        value: function components() {
-            return { PredefinedRadialGradientAngle: PredefinedRadialGradientAngle };
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n        <div class=\'gradient-tools\'>\n            <div class=\'gradient-type\' ref="$gradientType">\n                <div ref="$linear" class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                <div ref="$radial" class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                <div ref="$repeatingLinear" class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                <div ref="$repeatingRadial" class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                <div ref="$image" class="gradient-item image" data-type="image" title="Background Image">\n                    <div class="m1"></div>\n                    <div class="m2"></div>\n                    <div class="m3"></div>\n                </div>\n            </div>\n            <div ref="$angular" class=\'gradient-angular linear\'>\n                <div class="gradient-angular-item radial">\n                    <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                </div>\n                <div class="gradient-angular-item image">\n                    \n                </div>                \n            </div>\n        </div>\n\n          \n        ';
-        }
-    }, {
-        key: '@changeLayer',
-        value: function changeLayer() {
-            // this.setLayerTypeUI()
-        }
-    }, {
-        key: '@initLayer',
-        value: function initLayer() {
-            this.setLayerTypeUI();
-        }
-    }, {
-        key: 'setLayerTypeUI',
-        value: function setLayerTypeUI(type) {
-
-            type = type || this.read('/image/get', 'type');
-
-            this.refs.$linear.toggleClass('selected', type == 'linear');
-            this.refs.$radial.toggleClass('selected', type == 'radial');
-            this.refs.$repeatingLinear.toggleClass('selected', type == 'repeating-linear');
-            this.refs.$repeatingRadial.toggleClass('selected', type == 'repeating-radial');
-            this.refs.$image.toggleClass('selected', type == 'image');
-
-            this.refs.$angular.toggleClass('linear', this.read('/image/isLinearType'));
-            this.refs.$angular.toggleClass('radial', this.read('/image/isRadialType'));
-            this.refs.$angular.toggleClass('image', this.read('/image/isImageType'));
-        }
-    }, {
-        key: 'click $gradientType .gradient-item',
-        value: function click$gradientTypeGradientItem(e) {
-
-            var type = e.$delegateTarget.attr('data-type');
-
-            this.dispatch('/image/change', { type: type });
-
-            this.setLayerTypeUI(type);
-        }
-    }]);
-    return GradientType;
-}(UIElement);
-
-var GradientSampleList = function (_UIElement) {
-    inherits(GradientSampleList, _UIElement);
-
-    function GradientSampleList() {
-        classCallCheck(this, GradientSampleList);
-        return possibleConstructorReturn(this, (GradientSampleList.__proto__ || Object.getPrototypeOf(GradientSampleList)).apply(this, arguments));
-    }
-
-    createClass(GradientSampleList, [{
-        key: 'template',
-        value: function template() {
-            var _this2 = this;
-
-            var list = this.read('/gradient/list/sample');
-
-            return '\n        <div class="gradient-sample-list">\n                 ' + list.map(function (it, index) {
-                return '<div class=\'gradient-sample-item\' style=\'' + _this2.read('/image/toString', it) + '\' data-index="' + index + '"></div>';
-            }).join('') + '\n        </div>\n        ';
-        }
-    }, {
-        key: 'click $el .gradient-sample-item',
-        value: function click$elGradientSampleItem(e) {
-            var index = +e.$delegateTarget.attr('data-index');
-
-            this.dispatch('/gradient/select', index);
-        }
-    }]);
-    return GradientSampleList;
-}(UIElement);
 
 var GradientAngle = function (_UIElement) {
     inherits(GradientAngle, _UIElement);
@@ -11554,6 +11681,177 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
     return PredefinedRadialGradientPosition;
 }(UIElement);
 
+var PredefinedRadialGradientAngle = function (_UIElement) {
+    inherits(PredefinedRadialGradientAngle, _UIElement);
+
+    function PredefinedRadialGradientAngle() {
+        classCallCheck(this, PredefinedRadialGradientAngle);
+        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
+    }
+
+    createClass(PredefinedRadialGradientAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="inline-block">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="circle">circle</option>\n                    <option value="ellipse">ellipse</option>\n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                </select>\n            </div>\n        ';
+        }
+    }, {
+        key: 'change $select',
+        value: function change$select(e) {
+            this.dispatch('/image/change', { radialType: this.refs.$select.val() });
+        }
+    }, {
+        key: 'click $center',
+        value: function click$center(e) {
+            this.dispatch('/image/change', { radialPosition: 'center' });
+        }
+    }]);
+    return PredefinedRadialGradientAngle;
+}(UIElement);
+
+var GradientType = function (_UIElement) {
+    inherits(GradientType, _UIElement);
+
+    function GradientType() {
+        classCallCheck(this, GradientType);
+        return possibleConstructorReturn(this, (GradientType.__proto__ || Object.getPrototypeOf(GradientType)).apply(this, arguments));
+    }
+
+    createClass(GradientType, [{
+        key: 'components',
+        value: function components() {
+            return { PredefinedRadialGradientAngle: PredefinedRadialGradientAngle };
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n        <div class=\'gradient-tools\'>\n            <div class=\'gradient-type\' ref="$gradientType">\n                <div ref="$static" class="gradient-item static" data-type="static" title="Static Color"></div>\n                <div ref="$linear" class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                <div ref="$radial" class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                <div ref="$repeatingLinear" class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                <div ref="$repeatingRadial" class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                <div ref="$image" class="gradient-item image" data-type="image" title="Background Image">\n                    <div class="m1"></div>\n                    <div class="m2"></div>\n                    <div class="m3"></div>\n                </div>\n            </div>\n            <div ref="$angular" class=\'gradient-angular linear\'>\n                <div class="gradient-angular-item radial">\n                    <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                </div>\n                <div class="gradient-angular-item image">\n                    \n                </div>                \n            </div>\n        </div>\n\n          \n        ';
+        }
+    }, {
+        key: '@changeLayer',
+        value: function changeLayer() {
+            this.setLayerTypeUI();
+        }
+    }, {
+        key: '@initLayer',
+        value: function initLayer() {
+            this.setLayerTypeUI();
+        }
+    }, {
+        key: 'setLayerTypeUI',
+        value: function setLayerTypeUI(type) {
+
+            type = type || this.read('/image/get', 'type');
+
+            this.refs.$static.toggleClass('selected', type == 'static');
+            this.refs.$linear.toggleClass('selected', type == 'linear');
+            this.refs.$radial.toggleClass('selected', type == 'radial');
+            this.refs.$repeatingLinear.toggleClass('selected', type == 'repeating-linear');
+            this.refs.$repeatingRadial.toggleClass('selected', type == 'repeating-radial');
+            this.refs.$image.toggleClass('selected', type == 'image');
+
+            this.refs.$angular.toggleClass('linear', this.read('/image/isLinearType'));
+            this.refs.$angular.toggleClass('radial', this.read('/image/isRadialType'));
+            this.refs.$angular.toggleClass('image', this.read('/image/isImageType'));
+        }
+    }, {
+        key: 'click $gradientType .gradient-item',
+        value: function click$gradientTypeGradientItem(e) {
+
+            var type = e.$delegateTarget.attr('data-type');
+
+            this.dispatch('/image/change', { type: type });
+
+            this.setLayerTypeUI(type);
+        }
+    }]);
+    return GradientType;
+}(UIElement);
+
+var LayersMenu = function (_UIElement) {
+    inherits(LayersMenu, _UIElement);
+
+    function LayersMenu() {
+        classCallCheck(this, LayersMenu);
+        return possibleConstructorReturn(this, (LayersMenu.__proto__ || Object.getPrototypeOf(LayersMenu)).apply(this, arguments));
+    }
+
+    createClass(LayersMenu, [{
+        key: 'template',
+        value: function template() {
+            return ' \n            <div class=\'gradient-layers-menu\'>\n                <div class="right">\n                    <span class="divider">|</span>                    \n                    <button type="button" ref="$stackView" class="stack-view" title="Stack View"></button>\n                    <button type="button" ref="$onlyView" class="only-view" title="Only View"></button>\n                    <span class="divider">|</span>\n                    <button type="button" ref="$showAngle" class=\'show-angle\' title="Show angle guide"></button>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            // this.refs.$show.toggleClass('selected', this.dispatch('/getGradientLayerVisible'))
+        }
+    }, {
+        key: '@changeLayer',
+        value: function changeLayer() {
+            this.refresh();
+        }
+    }, {
+        key: '@initLayer',
+        value: function initLayer() {
+            this.refresh();
+        }
+    }, {
+        key: 'click $left',
+        value: function click$left(e) {
+            this.dispatch('/moveLayerToLeft');
+        }
+    }, {
+        key: 'click $first',
+        value: function click$first(e) {
+            this.dispatch('/moveLayerToFirst');
+        }
+    }, {
+        key: 'click $last',
+        value: function click$last(e) {
+            this.dispatch('/moveLayerToLast');
+        }
+    }, {
+        key: 'click $right',
+        value: function click$right(e) {
+            this.dispatch('/moveLayerToRight');
+        }
+    }, {
+        key: 'click $delete',
+        value: function click$delete(e) {
+            this.dispatch('/removeLayer');
+        }
+    }, {
+        key: 'click $show',
+        value: function click$show(e) {
+            // TODO: 매끈하게 만들어봅시다. 
+            var isVisible = this.refs.$show.hasClass('selected');
+            this.dispatch('/setLayerVisible', isVisible);
+            this.refresh();
+        }
+    }, {
+        key: 'click $showPosition',
+        value: function click$showPosition(e) {
+            this.dispatch('/tool/toggle', 'guide.position');
+        }
+    }, {
+        key: 'click $showAngle',
+        value: function click$showAngle(e) {
+            this.dispatch('/tool/toggle', 'guide.angle');
+        }
+    }, {
+        key: 'click $onlyView',
+        value: function click$onlyView(e) {
+            this.dispatch('/tool/set', 'guide.only', true);
+        }
+    }, {
+        key: 'click $stackView',
+        value: function click$stackView(e) {
+            this.dispatch('/tool/set', 'guide.only', false);
+        }
+    }]);
+    return LayersMenu;
+}(UIElement);
+
 var GradientView = function (_UIElement) {
     inherits(GradientView, _UIElement);
 
@@ -11565,12 +11863,12 @@ var GradientView = function (_UIElement) {
     createClass(GradientView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'gradient-view\'>\n                <div class="gradient-color-view-container"></div>\n                <div class="gradient-color-view" ref="$colorview"></div>\n                <div class="gradient-color-view" ref="$colorviewOnly"></div>\n                <GradientAngle></GradientAngle>   \n                <GradientPosition></GradientPosition>             \n                <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n            </div>\n        ';
+            return '\n            <div class=\'gradient-view\'>\n                <GradientLayersMenu></GradientLayersMenu>\n                <div class="gradient-color-view-container"></div>\n                <div class="gradient-color-view" ref="$colorview"></div>\n                <div class="gradient-color-view" ref="$colorviewOnly"></div>\n                <GradientAngle></GradientAngle>   \n                <GradientPosition></GradientPosition>             \n                <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                <GradientType></GradientType>                \n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
-            return { GradientAngle: GradientAngle, GradientPosition: GradientPosition, PredefinedLinearGradientAngle: PredefinedLinearGradientAngle, PredefinedRadialGradientPosition: PredefinedRadialGradientPosition };
+            return { GradientAngle: GradientAngle, GradientPosition: GradientPosition, PredefinedLinearGradientAngle: PredefinedLinearGradientAngle, PredefinedRadialGradientPosition: PredefinedRadialGradientPosition, GradientType: GradientType, GradientLayersMenu: LayersMenu };
         }
     }, {
         key: 'refresh',
@@ -11652,6 +11950,15 @@ var ImageList = function (_UIElement) {
             this.refresh();
         }
     }, {
+        key: '@changeColor',
+        value: function changeColor(c) {
+            if (this.read('/image/get', 'type') == 'static') {
+                var color = this.read('/tool/get', 'color');
+                this.dispatch('/image/change', { color: color });
+                this.refresh();
+            }
+        }
+    }, {
         key: 'click $createImageButton',
         value: function click$createImageButton(e) {
             this.dispatch('/image/add');
@@ -11662,6 +11969,14 @@ var ImageList = function (_UIElement) {
         value: function click$imageListImageItemVisible(e) {
             var index = e.$delegateTarget.attr('data-index');
             this.dispatch('/image/toggle/visible', +index);
+
+            this.refresh();
+        }
+    }, {
+        key: 'click $imageList .image-item-delete',
+        value: function click$imageListImageItemDelete(e) {
+            var index = e.$delegateTarget.attr('data-index');
+            this.dispatch('/image/remove', +index);
 
             this.refresh();
         }
@@ -11688,12 +12003,12 @@ var ImageControl = function (_UIElement) {
     createClass(ImageControl, [{
         key: "template",
         value: function template() {
-            return " \n            <div class=\"control image-control\">\n                <div class=\"left\">\n                    <ImageLIst></ImageList> \n                </div>\n                <div class=\"right\">\n                    <GradientSampleList></GradientSampleList>                \n                    <GradientType></GradientType>\n                    <GradientView></GradientView>                      \n                </div>\n\n            </div>     \n        ";
+            return " \n            <div class=\"control image-control\">\n                <div class=\"left\">\n                    <ImageLIst></ImageList> \n                </div>\n                <div class=\"right\">\n                    <GradientView></GradientView>                      \n                </div>\n\n            </div>     \n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return { GradientType: GradientType, GradientView: GradientView, GradientSampleList: GradientSampleList, ImageList: ImageList };
+            return { GradientView: GradientView, ImageList: ImageList };
         }
     }]);
     return ImageControl;
@@ -11723,7 +12038,7 @@ var BlendList = function (_UIElement) {
             return '<div>' + list.map(function (blend) {
 
                 var selected = blend == backgroundBlendMode ? 'selected' : '';
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-view"  style=\'' + _this2.read('/blend/toString', layer, '') + '\'></div>\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toString', layer, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toString', layer, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join('') + '</div>';
         }
     }, {
@@ -11737,7 +12052,7 @@ var BlendList = function (_UIElement) {
             return '<div>' + list.map(function (blend) {
 
                 var selected = blend == mixBlendMode ? 'selected' : '';
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-view"  style=\'' + _this3.read('/blend/toString', layer, '', '') + '\'></div>\n                                <div class="blend-item-blend-view"  style=\'' + _this3.read('/blend/toString', layer, '', blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this3.read('/blend/toString', layer, '', blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join('') + '</div>';
         }
     }, {
@@ -11834,13 +12149,13 @@ var XDImageEditor = function (_BaseImageEditor) {
     createClass(XDImageEditor, [{
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main">\n                <div class="layout-top">\n                    <div class=\'layout-flow\'>                \n                        <ControlTab></ControlTab>\n                    </div>\n                </div>\n                <div class="layout-left">\n                    <div class=\'layout-flow\'>\n                        <LayerManagerTab></LayerManagerTab>                \n                    </div>\n                </div>\n                <div class="layout-right">\n                    <div class=\'layout-flow\'>\n                        <ColorTab></ColorTab>\n                        <ColorStepsTab></ColorStepsTab>\n                    </div>\n                </div>\n                <div class="layout-header">\n                    <GradientLayersMenu></GradientLayersMenu>\n                </div>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main">\n                <div class="layout-top">\n                    <div class=\'layout-flow\'>                \n                        <ControlTab></ControlTab>\n                    </div>\n                </div>\n                <div class="layout-left">\n                    <div class=\'layout-flow\'>\n                        <LayerManagerTab></LayerManagerTab>                \n                    </div>\n                </div>\n                <div class="layout-right">\n                    <div class=\'layout-flow\'>\n                        <ColorTab></ColorTab>\n                        <ColorStepsTab></ColorStepsTab>\n                    </div>\n                </div>\n                <div class="layout-header">\n                    <h1>Image Editor</h1>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
-                ColorTab: ColorTab, ColorStepsTab: ColorStepsTab, LayerManagerTab: LayerManagerTab, GradientLayersMenu: LayersMenu, ControlTab: ControlTab
+                ColorTab: ColorTab, ColorStepsTab: ColorStepsTab, LayerManagerTab: LayerManagerTab, ControlTab: ControlTab
             };
         }
     }]);
