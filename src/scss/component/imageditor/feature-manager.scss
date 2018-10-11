@@ -1,0 +1,66 @@
+$pointer-color: rgba(#ececec, 0.8);
+$direction-border: 2px solid $pointer-color;
+$page-item-height: 35px;
+$button-size: 24px;
+$layer-item-padding: 4px;
+
+.feature-control {
+    position: absolute;
+    box-sizing: border-box;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+
+    .feature {
+        display: none; 
+        position: absolute; 
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        top: 0px;
+        box-sizing: border-box; 
+
+        &.selected {
+            display: block;
+        }
+    }
+
+    .image-feature {
+        .color-tab {
+            bottom: auto;
+            height: 290px;
+        }
+
+        .color-steps-tab {
+            top: 620px;
+        }
+    }
+}
+
+.sub-feature-control {
+
+    .image-feature {
+
+        .property-view {
+            border-bottom: 0px;
+            border-top: 0px;
+            .property-item {
+                display: inline-block;
+                vertical-align: middle;
+                border: 0px;
+    
+                > .items {
+                    > div {
+                        label {
+                            width: auto; 
+                            margin-right: 10px;
+                        }
+                    }
+                }
+    
+            } 
+        }
+
+    }
+}

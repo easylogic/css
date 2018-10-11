@@ -1,116 +1,170 @@
-$pointer-color: rgba(#ececec, 0.8);
-$direction-border: 2px solid $pointer-color;
-$layer-item-height: 50px;
-$button-size: 24px;
-$layer-item-padding: 8px;
+$image-item-height: 100px;
+$image-item-width: 100px;
 
-.image-list-container {
-    position: absolute;
-    left: 100px;
-    right: 0px;
-    top: 35px;
-    bottom: 0px; 
+.images {
     box-sizing: border-box;
-    padding: 5px;
+    position: relative;
+    height: 100%; 
 
-    .image-list {
-        display: block;
+
+    .image-tools {
+        padding: 5px; 
         position: absolute;
         left: 0px;
         right: 0px;
-        top: 0px;
         bottom: 0px;
-        overflow: auto; 
-        border-top: 1px solid #dedede;
-        .image-item {
-            display: flex;
-            height: $layer-item-height;            
+        top: 0px;
+        display: flex; 
+        flex-direction: row;
+
+        button {
+            display: inline-block;
+            appearance: none;
+            width: $image-item-width;
+            height: $image-item-height;
             box-sizing: border-box;
+            border: 1px solid #dedede;
+            vertical-align: middle;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+            position: relative;
+            pointer-events: all;
+        }
+    
+ 
+        > .tools {
+            flex: none; 
+            width: $image-item-width + 10;            
+        }
+
+        .image-list {
+            flex: 1 1 auto; 
+        }
+
+        .menu-buttons {
+            width: 110px;
+            flex: none;
+
+            .gradient-type {
+                height: 100%;
+
+                > button {
+                    height: auto; 
+                    margin: 5px 0px;
+                }
+
+                .gradient-item {
+                    width: 30px;
+                    height: 30px;
+                }
+            }
+        }
+    }    
+
+    .add-tools {
+        padding: 5px; 
+        height: $image-item-height + 10;
+
+
+    }        
+
+    .image-list {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 0px 5px;
+
+        .menu-buttons {
+            padding: 5px 10px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .tree-item {
+            display: inline-block;
+            height: $image-item-height;            
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            border-bottom: 1px solid #dedede;
-            padding: 5px;
-
-            svg {
-                pointer-events: none;
-            }
+            border: 5px solid #dedede;  
+            vertical-align: middle;
+            margin-right: 5px;
 
             &.selected {
-                background-color: #dedede;                
-                .image-item-check {
-                    svg {
-                        display: inline-block; 
-                    }
+                border: 5px solid #333;
+            }
+
+            &:hover {
+                .item-tools {
+                    display: inline-block;
                 }
             }
 
-            .image-item-view-container {
+            .item-view-container {
                 position: relative; 
-                @include transparent-background();
+                // @include transparent-background();
                 pointer-events: none;
                 display: inline-block;
                 vertical-align: middle;
                 box-sizing: border-box;
-                flex: 1 1 auto;  
-                padding: 14px;
-                width: 25%;
-            }
+                height: $image-item-height;
+                width: $image-item-width;
 
-            .image-item-check {
-                position: relative; 
-                display: inline-block;
-                vertical-align: middle;
-                box-sizing: border-box;
-                flex: 1 1 auto;  
-                width: 25%;
-                text-align: center;
-                padding: $layer-item-padding;
-
-                svg {
-                    display: none;
+                .item-view {
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    right: 0px;
+                    bottom: 0px;
                 }
             }
 
-            .image-item-visible {
-                position: relative; 
-                display: inline-block;
-                vertical-align: middle;
-                box-sizing: border-box;
-                flex: 1 1 auto;  
-                width: 25%;
-                text-align: center;       
-                padding: $layer-item-padding;
-
-                svg.on { display: none; }
-                svg.off { display: inline-block; }                
-
-                &.on {
-                    svg.on { display: inline-block; }
-                    svg.off { display: none; }
-                }
-            }
-
-            .image-item-delete {
-                position: relative; 
-                display: inline-block;
-                vertical-align: middle;
-                box-sizing: border-box;
-                flex: 1 1 auto;  
-                padding: $layer-item-padding;                
-                width: 25%;
-                text-align: center;                
-            }
-
-            .image-item-view {
-                pointer-events: none;                
-                position: absolute; 
-                left: 0px;
+            .item-tools {
+                position: absolute;
                 right: 0px;
+                top: 0px;
                 bottom: 0px;
-                top: 0px; 
-            }
-        }
-    }
+                left: 0px;
+                display: none;
+                padding: 5px;     
+                pointer-events: none;
 
+                button {
+                    height: 20px;
+                    width: 20px;
+                    position: absolute;
+                    display:inline-block;
+                    border: 0px solid #dedede;
+                    cursor: pointer;
+                    pointer-events: all;
+                    border-radius: 50%;
+                    background-color: rgba(255, 255, 255, 0.2);                    
+                    
+                    &.copy-item {
+                        right: 1px;
+                        top: 50%;
+                        transform: translateY(-50%) rotate(45deg);
+                    }
+
+                    &.left-item {
+                        left: 1px;
+                        bottom: 1px;
+                    }
+
+                    &.right-item {
+                        right: 1px;
+                        bottom: 1px;
+                    }              
+                    
+                    &.delete-item {
+                        top: 1px;
+                        right: 1px;
+                    }
+                }
+
+            }
+
+        }
+
+    }
 }

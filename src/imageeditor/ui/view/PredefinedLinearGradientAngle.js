@@ -17,24 +17,32 @@ export default class PredefinedLinearGradientAngle extends UIElement {
             </div>
         `
     }
-    'click $el button' (e) {
-        this.dispatch('/image/setAngle', e.$delegateTarget.attr('data-value'));
-    }
-
 
     refresh () {
         this.$el.toggle(this.isShow())
     }
 
+
     isShow () {
-        return this.dispatch('/image/isLinearType') && this.read('/tool/get', 'guide.angle')
+        if (!this.read('/item/is/mode', 'image')) return false;         
+        var image = this.read('/item/current/image')
+
+        if (!image) { return false; }
+
+        return this.read('/tool/get', 'guide.angle') && this.read('/image/type/isLinear', image.type);
     }
 
-    '@changeLayer' () {
-        this.refresh()
+    'click.self $el button' (e) {
+
+        this.read('/item/current/image', (item) => {
+            item.angle = e.$delegateTarget.attr('data-value'); 
+
+            this.dispatch('/item/set', item);
+        })
+        
     }
 
-    '@initLayer' () { this.refresh() }    
+    '@changeEditor' () { this.refresh(); }
 
 
     '@changeTool' () {

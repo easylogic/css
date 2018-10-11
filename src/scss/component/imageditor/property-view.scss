@@ -1,0 +1,89 @@
+.property-view {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
+    box-sizing: border-box;
+    overflow: auto;
+    border-top: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+    border-right: 1px solid #ececec;
+
+    .property-item {
+        padding: 5px;
+        border-bottom: 1px solid #ececec;
+        font-size: 12px;
+        overflow: hidden;
+        
+        > .title {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 0px !important;
+        }
+
+        > .items > div {
+            display: flex; 
+
+            > label {
+                width: 70px;
+                display: inline-block;
+                vertical-align: middle;
+                line-height: 1.6;
+                margin-left: 4px;
+                text-align: right;
+                padding-right: 10px;
+                box-sizing: border-box;
+
+                &.left {
+                    text-align: left;
+                }
+
+                &:first-child {
+                    margin-left: 0px;
+                }
+            }
+
+            > div {
+                display: flex; 
+
+                input[type=number], input[type=text] {
+                    width: 40px;
+                    vertical-align: middle;                    
+                }
+
+                .input {
+                    input[type=number], input[type=text] {
+                        width: 30px;
+                    }
+                }
+
+                > span {
+                    display: inline-block;
+                    margin-left: 4px; 
+                    margin-right: 10px;
+                    vertical-align: middle;
+                    display: none;
+                }
+
+                .input-text {
+                    span {
+                        display: inline-block;
+                        width: 36px;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+
+        @import './property-items/gradient-steps.scss';
+        @import './property-items/gradient-sample-list.scss';
+        @import './property-items/gradient-steps-info.scss';
+        @import './property-items/gradient-tools.scss';
+    }
+
+    .gradient-view {
+        height: 230px;
+        width: 100%;
+    }
+}
