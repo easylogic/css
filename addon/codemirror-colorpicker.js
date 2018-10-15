@@ -5660,8 +5660,6 @@ var Util = {
     ImageLoader: ImageLoader
 };
 
-var color = Color$1.color;
-
 var counter = 0;
 var cached = [];
 
@@ -9811,6 +9809,24 @@ var ImageManager = function (_BaseModule) {
     return ImageManager;
 }(BaseModule);
 
+var filterInfo = {
+
+    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: 'px', defaultValue: 0 },
+    'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
+    'hue-rotate': { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'invert': { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 0 },
+    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: '%', defaultValue: 100 },
+    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: '%', defaultValue: 100 },
+    'drop-shadow': {
+        title: 'Drop Shadow',
+        type: 'multi',
+        items: [{ title: 'Offset X', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Offset Y', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Spread Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Color', type: 'color', defaultValue: 'black' }]
+    },
+    'opacity': { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
+    'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
+    'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 0 }
+};
+
 var LayerManager = function (_BaseModule) {
     inherits(LayerManager, _BaseModule);
 
@@ -9820,6 +9836,16 @@ var LayerManager = function (_BaseModule) {
     }
 
     createClass(LayerManager, [{
+        key: '*/layer/filter/list',
+        value: function layerFilterList($store) {
+            return filterInfo;
+        }
+    }, {
+        key: '*/layer/get/filter',
+        value: function layerGetFilter($store, id) {
+            return filterInfo[id];
+        }
+    }, {
         key: '*/layer/toString',
         value: function layerToString($store, layer) {
             var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
@@ -9832,7 +9858,63 @@ var LayerManager = function (_BaseModule) {
                 delete obj['background-color'];
                 delete obj['background-blend-mode'];
                 delete obj['mix-blend-mode'];
+                delete obj['filter'];
             }
+
+            return Object.keys(obj).map(function (key) {
+                return key + ': ' + obj[key] + ';';
+            }).join(' ');
+        }
+    }, {
+        key: '*/layer/make/filter',
+        value: function layerMakeFilter($store, filters) {
+            var defaultDataObject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            return Object.keys(filters).map(function (id) {
+                var dataObject = filters[id] || defaultDataObject;
+
+                // 적용하는 필터가 아니면 제외 한다. 
+                if (!dataObject.checked) return '';
+
+                var viewObject = $store.read('/layer/get/filter', id);
+
+                var value = dataObject.value;
+
+                if (typeof value == 'undefined') {
+                    value = viewObject.defaultValue;
+                }
+
+                return id + '(' + value + viewObject.unit + ')';
+            }).join(' ');
+        }
+    }, {
+        key: '*/layer/filter/toString',
+        value: function layerFilterToString($store, layer) {
+            var filterId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+            var onlyFilter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+            if (!layer) return '';
+            if (!filterId && !layer.filters) return '';
+
+            var obj = $store.read('/layer/toCSS', layer, true) || { filters: [] };
+            var filters = {};
+
+            if (!filterId) {
+                filters = layer.filters || {};
+            } else {
+                filters[filterId] = Object.assign({}, layer.filters[filterId] || {});
+                filters[filterId].checked = true;
+            }
+
+            if (onlyFilter) {
+                delete obj.width;
+                delete obj.height;
+                delete obj.left;
+                delete obj.top;
+            }
+
+            obj.filter = $store.read('/layer/make/filter', filters);
 
             return Object.keys(obj).map(function (key) {
                 return key + ': ' + obj[key] + ';';
@@ -9968,6 +10050,7 @@ var LayerManager = function (_BaseModule) {
             } else {}
 
             css['transform'] = $store.read('/layer/make/transform', layer);
+            css['filter'] = $store.read('/layer/make/filter', layer.filters);
 
             var results = Object.assign(css, image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/toImageCSS', layer));
 
@@ -10177,7 +10260,13 @@ var circle2 = {
     colorsteps: [{ color: 'white', percent: 0 }, { color: 'rgb(255,82,2)', percent: 9 }]
 };
 
-var gradientList = [sample1, gradegray, piggypink, coolblues, megatron, jshine, darkocean, yoda, liberty, silence, circle, circle2];
+var deepblue = {
+    type: 'linear',
+    angle: 'to right',
+    colorsteps: [{ color: '#6a11cb', percent: 0 }, { color: '#2575fc', percent: 100 }]
+};
+
+var gradientList = [deepblue, sample1, gradegray, piggypink, coolblues, megatron, jshine, darkocean, yoda, liberty, silence, circle, circle2];
 
 var material = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B'];
 
@@ -10213,9 +10302,10 @@ var GradientManager = function (_BaseModule) {
                     return Object.assign({}, it);
                 })));
 
-                results.push.apply(results, toConsumableArray(ColorList.list['material'].map(function (color) {
-                    return Object.assign({}, { type: 'static', color: color });
-                })));
+                results.push({
+                    type: 'static',
+                    color: ColorList.list['material'][0]
+                });
             } else {
                 results.push.apply(results, toConsumableArray(ColorList.list['material'].map(function (color) {
                     return Object.assign({}, { type: 'static', color: color });
@@ -10248,6 +10338,11 @@ var GradientManager = function (_BaseModule) {
                     }
 
                     $store.dispatch('/item/set', image);
+                } else {
+                    $store.read('/item/current/layer', function (layer) {
+                        layer.style['background-color'] = obj.color;
+                        $store.dispatch('/item/set', layer);
+                    });
                 }
             }
         }
@@ -10306,8 +10401,8 @@ var PAGE_DEFAULT_OBJECT = {
     parentId: '',
     index: 0,
     style: {
-        width: '200px',
-        height: '200px'
+        width: '360px',
+        height: '630px'
     }
 };
 
@@ -10325,7 +10420,7 @@ var LAYER_DEFAULT_OBJECT = {
         x: '0px',
         y: '0px'
     },
-    filters: []
+    filters: {}
 };
 
 var IMAGE_DEFAULT_OBJECT = {
@@ -10753,7 +10848,9 @@ var ItemManager = function (_BaseModule) {
         }
     }, {
         key: '/item/select',
-        value: function itemSelect($store, selectedId) {
+        value: function itemSelect($store) {
+            var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
             $store.read('/item/keys').forEach(function (id) {
 
                 var item = $store.items[id];
@@ -10765,11 +10862,16 @@ var ItemManager = function (_BaseModule) {
                 }
             });
 
-            $store.items[selectedId].selectTime = Date.now();
+            if (selectedId) {
+                $store.items[selectedId].selectTime = Date.now();
 
-            $store.selectedId = selectedId;
+                $store.selectedId = selectedId;
 
-            $store.run('/item/select/mode', $store.items[selectedId].itemType);
+                $store.run('/item/select/mode', $store.items[selectedId].itemType);
+            } else {
+                $store.selectedId = selectedId;
+                $store.run('/item/select/mode', 'board');
+            }
         }
     }, {
         key: '/item/select/mode',
@@ -10986,7 +11088,180 @@ var ItemManager = function (_BaseModule) {
     return ItemManager;
 }(BaseModule);
 
-var ModuleList = [ItemManager, ColorStepManager, ImageManager, PageManager, LayerManager, ToolManager, BlendManager, GradientManager];
+var list$1 = new Array(1000);
+var lastIndex = -1;
+var selectedItem = {};
+
+var verticalKeys = ['y', 'centerY', 'y2'];
+var horizontalKeys = ['x', 'centerX', 'x2'];
+var maxDist = 1;
+
+var GuideManager = function (_BaseModule) {
+    inherits(GuideManager, _BaseModule);
+
+    function GuideManager() {
+        classCallCheck(this, GuideManager);
+        return possibleConstructorReturn(this, (GuideManager.__proto__ || Object.getPrototypeOf(GuideManager)).apply(this, arguments));
+    }
+
+    createClass(GuideManager, [{
+        key: '*/guide/rect',
+        value: function guideRect($store, obj) {
+            var x = +(obj.x || '0px').replace('px', '');
+            var y = +(obj.y || '0px').replace('px', '');
+            var width = +(obj.width || '0px').replace('px', '');
+            var height = +(obj.height || '0px').replace('px', '');
+
+            var x2 = x + width;
+            var y2 = y + height;
+
+            var centerX = x + Math.floor(width / 2);
+            var centerY = y + Math.floor(height / 2);
+
+            return { x: x, y: y, x2: x2, y2: y2, width: width, height: height, centerX: centerX, centerY: centerY };
+        }
+    }, {
+        key: '*/guide/line/layer',
+        value: function guideLineLayer($store) {
+
+            var page = $store.read('/item/current/page');
+
+            if (!page) return [];
+            if (!page.style) return [];
+
+            if (page.selected) return [];
+
+            var index = 0;
+            list$1[index++] = $store.read('/guide/rect', {
+                x: 0,
+                y: 0,
+                width: page.style.width,
+                height: page.style.height
+            });
+
+            $store.read('/item/each/children', page.id, function (item) {
+                var newItem = $store.read('/guide/rect', {
+                    x: item.style.x,
+                    y: item.style.y,
+                    width: item.style.width,
+                    height: item.style.height
+                });
+
+                if (item.selected) {
+                    selectedItem = newItem;
+                } else {
+                    list$1[index++] = newItem;
+                }
+            });
+
+            lastIndex = index;
+
+            return $store.read('/guide/paths');
+        }
+    }, {
+        key: '*/guide/paths',
+        value: function guidePaths($store) {
+
+            var results = [];
+            for (var i = 0; i < lastIndex; i++) {
+                results.push.apply(results, toConsumableArray($store.read('/guide/check', list$1[i], selectedItem)));
+            }
+
+            return results;
+        }
+    }, {
+        key: '*/guide/check',
+        value: function guideCheck($store, item1, item2) {
+            var results = [];
+
+            // 가로 먼저 체크 
+
+            results.push.apply(results, toConsumableArray($store.read('/guide/check/vertical', item1, item2)));
+
+            // 세로 체크 
+            results.push.apply(results, toConsumableArray($store.read('/guide/check/horizontal', item1, item2)));
+
+            return results;
+        }
+    }, {
+        key: '*/guide/check/vertical',
+        value: function guideCheckVertical($store, item1, item2) {
+            var results = [];
+
+            verticalKeys.forEach(function (key) {
+
+                // top
+                if (Math.abs(item1.y - item2[key]) < maxDist) {
+                    results.push({ type: '-',
+                        x: Math.min(item1.centerX, item2.centerX),
+                        y: item1.y,
+                        width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
+                    });
+                }
+
+                // middle
+                if (Math.abs(item1.centerY - item2[key]) < maxDist) {
+                    results.push({ type: '-',
+                        x: Math.min(item1.centerX, item2.centerX),
+                        y: item1.centerY,
+                        width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
+                    });
+                }
+
+                // bottom
+                if (Math.abs(item1.y2 - item2[key]) < maxDist) {
+                    results.push({ type: '-',
+                        x: Math.min(item1.centerX, item2.centerX),
+                        y: item1.y2,
+                        width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
+                    });
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: '*/guide/check/horizontal',
+        value: function guideCheckHorizontal($store, item1, item2) {
+            var results = [];
+
+            horizontalKeys.forEach(function (key) {
+
+                // left 
+                if (Math.abs(item1.x - item2[key]) < maxDist) {
+                    results.push({ type: '|',
+                        x: item1.x,
+                        y: Math.min(item1.centerY, item2.centerY),
+                        height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
+                    });
+                }
+
+                // center
+                if (Math.abs(item1.centerX - item2[key]) < maxDist) {
+                    results.push({ type: '|',
+                        x: item1.centerX,
+                        y: Math.min(item1.centerY, item2.centerY),
+                        height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
+                    });
+                }
+
+                // right
+                if (Math.abs(item1.x2 - item2[key]) < maxDist) {
+                    results.push({ type: '|',
+                        x: item1.x2,
+                        y: Math.min(item1.centerY, item2.centerY),
+                        height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
+                    });
+                }
+            });
+
+            return results;
+        }
+    }]);
+    return GuideManager;
+}(BaseModule);
+
+var ModuleList = [ItemManager, ColorStepManager, ImageManager, PageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseImageEditor = function (_UIElement) {
     inherits(BaseImageEditor, _UIElement);
@@ -11043,7 +11318,7 @@ var PageList = function (_UIElement) {
     createClass(PageList, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'pages\'>         \n                <div class=\'title\'> \n                    <h1>Pages</h1>\n                    <div class="tools">\n                        <button type="button" class=\'add-page\' ref="$addPage">+</button>\n                    </div>\n                </div> \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',
@@ -11071,9 +11346,13 @@ var PageList = function (_UIElement) {
         value: function load$pageList() {
             var _this2 = this;
 
-            return this.read('/item/map/page', function (item, index) {
+            var str = this.read('/item/map/page', function (item, index) {
                 return _this2.makeItemNode(item);
-            });
+            }).join('');
+
+            str += '<button type="button" class=\'add-page\'>+ Page</button>';
+
+            return str;
         }
     }, {
         key: 'refresh',
@@ -11086,8 +11365,8 @@ var PageList = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: 'click $addPage',
-        value: function click$addPage(e) {
+        key: 'click $pageList .add-page',
+        value: function click$pageListAddPage(e) {
             this.dispatch('/item/add/page', true);
             this.refresh();
         }
@@ -11104,6 +11383,45 @@ var PageList = function (_UIElement) {
         }
     }]);
     return PageList;
+}(UIElement);
+
+var BaseTab = function (_UIElement) {
+    inherits(BaseTab, _UIElement);
+
+    function BaseTab() {
+        classCallCheck(this, BaseTab);
+        return possibleConstructorReturn(this, (BaseTab.__proto__ || Object.getPrototypeOf(BaseTab)).apply(this, arguments));
+    }
+
+    createClass(BaseTab, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="tab">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="1">1</div>\n                <div class="tab-item" data-id="2">2</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="1"></div>\n                <div class="tab-content" data-id="2"></div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'isNotSelectedTab',
+        value: function isNotSelectedTab(e) {
+            return !e.$delegateTarget.hasClass('selected');
+        }
+    }, {
+        key: 'click.isNotSelectedTab $header .tab-item',
+        value: function clickIsNotSelectedTab$headerTabItem(e) {
+            this.selectTab(e.$delegateTarget.attr('data-id'));
+        }
+    }, {
+        key: 'selectTab',
+        value: function selectTab(id) {
+
+            this.refs.$header.children().forEach(function ($dom) {
+                $dom.toggleClass('selected', $dom.attr('data-id') == id);
+            });
+
+            this.refs.$body.children().forEach(function ($dom) {
+                $dom.toggleClass('selected', $dom.attr('data-id') == id);
+            });
+        }
+    }]);
+    return BaseTab;
 }(UIElement);
 
 var Size = function (_UIElement) {
@@ -11431,7 +11749,7 @@ var SampleList = function (_UIElement) {
     createClass(SampleList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item sample-list'>\n                <div class='title'>Sample Colors</div>\n                <div class='items'>            \n                    <GradientSampleList></GradientSampleList>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item sample-list'>\n                <div class='title'>Select Images</div>\n                <div class='items'>            \n                    <GradientSampleList></GradientSampleList>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -12192,7 +12510,7 @@ var ColorSampleList = function (_UIElement) {
     createClass(ColorSampleList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item sample-list'>\n                <div class='title'>Sample Colors</div>\n                <div class='items'>            \n                    <GradientSampleList type=\"color\"></GradientSampleList>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item sample-list'>\n                <div class='items'>            \n                    <GradientSampleList type=\"color\"></GradientSampleList>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -12586,6 +12904,297 @@ var PropertyView = function (_UIElement) {
     return PropertyView;
 }(UIElement);
 
+var PageMenuTab = function (_BaseTab) {
+    inherits(PageMenuTab, _BaseTab);
+
+    function PageMenuTab() {
+        classCallCheck(this, PageMenuTab);
+        return possibleConstructorReturn(this, (PageMenuTab.__proto__ || Object.getPrototypeOf(PageMenuTab)).apply(this, arguments));
+    }
+
+    createClass(PageMenuTab, [{
+        key: 'components',
+        value: function components() {
+            return {
+                PropertyView: PropertyView
+            };
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+
+            return '\n            <div class="tab page-menu-tab">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="property">\n                        Property\n                    </div>                 \n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class=\'tab-content selected\' data-id=\'property\'>\n                        <PropertyView></PropertyView>\n                    </div>\n                </div>\n            </div>        \n        ';
+        }
+    }]);
+    return PageMenuTab;
+}(BaseTab);
+
+var BlendList = function (_UIElement) {
+    inherits(BlendList, _UIElement);
+
+    function BlendList() {
+        classCallCheck(this, BlendList);
+        return possibleConstructorReturn(this, (BlendList.__proto__ || Object.getPrototypeOf(BlendList)).apply(this, arguments));
+    }
+
+    createClass(BlendList, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'background-blend-list blend-list-tab\'>\n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'load $blendList',
+        value: function load$blendList() {
+            var _this2 = this;
+
+            var list = this.read('/blend/list');
+
+            var item = this.read('/item/current/layer');
+            if (!item) {
+                return '';
+            }
+
+            return '<div>' + list.map(function (blend) {
+
+                var selected = blend == item.style['background-blend-mode'] ? 'selected' : '';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+            }).join('') + '</div>';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'click.self $blendList .blend-item',
+        value: function clickSelf$blendListBlendItem(e) {
+            var item = this.read('/item/current/layer');
+
+            if (!item) return;
+
+            item.style['background-blend-mode'] = e.$delegateTarget.attr('data-mode');
+
+            this.dispatch('/item/set', item, true);
+            this.refresh();
+        }
+    }]);
+    return BlendList;
+}(UIElement);
+
+var BlendList$2 = function (_UIElement) {
+    inherits(BlendList, _UIElement);
+
+    function BlendList() {
+        classCallCheck(this, BlendList);
+        return possibleConstructorReturn(this, (BlendList.__proto__ || Object.getPrototypeOf(BlendList)).apply(this, arguments));
+    }
+
+    createClass(BlendList, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'mix-blend-list blend-list-tab\'>\n                <div class="blend-list" ref="$mixBlendList"></div>            \n            </div>   \n        ';
+        }
+    }, {
+        key: 'load $mixBlendList',
+        value: function load$mixBlendList() {
+            var _this2 = this;
+
+            var list = this.read('/blend/list');
+            var item = this.read('/item/current/layer');
+            if (!item) {
+                return '';
+            }
+
+            return '<div>' + list.map(function (blend) {
+
+                var selected = blend == item.style['mix-blend-mode'] ? 'selected' : '';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, '', blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+            }).join('') + '</div>';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'click.self $mixBlendList .blend-item',
+        value: function clickSelf$mixBlendListBlendItem(e) {
+            var item = this.read('/item/current/layer');
+
+            if (!item) return;
+
+            item.style['mix-blend-mode'] = e.$delegateTarget.attr('data-mode');
+
+            this.dispatch('/item/set', item, true);
+
+            this.refresh();
+        }
+    }]);
+    return BlendList;
+}(UIElement);
+
+var FilterList$1 = function (_BaseTab) {
+    inherits(FilterList, _BaseTab);
+
+    function FilterList() {
+        classCallCheck(this, FilterList);
+        return possibleConstructorReturn(this, (FilterList.__proto__ || Object.getPrototypeOf(FilterList)).apply(this, arguments));
+    }
+
+    createClass(FilterList, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="filter-list" ref="$filterList">\n                \n            </div>\n        ';
+        }
+    }, {
+        key: 'makeInputItem',
+        value: function makeInputItem(id, viewObject, dataObject) {
+
+            var value = dataObject.value;
+
+            if (typeof value == 'undefined') {
+                value = viewObject.defaultValue;
+            }
+
+            if (viewObject.type == 'range') {
+                return '\n                <div>\n                    <span class=\'title\'>\n                        <label><input type="checkbox" ' + (dataObject.checked ? 'checked="checked"' : '') + ' data-filter-id="' + id + '" /> ' + viewObject.title + ' </label>\n                    </span>\n                    <span class=\'range\'><input type="range" min="' + viewObject.min + '" max="' + viewObject.max + '" step="' + viewObject.step + '" value="' + value + '" data-filter-id="' + id + '" /></span>\n                    <span class=\'input\'><input type="number" min="' + viewObject.min + '" max="' + viewObject.max + '" step="' + viewObject.step + '" value="' + value + '" data-filter-id="' + id + '"/></span>\n                    <span class=\'unit\'>' + viewObject.unit + '</span>\n                </div>\n            ';
+            }
+
+            return '<div>\n\n        </div>';
+        }
+    }, {
+        key: 'load $filterList',
+        value: function load$filterList() {
+            var _this2 = this;
+
+            var layer = this.read('/item/current/layer');
+
+            if (!layer) return '';
+
+            var defaultFilterList = this.read('/layer/filter/list');
+            var filters = this.getFilterList();
+
+            return Object.keys(defaultFilterList).map(function (id) {
+                var viewObject = defaultFilterList[id];
+                var dataObject = filters[id] || {};
+
+                return '\n                <div class=\'filter-item\' data-filter="' + id + '">\n                    <div class="filter-item-view-container">\n                        <div class="filter-item-view" data-filter-id="' + id + '" style=\'' + _this2.read('/layer/filter/toString', layer, id, true) + '\'></div>\n                    </div>\n                    <div class="filter-item-input">\n                        ' + _this2.makeInputItem(id, viewObject, dataObject) + '\n                    </div>\n                </div>';
+            });
+        }
+    }, {
+        key: 'refreshFilter',
+        value: function refreshFilter(id) {
+            var _this3 = this;
+
+            this.read('/item/current/layer', function (layer) {
+                var filter = layer.filters[id];
+
+                if (filter) {
+                    var $dom = _this3.$el.$('[data-filter=' + id + ']');
+
+                    $dom.$('.filter-item-view[data-filter-id=' + id + ']').el.style = _this3.read('/layer/filter/toString', layer, id, true);
+                    $dom.$('.input [data-filter-id=' + id + ']').val(filter.value);
+                    $dom.$('.range [data-filter-id=' + id + ']').val(filter.value);
+                }
+            });
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: 'getFilterList',
+        value: function getFilterList() {
+
+            var layer = this.read('/item/current/layer');
+
+            if (!layer) return [];
+
+            return layer.filters || [];
+        }
+    }, {
+        key: 'click $filterList input[type=checkbox]',
+        value: function click$filterListInputTypeCheckbox(e) {
+            var _this4 = this;
+
+            var id = e.$delegateTarget.attr('data-filter-id');
+
+            this.read('/item/current/layer', function (layer) {
+                if (!layer.filters[id]) {
+                    layer.filters[id] = { checked: false };
+                }
+
+                layer.filters[id].checked = e.$delegateTarget.el.checked;
+
+                _this4.dispatch('/item/set', layer);
+                // this.refresh();
+            });
+        }
+    }, {
+        key: 'change:input $filterList input[type=range]',
+        value: function changeInput$filterListInputTypeRange(e) {
+            var _this5 = this;
+
+            var id = e.$delegateTarget.attr('data-filter-id');
+
+            this.read('/item/current/layer', function (layer) {
+
+                if (!layer.filters) {
+                    layer.filters = {};
+                }
+
+                if (!layer.filters[id]) {
+                    layer.filters[id] = {};
+                }
+
+                layer.filters[id].value = e.$delegateTarget.val();
+
+                _this5.dispatch('/item/set', layer);
+                _this5.refreshFilter(id);
+            });
+        }
+    }, {
+        key: 'input $filterList input[type=number]',
+        value: function input$filterListInputTypeNumber(e) {
+            var _this6 = this;
+
+            var id = e.$delegateTarget.attr('data-filter-id');
+
+            this.read('/item/current/layer', function (layer) {
+                layer.filters[id].value = e.$delegateTarget.val();
+
+                if (!layer.filters) {
+                    layer.filters = {};
+                }
+
+                if (!layer.filters[id]) {
+                    layer.filters[id] = {};
+                }
+
+                _this6.dispatch('/item/set', layer);
+                _this6.refreshFilter(id);
+            });
+        }
+    }]);
+    return FilterList;
+}(BaseTab);
+
 var LayerView = function (_UIElement) {
     inherits(LayerView, _UIElement);
 
@@ -12597,7 +13206,7 @@ var LayerView = function (_UIElement) {
     createClass(LayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <Name></Name>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorSampleList></ColorSampleList>\n                <size></size>\n                <position></position>\n                <radius></radius>\n                <transform></transform>\n                <transform3d></transform3d>\n            </div> \n        ";
+            return "\n            <div class='property-view'>\n                <Name></Name>                \n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorSampleList></ColorSampleList>                \n                <size></size>\n                <position></position>\n                <radius></radius>\n                <transform></transform>\n                <transform3d></transform3d>\n            </div> \n        ";
         }
     }, {
         key: "components",
@@ -12607,6 +13216,53 @@ var LayerView = function (_UIElement) {
     }]);
     return LayerView;
 }(UIElement);
+
+var LayerMenuTab = function (_BaseTab) {
+    inherits(LayerMenuTab, _BaseTab);
+
+    function LayerMenuTab() {
+        classCallCheck(this, LayerMenuTab);
+        return possibleConstructorReturn(this, (LayerMenuTab.__proto__ || Object.getPrototypeOf(LayerMenuTab)).apply(this, arguments));
+    }
+
+    createClass(LayerMenuTab, [{
+        key: 'components',
+        value: function components() {
+            return {
+                LayerView: LayerView,
+                BlendList: BlendList,
+                MixBlendList: BlendList$2,
+                FilterList: FilterList$1
+            };
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+
+            return '\n            <div class="tab layer-menu-tab">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="property">\n                        Property\n                    </div>\n                    <div class="tab-item" data-id="background-blend" title="Background Blend">\n                        <div class=\'blend-preview-item\'>\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view" ref="$backgroundBlendMode" ></div>\n                            </div>\n                        </div>\n                        Background Blend \n                    </div>\n                    <div class="tab-item" data-id="mix-blend" title="Mix Blend">\n                        <div class=\'blend-preview-item\'>\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  ref="$mixBlendMode" ></div>\n                            </div>\n                        </div>\n                        Mix Blend\n                    \n                    </div>\n                    <div class="tab-item" data-id="filter" title="Filter">\n                        Filter                    \n                    </div>                    \n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class=\'tab-content selected\' data-id=\'property\'>\n                        <LayerView></LayerView>\n                    </div>\n                    <div class="tab-content" data-id="background-blend">\n                        <BlendList></BlendList>\n                    </div>\n                    <div class="tab-content" data-id="mix-blend">\n                        <MixBlendList></MixBlendList>\n                    </div>                    \n                    <div class="tab-content" data-id="filter">\n                        <FilterList></FilterList>\n                    </div>                                        \n                </div>\n            </div>        \n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/item/current/layer', function (item) {
+                _this2.refs.$backgroundBlendMode.el.style = _this2.read('/blend/toStringWithoutDimension', item, item.style['background-blend-mode']);
+                _this2.refs.$mixBlendMode.el.style = _this2.read('/blend/toStringWithoutDimension', item, item.style['background-blend-mode'], item.style['mix-blend-mode']);
+            });
+
+            if (this.read('/item/is/mode', 'page')) {
+                this.selectTab('property');
+            }
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }]);
+    return LayerMenuTab;
+}(BaseTab);
 
 var ImageView = function (_UIElement) {
     inherits(ImageView, _UIElement);
@@ -12619,7 +13275,7 @@ var ImageView = function (_UIElement) {
     createClass(ImageView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <ColorPickerPanel></ColorPickerPanel>            \n                <SampleList></SampleList>                \n                <ImageTypeSelect></ImageTypeSelect>\n                <ColorSteps></ColorSteps>\n                <ColorStepsInfo></ColorStepsInfo>\n            </div>  \n        ";
+            return "\n            <div class='property-view'>\n                <SampleList></SampleList>                    \n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorSampleList></ColorSampleList>\n                <ImageTypeSelect></ImageTypeSelect>\n                <ColorSteps></ColorSteps>\n                <ColorStepsInfo></ColorStepsInfo>\n            </div>  \n        ";
         }
     }, {
         key: "components",
@@ -12629,6 +13285,31 @@ var ImageView = function (_UIElement) {
     }]);
     return ImageView;
 }(UIElement);
+
+var ImageMenuTab = function (_BaseTab) {
+    inherits(ImageMenuTab, _BaseTab);
+
+    function ImageMenuTab() {
+        classCallCheck(this, ImageMenuTab);
+        return possibleConstructorReturn(this, (ImageMenuTab.__proto__ || Object.getPrototypeOf(ImageMenuTab)).apply(this, arguments));
+    }
+
+    createClass(ImageMenuTab, [{
+        key: 'components',
+        value: function components() {
+            return {
+                ImageView: ImageView
+            };
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+
+            return '\n            <div class="tab image-menu-tab">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="property">\n                        Property\n                    </div>               \n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class=\'tab-content selected\' data-id=\'property\'>\n                        <ImageView></ImageView>\n                    </div>\n                </div>\n            </div>        \n        ';
+        }
+    }]);
+    return ImageMenuTab;
+}(BaseTab);
 
 var FeatureControl = function (_UIElement) {
     inherits(FeatureControl, _UIElement);
@@ -12641,12 +13322,16 @@ var FeatureControl = function (_UIElement) {
     createClass(FeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='feature-control'>\n                <div class='feature page-feature selected' data-type='page'>\n                    <PropertyView></PropertyView>\n                </div>\n                <div class='feature layer-feature' data-type='layer'>\n                    <LayerView></LayerView>\n                </div>              \n                <div class='feature image-feature' data-type='image'>\n                    <ImageView></ImageView>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='feature-control'>\n                <div class='feature page-feature selected' data-type='page'>\n                    <PageMenuTab></PageMenuTab>\n                </div>\n                <div class='feature layer-feature' data-type='layer'>\n                    <LayerMenuTab></LayerMenuTab>\n                </div>              \n                <div class='feature image-feature' data-type='image'>\n                    <ImageMenuTab></ImageMenuTab>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return { PropertyView: PropertyView, LayerView: LayerView, ImageView: ImageView };
+            return {
+                PageMenuTab: PageMenuTab,
+                LayerMenuTab: LayerMenuTab,
+                ImageMenuTab: ImageMenuTab
+            };
         }
     }, {
         key: "selectFeature",
@@ -12654,7 +13339,7 @@ var FeatureControl = function (_UIElement) {
             var obj = this.read('/item/current');
             this.$el.$('.feature.selected').removeClass('selected');
 
-            var selectType = '';
+            var selectType = 'page';
             if (obj && obj.itemType == 'page') {
                 selectType = 'page';
             } else if (obj) {
@@ -13220,45 +13905,6 @@ var LayersMenu = function (_UIElement) {
     return LayersMenu;
 }(UIElement);
 
-var BaseTab = function (_UIElement) {
-    inherits(BaseTab, _UIElement);
-
-    function BaseTab() {
-        classCallCheck(this, BaseTab);
-        return possibleConstructorReturn(this, (BaseTab.__proto__ || Object.getPrototypeOf(BaseTab)).apply(this, arguments));
-    }
-
-    createClass(BaseTab, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="tab">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="1">1</div>\n                <div class="tab-item" data-id="2">2</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="1"></div>\n                <div class="tab-content" data-id="2"></div>\n            </div>\n        </div>\n        ';
-        }
-    }, {
-        key: 'isNotSelectedTab',
-        value: function isNotSelectedTab(e) {
-            return !e.$delegateTarget.hasClass('selected');
-        }
-    }, {
-        key: 'click.isNotSelectedTab $header .tab-item',
-        value: function clickIsNotSelectedTab$headerTabItem(e) {
-            this.selectTab(e.$delegateTarget.attr('data-id'));
-        }
-    }, {
-        key: 'selectTab',
-        value: function selectTab(id) {
-
-            this.refs.$header.children().forEach(function ($dom) {
-                $dom.toggleClass('selected', $dom.attr('data-id') == id);
-            });
-
-            this.refs.$body.children().forEach(function ($dom) {
-                $dom.toggleClass('selected', $dom.attr('data-id') == id);
-            });
-        }
-    }]);
-    return BaseTab;
-}(UIElement);
-
 var PredefinedPageResizer = function (_UIElement) {
     inherits(PredefinedPageResizer, _UIElement);
 
@@ -13270,7 +13916,7 @@ var PredefinedPageResizer = function (_UIElement) {
     createClass(PredefinedPageResizer, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="predefined-page-resizer">\n                <button type="button" data-value="to right"></button>\n                <button type="button" data-value="to left"></button>\n                <button type="button" data-value="to top"></button>\n                <button type="button" data-value="to bottom"></button>\n                <button type="button" data-value="to top right"></button>\n                <button type="button" data-value="to bottom right"></button>\n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+            return '\n            <div class="predefined-page-resizer">\n                <button type="button" data-value="to right"></button>\n                <!--<button type="button" data-value="to left"></button>-->\n                <!--<button type="button" data-value="to top"></button>-->\n                <button type="button" data-value="to bottom"></button>\n                <!--<button type="button" data-value="to top right"></button>-->\n                <button type="button" data-value="to bottom right"></button>\n                <!--<button type="button" data-value="to bottom left"></button>-->\n                <!--<button type="button" data-value="to top left"></button>-->\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -13280,7 +13926,8 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('/item/is/mode', 'page');
+            return false;
+            // return this.read('/item/is/mode', 'page')
         }
     }, {
         key: '@changeEditor',
@@ -13307,22 +13954,22 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'changeX',
         value: function changeX(dx) {
-            var width = this.width + dx * 2;
+            var width = this.width + dx;
 
             this.change({ width: width + 'px' });
         }
     }, {
         key: 'changeY',
         value: function changeY(dy) {
-            var height = this.height + dy * 2;
+            var height = this.height + dy;
 
             this.change({ height: height + 'px' });
         }
     }, {
         key: 'changeXY',
         value: function changeXY(dx, dy) {
-            var width = this.width + dx * 2;
-            var height = this.height + dy * 2;
+            var width = this.width + dx;
+            var height = this.height + dy;
 
             this.change({ width: width + 'px', height: height + 'px' });
         }
@@ -13330,7 +13977,7 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'toTop',
         value: function toTop() {
             var dy = this.xy.y - this.targetXY.y;
-            var height = this.height + dy * 2;
+            var height = this.height + dy;
 
             return { height: height };
         }
@@ -13338,7 +13985,7 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'toBottom',
         value: function toBottom() {
             var dy = this.targetXY.y - this.xy.y;
-            var height = this.height + dy * 2;
+            var height = this.height + dy;
 
             return { height: height };
         }
@@ -13346,7 +13993,7 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'toRight',
         value: function toRight() {
             var dx = this.targetXY.x - this.xy.x;
-            var width = this.width + dx * 2;
+            var width = this.width + dx;
 
             return { width: width };
         }
@@ -13354,7 +14001,7 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'toLeft',
         value: function toLeft() {
             var dx = this.xy.x - this.targetXY.x;
-            var width = this.width + dx * 2;
+            var width = this.width + dx;
 
             return { width: width };
         }
@@ -13916,283 +14563,47 @@ var PredefinedLayerResizer = function (_UIElement) {
     return PredefinedLayerResizer;
 }(UIElement);
 
-var BlendList = function (_UIElement) {
-    inherits(BlendList, _UIElement);
+var MoveGuide = function (_UIElement) {
+    inherits(MoveGuide, _UIElement);
 
-    function BlendList() {
-        classCallCheck(this, BlendList);
-        return possibleConstructorReturn(this, (BlendList.__proto__ || Object.getPrototypeOf(BlendList)).apply(this, arguments));
+    function MoveGuide() {
+        classCallCheck(this, MoveGuide);
+        return possibleConstructorReturn(this, (MoveGuide.__proto__ || Object.getPrototypeOf(MoveGuide)).apply(this, arguments));
     }
 
-    createClass(BlendList, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'background-blend-list blend-list-tab\'>\n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'load $blendList',
-        value: function load$blendList() {
-            var _this2 = this;
+    createClass(MoveGuide, [{
+        key: 'initialize',
+        value: function initialize() {
+            get(MoveGuide.prototype.__proto__ || Object.getPrototypeOf(MoveGuide.prototype), 'initialize', this).call(this);
 
-            var list = this.read('/blend/list');
-
-            var item = this.read('/item/current/layer');
-            if (!item) {
-                return '';
-            }
-
-            return '<div>' + list.map(function (blend) {
-
-                var selected = blend == item.style['background-blend-mode'] ? 'selected' : '';
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
-            }).join('') + '</div>';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-    }, {
-        key: 'click.self $blendList .blend-item',
-        value: function clickSelf$blendListBlendItem(e) {
-            var item = this.read('/item/current/layer');
-
-            if (!item) return;
-
-            item.style['background-blend-mode'] = e.$delegateTarget.attr('data-mode');
-
-            this.dispatch('/item/set', item, true);
-            this.refresh();
-        }
-    }]);
-    return BlendList;
-}(UIElement);
-
-var ImageList = function (_UIElement) {
-    inherits(ImageList, _UIElement);
-
-    function ImageList() {
-        classCallCheck(this, ImageList);
-        return possibleConstructorReturn(this, (ImageList.__proto__ || Object.getPrototypeOf(ImageList)).apply(this, arguments));
-    }
-
-    createClass(ImageList, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'images\'>\n                <div class=\'image-tools\'>   \n                    <div class="image-list" ref="$imageList">\n\n                    </div>\n                    <div class=\'menu-buttons\'>\n                        <div class=\'gradient-type\' ref="$gradientType">\n                            <button type="button">+</button>\n                            <div ref="$static" class="gradient-item static" data-type="static" title="Static Color"></div>\n                            <div ref="$linear" class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                            <div ref="$radial" class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                            <div ref="$repeatingLinear" class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                            <div ref="$repeatingRadial" class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                            <div ref="$image" class="gradient-item image" data-type="image" title="Background Image">\n                                <div class="m1"></div>\n                                <div class="m2"></div>\n                                <div class="m3"></div>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'makeItemNodeImage',
-        value: function makeItemNodeImage(item) {
-            var selected = item.selected ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\'>&times;</button>\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\'>&times;</button>\n                    <button type="button" class=\'left-item\' item-id=\'' + item.id + '\'>&lt;</button>\n                    <button type="button" class=\'right-item\' item-id=\'' + item.id + '\'>&gt;</button>\n                </div>            \n            </div>\n            ';
-        }
-    }, {
-        key: 'load $imageList',
-        value: function load$imageList() {
-            var _this2 = this;
-
-            var item = this.read('/item/current/layer');
-
-            if (!item) return '';
-
-            return this.read('/item/map/children', item.id, function (item) {
-                return _this2.makeItemNodeImage(item);
-            });
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-    }, {
-        key: 'isNotSelected',
-        value: function isNotSelected(e) {
-            return !e.$delegateTarget.hasClass('selected');
-        }
-    }, {
-        key: 'click.self.isNotSelected $imageList .tree-item',
-        value: function clickSelfIsNotSelected$imageListTreeItem(e) {
-            var id = e.$delegateTarget.attr('id');
-
-            if (id) {
-                this.dispatch('/item/select', id);
-                this.refresh();
-            }
-        }
-    }, {
-        key: 'click $gradientType .gradient-item',
-        value: function click$gradientTypeGradientItem(e) {
-            var _this3 = this;
-
-            this.read('/item/current/layer', function (item) {
-
-                var type = e.$delegateTarget.attr('data-type');
-
-                _this3.dispatch('/item/add/image', type, true, item.id);
-                _this3.refresh();
-            });
-        }
-    }, {
-        key: 'click $imageList .copy-item',
-        value: function click$imageListCopyItem(e) {
-            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .delete-item',
-        value: function click$imageListDeleteItem(e) {
-            this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .left-item',
-        value: function click$imageListLeftItem(e) {
-            this.dispatch('/item/move/prev', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .right-item',
-        value: function click$imageListRightItem(e) {
-            this.dispatch('/item/move/next', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }]);
-    return ImageList;
-}(UIElement);
-
-var BlendList$2 = function (_UIElement) {
-    inherits(BlendList, _UIElement);
-
-    function BlendList() {
-        classCallCheck(this, BlendList);
-        return possibleConstructorReturn(this, (BlendList.__proto__ || Object.getPrototypeOf(BlendList)).apply(this, arguments));
-    }
-
-    createClass(BlendList, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'mix-blend-list blend-list-tab\'>\n                <div class="blend-list" ref="$mixBlendList"></div>            \n            </div>   \n        ';
-        }
-    }, {
-        key: 'load $mixBlendList',
-        value: function load$mixBlendList() {
-            var _this2 = this;
-
-            var list = this.read('/blend/list');
-            var item = this.read('/item/current/layer');
-            if (!item) {
-                return '';
-            }
-
-            return '<div>' + list.map(function (blend) {
-
-                var selected = blend == item.style['mix-blend-mode'] ? 'selected' : '';
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, '', blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
-            }).join('') + '</div>';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-    }, {
-        key: 'click.self $mixBlendList .blend-item',
-        value: function clickSelf$mixBlendListBlendItem(e) {
-            var item = this.read('/item/current/layer');
-
-            if (!item) return;
-
-            item.style['mix-blend-mode'] = e.$delegateTarget.attr('data-mode');
-
-            this.dispatch('/item/set', item, true);
-
-            this.refresh();
-        }
-    }]);
-    return BlendList;
-}(UIElement);
-
-var LayerMenuTab = function (_BaseTab) {
-    inherits(LayerMenuTab, _BaseTab);
-
-    function LayerMenuTab() {
-        classCallCheck(this, LayerMenuTab);
-        return possibleConstructorReturn(this, (LayerMenuTab.__proto__ || Object.getPrototypeOf(LayerMenuTab)).apply(this, arguments));
-    }
-
-    createClass(LayerMenuTab, [{
-        key: 'components',
-        value: function components() {
-            return { BlendList: BlendList, ImageList: ImageList, MixBlendList: BlendList$2 };
+            this.$board = this.parent.refs.$board;
+            this.$page = this.parent.refs.$page;
         }
     }, {
         key: 'template',
         value: function template() {
-
-            return '\n            <div class="tab layer-menu-tab">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="image">Image</div>                \n                    <div class="tab-item" data-id="background-blend">\n                        <div class=\'blend-preview-item\'>\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view" ref="$backgroundBlendMode" ></div>\n                            </div>\n                        </div>\n                        Background Blend\n                    </div>\n                    <div class="tab-item" data-id="mix-blend">\n                        <div class=\'blend-preview-item\'>\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  ref="$mixBlendMode" ></div>\n                            </div>\n                        </div>\n                        Mix Blend\n                    \n                    </div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content selected" data-id="image">\n                        <ImageList></ImageList>\n                    </div>                \n                    <div class="tab-content" data-id="background-blend">\n                        <BlendList></BlendList>\n                    </div>\n                    <div class="tab-content" data-id="mix-blend">\n                        <MixBlendList></MixBlendList>\n                    </div>                    \n                </div>\n            </div>        \n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this2 = this;
-
-            this.read('/item/current/layer', function (item) {
-                _this2.refs.$backgroundBlendMode.el.style = _this2.read('/blend/toStringWithoutDimension', item, item.style['background-blend-mode']);
-                _this2.refs.$mixBlendMode.el.style = _this2.read('/blend/toStringWithoutDimension', item, item.style['background-blend-mode'], item.style['mix-blend-mode']);
-            });
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-    }]);
-    return LayerMenuTab;
-}(BaseTab);
-
-var LayerPreview = function (_UIElement) {
-    inherits(LayerPreview, _UIElement);
-
-    function LayerPreview() {
-        classCallCheck(this, LayerPreview);
-        return possibleConstructorReturn(this, (LayerPreview.__proto__ || Object.getPrototypeOf(LayerPreview)).apply(this, arguments));
-    }
-
-    createClass(LayerPreview, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="layer-preview">\n            </div>            \n        ';
+            return '\n            <div class="move-guide">\n\n            </div>\n        ';
         }
     }, {
         key: 'load $el',
         value: function load$el() {
-            var item = this.read('/item/current/layer');
+            var list = this.read('/guide/line/layer');
 
-            if (!item) return '';
+            var bo = this.$board.offset();
+            var po = this.$page.offset();
 
-            var imageList = this.read('/item/filter/children', item.id, function (item) {
-                return item.selected;
+            var top = po.top - bo.top + this.$board.scrollTop();
+            var left = po.left - bo.left + this.$board.scrollLeft();
+
+            // console.log(top, left, bo, po);
+
+            return list.map(function (axis) {
+                if (axis.type == '-') {
+                    return '<div class=\'line\' style=\'left: 0px; top: ' + (axis.y + top) + 'px; right: 0px; height: 1px;\'></div>';
+                } else {
+                    return '<div class=\'line\' style=\'left: ' + (axis.x + left) + 'px; top: 0px; bottom: 0px; width: 1px;\'></div>';
+                }
             });
-
-            var selected = !imageList.length ? 'selected' : '';
-
-            return ' \n            <div class=\'tree-item ' + selected + '\' type=\'layer\'>\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                    <div class="item-view-background-color" style="background-color: ' + item.style['background-color'] + ';"></div>\n                </div>\n            </div>';
         }
     }, {
         key: 'refresh',
@@ -14204,24 +14615,8 @@ var LayerPreview = function (_UIElement) {
         value: function changeEditor() {
             this.refresh();
         }
-    }, {
-        key: 'click $el .tree-item',
-        value: function click$elTreeItem(e) {
-            var _this2 = this;
-
-            this.read('/item/current/layer', function (layer) {
-
-                _this2.read('/item/each/children', layer.id, function (image) {
-
-                    image.selected = false;
-                });
-
-                _this2.dispatch('/item/select', layer.id);
-                _this2.refresh();
-            });
-        }
     }]);
-    return LayerPreview;
+    return MoveGuide;
 }(UIElement);
 
 var GradientView = function (_BaseTab) {
@@ -14235,21 +14630,20 @@ var GradientView = function (_BaseTab) {
     createClass(GradientView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n\n                <div class=\'page-content\'>\n                    <div class="gradient-color-view-container" ref="$page">\n                        <div class="gradient-color-view" ref="$colorview"></div>            \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedLayerResizer></PredefinedLayerResizer>\n                    </div>                   \n                </div>\n                <div class="page-menu">\n                    <LayerPreview></LayerPreview>\n                    <LayerMenuTab></LayerMenuTab>\n                </div>\n                <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                <GradientPosition></GradientPosition>\n                <GradientAngle></GradientAngle>                 \n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n                            <PredefinedPageResizer></PredefinedPageResizer>\n                            <PredefinedLayerResizer></PredefinedLayerResizer>\n                        </div>       \n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n\n                <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                <GradientPosition></GradientPosition>\n                <GradientAngle></GradientAngle>     \n   \n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
+                MoveGuide: MoveGuide,
                 GradientAngle: GradientAngle,
                 GradientPosition: GradientPosition,
                 PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
                 PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
                 GradientLayersMenu: LayersMenu,
                 PredefinedPageResizer: PredefinedPageResizer,
-                PredefinedLayerResizer: PredefinedLayerResizer,
-                LayerMenuTab: LayerMenuTab,
-                LayerPreview: LayerPreview
+                PredefinedLayerResizer: PredefinedLayerResizer
             };
         }
     }, {
@@ -14285,9 +14679,11 @@ var GradientView = function (_BaseTab) {
         }
     }, {
         key: 'refresh',
-        value: function refresh() {
+        value: function refresh(isDrag) {
             this.setBackgroundColor();
             this.load();
+
+            
         }
     }, {
         key: 'makePageCSS',
@@ -14328,14 +14724,6 @@ var GradientView = function (_BaseTab) {
         key: 'checkPage',
         value: function checkPage(e) {
             return e.target == this.refs.$colorview.el;
-        }
-    }, {
-        key: 'click.checkPage $colorview',
-        value: function clickCheckPage$colorview(e) {
-            var page = this.read('/item/current/page');
-            if (page) {
-                this.dispatch('/item/select', page.id);
-            }
         }
     }, {
         key: 'click $page .layer',
@@ -14380,7 +14768,7 @@ var GradientView = function (_BaseTab) {
             item.style = Object.assign(item.style, style);
 
             this.dispatch('/item/set', item);
-            this.refresh();
+            this.refresh(true);
         }
     }, {
         key: 'moveXY',
@@ -14394,6 +14782,7 @@ var GradientView = function (_BaseTab) {
         key: 'pointermove document',
         value: function pointermoveDocument(e) {
             if (this.isDown) {
+                this.refs.$page.addClass('moving');
                 this.targetXY = e.xy;
 
                 this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y);
@@ -14404,6 +14793,7 @@ var GradientView = function (_BaseTab) {
         value: function pointerendDocument(e) {
             this.isDown = false;
             this.layer = null;
+            this.refs.$page.removeClass('moving');
         }
     }]);
     return GradientView;
@@ -14492,6 +14882,105 @@ var LayerList = function (_UIElement) {
     return LayerList;
 }(UIElement);
 
+var ImageList = function (_UIElement) {
+    inherits(ImageList, _UIElement);
+
+    function ImageList() {
+        classCallCheck(this, ImageList);
+        return possibleConstructorReturn(this, (ImageList.__proto__ || Object.getPrototypeOf(ImageList)).apply(this, arguments));
+    }
+
+    createClass(ImageList, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'images\'>\n                <div class=\'image-tools\'>   \n                    <div class=\'menu-buttons\'>\n                        <div class=\'gradient-type\' ref="$gradientType">\n                            <div class="gradient-item static" data-type="static" title="Static Color"></div>\n                            <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                            <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                            <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                            <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                            <div class="gradient-item image" data-type="image" title="Background Image">\n                                <div class="m1"></div>\n                                <div class="m2"></div>\n                                <div class="m3"></div>\n                            </div>\n                        </div>\n                    </div>\n                    <div class="image-list" ref="$imageList">\n\n                    </div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'makeItemNodeImage',
+        value: function makeItemNodeImage(item) {
+            var selected = item.selected ? 'selected' : '';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\'>&times;</button>\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\'>&times;</button>\n                    <button type="button" class=\'left-item\' item-id=\'' + item.id + '\'>&lt;</button>\n                    <button type="button" class=\'right-item\' item-id=\'' + item.id + '\'>&gt;</button>\n                </div>            \n            </div>\n            ';
+        }
+    }, {
+        key: 'load $imageList',
+        value: function load$imageList() {
+            var _this2 = this;
+
+            var item = this.read('/item/current/layer');
+
+            if (!item) return '';
+
+            return this.read('/item/map/children', item.id, function (item) {
+                return _this2.makeItemNodeImage(item);
+            });
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'isNotSelected',
+        value: function isNotSelected(e) {
+            return !e.$delegateTarget.hasClass('selected');
+        }
+    }, {
+        key: 'click.self.isNotSelected $imageList .tree-item',
+        value: function clickSelfIsNotSelected$imageListTreeItem(e) {
+            var id = e.$delegateTarget.attr('id');
+
+            if (id) {
+                this.dispatch('/item/select', id);
+                this.refresh();
+            }
+        }
+    }, {
+        key: 'click $gradientType .gradient-item',
+        value: function click$gradientTypeGradientItem(e) {
+            var _this3 = this;
+
+            console.log(e);
+            this.read('/item/current/layer', function (item) {
+
+                var type = e.$delegateTarget.attr('data-type');
+
+                _this3.dispatch('/item/add/image', type, true, item.id);
+                _this3.refresh();
+            });
+        }
+    }, {
+        key: 'click $imageList .copy-item',
+        value: function click$imageListCopyItem(e) {
+            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
+    }, {
+        key: 'click $imageList .delete-item',
+        value: function click$imageListDeleteItem(e) {
+            this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
+    }, {
+        key: 'click $imageList .left-item',
+        value: function click$imageListLeftItem(e) {
+            this.dispatch('/item/move/prev', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
+    }, {
+        key: 'click $imageList .right-item',
+        value: function click$imageListRightItem(e) {
+            this.dispatch('/item/move/next', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
+    }]);
+    return ImageList;
+}(UIElement);
+
 var ImageView$2 = function (_UIElement) {
     inherits(ImageView, _UIElement);
 
@@ -14577,13 +15066,18 @@ var XDImageEditor = function (_BaseImageEditor) {
     createClass(XDImageEditor, [{
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main">\n                <div class="layout-header">\n                    <h1>EASYLOGIc studio</h1>\n                </div>\n                <div class="layout-left">      \n                    <PageList></PageList>\n                    <LayerList></LayerList>\n                </div>\n                <div class="layout-body">\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                </div>\n                <div class="layout-footer">\n                    <SubFeatureControl></SubFeatureControl>\n                </div>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageList></PageList>\n                    </div>\n                </div>\n                <div class="layout-left">      \n                    <LayerList></LayerList>\n                    <ImageList></ImageList>\n                </div>\n                <div class="layout-body">\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                </div>\n                <div class="layout-footer">\n                    <SubFeatureControl></SubFeatureControl>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
-                GradientView: GradientView, PageList: PageList, FeatureControl: FeatureControl, LayerList: LayerList, SubFeatureControl: SubFeatureControl
+                GradientView: GradientView,
+                PageList: PageList,
+                FeatureControl: FeatureControl,
+                LayerList: LayerList,
+                SubFeatureControl: SubFeatureControl,
+                ImageList: ImageList
             };
         }
     }]);
