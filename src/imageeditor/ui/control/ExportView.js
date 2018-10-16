@@ -35,8 +35,8 @@ export default class ExportView extends UIElement {
 
         var pageStyle = this.makePageCSS(page)
 
-        var html = `<div class='page' style="${pageStyle}">\n${this.read('/item/map/children', page.id, (item) => {
-                return `<div class='layer' item-id="${item.id}" style='${this.read('/layer/toString', item, true)}'></div>`
+        var html = `<div style="${pageStyle}">\n${this.read('/item/map/children', page.id, (item) => {
+                return `<div style='${this.read('/layer/toString', item, true)}'></div>`
             }).join('\n')}\n</div>`
 
         this.refs.$code.val(html);
