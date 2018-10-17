@@ -38,7 +38,7 @@ export default class MoveGuide extends UIElement {
     }
 
     refresh () {
-        this.$el.hide();
+        // this.$el.hide();
         this.load()
     }
 
