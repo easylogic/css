@@ -3627,10 +3627,12 @@ function putBitmap(bitmap, subBitmap, area) {
     return Canvas.putBitmap(bitmap, subBitmap, area);
 }
 
-function parseParamNumber$1(param) {
+function parseParamNumber$1(param, callback) {
     if (typeof param === 'string') {
-        param = param.replace(/deg/, '');
-        param = param.replace(/px/, '');
+        param = param.replace(/deg|px/g, '');
+    }
+    if (typeof callback == 'function') {
+        return callback(+param);
     }
     return +param;
 }
@@ -10102,6 +10104,8 @@ var LayerManager = function (_BaseModule) {
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
 
             var results = Object.assign(css, image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/toImageCSS', layer));
+            delete results.x;
+            delete results.y;
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -10428,7 +10432,7 @@ var LAYER_DEFAULT_OBJECT = {
         x: '0px',
         y: '0px',
         'background-blend-mode': 'multiply',
-        'mix-blend-mode': 'normal'
+        'mix-blend-mode': 'multiply'
     },
     filters: {}
 };
@@ -12418,7 +12422,7 @@ var GradientInfo = function (_UIElement) {
             });
 
             return '<div class=\'step-list\' ref="$stepList">\n                    ' + colorsteps.map(function (step) {
-                return '\n                            <div class=\'color-step ' + (step.selected ? 'selected' : '') + '\' style="background-color: ' + (step.selected ? step.color : '') + '" >\n                                <div class="color-view">\n                                    <div class="color-view-item" style="background-color: ' + step.color + '" colorstep-id="' + step.id + '" ></div>\n                                </div>\n                                <div class="color-code">\n                                    <input type="text" class="code" value=\'' + step.color + '\'  colorstep-id="' + step.id + '"  />\n                                </div>\n                                <div class="color-percent">\n                                    <input type="number" class="percent" value="' + step.percent + '"   colorstep-id="' + step.id + '"  />%\n                                </div>\n                                <div class="tools">\n                                    <button type="button" class=\'remove-step\'  colorstep-id="' + step.id + '" >&times;</button>\n                                </div>\n                            </div>\n                        ';
+                return '\n                            <div class=\'color-step ' + (step.selected ? 'selected' : '') + '\' style="background-color: ' + (step.selected ? step.color : '') + '" >\n                                <div class="color-view">\n                                    <div class="color-view-item" style="background-color: ' + step.color + '" colorstep-id="' + step.id + '" ></div>\n                                </div>\n                                <div class="color-code">\n                                    <input type="text" class="code" value=\'' + step.color + '\'  colorstep-id="' + step.id + '"  />\n                                </div>\n                                <div class="color-percent">\n                                    <input type="number" class="percent" min="0" max="100" step="0.1"  value="' + step.percent + '"   colorstep-id="' + step.id + '"  />%\n                                </div>\n                                <div class="tools">\n                                    <button type="button" class=\'remove-step\'  colorstep-id="' + step.id + '" >&times;</button>\n                                </div>\n                            </div>\n                        ';
             }).join('') + '\n                </div>';
         }
     }, {
@@ -12438,7 +12442,7 @@ var GradientInfo = function (_UIElement) {
             if (!item) return;
 
             var color = e.$delegateTarget.val();
-            var id = +e.$delegateTarget.attr('colorstep-id');
+            var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.read('/item/get', id);
 
@@ -12454,7 +12458,7 @@ var GradientInfo = function (_UIElement) {
             if (!item) return;
 
             var percent = e.$delegateTarget.val();
-            var id = +e.$delegateTarget.attr('colorstep-id');
+            var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.read('/item/get', id);
 
@@ -12469,7 +12473,7 @@ var GradientInfo = function (_UIElement) {
             var item = this.read('/item/current/image');
             if (!item) return;
 
-            var id = +e.$delegateTarget.attr('colorstep-id');
+            var id = e.$delegateTarget.attr('colorstep-id');
 
             this.dispatch('/colorstep/remove', id);
             this.refresh();
@@ -14248,6 +14252,14 @@ var PredefinedPageResizer = function (_UIElement) {
     }
 
     createClass(PredefinedPageResizer, [{
+        key: 'initialize',
+        value: function initialize() {
+            get(PredefinedPageResizer.prototype.__proto__ || Object.getPrototypeOf(PredefinedPageResizer.prototype), 'initialize', this).call(this);
+
+            this.$board = this.parent.refs.$board;
+            this.$page = this.parent.refs.$page;
+        }
+    }, {
         key: 'template',
         value: function template() {
             return '\n            <div class="predefined-page-resizer">\n                <button type="button" data-value="to right"></button>\n                <!--<button type="button" data-value="to left"></button>-->\n                <!--<button type="button" data-value="to top"></button>-->\n                <button type="button" data-value="to bottom"></button>\n                <!--<button type="button" data-value="to top right"></button>-->\n                <button type="button" data-value="to bottom right"></button>\n                <!--<button type="button" data-value="to bottom left"></button>-->\n                <!--<button type="button" data-value="to top left"></button>-->\n            </div>\n        ';
@@ -14255,7 +14267,35 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh() {
-            this.$el.toggle(this.isShow());
+            var isShow = this.isShow();
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.setPosition();
+            }
+        }
+    }, {
+        key: 'setPosition',
+        value: function setPosition() {
+            var page = this.read('/item/current/page');
+
+            if (!page) return;
+
+            var style = page.style;
+
+            var width = style.width;
+            var height = style.height;
+
+            var boardOffset = this.$board.offset();
+            var pageOffset = this.$page.offset();
+
+            var x = pageOffset.left - boardOffset.left + 'px';
+            var y = pageOffset.top - boardOffset.top + 'px';
+
+            this.$el.css({
+                width: width, height: height,
+                left: x, top: y
+            });
         }
     }, {
         key: 'isShow',
@@ -14283,6 +14323,7 @@ var PredefinedPageResizer = function (_UIElement) {
             var page = this.read('/item/current/page');
             page.style = Object.assign(page.style, style);
             this.dispatch('/item/set', page);
+            this.refresh();
         }
     }, {
         key: 'changeX',
@@ -14318,7 +14359,7 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'toBottom',
         value: function toBottom() {
             var dy = this.targetXY.y - this.xy.y;
-            var height = this.height + dy;
+            var height = this.height + dy * 2;
 
             return { height: height };
         }
@@ -14326,7 +14367,7 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'toRight',
         value: function toRight() {
             var dx = this.targetXY.x - this.xy.x;
-            var width = this.width + dx;
+            var width = this.width + dx * 2;
 
             return { width: width };
         }
@@ -14367,8 +14408,8 @@ var PredefinedPageResizer = function (_UIElement) {
             this.currentType = type;
             this.xy = e.xy;
             this.page = this.read('/item/current/page');
-            this.width = +this.page.style.width.replace('px', '');
-            this.height = +this.page.style.height.replace('px', '');
+            this.width = parseParamNumber$2(this.page.style.width);
+            this.height = parseParamNumber$2(this.page.style.height);
         }
     }, {
         key: 'pointermove document',
@@ -14742,13 +14783,6 @@ var PredefinedLayerResizer = function (_UIElement) {
             return undefined;
         }
     }, {
-        key: 'parseNumber',
-        value: function parseNumber(value) {
-            var unit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'px';
-
-            return +(value || '0px').replace(unit, '');
-        }
-    }, {
         key: 'setPosition',
         value: function setPosition() {
             var layer = this.read('/item/current/layer');
@@ -14761,6 +14795,16 @@ var PredefinedLayerResizer = function (_UIElement) {
             var height = style.height;
             var x = style.x;
             var y = style.y;
+
+            var boardOffset = this.$board.offset();
+            var pageOffset = this.$page.offset();
+
+            x = parseParamNumber$1(x, function (x) {
+                return x + pageOffset.left - boardOffset.left;
+            }) + 'px';
+            y = parseParamNumber$1(y, function (y) {
+                return y + pageOffset.top - boardOffset.top;
+            }) + 'px';
 
             this.$el.css({
                 width: width, height: height,
@@ -14792,7 +14836,7 @@ var PredefinedLayerResizer = function (_UIElement) {
             var x = this.caculatePosition(list, 'x', 'right');
 
             if (typeof x != 'undefined') {
-                var newWidth = Math.abs(this.moveX - this.parseNumber(x));
+                var newWidth = Math.abs(this.moveX - parseParamNumber$1(x));
                 item.style.width = newWidth + 'px';
             }
         }
@@ -14802,7 +14846,7 @@ var PredefinedLayerResizer = function (_UIElement) {
             var x = this.caculatePosition(list, 'x', 'left');
 
             if (typeof x != 'undefined') {
-                var newWidth = this.width + (this.moveX - this.parseNumber(x));
+                var newWidth = this.width + (this.moveX - parseParamNumber$1(x));
 
                 item.style.x = x;
                 item.style.width = newWidth + 'px';
@@ -14814,7 +14858,7 @@ var PredefinedLayerResizer = function (_UIElement) {
             var y = this.caculatePosition(list, 'y', 'bottom');
 
             if (typeof y != 'undefined') {
-                var newHeight = Math.abs(this.moveY - this.parseNumber(y));
+                var newHeight = Math.abs(this.moveY - parseParamNumber$1(y));
                 item.style.height = newHeight + 'px';
             }
         }
@@ -14824,7 +14868,7 @@ var PredefinedLayerResizer = function (_UIElement) {
             var y = this.caculatePosition(list, 'y', 'top');
 
             if (typeof y != 'undefined') {
-                var newHeight = this.height + (this.moveY - this.parseNumber(y));
+                var newHeight = this.height + (this.moveY - parseParamNumber$1(y));
 
                 item.style.y = y;
                 item.style.height = newHeight + 'px';
@@ -14990,10 +15034,10 @@ var PredefinedLayerResizer = function (_UIElement) {
             this.currentType = type;
             this.xy = e.xy;
             this.layer = layer;
-            this.width = this.parseNumber(layer.style.width);
-            this.height = this.parseNumber(layer.style.height);
-            this.moveX = this.parseNumber(layer.style.x);
-            this.moveY = this.parseNumber(layer.style.y);
+            this.width = parseParamNumber$1(layer.style.width);
+            this.height = parseParamNumber$1(layer.style.height);
+            this.moveX = parseParamNumber$1(layer.style.x);
+            this.moveY = parseParamNumber$1(layer.style.y);
         }
     }, {
         key: 'pointermove document',
@@ -15096,7 +15140,7 @@ var GradientView = function (_BaseTab) {
     createClass(GradientView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n                            <PredefinedPageResizer></PredefinedPageResizer>\n                            <PredefinedLayerResizer></PredefinedLayerResizer>\n                        </div>       \n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n\n                <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                <GradientPosition></GradientPosition>\n                <GradientAngle></GradientAngle>     \n   \n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedLayerResizer></PredefinedLayerResizer>                        \n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n\n                <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                <GradientPosition></GradientPosition>\n                <GradientAngle></GradientAngle>     \n   \n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -15191,8 +15235,8 @@ var GradientView = function (_BaseTab) {
             return e.target == this.refs.$colorview.el;
         }
     }, {
-        key: 'click $page .layer',
-        value: function click$pageLayer(e) {
+        key: 'click.self $page .layer',
+        value: function clickSelf$pageLayer(e) {
             var id = e.$delegateTarget.attr('item-id');
             if (id) {
                 this.run('/item/select/mode', 'layer');
@@ -15200,23 +15244,32 @@ var GradientView = function (_BaseTab) {
             }
         }
     }, {
+        key: 'selectPageMode',
+        value: function selectPageMode() {
+            this.dispatch('/item/select/mode', 'page');
+        }
+    }, {
+        key: 'click $page',
+        value: function click$page(e) {
+            if (!e.$delegateTarget) {
+                this.selectPageMode();
+            } else if (!e.$delegateTarget.hasClass('layer')) {
+                this.selectPageMode();
+            }
+        }
+    }, {
         key: 'click.self $el .page-canvas',
         value: function clickSelf$elPageCanvas(e) {
+            this.selectPageMode();
+        }
+    }, {
+        key: 'click $colorview',
+        value: function click$colorview(e) {
             var _this3 = this;
 
             this.read('/item/current/layer', function (layer) {
                 _this3.dispatch('/item/select', layer.id);
                 _this3.refresh();
-            });
-        }
-    }, {
-        key: 'click $colorview',
-        value: function click$colorview(e) {
-            var _this4 = this;
-
-            this.read('/item/current/layer', function (layer) {
-                _this4.dispatch('/item/select', layer.id);
-                _this4.refresh();
             });
         }
     }, {
@@ -15314,14 +15367,14 @@ var GradientView = function (_BaseTab) {
     }, {
         key: 'drop document',
         value: function dropDocument(e) {
-            var _this5 = this;
+            var _this4 = this;
 
             return;
             e.preventDefault();
             var files = [].concat(toConsumableArray(e.dataTransfer.files));
             this.read('/item/current/layer', function (layer) {
-                _this5.read('/image/get/file', files, function (img) {
-                    _this5.dispatch('/item/add/image/file', img, true, layer.id);
+                _this4.read('/image/get/file', files, function (img) {
+                    _this4.dispatch('/item/add/image/file', img, true, layer.id);
                 });
             });
         }
