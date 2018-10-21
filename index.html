@@ -4,9 +4,13 @@
     <meta charset="utf-8" />
     <title>Multi Platform Image Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.css" />
 
-    <link rel="stylesheet" href="./dist/codemirror-colorpicker.css" />
-    <script type="text/javascript" src="./dist/codemirror-colorpicker.min.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/xml/xml.min.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/htmlmixed/htmlmixed.min.js" ></script>
+    <link rel="stylesheet" href="./addon/codemirror-colorpicker.css" />
+    <script type="text/javascript" src="./addon/codemirror-colorpicker.js" ></script>
 
     <style type="text/css">
     html, body {
@@ -31,7 +35,7 @@
         var type = item.getAttribute('data-type');
 
         var picker = new CodeMirrorColorPicker.createImageEditor();
-        picker.dispatch('/item/add/page', true);
+        picker.loadStart(true);
     }    
 </script>
 
