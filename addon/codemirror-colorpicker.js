@@ -13702,7 +13702,7 @@ var FilterList$1 = function (_BasePropertyItem) {
                 var viewObject = defaultFilterList[id];
                 var dataObject = filters[id] || {};
 
-                return '\n                <div class=\'filter-item\' data-filter="' + id + '">\n                    <div class="filter-item-view-container">\n                        <div class="filter-item-view" data-filter-id="' + id + '" style=\'' + _this2.read('/layer/filter/toString', layer, id, true) + '\'></div>\n                    </div>\n                    <div class="filter-item-input">\n                        ' + _this2.makeInputItem(id, viewObject, dataObject) + '\n                    </div>\n                </div>';
+                return '\n                <div class=\'filter-item\' data-filter="' + id + '">\n                    <div class="filter-item-input">\n                        ' + _this2.makeInputItem(id, viewObject, dataObject) + '\n                    </div>\n                </div>';
             });
         }
     }, {
@@ -13716,7 +13716,6 @@ var FilterList$1 = function (_BasePropertyItem) {
                 if (filter) {
                     var $dom = _this3.$el.$('[data-filter=' + id + ']');
 
-                    $dom.$('.filter-item-view[data-filter-id=' + id + ']').el.style = _this3.read('/layer/filter/toString', layer, id, true);
                     $dom.$('.input [data-filter-id=' + id + ']').val(filter.value);
                     $dom.$('.range [data-filter-id=' + id + ']').val(filter.value);
                 }
@@ -16087,7 +16086,7 @@ var DropView = function (_UIElement) {
     createClass(DropView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'drop-view\'>\n\n            </div>\n        ';
+            return '\n            <div class=\'drop-view\'>\n                <div class=\'drop-overview\'></div>\n            </div>\n        ';
         }
     }, {
         key: 'dragover document',
@@ -16109,14 +16108,6 @@ var DropView = function (_UIElement) {
             e.preventDefault();
 
             var files = [].concat(toConsumableArray(e.dataTransfer.files));
-            var items = [].concat(toConsumableArray(e.dataTransfer.items)).map(function (item) {
-                return { kind: item.kind, type: item.type, item: item };
-            });
-            var types = [].concat(toConsumableArray(e.dataTransfer.types)).filter(function (type) {
-                return type == 'text/uri-list';
-            }).map(function (type) {
-                return e.dataTransfer.getData(type);
-            });
 
             this.read('/item/current/layer', function (layer) {
                 _this2.read('/image/get/file', files, function (img) {
