@@ -10537,6 +10537,79 @@ var ItemManager = function (_BaseModule) {
             this.$store.emit('changeEditor');
         }
     }, {
+        key: '*/item/collect/colorsteps',
+        value: function itemCollectColorsteps($store, imageId) {
+            return $store.read('/item/map/children', imageId, function (colorstep) {
+                var colorstep = $store.read('/clone', $store.items[colorstep.id]);
+                delete colorstep.id;
+                delete colorstep.parentId;
+
+                return colorstep;
+            });
+        }
+    }, {
+        key: '*/item/collect/image/one',
+        value: function itemCollectImageOne($store, imageId) {
+            var image = $store.read('/clone', $store.items[imageId]);
+            delete image.id;
+            delete image.parentId;
+
+            return {
+                image: image,
+                colorsteps: $store.read('/item/collect/colorsteps', imageId)
+            };
+        }
+    }, {
+        key: '*/item/collect/images',
+        value: function itemCollectImages($store, layerId) {
+            return $store.read('/item/map/children', layerId, function (image) {
+                return $store.read('/item/collect/image/one', image.id);
+            });
+        }
+    }, {
+        key: '*/item/collect/layer/one',
+        value: function itemCollectLayerOne($store, layerId) {
+            var results = {};
+
+            if (!$store.items[layerId]) {
+                return results;
+            }
+
+            var layer = $store.read('/clone', $store.items[layerId]);
+            delete layer.id;
+            delete layer.parentId;
+
+            return {
+                layer: layer,
+                images: $store.read('/item/collect/images', layerId)
+            };
+        }
+    }, {
+        key: '*/item/collect/layers',
+        value: function itemCollectLayers($store, pageId) {
+            return $store.read('/item/map/children', pageId, function (layer) {
+                return $store.read('/item/collect/layer/one', layer.id);
+            });
+        }
+    }, {
+        key: '*/item/collect/page',
+        value: function itemCollectPage($store, pageId) {
+            var results = {};
+
+            if (!$store.items[pageId]) {
+                return results;
+            }
+
+            var page = $store.read('/clone', $store.items[pageId]);
+            delete page.id;
+            delete page.parentId;
+
+            return {
+                page: page,
+                layers: $store.read('/item/collect/layers', pageId)
+            };
+        }
+    }, {
         key: '*/item/create/object',
         value: function itemCreateObject($store, obj) {
             var defaultObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -10839,12 +10912,12 @@ var ItemManager = function (_BaseModule) {
             return $store.editMode;
         }
     }, {
-        key: '*/item/rect',
-        value: function itemRect($store, id) {
-            var dom = document.querySelector('[item-id="' + id + '"]');
+        key: '*/item/dom',
+        value: function itemDom($store, id) {
+            var dom = document.querySelector('[item-layer-id="' + id + '"]');
 
             if (dom) {
-                return new Dom(dom).rect();
+                return new Dom(dom);
             }
         }
     }, {
@@ -11100,16 +11173,67 @@ var ItemManager = function (_BaseModule) {
         }
     }, {
         key: '/item/addCopy',
-        value: function itemAddCopy($store, id) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+        value: function itemAddCopy($store, sourceId) {
+            var newItemId = $store.read('/item/copy', sourceId);
+            $store.run('/item/move/to', sourceId, newItemId);
+        }
+    }, {
+        key: '/item/move/to',
+        value: function itemMoveTo($store, sourceId, newItemId) {
 
-            var copyId = $store.read('/item/copy', id);
+            var currentItem = $store.read('/item/get', sourceId);
 
-            var copyItem = $store.read('/item/get', copyId);
-            copyItem.index = Number.MAX_SAFE_INTEGER;
+            var newItem = $store.read('/item/get', newItemId);
+            newItem.index = currentItem.index + COPY_INDEX_DIST;
 
-            $store.run('/item/set', copyItem, copyItem.selected || isSelected);
-            $store.run('/item/sort', copyId);
+            $store.run('/item/set', newItem, true);
+            $store.run('/item/sort', newItemId);
+        }
+    }, {
+        key: '/item/addCopy/page',
+        value: function itemAddCopyPage($store, sourceId) {
+            var page = $store.read('/item/collect/page', sourceId);
+            var newPageId = $store.read('/item/create/object', page.page);
+
+            page.layers.forEach(function (layer) {
+                var newLayerId = $store.read('/item/create/object', Object.assign({}, layer.layer, { parentId: newPageId }));
+                layer.images.forEach(function (image) {
+                    var newImageId = $store.read('/item/create/object', Object.assign({}, image.image, { parentId: newLayerId }));
+
+                    image.colorsteps.forEach(function (step) {
+                        $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
+                    });
+                });
+            });
+
+            $store.run('/item/move/to', sourceId, newPageId);
+        }
+    }, {
+        key: '/item/addCopy/layer',
+        value: function itemAddCopyLayer($store, sourceId) {
+            var currentLayer = $store.read('/item/get', sourceId);
+            var layer = $store.read('/item/collect/layer/one', sourceId);
+            var newLayerId = $store.read('/item/create/object', Object.assign({ parentId: currentLayer.parentId }, layer.layer));
+            layer.images.forEach(function (image) {
+                var newImageId = $store.read('/item/create/object', Object.assign({}, image.image, { parentId: newLayerId }));
+
+                image.colorsteps.forEach(function (step) {
+                    $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
+                });
+            });
+
+            $store.run('/item/move/to', sourceId, newLayerId);
+        }
+    }, {
+        key: '/item/addCopy/image',
+        value: function itemAddCopyImage($store, sourceId) {
+            var currentImage = $store.read('/item/get', sourceId);
+            var image = $store.read('/item/collect/image/one', sourceId);
+            var newImageId = $store.read('/item/create/object', Object.assign({ parentId: currentImage.parentId }, image.image));
+            image.colorsteps.forEach(function (step) {
+                $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
+            });
+            $store.run('/item/move/to', sourceId, newImageId);
         }
     }, {
         key: '/item/move/next',
@@ -11119,6 +11243,34 @@ var ItemManager = function (_BaseModule) {
 
             $store.run('/item/set', item, item.selected);
             $store.run('/item/sort', id);
+        }
+    }, {
+        key: '/item/move/last',
+        value: function itemMoveLast($store, id) {
+            var item = $store.read('/item/get', id);
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('/item/set', item, item.selected);
+            $store.run('/item/sort', id);
+        }
+    }, {
+        key: '/item/move/first',
+        value: function itemMoveFirst($store, id) {
+            var item = $store.read('/item/get', id);
+            item.index = -1 * COPY_INDEX_DIST;
+
+            $store.run('/item/set', item, item.selected);
+            $store.run('/item/sort', id);
+        }
+    }, {
+        key: '/item/move/in',
+        value: function itemMoveIn($store, destId, sourceId) {
+            var destItem = $store.read('/item/get', destId);
+            var sourceItem = $store.read('/item/get', sourceId);
+            sourceItem.index = destItem.index - COPY_INDEX_DIST;
+
+            $store.run('/item/set', sourceItem, true);
+            $store.run('/item/sort', sourceId);
         }
     }, {
         key: '/item/move/prev',
@@ -12835,43 +12987,6 @@ var ColorPickerPanel = function (_UIElement) {
     return ColorPickerPanel;
 }(UIElement);
 
-var PredefinedRadialGradientAngle = function (_UIElement) {
-    inherits(PredefinedRadialGradientAngle, _UIElement);
-
-    function PredefinedRadialGradientAngle() {
-        classCallCheck(this, PredefinedRadialGradientAngle);
-        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedRadialGradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="inline-block">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="circle">circle</option>\n                    <option value="ellipse">ellipse</option>\n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                </select>\n            </div>\n        ';
-        }
-    }, {
-        key: 'change $select',
-        value: function change$select(e) {
-            var _this2 = this;
-
-            this.read('/item/current/image', function (image) {
-                image.radialType = _this2.refs.$select.val();
-                _this2.dispatch('/item/set', image);
-            });
-        }
-    }, {
-        key: 'click $center',
-        value: function click$center(e) {
-            var _this3 = this;
-
-            this.read('/item/current/image', function (image) {
-                image.radialPosition = 'center';
-                _this3.dispatch('/item/set', image);
-            });
-        }
-    }]);
-    return PredefinedRadialGradientAngle;
-}(UIElement);
-
 var ImageTypeSelect = function (_BasePropertyItem) {
     inherits(ImageTypeSelect, _BasePropertyItem);
 
@@ -12881,14 +12996,9 @@ var ImageTypeSelect = function (_BasePropertyItem) {
     }
 
     createClass(ImageTypeSelect, [{
-        key: 'components',
-        value: function components() {
-            return { PredefinedRadialGradientAngle: PredefinedRadialGradientAngle };
-        }
-    }, {
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item gradient-tools show\'>\n            <div class=\'title\' ref="$title">Change Image Types</div>\n            <div class=\'items\' ref="$items">        \n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div ref="$static" class="gradient-item static" data-type="static" title="Static Color"></div>\n                    <div ref="$linear" class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div ref="$radial" class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div ref="$repeatingLinear" class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div ref="$repeatingRadial" class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div ref="$image" class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div>\n                    </div>\n                </div>\n                <div ref="$angular" class=\'gradient-angular linear\'>\n                    <div class="gradient-angular-item radial">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                    </div>\n                    <div class="gradient-angular-item image">\n                        \n                    </div>                \n                </div>\n            </div>\n        </div>\n\n          \n        ';
+            return '\n        <div class=\'property-item gradient-tools show\'>\n            <div class=\'title\' ref="$title">Change Image Types</div>\n            <div class=\'items\' ref="$items">        \n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div ref="$static" class="gradient-item static" data-type="static" title="Static Color"></div>\n                    <div ref="$linear" class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div ref="$radial" class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div ref="$repeatingLinear" class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div ref="$repeatingRadial" class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div ref="$image" class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -12930,10 +13040,6 @@ var ImageTypeSelect = function (_BasePropertyItem) {
             this.refs.$repeatingLinear.toggleClass('selected', type == 'repeating-linear');
             this.refs.$repeatingRadial.toggleClass('selected', type == 'repeating-radial');
             this.refs.$image.toggleClass('selected', type == 'image');
-
-            this.refs.$angular.toggleClass('linear', this.read('/image/type/isLinear', type));
-            this.refs.$angular.toggleClass('radial', this.read('/image/type/isRadial', type));
-            this.refs.$angular.toggleClass('image', this.read('/image/type/isImage', type));
         }
     }, {
         key: 'click $gradientType .gradient-item',
@@ -14002,7 +14108,7 @@ var ImageView = function (_UIElement) {
     createClass(ImageView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <ColorPickerPanel></ColorPickerPanel>\n                <SampleList></SampleList>                                   \n                <ImageTypeSelect></ImageTypeSelect>\n                <ColorSteps></ColorSteps>\n                <ColorStepsInfo></ColorStepsInfo>\n            </div>  \n        ";
+            return "\n            <div class='property-view'>\n                <SampleList></SampleList>                                   \n                <ImageTypeSelect></ImageTypeSelect>            \n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorSteps></ColorSteps>\n                <ColorStepsInfo></ColorStepsInfo>\n            </div>  \n        ";
         }
     }, {
         key: "components",
@@ -14982,6 +15088,14 @@ var LayerRotate = function (_UIElement) {
     }
 
     createClass(LayerRotate, [{
+        key: 'initialize',
+        value: function initialize() {
+            get(LayerRotate.prototype.__proto__ || Object.getPrototypeOf(LayerRotate.prototype), 'initialize', this).call(this);
+
+            this.$board = this.parent.$board;
+            this.$page = this.parent.$page;
+        }
+    }, {
         key: 'template',
         value: function template() {
             return '<button type=\'button\' data-value=\'layer rotate\'></button>';
@@ -14989,6 +15103,7 @@ var LayerRotate = function (_UIElement) {
     }, {
         key: 'resize',
         value: function resize() {
+
             var angle = caculateAngle(this.targetXY.x - this.layerCenterX, this.targetXY.y - this.layerCenterY);
 
             this.layer.style.rotate = Math.floor(angle) - 270;
@@ -15006,9 +15121,13 @@ var LayerRotate = function (_UIElement) {
             this.xy = e.xy;
             this.layer = layer;
 
-            this.rect = this.read('/item/rect', layer.id);
-            this.layerCenterX = this.rect.left + this.rect.width / 2;
-            this.layerCenterY = this.rect.top + this.rect.height / 2;
+            this.$dom = this.read('/item/dom', layer.id);
+
+            if (this.$dom) {
+                var rect = this.$dom.rect();
+                this.layerCenterX = rect.left + rect.width / 2;
+                this.layerCenterY = rect.top + rect.height / 2;
+            }
         }
     }, {
         key: 'pointermove document',
@@ -15463,26 +15582,55 @@ var MoveGuide = function (_UIElement) {
     return MoveGuide;
 }(UIElement);
 
-var ImageView$2 = function (_UIElement) {
-    inherits(ImageView, _UIElement);
+var PredefinedRadialGradientAngle = function (_UIElement) {
+    inherits(PredefinedRadialGradientAngle, _UIElement);
 
-    function ImageView() {
-        classCallCheck(this, ImageView);
-        return possibleConstructorReturn(this, (ImageView.__proto__ || Object.getPrototypeOf(ImageView)).apply(this, arguments));
+    function PredefinedRadialGradientAngle() {
+        classCallCheck(this, PredefinedRadialGradientAngle);
+        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
     }
 
-    createClass(ImageView, [{
-        key: "template",
+    createClass(PredefinedRadialGradientAngle, [{
+        key: 'template',
         value: function template() {
-            return "\n            <div class='property-view'>\n\n            </div>  \n        ";
+            return '\n            <div class="predefined-radial-gradient-angle">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="circle">circle</option>\n                    <option value="ellipse">ellipse</option>\n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                </select>\n            </div>\n        ';
         }
     }, {
-        key: "components",
-        value: function components() {
-            return items;
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/item/current/image', function (image) {
+                _this2.refs.$select.val(image.radialType);
+            });
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'change $select',
+        value: function change$select(e) {
+            var _this3 = this;
+
+            this.read('/item/current/image', function (image) {
+                image.radialType = _this3.refs.$select.val();
+                _this3.dispatch('/item/set', image);
+            });
+        }
+    }, {
+        key: 'click $center',
+        value: function click$center(e) {
+            var _this4 = this;
+
+            this.read('/item/current/image', function (image) {
+                image.radialPosition = 'center';
+                _this4.dispatch('/item/set', image);
+            });
         }
     }]);
-    return ImageView;
+    return PredefinedRadialGradientAngle;
 }(UIElement);
 
 var SubFeatureControl = function (_UIElement) {
@@ -15496,12 +15644,18 @@ var SubFeatureControl = function (_UIElement) {
     createClass(SubFeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\">\n                        <BackgroundSize></BackgroundSize>\n                    </div>\n                    <div class=\"property-view\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view\" ref=\"$radial\">\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\">\n                        <BackgroundSize></BackgroundSize>\n                    </div>\n                    <div class=\"property-view\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>                    \n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return _extends({ ImageSubView: ImageView$2 }, items);
+            return _extends({
+                PredefinedRadialGradientAngle: PredefinedRadialGradientAngle,
+                GradientAngle: GradientAngle,
+                GradientPosition: GradientPosition,
+                PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
+                PredefinedRadialGradientPosition: PredefinedRadialGradientPosition
+            }, items);
         }
     }, {
         key: "refresh",
@@ -15579,10 +15733,6 @@ var GradientView = function (_BaseTab) {
             return {
                 SubFeatureControl: SubFeatureControl,
                 MoveGuide: MoveGuide,
-                GradientAngle: GradientAngle,
-                GradientPosition: GradientPosition,
-                PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
-                PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
                 PredefinedPageResizer: PredefinedPageResizer,
                 PredefinedLayerResizer: PredefinedLayerResizer
             };
@@ -15600,7 +15750,7 @@ var GradientView = function (_BaseTab) {
 
             var editMode = this.read('/item/get/editMode');
 
-            return this.read('/item/map/children', page.id, function (item) {
+            return this.read('/item/map/children', page.id, function (item, index) {
 
                 switch (editMode) {
                     case EDITOR_MODE_IMAGE_IMAGE:
@@ -15611,11 +15761,11 @@ var GradientView = function (_BaseTab) {
                         var image = _this2.read('/item/current/image');
 
                         if (image.parentId == item.id) {
-                            return '<div class=\'layer\' item-id="' + item.id + '" style=\'' + _this2.read('/layer/toString', item, true, image) + '\'></div>';
+                            return '<div class=\'layer\' item-layer-id="' + item.id + '" title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" style=\'' + _this2.read('/layer/toString', item, true, image) + '\'></div>';
                         }
                 }
 
-                return '<div class=\'layer\' item-id="' + item.id + '" style=\'' + _this2.read('/layer/toString', item, true) + '\'></div>';
+                return '<div class=\'layer\' item-layer-id="' + item.id + '" title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" style=\'' + _this2.read('/layer/toString', item, true) + '\'></div>';
             });
         }
     }, {
@@ -15669,7 +15819,7 @@ var GradientView = function (_BaseTab) {
     }, {
         key: 'click.self $page .layer',
         value: function clickSelf$pageLayer(e) {
-            var id = e.$delegateTarget.attr('item-id');
+            var id = e.$delegateTarget.attr('item-layer-id');
             if (id) {
                 this.run('/item/select/mode', 'layer');
                 this.dispatch('/item/select', id);
@@ -15710,7 +15860,7 @@ var GradientView = function (_BaseTab) {
             this.isDown = true;
             this.xy = e.xy;
             this.$layer = e.$delegateTarget;
-            this.layer = this.read('/item/get', e.$delegateTarget.attr('item-id'));
+            this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'));
             this.moveX = +(this.layer.style.x || 0).replace('px', '');
             this.moveY = +(this.layer.style.y || 0).replace('px', '');
 
@@ -15800,7 +15950,7 @@ var LayerList = function (_UIElement) {
         }
     }, {
         key: 'makeItemNode',
-        value: function makeItemNode(node) {
+        value: function makeItemNode(node, index) {
             var item = this.read('/item/get', node.id);
 
             var layer = this.read('/item/current/layer');
@@ -15809,14 +15959,16 @@ var LayerList = function (_UIElement) {
             if (layer) selectedId = layer.id;
 
             if (item.itemType == 'layer') {
-                return this.makeItemNodeLayer(item, selectedId);
+                return this.makeItemNodeLayer(item, selectedId, index);
             }
         }
     }, {
         key: 'makeItemNodeLayer',
         value: function makeItemNodeLayer(item, selectedId) {
+            var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
             var selected = item.id == selectedId ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\'>\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> ' + (item.name || 'Layer ') + ' </div>\n            </div>\n            ';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            ';
         }
     }, {
         key: 'load $layerList',
@@ -15830,7 +15982,7 @@ var LayerList = function (_UIElement) {
             }
 
             return this.read('/item/map/children', page.id, function (item, index) {
-                return _this2.makeItemNode(item);
+                return _this2.makeItemNode(item, index);
             });
         }
     }, {
@@ -15864,6 +16016,63 @@ var LayerList = function (_UIElement) {
                 this.emit('@selectLayer');
             }
         }
+    }, {
+        key: 'dragstart $layerList .tree-item',
+        value: function dragstart$layerListTreeItem(e) {
+            this.draggedLayer = e.$delegateTarget;
+            this.draggedLayer.css('opacity', 0.5);
+            // e.preventDefault();
+        }
+    }, {
+        key: 'dragend $layerList .tree-item',
+        value: function dragend$layerListTreeItem(e) {
+
+            if (this.draggedLayer) {
+                this.draggedLayer.css('opacity', 1);
+            }
+        }
+    }, {
+        key: 'dragover $layerList .tree-item',
+        value: function dragover$layerListTreeItem(e) {
+            e.preventDefault();
+        }
+    }, {
+        key: 'drop.self $layerList .tree-item',
+        value: function dropSelf$layerListTreeItem(e) {
+            e.preventDefault();
+
+            var destId = e.$delegateTarget.attr('id');
+            var sourceId = this.draggedLayer.attr('id');
+
+            this.draggedLayer = null;
+            this.dispatch('/item/move/in', destId, sourceId);
+            this.refresh();
+        }
+    }, {
+        key: 'drop $layerList',
+        value: function drop$layerList(e) {
+            e.preventDefault();
+
+            if (this.draggedLayer) {
+                var sourceId = this.draggedLayer.attr('id');
+
+                this.draggedLayer = null;
+                this.dispatch('/item/move/last', sourceId);
+                this.refresh();
+            }
+        }
+    }, {
+        key: 'click $layerList .copy-item',
+        value: function click$layerListCopyItem(e) {
+            this.dispatch('/item/addCopy/layer', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
+    }, {
+        key: 'click $layerList .delete-item',
+        value: function click$layerListDeleteItem(e) {
+            this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
     }]);
     return LayerList;
 }(UIElement);
@@ -15885,7 +16094,7 @@ var ImageList = function (_UIElement) {
         key: 'makeItemNodeImage',
         value: function makeItemNodeImage(item) {
             var selected = item.selected ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\'>&times;</button>\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\'>&times;</button>\n                    <button type="button" class=\'left-item\' item-id=\'' + item.id + '\'>&lt;</button>\n                    <button type="button" class=\'right-item\' item-id=\'' + item.id + '\'>&gt;</button>\n                </div>            \n            </div>\n            ';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" draggable="true" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>                \n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">&times;</button>\n                </div>            \n            </div>\n            ';
         }
     }, {
         key: 'load $imageList',
@@ -15949,27 +16158,60 @@ var ImageList = function (_UIElement) {
             });
         }
     }, {
+        key: 'dragstart $imageList .tree-item',
+        value: function dragstart$imageListTreeItem(e) {
+            this.draggedImage = e.$delegateTarget;
+            this.draggedImage.css('opacity', 0.5);
+            // e.preventDefault();
+        }
+    }, {
+        key: 'dragend $imageList .tree-item',
+        value: function dragend$imageListTreeItem(e) {
+
+            if (this.draggedImage) {
+                this.draggedImage.css('opacity', 1);
+            }
+        }
+    }, {
+        key: 'dragover $imageList .tree-item',
+        value: function dragover$imageListTreeItem(e) {
+            e.preventDefault();
+        }
+    }, {
+        key: 'drop.self $imageList .tree-item',
+        value: function dropSelf$imageListTreeItem(e) {
+            e.preventDefault();
+
+            var destId = e.$delegateTarget.attr('id');
+            var sourceId = this.draggedImage.attr('id');
+
+            this.draggedImage = null;
+            this.dispatch('/item/move/in', destId, sourceId);
+            this.refresh();
+        }
+    }, {
+        key: 'drop $imageList',
+        value: function drop$imageList(e) {
+            e.preventDefault();
+
+            if (this.draggedImage) {
+                var sourceId = this.draggedImage.attr('id');
+
+                this.draggedImage = null;
+                this.dispatch('/item/move/last', sourceId);
+                this.refresh();
+            }
+        }
+    }, {
         key: 'click $imageList .copy-item',
         value: function click$imageListCopyItem(e) {
-            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.dispatch('/item/addCopy/image', e.$delegateTarget.attr('item-id'));
             this.refresh();
         }
     }, {
         key: 'click $imageList .delete-item',
         value: function click$imageListDeleteItem(e) {
             this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .left-item',
-        value: function click$imageListLeftItem(e) {
-            this.dispatch('/item/move/prev', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .right-item',
-        value: function click$imageListRightItem(e) {
-            this.dispatch('/item/move/next', e.$delegateTarget.attr('item-id'));
             this.refresh();
         }
     }]);
