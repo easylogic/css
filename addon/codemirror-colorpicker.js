@@ -1746,6 +1746,7 @@ var ImageLoader = function () {
 
             this.newImage = new Image();
             var img = this.newImage;
+            img.crossOrigin = "Anonymous";
             img.onload = function () {
                 _this2.isLoaded = true;
                 callback && callback();
@@ -6471,7 +6472,7 @@ var State = function () {
   return State;
 }();
 
-var CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt)/ig;
+var CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste)/ig;
 var CHECK_LOAD_PATTERN = /^load (.*)/ig;
 var EVENT_SAPARATOR = ' ';
 var EVENT_NAME_SAPARATOR = ':';
@@ -9632,16 +9633,22 @@ var ImageManager = function (_BaseModule) {
     createClass(ImageManager, [{
         key: '*/image/get/file',
         value: function imageGetFile($store, files, callback) {
+            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
+
             (files || []).forEach(function (file) {
-                var ext = file.name.split('.').pop();
-                if (ext == 'jpg' || ext == 'png' || ext == 'gif' || ext == 'svg') {
+                var fileType = file.name.split('.').pop();
+                if (['jpg', 'png', 'gif', 'svg'].includes(fileType)) {
 
                     if (typeof callback == 'function') {
-                        new ImageLoader(file).getImage(function (image) {
-                            callback({
-                                datauri: image.src, // export 용 
-                                url: URL.createObjectURL(file), // 화면 제어용 
-                                fileType: ext
+                        new ImageLoader(file).getImage(function (image$$1) {
+
+                            ImageToRGB(file, { maxWidth: 100 }, function (results) {
+                                callback({
+                                    datauri: image$$1.src, // export 용 
+                                    colors: palette(results, colorCount),
+                                    url: URL.createObjectURL(file), // 화면 제어용 
+                                    fileType: fileType
+                                });
                             });
                         });
                     }
@@ -9651,8 +9658,22 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/get/url',
         value: function imageGetUrl($store, urls, callback) {
+            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
+
             (urls || []).forEach(function (url) {
-                callback(url);
+                var fileType = url.split('.').pop();
+                if (['jpg', 'png', 'gif', 'svg'].includes(fileType)) {
+
+                    if (typeof callback == 'function') {
+                        ImageToRGB(url, { maxWidth: 100 }, function (results) {
+                            callback({
+                                colors: palette(results, colorCount),
+                                url: url,
+                                fileType: fileType
+                            });
+                        });
+                    }
+                }
             });
         }
     }, {
@@ -9724,14 +9745,14 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/toCSS',
         value: function imageToCSS($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
 
             var results = {};
-            var backgroundImage = $store.read('/image/toImageString', image, isExport);
-            var backgroundSize = $store.read('/image/toBackgroundSizeString', image, isExport);
-            var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image, isExport);
+            var backgroundImage = $store.read('/image/toImageString', image$$1, isExport);
+            var backgroundSize = $store.read('/image/toBackgroundSizeString', image$$1, isExport);
+            var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image$$1, isExport);
 
             if (backgroundImage) {
                 results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
@@ -9750,10 +9771,10 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/toString',
         value: function imageToString($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
 
-            var obj = $store.read('/image/toCSS', image);
+            var obj = $store.read('/image/toCSS', image$$1);
 
             return Object.keys(obj).map(function (key) {
                 return key + ': ' + obj[key] + ';';
@@ -9761,51 +9782,51 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: '*/image/toImageString',
-        value: function imageToImageString($store, image) {
+        value: function imageToImageString($store, image$$1) {
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-            var type = image.type;
+            var type = image$$1.type;
 
             if (type == 'linear' || type == 'repeating-linear') {
-                return $store.read('/image/toLinear', image, isExport);
+                return $store.read('/image/toLinear', image$$1, isExport);
             } else if (type == 'radial' || type == 'repeating-radial') {
-                return $store.read('/image/toRadial', image, isExport);
+                return $store.read('/image/toRadial', image$$1, isExport);
             } else if (type == 'image') {
-                return $store.read('/image/toImage', image, isExport);
+                return $store.read('/image/toImage', image$$1, isExport);
             } else if (type == 'static') {
-                return $store.read('/image/toStatic', image, isExport);
+                return $store.read('/image/toStatic', image$$1, isExport);
             }
         }
     }, {
         key: '*/image/toBackgroundSizeString',
-        value: function imageToBackgroundSizeString($store, image) {
+        value: function imageToBackgroundSizeString($store, image$$1) {
 
-            if (image.backgroundSize == 'contain' || image.backgroundSize == 'cover') {
-                return image.backgroundSize;
-            } else if (image.backgroundSizeWidth && image.backgroundSizeHeight) {
-                return [image.backgroundSizeWidth, image.backgroundSizeHeight].join(' ');
-            } else if (image.backgroundSizeWidth) {
-                return image.backgroundSizeWidth;
+            if (image$$1.backgroundSize == 'contain' || image$$1.backgroundSize == 'cover') {
+                return image$$1.backgroundSize;
+            } else if (image$$1.backgroundSizeWidth && image$$1.backgroundSizeHeight) {
+                return [image$$1.backgroundSizeWidth, image$$1.backgroundSizeHeight].join(' ');
+            } else if (image$$1.backgroundSizeWidth) {
+                return image$$1.backgroundSizeWidth;
             }
 
             return 'auto';
         }
     }, {
         key: '*/image/toBackgroundRepeatString',
-        value: function imageToBackgroundRepeatString($store, image) {
-            if (image.backgroundRepeat) {
-                return image.backgroundRepeat;
+        value: function imageToBackgroundRepeatString($store, image$$1) {
+            if (image$$1.backgroundRepeat) {
+                return image$$1.backgroundRepeat;
             }
         }
     }, {
         key: '*/image/toItemString',
         value: function imageToItemString($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
 
-            if (!image) return '';
+            if (!image$$1) return '';
 
-            var colorsteps = image.colorsteps || $store.read('/item/map/children', image.id, function (step) {
+            var colorsteps = image$$1.colorsteps || $store.read('/item/map/children', image$$1.id, function (step) {
                 return step;
             });
 
@@ -9828,15 +9849,15 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/toLinear',
         value: function imageToLinear($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var colors = $store.read('/image/toItemString', image);
+            var colors = $store.read('/image/toItemString', image$$1);
 
             if (colors == '') return '';
 
             var opt = '';
-            var angle = image.angle;
-            var gradientType = image.type;
+            var angle = image$$1.angle;
+            var gradientType = image$$1.type;
 
             opt = angle;
 
@@ -9855,31 +9876,31 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/toStatic',
         value: function imageToStatic($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             return $store.read('/image/toLinear', {
                 type: 'linear',
                 angle: 0,
-                colorsteps: [{ color: image.color, percent: 0 }, { color: image.color, percent: 100 }]
+                colorsteps: [{ color: image$$1.color, percent: 0 }, { color: image$$1.color, percent: 100 }]
             });
         }
     }, {
         key: '*/image/toLinearRight',
-        value: function imageToLinearRight($store, image) {
-            return $store.read('/image/toLinear', Object.assign({}, image, { type: 'linear', angle: 'to right' }));
+        value: function imageToLinearRight($store, image$$1) {
+            return $store.read('/image/toLinear', Object.assign({}, image$$1, { type: 'linear', angle: 'to right' }));
         }
     }, {
         key: '*/image/toRadial',
         value: function imageToRadial($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var colors = $store.read('/image/toItemString', image);
+            var colors = $store.read('/image/toItemString', image$$1);
 
             if (colors == '') return '';
             var opt = '';
-            var radialType = image.radialType;
-            var radialPosition = image.radialPosition;
-            var gradientType = image.type;
+            var radialType = image$$1.radialType;
+            var radialPosition = image$$1.radialPosition;
+            var gradientType = image$$1.type;
 
             radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(' ');
 
@@ -9890,15 +9911,15 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/toImage',
         value: function imageToImage($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-            var url = image.backgroundImage;
+            var url = image$$1.backgroundImage;
 
             if (!isExport && url) {
                 return 'url(' + url + ')';
             } else if (isExport) {
-                return 'url(' + image.backgroundImageDataURI + ')';
+                return 'url(' + image$$1.backgroundImageDataURI + ')';
             }
 
             return null;
@@ -10402,6 +10423,11 @@ var GradientManager = function (_BaseModule) {
     }
 
     createClass(GradientManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit('changeEditor');
+        }
+    }, {
         key: '*/gradient/list/sample',
         value: function gradientListSample($store) {
             var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
@@ -10427,35 +10453,40 @@ var GradientManager = function (_BaseModule) {
             return results;
         }
     }, {
+        key: '/gradient/image/select',
+        value: function gradientImageSelect($store, obj) {
+            var image = $store.read('/item/current/image');
+
+            if (image) {
+
+                $store.run('/item/remove/children', image.id);
+
+                image = Object.assign({}, image, obj);
+
+                if (image.colorsteps) {
+                    image.colorsteps.forEach(function (step) {
+                        step.parentId = image.id;
+                        $store.read('/item/create/colorstep', step);
+                    });
+                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
+                    delete image.colorsteps;
+                }
+
+                $store.run('/item/set', image);
+            } else {
+                $store.read('/item/current/layer', function (layer) {
+                    layer.style['background-color'] = obj.color;
+                    $store.run('/item/set', layer);
+                });
+            }
+        }
+    }, {
         key: '/gradient/select',
         value: function gradientSelect($store, type, index) {
             var obj = $store.read('/gradient/list/sample', type)[index];
 
             if (obj) {
-                var image = $store.read('/item/current/image');
-
-                if (image) {
-
-                    $store.run('/item/remove/children', image.id);
-
-                    image = Object.assign({}, image, obj);
-
-                    if (image.colorsteps) {
-                        image.colorsteps.forEach(function (step) {
-                            step.parentId = image.id;
-                            $store.read('/item/create/colorstep', step);
-                        });
-                        // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
-                        delete image.colorsteps;
-                    }
-
-                    $store.dispatch('/item/set', image);
-                } else {
-                    $store.read('/item/current/layer', function (layer) {
-                        layer.style['background-color'] = obj.color;
-                        $store.dispatch('/item/set', layer);
-                    });
-                }
+                $store.run('/gradient/image/select', obj);
             }
         }
     }]);
@@ -11114,6 +11145,12 @@ var ItemManager = function (_BaseModule) {
         value: function itemPrevIndex($store, id) {
             return $store.read('/item/add/index', id, -1 * (INDEX_DIST + COPY_INDEX_DIST));
         }
+
+        // initialize items 
+
+    }, {
+        key: '/item/load',
+        value: function itemLoad($store) {}
     }, {
         key: '/item/add',
         value: function itemAdd($store, itemType) {
@@ -11161,6 +11198,7 @@ var ItemManager = function (_BaseModule) {
             item.type = 'image';
             item.parentId = parentId;
             item.index = Number.MAX_SAFE_INTEGER;
+            item.colors = img.colors;
             item.fileType = img.fileType;
             item.backgroundImage = img.url;
             item.backgroundImageDataURI = img.datauri, item.backgroundSizeWidth = '100%';
@@ -11170,7 +11208,7 @@ var ItemManager = function (_BaseModule) {
         }
     }, {
         key: '/item/add/image/url',
-        value: function itemAddImageUrl($store, url) {
+        value: function itemAddImageUrl($store, img) {
             var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
             var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
 
@@ -11179,7 +11217,9 @@ var ItemManager = function (_BaseModule) {
             item.type = 'image';
             item.parentId = parentId;
             item.index = Number.MAX_SAFE_INTEGER;
-            item.backgroundImage = url;
+            item.colors = img.colors;
+            item.fileType = img.fileType;
+            item.backgroundImage = img.url;
             item.backgroundSizeWidth = '100%';
 
             $store.run('/item/set', item, isSelected);
@@ -11631,12 +11671,27 @@ var StorageManager = function (_BaseModule) {
     }, {
         key: 'afterDispatch',
         value: function afterDispatch() {
-            this.$store.emit('changeEditor');
+            this.$store.emit('changeStorage');
         }
     }, {
         key: '*/storage/layers',
         value: function storageLayers($store) {
+            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+            if (typeof index !== 'undefined') {
+                return $store.cachedLayers[index];
+            }
             return $store.cachedLayers;
+        }
+    }, {
+        key: '*/storage/images',
+        value: function storageImages($store) {
+            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+            if (typeof index !== 'undefined') {
+                return $store.cachedImages[index];
+            }
+            return $store.cachedImages;
         }
     }, {
         key: '/storage/unshift/layer',
@@ -11650,7 +11705,7 @@ var StorageManager = function (_BaseModule) {
         key: '/storage/add/layer',
         value: function storageAddLayer($store, layer) {
             var item = $store.read('/clone', layer);
-            $store.cachedLayers.add(item);
+            $store.cachedLayers.push(item);
 
             $store.run('/storage/save/layer');
         }
@@ -11658,7 +11713,7 @@ var StorageManager = function (_BaseModule) {
         key: '/storage/add/image',
         value: function storageAddImage($store, image) {
             var item = $store.read('/clone', image);
-            $store.cachedImages.add(item);
+            $store.cachedImages.push(item);
 
             $store.run('/storage/save/image');
         }
@@ -11827,7 +11882,51 @@ var CssManager = function (_BaseModule) {
     return CssManager;
 }(BaseModule);
 
-var ModuleList = [CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var ExternalResourceManager = function (_BaseModule) {
+    inherits(ExternalResourceManager, _BaseModule);
+
+    function ExternalResourceManager() {
+        classCallCheck(this, ExternalResourceManager);
+        return possibleConstructorReturn(this, (ExternalResourceManager.__proto__ || Object.getPrototypeOf(ExternalResourceManager)).apply(this, arguments));
+    }
+
+    createClass(ExternalResourceManager, [{
+        key: 'afterDispatch',
+        value: function afterDispatch() {
+            this.$store.emit('changeEditor');
+        }
+    }, {
+        key: '/external/paste',
+        value: function externalPaste($store, dataTransfer, layerId) {
+            var items = [].concat(toConsumableArray(dataTransfer.items));
+            var types = [].concat(toConsumableArray(dataTransfer.types)).filter(function (type) {
+                return type == 'text/uri-list';
+            });
+
+            var dataList = types.map(function (type) {
+                return dataTransfer.getData(type);
+            });
+
+            if (dataList.length) {
+                $store.read('/image/get/url', dataList, function (url) {
+
+                    $store.run('/item/add/image/url', url, true, layerId);
+                });
+            }
+
+            var files = [].concat(toConsumableArray(dataTransfer.files));
+            if (files.length) {
+
+                $store.read('/image/get/file', files, function (img) {
+                    $store.dispatch('/item/add/image/file', img, true, layerId);
+                });
+            }
+        }
+    }]);
+    return ExternalResourceManager;
+}(BaseModule);
+
+var ModuleList = [ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseImageEditor = function (_UIElement) {
     inherits(BaseImageEditor, _UIElement);
@@ -12180,7 +12279,7 @@ var Radius = function (_BasePropertyItem) {
     createClass(Radius, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'property-item radius show\'>\n                <div class=\'title\' ref="$title">Radius \n                    <span>\n                        <label><input type=\'checkbox\' ref="$fixedRadius" /> fixed</label>\n                    </span> \n                </div>\n                <div class=\'items\'>         \n                    <div>\n                        <label style="width:80px;">Top Left</label>\n                        <div>\n                            <input type=\'number\' ref="$topLeftRadius"> <span>px</span>\n                        </div>\n                        <label style="width:50px;">Right</label>\n                        <div>\n                            <input type=\'number\' ref="$topRightRadius"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label style="width:80px;">Bottom Left</label>\n                        <div>\n                            <input type=\'number\' ref="$bottomLeftRadius"> <span>px</span>\n                        </div>\n                        <label style="width:50px;">Right</label>\n                        <div>\n                            <input type=\'number\' ref="$bottomRightRadius"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'property-item radius show\'>\n                <div class=\'title\' ref="$title">Radius \n                    <span>\n                        <label><input type=\'checkbox\' ref="$fixedRadius" /> fixed</label>\n                    </span> \n                </div>\n                <div class=\'items\'>         \n                    <div>\n                        <label style="width:80px;">T Left</label>\n                        <div>\n                            <input type=\'number\' ref="$topLeftRadius"> <span>px</span>\n                        </div>\n                        <label style="width:50px;">Right</label>\n                        <div>\n                            <input type=\'number\' ref="$topRightRadius"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label style="width:80px;">B Left</label>\n                        <div>\n                            <input type=\'number\' ref="$bottomLeftRadius"> <span>px</span>\n                        </div>\n                        <label style="width:50px;">Right</label>\n                        <div>\n                            <input type=\'number\' ref="$bottomRightRadius"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: '@changeEditor',
@@ -12337,6 +12436,7 @@ var GradientSampleList = function (_UIElement) {
             get(GradientSampleList.prototype.__proto__ || Object.getPrototypeOf(GradientSampleList.prototype), 'initialize', this).call(this);
 
             this.list = this.read('/gradient/list/sample', this.props.type);
+            this.dispatch('/storage/load/image');
         }
     }, {
         key: 'template',
@@ -12345,7 +12445,27 @@ var GradientSampleList = function (_UIElement) {
 
             return '\n        <div class="gradient-sample-list">\n            ' + this.list.map(function (item, index) {
                 return '<div class=\'gradient-sample-item\' style=\'' + _this2.read('/image/toString', item) + '\' data-index="' + index + '"></div>';
-            }).join('') + '\n        </div>\n        ';
+            }).join('') + '\n            <div class=\'cached-list\' ref="$cachedList"></div>\n            <div class=\'tools\'>\n                <button type="button" class="add-current-image" title="Cache a image">+</button>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'load $cachedList',
+        value: function load$cachedList() {
+            var _this3 = this;
+
+            return this.read('/storage/images').map(function (item, index) {
+                var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
+                return '<div class=\'gradient-cached-item\' style=\'' + _this3.read('/image/toString', newImage) + '\' data-index="' + index + '"></div>';
+            });
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: '@changeStorage',
+        value: function changeStorage() {
+            this.refresh();
         }
     }, {
         key: 'click $el .gradient-sample-item',
@@ -12353,6 +12473,27 @@ var GradientSampleList = function (_UIElement) {
             var index = +e.$delegateTarget.attr('data-index');
 
             this.dispatch('/gradient/select', this.props.type, index);
+        }
+    }, {
+        key: 'click $el .gradient-cached-item',
+        value: function click$elGradientCachedItem(e) {
+            var index = +e.$delegateTarget.attr('data-index');
+            var image = this.read('/storage/images', index);
+            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
+
+            this.dispatch('/gradient/image/select', newImage);
+        }
+    }, {
+        key: 'click $el .add-current-image',
+        value: function click$elAddCurrentImage(e) {
+            var _this4 = this;
+
+            this.read('/item/current/image', function (image) {
+                var newImage = _this4.read('/item/collect/image/one', image.id);
+
+                _this4.dispatch('/storage/add/image', newImage);
+                _this4.refresh();
+            });
         }
     }]);
     return GradientSampleList;
@@ -12817,8 +12958,6 @@ var GradientInfo = function (_UIElement) {
                 if (step.selected) step.selected = false;
             });
 
-            console.log(e, item);
-
             item.selected = true;
 
             this.initColor(item.color);
@@ -13073,6 +13212,7 @@ var ImageTypeSelect = function (_BasePropertyItem) {
     }, {
         key: 'isShow',
         value: function isShow() {
+            return false;
             var item = this.read('/item/current/image');
 
             if (!item) return false;
@@ -13602,9 +13742,9 @@ var PageSize = function (_UIElement) {
     }
 
     createClass(PageSize, [{
-        key: 'template',
+        key: "template",
         value: function template() {
-            return '\n            <div class=\'property-item size\'>\n                <div class=\'title\'>page size\n                    <span>\n                        <button type="button" ref="$rect">rect</button>\n                    </span>\n                </div>\n                <div class=\'items\'>\n                    <div>\n                        <label>Width</label>\n                        <div>\n                            <input type=\'number\' ref="$width"> <span>px</span>\n                        </div>\n                        <label>Height</label>\n                        <div>\n                            <input type=\'number\' ref="$height"> <span>px</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ';
+            return "\n            <div class='property-item size'>\n                <div class='title'>page size\n                    <span>\n                        <button type=\"button\" ref=\"$rect\">rect</button>\n                    </span>\n                </div>\n                <div class='items'>\n                    <div>\n                        <label>Width</label>\n                        <div>\n                            <input type='number' ref=\"$width\"> <span>px</span>\n                        </div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>px</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
         }
     }, {
         key: '@changeEditor',
@@ -13612,17 +13752,17 @@ var PageSize = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: 'refresh',
+        key: "refresh",
         value: function refresh() {
             var _this2 = this;
 
             this.read('/item/current/page', function (item) {
                 if (item.style && item.style.width) {
-                    _this2.refs.$width.val(item.style.width.replace('px', ''));
+                    _this2.refs.$width.val(parseParamNumber$2(item.style.width));
                 }
 
                 if (item.style && item.style.height) {
-                    _this2.refs.$height.val(item.style.height.replace('px', ''));
+                    _this2.refs.$height.val(parseParamNumber$2(item.style.height));
                 }
             });
         }
@@ -13653,7 +13793,7 @@ var PageSize = function (_UIElement) {
             var _this5 = this;
 
             this.read('/item/current/page', function (item) {
-                item.style.height = item.style.width;
+                item.style.height = _this5.refs.$height.int() + 'px';
                 _this5.dispatch('/item/set', item);
             });
         }
@@ -13761,15 +13901,30 @@ var BlendList = function (_BasePropertyItem) {
             }).join('') + '</div>';
         }
     }, {
+        key: 'isShow',
+        value: function isShow() {
+            var image = this.read('/item/current/image');
+
+            if (image) return false;
+
+            return true;
+        }
+    }, {
         key: 'refresh',
         value: function refresh() {
             var _this3 = this;
 
-            this.load();
+            var isShow = this.isShow();
 
-            this.read('/item/current/layer', function (layer) {
-                _this3.refs.$desc.html(layer.style['background-blend-mode']);
-            });
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.load();
+
+                this.read('/item/current/layer', function (layer) {
+                    _this3.refs.$desc.html(layer.style['background-blend-mode']);
+                });
+            }
         }
     }, {
         key: '@changeEditor',
@@ -13823,15 +13978,30 @@ var MixBlendList = function (_BasePropertyItem) {
             }).join('') + '</div>';
         }
     }, {
+        key: 'isShow',
+        value: function isShow() {
+            var image = this.read('/item/current/image');
+
+            if (image) return false;
+
+            return true;
+        }
+    }, {
         key: 'refresh',
         value: function refresh() {
             var _this3 = this;
 
-            this.load();
+            var isShow = this.isShow();
 
-            this.read('/item/current/layer', function (layer) {
-                _this3.refs.$desc.html(layer.style['mix-blend-mode']);
-            });
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.load();
+
+                this.read('/item/current/layer', function (layer) {
+                    _this3.refs.$desc.html(layer.style['mix-blend-mode']);
+                });
+            }
         }
     }, {
         key: '@changeEditor',
@@ -13926,10 +14096,26 @@ var FilterList$1 = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
+        key: 'isShow',
+        value: function isShow() {
+            var image = this.read('/item/current/image');
+
+            if (image) return false;
+
+            return true;
+        }
+    }, {
         key: 'refresh',
         value: function refresh() {
-            this.load();
-            this.refreshFilterList();
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.load();
+                this.refreshFilterList();
+            }
         }
     }, {
         key: 'refreshFilterList',
@@ -16324,6 +16510,40 @@ var ImageList = function (_UIElement) {
             this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
             this.refresh();
         }
+    }, {
+        key: 'paste document',
+        value: function pasteDocument(e) {
+            var _this4 = this;
+
+            var dataTransfer = e.clipboardData;
+
+            var items = [].concat(toConsumableArray(dataTransfer.items));
+            var types = [].concat(toConsumableArray(dataTransfer.types)).filter(function (type) {
+                return type == 'text/uri-list';
+            });
+
+            var dataList = types.map(function (type) {
+                return dataTransfer.getData(type);
+            });
+
+            if (dataList.length) {
+                this.read('/item/current/layer', function (layer) {
+                    _this4.read('/image/get/url', dataList, function (url) {
+                        _this4.dispatch('/item/add/image/url', url, true, layer.id);
+                    });
+                });
+            }
+
+            var files = [].concat(toConsumableArray(dataTransfer.files));
+            if (files.length) {
+                this.read('/item/current/layer', function (layer) {
+                    _this4.read('/image/get/file', files, function (img) {
+                        _this4.dispatch('/item/add/image/file', img, true, layer.id);
+                        _this4.refresh();
+                    });
+                });
+            }
+        }
     }]);
     return ImageList;
 }(UIElement);
@@ -16491,28 +16711,27 @@ var DropView = function (_UIElement) {
 
             e.preventDefault();
 
-            var items = [].concat(toConsumableArray(e.dataTransfer.items));
-            var types = [].concat(toConsumableArray(e.dataTransfer.types)).filter(function (type) {
+            var dataTransfer = e.dataTransfer;
+
+            var items = [].concat(toConsumableArray(dataTransfer.items));
+            var types = [].concat(toConsumableArray(dataTransfer.types)).filter(function (type) {
                 return type == 'text/uri-list';
             });
 
             var dataList = types.map(function (type) {
-                return e.dataTransfer.getData(type);
+                return dataTransfer.getData(type);
             });
 
             if (dataList.length) {
-
                 this.read('/item/current/layer', function (layer) {
-                    _this2.read('/image/get/url', dataList, function (url) {
-                        _this2.dispatch('/item/add/image/url', url, true, layer.id);
+                    _this2.read('/image/get/url', dataList, function (img) {
+                        _this2.dispatch('/item/add/image/url', img, true, layer.id);
                     });
                 });
             }
 
-            console.log(items, types, dataList);
-            var files = [].concat(toConsumableArray(e.dataTransfer.files));
+            var files = [].concat(toConsumableArray(dataTransfer.files));
             if (files.length) {
-
                 this.read('/item/current/layer', function (layer) {
                     _this2.read('/image/get/file', files, function (img) {
                         _this2.dispatch('/item/add/image/file', img, true, layer.id);
@@ -16560,7 +16779,9 @@ var XDImageEditor = function (_BaseImageEditor) {
 
             this.dispatch('/storage/load', function (isLoaded) {
                 if (!isLoaded && isAdd) {
-                    _this2.run('/item/add/page', true);
+                    _this2.dispatch('/item/add/page', true);
+                } else {
+                    _this2.dispatch('/item/load');
                 }
             });
         }
