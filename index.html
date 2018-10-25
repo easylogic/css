@@ -32,7 +32,7 @@
     var picker = new CodeMirrorColorPicker.createImageEditor();
     picker.loadStart(true);
 
-    axios.get('/resources/icons.json')
+    axios.get('./resources/icons.json')
         .then(function (response) {
             picker.dispatch('/svg/list/load', Object.keys(response.data).map(key => {
                 return {
