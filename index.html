@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /> 
     <title>CSS Gradient Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.css" />
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.js" ></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/xml/xml.min.js" ></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/htmlmixed/htmlmixed.min.js" ></script>
-    <link rel="stylesheet" href="./dist/codemirror-colorpicker.css" />
-    <script type="text/javascript" src="./dist/codemirror-colorpicker.min.js" ></script>
+    <link rel="stylesheet" href="./addon/codemirror-colorpicker.css" />
+    <script type="text/javascript" src="./addon/codemirror-colorpicker.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>    
 
     <style type="text/css">
     html, body {
         padding:0px;
         margin:0px;
     }
-    
+
     </style>
-</head>     
+</head>
 <body>
 
 <div class="colorpicker-type">
@@ -29,21 +30,17 @@
      
 
 <script type="text/javascript">
+
     var picker = new CodeMirrorColorPicker.createImageEditor();
     picker.loadStart(true);
 
-    axios.get('./resources/icons.json')
-        .then(function (response) {
-            picker.dispatch('/svg/list/load', Object.keys(response.data).map(key => {
-                return {
-                    key: key , 
-                    url: 'https://cdn.jsdelivr.net/npm/feather-icons@4.7.3/dist/icons/' + key + '.svg'
-                }
-            }));
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+
+    var icons = Object.keys(feather.icons).map(key => {
+        return { key: key, svg: feather.icons[key].toSvg() }        
+    });
+
+    picker.dispatch('/svg/list/load', icons);
+
 </script>
 
 </body>
