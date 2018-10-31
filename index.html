@@ -34,12 +34,16 @@
     var picker = new CodeMirrorColorPicker.createImageEditor();
     picker.loadStart(true);
 
+    var icon_url = "https://cdn.jsdelivr.net/npm/material-design-icons-svg@2.0.0/paths.json";
 
-    var icons = Object.keys(feather.icons).map(key => {
-        return { key: key, svg: feather.icons[key].toSvg() }        
+    axios.get(icon_url).then(function (response) {
+        var icons = Object.keys(response.data).map(key => {
+            return { key: key, svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="' + response.data[key] + '" /></svg>' }            
+        })
+
+        picker.dispatch('/svg/list/load', icons);
+
     });
-
-    picker.dispatch('/svg/list/load', icons);
 
 </script>
 
