@@ -9927,7 +9927,16 @@ var ImageManager = function (_BaseModule) {
                 return a.percent > b.percent ? 1 : -1;
             });
 
-            colors = colors.map(function (f) {
+            var newColors = [];
+            colors.forEach(function (c, index) {
+                if (c.cut && index > 0) {
+                    newColors.push(Object.assign({}, c, { percent: colors[index - 1].percent }));
+                }
+
+                newColors.push(c);
+            });
+
+            colors = newColors.map(function (f) {
                 return f.color + ' ' + f.percent + '%';
             }).join(',');
 
@@ -9962,7 +9971,16 @@ var ImageManager = function (_BaseModule) {
                 return a.percent > b.percent ? 1 : -1;
             });
 
-            colors = colors.map(function (f) {
+            var newColors = [];
+            colors.forEach(function (c, index) {
+                if (c.cut && index > 0) {
+                    newColors.push(Object.assign({}, c, { percent: colors[index - 1].percent }));
+                }
+
+                newColors.push(c);
+            });
+
+            colors = newColors.map(function (f) {
                 var deg = Math.floor(f.percent * 3.6);
                 return f.color + ' ' + deg + 'deg';
             }).join(',');
@@ -12868,7 +12886,7 @@ var Name = function (_UIElement) {
     createClass(Name, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'property-item name show\'>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type=\'text\' ref="$name" class=\'full\'> \n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'property-item name show\'>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type=\'text\' ref="$name" class=\'full\'> \n                        </div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div>\n                            <input type=\'text\' ref="$id" class=\'full\'> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div>\n                            <input type=\'text\' ref="$class" class=\'full\'> \n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ';
         }
     }, {
         key: '@changeEditor',
@@ -12894,6 +12912,26 @@ var Name = function (_UIElement) {
 
             if (item) {
                 item.name = this.refs.$name.val();
+                this.dispatch('/item/set', item);
+            }
+        }
+    }, {
+        key: 'input $class',
+        value: function input$class() {
+            var item = this.read('/item/current');
+
+            if (item) {
+                item.className = this.refs.$class.val();
+                this.dispatch('/item/set', item);
+            }
+        }
+    }, {
+        key: 'input $id',
+        value: function input$id() {
+            var item = this.read('/item/current');
+
+            if (item) {
+                item.idString = this.refs.$id.val();
                 this.dispatch('/item/set', item);
             }
         }
@@ -12942,7 +12980,9 @@ var GradientSteps = function (_UIElement) {
 
             return this.read('/item/map/children', item.id, function (step) {
 
-                return '\n                <div \n                    class=\'drag-bar step ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    color="' + step.color + '" \n                    style="left: ' + _this2.getStepPosition(step.percent) + 'px; border-color: ' + step.color + ';background-color: ' + step.color + ';"\n                >\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                </div>\n            ';
+                var cut = step.cut ? 'cut' : '';
+
+                return '\n                <div \n                    class=\'drag-bar step ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    color="' + step.color + '" \n                    style="left: ' + _this2.getStepPosition(step.percent) + 'px; border-color: ' + step.color + ';background-color: ' + step.color + ';"\n                >\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                </div>\n            ';
             });
         }
     }, {
@@ -13163,6 +13203,18 @@ var GradientSteps = function (_UIElement) {
         value: function click$stepsStep(e) {
             this.selectStep(e);
         }
+    }, {
+        key: 'click $steps .step .guide-change',
+        value: function click$stepsStepGuideChange(e) {
+            var id = e.$delegateTarget.attr('data-colorstep-id');
+            var item = this.read('/item/get', id);
+
+            if (item.id) {
+                item.cut = !item.cut;
+                this.dispatch('/item/set', item);
+                this.refresh();
+            }
+        }
 
         // Event Bindings 
 
@@ -13177,10 +13229,16 @@ var GradientSteps = function (_UIElement) {
             this.onDragMove(e);
         }
     }, {
+        key: 'isStepElement',
+        value: function isStepElement(e) {
+            return new Dom(e.target).hasClass('step');
+        }
+    }, {
         key: 'pointerstart $steps .step',
         value: function pointerstart$stepsStep(e) {
+
             e.preventDefault();
-            if (!this.isDown) {
+            if (this.isStepElement(e) && !this.isDown) {
                 this.onDragStart(e);
             }
         }
@@ -13283,7 +13341,7 @@ var GradientInfo = function (_UIElement) {
             var colorsteps = this.read('/item/map/children', item.id);
 
             return '<div class=\'step-list\' ref="$stepList">\n                    ' + colorsteps.map(function (step) {
-                return '\n                            <div class=\'color-step ' + (step.selected ? 'selected' : '') + '\' style="background-color: ' + (step.selected ? step.color : '') + '" colorstep-id="' + step.id + '" >\n                                <div class="color-view">\n                                    <div class="color-view-item" style="background-color: ' + step.color + '" colorstep-id="' + step.id + '" ></div>\n                                </div>\n                                <div class="color-code">\n                                    <input type="text" class="code" value=\'' + step.color + '\'  colorstep-id="' + step.id + '"  />\n                                </div>\n                                <div class="color-percent">\n                                    <input type="number" class="percent" min="0" max="100" step="0.1"  value="' + step.percent + '"   colorstep-id="' + step.id + '"  />%\n                                </div>\n                                <div class="color-angle">\n                                    <input type="number" class="angle" min="0" max="360" step="1"  value="' + step.angle + '"  colorstep-id="' + step.id + '"  />deg\n                                </div>                                \n                                <div class="tools">\n                                    <button type="button" class=\'remove-step\'  colorstep-id="' + step.id + '" >&times;</button>\n                                </div>\n                            </div>\n                        ';
+                return '\n                            <div class=\'color-step ' + (step.selected ? 'selected' : '') + '\' style="background-color: ' + (step.selected ? step.color : '') + '" colorstep-id="' + step.id + '" >\n                                <div class="color-view">\n                                    <div class="color-view-item" style="background-color: ' + step.color + '" colorstep-id="' + step.id + '" ></div>\n                                </div>\n                                <div class="color-code">\n                                    <input type="text" class="code" value=\'' + step.color + '\'  colorstep-id="' + step.id + '"  />\n                                </div>\n                                <div class="color-percent">\n                                    <input type="number" class="percent" min="0" max="100" step="0.1"  value="' + step.percent + '"   colorstep-id="' + step.id + '"  />%\n                                </div>                       \n                                <div class="tools">\n                                    <button type="button" class=\'remove-step\'  colorstep-id="' + step.id + '" >&times;</button>\n                                </div>\n                            </div>\n                        ';
             }).join('') + '\n                </div>';
         }
     }, {
@@ -13350,22 +13408,6 @@ var GradientInfo = function (_UIElement) {
 
             if (step) {
                 step.percent = percent;
-                this.dispatch('/item/set', step);
-            }
-        }
-    }, {
-        key: 'input $colorsteps input.angle',
-        value: function input$colorstepsInputAngle(e) {
-            var item = this.read('/item/current/image');
-            if (!item) return;
-
-            var angle = e.$delegateTarget.val();
-            var id = e.$delegateTarget.attr('colorstep-id');
-
-            var step = this.read('/item/get', id);
-
-            if (step) {
-                step.angle = angle == '' ? undefined : angle;
                 this.dispatch('/item/set', step);
             }
         }
@@ -17692,7 +17734,7 @@ var ExportView = function (_UIElement) {
     createClass(ExportView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n\n                        <div class=\"title\">Code</div>\n                        <div class=\"codeview\">\n                            <textarea ref=\"$code\"></textarea>\n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">Code</div>\n                        <div class=\"codeview\">\n                            <textarea ref=\"$code\"></textarea>\n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "afterRender",
@@ -17728,7 +17770,11 @@ var ExportView = function (_UIElement) {
             var pageStyle = this.makePageCSS(page);
 
             var html = "<div id=\"page-1\" style=\"" + pageStyle + "\">\n" + this.read('/item/map/children', page.id, function (item, index) {
-                return "\t<div id=\"layer-" + (index + 1) + "\" style=\"" + _this2.read('/layer/toExport', item, true) + "\">\t\t\n" + _this2.read('/layer/toStringClipPath', item) + "</div>";
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                return "\t<div id=\"" + idString + "\"  " + (className ? "class=\"" + className + "\"" : '') + " style=\"" + _this2.read('/layer/toExport', item, true) + "\">\t\t\n" + _this2.read('/layer/toStringClipPath', item) + "</div>";
             }).join('\n') + "\n</div>";
 
             if (this.cm) {
