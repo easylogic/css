@@ -200,16 +200,6 @@
                     .guide-change, .guide-step, .guide-unit {
                         opacity: 1;
                     }
-
-                    .guide-unit {
-                        select {
-                            pointer-events: all;
-                        }
-                    }
-
-                    .guide-change {
-                        pointer-events: all;
-                    }
                 }
             }                    
         }

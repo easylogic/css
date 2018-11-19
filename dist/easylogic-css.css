@@ -2483,10 +2483,6 @@
               height: 32px; }
             .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-change, .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-step, .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-unit {
               opacity: 1; }
-            .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-unit select {
-              pointer-events: all; }
-            .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-change {
-              pointer-events: all; }
       .imageeditor .vertical-colorstep .gradient-steps .current-percent {
         position: absolute;
         display: none;
