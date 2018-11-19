@@ -1,8 +1,8 @@
 {
-  "name": "codemirror-colorpicker",
-  "version": "2.0.0",
-  "description": "simple colorpicker used anywhere",
-  "main": "./dist/codemirror-colorpicker.js",
+  "name": "easylogic-css",
+  "version": "0.1.0",
+  "description": "Enjoyable CSS Gradient Editor",
+  "main": "./dist/easylogic-css.js",
   "scripts": {
     "pub": "npm run build && npm publish",
     "build": "NODE_ENV=production rollup --config config/rollup.config.prod.js",
@@ -12,27 +12,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/easylogic/codemirror-colorpicker.git"
+    "url": "git+https://github.com/easylogic/css.git"
   },
   "keywords": [
-    "codemirror",
-    "colorview",
-    "colorpicker",
-    "imagefilter",
+
     "color",
     "rgb",
-    "webgl",
-    "chromdevtool",
-    "macos",
-    "sketch",
-    "palette"
+    "css",
+    "gradient",
+    "editor"
   ],
   "author": "easylogic",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/easylogic/codemirror-colorpicker/issues"
+    "url": "https://github.com/easylogic/css/issues"
   },
-  "homepage": "https://easylogic.github.io/codemirror-colorpicker/",
+  "homepage": "https://easylogic.studio/css/",
   "devDependencies": {
     "autoprefixer": "^7.2.5",
     "babel-cli": "^6.26.0",

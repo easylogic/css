@@ -18,7 +18,7 @@ export default {
     },
     external: ['codemirror']
   },
-  name: 'CodeMirrorColorPicker',  
+  name: 'EasyLogicCSS',  
   plugins : [
     serve(),
     livereload({watch: 'addon'}),

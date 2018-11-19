@@ -94,6 +94,7 @@
                     transition: all 0.3s ease-out;
                     // background-color: black;
                     border: 1px solid $border-color;
+                    pointer-events: none;
 
                     &:before {
                         content: "";
@@ -184,6 +185,7 @@
                         vertical-align: middle;
                         height:20px;
                         outline: none;
+                        pointer-events: none;
                     }
                 }
                 
@@ -197,6 +199,16 @@
                     
                     .guide-change, .guide-step, .guide-unit {
                         opacity: 1;
+                    }
+
+                    .guide-unit {
+                        select {
+                            pointer-events: all;
+                        }
+                    }
+
+                    .guide-change {
+                        pointer-events: all;
                     }
                 }
             }                    

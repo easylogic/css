@@ -16,7 +16,7 @@ export default [{
     }, 
     external: ['codemirror']
   },
-  name: 'CodeMirrorColorPicker',  
+  name: 'EasyLogicCSS',  
   plugins : [
     glslify({ basedir: 'src/util/glsl/source' }),
     //scss({output : 'dist/' + packageJSON.name + '.css'}),
@@ -42,7 +42,7 @@ export default [{
     },
     external: ['codemirror']
   },
-  name: 'codemirror-colorpicker',
+  name: 'EasyLogicCSS',
   plugins : [
     postcss({
       extract: 'dist/' + packageJSON.name + '.css',
