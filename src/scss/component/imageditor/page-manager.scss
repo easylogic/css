@@ -13,12 +13,14 @@ $layer-item-padding: 4px;
     
     .project-tools {
         flex: none;
-        display:inline-block;
+        display:inline-flex;
         padding: 0px 0px;
         box-sizing: border-box;
         text-align: right;
+        overflow:hidden;
 
         button {
+            flex:1;
             appearance: none;
             border: 0px solid $border-color;
             padding: 0px 20px;

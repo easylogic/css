@@ -1324,12 +1324,18 @@
       -webkit-box-flex: 0;
           -ms-flex: none;
               flex: none;
-      display: inline-block;
+      display: -webkit-inline-box;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
       padding: 0px 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      text-align: right; }
+      text-align: right;
+      overflow: hidden; }
       .imageeditor .pages .project-tools button {
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
