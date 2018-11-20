@@ -2489,8 +2489,7 @@
               display: inline-block;
               vertical-align: middle;
               height: 20px;
-              outline: none;
-              pointer-events: none; }
+              outline: none; }
           .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected {
             z-index: 1;
             top: 30px; }
