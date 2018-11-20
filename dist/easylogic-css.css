@@ -2388,8 +2388,7 @@
             opacity: 0;
             -webkit-transition: all 0.3s ease-out;
             transition: all 0.3s ease-out;
-            border: 1px solid #c7c7c7;
-            pointer-events: none; }
+            border: 1px solid #c7c7c7; }
             .imageeditor .vertical-colorstep .gradient-steps .hue .drag-bar .guide-change:before {
               content: "";
               position: absolute;
