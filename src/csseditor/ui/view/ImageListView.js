@@ -7,8 +7,9 @@ export default class ImageList extends UIElement {
             <div class='images'>
                 <div class="title">Gradients</div>
                 <div class='image-tools'>   
-                    <div class="image-list" ref="$imageList"> </div>                                       
+                    <div class="image-list" ref="$imageList"> </div>    
                     <div class='menu-buttons'>
+                        <div class="title">+ Add Gradients</div>
                         <div class='gradient-type' ref="$gradientType">
                             <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>
                             <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>

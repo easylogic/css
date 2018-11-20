@@ -156,12 +156,24 @@ $image-item-width: 64px;
         }
 
         .menu-buttons {
-            height: 120px;
+            height: 150px;
             flex: none;
             padding: 5px;
             box-sizing: border-box;
             border-top: 1px solid $border-color;
             position: relative;
+
+            .title {
+                font-size: 12px;
+                border-bottom: 1px solid $border-color;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                right: 0px;
+                display: inline-block;
+                padding: 5px;
+                text-align: center;
+            }
 
             .gradient-sample-list {
                 position: absolute;
@@ -209,7 +221,7 @@ $image-item-width: 64px;
                 position: absolute;
                 left: 0px;
                 right: 0px;
-                top: 0px;
+                top: 30px;
                 bottom:30px;
                 padding: 5px;
                 display: block;

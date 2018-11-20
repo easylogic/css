@@ -1715,7 +1715,7 @@
                 top: 1px;
                 right: 1px; }
       .imageeditor .images .image-tools .menu-buttons {
-        height: 120px;
+        height: 150px;
         -webkit-box-flex: 0;
             -ms-flex: none;
                 flex: none;
@@ -1724,6 +1724,16 @@
                 box-sizing: border-box;
         border-top: 1px solid #c7c7c7;
         position: relative; }
+        .imageeditor .images .image-tools .menu-buttons .title {
+          font-size: 12px;
+          border-bottom: 1px solid #c7c7c7;
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          right: 0px;
+          display: inline-block;
+          padding: 5px;
+          text-align: center; }
         .imageeditor .images .image-tools .menu-buttons .gradient-sample-list {
           position: absolute;
           bottom: 0px;
@@ -1763,7 +1773,7 @@
           position: absolute;
           left: 0px;
           right: 0px;
-          top: 0px;
+          top: 30px;
           bottom: 30px;
           padding: 5px;
           display: block;
