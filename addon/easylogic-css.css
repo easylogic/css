@@ -2403,7 +2403,8 @@
             opacity: 0;
             -webkit-transition: all 0.3s ease-out;
             transition: all 0.3s ease-out;
-            border: 1px solid #c7c7c7; }
+            border: 1px solid #c7c7c7;
+            pointer-events: none; }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar .guide-change:before {
               content: "";
               position: absolute;
@@ -2457,7 +2458,8 @@
                     transform: translateY(-50%);
             opacity: 0;
             -webkit-transition: all 0.3s ease-out;
-            transition: all 0.3s ease-out; }
+            transition: all 0.3s ease-out;
+            pointer-events: none; }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar .guide-unit > input[type=number] {
               display: none;
               outline: none;
@@ -2494,6 +2496,8 @@
             top: 30px; }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-line {
               height: 32px; }
+            .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-change, .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-unit {
+              pointer-events: all; }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-change, .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-step, .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-unit {
               opacity: 1; }
       .csseditor .vertical-colorstep .gradient-steps .current-percent {

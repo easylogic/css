@@ -94,7 +94,7 @@
                     transition: all 0.3s ease-out;
                     // background-color: black;
                     border: 1px solid $border-color;
-
+                    pointer-events: none;
                     &:before {
                         content: "";
                         position: absolute;
@@ -161,6 +161,7 @@
                     transition: all 0.3s ease-out;
                     // background-color: black;
                     // border: 1px solid $border-color;
+                    pointer-events: none;
 
                     > input[type=number] {
                         display:none;
@@ -195,6 +196,10 @@
                         height: 32px;
                     }       
                     
+                    .guide-change, .guide-unit {
+                        pointer-events: all;
+                    }
+
                     .guide-change, .guide-step, .guide-unit {
                         opacity: 1;
                     }
