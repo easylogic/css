@@ -78,7 +78,7 @@ export default class LayerManager extends BaseModule {
     }    
 
     '*/layer/make/clip-path' ($store, layer) {
-
+        
         if (layer.clipPathType == 'circle') {
 
             if (!layer.clipPathCenter) return ;
@@ -103,6 +103,8 @@ export default class LayerManager extends BaseModule {
             var radiusPercent = Math.floor(radiusSize / dist * 100) + '%';  
     
             return `circle(${radiusPercent} at ${placeCenter.join(' ')})`;
+        } else if (layer.clipPathType == 'none') {
+            return 'none';
         } else {
             if (layer.clipPathSvg) {
                 return `url(#clippath-${layer.id})`

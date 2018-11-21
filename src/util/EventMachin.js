@@ -17,8 +17,6 @@ const PREDEFINED_EVENT_NAMES = {
   'tt': 'click'
 }
 
-//  'mousedown.debounce(300)
-
 export default class EventMachin {
 
   constructor() { 

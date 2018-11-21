@@ -52,6 +52,12 @@ export default class MoveGuide extends UIElement {
         return this.$page.hasClass('moving');
     }
 
+
     '@changeEditor' () { this.refresh(); }
+
+
+    'resize.debounce(300) window' (e) {
+        this.refresh();
+    }    
 
 }

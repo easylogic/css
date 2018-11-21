@@ -15,6 +15,8 @@ import Animation from '../../util/animation/Animation';
 import GradientSampleView from '../ui/window/GradientSampleWindow';
 import LayerSampleView from '../ui/window/LayerSampleWindow';
 import PageSampleView from '../ui/window/PageSampleWindow';
+import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
+
 
 
 
@@ -54,6 +56,7 @@ export default class CSSEditor extends BaseCSSEditor {
                 </div>                
                 <div class="layout-right">
                     <FeatureControl></FeatureControl>
+                    <ClipPathImageList></ClipPathImageList>
                 </div>
                 <div class="layout-footer">
                     <Timeline></Timeline>
@@ -69,6 +72,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     components() {     
         return { 
+            ClipPathImageList,
             GradientSampleView,
             VerticalColorStep, 
             DropView,

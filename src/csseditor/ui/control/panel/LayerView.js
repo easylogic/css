@@ -11,7 +11,7 @@ export default class LayerView extends UIElement {
                 <BackgroundColor></BackgroundColor> 
                 <LayerColorPickerPanel></LayerColorPickerPanel>                
                 <ClipPath></ClipPath>                 
-                <ClipPathImageResource></ClipPathImageResource>
+                <!-- <ClipPathImageResource></ClipPathImageResource> -->
                 <size></size>
                 <radius></radius>                
                 <transform></transform>

@@ -10,7 +10,7 @@ export default class ClipPath extends BasePropertyItem {
                         <label>Type</label>
                         <div >
                             <select ref="$clipType">
-                                <option value="">none</option>
+                                <option value="none">none</option>
                                 <!-- <option value="circle">circle</option>-->
                                 <!-- <option value="inset">inset</option> -->
                                 <!-- <option value="polygon">polygon</option> -->
@@ -52,7 +52,7 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     'click $clipPath' () {
-        this.emit('toggleClipPathImageResource')
+        this.emit('toggleClipPathImageList')
     }
 
     'click $fit' () {
@@ -65,6 +65,12 @@ export default class ClipPath extends BasePropertyItem {
     'change $clipType' () {
         this.read('/item/current/layer', (layer) => {
             layer.clipPathType = this.refs.$clipType.val();
+
+            if (layer.clipPathType == 'none') {
+                this.refs.$fit.el.checked = false
+                this.refs.$clipPath.empty();
+            }
+
             this.dispatch('/item/set', layer);
         })
     }

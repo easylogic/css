@@ -966,7 +966,6 @@
       width: 250px;
       top: 80px;
       bottom: 0px;
-      overflow: auto;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       border-right: 1px solid #c7c7c7;
@@ -4229,3 +4228,32 @@
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
           overflow: auto; }
+  .csseditor .image-resource {
+    position: absolute;
+    left: -251px;
+    width: 250px;
+    top: 0px;
+    bottom: 0px;
+    display: none;
+    background-color: white; }
+    .csseditor .image-resource.show {
+      display: block; }
+    .csseditor .image-resource .items {
+      height: 100%;
+      overflow: auto; }
+      .csseditor .image-resource .items .svg-item {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        vertical-align: middle;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border: 1px solid #c7c7c7;
+        cursor: pointer;
+        margin: 2px; }
+        .csseditor .image-resource .items .svg-item svg {
+          width: 100%;
+          height: 100%; }
+        .csseditor .image-resource .items .svg-item img {
+          max-width: 100%;
+          max-height: 100%; }

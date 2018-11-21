@@ -20,11 +20,11 @@ import LayerColorPickerPanel from "./LayerColorPickerPanel";
 import ImageResource from "./ImageResource";
 import PageLayout from "./PageLayout";
 import ClipPath from "./ClipPath";
-import ClipPathImageResource from "./ClipPathImageResource";
+// import ClipPathImageResource from "./ClipPathImageResource";
 
 export default {
     ClipPath,
-    ClipPathImageResource,    
+    // ClipPathImageResource,    
     PageLayout,  
     ImageResource,
     BackgroundColor,
