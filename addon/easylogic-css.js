@@ -12700,15 +12700,12 @@ var BaseCSSEditor = function (_UIElement) {
         value: function initialize() {
             var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
-            this.$body = null;
-            this.$root = null;
-
             this.$store = new BaseStore({
                 modules: [].concat(toConsumableArray(ModuleList), toConsumableArray(modules))
             });
 
             this.$body = new Dom(this.getContainer());
-            this.$root = new Dom('div', 'imageeditor');
+            this.$root = new Dom('div', 'csseditor');
 
             this.$body.append(this.$root);
 

@@ -1,4 +1,4 @@
-.imageeditor {
+.csseditor {
     width: 100%;
     height: 100%;
     user-select: none;
@@ -6,5 +6,5 @@
     left:0px;
     top: 0px;
 
-    @import './component/imageditor/layout.scss';
+    @import './csseditor/layout.scss';
 }

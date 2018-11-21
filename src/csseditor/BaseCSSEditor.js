@@ -6,10 +6,7 @@ import UIElement from '../colorpicker/UIElement';
 
 export default class BaseCSSEditor extends UIElement {
 
-    initialize (modules = []) {
-        this.$body = null;
-        this.$root = null; 
-        
+    initialize (modules = []) { 
         this.$store = new BaseStore({
             modules: [
                 ...ModuleList,
@@ -18,7 +15,7 @@ export default class BaseCSSEditor extends UIElement {
         });
 
         this.$body = new Dom(this.getContainer());
-        this.$root = new Dom('div', 'imageeditor');
+        this.$root = new Dom('div', 'csseditor');
 
         this.$body.append(this.$root);        
 
