@@ -6038,8 +6038,6 @@ var Dom = function () {
             var scrollTop = Dom.getScrollTop();
             var scrollLeft = Dom.getScrollLeft();
 
-            console.log('scrollTop', scrollTop, scrollLeft);
-
             return {
                 top: rect.top + scrollTop,
                 left: rect.left + scrollLeft
@@ -19623,10 +19621,15 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     createClass(CSSEditor, [{
         key: 'afterRender',
         value: function afterRender() {
+            var _this2 = this;
+
             this.refs.$layoutMain.removeClass('beginner-mode');
             this.refs.$layoutMain.removeClass('expertor-mode');
             this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode');
-            this.emit('changeEditor');
+
+            setTimeout(function () {
+                _this2.emit('changeEditor');
+            }, 100);
         }
     }, {
         key: 'template',
@@ -19691,13 +19694,13 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'loadStart',
         value: function loadStart(isAdd) {
-            var _this2 = this;
+            var _this3 = this;
 
             this.dispatch('/storage/load', function (isLoaded) {
                 if (!isLoaded && isAdd) {
-                    _this2.dispatch('/item/add/page', true);
+                    _this3.dispatch('/item/add/page', true);
                 } else {
-                    _this2.dispatch('/item/load');
+                    _this3.dispatch('/item/load');
                 }
             });
         }
@@ -19709,12 +19712,12 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: '@updateLayout',
         value: function updateLayout(layout) {
-            var _this3 = this;
+            var _this4 = this;
 
             screenModes.filter(function (key) {
                 return key != layout;
             }).forEach(function (key) {
-                _this3.refs.$layoutMain.removeClass(key + '-mode');
+                _this4.refs.$layoutMain.removeClass(key + '-mode');
             });
 
             this.refs.$layoutMain.addClass(layout + '-mode');

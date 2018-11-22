@@ -242,8 +242,6 @@ export default class Dom {
         var scrollTop = Dom.getScrollTop()
         var scrollLeft = Dom.getScrollLeft()
 
-        console.log('scrollTop', scrollTop, scrollLeft);
-
         return { 
             top: rect.top + scrollTop,
             left: rect.left + scrollLeft

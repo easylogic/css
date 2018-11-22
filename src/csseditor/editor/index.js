@@ -27,7 +27,11 @@ export default class CSSEditor extends BaseCSSEditor {
         this.refs.$layoutMain.removeClass('beginner-mode')
         this.refs.$layoutMain.removeClass('expertor-mode')
         this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode')
-        this.emit('changeEditor');
+
+        setTimeout(() => {
+            this.emit('changeEditor');
+        }, 100)
+
     }
 
     template () {
