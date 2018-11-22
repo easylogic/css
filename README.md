@@ -3,14 +3,14 @@
 
 This project is a simple editor for CSS Gradient. 
 
-https://easylogic.github.com/css/
+https://css.easylogic.studio/
 
 
 You can use it as you see it.
 
 # Screen Shot 
 
-<img width="800px" src="https://easylogic.github.com/css/resources/image/sample.png" />
+<img width="800px" src="https://css.easylogic.studio/resources/image/sample.png" />
 
 
 # Features 
