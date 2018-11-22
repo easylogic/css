@@ -86,6 +86,8 @@ export default class PredefinedLayerResizer extends UIElement {
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()
 
+        console.log(boardOffset, pageOffset);
+
         x = parseParamNumber(x, x => x + pageOffset.left - boardOffset.left) + 'px'; 
         y = parseParamNumber(y, y => y + pageOffset.top - boardOffset.top) + 'px'; 
 

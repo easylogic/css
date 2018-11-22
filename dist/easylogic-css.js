@@ -16365,6 +16365,8 @@ var PredefinedLayerResizer = function (_UIElement) {
             var boardOffset = this.$board.offset();
             var pageOffset = this.$page.offset();
 
+            console.log(boardOffset, pageOffset);
+
             x = parseParamNumber$1(x, function (x) {
                 return x + pageOffset.left - boardOffset.left;
             }) + 'px';
