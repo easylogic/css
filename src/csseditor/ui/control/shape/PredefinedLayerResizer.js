@@ -80,8 +80,8 @@ export default class PredefinedLayerResizer extends UIElement {
 
         var width = style.width
         var height = style.height
-        var x  = style.x
-        var y  = style.y
+        var x  = style.x || '0px'
+        var y  = style.y || '0px'
 
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()
