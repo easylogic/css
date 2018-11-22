@@ -168,6 +168,7 @@ $gradient-box-size: 100px;
         height: 0px;
         bottom: 0px;
         z-index: 0; 
+        display:none;
         overflow: hidden; 
         border-top: 1px solid $border-color;      
         transition: $show-timeline-animation;  

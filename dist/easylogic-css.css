@@ -916,7 +916,7 @@
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  position: absolute;
+  position: fixed;
   left: 0px;
   top: 0px; }
   .csseditor .layout-main {
@@ -1039,6 +1039,7 @@
       height: 0px;
       bottom: 0px;
       z-index: 0;
+      display: none;
       overflow: hidden;
       border-top: 1px solid #c7c7c7;
       -webkit-transition: all 0.15s linear;
