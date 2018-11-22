@@ -8,6 +8,7 @@ $guide-border-hover-color: rgba(0 , 0, 0, 0.2);
     right: 0px;
     bottom: 0px;
     top: 0px;
+    box-sizing: border-box;
     
     .page-menu { 
         position: absolute; 
@@ -16,6 +17,7 @@ $guide-border-hover-color: rgba(0 , 0, 0, 0.2);
         top: 0px;
         height: 160px;
         z-index: 5;
+        box-sizing: border-box;        
 
         .layer-menu-tab {
             position: absolute;

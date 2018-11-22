@@ -16193,16 +16193,11 @@ var PredefinedLayerResizer = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh() {
-            var _this2 = this;
-
             var isShow = this.isShow();
             this.$el.toggle(isShow);
 
             if (isShow) {
-
-                setTimeout(function () {
-                    _this2.setPosition();
-                }, 10);
+                this.setPosition();
             }
         }
     }, {
@@ -19482,6 +19477,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
 }(BasePropertyItem);
 
 var screenModes = ['expertor', 'beginner'];
+
 var CSSEditor$1 = function (_BaseCSSEditor) {
     inherits(CSSEditor, _BaseCSSEditor);
 
@@ -19496,6 +19492,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
             this.refs.$layoutMain.removeClass('beginner-mode');
             this.refs.$layoutMain.removeClass('expertor-mode');
             this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode');
+            this.emit('changeEditor');
         }
     }, {
         key: 'template',

@@ -991,7 +991,9 @@ html, body {
       left: 350px;
       right: 250px;
       top: 80px;
-      bottom: 0px; }
+      bottom: 0px;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
     .csseditor .layout-main .layout-header {
       position: absolute;
       left: 0px;
@@ -2827,14 +2829,18 @@ html, body {
     left: 0px;
     right: 0px;
     bottom: 0px;
-    top: 0px; }
+    top: 0px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box; }
     .csseditor .page-view .page-menu {
       position: absolute;
       left: 0px;
       right: 0px;
       top: 0px;
       height: 160px;
-      z-index: 5; }
+      z-index: 5;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
       .csseditor .page-view .page-menu .layer-menu-tab {
         position: absolute;
         right: 0px;
