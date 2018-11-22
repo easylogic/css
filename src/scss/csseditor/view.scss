@@ -45,13 +45,15 @@ $guide-border-hover-color: rgba(0 , 0, 0, 0.2);
         align-items: center;       
         width: 100%;
         height: 100%; 
+        box-sizing: border-box;
     }
 
     .gradient-color-view-container {
         position: relative;
         display: inline-block;
         background-color: white;
-        box-shadow: 8px 9px 20px -5px #777;      
+        box-shadow: 8px 9px 20px -5px #777;   
+        box-sizing: border-box;           
         
         &.moving {
             .predefined-layer-resizer {
@@ -85,7 +87,7 @@ $guide-border-hover-color: rgba(0 , 0, 0, 0.2);
             left: 0px;
             top: 0px;
             width: 100%;
-            height: 100%;
+            height: 100%;            
         }
     }
 

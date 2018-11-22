@@ -2860,13 +2860,17 @@
           -ms-flex-align: center;
               align-items: center;
       width: 100%;
-      height: 100%; }
+      height: 100%;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
     .csseditor .page-view .gradient-color-view-container {
       position: relative;
       display: inline-block;
       background-color: white;
       -webkit-box-shadow: 8px 9px 20px -5px #777;
-              box-shadow: 8px 9px 20px -5px #777; }
+              box-shadow: 8px 9px 20px -5px #777;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
       .csseditor .page-view .gradient-color-view-container.moving .predefined-layer-resizer {
         display: none !important; }
       .csseditor .page-view .gradient-color-view-container.moving .predefined-page-resizer {
