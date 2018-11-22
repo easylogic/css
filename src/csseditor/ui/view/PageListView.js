@@ -13,6 +13,7 @@ export default class PageList extends UIElement {
                         <div class="arrow"></div>
                     </button>                
                     <button type="button" ref="$saveButton">Save</button>
+                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>
                 </div>
             </div>
         `

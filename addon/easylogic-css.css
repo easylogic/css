@@ -1332,6 +1332,27 @@
               box-sizing: border-box;
       text-align: right;
       overflow: hidden; }
+      .csseditor .pages .project-tools a.button {
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 0px solid #c7c7c7;
+        padding: 0px 20px;
+        height: 100%;
+        display: inline-block;
+        vertical-align: middle;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-left: 1px solid #c7c7c7;
+        outline: none;
+        line-height: 34px;
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        font-size: 14px; }
       .csseditor .pages .project-tools button {
         -webkit-box-flex: 1;
             -ms-flex: 1;

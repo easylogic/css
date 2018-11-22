@@ -12872,7 +12872,7 @@ var PageList = function (_UIElement) {
     createClass(PageList, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',

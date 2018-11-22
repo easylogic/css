@@ -19,6 +19,24 @@ $layer-item-padding: 4px;
         text-align: right;
         overflow:hidden;
 
+        a.button {
+            flex:1;
+            appearance: none;
+            border: 0px solid $border-color;
+            padding: 0px 20px;
+            height: 100%;
+            display: inline-block;
+            vertical-align: middle;
+            box-sizing: border-box;
+            border-left: 1px solid $border-color;
+            outline: none;
+            line-height: 34px;
+            text-decoration: none;
+            font-weight: bold;
+            color: black;
+            font-size: 14px;
+        }
+
         button {
             flex:1;
             appearance: none;
