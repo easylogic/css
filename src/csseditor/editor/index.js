@@ -1,10 +1,10 @@
 import BaseCSSEditor from '../BaseCSSEditor';
-import PageList from '../ui/view/PageListView';
+import PageListView from '../ui/view/PageListView';
 import FeatureControl from '../ui/control/FeatureControl';
 import GradientView from '../ui/view/GradientView';
 
-import LayerList from '../ui/view/LayerListView';
-import ImageList from '../ui/view/ImageListView'
+import LayerListView from '../ui/view/LayerListView';
+import ImageListView from '../ui/view/ImageListView'
 import SubFeatureControl from '../ui/control/SubFeatureControl';
 import PropertyView from '../ui/control/panel/PropertyView';
 import ExportView from '../ui/window/ExportWindow';
@@ -41,15 +41,15 @@ export default class CSSEditor extends BaseCSSEditor {
                 <div class="layout-header">
                     <h1 class="header-title">EASYLOGIC</h1>
                     <div class="page-tab-menu">
-                        <PageList></PageList>
+                        <PageListView></PageListView>
                     </div>
                 </div>
                 <div class="layout-top">
                     <PropertyView></PropertyView>
                 </div>
                 <div class="layout-left">      
-                    <LayerList></LayerList>
-                    <ImageList></ImageList>
+                    <LayerListView></LayerListView>
+                    <ImageListView></ImageListView>
                 </div>
                 <div class="layout-body">
                     <VerticalColorStep></VerticalColorStep>
@@ -80,11 +80,11 @@ export default class CSSEditor extends BaseCSSEditor {
             ExportView,
             PropertyView,
             GradientView, 
-            PageList,
+            PageListView,
             FeatureControl, 
-            LayerList, 
+            LayerListView, 
             SubFeatureControl, 
-            ImageList,
+            ImageListView,
             Timeline,
             LayerSampleView,
             PageSampleView

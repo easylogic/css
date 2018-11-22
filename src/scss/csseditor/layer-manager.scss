@@ -3,6 +3,7 @@ $direction-border: 2px solid $pointer-color;
 $page-item-height: 35px;
 $button-size: 24px;
 $layer-item-padding: 4px;
+$mini-layer-view-height: 440px;
 
 .layers {
     // border-bottom: 1px solid $border-color;
@@ -196,6 +197,44 @@ $layer-item-padding: 4px;
 
         }
 
+    }
+
+    .mini-layer-view {
+        position: absolute;
+        top: auto;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        height: $mini-layer-view-height;
+        display: none;
+        border-right: 0px;
+
+        .property-item {
+            > .title {
+                display: none;
+            }
+        }
+
+        > .tab-header {
+            > .tab-item {
+                text-align: center;
+            }
+
+        }
+
+        .tab-body {
+            border:0px;
+        }
+    }
+
+    &.show-mini-view {
+        .layer-list {
+            bottom: $mini-layer-view-height;
+        }
+
+        .mini-layer-view {
+            display: block;
+        }
     }
 
 }

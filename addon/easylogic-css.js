@@ -14214,7 +14214,7 @@ var Transform = function (_BasePropertyItem) {
     createClass(Transform, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'property-item transform\'>\n                <div class=\'title\' ref="$title">Transform</div>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type=\'number\' ref="$rotate"> <span>deg</span>\n                        </div>\n                        <label>Scale</label>\n                        <div>\n                            <input type=\'number\' ref="$scale" min="0.5" max="10.0" step="0.1"> <span></span>\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type=\'number\' ref="$skewX"> <span>deg</span>\n                        </div>\n                        <label>SkewY</label>\n                        <div>\n                            <input type=\'number\' ref="$skewY"> <span>deg</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type=\'number\' ref="$translateX"> <span>px</span>\n                        </div>\n                        <label>translateY</label>\n                        <div>\n                            <input type=\'number\' ref="$translateY"> <span>px</span>\n                        </div>\n                    </div>                                                         \n                    \n                    <!--\n                    <div>\n                        <label>translateZ</label>\n                        <div>\n                            <input type=\'number\' ref="$translateZ"> <span>px</span>\n                        </div>\n                    </div>   -->                                                                          \n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'property-item transform show\'>\n                <div class=\'title\' ref="$title">Transform</div>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type=\'number\' ref="$rotate"> <span>deg</span>\n                        </div>\n                        <label>Scale</label>\n                        <div>\n                            <input type=\'number\' ref="$scale" min="0.5" max="10.0" step="0.1"> <span></span>\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type=\'number\' ref="$skewX"> <span>deg</span>\n                        </div>\n                        <label>SkewY</label>\n                        <div>\n                            <input type=\'number\' ref="$skewY"> <span>deg</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type=\'number\' ref="$translateX"> <span>px</span>\n                        </div>\n                        <label>translateY</label>\n                        <div>\n                            <input type=\'number\' ref="$translateY"> <span>px</span>\n                        </div>\n                    </div>                                                         \n                    \n                    <!--\n                    <div>\n                        <label>translateZ</label>\n                        <div>\n                            <input type=\'number\' ref="$translateZ"> <span>px</span>\n                        </div>\n                    </div>   -->                                                                          \n                </div>\n            </div>\n        ';
         }
     }, {
         key: '@changeEditor',
@@ -14297,7 +14297,7 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'property-item transform\'>\n                <div class=\'title\' ref="$title">Transform 3D</div> \n                <div class=\'items\'>            \n                    <div>\n                        <label>Rotate 3D</label>\n                        <div>\n                            <div class=\'input\'> \n                                <input type=\'number\' ref="$rotate3dX"> \n                                <input type=\'number\' ref="$rotate3dY"> \n                                <input type=\'number\' ref="$rotate3dZ"> \n                                <input type=\'number\' ref="$rotate3dA"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            \n                            <div class=\'input-text\'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                                <span>Angle</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale 3D</label>\n                        <div>\n                            <div class=\'input\'> \n                                <input type=\'number\' ref="$scale3dX"> \n                                <input type=\'number\' ref="$scale3dY"> \n                                <input type=\'number\' ref="$scale3dZ"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            <div class=\'input-text\'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate3D</label>\n                        <div>\n                            <div class=\'input\'> \n                                <input type=\'number\' ref="$translate3dX"> \n                                <input type=\'number\' ref="$translate3dY"> \n                                <input type=\'number\' ref="$translate3dZ"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>                            \n                        <div>\n                            <div class=\'input-text\'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'property-item transform show\'>\n                <div class=\'title\' ref="$title">Transform 3D</div> \n                <div class=\'items\'>            \n                    <div>\n                        <label>Rotate 3D</label>\n                        <div>\n                            <div class=\'input\'> \n                                <input type=\'number\' ref="$rotate3dX"> \n                                <input type=\'number\' ref="$rotate3dY"> \n                                <input type=\'number\' ref="$rotate3dZ"> \n                                <input type=\'number\' ref="$rotate3dA"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            \n                            <div class=\'input-text\'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                                <span>Angle</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale 3D</label>\n                        <div>\n                            <div class=\'input\'> \n                                <input type=\'number\' ref="$scale3dX"> \n                                <input type=\'number\' ref="$scale3dY"> \n                                <input type=\'number\' ref="$scale3dZ"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            <div class=\'input-text\'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate3D</label>\n                        <div>\n                            <div class=\'input\'> \n                                <input type=\'number\' ref="$translate3dX"> \n                                <input type=\'number\' ref="$translate3dY"> \n                                <input type=\'number\' ref="$translate3dZ"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>                            \n                        <div>\n                            <div class=\'input-text\'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n            </div>\n        ';
         }
     }, {
         key: '@changeEditor',
@@ -15525,7 +15525,7 @@ var LayerView = function (_UIElement) {
     createClass(LayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <Name></Name>                \n                <BackgroundColor></BackgroundColor> \n                <LayerColorPickerPanel></LayerColorPickerPanel>                \n                <ClipPath></ClipPath>                 \n                <!-- <ClipPathImageResource></ClipPathImageResource> -->\n                <size></size>\n                <radius></radius>                \n                <transform></transform>\n                <transform3d></transform3d>                \n                <BlendList></BlendList>\n                <MixBlendList></MixBlendList>\n                <FilterList></FilterList>                \n\n            </div> \n        ";
+            return "\n            <div class='property-view'>\n                <Name></Name>                \n                <BackgroundColor></BackgroundColor> \n                <!--<LayerColorPickerPanel></LayerColorPickerPanel>-->\n                <ClipPath></ClipPath>                 \n                <!-- <ClipPathImageResource></ClipPathImageResource> -->\n                <size></size>\n                <radius></radius>                \n                <transform></transform>\n                <transform3d></transform3d>                \n                <!--<BlendList></BlendList>-->\n                <!--<MixBlendList></MixBlendList>-->\n                <!--<FilterList></FilterList>-->\n\n            </div> \n        ";
         }
     }, {
         key: "components",
@@ -17815,6 +17815,28 @@ var GradientView = function (_BaseTab) {
     return GradientView;
 }(BaseTab);
 
+var MiniLayerView = function (_BaseTab) {
+    inherits(MiniLayerView, _BaseTab);
+
+    function MiniLayerView() {
+        classCallCheck(this, MiniLayerView);
+        return possibleConstructorReturn(this, (MiniLayerView.__proto__ || Object.getPrototypeOf(MiniLayerView)).apply(this, arguments));
+    }
+
+    createClass(MiniLayerView, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class=\"tab mini-layer-view\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"color\">Color</div>\n                    <div class=\"tab-item\" data-id=\"blend\">Blend</div>\n                    <div class=\"tab-item\" data-id=\"mix\">Mix</div>\n                    <div class=\"tab-item\" data-id=\"filter\">Filter</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"color\">\n                        <LayerColorPickerPanel></LayerColorPickerPanel>                \n                    </div>\n                    <div class=\"tab-content\" data-id=\"blend\">\n                        <BlendList></BlendList>    \n                    </div>\n                    <div class=\"tab-content\" data-id=\"mix\">\n                        <MixBlendList></MixBlendList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"filter\">\n                        <FilterList></FilterList>   \n                    </div>                                        \n                </div>\n            </div>            \n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return items;
+        }
+    }]);
+    return MiniLayerView;
+}(BaseTab);
+
 var LayerList = function (_UIElement) {
     inherits(LayerList, _UIElement);
 
@@ -17826,7 +17848,12 @@ var LayerList = function (_UIElement) {
     createClass(LayerList, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1>Layers</h1>\n                    <div class="tools">\n                        <button type="button" class=\'add-layer\' ref="$addLayer">+</button>\n                        <button type="button" class=\'view-sample\' ref="$viewSample">\n                            <div class="arrow"></div>\n                        </button>\n                    </div>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
+            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1>Layers</h1>\n                    <div class="tools">\n                        <button type="button" class=\'add-layer\' ref="$addLayer">+</button>\n                        <button type="button" class=\'view-sample\' ref="$viewSample">\n                            <div class="arrow"></div>\n                        </button>\n                    </div>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n                <MiniLayerView></MiniLayerView>\n            </div>\n        ';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return { MiniLayerView: MiniLayerView };
         }
     }, {
         key: 'makeItemNode',
@@ -17869,6 +17896,10 @@ var LayerList = function (_UIElement) {
         key: 'refresh',
         value: function refresh() {
             this.load();
+
+            var image = this.read('/item/current/image');
+
+            this.$el.toggleClass('show-mini-view', !image);
         }
     }, {
         key: '@changeEditor',
@@ -19595,7 +19626,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageList></PageList>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerList></LayerList>\n                    <ImageList></ImageList>\n                </div>\n                <div class="layout-body">\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <ImageListView></ImageListView>\n                </div>\n                <div class="layout-body">\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -19608,11 +19639,11 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
                 ExportView: ExportWindow,
                 PropertyView: PropertyView,
                 GradientView: GradientView,
-                PageList: PageList,
+                PageListView: PageList,
                 FeatureControl: FeatureControl,
-                LayerList: LayerList,
+                LayerListView: LayerList,
                 SubFeatureControl: SubFeatureControl,
-                ImageList: ImageList,
+                ImageListView: ImageList,
                 Timeline: Timeline,
                 LayerSampleView: LayerSampleWindow,
                 PageSampleView: PageSampleWindow

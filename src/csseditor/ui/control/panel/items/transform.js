@@ -3,7 +3,7 @@ import BasePropertyItem from "./BasePropertyItem";
 export default class Transform extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item transform'>
+            <div class='property-item transform show'>
                 <div class='title' ref="$title">Transform</div>
                 <div class='items'>            
                     <div>

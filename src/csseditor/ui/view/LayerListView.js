@@ -1,4 +1,5 @@
 import UIElement from '../../../colorpicker/UIElement';
+import MiniLayerView from './MiniLayerView';
 
 export default class LayerList extends UIElement {
 
@@ -15,8 +16,13 @@ export default class LayerList extends UIElement {
                     </div>
                 </div>             
                 <div class="layer-list" ref="$layerList"></div>
+                <MiniLayerView></MiniLayerView>
             </div>
         `
+    }
+
+    components () {
+        return { MiniLayerView }
     }
 
     makeItemNode (node, index) {
@@ -65,6 +71,10 @@ export default class LayerList extends UIElement {
 
     refresh () {
         this.load()
+
+        var image = this.read('/item/current/image');
+
+        this.$el.toggleClass('show-mini-view', !image);
     }
 
     '@changeEditor' () {

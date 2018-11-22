@@ -934,7 +934,6 @@ html, body {
       height: 300px; }
     .csseditor .layout-main.expertor-mode .layout-left {
       top: 70px;
-      width: 200px;
       border-right: 1px solid #c7c7c7; }
     .csseditor .layout-main.expertor-mode .layout-right {
       top: 70px;
@@ -944,7 +943,6 @@ html, body {
       border-right: 0px; }
     .csseditor .layout-main.expertor-mode .layout-body {
       top: 70px;
-      left: 300px;
       right: 250px; }
     .csseditor .layout-main.expertor-mode .layout-top {
       height: 40px;
@@ -1612,6 +1610,25 @@ html, body {
               top: 50%;
               -webkit-transform: translateY(-50%);
                       transform: translateY(-50%); }
+    .csseditor .layers .mini-layer-view {
+      position: absolute;
+      top: auto;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      height: 440px;
+      display: none;
+      border-right: 0px; }
+      .csseditor .layers .mini-layer-view .property-item > .title {
+        display: none; }
+      .csseditor .layers .mini-layer-view > .tab-header > .tab-item {
+        text-align: center; }
+      .csseditor .layers .mini-layer-view .tab-body {
+        border: 0px; }
+    .csseditor .layers.show-mini-view .layer-list {
+      bottom: 440px; }
+    .csseditor .layers.show-mini-view .mini-layer-view {
+      display: block; }
   .csseditor .layout-main.small-mode .layer-list .tree-item {
     height: 40px;
     overflow: auto; }
