@@ -16323,11 +16323,16 @@ var PredefinedLayerResizer = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh() {
+            var _this2 = this;
+
             var isShow = this.isShow();
             this.$el.toggle(isShow);
 
             if (isShow) {
-                this.setPosition();
+
+                setTimeout(function () {
+                    _this2.setPosition();
+                }, 100);
             }
         }
     }, {
@@ -16364,8 +16369,6 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             var boardOffset = this.$board.offset();
             var pageOffset = this.$page.offset();
-
-            console.log(boardOffset, pageOffset);
 
             x = parseParamNumber$1(x, function (x) {
                 return x + pageOffset.left - boardOffset.left;

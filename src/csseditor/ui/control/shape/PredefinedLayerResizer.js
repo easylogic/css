@@ -55,7 +55,10 @@ export default class PredefinedLayerResizer extends UIElement {
         this.$el.toggle(isShow)
 
         if (isShow) {
-            this.setPosition()
+
+            setTimeout(() => {
+                this.setPosition()
+            }, 100)
         }
     }
 
@@ -85,8 +88,6 @@ export default class PredefinedLayerResizer extends UIElement {
 
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()
-
-        console.log(boardOffset, pageOffset);
 
         x = parseParamNumber(x, x => x + pageOffset.left - boardOffset.left) + 'px'; 
         y = parseParamNumber(y, y => y + pageOffset.top - boardOffset.top) + 'px'; 
