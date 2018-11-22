@@ -51,9 +51,11 @@ export default class PredefinedPageResizer extends UIElement {
 
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()
+        var canvasScrollLeft = this.$board.scrollLeft();
+        var canvasScrollTop = this.$board.scrollTop();
 
-        var x = (pageOffset.left - boardOffset.left) + 'px'; 
-        var y = (pageOffset.top - boardOffset.top) + 'px'; 
+        var x = (pageOffset.left - boardOffset.left + canvasScrollLeft) + 'px'; 
+        var y = (pageOffset.top - boardOffset.top + canvasScrollTop) + 'px'; 
 
         this.$el.css({ 
             width, height, 
@@ -110,14 +112,14 @@ export default class PredefinedPageResizer extends UIElement {
 
     toBottom () {
         var dy = this.targetXY.y - this.xy.y
-        var height = this.height + dy*2; 
+        var height = this.height + dy * 2; 
 
         return { height }        
     }
 
     toRight () {
         var dx = this.targetXY.x - this.xy.x
-        var width = this.width + dx*2; 
+        var width = this.width + dx * 2; 
 
         return { width }
     }
@@ -169,8 +171,11 @@ export default class PredefinedPageResizer extends UIElement {
     }
 
     'pointerend document' (e) {
-        this.currentType = null; 
-        this.xy = null 
+        if (this.xy) {
+            this.currentType = null; 
+            this.xy = null 
+            // this.emit('changeEditor');    
+        }
     }
 
     'resize.debounce(300) window' (e) {

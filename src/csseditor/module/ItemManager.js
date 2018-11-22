@@ -36,7 +36,7 @@ const LAYER_DEFAULT_OBJECT = {
         x: '0px',
         y: '0px',
         'background-blend-mode' : 'multiply',
-        'mix-blend-mode': 'multiply'
+        'mix-blend-mode': 'normal'
     },    
     filters: {}
 }

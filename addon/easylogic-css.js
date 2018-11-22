@@ -10499,6 +10499,7 @@ var ToolManager = function (_BaseModule) {
             this.$store.tool = {
                 color: '',
                 colorSource: '',
+                'show.grid': false,
                 'guide.only': false,
                 'guide.angle': true,
                 'guide.position': true
@@ -10897,7 +10898,7 @@ var LAYER_DEFAULT_OBJECT = {
         x: '0px',
         y: '0px',
         'background-blend-mode': 'multiply',
-        'mix-blend-mode': 'multiply'
+        'mix-blend-mode': 'normal'
     },
     filters: {}
 };
@@ -13330,7 +13331,7 @@ var GradientSteps = function (_UIElement) {
 
                 var cut = step.cut ? 'cut' : '';
                 var unitValue = _this2.getUnitValue(step);
-                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="percent" min="0" max="100" step="0.1"  value="' + unitValue.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="px" min="0" max="1000" step="1"  value="' + unitValue.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="em" min="0" max="500" step="0.1"  value="' + unitValue.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
+                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="' + unitValue.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="px" min="-100" max="1000" step="1"  value="' + unitValue.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="' + unitValue.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
             });
         }
     }, {
@@ -14541,7 +14542,7 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background'>\n                <!-- <div class='title' ref=\"$title\">Background</div> -->   \n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background'>\n                <!-- <div class='title' ref=\"$title\">Background</div> -->   \n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "updateWidth",
@@ -15440,7 +15441,53 @@ var ClipPath = function (_BasePropertyItem) {
     return ClipPath;
 }(BasePropertyItem);
 
+var PageShowGrid = function (_UIElement) {
+    inherits(PageShowGrid, _UIElement);
+
+    function PageShowGrid() {
+        classCallCheck(this, PageShowGrid);
+        return possibleConstructorReturn(this, (PageShowGrid.__proto__ || Object.getPrototypeOf(PageShowGrid)).apply(this, arguments));
+    }
+
+    createClass(PageShowGrid, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'property-item hidden\'>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Show Grid</label>\n                        <div>\n                            <input type=\'checkbox\' ref="$check">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.refresh();
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/item/current/page', function (item) {
+                _this2.refs.$check.el.checked = _this2.read('/tool/get', 'show.grid');
+            });
+        }
+    }, {
+        key: 'click $check',
+        value: function click$check() {
+            var _this3 = this;
+
+            this.read('/item/current/page', function (item) {
+                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.el.checked);
+            });
+        }
+    }]);
+    return PageShowGrid;
+}(UIElement);
+
 var items = {
+    PageShowGrid: PageShowGrid,
     ClipPath: ClipPath,
     // ClipPathImageResource,    
     PageLayout: PageLayout,
@@ -15649,9 +15696,11 @@ var PredefinedPageResizer = function (_UIElement) {
 
             var boardOffset = this.$board.offset();
             var pageOffset = this.$page.offset();
+            var canvasScrollLeft = this.$board.scrollLeft();
+            var canvasScrollTop = this.$board.scrollTop();
 
-            var x = pageOffset.left - boardOffset.left + 'px';
-            var y = pageOffset.top - boardOffset.top + 'px';
+            var x = pageOffset.left - boardOffset.left + canvasScrollLeft + 'px';
+            var y = pageOffset.top - boardOffset.top + canvasScrollTop + 'px';
 
             this.$el.css({
                 width: width, height: height,
@@ -15784,8 +15833,11 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'pointerend document',
         value: function pointerendDocument(e) {
-            this.currentType = null;
-            this.xy = null;
+            if (this.xy) {
+                this.currentType = null;
+                this.xy = null;
+                // this.emit('changeEditor');    
+            }
         }
     }, {
         key: 'resize.debounce(300) window',
@@ -16176,6 +16228,7 @@ var PredefinedLayerResizer = function (_UIElement) {
             get(PredefinedLayerResizer.prototype.__proto__ || Object.getPrototypeOf(PredefinedLayerResizer.prototype), 'initialize', this).call(this);
 
             this.$board = this.parent.refs.$board;
+            this.$canvas = this.parent.refs.$canvas;
             this.$page = this.parent.refs.$page;
         }
     }, {
@@ -16232,12 +16285,14 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             var boardOffset = this.$board.offset();
             var pageOffset = this.$page.offset();
+            var canvasScrollLeft = this.$board.scrollLeft();
+            var canvasScrollTop = this.$board.scrollTop();
 
             x = parseParamNumber$1(x, function (x) {
-                return x + pageOffset.left - boardOffset.left;
+                return x + pageOffset.left - boardOffset.left + canvasScrollLeft;
             }) + 'px';
             y = parseParamNumber$1(y, function (y) {
-                return y + pageOffset.top - boardOffset.top;
+                return y + pageOffset.top - boardOffset.top + canvasScrollTop;
             }) + 'px';
 
             this.$el.css({
@@ -17502,9 +17557,16 @@ var GradientView = function (_BaseTab) {
     }
 
     createClass(GradientView, [{
+        key: 'initialize',
+        value: function initialize() {
+            get(GradientView.prototype.__proto__ || Object.getPrototypeOf(GradientView.prototype), 'initialize', this).call(this);
+
+            this.hasScroll = false;
+        }
+    }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedLayerResizer></PredefinedLayerResizer>                        \n                        <LayerShapeEditor></LayerShapeEditor>\n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n \n                <!--<ColorPickerLayer></ColorPickerLayer>-->\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedLayerResizer></PredefinedLayerResizer>                        \n                        <LayerShapeEditor></LayerShapeEditor>\n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n \n                <!--<ColorPickerLayer></ColorPickerLayer>-->\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -17573,7 +17635,39 @@ var GradientView = function (_BaseTab) {
         value: function setBackgroundColor() {
 
             var page = this.read('/item/current/page');
-            this.refs.$page.css(this.makePageCSS(page));
+
+            var pageCSS = this.makePageCSS(page);
+            var canvasCSS = {
+                width: 2000 + 'px',
+                height: 2000 + 'px'
+            };
+            this.refs.$canvas.css(canvasCSS);
+            this.refs.$page.css(pageCSS);
+
+            if (!this.hasScroll) {
+                var canvasWidth = 2000;
+                var canvasHeight = 2000;
+                var boardWidth = this.refs.$board.width();
+                var boardHeight = this.refs.$board.height();
+                var pageWidth = parseParamNumber$1(pageCSS.width);
+                var pageHeight = parseParamNumber$1(pageCSS.height);
+
+                if (boardWidth < pageWidth) {
+                    var left = canvasWidth / 2 - (pageWidth / 2 - boardWidth / 2);
+                } else {
+                    var left = canvasWidth / 2 - boardWidth / 2;
+                }
+
+                if (boardHeight < pageHeight) {
+                    var top = canvasHeight / 2 - (pageHeight / 2 - boardHeight / 2);
+                } else {
+                    var top = canvasHeight / 2 - boardHeight / 2;
+                }
+
+                this.refs.$board.el.scrollTop = Math.floor(top);
+                this.refs.$board.el.scrollLeft = Math.floor(left);
+                this.hasScroll = true;
+            }
 
             var item = this.read('/item/current/page');
 
@@ -17594,7 +17688,8 @@ var GradientView = function (_BaseTab) {
     }, {
         key: '@changeTool',
         value: function changeTool() {
-            this.refresh();
+            // this.refresh()
+            this.refs.$colorview.toggleClass('showGrid', this.read('/tool/get', 'show.grid'));
         }
     }, {
         key: 'checkPage',
@@ -18019,7 +18114,7 @@ var PropertyView = function (_UIElement) {
     createClass(PropertyView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n                <PageExport></PageExport>\n                <PageLayout></PageLayout>\n            </div>\n        ";
+            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n                <PageExport></PageExport>\n                <PageLayout></PageLayout>\n                <PageShowGrid></PageShowGrid>\n            </div>\n        ";
         }
     }, {
         key: "components",

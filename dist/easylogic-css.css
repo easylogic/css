@@ -1357,7 +1357,8 @@ html, body {
         text-decoration: none;
         font-weight: bold;
         color: black;
-        font-size: 14px; }
+        font-size: 14px;
+        cursor: pointer; }
       .csseditor .pages .project-tools button {
         -webkit-box-flex: 1;
             -ms-flex: 1;
@@ -1373,7 +1374,8 @@ html, body {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         border-left: 1px solid #c7c7c7;
-        outline: none; }
+        outline: none;
+        cursor: pointer; }
         .csseditor .pages .project-tools button.view-sample {
           position: relative; }
           .csseditor .pages .project-tools button.view-sample .arrow {
@@ -2552,10 +2554,10 @@ html, body {
     .csseditor .gradient-sample-view .gradient-sample-list {
       position: absolute;
       top: 40px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      text-align: center;
+      left: 40px;
+      right: 40px;
+      bottom: 40px;
+      text-align: left;
       overflow: auto; }
       .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image {
         -webkit-appearance: none;
@@ -2897,6 +2899,10 @@ html, body {
       background-color: white;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
+      .csseditor .page-view .gradient-color-view.showGrid {
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
+        background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+        background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px; }
     .csseditor .page-view .gradient-color-view .layer {
       position: absolute;
       left: 0px;

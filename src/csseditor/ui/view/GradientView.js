@@ -6,15 +6,22 @@ import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
 import LayerShapeEditor from '../control/shape/LayerShapeEditor';
 import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
+import { parseParamNumber } from '../../../util/filter/functions';
 
 
 export default class GradientView extends BaseTab {
+
+    initialize () {
+        super.initialize();
+
+        this.hasScroll = false;
+    }
 
     template () {
         return `
             <div class='page-view'>
                 <div class='page-content' ref="$board">
-                    <div class="page-canvas">
+                    <div class="page-canvas" ref="$canvas">
                         <div class="gradient-color-view-container" ref="$page">
                             <div class="gradient-color-view" ref="$colorview"></div>            
 
@@ -100,7 +107,39 @@ export default class GradientView extends BaseTab {
     setBackgroundColor() {
 
         var page = this.read('/item/current/page');
-        this.refs.$page.css(this.makePageCSS(page))
+
+        var pageCSS = this.makePageCSS(page);
+        var canvasCSS = {
+            width: 2000 + 'px',
+            height: 2000 + 'px'
+        }
+        this.refs.$canvas.css(canvasCSS);
+        this.refs.$page.css(pageCSS)
+
+        if (!this.hasScroll) {
+            var canvasWidth = 2000;
+            var canvasHeight = 2000;
+            var boardWidth = this.refs.$board.width();
+            var boardHeight = this.refs.$board.height();
+            var pageWidth = parseParamNumber(pageCSS.width);
+            var pageHeight = parseParamNumber(pageCSS.height);
+            
+            if (boardWidth < pageWidth) {
+                var left = canvasWidth/2 - (pageWidth/2 - boardWidth/2)
+            } else {
+                var left = (canvasWidth)/2 - (boardWidth/2)
+            }
+    
+            if (boardHeight < pageHeight) {
+                var top = canvasHeight/2 - (pageHeight/2 - boardHeight/2)
+            } else {
+                var top = canvasHeight/2 - (boardHeight/2)
+            }        
+    
+            this.refs.$board.el.scrollTop = Math.floor(top);
+            this.refs.$board.el.scrollLeft = Math.floor(left);
+            this.hasScroll = true; 
+        }
 
         var item = this.read('/item/current/page')
 
@@ -122,7 +161,8 @@ export default class GradientView extends BaseTab {
     }
 
     '@changeTool' () {
-        this.refresh()
+        // this.refresh()
+        this.refs.$colorview.toggleClass('showGrid', this.read('/tool/get', 'show.grid'))
     }
 
     checkPage (e) {

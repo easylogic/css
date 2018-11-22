@@ -120,9 +120,9 @@ export default class GradientSteps extends UIElement {
                         style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ${step.color} 10%) ;"></div>
                     <div class="guide-change ${cut}" data-colorstep-id="${step.id}"></div>
                     <div class="guide-unit ${this.getUnitName(step)}">
-                        <input type="number" class="percent" min="0" max="100" step="0.1"  value="${unitValue.percent}" data-colorstep-id="${step.id}"  />
-                        <input type="number" class="px" min="0" max="1000" step="1"  value="${unitValue.px}" data-colorstep-id="${step.id}"  />
-                        <input type="number" class="em" min="0" max="500" step="0.1"  value="${unitValue.em}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="${unitValue.percent}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="px" min="-100" max="1000" step="1"  value="${unitValue.px}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="${unitValue.em}" data-colorstep-id="${step.id}"  />
                         ${this.getUnitSelect(step)}
                     </div>       
                 </div>

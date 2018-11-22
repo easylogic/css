@@ -25,7 +25,7 @@ export default class BackgroundSize extends UIElement {
                         <label>x</label>
                         <UnitRange 
                             ref="$x" 
-                            min="0" max="1000" step="1" value="0" unit="px" 
+                            min="-100" max="1000" step="1" value="0" unit="px" 
                             maxValueFunction="getMaxX"
                             updateFunction="updateX"
                         ></UnitRange>
@@ -34,7 +34,7 @@ export default class BackgroundSize extends UIElement {
                         <label>y</label>
                         <UnitRange 
                             ref="$y" 
-                            min="0" max="1000" step="1" value="0" unit="px" 
+                            min="-100" max="1000" step="1" value="0" unit="px" 
                             maxValueFunction="getMaxY"
                             updateFunction="updateY"
                         ></UnitRange>

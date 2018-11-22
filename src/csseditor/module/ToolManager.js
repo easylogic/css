@@ -8,6 +8,7 @@ export default class ToolManager extends BaseModule {
         this.$store.tool = {
             color : '',
             colorSource : '',
+            'show.grid': false,
             'guide.only': false,            
             'guide.angle': true,
             'guide.position': true
