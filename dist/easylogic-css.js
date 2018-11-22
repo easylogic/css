@@ -6035,9 +6035,14 @@ var Dom = function () {
         value: function offset() {
             var rect = this.rect();
 
+            var scrollTop = Dom.getScrollTop();
+            var scrollLeft = Dom.getScrollLeft();
+
+            console.log('scrollTop', scrollTop, scrollLeft);
+
             return {
-                top: rect.top + Dom.getScrollTop(),
-                left: rect.left + Dom.getScrollLeft()
+                top: rect.top + scrollTop,
+                left: rect.left + scrollLeft
             };
         }
     }, {
@@ -16332,7 +16337,7 @@ var PredefinedLayerResizer = function (_UIElement) {
 
                 setTimeout(function () {
                     _this2.setPosition();
-                }, 100);
+                }, 10);
             }
         }
     }, {

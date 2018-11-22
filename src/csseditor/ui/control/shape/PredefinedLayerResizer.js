@@ -58,7 +58,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
             setTimeout(() => {
                 this.setPosition()
-            }, 100)
+            }, 10)
         }
     }
 
