@@ -909,6 +909,9 @@
   .colorsets-contextmenu.small .menu-item.small-hide {
     display: none; }
 
+html, body {
+  font-size: 13px; }
+
 .csseditor {
   width: 100%;
   height: 100%;
