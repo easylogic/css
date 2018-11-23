@@ -3478,7 +3478,8 @@ html, body {
     bottom: 0px;
     width: 100%;
     top: 30px;
-    right: 0px; }
+    right: 0px;
+    overflow: hidden; }
     .csseditor .drag-position .drag-pointer {
       position: absolute;
       width: 12px;
