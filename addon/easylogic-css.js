@@ -8193,14 +8193,14 @@ var ColorWheel = function (_UIElement) {
     }, {
         key: 'getRectangle',
         value: function getRectangle() {
-            var width = this.state.get('$el.width');
-            var height = this.state.get('$el.height');
-            var radius = this.state.get('$colorwheel.width') / 2;
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var radius = this.refs.$colorwheel.width() / 2;
 
-            var minX = this.state.get('$el.offsetLeft');
+            var minX = this.$el.offsetLeft();
             var centerX = minX + width / 2;
 
-            var minY = this.state.get('$el.offsetTop');
+            var minY = this.$el.offsetTop();
             var centerY = minY + height / 2;
 
             return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };

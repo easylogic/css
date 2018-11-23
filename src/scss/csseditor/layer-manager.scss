@@ -13,7 +13,8 @@ $mini-layer-view-height: 440px;
     top: 0px;
     right: 0px;
     bottom: 0px;
-
+    display: flex;
+    flex-direction: column;
 
     button {
         appearance: none;
@@ -30,13 +31,11 @@ $mini-layer-view-height: 440px;
     }
 
     > .title {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        right: 0px;
+        flex: none;
         height: 30px;
         padding: 5px;
         box-sizing: border-box;
+        position: relative;
 
         h1 {
             font-size: 12px; 
@@ -95,14 +94,11 @@ $mini-layer-view-height: 440px;
     }    
 
     .layer-list {
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        bottom: 0px;
-        top: 30px;
+        flex: 1 1 auto;
         overflow: auto; 
         border-top: 1px solid #ececec;
         box-sizing: border-box;
+        position: relative;        
         
         button {
             display: inline-block;      
@@ -200,14 +196,11 @@ $mini-layer-view-height: 440px;
     }
 
     .mini-layer-view {
-        position: absolute;
-        top: auto;
-        bottom: 0px;
-        left: 0px;
-        right: 0px;
+        flex: none;
         height: $mini-layer-view-height;
         display: none;
         border-right: 0px;
+        position: relative;        
 
         .property-item {
             > .title {
@@ -229,7 +222,7 @@ $mini-layer-view-height: 440px;
 
     &.show-mini-view {
         .layer-list {
-            bottom: $mini-layer-view-height;
+            // bottom: $mini-layer-view-height;
         }
 
         .mini-layer-view {

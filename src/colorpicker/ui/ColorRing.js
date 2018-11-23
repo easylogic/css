@@ -39,7 +39,7 @@ export default class ColorRing extends ColorWheel {
             e,  
             this.getDefaultValue(),
             radius, 
-            centerX, 
+            centerX,  
             centerY
         )
 
