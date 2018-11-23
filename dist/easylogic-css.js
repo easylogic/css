@@ -5989,6 +5989,17 @@ var Dom = function () {
                 return this;
             }
         }
+
+        /**
+         * 
+         * $el.css`
+         *  border-color: yellow;
+         * `
+         * 
+         * @param {*} key 
+         * @param {*} value 
+         */
+
     }, {
         key: 'css',
         value: function css(key, value) {
@@ -6007,6 +6018,15 @@ var Dom = function () {
                     });
                 }
             }
+
+            return this;
+        }
+    }, {
+        key: 'cssText',
+        value: function cssText(value) {
+            this.el.cssText = value.split(';').map(function (it) {
+                return it.trim();
+            }).join(';');
 
             return this;
         }
@@ -8326,14 +8346,14 @@ var ColorWheel = function (_UIElement) {
     }, {
         key: 'getRectangle',
         value: function getRectangle() {
-            var width = this.state.get('$el.width');
-            var height = this.state.get('$el.height');
-            var radius = this.state.get('$colorwheel.width') / 2;
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var radius = this.refs.$colorwheel.width() / 2;
 
-            var minX = this.state.get('$el.offsetLeft');
+            var minX = this.$el.offsetLeft();
             var centerX = minX + width / 2;
 
-            var minY = this.state.get('$el.offsetTop');
+            var minY = this.$el.offsetTop();
             var centerY = minY + height / 2;
 
             return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
@@ -11828,10 +11848,13 @@ var ItemManager = function (_BaseModule) {
         key: '/item/addCopy/layer',
         value: function itemAddCopyLayer($store, sourceId) {
 
-            var layer = $store.read('collect/layer/one', sourceId);
-            var newLayerId = $store.run('/item/recover/layer', layer, layer.parentId);
+            var layer = $store.read('/collect/layer/one', sourceId);
 
-            $store.run('/item/move/to', sourceId, newLayerId);
+            $store.run('/item/addCache/layer', layer);
+            // var item = $store.read('/item/get', sourceId);
+            // var newLayerId = $store.run('/item/recover/layer', layer, item.parentId);
+
+            // $store.run('/item/move/to', sourceId, newLayerId);        
         }
     }, {
         key: '/item/addCache/layer',

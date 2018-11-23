@@ -200,6 +200,16 @@ export default class Dom {
         }
         
     }
+
+    /**
+     * 
+     * $el.css`
+     *  border-color: yellow;
+     * `
+     * 
+     * @param {*} key 
+     * @param {*} value 
+     */
     
     css (key, value) {
         if (arguments.length == 2) {
@@ -218,6 +228,12 @@ export default class Dom {
         }
     
         return this;
+    }
+
+    cssText (value) {
+        this.el.cssText = value.split(';').map(it => it.trim()).join(';');
+
+        return this; 
     }
 
     cssFloat (key) {

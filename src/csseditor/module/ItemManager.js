@@ -726,10 +726,13 @@ export default class ItemManager extends BaseModule {
 
     '/item/addCopy/layer' ($store, sourceId) {
 
-        var layer = $store.read('collect/layer/one', sourceId);
-        var newLayerId = $store.run('/item/recover/layer', layer, layer.parentId);
+        var layer = $store.read('/collect/layer/one', sourceId);
+
+        $store.run('/item/addCache/layer', layer);
+        // var item = $store.read('/item/get', sourceId);
+        // var newLayerId = $store.run('/item/recover/layer', layer, item.parentId);
         
-        $store.run('/item/move/to', sourceId, newLayerId);        
+        // $store.run('/item/move/to', sourceId, newLayerId);        
     }
 
     '/item/addCache/layer' ($store, layer) {
