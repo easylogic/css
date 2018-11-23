@@ -95,26 +95,15 @@
                     // background-color: black;
                     border: 1px solid $border-color;
                     pointer-events: none;
-                    &:before {
-                        content: "";
-                        position: absolute;
-                        top: 0px;
-                        bottom: 0px;
-                        left: 3px;
-                        right: 3px;
-                        background-color: black; 
-                    }
+
+                    background-image: linear-gradient(to top, black 0%,black 100%);
+                    background-size: 2px 2px;
+                    background-position: 2.5px center;
+                    background-repeat: repeat-y;
 
                     &.cut {
-                        &:before {
-                            content: "";
-                            position: absolute;
-                            top: 3px;
-                            bottom: 3px;
-                            left: 0px;
-                            right: 0px;
-                            background-color: black; 
-                        }
+                        background-position: center 2.5px;                            
+                        background-repeat: repeat-x;
                     }
 
                     &.easing {
@@ -122,9 +111,6 @@
                         background-repeat: no-repeat;
                         background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAB3SURBVChTY9iefGyO+gasCCjFgCaEhrBLf33x/f6uZ0AGuvRc7Y37i8/8////3JQbQC5CekPwgRsrH/z48Aso9+bah8VmW6HSQBaQDxQFygFVANXB9YCkgeYA5YBmAk2GS0AQSBroCqBbkEXhCN1paAhvsCQfAwDynahhkocJpQAAAABJRU5ErkJggg==);
                         border:0px;
-                        &:before {
-                            display: none;
-                        }
                     }
 
                 } 

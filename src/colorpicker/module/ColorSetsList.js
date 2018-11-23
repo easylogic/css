@@ -8,6 +8,7 @@ export default class ColorSetsList extends BaseModule {
         // set property
         this.$store.colorSetsList = [
             {   name : "Material", 
+                edit: true,
                 colors: [ 
                     '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', 
                     '#2196F3', '#03A9F4', '#00BCD4',  '#009688', '#4CAF50', 
@@ -15,7 +16,7 @@ export default class ColorSetsList extends BaseModule {
                     '#FF5722',  '#795548', '#9E9E9E', '#607D8B' 
                 ]
             },
-            { name : "Custom", "edit" : true, "colors" : [] },
+            { name : "Custom", "edit" : true, "colors" : [ ] },
             { name: "Color Scale", "scale" : ['red', 'yellow', 'black' ], count : 5 }
         ]
         this.$store.currentColorSets = {}        

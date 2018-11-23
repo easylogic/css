@@ -96,35 +96,22 @@
 
                     .guide-change {
                         position: absolute;
-                        width: 16px;
-                        height: 16px;
+                        width: 12px;
+                        height: 12px;
                         box-sizing: border-box;
                         top: 50%;
                         left: 0px;
                         transform: translateY(-50%);
                         border: 1px solid $border-color;
                         cursor: pointer;
-    
-                        &:before {
-                            content: "";
-                            position: absolute;
-                            top: 0px;
-                            bottom: 0px;
-                            left: 5px;
-                            right: 5px;
-                            background-color: black; 
-                        }
+                        background-image: linear-gradient(to top, black 0%,black 100%);
+                        background-size: 3px 3px;
+                        background-position: 3.5px center;
+                        background-repeat: repeat-y;
     
                         &.cut {
-                            &:before {
-                                content: "";
-                                position: absolute;
-                                top: 5px;
-                                bottom: 5px;
-                                left: 0px;
-                                right: 0px;
-                                background-color: black; 
-                            }
+                            background-position: center 3px;                            
+                            background-repeat: repeat-x;
                         }
     
                     } 
