@@ -202,6 +202,7 @@ $mini-layer-view-height: 420px;
                 border:0px;
                 background-color: white; 
                 border-bottom: 1px solid $border-color;
+                border-left: 1px solid $border-color;
 
                 &.selected {
                     background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%,rgb(244,244,244) 0%,rgb(244,244,244) 10px,rgba(0, 0, 0, 0.1) 10px,rgba(0, 0, 0, 0.1) 20px);

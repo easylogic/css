@@ -1637,7 +1637,8 @@ html, body {
         .csseditor .layers .layer-list .tree-item-children .tree-item {
           border: 0px;
           background-color: white;
-          border-bottom: 1px solid #c7c7c7; }
+          border-bottom: 1px solid #c7c7c7;
+          border-left: 1px solid #c7c7c7; }
           .csseditor .layers .layer-list .tree-item-children .tree-item.selected {
             background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%, #f4f4f4 0%, #f4f4f4 10px, rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 20px);
             background-repeat: repeat-x;
