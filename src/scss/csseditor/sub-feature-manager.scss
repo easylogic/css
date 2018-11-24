@@ -9,7 +9,7 @@ $layer-item-padding: 4px;
     bottom: 10px;
     left : 10px;
     right: 10px;
-
+    z-index: 100;
     > .feature {
         height: 100%;
         text-align: center;

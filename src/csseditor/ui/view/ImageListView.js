@@ -141,7 +141,7 @@ export default class ImageList extends UIElement {
     }           
 
     'click $imageList .copy-item' (e) {
-        this.dispatch('/item/addCopy/image', e.$delegateTarget.attr('item-id'))
+        this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
         this.refresh()
     }
 

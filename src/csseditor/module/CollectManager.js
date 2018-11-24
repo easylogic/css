@@ -12,6 +12,21 @@ export default class CollectManager extends BaseModule {
         })
     }
 
+    '*/collect/one' ($store, id) {
+        var item = $store.read('/item/get', id);
+
+        switch(item.itemType) {
+        case 'page': 
+            return $store.read('/collect/page/one', id);
+        case 'layer': 
+            return $store.read('/collect/layer/one', id);
+        case 'image': 
+            return $store.read('/collect/image/one', id);
+        }
+
+        return null;
+    }
+
     '*/collect/image/one' ($store, imageId) {
         var image = $store.read('/clone', $store.items[imageId]);
         delete image.id;

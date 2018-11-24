@@ -11776,12 +11776,6 @@ var ItemManager = function (_BaseModule) {
             $store.run('/item/set', image, isSelected);
         }
     }, {
-        key: '/item/addCopy',
-        value: function itemAddCopy($store, sourceId) {
-            var newItemId = $store.read('/item/copy', sourceId);
-            $store.run('/item/move/to', sourceId, newItemId);
-        }
-    }, {
         key: '/item/move/to',
         value: function itemMoveTo($store, sourceId, newItemId) {
 
@@ -11794,34 +11788,33 @@ var ItemManager = function (_BaseModule) {
             $store.run('/item/sort', newItemId);
         }
     }, {
-        key: '/item/addCopy/page',
-        value: function itemAddCopyPage($store, sourceId) {
-            var page = $store.read('/collect/page', sourceId);
-            var newPageId = $store.read('/item/create/object', page.page);
+        key: '*/item/recover',
+        value: function itemRecover($store, item, parentId) {
 
-            page.layers.forEach(function (layer) {
-                var newLayerId = $store.read('/item/create/object', Object.assign({}, layer.layer, { parentId: newPageId }));
-                layer.images.forEach(function (image) {
-                    var newImageId = $store.read('/item/create/object', Object.assign({}, image.image, { parentId: newLayerId }));
-
-                    image.colorsteps.forEach(function (step) {
-                        $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
-                    });
-                });
+            if (item.page) {
+                return $store.read('/item/recover/page', item, parentId);
+            } else if (item.layer) {
+                return $store.read('/item/recover/layer', item, parentId);
+            } else if (item.image) {
+                return $store.read('/item/recover/image', item, parentId);
+            }
+        }
+    }, {
+        key: '*/item/recover/image',
+        value: function itemRecoverImage($store, image, parentId) {
+            var newImageId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, image.image));
+            image.colorsteps.forEach(function (step) {
+                $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
             });
 
-            $store.run('/item/move/to', sourceId, newPageId);
+            return newImageId;
         }
     }, {
         key: '*/item/recover/layer',
         value: function itemRecoverLayer($store, layer, parentId) {
             var newLayerId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, layer.layer));
             layer.images.forEach(function (image) {
-                var newImageId = $store.read('/item/create/object', Object.assign({}, image.image, { parentId: newLayerId }));
-
-                image.colorsteps.forEach(function (step) {
-                    $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
-                });
+                $store.read('/item/recover/image', image, newLayerId);
             });
 
             return newLayerId;
@@ -11831,55 +11824,21 @@ var ItemManager = function (_BaseModule) {
         value: function itemRecoverPage($store, page) {
             var newPageId = $store.read('/item/create/object', page.page);
             page.layers.forEach(function (layer) {
-
-                var newLayerId = $store.read('/item/create/object', Object.assign({ parentId: newPageId }, layer.layer));
-                layer.images.forEach(function (image) {
-                    var newImageId = $store.read('/item/create/object', Object.assign({}, image.image, { parentId: newLayerId }));
-
-                    image.colorsteps.forEach(function (step) {
-                        $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
-                    });
-                });
+                $store.read('/item/recover/layer', layer, newPageId);
             });
 
             return newPageId;
         }
     }, {
-        key: '/item/addCopy/layer',
-        value: function itemAddCopyLayer($store, sourceId) {
-
-            var layer = $store.read('/collect/layer/one', sourceId);
-
-            $store.run('/item/addCache/layer', layer);
-            // var item = $store.read('/item/get', sourceId);
-            // var newLayerId = $store.run('/item/recover/layer', layer, item.parentId);
-
-            // $store.run('/item/move/to', sourceId, newLayerId);        
+        key: '/item/addCopy',
+        value: function itemAddCopy($store, sourceId) {
+            $store.run('/item/addCache', $store.read('/collect/one', sourceId), sourceId);
         }
     }, {
-        key: '/item/addCache/layer',
-        value: function itemAddCacheLayer($store, layer) {
-            var currentLayer = $store.read('/item/current/layer');
-
-            $store.run('/item/move/to', currentLayer.id, $store.read('/item/recover/layer', layer, currentLayer.parentId));
-        }
-    }, {
-        key: '/item/addCache/page',
-        value: function itemAddCachePage($store, page) {
-            var currentPage = $store.read('/item/current/page');
-
-            $store.run('/item/move/to', currentPage.id, $store.read('/item/recover/page', page));
-        }
-    }, {
-        key: '/item/addCopy/image',
-        value: function itemAddCopyImage($store, sourceId) {
-            var currentImage = $store.read('/item/get', sourceId);
-            var image = $store.read('/collect/image/one', sourceId);
-            var newImageId = $store.read('/item/create/object', Object.assign({ parentId: currentImage.parentId }, image.image));
-            image.colorsteps.forEach(function (step) {
-                $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
-            });
-            $store.run('/item/move/to', sourceId, newImageId);
+        key: '/item/addCache',
+        value: function itemAddCache($store, item, sourceId) {
+            var currentItem = $store.read('/item/get', sourceId);
+            $store.run('/item/move/to', sourceId, $store.read('/item/recover', item, currentItem.parentId));
         }
     }, {
         key: '/item/move/next',
@@ -11913,10 +11872,47 @@ var ItemManager = function (_BaseModule) {
         value: function itemMoveIn($store, destId, sourceId) {
             var destItem = $store.read('/item/get', destId);
             var sourceItem = $store.read('/item/get', sourceId);
+            sourceItem.parentId = destItem.parentId;
             sourceItem.index = destItem.index - COPY_INDEX_DIST;
 
             $store.run('/item/set', sourceItem, true);
             $store.run('/item/sort', sourceId);
+        }
+    }, {
+        key: '/item/copy/in',
+        value: function itemCopyIn($store, destId, sourceId) {
+            var destItem = $store.read('/item/get', destId);
+            var newImageId = $store.read('/item/recover', $store.read('/collect/one', sourceId), destItem.parentId);
+
+            var newImageItem = $store.read('/item/get', newImageId);
+            newImageItem.index = destItem.index - COPY_INDEX_DIST;
+
+            $store.run('/item/set', sourceItem, true);
+            $store.run('/item/sort', sourceId);
+        }
+    }, {
+        key: '/item/move/in/layer',
+        value: function itemMoveInLayer($store, destId, sourceId) {
+            var destItem = $store.read('/item/get', destId); /* layer */
+            var sourceItem = $store.read('/item/get', sourceId);
+
+            sourceItem.parentId = destItem.id;
+            sourceItem.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('/item/set', sourceItem, true);
+            $store.run('/item/sort', sourceId);
+        }
+    }, {
+        key: '/item/copy/in/layer',
+        value: function itemCopyInLayer($store, destId, sourceId) {
+            var destItem = $store.read('/item/get', destId); /* layer */
+            var newImageId = $store.read('/item/recover', $store.read('/collect/one', sourceId), destItem.parentId);
+
+            var newImageItem = $store.read('/item/get', newImageId);
+            newImageItem.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('/item/set', newImageItem, true);
+            $store.run('/item/sort', newImageId);
         }
     }, {
         key: '/item/move/prev',
@@ -12716,6 +12712,22 @@ var CollectManager = function (_BaseModule) {
             });
         }
     }, {
+        key: '*/collect/one',
+        value: function collectOne($store, id) {
+            var item = $store.read('/item/get', id);
+
+            switch (item.itemType) {
+                case 'page':
+                    return $store.read('/collect/page/one', id);
+                case 'layer':
+                    return $store.read('/collect/layer/one', id);
+                case 'image':
+                    return $store.read('/collect/image/one', id);
+            }
+
+            return null;
+        }
+    }, {
         key: '*/collect/image/one',
         value: function collectImageOne($store, imageId) {
             var image = $store.read('/clone', $store.items[imageId]);
@@ -12889,6 +12901,51 @@ var BaseCSSEditor = function (_UIElement) {
     return BaseCSSEditor;
 }(UIElement);
 
+var PageShowGrid = function (_UIElement) {
+    inherits(PageShowGrid, _UIElement);
+
+    function PageShowGrid() {
+        classCallCheck(this, PageShowGrid);
+        return possibleConstructorReturn(this, (PageShowGrid.__proto__ || Object.getPrototypeOf(PageShowGrid)).apply(this, arguments));
+    }
+
+    createClass(PageShowGrid, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'property-item hidden\'>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Show Grid</label>\n                        <div>\n                            <input type=\'checkbox\' ref="$check">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.refresh();
+        }
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/item/current/page', function (item) {
+                _this2.refs.$check.el.checked = _this2.read('/tool/get', 'show.grid');
+            });
+        }
+    }, {
+        key: 'click $check',
+        value: function click$check() {
+            var _this3 = this;
+
+            this.read('/item/current/page', function (item) {
+                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.el.checked);
+            });
+        }
+    }]);
+    return PageShowGrid;
+}(UIElement);
+
 var PageList = function (_UIElement) {
     inherits(PageList, _UIElement);
 
@@ -12898,9 +12955,14 @@ var PageList = function (_UIElement) {
     }
 
     createClass(PageList, [{
+        key: 'components',
+        value: function components() {
+            return { PageShowGrid: PageShowGrid };
+        }
+    }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <div class="property-item">\n                        <label>Show Grid <input type=\'checkbox\' ref="$check"></label>\n                    </div>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',
@@ -12939,7 +13001,21 @@ var PageList = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh() {
+            var _this3 = this;
+
             this.load();
+            this.read('/item/current/page', function (item) {
+                _this3.refs.$check.el.checked = _this3.read('/tool/get', 'show.grid');
+            });
+        }
+    }, {
+        key: 'click $check',
+        value: function click$check() {
+            var _this4 = this;
+
+            this.read('/item/current/page', function (item) {
+                _this4.dispatch('/tool/set', 'show.grid', _this4.refs.$check.el.checked);
+            });
         }
     }, {
         key: '@changeEditor',
@@ -15598,51 +15674,6 @@ var ClipPath = function (_BasePropertyItem) {
     return ClipPath;
 }(BasePropertyItem);
 
-var PageShowGrid = function (_UIElement) {
-    inherits(PageShowGrid, _UIElement);
-
-    function PageShowGrid() {
-        classCallCheck(this, PageShowGrid);
-        return possibleConstructorReturn(this, (PageShowGrid.__proto__ || Object.getPrototypeOf(PageShowGrid)).apply(this, arguments));
-    }
-
-    createClass(PageShowGrid, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'property-item hidden\'>\n                <div class=\'items\'>            \n                    <div>\n                        <label>Show Grid</label>\n                        <div>\n                            <input type=\'checkbox\' ref="$check">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
-            this.refresh();
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this2 = this;
-
-            this.read('/item/current/page', function (item) {
-                _this2.refs.$check.el.checked = _this2.read('/tool/get', 'show.grid');
-            });
-        }
-    }, {
-        key: 'click $check',
-        value: function click$check() {
-            var _this3 = this;
-
-            this.read('/item/current/page', function (item) {
-                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.el.checked);
-            });
-        }
-    }]);
-    return PageShowGrid;
-}(UIElement);
-
 // import ClipPathImageResource from "./ClipPathImageResource";
 
 var items = {
@@ -18029,17 +18060,27 @@ var LayerList = function (_UIElement) {
             }
         }
     }, {
+        key: 'makeItemNodeImage',
+        value: function makeItemNodeImage(item) {
+            var selected = item.selected ? 'selected' : '';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" draggable="true" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    &lt;' + item.type + '&gt;\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>                \n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-image-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>            \n            </div>\n            ';
+        }
+    }, {
         key: 'makeItemNodeLayer',
         value: function makeItemNodeLayer(item, selectedId) {
+            var _this2 = this;
+
             var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
             var selected = item.id == selectedId ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            ';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="tree-item-children">\n            ' + this.read('/item/map/children', item.id, function (item) {
+                return _this2.makeItemNodeImage(item);
+            }).join('') + '\n            </div>\n            ';
         }
     }, {
         key: 'load $layerList',
         value: function load$layerList() {
-            var _this2 = this;
+            var _this3 = this;
 
             var page = this.read('/item/current/page');
 
@@ -18048,7 +18089,7 @@ var LayerList = function (_UIElement) {
             }
 
             return this.read('/item/map/children', page.id, function (item, index) {
-                return _this2.makeItemNode(item, index);
+                return _this3.makeItemNode(item, index);
             });
         }
     }, {
@@ -18068,11 +18109,11 @@ var LayerList = function (_UIElement) {
     }, {
         key: 'click $addLayer',
         value: function click$addLayer(e) {
-            var _this3 = this;
+            var _this4 = this;
 
             this.read('/item/current/page', function (page) {
-                _this3.dispatch('/item/add', 'layer', true, page.id);
-                _this3.refresh();
+                _this4.dispatch('/item/add', 'layer', true, page.id);
+                _this4.refresh();
             });
         }
     }, {
@@ -18081,10 +18122,6 @@ var LayerList = function (_UIElement) {
 
             this.dispatch('/item/select', e.$delegateTarget.attr('id'));
             this.refresh();
-
-            if (e.$delegateTarget.attr('type') == 'layer') {
-                this.emit('@selectLayer');
-            }
         }
     }, {
         key: 'dragstart $layerList .tree-item',
@@ -18114,9 +18151,27 @@ var LayerList = function (_UIElement) {
             var destId = e.$delegateTarget.attr('id');
             var sourceId = this.draggedLayer.attr('id');
 
+            var sourceItem = this.read('/item/get', sourceId);
+            var destItem = this.read('/item/get', destId);
+
             this.draggedLayer = null;
-            this.dispatch('/item/move/in', destId, sourceId);
-            this.refresh();
+            if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
+                if (e.ctrlKey) {
+                    this.dispatch('/item/copy/in/layer', destId, sourceId);
+                } else {
+                    this.dispatch('/item/move/in/layer', destId, sourceId);
+                }
+
+                this.refresh();
+            } else if (destItem.itemType == sourceItem.itemType) {
+                if (e.ctrlKey) {
+                    this.dispatch('/item/copy/in', destId, sourceId);
+                } else {
+                    this.dispatch('/item/move/in', destId, sourceId);
+                }
+
+                this.refresh();
+            }
         }
     }, {
         key: 'drop $layerList',
@@ -18132,9 +18187,15 @@ var LayerList = function (_UIElement) {
             }
         }
     }, {
+        key: 'click $layerList .copy-image-item',
+        value: function click$layerListCopyImageItem(e) {
+            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.refresh();
+        }
+    }, {
         key: 'click $layerList .copy-item',
         value: function click$layerListCopyItem(e) {
-            this.dispatch('/item/addCopy/layer', e.$delegateTarget.attr('item-id'));
+            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
             this.refresh();
         }
     }, {
@@ -18150,6 +18211,49 @@ var LayerList = function (_UIElement) {
         }
     }]);
     return LayerList;
+}(UIElement);
+
+var LayerToolbar = function (_UIElement) {
+    inherits(LayerToolbar, _UIElement);
+
+    function LayerToolbar() {
+        classCallCheck(this, LayerToolbar);
+        return possibleConstructorReturn(this, (LayerToolbar.__proto__ || Object.getPrototypeOf(LayerToolbar)).apply(this, arguments));
+    }
+
+    createClass(LayerToolbar, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {}
+    }, {
+        key: '@changeEditor',
+        value: function changeEditor() {
+            this.refresh();
+        }
+    }, {
+        key: 'click $gradientType .gradient-item',
+        value: function click$gradientTypeGradientItem(e) {
+            var _this2 = this;
+
+            this.read('/item/current/layer', function (item) {
+
+                var type = e.$delegateTarget.attr('data-type');
+
+                _this2.dispatch('/item/prepend/image', type, true, item.id);
+                _this2.refresh();
+            });
+        }
+    }, {
+        key: 'click $el .gradient-sample-list',
+        value: function click$elGradientSampleList(e) {
+            this.emit('toggleGradientSampleView');
+        }
+    }]);
+    return LayerToolbar;
 }(UIElement);
 
 var ImageList = function (_UIElement) {
@@ -18275,7 +18379,7 @@ var ImageList = function (_UIElement) {
     }, {
         key: 'click $imageList .copy-item',
         value: function click$imageListCopyItem(e) {
-            this.dispatch('/item/addCopy/image', e.$delegateTarget.attr('item-id'));
+            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
             this.refresh();
         }
     }, {
@@ -18304,7 +18408,7 @@ var PropertyView = function (_UIElement) {
     createClass(PropertyView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n                <PageExport></PageExport>\n                <PageLayout></PageLayout>\n                <PageShowGrid></PageShowGrid>\n            </div>\n        ";
+            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n                <PageExport></PageExport>\n                <PageLayout></PageLayout>\n                <!-- <PageShowGrid></PageShowGrid> -->\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -19784,12 +19888,13 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <ImageListView></ImageListView>\n                </div>\n                <div class="layout-body">\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <!--<ImageListView></ImageListView>-->\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
+                LayerToolbar: LayerToolbar,
                 ClipPathImageList: ClipPathImageList,
                 GradientSampleView: GradientSampleWindow,
                 VerticalColorStep: VerticalColorStep,

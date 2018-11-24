@@ -19,6 +19,13 @@ $layer-item-padding: 4px;
         text-align: right;
         overflow:hidden;
 
+        .property-item {
+            flex: none;
+            display: inline-block;
+            padding: 5px 5px;
+            border-left: 1px solid $border-color;            
+        }
+
         a.button {
             flex:1;
             appearance: none;

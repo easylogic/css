@@ -3,7 +3,7 @@ $direction-border: 2px solid $pointer-color;
 $page-item-height: 35px;
 $button-size: 24px;
 $layer-item-padding: 4px;
-$mini-layer-view-height: 440px;
+$mini-layer-view-height: 420px;
 
 .layers {
     // border-bottom: 1px solid $border-color;
@@ -182,7 +182,8 @@ $mini-layer-view-height: 440px;
                     height: 20px;
                     display: inline-block;
 
-                    &.copy-item {
+                    &.copy-item,
+                    &.copy-image-item {
                         position: absolute;
                         right: 0px;
                         top: 50%;
@@ -191,6 +192,24 @@ $mini-layer-view-height: 440px;
                 }
             }
 
+        }
+
+        .tree-item-children {
+            padding-left: 50px;
+            box-sizing: border-box;
+
+            .tree-item {
+                border:0px;
+                background-color: white; 
+                border-bottom: 1px solid $border-color;
+
+                &.selected {
+                    background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%,rgb(244,244,244) 0%,rgb(244,244,244) 10px,rgba(0, 0, 0, 0.1) 10px,rgba(0, 0, 0, 0.1) 20px);
+                    background-repeat: repeat-x;
+                    background-size: 14px 14px;
+                    background-position: center center;
+                }
+            }
         }
 
     }

@@ -986,7 +986,7 @@ html, body {
       z-index: 100; }
     .csseditor .layout-main .layout-body {
       position: absolute;
-      left: 350px;
+      left: 250px;
       right: 250px;
       top: 80px;
       bottom: 0px;
@@ -1342,6 +1342,13 @@ html, body {
               box-sizing: border-box;
       text-align: right;
       overflow: hidden; }
+      .csseditor .pages .project-tools .property-item {
+        -webkit-box-flex: 0;
+            -ms-flex: none;
+                flex: none;
+        display: inline-block;
+        padding: 5px 5px;
+        border-left: 1px solid #c7c7c7; }
       .csseditor .pages .project-tools a.button {
         -webkit-box-flex: 1;
             -ms-flex: 1;
@@ -1617,17 +1624,30 @@ html, body {
           .csseditor .layers .layer-list .tree-item .item-tools button {
             height: 20px;
             display: inline-block; }
-            .csseditor .layers .layer-list .tree-item .item-tools button.copy-item {
+            .csseditor .layers .layer-list .tree-item .item-tools button.copy-item, .csseditor .layers .layer-list .tree-item .item-tools button.copy-image-item {
               position: absolute;
               right: 0px;
               top: 50%;
               -webkit-transform: translateY(-50%);
                       transform: translateY(-50%); }
+      .csseditor .layers .layer-list .tree-item-children {
+        padding-left: 50px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
+        .csseditor .layers .layer-list .tree-item-children .tree-item {
+          border: 0px;
+          background-color: white;
+          border-bottom: 1px solid #c7c7c7; }
+          .csseditor .layers .layer-list .tree-item-children .tree-item.selected {
+            background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%, #f4f4f4 0%, #f4f4f4 10px, rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 20px);
+            background-repeat: repeat-x;
+            background-size: 14px 14px;
+            background-position: center center; }
     .csseditor .layers .mini-layer-view {
       -webkit-box-flex: 0;
           -ms-flex: none;
               flex: none;
-      height: 440px;
+      height: 420px;
       display: none;
       border-right: 0px;
       position: relative; }
@@ -1642,14 +1662,67 @@ html, body {
   .csseditor .layout-main.small-mode .layer-list .tree-item {
     height: 40px;
     overflow: auto; }
+  .csseditor .layer-toolbar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 30px;
+    background-color: white;
+    z-index: 100;
+    border-bottom: 1px solid #c7c7c7; }
+    .csseditor .layer-toolbar label {
+      display: inline-block;
+      line-height: 2;
+      padding: 2px 5px;
+      height: 100%;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
+    .csseditor .layer-toolbar .gradient-type {
+      padding-top: 1px; }
+    .csseditor .layer-toolbar .gradient-sample-list {
+      display: inline-block;
+      height: 26px;
+      width: 30px;
+      vertical-align: middle;
+      position: relative;
+      text-align: center;
+      border: 1px solid #f1f1f1;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      margin-bottom: 2px; }
+      .csseditor .layer-toolbar .gradient-sample-list .arrow {
+        display: inline-block;
+        width: 10px;
+        height: 100%;
+        position: relative;
+        cursor: pointer; }
+        .csseditor .layer-toolbar .gradient-sample-list .arrow:before {
+          content: "";
+          position: absolute;
+          height: 1px;
+          width: 100%;
+          top: 10px;
+          left: 0px;
+          pointer-events: none;
+          background-color: black; }
+        .csseditor .layer-toolbar .gradient-sample-list .arrow:after {
+          content: "";
+          position: absolute;
+          height: 1px;
+          width: 100%;
+          top: 15px;
+          left: 0px;
+          pointer-events: none;
+          background-color: black; }
   .csseditor .images {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     position: absolute;
     top: 0px;
-    right: -101px;
+    right: -1px;
     bottom: 0px;
-    width: 100px;
+    width: 0px;
     border-right: 1px solid #c7c7c7;
     background-color: white; }
     .csseditor .images > .title {
@@ -1876,7 +1949,8 @@ html, body {
     position: absolute;
     bottom: 10px;
     left: 10px;
-    right: 10px; }
+    right: 10px;
+    z-index: 100; }
     .csseditor .sub-feature-control > .feature {
       height: 100%;
       text-align: center;
@@ -2377,7 +2451,7 @@ html, body {
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 10px;
+    top: 40px;
     width: 400px;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
@@ -2427,7 +2501,7 @@ html, body {
           border-radius: 50%;
           display: inline-block;
           left: 0px;
-          top: 11px;
+          top: 13px;
           -webkit-transform: translateX(-50%);
                   transform: translateX(-50%);
           position: absolute;
@@ -2554,7 +2628,7 @@ html, body {
                 transform: translateX(-50%); }
   .csseditor .gradient-sample-view {
     position: absolute;
-    left: 350px;
+    left: 250px;
     right: 0px;
     top: 80px;
     bottom: 0px;
@@ -2647,8 +2721,7 @@ html, body {
         .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item:hover .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item:hover .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image:hover .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty:hover .item-tools {
           display: inline-block; }
   .csseditor .layout-main.expertor-mode .gradient-sample-view {
-    top: 70px;
-    left: 300px; }
+    top: 70px; }
   .csseditor .layer-sample-view {
     position: absolute;
     left: 250px;
@@ -2745,8 +2818,7 @@ html, body {
         .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item:hover .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item:hover .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer:hover .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty:hover .item-tools {
           display: inline-block; }
   .csseditor .layout-main.expertor-mode .layer-sample-view {
-    top: 60px;
-    left: 200px; }
+    top: 70px; }
   .csseditor .page-sample-view {
     position: absolute;
     left: 0px;
@@ -2842,13 +2914,13 @@ html, body {
         .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item:hover .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item:hover .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page:hover .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .empty:hover .item-tools {
           display: inline-block; }
   .csseditor .layout-main.expertor-mode .page-sample-view {
-    top: 60px; }
+    top: 30px; }
   .csseditor .page-view {
     position: absolute;
     left: 0px;
     right: 0px;
     bottom: 0px;
-    top: 0px;
+    top: 30px;
     -webkit-box-sizing: border-box;
             box-sizing: border-box; }
     .csseditor .page-view .page-menu {

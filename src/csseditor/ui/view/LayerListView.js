@@ -38,6 +38,25 @@ export default class LayerList extends UIElement {
         }
 
     }
+
+   
+    makeItemNodeImage (item) {
+        var selected = item.selected ? 'selected' : '' 
+        return `
+            <div class='tree-item ${selected}' id="${item.id}" draggable="true" >
+                <div class="item-view-container">
+                    <div class="item-view"  style='${this.read('/image/toString', item)}'></div>
+                </div>
+                <div class="item-title"> 
+                    &lt;${item.type}&gt;
+                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
+                </div>                
+                <div class='item-tools'>
+                    <button type="button" class='copy-image-item' item-id='${item.id}' title="Copy">+</button>
+                </div>            
+            </div>
+            ` 
+    }        
  
     makeItemNodeLayer (item, selectedId, index = 0) {
         var selected = item.id == selectedId ? 'selected' : ''; 
@@ -53,6 +72,11 @@ export default class LayerList extends UIElement {
                 <div class='item-tools'>
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">+</button>
                 </div>                            
+            </div>
+            <div class="tree-item-children">
+            ${this.read('/item/map/children', item.id, (item) => {
+                return this.makeItemNodeImage(item)
+            }).join('')}
             </div>
             `
     }    
@@ -92,11 +116,6 @@ export default class LayerList extends UIElement {
 
         this.dispatch('/item/select', e.$delegateTarget.attr('id'));
         this.refresh();
-
-        if (e.$delegateTarget.attr('type') == 'layer') {
-            this.emit('@selectLayer')
-        }
-        
     }
 
     'dragstart $layerList .tree-item' (e) {
@@ -122,9 +141,28 @@ export default class LayerList extends UIElement {
         var destId = e.$delegateTarget.attr('id')
         var sourceId = this.draggedLayer.attr('id')
 
-        this.draggedLayer = null; 
-        this.dispatch('/item/move/in', destId, sourceId)
-        this.refresh()
+        var sourceItem = this.read('/item/get', sourceId);
+        var destItem = this.read('/item/get', destId);
+
+        this.draggedLayer = null;         
+        if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
+            if (e.ctrlKey) {
+                this.dispatch('/item/copy/in/layer', destId, sourceId)
+            } else {
+                this.dispatch('/item/move/in/layer', destId, sourceId)
+            }
+
+            this.refresh()            
+        } else if (destItem.itemType == sourceItem.itemType ) {
+            if (e.ctrlKey) {
+                this.dispatch('/item/copy/in', destId, sourceId)
+            } else {
+                this.dispatch('/item/move/in', destId, sourceId)
+            }
+
+            this.refresh()            
+        }
+
     }       
     
     'drop $layerList' (e) {
@@ -140,8 +178,13 @@ export default class LayerList extends UIElement {
 
     }           
 
+    'click $layerList .copy-image-item' (e) {
+        this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.refresh()
+    }
+
     'click $layerList .copy-item' (e) {
-        this.dispatch('/item/addCopy/layer', e.$delegateTarget.attr('item-id'))
+        this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
         this.refresh()
     }
 

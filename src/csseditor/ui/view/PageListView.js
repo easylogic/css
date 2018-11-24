@@ -1,6 +1,11 @@
 import UIElement from '../../../colorpicker/UIElement';
+import PageShowGrid from '../control/panel/items/PageShowGrid';
 
 export default class PageList extends UIElement {
+
+    components () {
+        return { PageShowGrid }
+    }
 
     template () { 
         return `
@@ -9,6 +14,9 @@ export default class PageList extends UIElement {
                 
                 </div>
                 <div class='project-tools'>
+                    <div class="property-item">
+                        <label>Show Grid <input type='checkbox' ref="$check"></label>
+                    </div>
                     <button type="button" class='view-sample' ref="$viewSample">
                         <div class="arrow"></div>
                     </button>                
@@ -57,6 +65,15 @@ export default class PageList extends UIElement {
 
     refresh () { 
         this.load()
+        this.read('/item/current/page', (item) => {
+            this.refs.$check.el.checked = this.read('/tool/get', 'show.grid');
+        })        
+    }
+
+    'click $check' () {
+        this.read('/item/current/page', (item) => {
+            this.dispatch('/tool/set', 'show.grid', this.refs.$check.el.checked)
+        })
     }
 
     '@changeEditor' () {

@@ -1,7 +1,7 @@
 .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 10px;
+    top: 10px + $layer-toolbar-height;
     width: 400px;
     transform: translateX(-50%);
     display: inline-block;
@@ -61,7 +61,7 @@
                 border-radius: 50%;
                 display: inline-block;
                 left: 0px;
-                top: 11px;
+                top: 13px;
                 transform: translateX(-50%);
                 position: absolute;
                 // background-color: rgba(white, 0.8);

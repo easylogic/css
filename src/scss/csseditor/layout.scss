@@ -10,7 +10,8 @@ $right-size: 250px;
 $timeline-header-size: 30px;
 $timeline-size: 300px;
 $show-timeline-animation: all 0.15s linear; 
-$gradient-box-size: 100px;
+$gradient-box-size: 0px;
+$layer-toolbar-height: 30px;
 
 .layout-main {
     position: absolute;
@@ -185,6 +186,7 @@ $gradient-box-size: 100px;
 @import './colorpicker-ui.scss';
 @import './page-manager.scss';
 @import './layer-manager.scss';
+@import './layer-toolbar.scss';
 @import './images.scss';
 @import './feature-manager.scss';
 @import './sub-feature-manager.scss';

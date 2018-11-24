@@ -4,6 +4,7 @@ import FeatureControl from '../ui/control/FeatureControl';
 import GradientView from '../ui/view/GradientView';
 
 import LayerListView from '../ui/view/LayerListView';
+import LayerToolbar from '../ui/view/LayerToolbar';
 import ImageListView from '../ui/view/ImageListView'
 import SubFeatureControl from '../ui/control/SubFeatureControl';
 import PropertyView from '../ui/control/panel/PropertyView';
@@ -49,9 +50,10 @@ export default class CSSEditor extends BaseCSSEditor {
                 </div>
                 <div class="layout-left">      
                     <LayerListView></LayerListView>
-                    <ImageListView></ImageListView>
+                    <!--<ImageListView></ImageListView>-->
                 </div>
                 <div class="layout-body">
+                    <LayerToolbar></LayerToolbar>
                     <VerticalColorStep></VerticalColorStep>
                     <GradientView></GradientView>                      
                 </div>                
@@ -73,6 +75,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     components() {     
         return { 
+            LayerToolbar,
             ClipPathImageList,
             GradientSampleView,
             VerticalColorStep, 
