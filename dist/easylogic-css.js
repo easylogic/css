@@ -18408,7 +18408,7 @@ var PropertyView = function (_UIElement) {
     createClass(PropertyView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n                <PageExport></PageExport>\n                <PageLayout></PageLayout>\n                <!-- <PageShowGrid></PageShowGrid> -->\n            </div>\n        ";
+            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n                <PageExport></PageExport>\n                <!--<PageLayout></PageLayout>-->\n                <!-- <PageShowGrid></PageShowGrid> -->\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -19862,8 +19862,6 @@ var ClipPathImageList = function (_BasePropertyItem) {
     return ClipPathImageList;
 }(BasePropertyItem);
 
-var screenModes = ['expertor', 'beginner'];
-
 var CSSEditor$1 = function (_BaseCSSEditor) {
     inherits(CSSEditor, _BaseCSSEditor);
 
@@ -19877,9 +19875,9 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
         value: function afterRender() {
             var _this2 = this;
 
-            this.refs.$layoutMain.removeClass('beginner-mode');
-            this.refs.$layoutMain.removeClass('expertor-mode');
-            this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode');
+            // this.refs.$layoutMain.removeClass('beginner-mode')
+            // this.refs.$layoutMain.removeClass('expertor-mode')
+            // this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode')
 
             setTimeout(function () {
                 _this2.emit('changeEditor');
@@ -19888,7 +19886,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <!--<ImageListView></ImageListView>-->\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <!--<ImageListView></ImageListView>-->\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -19967,15 +19965,11 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: '@updateLayout',
         value: function updateLayout(layout) {
-            var _this4 = this;
+            // screenModes.filter(key => key != layout).forEach(key => {
+            //     this.refs.$layoutMain.removeClass(`${key}-mode`)
+            // })
 
-            screenModes.filter(function (key) {
-                return key != layout;
-            }).forEach(function (key) {
-                _this4.refs.$layoutMain.removeClass(key + '-mode');
-            });
-
-            this.refs.$layoutMain.addClass(layout + '-mode');
+            // this.refs.$layoutMain.addClass(`${layout}-mode`)
         }
     }]);
     return CSSEditor;

@@ -25,9 +25,9 @@ export default class CSSEditor extends BaseCSSEditor {
 
 
     afterRender() {
-        this.refs.$layoutMain.removeClass('beginner-mode')
-        this.refs.$layoutMain.removeClass('expertor-mode')
-        this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode')
+        // this.refs.$layoutMain.removeClass('beginner-mode')
+        // this.refs.$layoutMain.removeClass('expertor-mode')
+        // this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode')
 
         setTimeout(() => {
             this.emit('changeEditor');
@@ -38,7 +38,7 @@ export default class CSSEditor extends BaseCSSEditor {
     template () {
         return `
 
-            <div class="layout-main" ref="$layoutMain">
+            <div class="layout-main expertor-mode" ref="$layoutMain">
                 <div class="layout-header">
                     <h1 class="header-title">EASYLOGIC</h1>
                     <div class="page-tab-menu">
@@ -145,10 +145,10 @@ export default class CSSEditor extends BaseCSSEditor {
     } 
 
     '@updateLayout' (layout) {
-        screenModes.filter(key => key != layout).forEach(key => {
-            this.refs.$layoutMain.removeClass(`${key}-mode`)
-        })
+        // screenModes.filter(key => key != layout).forEach(key => {
+        //     this.refs.$layoutMain.removeClass(`${key}-mode`)
+        // })
 
-        this.refs.$layoutMain.addClass(`${layout}-mode`)
+        // this.refs.$layoutMain.addClass(`${layout}-mode`)
     }
 }
