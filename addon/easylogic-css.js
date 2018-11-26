@@ -187,6 +187,30 @@ function cubicBezier(x1, y1, x2, y2) {
     };
 }
 
+function getGradientLine(angle, box) {
+    var length = Math.abs(box.width * Math.sin(angle)) + Math.abs(box.height * Math.cos(angle));
+    var center = {
+        x: box.x + box.width / 2,
+        y: box.y + box.height / 2
+    };
+
+    var yDiff = Math.sin(angle - Math.PI / 2) * length / 2;
+    var xDiff = Math.cos(angle - Math.PI / 2) * length / 2;
+
+    return {
+        length: length,
+        center: center,
+        start: {
+            x: center.x - xDiff,
+            y: center.y - yDiff
+        },
+        end: {
+            x: center.x + xDiff,
+            y: center.y + yDiff
+        }
+    };
+}
+
 var math = {
     round: round,
     uuid: uuid,
@@ -195,7 +219,8 @@ var math = {
     getXInCircle: getXInCircle,
     getYInCircle: getYInCircle,
     caculateAngle: caculateAngle,
-    cubicBezier: cubicBezier
+    cubicBezier: cubicBezier,
+    getGradientLine: getGradientLine
 };
 
 function RGBtoHSV(r, g, b) {
@@ -3622,6 +3647,23 @@ function parseParamNumber$1(param, callback) {
     return +param;
 }
 
+function unit2px(unitValue, maxValue) {
+
+    var value = parseParamNumber$1(unitValue);
+
+    if (unitValue.includes('%')) {
+        return percent2px(value, maxValue);
+    } else if (unitValue.includes('px')) {
+        return value;
+    } else if (unitValue.includes('em')) {
+        return em2px(value, maxValue);
+    }
+}
+
+
+
+
+
 function px2percent(px, maxValue) {
     return round(px / maxValue * 100, 100);
 }
@@ -3649,8 +3691,6 @@ function percent2px(percent, maxValue) {
 function percent2em(percent, maxValue) {
     return px2em(percent2px(percent, maxValue), maxValue);
 }
-
-
 
 var filter_regexp = /(([\w_\-]+)(\(([^\)]*)\))?)+/gi;
 function pack$1(callback) {
@@ -9545,6 +9585,22 @@ var ColorStepManager = function (_BaseModule) {
 
             return colorsteps;
         }
+    }, {
+        key: '/colorstep/distance/equals',
+        value: function colorstepDistanceEquals($store) {
+            $store.read('/item/current/image', function (image) {
+                var list = $store.read('/colorstep/sort/list', image.id);
+
+                var count = list.length - 1;
+                var dist = (list[count].percent - list[0].percent) / count;
+                var firstValue = list[0].percent;
+                for (var i = 1; i < count; i++) {
+                    var step = list[i];
+                    step.percent = firstValue + i * dist;
+                    $store.run('/item/set', step);
+                }
+            });
+        }
     }]);
     return ColorStepManager;
 }(BaseModule);
@@ -10932,7 +10988,7 @@ var IMAGE_DEFAULT_OBJECT = {
     parentId: '',
     angle: 90,
     color: 'red',
-    radialType: 'circle',
+    radialType: 'ellipse',
     radialPosition: 'center',
     visible: true,
     isClipPath: false,
@@ -14932,11 +14988,11 @@ var PageExport = function (_UIElement) {
     createClass(PageExport, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'property-item export\'>\n                <div class=\'items no-padding\'>\n                    <div>\n                        <label>Export</label>\n                        <button type="button" ref="$export">view</button>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'property-item export\'>\n                <div class=\'items no-padding\'>\n                    <div>\n                        <label>Export</label>\n                        <button type="button" ref="$exportCSS">CSS</button>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ';
         }
     }, {
-        key: 'click $export',
-        value: function click$export(e) {
+        key: 'click $exportCSS',
+        value: function click$exportCSS(e) {
             this.emit('showExport');
         }
     }]);
@@ -17232,7 +17288,7 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
     createClass(PredefinedRadialGradientAngle, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="predefined-radial-gradient-angle">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="circle">circle</option>\n                    <option value="ellipse">ellipse</option>\n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                </select>\n            </div>\n        ';
+            return '\n            <div class="predefined-radial-gradient-angle">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="ellipse">ellipse</option>                \n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                    <option value="circle">circle</option>\n                    <option value="circle closest-side">circle closest-side</option> \n                    <option value="circle closest-corner">circle closest-corner</option>\n                    <option value="circle farthest-side">circle farthest-side</option>\n                    <option value="circle farthest-corner">circle farthest-corner</option>                                        \n                </select>\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -18089,7 +18145,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Distance</label>\n                <button class="distance" ref="$distance">=|=</button>\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -18116,6 +18172,12 @@ var LayerToolbar = function (_UIElement) {
         key: 'click $el .gradient-sample-list',
         value: function click$elGradientSampleList(e) {
             this.emit('toggleGradientSampleView');
+        }
+    }, {
+        key: 'click $distance',
+        value: function click$distance(e) {
+            this.dispatch('/colorstep/distance/equals');
+            this.emit('changeEditor');
         }
     }]);
     return LayerToolbar;
@@ -19728,6 +19790,416 @@ var ClipPathImageList = function (_BasePropertyItem) {
     return ClipPathImageList;
 }(BasePropertyItem);
 
+var ExportCanvasWindow = function (_UIElement) {
+    inherits(ExportCanvasWindow, _UIElement);
+
+    function ExportCanvasWindow() {
+        classCallCheck(this, ExportCanvasWindow);
+        return possibleConstructorReturn(this, (ExportCanvasWindow.__proto__ || Object.getPrototypeOf(ExportCanvasWindow)).apply(this, arguments));
+    }
+
+    createClass(ExportCanvasWindow, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='export-view'>\n                <div class=\"canvas-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">Code\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>\n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "afterRender",
+        value: function afterRender() {
+            ColorPickerCodeMirror.load();
+            var mixedMode = {
+                name: "htmlmixed",
+                scriptTypes: [{ matches: /\/x-handlebars-template|\/x-mustache/i,
+                    mode: null }, { matches: /(text|application)\/(x-)?vb(a|script)/i,
+                    mode: "vbscript" }]
+            };
+            this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
+                lineNumbers: true,
+                readOnly: true,
+                lineWrapping: true,
+                mode: mixedMode,
+                colorpicker: {
+                    mode: 'view'
+                }
+            });
+
+            this.cmCss = CodeMirror.fromTextArea(this.refs.$css.el, {
+                lineNumbers: true,
+                readOnly: true,
+                lineWrapping: true,
+                mode: "text/css",
+                colorpicker: {
+                    mode: 'view'
+                }
+            });
+        }
+    }, {
+        key: "makePageCSS",
+        value: function makePageCSS(page) {
+            var obj = Object.assign({
+                position: 'relative',
+                overflow: page.clip ? 'hidden' : ''
+            }, page.style || {});
+
+            return this.read('/css/toString', obj);
+        }
+    }, {
+        key: "getClassName",
+        value: function getClassName(className) {
+            return (className || '').split(' ').map(function (it) {
+                return '.' + it;
+            }).join('');
+        }
+    }, {
+        key: "getPageStyle",
+        value: function getPageStyle(page) {
+            var pageStyle = this.makePageCSS(page).split(';').map(function (it) {
+                return "\t" + it + ';';
+            }).join('\n');
+
+            return pageStyle;
+        }
+    }, {
+        key: "getPageHtml",
+        value: function getPageHtml(page) {
+            var _this2 = this;
+
+            var html = "<div id=\"page-1\">\n" + this.read('/item/map/children', page.id, function (item, index) {
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                var selector = [];
+
+                if (className) {
+                    selector.push("class=\"" + className + "\"");
+                }
+
+                if (!selector.length && item.idString) {
+                    selector.push("id=\"" + idString + "\"");
+                } else {
+                    selector.push("id=\"layer-" + (index + 1) + "\"");
+                }
+
+                var clipPath = _this2.read('/layer/toStringClipPath', item);
+
+                if (clipPath) {
+                    clipPath = "\t\t\n" + clipPath;
+                }
+
+                return "\t<div " + selector.join(' ') + ">" + clipPath + "</div>";
+            }).join('\n') + "\n</div>";
+
+            return html;
+        }
+    }, {
+        key: "getLayerStyle",
+        value: function getLayerStyle(page) {
+            var _this3 = this;
+
+            var layerStyle = this.read('/item/map/children', page.id, function (item, index) {
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                var selector = [];
+
+                if (className) {
+                    selector = _this3.getClassName(className);
+                } else {
+                    selector = "#" + idString;
+                }
+
+                var css = _this3.read('/layer/toExport', item, true).split(';').map(function (it) {
+                    return '\t' + it + ';';
+                }).join('\n');
+
+                return selector + " {\n" + css + "\n}";
+            }).join('\n');
+
+            return layerStyle;
+        }
+    }, {
+        key: "generateCode",
+        value: function generateCode() {
+            var page = this.read('/item/current/page');
+
+            if (!page) {
+                return { html: '', css: '' };
+            }
+
+            return {
+                html: '',
+                css: ''
+            };
+        }
+    }, {
+        key: "loadCode",
+        value: function loadCode() {
+            var page = this.read('/item/current/page');
+
+            if (!page) {
+                return '';
+            }
+
+            var generateCode = this.generateCode();
+
+            if (this.cmHtml) {
+                this.cmHtml.setValue(generateCode.html);
+                this.cmHtml.refresh();
+            }
+
+            if (this.cmCss) {
+                this.cmCss.setValue(generateCode.css);
+                this.cmCss.refresh();
+            }
+
+            var newCanvasId = uuid();
+            this.refs.$preview.html("<canvas id=\"" + newCanvasId + "\"></canvas>");
+            this.loadCanvas(newCanvasId);
+        }
+    }, {
+        key: "getEndShapeForRadial",
+        value: function getEndShapeForRadial(image, layer) {
+            var size = layer.style['background-size'];
+
+            var layerX = parseParamNumber$1(layer.style.x);
+            var layerY = parseParamNumber$1(layer.style.y);
+            var layerWidth = parseParamNumber$1(layer.style.width);
+            var layerHeight = parseParamNumber$1(layer.style.height);
+
+            var imageX = 0;
+            var imageY = 0;
+
+            if (image.radialPosition == 'center') {
+                imageX = layerWidth / 2; // 50% 
+                imageY = layerHeight / 2; // 50% 
+            } else if (image.radialPosition == 'top') {
+                imageX = layerWidth / 2; // 50% 
+            } else if (image.radialPosition == 'bottom') {
+                imageX = layerWidth / 2; // 50%             
+                imageY = layerHeight;
+            } else if (image.radialPosition == 'left') {
+                imageY = layerHeight / 2; // 50% 
+            } else if (image.radialPosition == 'right') {
+                imageX = layerWidth;
+                imageY = layerHeight / 2; // 50%             
+            } else {
+                var _ref = typeof image.radialPosition == 'string' ? image.radialPosition.split(' ') : image.radialPosition,
+                    _ref2 = slicedToArray(_ref, 2),
+                    imageX = _ref2[0],
+                    imageY = _ref2[1];
+
+                imageX = unit2px(imageX, layerWidth);
+                imageY = unit2px(imageY, layerHeight);
+            }
+
+            var dx = Math.abs(imageX);
+            var dy = Math.abs(imageY);
+            var dx2 = Math.abs(dx - layerWidth);
+            var dy2 = Math.abs(dy - layerHeight);
+            var realPos = { x: 0, y: 0, ratio: 1, radius: layerWidth / 2 };
+
+            if (image.radialType == 'circle') {
+                // constant radius 
+                var realDist = Math.max(layerWidth / 2, layerHeight / 2);
+
+                realPos = { x: dx, y: dy, ratio: 1, radius: Math.sqrt(Math.pow(realDist, 2) + Math.pow(realDist, 2)) };
+
+                console.log(dx, dy, layerWidth, layerHeight, realDist);
+            } else if (image.radialType == 'ellipse') {
+                //axis-aligned ellipse
+                var distX = Math.min(dx, dx2);
+                var distY = Math.min(dy, dy2);
+                var realDist = Math.max(layerWidth / 2, layerHeight / 2);
+
+                realPos = { x: dx, y: dy, ratio: distY / distX, radius: Math.sqrt(Math.pow(realDist, 2) + Math.pow(realDist, 2)) };
+
+                console.log(dx, dy, dx2, dy2, layerWidth, layerHeight, realPos);
+            } else if (image.radialType == 'closest-side') {
+                var distX = Math.min(dx, dx2);
+                var distY = Math.min(dy, dy2);
+                var realDist = Math.min(distX, distY);
+
+                realPos = { x: dx, y: dy, ratio: distY / distX, radius: realDist };
+            } else if (image.radialType == 'closest-corner') {} else if (image.radialType == 'farthest-side') {
+                var distX = Math.max(dx, dx2);
+                var distY = Math.max(dy, dy2);
+                var realDist = Math.max(distX, distY);
+
+                realPos = { x: dx, y: dy, ratio: distY / distX, radius: realDist };
+            } else if (image.radialType == 'farthest-corner') {} else if (image.radialType == 'circle closest-side') {
+                var distX = Math.min(dx, dx2);
+                var distY = Math.min(dy, dy2);
+                var realDist = Math.min(distX, distY);
+
+                realPos = { x: dx, y: dy, ratio: 1, radius: realDist };
+                console.log(dx, dx2, dy, dy2, distX, distY, realDist, realDist / 2);
+            } else if (image.radialType == 'circle closest-corner') {} else if (image.radialType == 'circle farthest-side') {
+                var distX = Math.max(dx, dx2);
+                var distY = Math.max(dy, dy2);
+                var realDist = Math.max(distX, distY);
+
+                realPos = { x: dx, y: dy, ratio: 1, radius: realDist };
+            } else if (image.radialType == 'circle farthest-corner') {}
+
+            return realPos;
+        }
+    }, {
+        key: "loadCanvas",
+        value: function loadCanvas(canvasId) {
+            var _this4 = this;
+
+            var $canvas = this.refs.$preview.$('canvas');
+
+            var page = this.read('/item/current/page');
+
+            var collect = this.read('/collect/one', page.id);
+
+            var width = parseParamNumber$1(collect.page.style.width);
+            var height = parseParamNumber$1(collect.page.style.height);
+
+            // support retina 
+            var pixelRatio = window.devicePixelRatio || 1;
+
+            $canvas.el.width = width * pixelRatio / 2;
+            $canvas.el.height = height * pixelRatio / 2;
+            $canvas.px('width', width);
+            $canvas.px('height', height);
+
+            var context = $canvas.el.getContext('2d');
+            // context.scale(pixelRatio, pixelRatio)
+
+            // drawing gradient 
+            collect.layers.forEach(function (layerObj) {
+
+                var layer = layerObj.layer;
+                var images = layerObj.images;
+
+                // draw layer 
+
+                // ordering layer 
+                // 1. mix-blend-mode ? 
+                if (layer.style['mix-blend-mode']) {
+                    context.globalCompositeOpertation = layer.style['mix-blend-mode'];
+                }
+
+                var x = parseParamNumber$1(layer.style.x);
+                var y = parseParamNumber$1(layer.style.y);
+                var width = parseParamNumber$1(layer.style.width);
+                var height = parseParamNumber$1(layer.style.height);
+
+                // 2. implements transform 
+
+                // 3. background gradient 
+                //    - caculate start, end point 
+                //    - color step percent 
+                images.forEach(function (imageObj) {
+                    var image = imageObj.image;
+                    var colorsteps = imageObj.colorsteps;
+
+                    context.save();
+                    context.beginPath();
+
+                    if (image.type == 'linear' || image.type == 'repeating-linear') {
+                        var line = getGradientLine(degreeToRadian(layer.angle), { x: x, y: y, width: width, height: height });
+
+                        var gradient = context.createLinearGradient(line.start.x, line.start.y, line.end.x, line.end.y);
+
+                        colorsteps.forEach(function (step) {
+                            gradient.addColorStop(step.percent / 100, step.color);
+                        });
+
+                        context.fillStyle = gradient;
+                        context.fillRect(x, y, width, height);
+                    } else if (image.type == 'radial' || image.type == 'repeating-radial') {
+
+                        // background position (x, y)
+                        // background size (width, height)
+                        // background repeat(repeat, repeat-x, repeat-y, no-repeat)
+                        // end shape 
+                        // var radialType = image.radialType;  // circle, ellipse, closest-side
+
+                        // end shape position 
+                        // var radialPosition = image.radialPosition; // top, bottom, left, right 
+                        var endShape = _this4.getEndShapeForRadial(image, layer);
+
+                        var gradient = context.createRadialGradient(endShape.x, endShape.y, 0, endShape.x, endShape.y, endShape.radius);
+                        colorsteps.forEach(function (step) {
+                            gradient.addColorStop(step.percent / 100, step.color);
+                        });
+                        context.fillStyle = gradient;
+
+                        // setTransform 
+                        if (endShape.ratio > 1) {
+                            context.setTransform(endShape.ratio, 0, 0, 1, 0, 0);
+                            context.fillRect(x, y, width * endShape.ratio, height);
+                        } else if (endShape.ratio < 1) {
+                            context.fillRect(x, y, width, height * (1 / endShape.ratio));
+                            context.setTransform(1, 0, 0, endShape.ratio, 0, 0);
+                        } else {
+                            context.fillRect(x, y, width, height);
+                        }
+                    }
+
+                    context.restore();
+                });
+            });
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.loadCode();
+        }
+    }, {
+        key: 'click $close',
+        value: function click$close(e) {
+            this.$el.hide();
+        }
+    }, {
+        key: 'click $title .tool-item',
+        value: function click$titleToolItem(e) {
+            var _this5 = this;
+
+            var type = e.$delegateTarget.attr('data-type');
+
+            Object.keys(this.refs).filter(function (it) {
+                return it.includes('Title');
+            }).forEach(function (key) {
+                var obj = _this5.refs[key];
+                obj.toggleClass('selected', "$" + type + "Title" == key);
+            });
+
+            Object.keys(this.refs).filter(function (it) {
+                return it.includes('Content');
+            }).forEach(function (key) {
+                var obj = _this5.refs[key];
+                obj.toggleClass('selected', "$" + type + "Content" == key);
+
+                if (_this5.cmHtml) _this5.cmHtml.refresh();
+                if (_this5.cmHtml) _this5.cmCss.refresh();
+            });
+        }
+    }, {
+        key: '@toggleExportCanvas',
+        value: function toggleExportCanvas() {
+            this.$el.toggle();
+        }
+    }, {
+        key: '@showExportCanvas',
+        value: function showExportCanvas() {
+            this.$el.show();
+            this.refresh();
+        }
+    }, {
+        key: '@hideExportCanvas',
+        value: function hideExportCanvas() {
+            this.$el.hide();
+        }
+    }]);
+    return ExportCanvasWindow;
+}(UIElement);
+
 var CSSEditor$1 = function (_BaseCSSEditor) {
     inherits(CSSEditor, _BaseCSSEditor);
 
@@ -19752,12 +20224,13 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <!--<ImageListView></ImageListView>-->\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <!--<ImageListView></ImageListView>-->\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <GradientView></GradientView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <ExportCanvasWindow></ExportCanvasWindow>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
+                ExportCanvasWindow: ExportCanvasWindow,
                 LayerToolbar: LayerToolbar,
                 ClipPathImageList: ClipPathImageList,
                 GradientSampleView: GradientSampleWindow,

@@ -299,6 +299,44 @@ export function parseParamNumber (param, callback) {
     return +param 
 } 
 
+export function unit2px(unitValue, maxValue) {
+
+    var value = parseParamNumber(unitValue);
+
+    if (unitValue.includes('%')) {
+        return percent2px(value, maxValue);
+    } else if (unitValue.includes('px')) {
+        return value;
+    } else if (unitValue.includes('em')) {
+        return em2px(value, maxValue);
+    }
+}
+
+export function unit2percent(unitValue, maxValue) {
+
+    var value = parseParamNumber(unitValue);
+
+    if (unitValue.includes('%')) {
+        return value;
+    } else if (unitValue.includes('px')) {
+        return px2percent(value, maxValue);
+    } else if (unitValue.includes('em')) {
+        return em2percent(value, maxValue);
+    }
+}
+
+export function unit2em(unitValue, maxValue) {
+
+    var value = parseParamNumber(unitValue);
+
+    if (unitValue.includes('%')) {
+        return percent2em(value, maxValue);
+    } else if (unitValue.includes('px')) {
+        return px2em(value, maxValue);
+    } else if (unitValue.includes('em')) {
+        return value;
+    }
+}
 
 export function px2percent (px, maxValue) {
     return round((px / maxValue) * 100, 100); 
@@ -322,10 +360,6 @@ export function percent2px (percent, maxValue) {
 
 export function percent2em (percent, maxValue) {
     return px2em(percent2px(percent, maxValue), maxValue);
-}
-
-export function getGradientLength (W, H, A) {
-    return Math.abs(W * Math.sin(A)) + Math.abs(H * Math.cos(A))
 }
 
 const filter_regexp = /(([\w_\-]+)(\(([^\)]*)\))?)+/gi;

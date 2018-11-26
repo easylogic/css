@@ -4263,7 +4263,7 @@ html, body {
       bottom: 100%;
       color: white;
       cursor: pointer; }
-    .csseditor .export-view .color-view {
+    .csseditor .export-view .color-view, .csseditor .export-view .canvas-view {
       position: absolute;
       width: 800px;
       height: 600px;
@@ -4272,7 +4272,7 @@ html, body {
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%);
       background-color: white; }
-      .csseditor .export-view .color-view .codeview-container {
+      .csseditor .export-view .color-view .codeview-container, .csseditor .export-view .canvas-view .codeview-container {
         position: absolute;
         left: 0px;
         right: 0px;
@@ -4280,7 +4280,7 @@ html, body {
         top: 0px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box; }
-        .csseditor .export-view .color-view .codeview-container .title {
+        .csseditor .export-view .color-view .codeview-container .title, .csseditor .export-view .canvas-view .codeview-container .title {
           position: absolute;
           top: 0px;
           left: 0px;
@@ -4290,11 +4290,11 @@ html, body {
           font-size: 12px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box; }
-          .csseditor .export-view .color-view .codeview-container .title .tools {
+          .csseditor .export-view .color-view .codeview-container .title .tools, .csseditor .export-view .canvas-view .codeview-container .title .tools {
             float: right;
             display: inline-block;
             height: 100%; }
-            .csseditor .export-view .color-view .codeview-container .title .tools .tool-item {
+            .csseditor .export-view .color-view .codeview-container .title .tools .tool-item, .csseditor .export-view .canvas-view .codeview-container .title .tools .tool-item {
               display: inline-block;
               min-width: 80px;
               height: 100%;
@@ -4303,10 +4303,10 @@ html, body {
                       box-sizing: border-box;
               padding: 5px;
               cursor: pointer; }
-              .csseditor .export-view .color-view .codeview-container .title .tools .tool-item.selected {
+              .csseditor .export-view .color-view .codeview-container .title .tools .tool-item.selected, .csseditor .export-view .canvas-view .codeview-container .title .tools .tool-item.selected {
                 background-color: white;
                 color: black; }
-        .csseditor .export-view .color-view .codeview-container .codeview {
+        .csseditor .export-view .color-view .codeview-container .codeview, .csseditor .export-view .canvas-view .codeview-container .codeview {
           position: absolute;
           left: 0px;
           right: 0px;
@@ -4314,20 +4314,20 @@ html, body {
           top: 22px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box; }
-          .csseditor .export-view .color-view .codeview-container .codeview .CodeMirror {
+          .csseditor .export-view .color-view .codeview-container .codeview .CodeMirror, .csseditor .export-view .canvas-view .codeview-container .codeview .CodeMirror {
             height: 100%; }
-          .csseditor .export-view .color-view .codeview-container .codeview .content-item {
+          .csseditor .export-view .color-view .codeview-container .codeview .content-item, .csseditor .export-view .canvas-view .codeview-container .codeview .content-item {
             position: absolute;
             left: 0px;
             top: 0px;
             right: 0px;
             bottom: 0px;
             display: none; }
-            .csseditor .export-view .color-view .codeview-container .codeview .content-item.selected {
+            .csseditor .export-view .color-view .codeview-container .codeview .content-item.selected, .csseditor .export-view .canvas-view .codeview-container .codeview .content-item.selected {
               display: block; }
-          .csseditor .export-view .color-view .codeview-container .codeview textarea {
+          .csseditor .export-view .color-view .codeview-container .codeview textarea, .csseditor .export-view .canvas-view .codeview-container .codeview textarea {
             position: relative; }
-      .csseditor .export-view .color-view .preview-container {
+      .csseditor .export-view .color-view .preview-container, .csseditor .export-view .canvas-view .preview-container {
         position: absolute;
         right: 0px;
         left: 0px;
@@ -4336,7 +4336,7 @@ html, body {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         overflow: auto; }
-        .csseditor .export-view .color-view .preview-container .title {
+        .csseditor .export-view .color-view .preview-container .title, .csseditor .export-view .canvas-view .preview-container .title {
           position: absolute;
           top: 0px;
           left: 0px;
@@ -4347,7 +4347,7 @@ html, body {
           padding: 5px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box; }
-        .csseditor .export-view .color-view .preview-container .preview {
+        .csseditor .export-view .color-view .preview-container .preview, .csseditor .export-view .canvas-view .preview-container .preview {
           position: absolute;
           right: 0px;
           left: 0px;

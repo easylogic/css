@@ -8,12 +8,16 @@ export default class PredefinedRadialGradientAngle extends UIElement {
             <div class="predefined-radial-gradient-angle">
                 <button ref="$center" type="button" data-value="center" title="center"><span class='circle'></span></button>            
                 <select class="radial-type-list" ref="$select">
-                    <option value="circle">circle</option>
-                    <option value="ellipse">ellipse</option>
+                    <option value="ellipse">ellipse</option>                
                     <option value="closest-side">closest-side</option> 
                     <option value="closest-corner">closest-corner</option>
                     <option value="farthest-side">farthest-side</option>
                     <option value="farthest-corner">farthest-corner</option>                    
+                    <option value="circle">circle</option>
+                    <option value="circle closest-side">circle closest-side</option> 
+                    <option value="circle closest-corner">circle closest-corner</option>
+                    <option value="circle farthest-side">circle farthest-side</option>
+                    <option value="circle farthest-corner">circle farthest-corner</option>                                        
                 </select>
             </div>
         `

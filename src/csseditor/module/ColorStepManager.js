@@ -176,4 +176,19 @@ export default class ColorStepManager extends BaseModule {
         return colorsteps;
     }
 
+    '/colorstep/distance/equals' ($store) {
+        $store.read('/item/current/image', (image) => {
+            var list = $store.read('/colorstep/sort/list', image.id);
+
+            var count = list.length - 1; 
+            var dist = (list[count].percent - list[0].percent)/count; 
+            var firstValue = list[0].percent;
+            for(var i = 1; i < count; i++) {
+                var step = list[i];
+                step.percent = firstValue + i * dist; 
+                $store.run('/item/set', step);
+            }
+        })
+    }
+
 }

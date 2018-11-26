@@ -22,8 +22,10 @@ export default class LayerToolbar extends UIElement {
                 </div>
                 <div class="gradient-sample-list" title="Gradient Sample View">
                     <div class="arrow">
-                    </div>
+                    </div> 
                 </div>
+                <label>Distance</label>
+                <button class="distance" ref="$distance">=|=</button>
             </div>
         `
     }
@@ -48,5 +50,10 @@ export default class LayerToolbar extends UIElement {
 
     'click $el .gradient-sample-list' (e) {
         this.emit('toggleGradientSampleView');
+    }
+
+    'click $distance' (e) {
+        this.dispatch('/colorstep/distance/equals')
+        this.emit('changeEditor');
     }
 }

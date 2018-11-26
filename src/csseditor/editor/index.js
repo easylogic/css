@@ -17,6 +17,7 @@ import GradientSampleView from '../ui/window/GradientSampleWindow';
 import LayerSampleView from '../ui/window/LayerSampleWindow';
 import PageSampleView from '../ui/window/PageSampleWindow';
 import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
+import ExportCanvasWindow from '../ui/window/ExportCanvasWindow';
 
 
 const screenModes = ['expertor', 'beginner']
@@ -65,6 +66,7 @@ export default class CSSEditor extends BaseCSSEditor {
                     <Timeline></Timeline>
                 </div>
                 <ExportView></ExportView>
+                <ExportCanvasWindow></ExportCanvasWindow>
                 <DropView></DropView>
                 <GradientSampleView></GradientSampleView>
                 <LayerSampleView></LayerSampleView>
@@ -75,6 +77,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     components() {     
         return { 
+            ExportCanvasWindow,
             LayerToolbar,
             ClipPathImageList,
             GradientSampleView,

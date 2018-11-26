@@ -49,7 +49,7 @@ const IMAGE_DEFAULT_OBJECT = {
     parentId: '',    
     angle: 90,
     color: 'red',
-    radialType: 'circle',
+    radialType: 'ellipse',
     radialPosition: 'center',
     visible: true,
     isClipPath: false, 

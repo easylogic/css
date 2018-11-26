@@ -7,16 +7,15 @@ export default class PageExport extends UIElement {
                 <div class='items no-padding'>
                     <div>
                         <label>Export</label>
-                        <button type="button" ref="$export">view</button>
+                        <button type="button" ref="$exportCSS">CSS</button>
                     </div>   
                                  
                 </div>
             </div>
-        `
-    }
+        ` 
+    } 
 
-    'click $export' (e) {
+    'click $exportCSS' (e) {
         this.emit('showExport')
     }
-
 }

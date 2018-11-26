@@ -79,6 +79,30 @@ export function cubicBezier (x1, y1, x2, y2) {
     }
 }
 
+export function getGradientLine(angle, box) {
+    let length = Math.abs(box.width * Math.sin(angle)) + Math.abs(box.height * Math.cos(angle));
+    let center = {
+      x: box.x + box.width/2,
+      y: box.y + box.height/2
+    };
+  
+    let yDiff = Math.sin(angle-Math.PI/2) * length/2;
+    let xDiff = Math.cos(angle-Math.PI/2) * length/2;
+  
+    return {
+      length,
+      center,
+      start: {
+        x: center.x - xDiff,
+        y: center.y - yDiff
+      },
+      end: {
+        x: center.x + xDiff,
+        y: center.y + yDiff
+      }
+    };
+  }
+
 
 export default {
     round,
@@ -88,5 +112,6 @@ export default {
     getXInCircle,
     getYInCircle,
     caculateAngle,
-    cubicBezier
+    cubicBezier,
+    getGradientLine
 }
