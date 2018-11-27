@@ -9580,25 +9580,72 @@ var ColorStepManager = function (_BaseModule) {
             });
         }
     }, {
+        key: "getMaxValue",
+        value: function getMaxValue() {
+            return this.$store.step.width;
+        }
+    }, {
+        key: "getUnitValue",
+        value: function getUnitValue(step, maxValue) {
+
+            if (step.unit == 'px') {
+                if (typeof step.px == 'undefined') {
+                    step.px = percent2px(step.percent, maxValue);
+                }
+
+                return {
+                    px: step.px,
+                    percent: px2percent(step.px, maxValue),
+                    em: px2em(step.px, maxValue)
+                };
+            } else if (step.unit == 'em') {
+                if (typeof step.em == 'undefined') {
+                    step.em = percent2em(step.percent, maxValue);
+                }
+                return {
+                    em: step.em,
+                    percent: em2percent(step.em, maxValue),
+                    px: em2px(step.em, maxValue)
+                };
+            }
+
+            return {
+                percent: step.percent,
+                px: percent2px(step.percent, maxValue),
+                em: percent2em(step.percent, maxValue)
+            };
+        }
+    }, {
+        key: '*/colorstep/unit/value',
+        value: function colorstepUnitValue($store, step, maxValue) {
+            return this.getUnitValue(step, (typeof maxValue === "undefined" ? "undefined" : _typeof(maxValue)) == undefined ? this.getMaxValue() : +maxValue);
+        }
+    }, {
         key: '/colorstep/ordering/equals',
         value: function colorstepOrderingEquals($store) {
+            var _this2 = this;
+
             var firstIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
             var lastIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Number.MAX_SAFE_INTEGER;
 
 
-            var list = $store.read('/colorstep/list');
+            var list = $store.read('/colorstep/list').map(function (step) {
+                return Object.assign({}, step, $store.read('/colorstep/unit/value', step, _this2.getMaxValue()));
+            });
 
             if (lastIndex > list.length - 1) {
                 lastIndex = list.length - 1;
             }
 
             var count = lastIndex - firstIndex;
-            var dist = (list[lastIndex].percent - list[firstIndex].percent) / count;
+            var dist = (list[lastIndex].px - list[firstIndex].px) / count;
 
-            var firstValue = list[firstIndex].percent;
+            var firstValue = list[firstIndex].px;
             for (var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
                 var step = list[i];
-                step.percent = firstValue + start * dist;
+                step.px = firstValue + start * dist;
+                step.percent = px2percent(step.px, this.getMaxValue());
+                step.em = px2em(step.px, this.getMaxValue());
                 $store.run('/item/set', step);
             }
         }
@@ -13512,37 +13559,6 @@ var GradientSteps = function (_UIElement) {
         value: function getMaxValue() {
             return this.$store.step.width;
         }
-    }, {
-        key: 'getUnitValue',
-        value: function getUnitValue(step) {
-
-            if (step.unit == 'px') {
-                if (typeof step.px == 'undefined') {
-                    step.px = percent2px(step.percent, this.getMaxValue());
-                }
-
-                return {
-                    px: step.px,
-                    percent: px2percent(step.px, this.getMaxValue()),
-                    em: px2em(step.px, this.getMaxValue())
-                };
-            } else if (step.unit == 'em') {
-                if (typeof step.em == 'undefined') {
-                    step.em = percent2em(step.percent, this.getMaxValue());
-                }
-                return {
-                    em: step.em,
-                    percent: em2percent(step.em, this.getMaxValue()),
-                    px: em2px(step.em, this.getMaxValue())
-                };
-            }
-
-            return {
-                percent: step.percent,
-                px: percent2px(step.percent, this.getMaxValue()),
-                em: percent2em(step.percent, this.getMaxValue())
-            };
-        }
 
         // load 후에 이벤트를 재설정 해야한다. 
 
@@ -13558,7 +13574,7 @@ var GradientSteps = function (_UIElement) {
             return this.read('/item/map/children', item.id, function (step) {
 
                 var cut = step.cut ? 'cut' : '';
-                var unitValue = _this2.getUnitValue(step);
+                var unitValue = _this2.read('/colorstep/unit/value', step, _this2.getMaxValue());
                 return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="' + unitValue.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="px" min="-100" max="1000" step="1"  value="' + unitValue.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="' + unitValue.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
             });
         }
@@ -13821,7 +13837,7 @@ var GradientSteps = function (_UIElement) {
             if (step) {
                 step.unit = unit;
 
-                var unitValue = this.getUnitValue(step);
+                var unitValue = this.read('/colorstep/unit/value', step, this.getMaxValue());
                 Object.assign(step, unitValue);
 
                 this.dispatch('/item/set', step);

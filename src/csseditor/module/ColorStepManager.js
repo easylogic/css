@@ -1,12 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Color from "../../util/Color";
-
-
-const defaultObject = {
-    color: 'rgba(0, 0, 0, 0)',
-    percent: 0,
-    selected: false 
-}
+import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
 
 const isUndefined = (value) => {
     return typeof value == 'undefined' || value == null;
@@ -180,21 +174,64 @@ export default class ColorStepManager extends BaseModule {
         })
     }    
 
+
+    getMaxValue () {
+        return this.$store.step.width;
+    }
+
+    getUnitValue (step, maxValue) {
+
+        if (step.unit == 'px') {
+            if (typeof step.px == 'undefined') {
+                step.px = percent2px(step.percent, maxValue)
+            }
+
+            return {
+                px:  step.px,
+                percent: px2percent(step.px, maxValue),
+                em: px2em(step.px, maxValue)
+            }
+        } else if (step.unit == 'em') {
+            if (typeof step.em == 'undefined') {
+                step.em = percent2em(step.percent, maxValue)
+            }            
+            return {
+                em: step.em,
+                percent: em2percent(step.em, maxValue),
+                px: em2px(step.em, maxValue)
+            }
+        }
+
+        return {
+            percent: step.percent,
+            px: percent2px(step.percent, maxValue),
+            em: percent2em(step.percent, maxValue)
+        }
+    }        
+
+    '*/colorstep/unit/value' ($store, step, maxValue) {
+        return this.getUnitValue(step, typeof maxValue == undefined ? this.getMaxValue() : +maxValue);
+    }
+
     '/colorstep/ordering/equals' ($store, firstIndex = 0, lastIndex = Number.MAX_SAFE_INTEGER) {
 
-        var list = $store.read('/colorstep/list');
+        var list = $store.read('/colorstep/list').map(step => {
+            return Object.assign({}, step, $store.read('/colorstep/unit/value', step, this.getMaxValue()));
+        });
 
         if (lastIndex > list.length -1 ) {
             lastIndex = list.length - 1; 
         }
 
         var count = (lastIndex - firstIndex); 
-        var dist = (list[lastIndex].percent - list[firstIndex].percent)/count; 
+        var dist = (list[lastIndex].px - list[firstIndex].px)/count; 
 
-        var firstValue = list[firstIndex].percent;
+        var firstValue = list[firstIndex].px;
         for(var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
             var step = list[i];
-            step.percent = firstValue + start * dist; 
+            step.px = firstValue + start * dist; 
+            step.percent = px2percent(step.px, this.getMaxValue())
+            step.em = px2em(step.px, this.getMaxValue());
             $store.run('/item/set', step);
         }
 
@@ -208,5 +245,7 @@ export default class ColorStepManager extends BaseModule {
     '/colorstep/ordering/equals/right' ($store) {
         $store.run('/colorstep/ordering/equals', $store.read('/colorstep/currentIndex'));
     }        
+
+
 
 }

@@ -69,36 +69,6 @@ export default class GradientSteps extends UIElement {
         return this.$store.step.width;
     }
 
-    getUnitValue (step) {
-
-        if (step.unit == 'px') {
-            if (typeof step.px == 'undefined') {
-                step.px = percent2px(step.percent, this.getMaxValue())
-            }
-
-            return {
-                px:  step.px,
-                percent: px2percent(step.px, this.getMaxValue()),
-                em: px2em(step.px, this.getMaxValue())
-            }
-        } else if (step.unit == 'em') {
-            if (typeof step.em == 'undefined') {
-                step.em = percent2em(step.percent, this.getMaxValue())
-            }            
-            return {
-                em: step.em,
-                percent: em2percent(step.em, this.getMaxValue()),
-                px: em2px(step.em, this.getMaxValue())
-            }
-        }
-
-        return {
-            percent: step.percent,
-            px: percent2px(step.percent, this.getMaxValue()),
-            em: percent2em(step.percent, this.getMaxValue())
-        }
-    }    
-
     // load 후에 이벤트를 재설정 해야한다. 
     'load $stepList' () {
         var item = this.read('/item/current/image')
@@ -108,7 +78,7 @@ export default class GradientSteps extends UIElement {
         return this.read('/item/map/children', item.id, (step) => {
 
             var cut = step.cut ? 'cut' : ''; 
-            var unitValue = this.getUnitValue(step);
+            var unitValue = this.read('/colorstep/unit/value', step, this.getMaxValue());
             return `
                 <div 
                     class='drag-bar ${step.selected ? 'selected' : ''}' 
@@ -358,7 +328,7 @@ export default class GradientSteps extends UIElement {
         if (step) {
             step.unit = unit;
 
-            var unitValue = this.getUnitValue(step);
+            var unitValue = this.read('/colorstep/unit/value',step, this.getMaxValue());
             Object.assign(step, unitValue);
 
             this.dispatch('/item/set', step)            
