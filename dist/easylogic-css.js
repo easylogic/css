@@ -9567,8 +9567,8 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: '/colorstep/initColor',
         value: function colorstepInitColor($store, color) {
-            $store.dispatch('/tool/setColorSource', INIT_COLOR_SOURCE);
-            $store.dispatch('/tool/changeColor', color);
+            $store.run('/tool/setColorSource', INIT_COLOR_SOURCE);
+            $store.run('/tool/changeColor', color);
         }
     }, {
         key: '/colorstep/add',
@@ -9578,10 +9578,10 @@ var ColorStepManager = function (_BaseModule) {
 
             if (!list.length) {
 
-                $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(0, 0, 0, 0)', percent: percent, index: 0 });
-                $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(0, 0, 0, 1)', percent: 100, index: 100 });
+                $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent, index: 0 });
+                $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
 
-                $store.dispatch('/item/set', item);
+                $store.run('/item/set', item);
                 return;
             }
 
@@ -9595,7 +9595,7 @@ var ColorStepManager = function (_BaseModule) {
 
                 $store.read('/item/create/colorstep', { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent });
                 $store.run('/item/set', colorsteps[0]);
-                $store.dispatch('/item/set', item);
+                $store.run('/item/set', item);
                 return;
             }
 
@@ -9604,7 +9604,7 @@ var ColorStepManager = function (_BaseModule) {
                 var index = colorsteps[colorsteps.length - 1].index;
 
                 $store.read('/item/create/colorstep', { parentId: item.id, index: index + 1, color: color, percent: percent });
-                $store.dispatch('/item/set', item);
+                $store.run('/item/set', item);
                 return;
             }
 
@@ -9616,7 +9616,7 @@ var ColorStepManager = function (_BaseModule) {
                     var color = Color$1.mix(step.color, nextStep.color, (percent - step.percent) / (nextStep.percent - step.percent), 'rgb');
 
                     $store.read('/item/create/colorstep', { parentId: item.id, index: step.index + 1, color: color, percent: percent });
-                    $store.dispatch('/item/set', item);
+                    $store.run('/item/set', item);
                     return;
                 }
             }
@@ -9628,9 +9628,9 @@ var ColorStepManager = function (_BaseModule) {
             var parentId = $store.read('/item/get', id).parentId;
             var image = $store.read('/item/get', parentId);
 
-            $store.dispatch('/item/remove', id);
+            $store.run('/item/remove', id);
 
-            $store.dispatch('/item/set', image);
+            $store.run('/item/set', image);
         }
     }, {
         key: '/colorstep/sort',
@@ -11230,15 +11230,15 @@ var ItemManager = function (_BaseModule) {
                     $store.items[imageId].angle = 0;
                 }
 
-                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(0, 0, 0, 0)', percent: 0, index: 0 });
-                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(0, 0, 0, 1)', percent: 100, index: 100 });
+                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
+                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
             } else if (repeatingGradientTypeList.includes(obj.type)) {
                 if (conicList.includes(obj.type)) {
                     $store.items[imageId].angle = 0;
                 }
 
-                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(0, 0, 0, 0)', percent: 0, index: 0 });
-                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(0, 0, 0, 1)', percent: 10, index: 100 });
+                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
+                $store.read('/item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 10, index: 100 });
             }
 
             return imageId;

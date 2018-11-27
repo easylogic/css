@@ -42,8 +42,8 @@ export default class ColorStepManager extends BaseModule {
     }
 
     '/colorstep/initColor' ($store, color) {
-        $store.dispatch('/tool/setColorSource',INIT_COLOR_SOURCE);
-        $store.dispatch('/tool/changeColor', color);
+        $store.run('/tool/setColorSource',INIT_COLOR_SOURCE);
+        $store.run('/tool/changeColor', color);
     }    
 
     '/colorstep/add' ($store, item, percent) {
@@ -52,10 +52,10 @@ export default class ColorStepManager extends BaseModule {
 
         if (!list.length) {
 
-            $store.read('/item/create/colorstep', {parentId: item.id, color: 'rgba(0, 0, 0, 0)', percent, index: 0});
-            $store.read('/item/create/colorstep', {parentId: item.id, color: 'rgba(0, 0, 0, 1)', percent: 100, index: 100});
+            $store.read('/item/create/colorstep', {parentId: item.id, color: 'rgba(216,216,216, 0)', percent, index: 0});
+            $store.read('/item/create/colorstep', {parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100});
 
-            $store.dispatch('/item/set', item);
+            $store.run('/item/set', item);
             return; 
         }
 
@@ -69,7 +69,7 @@ export default class ColorStepManager extends BaseModule {
 
             $store.read('/item/create/colorstep', {parentId: item.id, index: 0, color: colorsteps[0].color, percent});
             $store.run('/item/set', colorsteps[0]);
-            $store.dispatch('/item/set', item);
+            $store.run('/item/set', item);
             return;             
         }
 
@@ -78,7 +78,7 @@ export default class ColorStepManager extends BaseModule {
             var index = colorsteps[colorsteps.length -1].index;         
 
             $store.read('/item/create/colorstep', {parentId: item.id, index: index + 1,  color, percent});
-            $store.dispatch('/item/set', item);
+            $store.run('/item/set', item);
             return;             
         }        
        
@@ -90,7 +90,7 @@ export default class ColorStepManager extends BaseModule {
                 var color = Color.mix(step.color, nextStep.color, (percent - step.percent)/(nextStep.percent - step.percent), 'rgb');
 
                 $store.read('/item/create/colorstep', {parentId: item.id, index: step.index + 1, color, percent});
-                $store.dispatch('/item/set', item);            
+                $store.run('/item/set', item);            
                 return; 
             }
         }
@@ -101,9 +101,9 @@ export default class ColorStepManager extends BaseModule {
         var parentId = $store.read('/item/get', id).parentId; 
         var image = $store.read('/item/get', parentId);
 
-        $store.dispatch('/item/remove', id);
+        $store.run('/item/remove', id);
 
-        $store.dispatch('/item/set', image);
+        $store.run('/item/set', image);
     }
 
     '/colorstep/sort' ($store, id, sortedList) {
