@@ -1630,16 +1630,54 @@ html, body {
               top: 50%;
               -webkit-transform: translateY(-50%);
                       transform: translateY(-50%); }
-      .csseditor .layers .layer-list .tree-item-children {
-        padding-left: 50px;
+      .csseditor .layers .layer-list .gradient-list-group {
+        position: relative;
         -webkit-box-sizing: border-box;
-                box-sizing: border-box; }
-        .csseditor .layers .layer-list .tree-item-children .tree-item {
+                box-sizing: border-box;
+        padding-left: 50px; }
+        .csseditor .layers .layer-list .gradient-list-group.collapsed .gradient-collape-button {
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black);
+          background-size: 1px 1px;
+          background-position: center center;
+          background-repeat: repeat-x; }
+        .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children {
+          overflow: hidden;
+          height: 50px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          display: block; }
+          .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item {
+            display: inline-block;
+            vertical-align: middle; }
+            .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item.selected {
+              border-bottom: 2px solid black; }
+            .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-title, .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-tools {
+              display: none; }
+        .csseditor .layers .layer-list .gradient-list-group .gradient-collape-button {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          left: 25px;
+          top: 25px;
+          cursor: pointer;
+          -webkit-transform: translateY(-50%) translateX(-50%);
+                  transform: translateY(-50%) translateX(-50%);
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 1px, 1px 1px;
+          background-position: center center, center center;
+          background-repeat: repeat-y, repeat-x; }
+        .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item {
           border: 0px;
           background-color: white;
           border-bottom: 1px solid #c7c7c7;
-          border-left: 1px solid #c7c7c7; }
-          .csseditor .layers .layer-list .tree-item-children .tree-item.selected {
+          border-left: 1px solid #c7c7c7;
+          -webkit-transition: all 0.3s linear;
+          transition: all 0.3s linear; }
+          .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item.selected {
             background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%, #f4f4f4 0%, #f4f4f4 10px, rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 20px);
             background-repeat: repeat-x;
             background-size: 14px 14px;
@@ -3366,13 +3404,19 @@ html, body {
         height: 10px;
         border-radius: 50%;
         /* linear */ }
-        .csseditor .page-view .predefined-layer-resizer button.active:after {
+        .csseditor .page-view .predefined-layer-resizer button.active:not([data-position*=" "]):after {
           position: absolute;
           bottom: -20px;
           display: inline-block;
           content: attr(data-position);
           -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%); }
+                  transform: translateX(-50%);
+          background-color: #9c9c9c;
+          color: white;
+          border-radius: 3px;
+          padding: 3px 5px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
         .csseditor .page-view .predefined-layer-resizer button[data-value='to top'] {
           top: -6px;
           left: 50%;

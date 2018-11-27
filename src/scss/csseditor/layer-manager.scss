@@ -194,24 +194,79 @@ $mini-layer-view-height: 420px;
 
         }
 
-        .tree-item-children {
-            padding-left: 50px;
+        .gradient-list-group {
+            position: relative;
             box-sizing: border-box;
+            padding-left: 50px;
 
-            .tree-item {
-                border:0px;
-                background-color: white; 
-                border-bottom: 1px solid $border-color;
-                border-left: 1px solid $border-color;
-
-                &.selected {
-                    background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%,rgb(244,244,244) 0%,rgb(244,244,244) 10px,rgba(0, 0, 0, 0.1) 10px,rgba(0, 0, 0, 0.1) 20px);
-                    background-repeat: repeat-x;
-                    background-size: 14px 14px;
+            &.collapsed {
+                .gradient-collape-button {
+                    background-image: linear-gradient(to right, black, black);
+                    background-size: 1px 1px;
                     background-position: center center;
+                    background-repeat: repeat-x;
+    
                 }
+
+                .tree-item-children {
+                    overflow:hidden;
+                    height: 50px;
+                    box-sizing: border-box;
+                    display: block;
+
+                    .tree-item {
+                        display: inline-block;
+                        vertical-align: middle;
+                        &.selected {
+                            border-bottom: 2px solid black; 
+                        }
+                        .item-title, .item-tools {
+                            display: none;
+                        }
+                    }
+                }
+
+            }            
+
+            .gradient-collape-button {
+                position: absolute;
+                width: 20px;
+                height: 20px;
+                box-sizing: border-box;
+                left: 25px;
+                top: 25px;
+                cursor: pointer;
+                transform: translateY(-50%) translateX(-50%);
+                // border-radius: 50%;
+                // border:1px solid black;
+                background-image: linear-gradient(to right, black, black),linear-gradient(to right, black, black);
+                background-size: 1px 1px, 1px 1px;
+                background-position: center center, center center;
+                background-repeat: repeat-y, repeat-x;
+
+            }
+
+            .tree-item-children {
+
+                .tree-item {
+                    border:0px;
+                    background-color: white; 
+                    border-bottom: 1px solid $border-color;
+                    border-left: 1px solid $border-color;
+                    transition: all 0.3s linear; 
+    
+                    &.selected {
+                        background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%,rgb(244,244,244) 0%,rgb(244,244,244) 10px,rgba(0, 0, 0, 0.1) 10px,rgba(0, 0, 0, 0.1) 20px);
+                        background-repeat: repeat-x;
+                        background-size: 14px 14px;
+                        background-position: center center;
+                    }
+                }
+    
+                
             }
         }
+
 
     }
 

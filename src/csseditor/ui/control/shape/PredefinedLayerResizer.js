@@ -34,7 +34,7 @@ export default class PredefinedLayerResizer extends UIElement {
                     <button type="button" data-value="to top right"></button>
                     <button type="button" data-value="to bottom right"></button>
                     <button type="button" data-value="to bottom left"></button>
-                    <button type="button" data-value="to top left" data-position="aaa"></button>
+                    <button type="button" data-value="to top left"></button>
                 </div>
 
                 <Radius></Radius>

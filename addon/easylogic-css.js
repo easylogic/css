@@ -16361,7 +16361,7 @@ var PredefinedLayerResizer = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="predefined-layer-resizer">\n                <div class=\'button-group\' ref=\'$buttonGroup\'>\n                    <button type="button" data-value="to right"></button>\n                    <button type="button" data-value="to left"></button>\n                    <button type="button" data-value="to top"></button>\n                    <button type="button" data-value="to bottom"></button>\n                    <button type="button" data-value="to top right"></button>\n                    <button type="button" data-value="to bottom right"></button>\n                    <button type="button" data-value="to bottom left"></button>\n                    <button type="button" data-value="to top left" data-position="aaa"></button>\n                </div>\n\n                <Radius></Radius>\n                <TopLeftRadius></TopLeftRadius>\n                <TopRightRadius></TopRightRadius>\n                <BottomLeftRadius></BottomLeftRadius>\n                <BottomRightRadius></BottomRightRadius>\n                <LayerRadius></LayerRadius>\n                <LayerRotate></LayerRotate>\n\n                <div class="guide-horizontal"></div>\n                <div class="guide-vertical"></div>\n            </div> \n        ';
+            return '\n            <div class="predefined-layer-resizer">\n                <div class=\'button-group\' ref=\'$buttonGroup\'>\n                    <button type="button" data-value="to right"></button>\n                    <button type="button" data-value="to left"></button>\n                    <button type="button" data-value="to top"></button>\n                    <button type="button" data-value="to bottom"></button>\n                    <button type="button" data-value="to top right"></button>\n                    <button type="button" data-value="to bottom right"></button>\n                    <button type="button" data-value="to bottom left"></button>\n                    <button type="button" data-value="to top left"></button>\n                </div>\n\n                <Radius></Radius>\n                <TopLeftRadius></TopLeftRadius>\n                <TopRightRadius></TopRightRadius>\n                <BottomLeftRadius></BottomLeftRadius>\n                <BottomRightRadius></BottomRightRadius>\n                <LayerRadius></LayerRadius>\n                <LayerRotate></LayerRotate>\n\n                <div class="guide-horizontal"></div>\n                <div class="guide-vertical"></div>\n            </div> \n        ';
         }
     }, {
         key: 'refresh',
@@ -18005,9 +18005,10 @@ var LayerList = function (_UIElement) {
             var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
             var selected = item.id == selectedId ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="tree-item-children">\n            ' + this.read('/item/map/children', item.id, function (item) {
+            var collapsed = item.gradientCollapsed ? 'collapsed' : '';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" item-id="' + item.id + '">\n                <div class=\'gradient-collape-button\'></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
-            }).join('') + '\n            </div>\n            ';
+            }).join('') + '\n                </div>\n            </div>\n            ';
         }
     }, {
         key: 'load $layerList',
@@ -18140,6 +18141,15 @@ var LayerList = function (_UIElement) {
         key: 'click $viewSample',
         value: function click$viewSample(e) {
             this.emit('toggleLayerSampleView');
+        }
+    }, {
+        key: 'click $layerList .gradient-collape-button',
+        value: function click$layerListGradientCollapeButton(e) {
+            e.$delegateTarget.parent().toggleClass('collapsed');
+            var item = this.read('/item/get', e.$delegateTarget.attr('item-id'));
+
+            item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
+            this.run('/item/set', item);
         }
     }]);
     return LayerList;

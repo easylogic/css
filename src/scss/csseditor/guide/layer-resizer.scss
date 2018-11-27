@@ -53,12 +53,17 @@
             
 
             &.active {
-                &:after {
+                &:not([data-position*=" "]):after {
                     position: absolute;
                     bottom: -20px;
                     display: inline-block;
                     content: attr(data-position);
                     transform: translateX(-50%);
+                    background-color: rgba(156, 156, 156, 1);
+                    color: white;
+                    border-radius: 3px;
+                    padding: 3px 5px;
+                    box-sizing: border-box;
                 }
     
             }
