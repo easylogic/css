@@ -18218,7 +18218,7 @@ var LayerList = function (_UIElement) {
 
             var selected = item.id == selectedId ? 'selected' : '';
             var collapsed = item.gradientCollapsed ? 'collapsed' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" item-id="' + item.id + '">\n                <div class=\'gradient-collape-button\'></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/children', item.id, function (item) {
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }).join('') + '\n                </div>\n            </div>\n            ';
         }
@@ -18355,8 +18355,8 @@ var LayerList = function (_UIElement) {
             this.emit('toggleLayerSampleView');
         }
     }, {
-        key: 'click $layerList .gradient-collape-button',
-        value: function click$layerListGradientCollapeButton(e) {
+        key: 'click.self $layerList .gradient-collapse-button',
+        value: function clickSelf$layerListGradientCollapseButton(e) {
             e.$delegateTarget.parent().toggleClass('collapsed');
             var item = this.read('/item/get', e.$delegateTarget.attr('item-id'));
 

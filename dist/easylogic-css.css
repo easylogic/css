@@ -1635,7 +1635,7 @@ html, body {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         padding-left: 50px; }
-        .csseditor .layers .layer-list .gradient-list-group.collapsed .gradient-collape-button {
+        .csseditor .layers .layer-list .gradient-list-group.collapsed .gradient-collapse-button {
           background-image: -webkit-gradient(linear, left top, right top, from(black), to(black));
           background-image: linear-gradient(to right, black, black);
           background-size: 1px 1px;
@@ -1654,7 +1654,7 @@ html, body {
               border-bottom: 2px solid black; }
             .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-title, .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-tools {
               display: none; }
-        .csseditor .layers .layer-list .gradient-list-group .gradient-collape-button {
+        .csseditor .layers .layer-list .gradient-list-group .gradient-collapse-button {
           position: absolute;
           width: 20px;
           height: 20px;

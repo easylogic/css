@@ -200,7 +200,7 @@ $mini-layer-view-height: 420px;
             padding-left: 50px;
 
             &.collapsed {
-                .gradient-collape-button {
+                .gradient-collapse-button {
                     background-image: linear-gradient(to right, black, black);
                     background-size: 1px 1px;
                     background-position: center center;
@@ -228,7 +228,7 @@ $mini-layer-view-height: 420px;
 
             }            
 
-            .gradient-collape-button {
+            .gradient-collapse-button {
                 position: absolute;
                 width: 20px;
                 height: 20px;
@@ -237,8 +237,6 @@ $mini-layer-view-height: 420px;
                 top: 25px;
                 cursor: pointer;
                 transform: translateY(-50%) translateX(-50%);
-                // border-radius: 50%;
-                // border:1px solid black;
                 background-image: linear-gradient(to right, black, black),linear-gradient(to right, black, black);
                 background-size: 1px 1px, 1px 1px;
                 background-position: center center, center center;

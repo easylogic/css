@@ -74,8 +74,8 @@ export default class LayerList extends UIElement {
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">+</button>
                 </div>                            
             </div>
-            <div class="gradient-list-group ${collapsed}" item-id="${item.id}">
-                <div class='gradient-collape-button'></div>            
+            <div class="gradient-list-group ${collapsed}" >
+                <div class='gradient-collapse-button' item-id="${item.id}"></div>            
                 <div class="tree-item-children">
                     ${this.read('/item/map/children', item.id, (item) => {
                         return this.makeItemNodeImage(item)
@@ -201,7 +201,7 @@ export default class LayerList extends UIElement {
         this.emit('toggleLayerSampleView');
     }
 
-    'click $layerList .gradient-collape-button' (e) {
+    'click.self $layerList .gradient-collapse-button' (e) {
         e.$delegateTarget.parent().toggleClass('collapsed')
         var item = this.read('/item/get', e.$delegateTarget.attr('item-id'))
 
