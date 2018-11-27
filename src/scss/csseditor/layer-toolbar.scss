@@ -62,4 +62,39 @@
             }                    
         }
     }
+
+    .button-group {
+        display: inline-flex;
+        vertical-align: middle;        
+
+        button {
+            flex: 1 1 auto;
+            appearance: none;
+            border:1px solid $border-color;
+            outline:none;
+            vertical-align: middle;
+
+            &:not(:first-child) {
+                margin-left: -1px;
+            }
+
+            &.cut {
+                width: 18px;
+                height: 18px;
+                box-sizing: border-box;
+                border: 1px solid $border-color;
+                cursor: pointer;
+                background-image: linear-gradient(to top, black 0%,black 100%);
+                background-size: 4px 4px;
+                background-position: 6px center;
+                background-repeat: repeat-y;
+    
+                &.on {
+                    background-position: center 6px;                            
+                    background-repeat: repeat-x;
+                }      
+            }
+      
+        }
+    }
 }

@@ -24,8 +24,17 @@ export default class LayerToolbar extends UIElement {
                     <div class="arrow">
                     </div> 
                 </div>
-                <label>Distance</label>
-                <button class="distance" ref="$distance">=|=</button>
+                <label>Steps</label>
+                <div class="button-group">
+                    <button class="distance" ref="$ordering" title="Full Ordering">=|=</button>
+                    <button class="distance" ref="$orderingLeft" title="Left Ordering">=|</button>
+                    <button class="distance" ref="$orderingRight" title="Right Ordering">|=</button>
+                </div>
+
+                <div class="button-group">
+                    <button class="cut" ref="$cutOff" title="Cut Off"></button>
+                    <button class="cut on" ref="$cutOn" title="Cut On"></button>
+                </div>                
             </div>
         `
     }
@@ -52,8 +61,23 @@ export default class LayerToolbar extends UIElement {
         this.emit('toggleGradientSampleView');
     }
 
-    'click $distance' (e) {
-        this.dispatch('/colorstep/distance/equals')
-        this.emit('changeEditor');
+    'click $ordering' (e) {
+        this.dispatch('/colorstep/ordering/equals')
+    } 
+
+    'click $orderingLeft' (e) {
+        this.dispatch('/colorstep/ordering/equals/left')
+    }    
+
+    'click $orderingRight' (e) {
+        this.dispatch('/colorstep/ordering/equals/right')
+    }        
+
+    'click $cutOff' (e) {
+        this.dispatch('/colorstep/cut/off')
     }
+
+    'click $cutOn' (e) {
+        this.dispatch('/colorstep/cut/on')
+    }    
 }

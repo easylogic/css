@@ -24,15 +24,10 @@ export default class ColorStepManager extends BaseModule {
         }
     }
 
-    '*/colorstep/create' ($store, obj) {
-        if (obj) {
-            obj = $store.clone(obj)
-        } else {
-            obj = $store.clone(defaultObject)
-        }
 
-        return obj;
-    }
+    afterDispatch () {
+        this.$store.emit('changeEditor')
+    }    
 
     '*/colorstep/colorSource' ($store) {
         return INIT_COLOR_SOURCE
@@ -44,48 +39,6 @@ export default class ColorStepManager extends BaseModule {
         } else {
             return $store.read('/colorstep/list').filter(item => !!item.selected)[0]
         }
-    }
-
-    '*/colorstep/currentIndex' ($store, index) {
-        if (isUndefined(index)) {
-            return $store.read('/colorstep/list').map((step, index) => { 
-                return {step, index }
-            }).filter(item => {
-                return !!item.step.selected
-            })[0].index
-        } else {
-            return index; 
-        }
-    }    
-
-    // 이미지 얻어오기 
-    '*/colorstep/get' ($store, colorStepOrKey, key) {
-
-        var current = $store.read('/colorstep/current');
-        if (arguments.length == 1) {
-            return current
-        } else if (arguments.length == 2) {
-            if (!isUndefined(current[colorStepOrKey])) {
-                return current[colorStepOrKey]
-            }
-        } else if (arguments.length == 3) {
-            if ( colorStepOrKey && !isUndefined(colorStepOrKey[key])) {
-                return colorStepOrKey[key];
-            } else if (!isUndefined(current[key])) {
-                return current[key]
-            }
-        }
-    }
-
-    // 이미지 리스트 얻어오기 
-    '*/colorstep/list' ($store, imageIndex) {
-        var image = $store.read('/image/current', imageIndex)
-
-        if (image) {
-            return image.colorsteps || []; 
-        }
-
-        return []
     }
 
     '/colorstep/initColor' ($store, color) {
@@ -176,19 +129,84 @@ export default class ColorStepManager extends BaseModule {
         return colorsteps;
     }
 
-    '/colorstep/distance/equals' ($store) {
-        $store.read('/item/current/image', (image) => {
-            var list = $store.read('/colorstep/sort/list', image.id);
 
-            var count = list.length - 1; 
-            var dist = (list[count].percent - list[0].percent)/count; 
-            var firstValue = list[0].percent;
-            for(var i = 1; i < count; i++) {
-                var step = list[i];
-                step.percent = firstValue + i * dist; 
-                $store.run('/item/set', step);
-            }
+    // 이미지 리스트 얻어오기 
+    '*/colorstep/list' ($store) {
+        var image = $store.read('/item/current/image');
+
+        if (image) {
+            return $store.read('/colorstep/sort/list', image.id); 
+        }
+
+        return []
+    }
+
+
+    '*/colorstep/currentIndex' ($store, index) {
+        if (isUndefined(index)) {
+            return $store.read('/colorstep/list').map((step, index) => { 
+                return { step, index }
+            }).filter(item => {
+                return !!item.step.selected
+            })[0].index
+        } else {
+            return index; 
+        }
+    }        
+
+    '/colorstep/cut/off' ($store, id) {
+        var list = []
+        if (isUndefined(id)) {
+            list = $store.read('/colorstep/list');
+        } else {
+            list = [ $store.read('/item/get', id) ]
+        }
+        list.forEach(item => {
+            item.cut = false; 
+            $store.run('/item/set', item);                
         })
     }
+
+    '/colorstep/cut/on' ($store, id) {
+        var list = []
+        if (isUndefined(id)) {
+            list = $store.read('/colorstep/list');
+        } else {
+            list = [ $store.read('/item/get', id) ]
+        }
+        list.forEach(item => {
+            item.cut = true; 
+            $store.run('/item/set', item);                
+        })
+    }    
+
+    '/colorstep/ordering/equals' ($store, firstIndex = 0, lastIndex = Number.MAX_SAFE_INTEGER) {
+
+        var list = $store.read('/colorstep/list');
+
+        if (lastIndex > list.length -1 ) {
+            lastIndex = list.length - 1; 
+        }
+
+        var count = (lastIndex - firstIndex); 
+        var dist = (list[lastIndex].percent - list[firstIndex].percent)/count; 
+
+        var firstValue = list[firstIndex].percent;
+        for(var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
+            var step = list[i];
+            step.percent = firstValue + start * dist; 
+            $store.run('/item/set', step);
+        }
+
+    }
+
+
+    '/colorstep/ordering/equals/left' ($store) {
+        $store.run('/colorstep/ordering/equals', 0, $store.read('/colorstep/currentIndex'));
+    }    
+
+    '/colorstep/ordering/equals/right' ($store) {
+        $store.run('/colorstep/ordering/equals', $store.read('/colorstep/currentIndex'));
+    }        
 
 }

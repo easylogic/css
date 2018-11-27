@@ -9387,12 +9387,6 @@ var ColorPicker = {
     XDColorPicker: XDColorPicker
 };
 
-var defaultObject = {
-    color: 'rgba(0, 0, 0, 0)',
-    percent: 0,
-    selected: false
-};
-
 var isUndefined$1 = function isUndefined(value) {
     return typeof value == 'undefined' || value == null;
 };
@@ -9417,15 +9411,9 @@ var ColorStepManager = function (_BaseModule) {
             };
         }
     }, {
-        key: '*/colorstep/create',
-        value: function colorstepCreate($store, obj) {
-            if (obj) {
-                obj = $store.clone(obj);
-            } else {
-                obj = $store.clone(defaultObject);
-            }
-
-            return obj;
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit('changeEditor');
         }
     }, {
         key: '*/colorstep/colorSource',
@@ -9442,55 +9430,6 @@ var ColorStepManager = function (_BaseModule) {
                     return !!item.selected;
                 })[0];
             }
-        }
-    }, {
-        key: '*/colorstep/currentIndex',
-        value: function colorstepCurrentIndex($store, index) {
-            if (isUndefined$1(index)) {
-                return $store.read('/colorstep/list').map(function (step, index) {
-                    return { step: step, index: index };
-                }).filter(function (item) {
-                    return !!item.step.selected;
-                })[0].index;
-            } else {
-                return index;
-            }
-        }
-
-        // 이미지 얻어오기 
-
-    }, {
-        key: '*/colorstep/get',
-        value: function colorstepGet($store, colorStepOrKey, key) {
-
-            var current = $store.read('/colorstep/current');
-            if (arguments.length == 1) {
-                return current;
-            } else if (arguments.length == 2) {
-                if (!isUndefined$1(current[colorStepOrKey])) {
-                    return current[colorStepOrKey];
-                }
-            } else if (arguments.length == 3) {
-                if (colorStepOrKey && !isUndefined$1(colorStepOrKey[key])) {
-                    return colorStepOrKey[key];
-                } else if (!isUndefined$1(current[key])) {
-                    return current[key];
-                }
-            }
-        }
-
-        // 이미지 리스트 얻어오기 
-
-    }, {
-        key: '*/colorstep/list',
-        value: function colorstepList($store, imageIndex) {
-            var image = $store.read('/image/current', imageIndex);
-
-            if (image) {
-                return image.colorsteps || [];
-            }
-
-            return [];
         }
     }, {
         key: '/colorstep/initColor',
@@ -9585,21 +9524,93 @@ var ColorStepManager = function (_BaseModule) {
 
             return colorsteps;
         }
-    }, {
-        key: '/colorstep/distance/equals',
-        value: function colorstepDistanceEquals($store) {
-            $store.read('/item/current/image', function (image) {
-                var list = $store.read('/colorstep/sort/list', image.id);
 
-                var count = list.length - 1;
-                var dist = (list[count].percent - list[0].percent) / count;
-                var firstValue = list[0].percent;
-                for (var i = 1; i < count; i++) {
-                    var step = list[i];
-                    step.percent = firstValue + i * dist;
-                    $store.run('/item/set', step);
-                }
+        // 이미지 리스트 얻어오기 
+
+    }, {
+        key: '*/colorstep/list',
+        value: function colorstepList($store) {
+            var image = $store.read('/item/current/image');
+
+            if (image) {
+                return $store.read('/colorstep/sort/list', image.id);
+            }
+
+            return [];
+        }
+    }, {
+        key: '*/colorstep/currentIndex',
+        value: function colorstepCurrentIndex($store, index) {
+            if (isUndefined$1(index)) {
+                return $store.read('/colorstep/list').map(function (step, index) {
+                    return { step: step, index: index };
+                }).filter(function (item) {
+                    return !!item.step.selected;
+                })[0].index;
+            } else {
+                return index;
+            }
+        }
+    }, {
+        key: '/colorstep/cut/off',
+        value: function colorstepCutOff($store, id) {
+            var list = [];
+            if (isUndefined$1(id)) {
+                list = $store.read('/colorstep/list');
+            } else {
+                list = [$store.read('/item/get', id)];
+            }
+            list.forEach(function (item) {
+                item.cut = false;
+                $store.run('/item/set', item);
             });
+        }
+    }, {
+        key: '/colorstep/cut/on',
+        value: function colorstepCutOn($store, id) {
+            var list = [];
+            if (isUndefined$1(id)) {
+                list = $store.read('/colorstep/list');
+            } else {
+                list = [$store.read('/item/get', id)];
+            }
+            list.forEach(function (item) {
+                item.cut = true;
+                $store.run('/item/set', item);
+            });
+        }
+    }, {
+        key: '/colorstep/ordering/equals',
+        value: function colorstepOrderingEquals($store) {
+            var firstIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var lastIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Number.MAX_SAFE_INTEGER;
+
+
+            var list = $store.read('/colorstep/list');
+
+            if (lastIndex > list.length - 1) {
+                lastIndex = list.length - 1;
+            }
+
+            var count = lastIndex - firstIndex;
+            var dist = (list[lastIndex].percent - list[firstIndex].percent) / count;
+
+            var firstValue = list[firstIndex].percent;
+            for (var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
+                var step = list[i];
+                step.percent = firstValue + start * dist;
+                $store.run('/item/set', step);
+            }
+        }
+    }, {
+        key: '/colorstep/ordering/equals/left',
+        value: function colorstepOrderingEqualsLeft($store) {
+            $store.run('/colorstep/ordering/equals', 0, $store.read('/colorstep/currentIndex'));
+        }
+    }, {
+        key: '/colorstep/ordering/equals/right',
+        value: function colorstepOrderingEqualsRight($store) {
+            $store.run('/colorstep/ordering/equals', $store.read('/colorstep/currentIndex'));
         }
     }]);
     return ColorStepManager;
@@ -18145,7 +18156,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Distance</label>\n                <button class="distance" ref="$distance">=|=</button>\n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button class="distance" ref="$ordering" title="Full Ordering">=|=</button>\n                    <button class="distance" ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button class="distance" ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>                \n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -18174,10 +18185,29 @@ var LayerToolbar = function (_UIElement) {
             this.emit('toggleGradientSampleView');
         }
     }, {
-        key: 'click $distance',
-        value: function click$distance(e) {
-            this.dispatch('/colorstep/distance/equals');
-            this.emit('changeEditor');
+        key: 'click $ordering',
+        value: function click$ordering(e) {
+            this.dispatch('/colorstep/ordering/equals');
+        }
+    }, {
+        key: 'click $orderingLeft',
+        value: function click$orderingLeft(e) {
+            this.dispatch('/colorstep/ordering/equals/left');
+        }
+    }, {
+        key: 'click $orderingRight',
+        value: function click$orderingRight(e) {
+            this.dispatch('/colorstep/ordering/equals/right');
+        }
+    }, {
+        key: 'click $cutOff',
+        value: function click$cutOff(e) {
+            this.dispatch('/colorstep/cut/off');
+        }
+    }, {
+        key: 'click $cutOn',
+        value: function click$cutOn(e) {
+            this.dispatch('/colorstep/cut/on');
         }
     }]);
     return LayerToolbar;
