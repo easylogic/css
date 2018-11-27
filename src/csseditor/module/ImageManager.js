@@ -150,6 +150,7 @@ export default class ImageManager extends BaseModule {
         var backgroundPosition = $store.read('/image/toBackgroundPositionString', image, isExport)
         var backgroundSize = $store.read('/image/toBackgroundSizeString', image, isExport)
         var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image, isExport)
+        var backgroundBlendMode = $store.read('/image/toBackgroundBlendModeString', image, isExport)
 
         if (backgroundImage) {
             results['background-image'] = backgroundImage;  // size, position, origin, attachment and etc 
@@ -165,7 +166,12 @@ export default class ImageManager extends BaseModule {
 
         if (backgroundRepeat) {
             results['background-repeat'] = backgroundRepeat;
-        }        
+        }      
+        
+        // console.log(backgroundBlendMode);
+        if (backgroundBlendMode) {
+            results['background-blend-mode'] = backgroundBlendMode;
+        }              
 
         return results
     }
@@ -178,6 +184,7 @@ export default class ImageManager extends BaseModule {
         var backgroundPosition = $store.read('/image/toBackgroundPositionString', image)
         var backgroundSize = $store.read('/image/toBackgroundSizeString', image)
         var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image)
+        var backgroundBlendMode = $store.read('/image/toBackgroundBlendModeString', image)        
 
         if (backgroundImage) {
             results['background-image'] = backgroundImage;  // size, position, origin, attachment and etc 
@@ -194,6 +201,10 @@ export default class ImageManager extends BaseModule {
         if (backgroundRepeat) {
             results['background-repeat'] = backgroundRepeat;
         }        
+
+        if (backgroundBlendMode) {
+            results['background-blend-mode'] = backgroundBlendMode;
+        }                
 
         return results
     }
@@ -262,6 +273,12 @@ export default class ImageManager extends BaseModule {
             return image.backgroundRepeat;
         }
     }       
+
+    '*/image/toBackgroundBlendModeString' ($store, image) {
+        if (image.backgroundBlendMode) {
+            return image.backgroundBlendMode || 'normal';
+        }
+    }           
 
     '*/image/get/unitValue' ($store, step) {
         if (step.unit == 'px') {

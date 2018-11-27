@@ -26,7 +26,7 @@ export default class MixBlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container">
-                                <div class="blend-item-blend-view"  style='${this.read('/blend/toStringWithoutDimension', item, '', blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read('/blend/toStringWithoutDimension', item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>`

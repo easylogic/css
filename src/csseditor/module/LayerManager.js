@@ -343,9 +343,11 @@ export default class LayerManager extends BaseModule {
             css['background-color'] = layer.style['background-color']
         }         
 
+        /*
         if (layer.style['background-blend-mode']) {
             css['background-blend-mode'] = layer.style['background-blend-mode'] || ""
         } 
+        */
         
         if (layer.style['mix-blend-mode']) {
             css['mix-blend-mode'] = layer.style['mix-blend-mode'] || ""

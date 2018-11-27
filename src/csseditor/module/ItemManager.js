@@ -23,7 +23,6 @@ const LAYER_DEFAULT_OBJECT = {
     name: '',
     index: 0,    
     backgroundColor: '',
-    backgroundBlendMode: 'normal',
     parentId: '',
     mixBlendMode: 'normal',
     selected: true,
@@ -35,7 +34,6 @@ const LAYER_DEFAULT_OBJECT = {
     style: {
         x: '0px',
         y: '0px',
-        'background-blend-mode' : 'multiply',
         'mix-blend-mode': 'normal'
     },    
     filters: {}
@@ -60,6 +58,7 @@ const IMAGE_DEFAULT_OBJECT = {
     backgroundOrigin: null, 
     backgroundPositionX: 0,
     backgroundPositionY: 0,
+    backgroundBlendMode: 'normal',
     backgroundColor: null,
     backgroundAttachment: null,
     backgroundClip: null

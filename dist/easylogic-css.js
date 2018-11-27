@@ -9923,6 +9923,7 @@ var ImageManager = function (_BaseModule) {
             var backgroundPosition = $store.read('/image/toBackgroundPositionString', image$$1, isExport);
             var backgroundSize = $store.read('/image/toBackgroundSizeString', image$$1, isExport);
             var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image$$1, isExport);
+            var backgroundBlendMode = $store.read('/image/toBackgroundBlendModeString', image$$1, isExport);
 
             if (backgroundImage) {
                 results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
@@ -9938,6 +9939,11 @@ var ImageManager = function (_BaseModule) {
 
             if (backgroundRepeat) {
                 results['background-repeat'] = backgroundRepeat;
+            }
+
+            // console.log(backgroundBlendMode);
+            if (backgroundBlendMode) {
+                results['background-blend-mode'] = backgroundBlendMode;
             }
 
             return results;
@@ -9954,6 +9960,7 @@ var ImageManager = function (_BaseModule) {
             var backgroundPosition = $store.read('/image/toBackgroundPositionString', image$$1);
             var backgroundSize = $store.read('/image/toBackgroundSizeString', image$$1);
             var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image$$1);
+            var backgroundBlendMode = $store.read('/image/toBackgroundBlendModeString', image$$1);
 
             if (backgroundImage) {
                 results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
@@ -9969,6 +9976,10 @@ var ImageManager = function (_BaseModule) {
 
             if (backgroundRepeat) {
                 results['background-repeat'] = backgroundRepeat;
+            }
+
+            if (backgroundBlendMode) {
+                results['background-blend-mode'] = backgroundBlendMode;
             }
 
             return results;
@@ -10040,6 +10051,13 @@ var ImageManager = function (_BaseModule) {
         value: function imageToBackgroundRepeatString($store, image$$1) {
             if (image$$1.backgroundRepeat) {
                 return image$$1.backgroundRepeat;
+            }
+        }
+    }, {
+        key: '*/image/toBackgroundBlendModeString',
+        value: function imageToBackgroundBlendModeString($store, image$$1) {
+            if (image$$1.backgroundBlendMode) {
+                return image$$1.backgroundBlendMode || 'normal';
             }
         }
     }, {
@@ -10635,9 +10653,11 @@ var LayerManager = function (_BaseModule) {
                 css['background-color'] = layer.style['background-color'];
             }
 
+            /*
             if (layer.style['background-blend-mode']) {
-                css['background-blend-mode'] = layer.style['background-blend-mode'] || "";
-            }
+                css['background-blend-mode'] = layer.style['background-blend-mode'] || ""
+            } 
+            */
 
             if (layer.style['mix-blend-mode']) {
                 css['mix-blend-mode'] = layer.style['mix-blend-mode'] || "";
@@ -10793,27 +10813,69 @@ var BlendManager = function (_BaseModule) {
             this.$store.blendMode = '';
         }
     }, {
-        key: '*/blend/toString',
-        value: function blendToString($store, layer) {
-            var backgroundBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-            var mixBlend = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-            var withStyle = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+        key: '*/blend/layer/toString',
+        value: function blendLayerToString($store, item) {
+            var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+            var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
 
-            layer = $store.read('/clone', layer);
+            item = $store.read('/clone', item);
 
-            layer.style['background-blend-mode'] = backgroundBlend;
-            layer.style['mix-blend-mode'] = mixBlend;
+            item.style['mix-blend-mode'] = mixBlend;
 
-            return $store.read('/layer/toString', layer, withStyle);
+            return $store.read('/layer/toString', item, withStyle);
+        }
+    }, {
+        key: '*/blend/image/toString',
+        value: function blendImageToString($store, item) {
+            var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+            var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+
+            item = $store.read('/clone', item);
+
+            item.backgroundBlendMode = blend;
+
+            // console.log($store.read('/image/toString', item, withStyle))
+
+            return $store.read('/image/toString', item, withStyle);
         }
     }, {
         key: '*/blend/toStringWithoutDimension',
-        value: function blendToStringWithoutDimension($store, layer) {
-            var backgroundBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-            var mixBlend = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+        value: function blendToStringWithoutDimension($store, item) {
+            var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
-            return $store.read('/blend/toString', layer, backgroundBlend, mixBlend, false);
+            return $store.read('/blend/layer/toString', item, mixBlend, false);
+        }
+    }, {
+        key: '*/blend/toStringWithoutDimensionForImage',
+        value: function blendToStringWithoutDimensionForImage($store, item) {
+            var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
+
+            // console.log(item, blend);
+            var cssText = $store.read('/blend/image/toString', item, blend, false);
+
+            cssText = cssText.split(';').map(function (it) {
+                return it.split(':').map(function (it) {
+                    return it.trim();
+                });
+            }).map(function (a) {
+                if (a[0] == 'background-image') {
+                    a[1] += ',url(/resources/image/grapes.jpg)';
+                } else if (a[0] == 'background-size') {
+                    a[1] += ',auto';
+                } else if (a[0] == 'background-repeat') {
+                    a[1] += ',no-repeat';
+                } else if (a[0] == 'background-position') {
+                    a[1] += ',center center';
+                } else if (a[0] == 'background-blend-mode') {
+                    a[1] += ',normal';
+                }
+
+                return a.join(':');
+            }).join(';');
+
+            return cssText;
         }
     }, {
         key: '*/blend/list',
@@ -11106,7 +11168,6 @@ var LAYER_DEFAULT_OBJECT = {
     name: '',
     index: 0,
     backgroundColor: '',
-    backgroundBlendMode: 'normal',
     parentId: '',
     mixBlendMode: 'normal',
     selected: true,
@@ -11118,7 +11179,6 @@ var LAYER_DEFAULT_OBJECT = {
     style: {
         x: '0px',
         y: '0px',
-        'background-blend-mode': 'multiply',
         'mix-blend-mode': 'normal'
     },
     filters: {}
@@ -11143,6 +11203,7 @@ var IMAGE_DEFAULT_OBJECT = {
     backgroundOrigin: null,
     backgroundPositionX: 0,
     backgroundPositionY: 0,
+    backgroundBlendMode: 'normal',
     backgroundColor: null,
     backgroundAttachment: null,
     backgroundClip: null
@@ -15154,7 +15215,7 @@ var BlendList = function (_BasePropertyItem) {
     createClass(BlendList, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend\'>\n            <div class=\'title\' ref="$title">Blend - <span class=\'description\' ref="$desc"></span></div>\n            <div class=\'items max-height\'>         \n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'title\' ref="$title">Blend - <span class=\'description\' ref="$desc"></span></div>\n            <div class=\'items max-height\'>         \n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'load $blendList',
@@ -15163,15 +15224,15 @@ var BlendList = function (_BasePropertyItem) {
 
             var list = this.read('/blend/list');
 
-            var item = this.read('/item/current/layer');
+            var item = this.read('/item/current/image');
             if (!item) {
                 return '';
             }
 
             return '<div>' + list.map(function (blend) {
 
-                var selected = blend == item.style['background-blend-mode'] ? 'selected' : '';
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+                var selected = blend == item.backgroundBlendMode ? 'selected' : '';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ' + blend + ';">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimensionForImage', item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join('') + '</div>';
         }
     }, {
@@ -15179,9 +15240,9 @@ var BlendList = function (_BasePropertyItem) {
         value: function isShow() {
             var image = this.read('/item/current/image');
 
-            if (image) return false;
+            if (image) return true;
 
-            return true;
+            return false;
         }
     }, {
         key: 'refresh',
@@ -15195,8 +15256,8 @@ var BlendList = function (_BasePropertyItem) {
             if (isShow) {
                 this.load();
 
-                this.read('/item/current/layer', function (layer) {
-                    _this3.refs.$desc.html(layer.style['background-blend-mode']);
+                this.read('/item/current/image', function (image) {
+                    _this3.refs.$desc.html(image.backgroundBlendMode || 'normal');
                 });
             }
         }
@@ -15208,11 +15269,11 @@ var BlendList = function (_BasePropertyItem) {
     }, {
         key: 'click.self $blendList .blend-item',
         value: function clickSelf$blendListBlendItem(e) {
-            var item = this.read('/item/current/layer');
+            var item = this.read('/item/current/image');
 
             if (!item) return;
 
-            item.style['background-blend-mode'] = e.$delegateTarget.attr('data-mode');
+            item.backgroundBlendMode = e.$delegateTarget.attr('data-mode');
 
             this.dispatch('/item/set', item, true);
             this.refresh();
@@ -15248,7 +15309,7 @@ var MixBlendList = function (_BasePropertyItem) {
             return '<div>' + list.map(function (blend) {
 
                 var selected = blend == item.style['mix-blend-mode'] ? 'selected' : '';
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, '', blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join('') + '</div>';
         }
     }, {
@@ -15804,7 +15865,7 @@ var ImageView = function (_UIElement) {
     createClass(ImageView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>\n                <ImageResource></ImageResource>\n            </div>  \n        ";
+            return "\n            <div class='property-view'>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>\n                <ImageResource></ImageResource>\n                <BlendList></BlendList>                    \n            </div>  \n        ";
         }
     }, {
         key: "components",
@@ -18083,7 +18144,7 @@ var MiniLayerView = function (_BaseTab) {
     createClass(MiniLayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class=\"tab mini-layer-view\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"color\">Color</div>\n                    <div class=\"tab-item\" data-id=\"blend\">Blend</div>\n                    <div class=\"tab-item\" data-id=\"mix\">Mix</div>\n                    <div class=\"tab-item\" data-id=\"filter\">Filter</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"color\">\n                        <LayerColorPickerPanel></LayerColorPickerPanel>                \n                    </div>\n                    <div class=\"tab-content\" data-id=\"blend\">\n                        <BlendList></BlendList>    \n                    </div>\n                    <div class=\"tab-content\" data-id=\"mix\">\n                        <MixBlendList></MixBlendList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"filter\">\n                        <FilterList></FilterList>   \n                    </div>                                        \n                </div>\n            </div>            \n        ";
+            return "\n            <div class=\"tab mini-layer-view\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"color\">Color</div>\n                    <!-- <div class=\"tab-item\" data-id=\"blend\">Blend</div> -->\n                    <div class=\"tab-item\" data-id=\"mix\">Blend</div>\n                    <div class=\"tab-item\" data-id=\"filter\">Filter</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"color\">\n                        <LayerColorPickerPanel></LayerColorPickerPanel>                \n                    </div>\n                    <!-- <div class=\"tab-content\" data-id=\"blend\">\n                        <BlendList></BlendList>    \n                    </div> -->\n                    <div class=\"tab-content\" data-id=\"mix\">\n                        <MixBlendList></MixBlendList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"filter\">\n                        <FilterList></FilterList>   \n                    </div>                                        \n                </div>\n            </div>            \n        ";
         }
     }, {
         key: "components",
