@@ -2685,6 +2685,9 @@ html, body {
           .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected {
             z-index: 1;
             top: 30px; }
+            .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-step {
+              -webkit-box-shadow: 0 0 20px 8px rgba(228, 255, 0, 0.8);
+                      box-shadow: 0 0 20px 8px rgba(228, 255, 0, 0.8); }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-line {
               height: 32px; }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-change, .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar.selected .guide-unit {
@@ -3409,8 +3412,8 @@ html, body {
           bottom: -20px;
           display: inline-block;
           content: attr(data-position);
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
+          -webkit-transform: translateX(5px) translateY(5px);
+                  transform: translateX(5px) translateY(5px);
           background-color: #9c9c9c;
           color: white;
           border-radius: 3px;

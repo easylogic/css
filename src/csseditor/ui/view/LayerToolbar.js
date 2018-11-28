@@ -26,15 +26,15 @@ export default class LayerToolbar extends UIElement {
                 </div>
                 <label>Steps</label>
                 <div class="button-group">
-                    <button class="distance" ref="$ordering" title="Full Ordering">=|=</button>
-                    <button class="distance" ref="$orderingLeft" title="Left Ordering">=|</button>
-                    <button class="distance" ref="$orderingRight" title="Right Ordering">|=</button>
+                    <button ref="$ordering" title="Full Ordering">=|=</button>
+                    <button ref="$orderingLeft" title="Left Ordering">=|</button>
+                    <button ref="$orderingRight" title="Right Ordering">|=</button>
                 </div>
 
                 <div class="button-group">
                     <button class="cut" ref="$cutOff" title="Cut Off"></button>
                     <button class="cut on" ref="$cutOn" title="Cut On"></button>
-                </div>                
+                </div>           
             </div>
         `
     }

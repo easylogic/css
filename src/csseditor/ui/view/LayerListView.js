@@ -56,7 +56,7 @@ export default class LayerList extends UIElement {
                 </div>            
             </div>
             ` 
-    }        
+    }         
  
     makeItemNodeLayer (item, selectedId, index = 0) {
         var selected = item.id == selectedId ? 'selected' : ''; 
@@ -77,11 +77,11 @@ export default class LayerList extends UIElement {
             <div class="gradient-list-group ${collapsed}" >
                 <div class='gradient-collapse-button' item-id="${item.id}"></div>            
                 <div class="tree-item-children">
-                    ${this.read('/item/map/children', item.id, (item) => {
+                    ${this.read('/item/map/image/children', item.id, (item) => {
                         return this.makeItemNodeImage(item)
                     }).join('')}
                 </div>
-            </div>
+            </div>       
             `
     }    
 

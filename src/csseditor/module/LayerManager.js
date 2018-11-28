@@ -234,6 +234,14 @@ export default class LayerManager extends BaseModule {
         return results; 
     }    
 
+    '*/layer/make/box-shadow' ($store, layer) {
+        var results = $store.read('/item/map/boxshadow/children', layer.id).map(it => {
+            return `${it.inset ? 'inset' : ''} ${it.offsetX}px ${it.offsetY}px ${it.blurRadius}px ${it.spreadRadius}px ${it.color}`
+        })
+
+        return results.join(', ');
+    }
+
     '*/layer/make/transform' ($store, layer) {
 
         var results = [] 
@@ -342,12 +350,6 @@ export default class LayerManager extends BaseModule {
         if (layer.style['background-color']) {
             css['background-color'] = layer.style['background-color']
         }         
-
-        /*
-        if (layer.style['background-blend-mode']) {
-            css['background-blend-mode'] = layer.style['background-blend-mode'] || ""
-        } 
-        */
         
         if (layer.style['mix-blend-mode']) {
             css['mix-blend-mode'] = layer.style['mix-blend-mode'] || ""
@@ -356,6 +358,7 @@ export default class LayerManager extends BaseModule {
         Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
         css['transform'] = $store.read('/layer/make/transform', layer)
+        css['box-shadow'] = $store.read('/layer/make/box-shadow', layer)
         css['filter'] = $store.read('/layer/make/filter', layer.filters);
         css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
@@ -384,10 +387,6 @@ export default class LayerManager extends BaseModule {
         if (layer.style['background-color']) {
             css['background-color'] = layer.style['background-color']
         }         
-
-        if (layer.style['background-blend-mode']) {
-            css['background-blend-mode'] = layer.style['background-blend-mode'] || ""
-        } 
         
         if (layer.style['mix-blend-mode']) {
             css['mix-blend-mode'] = layer.style['mix-blend-mode'] || ""
@@ -396,6 +395,7 @@ export default class LayerManager extends BaseModule {
         Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
         css['transform'] = $store.read('/layer/make/transform', layer)
+        css['box-shadow'] = $store.read('/layer/make/box-shadow', layer)
         css['filter'] = $store.read('/layer/make/filter', layer.filters);
         css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 

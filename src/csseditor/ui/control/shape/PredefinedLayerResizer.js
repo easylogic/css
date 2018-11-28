@@ -235,7 +235,7 @@ export default class PredefinedLayerResizer extends UIElement {
             position = [x + width, y + height]
         }
 
-        this.activeButton.attr('data-position', position.join(','))
+        this.activeButton.attr('data-position', position.map(it => it + 'px').join(', '))
     }
 
 

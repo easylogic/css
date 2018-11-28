@@ -58,7 +58,7 @@
                     bottom: -20px;
                     display: inline-block;
                     content: attr(data-position);
-                    transform: translateX(-50%);
+                    transform: translateX(5px) translateY(5px);
                     background-color: rgba(156, 156, 156, 1);
                     color: white;
                     border-radius: 3px;

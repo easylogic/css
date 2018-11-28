@@ -178,6 +178,11 @@
                 &.selected {
                     z-index:1;
                     top: 30px;
+
+                    .guide-step {
+                        box-shadow: 0 0 20px 8px rgba(228, 255, 0, 0.8);                    
+                    }
+
                     .guide-line {
                         height: 32px;
                     }       

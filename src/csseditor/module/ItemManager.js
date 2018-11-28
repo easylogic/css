@@ -64,6 +64,15 @@ const IMAGE_DEFAULT_OBJECT = {
     backgroundClip: null
 }
 
+const BOXSHADOW_DEFAULT_OBJECT = {
+    offsetX: 0,
+    offsetY: 0,
+    inset: false,
+    blurRadius: 0,
+    spreadRadius: 0,
+    color: 'transparent'
+}
+
 const COLORSTEP_DEFAULT_OBJECT = {
     itemType: 'colorstep',
     parentId: '',
@@ -118,6 +127,10 @@ export default class ItemManager extends BaseModule {
 
     '*/item/create/layer' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, LAYER_DEFAULT_OBJECT);
+    }
+
+    '*/item/create/boxshadow' ($store, obj = {}) {
+        return $store.read('/item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
     }
     
     '*/item/create/image' ($store, obj = {}) {
@@ -192,32 +205,14 @@ export default class ItemManager extends BaseModule {
         if (item.itemType == 'layer') {
             if (typeof callback == 'function') callback(item)
             return item; 
-        } else if (item.itemType == 'image') {
+        } else if (item.itemType == 'image' || item.itemType == 'boxshadow') {
             var layer = $store.read('/item/get', item.parentId);
             if (typeof callback == 'function') callback(layer)
             return layer
         }
         
         return null; 
-    }    
-
-    '*/item/is' ($store, itemType) {
-        var item = $store.read('/item/current')
-
-        return item.itemType == itemType 
-    }
-
-    '*/item/is/page' ($store) {
-        return $store.read('/item/is', 'page');
-    }
-
-    '*/item/is/layer' ($store) {
-        return $store.read('/item/is', 'layer');
-    }    
-
-    '*/item/is/image' ($store) {
-        return $store.read('/item/is', 'image');
-    }        
+    }     
 
     '*/item/is/mode' ($store, mode, mode2) {
         return $store.selectedMode == mode || $store.selectedMode == mode2;
@@ -235,6 +230,19 @@ export default class ItemManager extends BaseModule {
 
         return null; 
     }
+
+    '*/item/current/boxshadow' ($store, callback) {
+        var item = $store.read('/item/current')
+
+        if (item && item.itemType == 'boxshadow') {
+            if (typeof callback == 'function') {
+                callback(item);
+            } 
+            return item; 
+        }
+
+        return null; 
+    }    
 
     '*/item/keys' ($store) {
         return Object.keys($store.items)
@@ -255,23 +263,39 @@ export default class ItemManager extends BaseModule {
     }    
 
     '*/item/list/page' ($store) {
-        return $store.read('/item/filter', function (id) {
-            return $store.items[id].itemType == 'page'
-        });
+        return $store.read('/item/filter', this.checkItemCallback($store, null, 'page'));
     } 
 
     '*/item/map/page' ($store, callback) {
-        return $store.read('/item/filter', function (id) {
-            return $store.items[id].itemType == 'page'
-        }).map( (id, index) => {
+        return $store.read('/item/list/page').map( (id, index) => {
             return callback($store.items[id], index)
-        });
+        }); 
     }    
 
-    '*/item/list/children' ($store, parentId) {
-        return $store.read('/item/filter', function (id) {
-            return $store.items[id].parentId == parentId
-        });
+
+    checkItemCallback ($store, parentId, itemType = undefined) {
+        if (itemType) {
+
+            if (parentId) {
+                return function (id) {
+                    return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType 
+                }
+            } else {
+                return function (id) {
+                    return $store.items[id].itemType == itemType
+                }
+            }
+        } else {
+            return function (id) {
+                return $store.items[id].parentId == parentId
+            }
+        }
+
+    }
+        
+
+    '*/item/list/children' ($store, parentId, itemType) {
+        return $store.read('/item/filter', this.checkItemCallback($store, parentId, itemType));
     }
 
     '*/item/count/children' ($store, parentId) {
@@ -279,28 +303,52 @@ export default class ItemManager extends BaseModule {
     }    
 
     '*/item/map/children' ($store, parentId, callback = ((item) => item)) {
-        return $store.read('/item/filter', function (id) {
-            return $store.items[id].parentId == parentId
-        }).map(function (id, index) { 
+        return $store.read('/item/list/children', parentId).map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }    
 
-    '*/item/filter/children' ($store, parentId, callback) {
-        return $store.read('/item/filter', function (id) {
-            return $store.items[id].parentId == parentId
-        }).filter(function (id, index) { 
+    '*/item/map/type/children' ($store, parentId, itemType, callback = ((item) => item)) {
+        return $store.read('/item/list/children', parentId, itemType).map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }        
 
+    '*/item/map/image/children' ($store, parentId, callback = ((item) => iteem)) {
+        return $store.read('/item/map/type/children', parentId, 'image', callback);
+    }
+
+    '*/item/map/colorstep/children' ($store, parentId, callback = ((item) => iteem)) {
+        return $store.read('/item/map/type/children', parentId, 'colorstep', callback);
+    }    
+
+    '*/item/map/boxshadow/children' ($store, parentId, callback = ((item) => iteem)) {
+        return $store.read('/item/map/type/children', parentId, 'boxshadow', callback);
+    }    
+
+    '*/item/filter/children' ($store, parentId, callback) {
+        return $store.read('/item/list/children', parentId).filter(function (id, index) { 
+            return callback($store.items[id], index)
+        });
+    }  
+
+    '*/item/filter/type/children' ($store, parentId, itemType, callback) {
+        return $store.read('/item/list/children', parentId, itemType).filter(function (id, index) { 
+            return callback($store.items[id], index)
+        });
+    }      
+
     '*/item/each/children' ($store, parentId, callback) {
-        return $store.read('/item/filter', function (id) {
-            return $store.items[id].parentId == parentId
-        }).forEach(function (id, index) { 
+        return $store.read('/item/list/children', parentId).forEach(function (id, index) { 
             callback($store.items[id], index)
         });
     }        
+
+    '*/item/each/type/children' ($store, parentId, itemType, callback) {
+        return $store.read('/item/list/children', parentId, itemType).forEach(function (id, index) { 
+            callback($store.items[id], index)
+        });
+    }            
 
     '*/item/traverse' ($store, parentId) {
         var list = $store.read('/item/list/children', parentId);

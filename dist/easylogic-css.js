@@ -10582,6 +10582,15 @@ var LayerManager = function (_BaseModule) {
             return results;
         }
     }, {
+        key: '*/layer/make/box-shadow',
+        value: function layerMakeBoxShadow($store, layer) {
+            var results = $store.read('/item/map/boxshadow/children', layer.id).map(function (it) {
+                return (it.inset ? 'inset' : '') + " " + it.offsetX + "px " + it.offsetY + "px " + it.blurRadius + "px " + it.spreadRadius + "px " + it.color;
+            });
+
+            return results.join(', ');
+        }
+    }, {
         key: '*/layer/make/transform',
         value: function layerMakeTransform($store, layer) {
 
@@ -10700,12 +10709,6 @@ var LayerManager = function (_BaseModule) {
                 css['background-color'] = layer.style['background-color'];
             }
 
-            /*
-            if (layer.style['background-blend-mode']) {
-                css['background-blend-mode'] = layer.style['background-blend-mode'] || ""
-            } 
-            */
-
             if (layer.style['mix-blend-mode']) {
                 css['mix-blend-mode'] = layer.style['mix-blend-mode'] || "";
             }
@@ -10713,6 +10716,7 @@ var LayerManager = function (_BaseModule) {
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
             css['transform'] = $store.read('/layer/make/transform', layer);
+            css['box-shadow'] = $store.read('/layer/make/box-shadow', layer);
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
             css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
@@ -10742,10 +10746,6 @@ var LayerManager = function (_BaseModule) {
                 css['background-color'] = layer.style['background-color'];
             }
 
-            if (layer.style['background-blend-mode']) {
-                css['background-blend-mode'] = layer.style['background-blend-mode'] || "";
-            }
-
             if (layer.style['mix-blend-mode']) {
                 css['mix-blend-mode'] = layer.style['mix-blend-mode'] || "";
             }
@@ -10753,6 +10753,7 @@ var LayerManager = function (_BaseModule) {
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
             css['transform'] = $store.read('/layer/make/transform', layer);
+            css['box-shadow'] = $store.read('/layer/make/box-shadow', layer);
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
             css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
@@ -11256,6 +11257,15 @@ var IMAGE_DEFAULT_OBJECT = {
     backgroundClip: null
 };
 
+var BOXSHADOW_DEFAULT_OBJECT = {
+    offsetX: 0,
+    offsetY: 0,
+    inset: false,
+    blurRadius: 0,
+    spreadRadius: 0,
+    color: 'transparent'
+};
+
 var COLORSTEP_DEFAULT_OBJECT = {
     itemType: 'colorstep',
     parentId: '',
@@ -11323,6 +11333,13 @@ var ItemManager = function (_BaseModule) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             return $store.read('/item/create/object', obj, LAYER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: '*/item/create/boxshadow',
+        value: function itemCreateBoxshadow($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('/item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
         }
     }, {
         key: '*/item/create/image',
@@ -11408,35 +11425,13 @@ var ItemManager = function (_BaseModule) {
             if (item.itemType == 'layer') {
                 if (typeof callback == 'function') callback(item);
                 return item;
-            } else if (item.itemType == 'image') {
+            } else if (item.itemType == 'image' || item.itemType == 'boxshadow') {
                 var layer = $store.read('/item/get', item.parentId);
                 if (typeof callback == 'function') callback(layer);
                 return layer;
             }
 
             return null;
-        }
-    }, {
-        key: '*/item/is',
-        value: function itemIs($store, itemType) {
-            var item = $store.read('/item/current');
-
-            return item.itemType == itemType;
-        }
-    }, {
-        key: '*/item/is/page',
-        value: function itemIsPage($store) {
-            return $store.read('/item/is', 'page');
-        }
-    }, {
-        key: '*/item/is/layer',
-        value: function itemIsLayer($store) {
-            return $store.read('/item/is', 'layer');
-        }
-    }, {
-        key: '*/item/is/image',
-        value: function itemIsImage($store) {
-            return $store.read('/item/is', 'image');
         }
     }, {
         key: '*/item/is/mode',
@@ -11449,6 +11444,20 @@ var ItemManager = function (_BaseModule) {
             var item = $store.read('/item/current');
 
             if (item && item.itemType == 'image') {
+                if (typeof callback == 'function') {
+                    callback(item);
+                }
+                return item;
+            }
+
+            return null;
+        }
+    }, {
+        key: '*/item/current/boxshadow',
+        value: function itemCurrentBoxshadow($store, callback) {
+            var item = $store.read('/item/current');
+
+            if (item && item.itemType == 'boxshadow') {
                 if (typeof callback == 'function') {
                     callback(item);
                 }
@@ -11481,25 +11490,41 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/list/page',
         value: function itemListPage($store) {
-            return $store.read('/item/filter', function (id) {
-                return $store.items[id].itemType == 'page';
-            });
+            return $store.read('/item/filter', this.checkItemCallback($store, null, 'page'));
         }
     }, {
         key: '*/item/map/page',
         value: function itemMapPage($store, callback) {
-            return $store.read('/item/filter', function (id) {
-                return $store.items[id].itemType == 'page';
-            }).map(function (id, index) {
+            return $store.read('/item/list/page').map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
+        key: "checkItemCallback",
+        value: function checkItemCallback($store, parentId) {
+            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
+            if (itemType) {
+
+                if (parentId) {
+                    return function (id) {
+                        return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType;
+                    };
+                } else {
+                    return function (id) {
+                        return $store.items[id].itemType == itemType;
+                    };
+                }
+            } else {
+                return function (id) {
+                    return $store.items[id].parentId == parentId;
+                };
+            }
+        }
+    }, {
         key: '*/item/list/children',
-        value: function itemListChildren($store, parentId) {
-            return $store.read('/item/filter', function (id) {
-                return $store.items[id].parentId == parentId;
-            });
+        value: function itemListChildren($store, parentId, itemType) {
+            return $store.read('/item/filter', this.checkItemCallback($store, parentId, itemType));
         }
     }, {
         key: '*/item/count/children',
@@ -11513,27 +11538,73 @@ var ItemManager = function (_BaseModule) {
                 return item;
             };
 
-            return $store.read('/item/filter', function (id) {
-                return $store.items[id].parentId == parentId;
-            }).map(function (id, index) {
+            return $store.read('/item/list/children', parentId).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
+        key: '*/item/map/type/children',
+        value: function itemMapTypeChildren($store, parentId, itemType) {
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (item) {
+                return item;
+            };
+
+            return $store.read('/item/list/children', parentId, itemType).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: '*/item/map/image/children',
+        value: function itemMapImageChildren($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
+                return iteem;
+            };
+
+            return $store.read('/item/map/type/children', parentId, 'image', callback);
+        }
+    }, {
+        key: '*/item/map/colorstep/children',
+        value: function itemMapColorstepChildren($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
+                return iteem;
+            };
+
+            return $store.read('/item/map/type/children', parentId, 'colorstep', callback);
+        }
+    }, {
+        key: '*/item/map/boxshadow/children',
+        value: function itemMapBoxshadowChildren($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
+                return iteem;
+            };
+
+            return $store.read('/item/map/type/children', parentId, 'boxshadow', callback);
+        }
+    }, {
         key: '*/item/filter/children',
         value: function itemFilterChildren($store, parentId, callback) {
-            return $store.read('/item/filter', function (id) {
-                return $store.items[id].parentId == parentId;
-            }).filter(function (id, index) {
+            return $store.read('/item/list/children', parentId).filter(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: '*/item/filter/type/children',
+        value: function itemFilterTypeChildren($store, parentId, itemType, callback) {
+            return $store.read('/item/list/children', parentId, itemType).filter(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
         key: '*/item/each/children',
         value: function itemEachChildren($store, parentId, callback) {
-            return $store.read('/item/filter', function (id) {
-                return $store.items[id].parentId == parentId;
-            }).forEach(function (id, index) {
+            return $store.read('/item/list/children', parentId).forEach(function (id, index) {
+                callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: '*/item/each/type/children',
+        value: function itemEachTypeChildren($store, parentId, itemType, callback) {
+            return $store.read('/item/list/children', parentId, itemType).forEach(function (id, index) {
                 callback($store.items[id], index);
             });
         }
@@ -16793,7 +16864,9 @@ var PredefinedLayerResizer = function (_UIElement) {
                 position = [x + width, y + height];
             }
 
-            this.activeButton.attr('data-position', position.join(','));
+            this.activeButton.attr('data-position', position.map(function (it) {
+                return it + 'px';
+            }).join(', '));
         }
     }, {
         key: 'toRight',
@@ -18218,9 +18291,9 @@ var LayerList = function (_UIElement) {
 
             var selected = item.id == selectedId ? 'selected' : '';
             var collapsed = item.gradientCollapsed ? 'collapsed' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/children', item.id, function (item) {
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/image/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
-            }).join('') + '\n                </div>\n            </div>\n            ';
+            }).join('') + '\n                </div>\n            </div>       \n            ';
         }
     }, {
         key: 'load $layerList',
@@ -18378,7 +18451,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button class="distance" ref="$ordering" title="Full Ordering">=|=</button>\n                    <button class="distance" ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button class="distance" ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>                \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>\n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button ref="$ordering" title="Full Ordering">=|=</button>\n                    <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>           \n            </div>\n        ';
         }
     }, {
         key: 'refresh',
