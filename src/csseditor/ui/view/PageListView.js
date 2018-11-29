@@ -76,7 +76,7 @@ export default class PageList extends UIElement {
         })
     }
 
-    '@changeEditor' () {
+    '@changePage' () {
         this.refresh()
     }
 

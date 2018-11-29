@@ -36,14 +36,7 @@ export default class FeatureControl extends UIElement {
         if (obj.itemType == 'layer') {
             selectType = 'layer';
         } else if (obj.itemType == 'image') {
-            var layer = this.read('/item/current/layer');
-
-            if (layer.selectTime > obj.selectTime) {
-                selectType = 'layer';
-            } else {
-                selectType = 'image';
-            }
-            
+            selectType = 'image';
         }
 
         this.$el.$(`.feature[data-type=${selectType}]`).addClass('selected')

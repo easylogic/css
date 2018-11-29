@@ -140,6 +140,7 @@ export default class CSSEditor extends BaseCSSEditor {
             } else {
                 this.dispatch('/item/load');
             }
+            this.emit('changePage')
         });
     }
 

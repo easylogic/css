@@ -84,10 +84,10 @@ export default class PredefinedLayerResizer extends UIElement {
         var x  = style.x || '0px'
         var y  = style.y || '0px'
 
-        var boardOffset = this.$board.offset()
-        var pageOffset = this.$page.offset()
-        var canvasScrollLeft = this.$board.scrollLeft();
-        var canvasScrollTop = this.$board.scrollTop();
+        var boardOffset = this.boardOffset || this.$board.offset()
+        var pageOffset = this.pageOffset || this.$page.offset()
+        var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
+        var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
         x = parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) + 'px'; 
         y = parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) + 'px'; 
@@ -334,6 +334,11 @@ export default class PredefinedLayerResizer extends UIElement {
         this.height = parseParamNumber(layer.style.height)
         this.moveX = parseParamNumber(layer.style.x)
         this.moveY = parseParamNumber(layer.style.y)
+
+        this.boardOffset = this.$board.offset()
+        this.pageOffset = this.$page.offset()
+        this.canvasScrollLeft = this.$board.scrollLeft();
+        this.canvasScrollTop = this.$board.scrollTop();
 
     }
 

@@ -10010,29 +10010,29 @@ var ImageManager = function (_BaseModule) {
 
             if (!image$$1) return '';
 
-            var colorsteps = image$$1.colorsteps || $store.read('/item/map/children', image$$1.id, function (step) {
-                return step;
-            });
+            var colorsteps = image$$1.colorsteps || $store.read('/item/map/children', image$$1.id);
 
             if (!colorsteps) return '';
 
             var colors = [].concat(toConsumableArray(colorsteps));
             if (!colors.length) return '';
 
-            colors.sort(function (a, b) {
+            /*
+            colors.sort((a, b) => {
                 if (a.index == b.index) return 0;
                 return a.index > b.index ? 1 : -1;
-            });
+            })*/
 
             var newColors = [];
             colors.forEach(function (c, index) {
                 if (c.cut && index > 0) {
-                    newColors.push(Object.assign({}, c, {
+                    newColors.push({
+                        color: c.color,
                         unit: colors[index - 1].unit,
                         percent: colors[index - 1].percent,
                         px: colors[index - 1].px,
                         em: colors[index - 1].em
-                    }));
+                    });
                 }
 
                 newColors.push(c);
@@ -11628,6 +11628,8 @@ var ItemManager = function (_BaseModule) {
         value: function itemSelect($store) {
             var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
+            if ($store.selectedId == selectedId) return;
+
             $store.read('/item/keys').forEach(function (id) {
 
                 var item = $store.items[id];
@@ -11640,7 +11642,7 @@ var ItemManager = function (_BaseModule) {
             });
 
             if (selectedId) {
-                $store.items[selectedId].selectTime = Date.now();
+                // $store.items[selectedId].selectTime = Date.now();
 
                 $store.selectedId = selectedId;
 
@@ -13216,8 +13218,8 @@ var PageList = function (_UIElement) {
             });
         }
     }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
+        key: '@changePage',
+        value: function changePage() {
             this.refresh();
         }
     }, {
@@ -15962,13 +15964,7 @@ var FeatureControl = function (_UIElement) {
             if (obj.itemType == 'layer') {
                 selectType = 'layer';
             } else if (obj.itemType == 'image') {
-                var layer = this.read('/item/current/layer');
-
-                if (layer.selectTime > obj.selectTime) {
-                    selectType = 'layer';
-                } else {
-                    selectType = 'image';
-                }
+                selectType = 'image';
             }
 
             this.$el.$(".feature[data-type=" + selectType + "]").addClass('selected');
@@ -16660,10 +16656,10 @@ var PredefinedLayerResizer = function (_UIElement) {
             var x = style.x || '0px';
             var y = style.y || '0px';
 
-            var boardOffset = this.$board.offset();
-            var pageOffset = this.$page.offset();
-            var canvasScrollLeft = this.$board.scrollLeft();
-            var canvasScrollTop = this.$board.scrollTop();
+            var boardOffset = this.boardOffset || this.$board.offset();
+            var pageOffset = this.pageOffset || this.$page.offset();
+            var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
+            var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
             x = parseParamNumber$1(x, function (x) {
                 return x + pageOffset.left - boardOffset.left + canvasScrollLeft;
@@ -16942,6 +16938,11 @@ var PredefinedLayerResizer = function (_UIElement) {
             this.height = parseParamNumber$1(layer.style.height);
             this.moveX = parseParamNumber$1(layer.style.x);
             this.moveY = parseParamNumber$1(layer.style.y);
+
+            this.boardOffset = this.$board.offset();
+            this.pageOffset = this.$page.offset();
+            this.canvasScrollLeft = this.$board.scrollLeft();
+            this.canvasScrollTop = this.$board.scrollTop();
         }
     }, {
         key: 'pointermove document',
@@ -18090,27 +18091,28 @@ var GradientView = function (_BaseTab) {
         value: function clickSelf$elPageCanvas(e) {
             this.selectPageMode();
         }
-    }, {
-        key: 'click $colorview',
-        value: function click$colorview(e) {
-            var _this3 = this;
 
-            this.read('/item/current/layer', function (layer) {
-                _this3.dispatch('/item/select', layer.id);
-                _this3.refresh();
-            });
-        }
+        /*
+        'click $colorview' (e) {
+             this.read('/item/current/layer', layer => {
+                this.dispatch('/item/select', layer.id);
+                this.refresh();
+            })
+        } */
+
     }, {
         key: 'pointerstart $page .layer',
         value: function pointerstart$pageLayer(e) {
-            this.isDown = true;
-            this.xy = e.xy;
-            this.$layer = e.$delegateTarget;
-            this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'));
-            this.moveX = +(this.layer.style.x || 0).replace('px', '');
-            this.moveY = +(this.layer.style.y || 0).replace('px', '');
+            if (!this.isDown) {
+                this.isDown = true;
+                this.xy = e.xy;
+                this.$layer = e.$delegateTarget;
+                this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'));
+                this.moveX = +(this.layer.style.x || 0).replace('px', '');
+                this.moveY = +(this.layer.style.y || 0).replace('px', '');
 
-            this.dispatch('/item/select', this.layer.id);
+                this.dispatch('/item/select', this.layer.id);
+            }
         }
     }, {
         key: 'updatePosition',
@@ -18164,7 +18166,6 @@ var GradientView = function (_BaseTab) {
             if (this.isDown) {
                 this.refs.$page.addClass('moving');
                 this.targetXY = e.xy;
-
                 this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y);
             }
         }
@@ -20583,6 +20584,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
                 } else {
                     _this3.dispatch('/item/load');
                 }
+                _this3.emit('changePage');
             });
         }
     }, {

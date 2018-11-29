@@ -53,10 +53,11 @@
             
 
             &.active {
-                &:not([data-position*=" "]):after {
+                &:not([data-position*=""]):after {
                     position: absolute;
                     bottom: -20px;
                     display: inline-block;
+                    white-space: nowrap;
                     content: attr(data-position);
                     transform: translateX(5px) translateY(5px);
                     background-color: rgba(156, 156, 156, 1);

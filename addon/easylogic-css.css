@@ -3407,10 +3407,11 @@ html, body {
         height: 10px;
         border-radius: 50%;
         /* linear */ }
-        .csseditor .page-view .predefined-layer-resizer button.active:not([data-position*=" "]):after {
+        .csseditor .page-view .predefined-layer-resizer button.active:not([data-position*=""]):after {
           position: absolute;
           bottom: -20px;
           display: inline-block;
+          white-space: nowrap;
           content: attr(data-position);
           -webkit-transform: translateX(5px) translateY(5px);
                   transform: translateX(5px) translateY(5px);

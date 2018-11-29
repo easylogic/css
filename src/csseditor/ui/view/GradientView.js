@@ -180,24 +180,27 @@ export default class GradientView extends BaseTab {
         this.selectPageMode()
     }
 
-
+    /*
     'click $colorview' (e) {
 
         this.read('/item/current/layer', layer => {
             this.dispatch('/item/select', layer.id);
             this.refresh();
         })
-    }    
+    } */
 
     'pointerstart $page .layer' (e) {
-        this.isDown = true; 
-        this.xy = e.xy;
-        this.$layer = e.$delegateTarget;
-        this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'))
-        this.moveX = +(this.layer.style.x || 0).replace('px', '')
-        this.moveY = +(this.layer.style.y || 0).replace('px', '')
+        if (!this.isDown) {
+            this.isDown = true; 
+            this.xy = e.xy;
+            this.$layer = e.$delegateTarget;
+            this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'))
+            this.moveX = +(this.layer.style.x || 0).replace('px', '')
+            this.moveY = +(this.layer.style.y || 0).replace('px', '')
+    
+            this.dispatch('/item/select', this.layer.id)
+        }
 
-        this.dispatch('/item/select', this.layer.id)
     }
 
     updatePosition (style1 = {}, style2 = {}) {
@@ -246,7 +249,6 @@ export default class GradientView extends BaseTab {
         if (this.isDown) {
             this.refs.$page.addClass('moving');
             this.targetXY = e.xy;
-
             this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y)
         }
     }

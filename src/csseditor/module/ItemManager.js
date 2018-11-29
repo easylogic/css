@@ -483,6 +483,8 @@ export default class ItemManager extends BaseModule {
     }
 
     '/item/select' ($store, selectedId = '') {
+        if ($store.selectedId == selectedId) return; 
+
         $store.read('/item/keys').forEach(id => {
 
             var item = $store.items[id]
@@ -496,7 +498,7 @@ export default class ItemManager extends BaseModule {
         })
 
         if (selectedId) {
-            $store.items[selectedId].selectTime = Date.now();
+            // $store.items[selectedId].selectTime = Date.now();
 
             $store.selectedId = selectedId;
     

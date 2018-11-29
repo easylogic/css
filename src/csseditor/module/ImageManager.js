@@ -304,27 +304,29 @@ export default class ImageManager extends BaseModule {
 
         if (!image) return '';
 
-        var colorsteps =  image.colorsteps || $store.read('/item/map/children', image.id, (step) => step )
+        var colorsteps =  image.colorsteps || $store.read('/item/map/children', image.id)
 
         if (!colorsteps) return '';
 
         var colors = [...colorsteps]
         if (!colors.length) return ''; 
         
+        /*
         colors.sort((a, b) => {
             if (a.index == b.index) return 0;
             return a.index > b.index ? 1 : -1;
-        })
+        })*/
 
         var newColors = []
         colors.forEach( (c, index) => {
             if (c.cut && index > 0) {
-                newColors.push(Object.assign({}, c, { 
+                newColors.push({ 
+                    color: c.color,
                     unit : colors[index-1].unit,
                     percent : colors[index-1].percent,
                     px : colors[index-1].px,
                     em : colors[index-1].em
-                } ));
+                });
             }
 
             newColors.push(c);
