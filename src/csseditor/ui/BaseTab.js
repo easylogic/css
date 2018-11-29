@@ -27,6 +27,8 @@ export default class BaseTab extends UIElement {
 
     selectTab (id) {
 
+        this.selectedTabId = id; 
+
         this.refs.$header.children().forEach($dom => {
             $dom.toggleClass('selected', $dom.attr('data-id') == id )
         })

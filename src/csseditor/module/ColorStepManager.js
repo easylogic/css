@@ -92,12 +92,11 @@ export default class ColorStepManager extends BaseModule {
 
     '/colorstep/remove' ($store, id) {
 
-        var parentId = $store.read('/item/get', id).parentId; 
-        var image = $store.read('/item/get', parentId);
+        // var parentId = $store.read('/item/get', id).parentId; 
+        // var image = $store.read('/item/get', parentId);
 
         $store.run('/item/remove', id);
-
-        $store.run('/item/set', image);
+        // $store.run('/item/set', image);
     }
 
     '/colorstep/sort' ($store, id, sortedList) {

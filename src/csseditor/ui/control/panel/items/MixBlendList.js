@@ -49,7 +49,7 @@ export default class MixBlendList extends BasePropertyItem {
 
         this.$el.toggle(isShow);
 
-        if(isShow) {
+        if(isShow && this.parent.selectedTabId == 'mix') {
             this.load()
 
             this.read('/item/current/layer', (layer) => {

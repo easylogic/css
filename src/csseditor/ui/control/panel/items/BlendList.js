@@ -5,8 +5,8 @@ export default class BlendList extends BasePropertyItem {
 
     template () { 
         return `
-        <div class='property-item blend show'>
-            <div class='title' ref="$title">Blend - <span class='description' ref="$desc"></span></div>
+        <div class='property-item blend'>
+            <div class='title' ref="$title">Blend Mode - <span class='description' ref="$desc"></span></div>
             <div class='items max-height'>         
                 <div class="blend-list" ref="$blendList"></div>
             </div>
@@ -14,6 +14,9 @@ export default class BlendList extends BasePropertyItem {
         `
     }
 
+    onToggleShow () {
+        this.refresh();
+    }
 
     'load $blendList' () {
         var list = this.read('/blend/list')
@@ -50,12 +53,12 @@ export default class BlendList extends BasePropertyItem {
 
         this.$el.toggle(isShow);
 
-        if(isShow) {
-            this.load()
+        this.read('/item/current/image', (image) => {
+            this.refs.$desc.html(image.backgroundBlendMode || 'normal')
+        })
 
-            this.read('/item/current/image', (image) => {
-                this.refs.$desc.html(image.backgroundBlendMode || 'normal')
-            })
+        if(isShow && this.$el.hasClass('show')) {
+            this.load()
         }
     }
 

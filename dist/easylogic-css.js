@@ -9625,12 +9625,11 @@ var ColorStepManager = function (_BaseModule) {
         key: '/colorstep/remove',
         value: function colorstepRemove($store, id) {
 
-            var parentId = $store.read('/item/get', id).parentId;
-            var image = $store.read('/item/get', parentId);
+            // var parentId = $store.read('/item/get', id).parentId; 
+            // var image = $store.read('/item/get', parentId);
 
             $store.run('/item/remove', id);
-
-            $store.run('/item/set', image);
+            // $store.run('/item/set', image);
         }
     }, {
         key: '/colorstep/sort',
@@ -13308,12 +13307,16 @@ var BasePropertyItem = function (_UIElement) {
     }
 
     createClass(BasePropertyItem, [{
+        key: "onToggleShow",
+        value: function onToggleShow() {}
+    }, {
         key: 'click $title',
         value: function click$title(e) {
             var $dom = new Dom(e.target);
 
             if ($dom.hasClass('title')) {
                 this.$el.toggleClass('show');
+                this.onToggleShow();
             }
         }
     }]);
@@ -15302,7 +15305,12 @@ var BlendList = function (_BasePropertyItem) {
     createClass(BlendList, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'title\' ref="$title">Blend - <span class=\'description\' ref="$desc"></span></div>\n            <div class=\'items max-height\'>         \n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item blend\'>\n            <div class=\'title\' ref="$title">Blend Mode - <span class=\'description\' ref="$desc"></span></div>\n            <div class=\'items max-height\'>         \n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'onToggleShow',
+        value: function onToggleShow() {
+            this.refresh();
         }
     }, {
         key: 'load $blendList',
@@ -15340,12 +15348,12 @@ var BlendList = function (_BasePropertyItem) {
 
             this.$el.toggle(isShow);
 
-            if (isShow) {
-                this.load();
+            this.read('/item/current/image', function (image) {
+                _this3.refs.$desc.html(image.backgroundBlendMode || 'normal');
+            });
 
-                this.read('/item/current/image', function (image) {
-                    _this3.refs.$desc.html(image.backgroundBlendMode || 'normal');
-                });
+            if (isShow && this.$el.hasClass('show')) {
+                this.load();
             }
         }
     }, {
@@ -15417,7 +15425,7 @@ var MixBlendList = function (_BasePropertyItem) {
 
             this.$el.toggle(isShow);
 
-            if (isShow) {
+            if (isShow && this.parent.selectedTabId == 'mix') {
                 this.load();
 
                 this.read('/item/current/layer', function (layer) {
@@ -16043,6 +16051,8 @@ var BaseTab = function (_UIElement) {
     }, {
         key: 'selectTab',
         value: function selectTab(id) {
+
+            this.selectedTabId = id;
 
             this.refs.$header.children().forEach(function ($dom) {
                 $dom.toggleClass('selected', $dom.attr('data-id') == id);
