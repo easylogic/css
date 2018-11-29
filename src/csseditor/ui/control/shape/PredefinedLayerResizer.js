@@ -360,7 +360,8 @@ export default class PredefinedLayerResizer extends UIElement {
         this.xy = null 
         this.moveX = null;
         this.moveY = null; 
-        this.$page.removeClass('moving')        
+        this.$page.removeClass('moving')    
+        this.dispatch('/history/push', 'Move a layer');
     }
 
     'resize.debounce(300) window' (e) {

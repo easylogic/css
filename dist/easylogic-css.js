@@ -7357,6 +7357,8 @@ var ColorManager = function (_BaseModule) {
     return ColorManager;
 }(BaseModule);
 
+var PREVENT = 'PREVENT';
+
 var BaseStore = function () {
     function BaseStore(opt) {
         classCallCheck(this, BaseStore);
@@ -7405,8 +7407,11 @@ var BaseStore = function () {
                     opts[_key - 1] = arguments[_key];
                 }
 
-                this.run.apply(this, [action].concat(opts));
-                m.context.afterDispatch();
+                var ret = this.run.apply(this, [action].concat(opts));
+
+                if (ret != PREVENT) {
+                    m.context.afterDispatch();
+                }
             } else {
                 throw new Error('action : ' + action + ' is not a valid.');
             }
@@ -11761,18 +11766,19 @@ var ItemManager = function (_BaseModule) {
         value: function itemSelect($store) {
             var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
-            if ($store.selectedId == selectedId) return;
+            if ($store.selectedId !== selectedId) {
 
-            $store.read('/item/keys').forEach(function (id) {
+                $store.read('/item/keys').forEach(function (id) {
 
-                var item = $store.items[id];
+                    var item = $store.items[id];
 
-                if (item.itemType == 'colorstep') {
-                    // NOOP 
-                } else {
-                    $store.items[id].selected = id === selectedId;
-                }
-            });
+                    if (item.itemType == 'colorstep') {
+                        // NOOP 
+                    } else {
+                        $store.items[id].selected = id === selectedId;
+                    }
+                });
+            }
 
             if (selectedId) {
                 // $store.items[selectedId].selectTime = Date.now();
@@ -11860,6 +11866,7 @@ var ItemManager = function (_BaseModule) {
 
             var id = obj.id;
             $store.items[id] = Object.assign($store.clone('/item/get', id), obj);
+            $store.lastChangedItemType = $store.items[id].itemType;
 
             if (isSelected) $store.run('/item/select', id);
         }
@@ -12200,11 +12207,6 @@ var ItemManager = function (_BaseModule) {
             list.forEach(function (id, index) {
                 $store.items[id].index = index * INDEX_DIST;
             });
-        }
-    }, {
-        key: '/item/set/parent',
-        value: function itemSetParent($store, id, parentId) {
-            $store.items[id] = Object.assign($store.clone('/item/get', id), { parentId: parentId });
         }
     }]);
     return ItemManager;
@@ -13135,7 +13137,7 @@ var HistoryManager = function (_BaseModule) {
         value: function afterDispatch() {}
     }, {
         key: 'changeHistory',
-        value: function changeHistory(seek) {
+        value: function changeHistory($store, seek) {
             var command = $store.histories[seek];
             $store.historyIndex = seek;
 
@@ -13152,10 +13154,11 @@ var HistoryManager = function (_BaseModule) {
         key: '/history/push',
         value: function historyPush($store, title) {
 
-            $store.histories.splice($store.historyIndex - 1, Number.MAX_SAFE_INTEGER, {
-                title: title,
-                items: $store.read('/clone', $store.items)
-            });
+            var histories = $store.histories.slice(0, $store.historyIndex);
+
+            histories.push({ title: title, items: $store.read('/clone', $store.items) });
+
+            $store.histories = histories;
 
             if ($store.histories.length > HISTORY_MAX) {
                 $store.histories.shift();
@@ -13173,7 +13176,7 @@ var HistoryManager = function (_BaseModule) {
                 return;
             }
 
-            this.changeHistory(seek);
+            this.changeHistory($store, seek);
         }
     }, {
         key: '/history/redo',
@@ -13185,7 +13188,7 @@ var HistoryManager = function (_BaseModule) {
                 return;
             }
 
-            this.changeHistory(seek);
+            this.changeHistory($store, seek);
         }
     }]);
     return HistoryManager;
@@ -13406,6 +13409,11 @@ var BasePropertyItem = function (_UIElement) {
                 this.$el.toggleClass('show');
                 this.onToggleShow();
             }
+        }
+    }, {
+        key: "isPropertyShow",
+        value: function isPropertyShow() {
+            return this.$el.hasClass('show');
         }
     }]);
     return BasePropertyItem;
@@ -14036,6 +14044,7 @@ var GradientSteps = function (_UIElement) {
             var id = e.$delegateTarget.attr('id');
 
             this.dispatch('/colorstep/remove', id);
+            this.run('/history/push', 'Remove colorstep');
             this.refresh();
         }
     }, {
@@ -14054,6 +14063,7 @@ var GradientSteps = function (_UIElement) {
             if (!item) return;
 
             this.dispatch('/colorstep/add', item, percent);
+            this.run('/history/push', 'Add colorstep');
             this.refresh();
         }
     }, {
@@ -14118,6 +14128,8 @@ var GradientSteps = function (_UIElement) {
             if (item.id) {
                 item.cut = !item.cut;
                 this.dispatch('/item/set', item);
+                this.run('/history/push', 'Apply cut option');
+
                 this.refresh();
             }
         }
@@ -14283,6 +14295,7 @@ var GradientSteps = function (_UIElement) {
             this.isDown = false;
             if (this.refs.$stepList) {
                 this.refs.$stepList.removeClass('mode-drag');
+                this.run('/history/push', 'Moved colorstep');
             }
         }
     }]);
@@ -15448,7 +15461,9 @@ var BlendList = function (_BasePropertyItem) {
     }, {
         key: '@changeEditor',
         value: function changeEditor() {
-            this.refresh();
+            if (this.isPropertyShow() && this.$store.lastChangedItemType == 'image') {
+                this.refresh();
+            }
         }
     }, {
         key: 'click.self $blendList .blend-item',
@@ -15530,7 +15545,9 @@ var MixBlendList = function (_BasePropertyItem) {
     }, {
         key: '@changeEditor',
         value: function changeEditor() {
-            this.refresh();
+            if (this.$store.lastChangedItemType == 'layer') {
+                this.refresh();
+            }
         }
     }, {
         key: 'click.self $mixBlendList .blend-item',
@@ -17100,6 +17117,7 @@ var PredefinedLayerResizer = function (_UIElement) {
             this.moveX = null;
             this.moveY = null;
             this.$page.removeClass('moving');
+            this.dispatch('/history/push', 'Move a layer');
         }
     }, {
         key: 'resize.debounce(300) window',
@@ -17824,245 +17842,6 @@ var SubFeatureControl = function (_UIElement) {
     return SubFeatureControl;
 }(UIElement);
 
-var CircleEditor = function (_UIElement) {
-    inherits(CircleEditor, _UIElement);
-
-    function CircleEditor() {
-        classCallCheck(this, CircleEditor);
-        return possibleConstructorReturn(this, (CircleEditor.__proto__ || Object.getPrototypeOf(CircleEditor)).apply(this, arguments));
-    }
-
-    createClass(CircleEditor, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'layer-shape-circle-editor\'>\n                <div class="drag-item center" data-type="center" ref="$center"></div>\n                <div class="drag-item radius" data-type="radius" ref="$radius"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.refreshPointer();
-            }
-        }
-    }, {
-        key: 'refreshPointer',
-        value: function refreshPointer() {
-            var _this2 = this;
-
-            this.read('/item/current/layer', function (layer) {
-
-                if (!layer.clipPathType) return;
-                if (!layer.clipPathCenter) return;
-                if (!layer.clipPathRadius) return;
-
-                var _layer$clipPathCenter = slicedToArray(layer.clipPathCenter, 2),
-                    x = _layer$clipPathCenter[0],
-                    y = _layer$clipPathCenter[1];
-
-                _this2.refs.$center.px('left', x);
-                _this2.refs.$center.px('top', y);
-
-                var _layer$clipPathRadius = slicedToArray(layer.clipPathRadius, 2),
-                    x = _layer$clipPathRadius[0],
-                    y = _layer$clipPathRadius[1];
-
-                _this2.refs.$radius.px('left', x);
-                _this2.refs.$radius.px('top', y);
-            });
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var item = this.read('/item/current/layer');
-
-            if (!item) return false;
-
-            return item.clipPathType == 'circle';
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.$el.width();
-            var height = this.$el.height();
-            var minX = this.$el.offsetLeft();
-            var minY = this.$el.offsetTop();
-
-            var maxX = minX + width;
-            var maxY = minY + height;
-
-            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(e) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY,
-                width = _getRectangle.width,
-                height = _getRectangle.height;
-
-            var _e$xy = e.xy,
-                x = _e$xy.x,
-                y = _e$xy.y;
-
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.refs['$' + this.currentType].px('left', left);
-            this.refs['$' + this.currentType].px('top', top);
-
-            if (e) {
-
-                this[this.currentType + "pos"] = [left, top];
-
-                this.updateClipPath();
-            }
-        }
-    }, {
-        key: 'updateClipPath',
-        value: function updateClipPath() {
-            var radius = this.radiuspos || [0, 0];
-            var center = this.centerpos || [0, 0];
-
-            var item = this.layer;
-            item.clipPathType = 'circle';
-            item.clipPathCenter = center;
-            item.clipPathRadius = radius;
-
-            this.dispatch('/item/set', item);
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'pointerend document',
-        value: function pointerendDocument(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: 'pointermove document',
-        value: function pointermoveDocument(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: 'pointerstart $el .drag-item',
-        value: function pointerstart$elDragItem(e) {
-            e.preventDefault();
-            this.currentType = e.$delegateTarget.attr('data-type');
-            this.isDown = true;
-        }
-    }, {
-        key: 'pointerstart $el',
-        value: function pointerstart$el(e) {
-            this.isDown = true;
-            this.layer = this.read('/item/current/layer');
-            // this.refreshUI(e);        
-        }
-    }]);
-    return CircleEditor;
-}(UIElement);
-
-var shapeEditor = {
-    CircleEditor: CircleEditor
-};
-
-var LayerShapeEditor = function (_UIElement) {
-    inherits(LayerShapeEditor, _UIElement);
-
-    function LayerShapeEditor() {
-        classCallCheck(this, LayerShapeEditor);
-        return possibleConstructorReturn(this, (LayerShapeEditor.__proto__ || Object.getPrototypeOf(LayerShapeEditor)).apply(this, arguments));
-    }
-
-    createClass(LayerShapeEditor, [{
-        key: 'initialize',
-        value: function initialize() {
-            get(LayerShapeEditor.prototype.__proto__ || Object.getPrototypeOf(LayerShapeEditor.prototype), 'initialize', this).call(this);
-
-            this.$board = this.parent.refs.$board;
-            this.$page = this.parent.refs.$page;
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return shapeEditor;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="layer-shape-editor">\n                <CircleEditor></CircleEditor>\n                <RectEditor></RectEditor>\n                <PolygonEditor></PolygonEditor>\n                <PathEditor></PathEditor>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var isShow = this.isShow();
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.setPosition();
-            }
-        }
-    }, {
-        key: 'setPosition',
-        value: function setPosition() {
-            var layer = this.read('/item/current/layer');
-
-            if (!layer) return;
-
-            var style = layer.style;
-
-            var width = style.width;
-            var height = style.height;
-            var x = style.x;
-            var y = style.y;
-
-            var boardOffset = this.$board.offset();
-            var pageOffset = this.$page.offset();
-
-            x = parseParamNumber$1(x, function (x) {
-                return x + pageOffset.left - boardOffset.left;
-            }) + 'px';
-            y = parseParamNumber$1(y, function (y) {
-                return y + pageOffset.top - boardOffset.top;
-            }) + 'px';
-
-            this.$el.css({
-                width: width, height: height,
-                left: x, top: y,
-                transform: this.read('/layer/make/transform', layer)
-            });
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            return !this.read('/item/is/mode', 'page');
-        }
-    }, {
-        key: '@changeEditor',
-        value: function changeEditor() {
-            this.refresh();
-        }
-    }]);
-    return LayerShapeEditor;
-}(UIElement);
-
 var GradientView = function (_BaseTab) {
     inherits(GradientView, _BaseTab);
 
@@ -18081,7 +17860,7 @@ var GradientView = function (_BaseTab) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedLayerResizer></PredefinedLayerResizer>                        \n                        <LayerShapeEditor></LayerShapeEditor>\n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n \n                <!--<ColorPickerLayer></ColorPickerLayer>-->\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>            \n\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedLayerResizer></PredefinedLayerResizer>                        \n                        <MoveGuide></MoveGuide>                          \n                    </div>          \n                </div>\n \n                <!--<ColorPickerLayer></ColorPickerLayer>-->\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -18091,8 +17870,7 @@ var GradientView = function (_BaseTab) {
                 SubFeatureControl: SubFeatureControl,
                 MoveGuide: MoveGuide,
                 PredefinedPageResizer: PredefinedPageResizer,
-                PredefinedLayerResizer: PredefinedLayerResizer,
-                LayerShapeEditor: LayerShapeEditor
+                PredefinedLayerResizer: PredefinedLayerResizer
             };
         }
     }, {
@@ -18431,6 +18209,7 @@ var LayerList = function (_UIElement) {
 
             this.read('/item/current/page', function (page) {
                 _this4.dispatch('/item/add', 'layer', true, page.id);
+                _this4.run('/history/push', 'Add a layer');
                 _this4.refresh();
             });
         }
@@ -18480,6 +18259,7 @@ var LayerList = function (_UIElement) {
                     this.dispatch('/item/move/in/layer', destId, sourceId);
                 }
 
+                this.run('/history/push', 'Change gradient position ');
                 this.refresh();
             } else if (destItem.itemType == sourceItem.itemType) {
                 if (e.ctrlKey) {
@@ -18487,7 +18267,7 @@ var LayerList = function (_UIElement) {
                 } else {
                     this.dispatch('/item/move/in', destId, sourceId);
                 }
-
+                this.run('/history/push', 'Change item position ');
                 this.refresh();
             }
         }
@@ -18501,6 +18281,7 @@ var LayerList = function (_UIElement) {
 
                 this.draggedLayer = null;
                 this.dispatch('/item/move/last', sourceId);
+                this.run('/history/push', 'Change layer position ');
                 this.refresh();
             }
         }
@@ -18508,18 +18289,21 @@ var LayerList = function (_UIElement) {
         key: 'click $layerList .copy-image-item',
         value: function click$layerListCopyImageItem(e) {
             this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.run('/history/push', 'Add a gradient');
             this.refresh();
         }
     }, {
         key: 'click $layerList .copy-item',
         value: function click$layerListCopyItem(e) {
             this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.run('/history/push', 'Add a layer');
             this.refresh();
         }
     }, {
         key: 'click $layerList .delete-item',
         value: function click$layerListDeleteItem(e) {
             this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
+            this.run('/history/push', 'Remove item');
             this.refresh();
         }
     }, {
@@ -18571,6 +18355,7 @@ var LayerToolbar = function (_UIElement) {
                 var type = e.$delegateTarget.attr('data-type');
 
                 _this2.dispatch('/item/prepend/image', type, true, item.id);
+                _this2.run('/history/push', 'Add ' + type + ' gradient');
                 _this2.refresh();
             });
         }

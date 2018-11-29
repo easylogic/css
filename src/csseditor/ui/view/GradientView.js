@@ -4,7 +4,6 @@ import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
 
 import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
-import LayerShapeEditor from '../control/shape/LayerShapeEditor';
 import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
 import { parseParamNumber } from '../../../util/filter/functions';
 
@@ -28,7 +27,6 @@ export default class GradientView extends BaseTab {
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
                         <PredefinedLayerResizer></PredefinedLayerResizer>                        
-                        <LayerShapeEditor></LayerShapeEditor>
                         <MoveGuide></MoveGuide>                          
                     </div>          
                 </div>
@@ -45,8 +43,7 @@ export default class GradientView extends BaseTab {
             SubFeatureControl,
             MoveGuide,
             PredefinedPageResizer,
-            PredefinedLayerResizer, 
-            LayerShapeEditor
+            PredefinedLayerResizer
         }
     }
 

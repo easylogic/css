@@ -64,7 +64,7 @@ class UIElement extends EventMachin {
 
     dispatch (...args) {
         this.$store.source = this.source ; 
-        return this.$store.dispatch(...args)
+        return this.$store.dispatch(...args) 
     }
 
     emit (...args) {

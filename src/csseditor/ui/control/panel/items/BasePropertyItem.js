@@ -15,4 +15,8 @@ export default class BasePropertyItem extends UIElement {
 
     } 
 
+    isPropertyShow () {
+        return this.$el.hasClass('show');
+    }
+
 }

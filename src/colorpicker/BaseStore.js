@@ -1,5 +1,7 @@
 import { debounce } from "../util/functions/func";
 
+export const PREVENT = 'PREVENT'
+
 export default class BaseStore {
     constructor (opt) {
         this.callbacks = [] 
@@ -34,8 +36,12 @@ export default class BaseStore {
         var m = this.actions[action];
 
         if (m) {
-            this.run(action, ...opts);
-            m.context.afterDispatch()
+            var ret = this.run(action, ...opts);
+
+            if (ret != PREVENT) {
+                m.context.afterDispatch()
+            }
+
         } else {
             throw new Error('action : ' + action + ' is not a valid.')
         }

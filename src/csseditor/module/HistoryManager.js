@@ -15,7 +15,7 @@ export default class HistoryManager extends BaseModule {
         
     }
 
-    changeHistory (seek) {
+    changeHistory ($store, seek) {
         var command = $store.histories[seek];
         $store.historyIndex = seek; 
 
@@ -30,14 +30,11 @@ export default class HistoryManager extends BaseModule {
 
     '/history/push' ($store, title) {
 
-        $store.histories.splice(
-            $store.historyIndex - 1, 
-            Number.MAX_SAFE_INTEGER, 
-            { 
-                title, 
-                items: $store.read('/clone', $store.items) 
-            }
-        );
+        var histories = $store.histories.slice(0,$store.historyIndex);
+
+        histories.push({ title, items: $store.read('/clone', $store.items) });
+
+        $store.histories = histories;
 
         if ($store.histories.length > HISTORY_MAX) {
             $store.histories.shift();
@@ -54,7 +51,7 @@ export default class HistoryManager extends BaseModule {
             return; 
         }
 
-        this.changeHistory(seek)
+        this.changeHistory($store, seek)
 
     }
 
@@ -67,6 +64,6 @@ export default class HistoryManager extends BaseModule {
             return; 
         }
 
-        this.changeHistory(seek)
+        this.changeHistory($store, seek)
     }        
 }

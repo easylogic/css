@@ -112,6 +112,7 @@ export default class LayerList extends UIElement {
     'click $addLayer' (e) {
         this.read('/item/current/page', (page) => {
             this.dispatch('/item/add', 'layer', true, page.id)
+            this.run('/history/push', 'Add a layer');        
             this.refresh();    
         });
     }
@@ -156,6 +157,7 @@ export default class LayerList extends UIElement {
                 this.dispatch('/item/move/in/layer', destId, sourceId)
             }
 
+            this.run('/history/push', `Change gradient position `);         
             this.refresh()            
         } else if (destItem.itemType == sourceItem.itemType ) {
             if (e.ctrlKey) {
@@ -163,7 +165,7 @@ export default class LayerList extends UIElement {
             } else {
                 this.dispatch('/item/move/in', destId, sourceId)
             }
-
+            this.run('/history/push', `Change item position `);         
             this.refresh()            
         }
 
@@ -177,6 +179,7 @@ export default class LayerList extends UIElement {
 
             this.draggedLayer = null; 
             this.dispatch('/item/move/last', sourceId)
+            this.run('/history/push', `Change layer position `);                     
             this.refresh()
         }
 
@@ -184,18 +187,21 @@ export default class LayerList extends UIElement {
 
     'click $layerList .copy-image-item' (e) {
         this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.run('/history/push', `Add a gradient`);                 
         this.refresh()
     }
 
     'click $layerList .copy-item' (e) {
         this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.run('/history/push', `Add a layer`);                         
         this.refresh()
     }
 
     'click $layerList .delete-item' (e) {
         this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'))
+        this.run('/history/push', `Remove item`);                         
         this.refresh()
-    }
+    } 
 
     'click $viewSample' (e) {
         this.emit('toggleLayerSampleView');

@@ -63,7 +63,9 @@ export default class BlendList extends BasePropertyItem {
     }
 
     '@changeEditor' () {
-        this.refresh()
+        if (this.isPropertyShow() && this.$store.lastChangedItemType == 'image') {
+            this.refresh()
+        }
     }
 
 

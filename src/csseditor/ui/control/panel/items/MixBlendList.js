@@ -63,7 +63,9 @@ export default class MixBlendList extends BasePropertyItem {
     }
 
     '@changeEditor' () {
-        this.refresh()
+        if (this.$store.lastChangedItemType == 'layer') {
+            this.refresh()
+        }
     }
 
     'click.self $mixBlendList .blend-item' (e) {

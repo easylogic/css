@@ -242,6 +242,7 @@ export default class GradientSteps extends UIElement {
         var id = e.$delegateTarget.attr('id')
 
         this.dispatch('/colorstep/remove', id);
+        this.run('/history/push', 'Remove colorstep');        
         this.refresh();
     }
 
@@ -257,6 +258,7 @@ export default class GradientSteps extends UIElement {
         if (!item) return; 
 
         this.dispatch('/colorstep/add', item, percent);
+        this.run('/history/push', 'Add colorstep');
         this.refresh()
     }
 
@@ -313,6 +315,8 @@ export default class GradientSteps extends UIElement {
         if (item.id) {
             item.cut = !item.cut;
             this.dispatch('/item/set', item);
+            this.run('/history/push', 'Apply cut option');        
+
             this.refresh();
         }
 
@@ -465,7 +469,8 @@ export default class GradientSteps extends UIElement {
     onDragEnd (e) {
         this.isDown = false         
         if (this.refs.$stepList) {
-            this.refs.$stepList.removeClass('mode-drag')        
+            this.refs.$stepList.removeClass('mode-drag')       
+            this.run('/history/push', 'Moved colorstep');                     
         }
 
     }

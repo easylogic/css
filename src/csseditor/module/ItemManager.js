@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { uuid } from "../../util/functions/math";
 import Dom from "../../util/Dom";
+import { PREVENT } from "../../colorpicker/BaseStore";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -483,19 +484,21 @@ export default class ItemManager extends BaseModule {
     }
 
     '/item/select' ($store, selectedId = '') {
-        if ($store.selectedId == selectedId) return; 
+        if ($store.selectedId !== selectedId) {
 
-        $store.read('/item/keys').forEach(id => {
+            $store.read('/item/keys').forEach(id => {
 
-            var item = $store.items[id]
+                var item = $store.items[id]
+    
+                if (item.itemType == 'colorstep') {
+                    // NOOP 
+                } else {
+                    $store.items[id].selected = id === selectedId; 
+                }
+    
+            })
+        }
 
-            if (item.itemType == 'colorstep') {
-                // NOOP 
-            } else {
-                $store.items[id].selected = id === selectedId; 
-            }
-
-        })
 
         if (selectedId) {
             // $store.items[selectedId].selectTime = Date.now();
@@ -576,6 +579,7 @@ export default class ItemManager extends BaseModule {
     '/item/set' ($store, obj = {}, isSelected = false) {
         var id = obj.id; 
         $store.items[id] = Object.assign($store.clone('/item/get', id), obj);
+        $store.lastChangedItemType = $store.items[id].itemType
 
         if (isSelected) $store.run('/item/select', id)
     }
@@ -869,8 +873,4 @@ export default class ItemManager extends BaseModule {
             $store.items[id].index = index * INDEX_DIST
         })
     }
-
-    '/item/set/parent' ($store, id, parentId) {
-        $store.items[id] = Object.assign($store.clone('/item/get', id), { parentId });
-    }    
 }
