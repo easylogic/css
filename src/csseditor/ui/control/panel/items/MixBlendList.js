@@ -58,6 +58,10 @@ export default class MixBlendList extends BasePropertyItem {
         }
     }
 
+    show () {
+        this.refresh();
+    }
+
     '@changeEditor' () {
         this.refresh()
     }

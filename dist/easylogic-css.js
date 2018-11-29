@@ -5856,6 +5856,13 @@ var Dom = function () {
             return this;
         }
     }, {
+        key: 'removeAttr',
+        value: function removeAttr(key) {
+            this.el.removeAttribute(key);
+
+            return this;
+        }
+    }, {
         key: 'is',
         value: function is(checkElement) {
             return this.el === (checkElement.el || checkElement);
@@ -13103,7 +13110,86 @@ var PageManager = function (_BaseModule) {
     return PageManager;
 }(BaseModule);
 
-var ModuleList = [PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var HISTORY_MAX = 200;
+
+var HistoryManager = function (_BaseModule) {
+    inherits(HistoryManager, _BaseModule);
+
+    function HistoryManager() {
+        classCallCheck(this, HistoryManager);
+        return possibleConstructorReturn(this, (HistoryManager.__proto__ || Object.getPrototypeOf(HistoryManager)).apply(this, arguments));
+    }
+
+    createClass(HistoryManager, [{
+        key: 'initialize',
+        value: function initialize() {
+            get(HistoryManager.prototype.__proto__ || Object.getPrototypeOf(HistoryManager.prototype), 'initialize', this).call(this);
+
+            this.$store.histories = [];
+            this.$store.historyIndex = 0;
+        }
+    }, {
+        key: 'afterDispatch',
+        value: function afterDispatch() {}
+    }, {
+        key: 'changeHistory',
+        value: function changeHistory(seek) {
+            var command = $store.histories[seek];
+            $store.historyIndex = seek;
+
+            $store.items = command.items;
+            $store.emit('changeHistory');
+        }
+    }, {
+        key: '/history/initialize',
+        value: function historyInitialize($store) {
+            $store.histories = [];
+            $store.historyIndex = 0;
+        }
+    }, {
+        key: '/history/push',
+        value: function historyPush($store, title) {
+
+            $store.histories.splice($store.historyIndex - 1, Number.MAX_SAFE_INTEGER, {
+                title: title,
+                items: $store.read('/clone', $store.items)
+            });
+
+            if ($store.histories.length > HISTORY_MAX) {
+                $store.histories.shift();
+            }
+
+            $store.historyIndex = $store.histories.length - 1;
+            $store.emit('pushHistory');
+        }
+    }, {
+        key: '/history/undo',
+        value: function historyUndo($store) {
+            var seek = $store.historyIndex--;
+
+            if (seek < 0) {
+                return;
+            }
+
+            this.changeHistory(seek);
+        }
+    }, {
+        key: '/history/redo',
+        value: function historyRedo($store) {
+
+            var seek = ++$store.historyIndex;
+
+            if (seek > $store.histories.length - 1) {
+                return;
+            }
+
+            this.changeHistory(seek);
+        }
+    }]);
+    return HistoryManager;
+}(BaseModule);
+
+var ModuleList = [HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -13485,9 +13571,9 @@ var Radius = function (_BasePropertyItem) {
     }
 
     createClass(Radius, [{
-        key: 'template',
+        key: "template",
         value: function template() {
-            return '\n            <div class=\'property-item radius show\'>\n                <div class=\'title\' ref="$title">Radius \n                    <span>\n                        <label><input type=\'checkbox\' ref="$fixedRadius" /> fixed</label>\n                    </span> \n                </div>\n                <div class=\'items\'>         \n                    <div>\n                        <label style="width:80px;">T Left</label>\n                        <div>\n                            <input type=\'number\' ref="$topLeftRadius"> <span>px</span>\n                        </div>\n                        <label style="width:50px;">Right</label>\n                        <div>\n                            <input type=\'number\' ref="$topRightRadius"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label style="width:80px;">B Left</label>\n                        <div>\n                            <input type=\'number\' ref="$bottomLeftRadius"> <span>px</span>\n                        </div>\n                        <label style="width:50px;">Right</label>\n                        <div>\n                            <input type=\'number\' ref="$bottomRightRadius"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
+            return "\n            <div class='property-item radius show'>\n                <div class='title' ref=\"$title\">Radius \n                    <span>\n                        <label><input type='checkbox' ref=\"$fixedRadius\" /> fixed</label>\n                    </span> \n                </div>\n                <div class='items'>         \n                    <div>\n                        <label style=\"width:80px;\" class=\"fixedRadiusOnly\">T Left</label>\n                        <div>\n                            <input type='number' min=\"0\" max=\"500\" class=\"fixedRadiusOnly\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                        <label style=\"width:50px;\">Right</label>\n                        <div>\n                            <input type='number' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label style=\"width:80px;\">B Left</label>\n                        <div>\n                            <input type='number' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                        <label style=\"width:50px;\">Right</label>\n                        <div>\n                            <input type='number' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: '@changeEditor',
@@ -13495,7 +13581,7 @@ var Radius = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
-        key: 'refresh',
+        key: "refresh",
         value: function refresh() {
             var _this2 = this;
 
@@ -13511,34 +13597,34 @@ var Radius = function (_BasePropertyItem) {
                     _this2.refs.$bottomRightRadius.val('');
 
                     // this.refs.$topLeftRadius.val(item.style['border-top-left-radius'].replace('px', ''))
-                    _this2.refs.$topRightRadius.el.disabled = true;
-                    _this2.refs.$bottomLeftRadius.el.disabled = true;
-                    _this2.refs.$bottomRightRadius.el.disabled = true;
+                    _this2.refs.$topRightRadius.attr('disabled', true);
+                    _this2.refs.$bottomLeftRadius.attr('disabled', true);
+                    _this2.refs.$bottomRightRadius.attr('disabled', true);
                 } else {
-                    _this2.refs.$topRightRadius.el.disabled = false;
-                    _this2.refs.$bottomLeftRadius.el.disabled = false;
-                    _this2.refs.$bottomRightRadius.el.disabled = false;
+                    _this2.refs.$topRightRadius.removeAttr('disabled');
+                    _this2.refs.$bottomLeftRadius.removeAttr('disabled');
+                    _this2.refs.$bottomRightRadius.removeAttr('disabled');
 
                     if (item.style['border-top-left-radius']) {
-                        _this2.refs.$topLeftRadius.val(item.style['border-top-left-radius'].replace('px', ''));
+                        _this2.refs.$topLeftRadius.val(parseParamNumber$1(item.style['border-top-left-radius']));
                     }
 
                     if (item.style['border-top-right-radius']) {
-                        _this2.refs.$topRightRadius.val(item.style['border-top-right-radius'].replace('px', ''));
+                        _this2.refs.$topRightRadius.val(parseParamNumber$1(item.style['border-top-right-radius']));
                     }
 
                     if (item.style['border-bottom-left-radius']) {
-                        _this2.refs.$bottomLeftRadius.val(item.style['border-bottom-left-radius'].replace('px', ''));
+                        _this2.refs.$bottomLeftRadius.val(parseParamNumber$1(['border-bottom-left-radius']));
                     }
 
                     if (item.style['border-bottom-right-radius']) {
-                        _this2.refs.$bottomRightRadius.val(item.style['border-bottom-right-radius'].replace('px', ''));
+                        _this2.refs.$bottomRightRadius.val(parseParamNumber$1(item.style['border-bottom-right-radius']));
                     }
                 }
             });
         }
     }, {
-        key: 'refreshValue',
+        key: "refreshValue",
         value: function refreshValue(key, $el) {
             var _this3 = this;
 
@@ -13555,11 +13641,12 @@ var Radius = function (_BasePropertyItem) {
             this.read('/item/current/layer', function (item) {
                 item.fixedRadius = _this4.refs.$fixedRadius.el.checked;
                 _this4.dispatch('/item/set', item);
+                _this4.refresh();
             });
         }
     }, {
-        key: 'input $topLeftRadius',
-        value: function input$topLeftRadius() {
+        key: 'input:change $topLeftRadius',
+        value: function inputChange$topLeftRadius() {
             var _this5 = this;
 
             this.read('/item/current/layer', function (item) {
@@ -13571,18 +13658,18 @@ var Radius = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: 'input $topRightRadius',
-        value: function input$topRightRadius() {
+        key: 'input:change $topRightRadius',
+        value: function inputChange$topRightRadius() {
             this.refreshValue('border-top-right-radius', this.refs.$topRightRadius);
         }
     }, {
-        key: 'input $bottomLeftRadius',
-        value: function input$bottomLeftRadius() {
+        key: 'input:change $bottomLeftRadius',
+        value: function inputChange$bottomLeftRadius() {
             this.refreshValue('border-bottom-left-radius', this.refs.$bottomLeftRadius);
         }
     }, {
-        key: 'input $bottomRightRadius',
-        value: function input$bottomRightRadius() {
+        key: 'input:change $bottomRightRadius',
+        value: function inputChange$bottomRightRadius() {
             this.refreshValue('border-bottom-right-radius', this.refs.$bottomRightRadius);
         }
     }]);
@@ -15434,6 +15521,11 @@ var MixBlendList = function (_BasePropertyItem) {
             }
         }
     }, {
+        key: 'show',
+        value: function show() {
+            this.refresh();
+        }
+    }, {
         key: '@changeEditor',
         value: function changeEditor() {
             this.refresh();
@@ -16061,7 +16153,12 @@ var BaseTab = function (_UIElement) {
             this.refs.$body.children().forEach(function ($dom) {
                 $dom.toggleClass('selected', $dom.attr('data-id') == id);
             });
+
+            this.onTabShow();
         }
+    }, {
+        key: 'onTabShow',
+        value: function onTabShow() {}
     }]);
     return BaseTab;
 }(UIElement);
@@ -18243,7 +18340,12 @@ var MiniLayerView = function (_BaseTab) {
     createClass(MiniLayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class=\"tab mini-layer-view\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"color\">Color</div>\n                    <!-- <div class=\"tab-item\" data-id=\"blend\">Blend</div> -->\n                    <div class=\"tab-item\" data-id=\"mix\">Blend</div>\n                    <div class=\"tab-item\" data-id=\"filter\">Filter</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"color\">\n                        <LayerColorPickerPanel></LayerColorPickerPanel>                \n                    </div>\n                    <!-- <div class=\"tab-content\" data-id=\"blend\">\n                        <BlendList></BlendList>    \n                    </div> -->\n                    <div class=\"tab-content\" data-id=\"mix\">\n                        <MixBlendList></MixBlendList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"filter\">\n                        <FilterList></FilterList>   \n                    </div>                                        \n                </div>\n            </div>            \n        ";
+            return "\n            <div class=\"tab mini-layer-view\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"color\">Color</div>\n                    <!-- <div class=\"tab-item\" data-id=\"blend\">Blend</div> -->\n                    <div class=\"tab-item\" data-id=\"mix\">Blend</div>\n                    <div class=\"tab-item\" data-id=\"filter\">Filter</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"color\">\n                        <LayerColorPickerPanel></LayerColorPickerPanel>                \n                    </div>\n                    <!-- <div class=\"tab-content\" data-id=\"blend\">\n                        <BlendList></BlendList>    \n                    </div> -->\n                    <div class=\"tab-content\" data-id=\"mix\">\n                        <MixBlendList ref=\"$mixBlendList\"></MixBlendList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"filter\">\n                        <FilterList></FilterList>   \n                    </div>                                        \n                </div>\n            </div>            \n        ";
+        }
+    }, {
+        key: "onTabShow",
+        value: function onTabShow() {
+            this.children.$mixBlendList.show();
         }
     }, {
         key: "components",

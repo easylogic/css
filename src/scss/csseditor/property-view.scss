@@ -156,6 +156,7 @@
         &.show {
             .items {
                 display: block; 
+                margin-top: 4px;
 
                 &.max-height {
                     max-height: 200px;
@@ -197,6 +198,13 @@
                     &.full {
                         width: 160px;
                         height: 20px;
+                    }
+
+                    &:disabled {
+                        background-color: $border-color;
+                        // appearance: none;
+                        border:1px solid $border-color;
+                        cursor: not-allowed;
                     }
                 }
 

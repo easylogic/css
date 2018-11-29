@@ -12,9 +12,11 @@ import ExternalResourceManager from "./ExternalResourceManager";
 import SVGManager from "./SVGManager";
 import CollectManager from "./CollectManager";
 import PageManager from "./PageManager";
+import HistoryManager from "./HistoryManager";
 
 
 export default [
+    HistoryManager,
     PageManager,
     CollectManager,
     SVGManager, 

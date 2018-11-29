@@ -44,6 +44,12 @@ export default class Dom {
         return this; 
     }
 
+    removeAttr (key) {
+        this.el.removeAttribute(key);
+
+        return this; 
+    }
+
     is (checkElement) {
         return this.el === (checkElement.el || checkElement);
     }

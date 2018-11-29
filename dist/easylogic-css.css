@@ -3820,7 +3820,8 @@ html, body {
         .csseditor .property-view .property-item > .items.no-padding {
           padding: 0px !important; }
       .csseditor .property-view .property-item.show .items {
-        display: block; }
+        display: block;
+        margin-top: 4px; }
         .csseditor .property-view .property-item.show .items.max-height {
           max-height: 200px;
           overflow: auto; }
@@ -3852,6 +3853,10 @@ html, body {
             .csseditor .property-view .property-item > .items > div > div input[type=number].full, .csseditor .property-view .property-item > .items > div > div input[type=text].full {
               width: 160px;
               height: 20px; }
+            .csseditor .property-view .property-item > .items > div > div input[type=number]:disabled, .csseditor .property-view .property-item > .items > div > div input[type=text]:disabled {
+              background-color: #c7c7c7;
+              border: 1px solid #c7c7c7;
+              cursor: not-allowed; }
           .csseditor .property-view .property-item > .items > div > div .input input[type=number], .csseditor .property-view .property-item > .items > div > div .input input[type=text] {
             width: 30px; }
           .csseditor .property-view .property-item > .items > div > div .input-field.hex input[type=number], .csseditor .property-view .property-item > .items > div > div .input-field.hex input[type=text] {

@@ -1,4 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { parseParamNumber } from "../../../../../util/filter/functions";
+
 
 export default class Radius extends BasePropertyItem {
     template () {
@@ -11,23 +13,23 @@ export default class Radius extends BasePropertyItem {
                 </div>
                 <div class='items'>         
                     <div>
-                        <label style="width:80px;">T Left</label>
+                        <label style="width:80px;" class="fixedRadiusOnly">T Left</label>
                         <div>
-                            <input type='number' ref="$topLeftRadius"> <span>px</span>
+                            <input type='number' min="0" max="500" class="fixedRadiusOnly" ref="$topLeftRadius"> <span>px</span>
                         </div>
                         <label style="width:50px;">Right</label>
                         <div>
-                            <input type='number' ref="$topRightRadius"> <span>px</span>
+                            <input type='number' min="0" max="500" ref="$topRightRadius"> <span>px</span>
                         </div>
                     </div>          
                     <div>
                         <label style="width:80px;">B Left</label>
                         <div>
-                            <input type='number' ref="$bottomLeftRadius"> <span>px</span>
+                            <input type='number' min="0" max="500" ref="$bottomLeftRadius"> <span>px</span>
                         </div>
                         <label style="width:50px;">Right</label>
                         <div>
-                            <input type='number' ref="$bottomRightRadius"> <span>px</span>
+                            <input type='number' min="0" max="500" ref="$bottomRightRadius"> <span>px</span>
                         </div>
                     </div>
                 </div>
@@ -52,29 +54,29 @@ export default class Radius extends BasePropertyItem {
                 this.refs.$bottomRightRadius.val('')
 
                 // this.refs.$topLeftRadius.val(item.style['border-top-left-radius'].replace('px', ''))
-                this.refs.$topRightRadius.el.disabled = true
-                this.refs.$bottomLeftRadius.el.disabled = true
-                this.refs.$bottomRightRadius.el.disabled = true
+                this.refs.$topRightRadius.attr('disabled', true)
+                this.refs.$bottomLeftRadius.attr('disabled', true)
+                this.refs.$bottomRightRadius.attr('disabled', true)
 
             } else {
-                this.refs.$topRightRadius.el.disabled = false
-                this.refs.$bottomLeftRadius.el.disabled = false
-                this.refs.$bottomRightRadius.el.disabled = false
+                this.refs.$topRightRadius.removeAttr('disabled')
+                this.refs.$bottomLeftRadius.removeAttr('disabled')
+                this.refs.$bottomRightRadius.removeAttr('disabled') 
 
                 if (item.style['border-top-left-radius']) {
-                    this.refs.$topLeftRadius.val(item.style['border-top-left-radius'].replace('px', ''))
+                    this.refs.$topLeftRadius.val(parseParamNumber(item.style['border-top-left-radius']))
                 }
         
                 if (item.style['border-top-right-radius']) {
-                    this.refs.$topRightRadius.val(item.style['border-top-right-radius'].replace('px', ''))
+                    this.refs.$topRightRadius.val(parseParamNumber(item.style['border-top-right-radius']))
                 }
     
                 if (item.style['border-bottom-left-radius']) {
-                    this.refs.$bottomLeftRadius.val(item.style['border-bottom-left-radius'].replace('px', ''))
+                    this.refs.$bottomLeftRadius.val(parseParamNumber(['border-bottom-left-radius']))
                 }
     
                 if (item.style['border-bottom-right-radius']) {
-                    this.refs.$bottomRightRadius.val(item.style['border-bottom-right-radius'].replace('px', ''))
+                    this.refs.$bottomRightRadius.val(parseParamNumber(item.style['border-bottom-right-radius']))
                 }
             }
 
@@ -93,10 +95,11 @@ export default class Radius extends BasePropertyItem {
         this.read('/item/current/layer', (item) => {
             item.fixedRadius = this.refs.$fixedRadius.el.checked; 
             this.dispatch('/item/set', item);
+            this.refresh();
         })
     }
 
-    'input $topLeftRadius' () {
+    'input:change $topLeftRadius' () {
         this.read('/item/current/layer', (item) => {
             if (item.fixedRadius) {
                 this.refreshValue('border-radius', this.refs.$topLeftRadius);
@@ -107,15 +110,15 @@ export default class Radius extends BasePropertyItem {
         
     }
 
-    'input $topRightRadius' () {
+    'input:change $topRightRadius' () {
         this.refreshValue('border-top-right-radius', this.refs.$topRightRadius);
     }
 
-    'input $bottomLeftRadius' () {
+    'input:change $bottomLeftRadius' () {
         this.refreshValue('border-bottom-left-radius', this.refs.$bottomLeftRadius);
     }
 
-    'input $bottomRightRadius' () {
+    'input:change $bottomRightRadius' () {
         this.refreshValue('border-bottom-right-radius', this.refs.$bottomRightRadius);
     }
 }

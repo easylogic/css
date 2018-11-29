@@ -20,7 +20,7 @@ export default class MiniLayerView extends BaseTab {
                         <BlendList></BlendList>    
                     </div> -->
                     <div class="tab-content" data-id="mix">
-                        <MixBlendList></MixBlendList>
+                        <MixBlendList ref="$mixBlendList"></MixBlendList>
                     </div>
                     <div class="tab-content" data-id="filter">
                         <FilterList></FilterList>   
@@ -28,6 +28,10 @@ export default class MiniLayerView extends BaseTab {
                 </div>
             </div>            
         `
+    }
+
+    onTabShow () {
+        this.children.$mixBlendList.show()
     }
 
     components () {
