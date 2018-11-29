@@ -17970,13 +17970,11 @@ var GradientView = function (_BaseTab) {
                 return '';
             }
 
-            var editMode = this.read('/item/get/editMode');
-
             var list = this.read('/item/map/children', page.id, function (item, index) {
                 return '<div \n                class=\'layer\' \n                item-layer-id="' + item.id + '" \n                title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                style=\'' + _this2.read('/layer/toString', item, true) + '\'>\n                    ' + _this2.read('/layer/toStringClipPath', item) + '\n                </div>';
             });
 
-            return list.reverse();
+            return list;
         }
     }, {
         key: '@animationEditor',

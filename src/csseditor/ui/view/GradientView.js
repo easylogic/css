@@ -57,8 +57,6 @@ export default class GradientView extends BaseTab {
             return ''; 
         }
 
-        var editMode = this.read('/item/get/editMode');
-
         var list = this.read('/item/map/children', page.id, (item, index) => {
             return `<div 
                 class='layer' 
@@ -69,7 +67,7 @@ export default class GradientView extends BaseTab {
                 </div>`
         });
 
-        return list.reverse(); 
+        return list; 
     }
 
     '@animationEditor' () {
