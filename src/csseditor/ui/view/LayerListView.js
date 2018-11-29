@@ -94,7 +94,7 @@ export default class LayerList extends UIElement {
 
         return this.read('/item/map/children', page.id, (item, index) => {
             return this.makeItemNode(item, index); 
-        })
+        }).reverse();
     }
 
     refresh () {

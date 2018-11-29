@@ -59,22 +59,7 @@ export default class GradientView extends BaseTab {
 
         var editMode = this.read('/item/get/editMode');
 
-        return this.read('/item/map/children', page.id, (item, index) => {
-
-            /*
-            switch (editMode) {
-            case EDITOR_MODE_IMAGE_IMAGE:
-            case EDITOR_MODE_IMAGE_LINEAR:
-            case EDITOR_MODE_IMAGE_RADIAL:
-            case EDITOR_MODE_IMAGE_STATIC:
-
-                var image = this.read('/item/current/image')
-
-                if (image.parentId == item.id) {
-                    return `<div class='layer' item-layer-id="${item.id}" title="${index+1}. ${item.name || 'Layer'}" style='${this.read('/layer/toString', item, true, image)}'></div>`
-                }
-            }*/
-
+        var list = this.read('/item/map/children', page.id, (item, index) => {
             return `<div 
                 class='layer' 
                 item-layer-id="${item.id}" 
@@ -83,6 +68,8 @@ export default class GradientView extends BaseTab {
                     ${this.read('/layer/toStringClipPath', item)}
                 </div>`
         });
+
+        return list.reverse(); 
     }
 
     '@animationEditor' () {

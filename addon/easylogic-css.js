@@ -17972,22 +17972,11 @@ var GradientView = function (_BaseTab) {
 
             var editMode = this.read('/item/get/editMode');
 
-            return this.read('/item/map/children', page.id, function (item, index) {
-
-                /*
-                switch (editMode) {
-                case EDITOR_MODE_IMAGE_IMAGE:
-                case EDITOR_MODE_IMAGE_LINEAR:
-                case EDITOR_MODE_IMAGE_RADIAL:
-                case EDITOR_MODE_IMAGE_STATIC:
-                     var image = this.read('/item/current/image')
-                     if (image.parentId == item.id) {
-                        return `<div class='layer' item-layer-id="${item.id}" title="${index+1}. ${item.name || 'Layer'}" style='${this.read('/layer/toString', item, true, image)}'></div>`
-                    }
-                }*/
-
+            var list = this.read('/item/map/children', page.id, function (item, index) {
                 return '<div \n                class=\'layer\' \n                item-layer-id="' + item.id + '" \n                title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                style=\'' + _this2.read('/layer/toString', item, true) + '\'>\n                    ' + _this2.read('/layer/toStringClipPath', item) + '\n                </div>';
             });
+
+            return list.reverse();
         }
     }, {
         key: '@animationEditor',
@@ -18285,7 +18274,7 @@ var LayerList = function (_UIElement) {
 
             return this.read('/item/map/children', page.id, function (item, index) {
                 return _this3.makeItemNode(item, index);
-            });
+            }).reverse();
         }
     }, {
         key: 'refresh',
