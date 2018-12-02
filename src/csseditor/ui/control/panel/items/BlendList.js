@@ -54,7 +54,7 @@ export default class BlendList extends BasePropertyItem {
         this.$el.toggle(isShow);
 
         this.read('/item/current/image', (image) => {
-            this.refs.$desc.html(image.backgroundBlendMode || 'normal')
+            this.refs.$desc.text(image.backgroundBlendMode || 'normal')
         })
 
         if(isShow && this.$el.hasClass('show')) {
@@ -69,7 +69,7 @@ export default class BlendList extends BasePropertyItem {
     }
 
 
-    'click.self $blendList .blend-item' (e) {
+    'click $blendList .blend-item | self' (e) {
         var item = this.read('/item/current/image');
 
         if (!item) return; 

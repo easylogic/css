@@ -106,7 +106,7 @@ export default class FilterList extends BasePropertyItem {
 
     refreshFilterList() {
         this.read('/item/current/layer', (layer) => {
-            this.refs.$desc.html(this.read('/layer/make/filter', layer.filters)); 
+            this.refs.$desc.text(this.read('/layer/make/filter', layer.filters)); 
         })        
     }
 

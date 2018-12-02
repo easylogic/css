@@ -7,63 +7,85 @@ export default class HistoryManager extends BaseModule {
     initialize () {
         super.initialize()
 
-        this.$store.histories = []
-        this.$store.historyIndex = 0;
+        this.$store.historyOriginal = {}
+        this.$store.histories = {}
+        this.$store.historyIndex = {};
     }
 
     afterDispatch () {
-        
+        this.$store.emit('changeHistory')
     }
 
-    changeHistory ($store, seek) {
-        var command = $store.histories[seek];
-        $store.historyIndex = seek; 
+    changeHistory ($store, page) {
+        
+        if ($store.historyIndex[page.id] < 0) {
+            var command = $store.historyOriginal[page.id];
+        } else {
+            var index = $store.historyIndex[page.id];
+            var command = $store.histories[page.id][index];
+        }
 
-        $store.items = command.items
-        $store.emit('changeHistory');        
+        if (command) {
+            var {items, selectedId} = command;
+            $store.selectedId = selectedId;
+            $store.dispatch('/item/set/all', page.id, $store.read('/clone', items))
+        }
     }        
 
     '/history/initialize' ($store) {
-        $store.histories = [] 
-        $store.historyIndex = 0;
+        $store.read('/item/current/page', (page) => {
+            $store.historyOriginal[page.id] = { 
+                items: $store.clone('/item/get/all', page.id), 
+                selectedId: $store.selectedId 
+            }
+            $store.histories[page.id] = [] 
+            $store.historyIndex[page.id] = 0;
+        })
     }
 
     '/history/push' ($store, title) {
+        $store.read('/item/current/page', (page) => {
+            var index = $store.historyIndex[page.id];
+            if (index < 0) index = -1; 
+            var histories = (index < 0) ? [] : $store.histories[page.id].slice(0, index + 1);
 
-        var histories = $store.histories.slice(0,$store.historyIndex);
+            histories.push({ 
+                title, 
+                items: $store.clone('/item/get/all', page.id),
+                selectedId: $store.selectedId
+            });
 
-        histories.push({ title, items: $store.read('/clone', $store.items) });
+            $store.histories[page.id] = histories;
 
-        $store.histories = histories;
+            if ($store.histories[page.id].length > HISTORY_MAX) {
+                $store.histories[page.id].shift();
+            }
 
-        if ($store.histories.length > HISTORY_MAX) {
-            $store.histories.shift();
-        }
-
-        $store.historyIndex = $store.histories.length -1;
-        $store.emit('pushHistory');
+            $store.historyIndex[page.id] = $store.histories[page.id].length -1;
+        })
     }
 
     '/history/undo' ($store) {
-        var seek = $store.historyIndex--;
+        $store.read('/item/current/page', (page) => {        
 
-        if (seek < 0) {
-            return; 
-        }
+            if ($store.historyIndex[page.id] < 0) {
+                return;
+            }
 
-        this.changeHistory($store, seek)
-
+            $store.historyIndex[page.id]--;
+            this.changeHistory($store, page)
+        })
     }
 
 
     '/history/redo' ($store) {
+        $store.read('/item/current/page', (page) => {        
+            if ($store.historyIndex[page.id] > $store.histories[page.id].length -1) {
+                return; 
+            }
 
-        var seek = ++$store.historyIndex;
-
-        if (seek > $store.histories.length -1) {
-            return; 
-        }
-
-        this.changeHistory($store, seek)
+            $store.historyIndex[page.id]++;
+            this.changeHistory($store, page)
+        });
     }        
 }

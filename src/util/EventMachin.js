@@ -8,6 +8,7 @@ const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 const CHECK_FUNCTION_PATTERN = /^([^ \t]*)(\((.*)\))?$/ig;
 const EVENT_SAPARATOR = ' '
 const EVENT_NAME_SAPARATOR = ':'
+const EVENT_CHECK_SAPARATOR = '|'
 const META_KEYS = ['Control', 'Shift', 'Alt', 'Meta'];
 const PREDEFINED_EVENT_NAMES = {
   'pointerstart': 'mousedown:touchstart',
@@ -244,16 +245,17 @@ export default class EventMachin {
   }
 
   parseEvent (key) {
-    let arr = key.split(EVENT_SAPARATOR) ;
+    let checkMethodFilters = key.split(EVENT_CHECK_SAPARATOR).map(it => it.trim());
+    var eventSelectorAndBehave = checkMethodFilters.shift() ;
 
-    var eventNames =  this.getEventNames(arr[0])
-
-    var params = arr.slice(1)
+    var [eventName, ...params] = eventSelectorAndBehave.split(EVENT_SAPARATOR);
+    var eventNames =  this.getEventNames(eventName)
     var callback = this[key].bind(this)
     
     eventNames.forEach(eventName => {
       var eventInfo = [eventName, ...params]
-      this.bindingEvent(eventInfo, callback);
+      // console.log(eventInfo)
+      this.bindingEvent(eventInfo, checkMethodFilters, callback);
     })
   }
 
@@ -278,16 +280,13 @@ export default class EventMachin {
     return e.delegateTarget == e.target; 
   }
 
-  getDefaultEventObject (eventName) {
-    let arr = eventName.split('.');
-    const realEventName = arr.shift();
+  getDefaultEventObject (eventName, checkMethodFilters) {
+    const isControl = checkMethodFilters.includes('Control');
+    const isShift =  checkMethodFilters.includes('Shift');
+    const isAlt = checkMethodFilters.includes('Alt');
+    const isMeta =  checkMethodFilters.includes('Meta');
 
-    const isControl = arr.includes('Control');
-    const isShift =  arr.includes('Shift');
-    const isAlt = arr.includes('Alt');
-    const isMeta =  arr.includes('Meta');
-
-    arr = arr.filter((code) => {
+    var arr = checkMethodFilters.filter((code) => {
       return META_KEYS.includes(code) === false;
     });
     
@@ -318,7 +317,7 @@ export default class EventMachin {
     // TODO: split debounce check code     
 
     return {
-      eventName : realEventName,
+      eventName,
       isControl,
       isShift,
       isAlt,
@@ -329,11 +328,10 @@ export default class EventMachin {
     }
   }
 
-  bindingEvent ([ eventName, dom, ...delegate], callback) {
-    dom = this.getDefaultDomElement(dom);
-    let eventObject = this.getDefaultEventObject(eventName);
+  bindingEvent ([ eventName, dom, ...delegate], checkMethodFilters, callback) {
+    let eventObject = this.getDefaultEventObject(eventName, checkMethodFilters);
 
-    eventObject.dom = dom;
+    eventObject.dom = this.getDefaultDomElement(dom);
     eventObject.delegate = delegate.join(EVENT_SAPARATOR);
 
     this.addEvent(eventObject, callback);

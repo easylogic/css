@@ -280,7 +280,8 @@ export default class GradientSteps extends UIElement {
     }
 
     selectStep (e) {
-        var item = this.read('/item/get', e.$delegateTarget.parent().attr('id'));
+        var parent = e.$delegateTarget.parent();
+        var item = this.read('/item/get', parent.attr('id'));
             
         this.read('/item/each/children', item.parentId, (step) => {
             if (step.selected) step.selected = false; 
@@ -290,17 +291,19 @@ export default class GradientSteps extends UIElement {
 
         this.initColor(item.color)     
 
+        this.currentStepBox = this.currentStepBox || parent;
         var $selected = this.refs.$stepList.$('.selected');
         if ($selected && !$selected.is(this.currentStepBox)) {
             $selected.removeClass('selected');
         }
+
         this.currentStepBox.addClass('selected')
         this.run ('/item/set', item); 
         this.dispatch('/colorstep/sort', item.id, this.getSortedStepList());
         this.setBackgroundColor();
     }
 
-    'click.Shift $steps .step' (e) {
+    'click $steps .step | Shift' (e) {
         this.removeStep(e);
     }
 
@@ -421,30 +424,42 @@ export default class GradientSteps extends UIElement {
         }
     }        
 
-    // Event Bindings 
-    'pointerend document' (e) { 
-        this.onDragEnd(e);
+    isDownCheck (e) {
+        return this.isDown
     }
 
-    'pointermove document' (e) {
-        this.onDragMove(e);
+    isNotDownCheck (e) {
+        return !this.isDown
+    }    
+
+    isNotFirstPosition (e) {
+        return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y     
+    } 
+
+    // Event Bindings 
+    'pointerend document | isDownCheck' (e) { 
+        this.isDown = false       
+        if (this.refs.$stepList) {
+            this.refs.$stepList.removeClass('mode-drag')       
+            this.run('/history/push', 'Moved colorstep');
+        }
+    }
+
+    'pointermove document | debounce(10) | isDownCheck' (e) {
+        this.refreshColorUI(e);
+        this.refs.$stepList.addClass('mode-drag')
     }
 
     isStepElement (e) {
         return new Dom(e.target).hasClass('step');
     }
 
-    'pointerstart $steps .step' (e) {
+    'pointerstart $steps .step | isNotDownCheck | isStepElement' (e) {
 
         e.preventDefault();
-        if (this.isStepElement(e) && !this.isDown) {
-            this.onDragStart(e);
-        }
-    }
-
-    onDragStart (e) {
 
         this.isDown = true; 
+        this.xy = e.xy;
         this.currentStep = e.$delegateTarget;
         this.currentStepBox = this.currentStep.parent();
         this.currentUnit = this.currentStepBox.$(".guide-unit")
@@ -458,20 +473,4 @@ export default class GradientSteps extends UIElement {
 
     }
 
-    onDragMove (e) {
-        if (this.isDown) {
-            this.refreshColorUI(e);
-            this.refs.$stepList.addClass('mode-drag')
-        }
-    } 
-
-    /* called when mouse is ended move  */
-    onDragEnd (e) {
-        this.isDown = false         
-        if (this.refs.$stepList) {
-            this.refs.$stepList.removeClass('mode-drag')       
-            this.run('/history/push', 'Moved colorstep');                     
-        }
-
-    }
 }

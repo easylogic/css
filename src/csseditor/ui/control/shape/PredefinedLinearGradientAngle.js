@@ -35,7 +35,7 @@ export default class PredefinedLinearGradientAngle extends UIElement {
         return this.read('/tool/get', 'guide.angle') && (isLinear || isConic);
     }
 
-    'click.self $el button' (e) {
+    'click $el button | self' (e) {
 
         this.read('/item/current/image', (item) => {
             item.angle = e.$delegateTarget.attr('data-value'); 

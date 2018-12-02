@@ -1,6 +1,10 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { percent2px, parseParamNumber, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
 
+function checkPxEm(unit) {
+    return ['px', 'em'].includes(unit);
+}
+
 export default class GradientInfo extends UIElement {
 
     template () { 
@@ -16,7 +20,7 @@ export default class GradientInfo extends UIElement {
     getUnitName (step) {
         var unit = step.unit || '%'
 
-        if (['px', 'em'].includes(unit)) {
+        if (checkPxEm(unit)) {
             return unit; 
         }
 
@@ -27,7 +31,7 @@ export default class GradientInfo extends UIElement {
 
         var unit = step.unit || '%'
 
-        if (['px', 'em'].includes(unit) == false) {
+        if (checkPxEm(unit) == false) {
             unit = '%';
         }
 

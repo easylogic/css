@@ -11,8 +11,8 @@ class UIElement extends EventMachin {
         this.parent = this.opt;
         this.props = props || {}
         this.source = uuid()
-
-        window[this.source] = this; 
+        this.sourceName = this.constructor.name;
+        // window[this.source] = this; 
 
         if (opt && opt.$store) {
             this.$store = opt.$store
@@ -64,6 +64,7 @@ class UIElement extends EventMachin {
 
     dispatch (...args) {
         this.$store.source = this.source ; 
+        this.$store.sourceName = this.sourceName;
         return this.$store.dispatch(...args) 
     }
 

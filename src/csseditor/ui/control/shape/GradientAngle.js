@@ -99,9 +99,7 @@ export default class GradientAngle extends UIElement {
     setAngle (angle) {
 
         this.read('/item/current/image', (item) => {
-            item.angle = angle; 
-
-            this.dispatch('/item/set', item);
+            this.dispatch('/item/set', {id: item.id, angle});
         })
 
     }
@@ -114,23 +112,29 @@ export default class GradientAngle extends UIElement {
         this.$el.toggle(this.isShow())
     }
 
+    isDownCheck () {
+        return this.isDown;
+    }
+
+    isNotDownCheck () {
+        return !this.isDown
+    }
+
     // Event Bindings 
-    'pointerend document' (e) {
+    'pointerend document | isDownCheck' (e) {
         this.isDown = false ;
     }
 
-    'pointermove document' (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
+    'pointermove document | debounce(10) | isDownCheck' (e) {
+        this.refreshUI(e);
     }
 
-    'pointerstart $drag_pointer' (e) {
+    'pointerstart $drag_pointer | isNotDownCheck' (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    'pointerstart $dragAngle' (e) {
+    'pointerstart $dragAngle | isNotDownCheck' (e) {
         this.isDown = true; 
         this.refreshUI(e);        
     }     

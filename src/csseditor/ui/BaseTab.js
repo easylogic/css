@@ -21,7 +21,7 @@ export default class BaseTab extends UIElement {
         return !e.$delegateTarget.hasClass('selected')
     }
 
-    'click.isNotSelectedTab $header .tab-item' (e) {
+    'click $header .tab-item | isNotSelectedTab' (e) {
         this.selectTab(e.$delegateTarget.attr('data-id'))
     }
 

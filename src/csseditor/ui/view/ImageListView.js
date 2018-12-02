@@ -79,7 +79,7 @@ export default class ImageList extends UIElement {
         this.refresh()
     }
 
-    'click.self $imageList .tree-item' (e) { 
+    'click $imageList .tree-item | self' (e) { 
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
@@ -116,7 +116,7 @@ export default class ImageList extends UIElement {
         e.preventDefault();        
     }        
 
-    'drop.self $imageList .tree-item' (e) {
+    'drop $imageList .tree-item | self' (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('data-id')

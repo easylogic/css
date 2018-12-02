@@ -85,7 +85,7 @@ export default class PageList extends UIElement {
         this.refresh();
     }
 
-    'click.self $pageList .tree-item' (e) { 
+    'click $pageList .tree-item | self' (e) { 
 
         this.dispatch('/item/select', e.$delegateTarget.attr('id'));
         this.refresh();

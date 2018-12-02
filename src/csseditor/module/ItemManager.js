@@ -81,6 +81,37 @@ const COLORSTEP_DEFAULT_OBJECT = {
     color: 'rgba(0, 0, 0, 0)'
 }
 
+const ITEM_KEYS = {
+    'page': Object.keys(PAGE_DEFAULT_OBJECT),
+    'layer': Object.keys(LAYER_DEFAULT_OBJECT),
+    'image': Object.keys(IMAGE_DEFAULT_OBJECT),
+    'colorstep': Object.keys(IMAGE_DEFAULT_OBJECT)
+}
+
+function getAllKeys(itemType1, itemType2) {
+    var results = {}
+
+    var arr = []
+    arr.push(...ITEM_KEYS[itemType1])
+    arr.push(...ITEM_KEYS[itemType2])
+    arr.forEach(key => {
+        results[key] = true; 
+    })
+
+    return Object.keys(results);
+}
+
+var keys = Object.keys(ITEM_KEYS);
+
+const ITEM_DIFF_KEYS = {}
+
+keys.forEach(key => {
+    keys.forEach(key2 => {
+        ITEM_DIFF_KEYS[`${key + key2}`] = getAllKeys(key, key2)
+    })
+})
+
+
 const gradientTypeList = ['linear', 'radial', 'conic']
 const repeatingGradientTypeList = ['repeating-linear', 'repeating-radial', 'repeating-conic']
 const conicList = ['conic', 'repeating-conic']
@@ -179,6 +210,28 @@ export default class ItemManager extends BaseModule {
 
     '*/item/get' ($store, id) {
         return $store.items[id] || {};
+    }
+
+    '*/item/get/all' ($store, parentId) {
+        var items = {}
+
+        $store.read('/item/each/children', parentId, (item) => {
+            items[item.id] = $store.read('/clone', item);
+
+            var children = $store.read('/item/get/all', item.id)
+            Object.keys(children).forEach(key => {
+                items[key] = children[key];
+            }); 
+        })
+
+        return items; 
+    }
+
+    '/item/set/all' ($store, parentId, items, isRemove = true) {
+        if (isRemove) { 
+            $store.run('/item/remove/all', parentId);
+        }
+        Object.assign($store.items, items);
     }
 
     '*/item/current' ($store) {
@@ -477,6 +530,15 @@ export default class ItemManager extends BaseModule {
         }
     }
 
+    '/item/remove/all' ($store, parentId) {
+        $store.read('/item/each/children', parentId, (item) => {
+
+            $store.run('/item/remove/all', item.id);
+
+            delete $store.items[item.id];
+        })
+    }
+
     '/item/remove/children' ($store, parentId) {
         $store.read('/item/each/children', parentId, (item) => {
             $store.run('/item/remove', item.id);
@@ -576,11 +638,27 @@ export default class ItemManager extends BaseModule {
 
     }
 
+    diff (prevItem, item) {
+        
+        var diff = {}
+
+        ITEM_DIFF_KEYS[`${prevItem.itemType + item.itemType}`].forEach(key => {
+            if (prevItem[key] != item[key]) {
+                // console.log(item[key])
+                diff[key] = true; 
+            }
+        });
+
+        return Object.keys(diff);
+    }
+
     '/item/set' ($store, obj = {}, isSelected = false) {
         var id = obj.id; 
-        $store.items[id] = Object.assign($store.clone('/item/get', id), obj);
+        var prevItem = $store.clone('/item/get', id)
+        $store.items[id] = Object.assign({}, prevItem, obj);
         $store.lastChangedItemType = $store.items[id].itemType
-
+        $store.lastDiff = this.diff(prevItem, $store.items[id])
+        // console.log($store.lastDiff);
         if (isSelected) $store.run('/item/select', id)
     }
 
@@ -597,7 +675,9 @@ export default class ItemManager extends BaseModule {
     }   
     
     // initialize items 
-    '/item/load' ($store) { }  
+    '/item/load' ($store) { 
+        $store.run('/history/initialize');
+    }  
 
     '/item/add' ($store, itemType, isSelected = false, parentId = '') {
         var id = $store.read('/item/create', itemType);
@@ -704,7 +784,9 @@ export default class ItemManager extends BaseModule {
         // 이미지 생성 
         var image = $store.read('/item/get', imageId);
         image.parentId = layerId; 
-        $store.run('/item/set', image, isSelected);        
+        $store.run('/item/set', image, isSelected);      
+        
+        $store.run('/history/initialize');
     }
 
 

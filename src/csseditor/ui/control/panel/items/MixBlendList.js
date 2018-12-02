@@ -53,7 +53,7 @@ export default class MixBlendList extends BasePropertyItem {
             this.load()
 
             this.read('/item/current/layer', (layer) => {
-                this.refs.$desc.html(layer.style['mix-blend-mode'])
+                this.refs.$desc.text(layer.style['mix-blend-mode'])
             })        
         }
     }
@@ -68,7 +68,7 @@ export default class MixBlendList extends BasePropertyItem {
         }
     }
 
-    'click.self $mixBlendList .blend-item' (e) {
+    'click $mixBlendList .blend-item | self' (e) {
         var item = this.read('/item/current/layer');
 
         if (!item) return; 

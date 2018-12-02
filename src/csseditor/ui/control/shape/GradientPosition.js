@@ -133,8 +133,7 @@ export default class GradientPosition extends UIElement {
 
     setRadialPosition (radialPosition) {
         this.read('/item/current/image', (image) => {
-            image.radialPosition = radialPosition
-            this.dispatch('/item/set', image);
+            this.dispatch('/item/set', {id: image.id, radialPosition});
         });
     }
 

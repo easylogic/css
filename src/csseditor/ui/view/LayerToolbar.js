@@ -5,6 +5,11 @@ export default class LayerToolbar extends UIElement {
     template () {  
         return `
             <div class='layer-toolbar'>
+                <label></label>
+                <div class="button-group">
+                    <button class="dodo" ref="$undo" title="Undo">Undo</button>
+                    <button class="dodo" ref="$redo" title="Redo">Redo</button>
+                </div>               
                 <label>Gradients</label>
                 <div class='gradient-type' ref="$gradientType">
                     <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>
@@ -53,7 +58,7 @@ export default class LayerToolbar extends UIElement {
             var type = e.$delegateTarget.attr('data-type')
 
             this.dispatch('/item/prepend/image', type, true, item.id)
-            this.run('/history/push', `Add ${type} gradient` );        
+            this.dispatch('/history/push', `Add ${type} gradient` );        
             this.refresh()
         }); 
     }       
@@ -64,21 +69,34 @@ export default class LayerToolbar extends UIElement {
 
     'click $ordering' (e) {
         this.dispatch('/colorstep/ordering/equals')
+        this.dispatch('/history/push', `Ordering gradient` );        
     } 
 
     'click $orderingLeft' (e) {
         this.dispatch('/colorstep/ordering/equals/left')
+        this.dispatch('/history/push', `Ordering gradient` );        
     }    
 
     'click $orderingRight' (e) {
         this.dispatch('/colorstep/ordering/equals/right')
+        this.dispatch('/history/push', `Ordering gradient` );        
     }        
 
     'click $cutOff' (e) {
         this.dispatch('/colorstep/cut/off')
+        this.dispatch('/history/push', `Cut off static gradient pattern` );
     }
 
     'click $cutOn' (e) {
         this.dispatch('/colorstep/cut/on')
+        this.dispatch('/history/push', `Cut on static gradient pattern` );
+    }    
+
+    'click $undo' (e) {
+        this.dispatch('/history/undo')
+    }
+
+    'click $redo' (e) {
+        this.dispatch('/history/redo')
     }    
 }

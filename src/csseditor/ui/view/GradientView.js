@@ -22,8 +22,7 @@ export default class GradientView extends BaseTab {
                 <div class='page-content' ref="$board">
                     <div class="page-canvas" ref="$canvas">
                         <div class="gradient-color-view-container" ref="$page">
-                            <div class="gradient-color-view" ref="$colorview"></div>            
-
+                            <div class="gradient-color-view" ref="$colorview"></div>
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
                         <PredefinedLayerResizer></PredefinedLayerResizer>                        
@@ -151,7 +150,7 @@ export default class GradientView extends BaseTab {
         return e.target == this.refs.$colorview.el;
     }
 
-    'click.self $page .layer' (e) {
+    'click $page .layer | self' (e) {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
             this.run('/item/select/mode', 'layer')
@@ -173,7 +172,7 @@ export default class GradientView extends BaseTab {
 
     }    
 
-    'click.self $el .page-canvas' (e) {
+    'click $el .page-canvas | self' (e) {
         this.selectPageMode()
     }
 
@@ -186,19 +185,6 @@ export default class GradientView extends BaseTab {
         })
     } */
 
-    'pointerstart $page .layer' (e) {
-        if (!this.isDown) {
-            this.isDown = true; 
-            this.xy = e.xy;
-            this.$layer = e.$delegateTarget;
-            this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'))
-            this.moveX = +(this.layer.style.x || 0).replace('px', '')
-            this.moveY = +(this.layer.style.y || 0).replace('px', '')
-    
-            this.dispatch('/item/select', this.layer.id)
-        }
-
-    }
 
     updatePosition (style1 = {}, style2 = {}) {
         let style = Object.assign({}, style1, style2);
@@ -242,19 +228,43 @@ export default class GradientView extends BaseTab {
     }    
 
 
-    'pointermove document' (e) {
-        if (this.isDown) {
-            this.refs.$page.addClass('moving');
-            this.targetXY = e.xy;
-            this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y)
-        }
+    isDownCheck () {
+        return this.isDown
     }
 
-    'pointerend document' (e) {
-        if (this.isDown) {
-            this.isDown = false; 
-            this.layer = null;
-            this.refs.$page.removeClass('moving');        
+    isNotDownCheck () {
+        return !this.isDown
+    }
+
+    'pointerstart $page .layer | isNotDownCheck' (e) {
+        this.isDown = true; 
+        this.xy = e.xy;
+        this.$layer = e.$delegateTarget;
+        this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'))
+        this.moveX = parseParamNumber(this.layer.style.x || '0px')
+        this.moveY = parseParamNumber(this.layer.style.y || '0px')
+
+        this.dispatch('/item/select', this.layer.id)
+    }    
+
+    'pointermove document | isDownCheck' (e) {
+        this.refs.$page.addClass('moving');
+        this.targetXY = e.xy;
+        this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y)
+    }
+
+
+    isNotFirstPosition (e) {
+        return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y     
+    }     
+
+    'pointerend document | isDownCheck' (e) {
+        this.isDown = false; 
+        this.layer = null;
+        this.refs.$page.removeClass('moving');        
+
+        if (this.isNotFirstPosition(e)) {
+            this.dispatch('/history/push', 'Move a layer');
         }
     }
 

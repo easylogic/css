@@ -112,12 +112,12 @@ export default class LayerList extends UIElement {
     'click $addLayer' (e) {
         this.read('/item/current/page', (page) => {
             this.dispatch('/item/add', 'layer', true, page.id)
-            this.run('/history/push', 'Add a layer');        
+            this.dispatch('/history/push', 'Add a layer');
             this.refresh();    
         });
     }
 
-    'click.self $layerList .tree-item' (e) { 
+    'click $layerList .tree-item | self' (e) { 
 
         this.dispatch('/item/select', e.$delegateTarget.attr('id'));
         this.refresh();
@@ -140,7 +140,7 @@ export default class LayerList extends UIElement {
         e.preventDefault();        
     }        
 
-    'drop.self $layerList .tree-item' (e) {
+    'drop $layerList .tree-item | self' (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('id')
@@ -157,7 +157,7 @@ export default class LayerList extends UIElement {
                 this.dispatch('/item/move/in/layer', destId, sourceId)
             }
 
-            this.run('/history/push', `Change gradient position `);         
+            this.dispatch('/history/push', `Change gradient position `);         
             this.refresh()            
         } else if (destItem.itemType == sourceItem.itemType ) {
             if (e.ctrlKey) {
@@ -165,7 +165,7 @@ export default class LayerList extends UIElement {
             } else {
                 this.dispatch('/item/move/in', destId, sourceId)
             }
-            this.run('/history/push', `Change item position `);         
+            this.dispatch('/history/push', `Change item position `);         
             this.refresh()            
         }
 
@@ -179,7 +179,7 @@ export default class LayerList extends UIElement {
 
             this.draggedLayer = null; 
             this.dispatch('/item/move/last', sourceId)
-            this.run('/history/push', `Change layer position `);                     
+            this.dispatch('/history/push', `Change layer position `);                     
             this.refresh()
         }
 
@@ -187,19 +187,19 @@ export default class LayerList extends UIElement {
 
     'click $layerList .copy-image-item' (e) {
         this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.run('/history/push', `Add a gradient`);                 
+        this.dispatch('/history/push', `Add a gradient`);                 
         this.refresh()
     }
 
     'click $layerList .copy-item' (e) {
         this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.run('/history/push', `Add a layer`);                         
+        this.dispatch('/history/push', `Copy a layer`);                         
         this.refresh()
     }
 
     'click $layerList .delete-item' (e) {
         this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'))
-        this.run('/history/push', `Remove item`);                         
+        this.dispatch('/history/push', `Remove item`);                         
         this.refresh()
     } 
 
@@ -207,7 +207,7 @@ export default class LayerList extends UIElement {
         this.emit('toggleLayerSampleView');
     }
 
-    'click.self $layerList .gradient-collapse-button' (e) {
+    'click $layerList .gradient-collapse-button | self' (e) {
         e.$delegateTarget.parent().toggleClass('collapsed')
         var item = this.read('/item/get', e.$delegateTarget.attr('item-id'))
 

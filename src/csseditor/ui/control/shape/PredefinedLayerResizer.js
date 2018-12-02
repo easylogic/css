@@ -205,7 +205,6 @@ export default class PredefinedLayerResizer extends UIElement {
         item = this.caculateSnap(item)
 
         this.caculateActiveButtonPosition(item);
-
         this.dispatch('/item/set', item);
         this.setPosition();
     }
@@ -319,8 +318,15 @@ export default class PredefinedLayerResizer extends UIElement {
         }
     }
 
-    'pointerstart $el [data-value]' (e) {
+    isNotDownCheck () {
+        return !this.xy;
+    }
 
+    isDownCheck () {
+        return this.xy; 
+    }
+
+    'pointerstart $el [data-value] | isNotDownCheck' (e) {
         var layer = this.read('/item/current/layer')
         if (!layer) return; 
 
@@ -342,17 +348,16 @@ export default class PredefinedLayerResizer extends UIElement {
 
     }
 
-    'pointermove document' (e) {
-        if (this.xy) {
-            this.targetXY = e.xy; 
-            this.$page.addClass('moving')
+    'pointermove document | isDownCheck' (e) {
+        this.targetXY = e.xy; 
+        this.$page.addClass('moving')
 
-            this.resizeComponent();
-        }
-
+        this.resizeComponent();
     }
 
-    'pointerend document' (e) {
+
+
+    'pointerend document | isDownCheck' (e) {
         if (this.activeButton) {
             this.activeButton.removeClass('active')
         }
@@ -361,10 +366,10 @@ export default class PredefinedLayerResizer extends UIElement {
         this.moveX = null;
         this.moveY = null; 
         this.$page.removeClass('moving')    
-        this.dispatch('/history/push', 'Move a layer');
+        this.dispatch('/history/push', 'Resize a layer');
     }
 
-    'resize.debounce(300) window' (e) {
+    'resize window | debounce(300)' (e) {
         this.refresh();
     }
 }

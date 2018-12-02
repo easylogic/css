@@ -152,7 +152,16 @@ export default class PredefinedPageResizer extends UIElement {
         }
     }
 
-    'pointerstart $el [data-value]' (e) {
+
+    isNotDownCheck () {
+        return !this.xy;
+    }
+
+    isDownCheck () {
+        return this.xy; 
+    }    
+
+    'pointerstart $el [data-value] | isNotDownCheck' (e) {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;
@@ -161,24 +170,19 @@ export default class PredefinedPageResizer extends UIElement {
         this.height = parseParamNumber(this.page.style.height)
     }
 
-    'pointermove document' (e) {
-        if (this.xy) {
-            this.targetXY = e.xy; 
-
-            this.resize();
-        }
+    'pointermove document | debounce(10) | isDownCheck' (e) {
+        this.targetXY = e.xy; 
+        this.resize();
 
     }
 
-    'pointerend document' (e) {
-        if (this.xy) {
-            this.currentType = null; 
-            this.xy = null 
-            // this.emit('changeEditor');    
-        }
+    'pointerend document | isDownCheck' (e) {
+        this.currentType = null; 
+        this.xy = null 
+        this.dispatch('/history/push', 'Resize a layer');        
     }
 
-    'resize.debounce(300) window' (e) {
+    'resize window | debounce(300)' (e) {
         this.refresh();
     }
         

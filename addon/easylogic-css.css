@@ -1716,7 +1716,8 @@ html, body {
       padding: 2px 5px;
       height: 100%;
       -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
+              box-sizing: border-box;
+      vertical-align: middle; }
     .csseditor .layer-toolbar .gradient-type {
       padding-top: 1px; }
     .csseditor .layer-toolbar .gradient-sample-list {
