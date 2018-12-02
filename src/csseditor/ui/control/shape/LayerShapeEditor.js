@@ -42,12 +42,7 @@ export default class LayerShapeEditor extends UIElement {
 
         if (!layer) return; 
 
-        var style = layer.style; 
-
-        var width = style.width
-        var height = style.height
-        var x  = style.x
-        var y  = style.y
+        var {width, height, x, y} = layer; 
 
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()

@@ -42,12 +42,7 @@ export default class PredefinedPageResizer extends UIElement {
 
         if (!page) return; 
 
-        var item = page; 
-        var style = page.style; 
-
-        var width = style.width
-        var height = style.height
-
+        var {width, height} = page; 
 
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()
@@ -79,7 +74,7 @@ export default class PredefinedPageResizer extends UIElement {
         })
 
         var page = this.read('/item/current/page')
-        page.style = Object.assign(page.style, style)
+        page = Object.assign(page, style)
         this.dispatch('/item/set', page)
         this.refresh();
     }
@@ -166,8 +161,8 @@ export default class PredefinedPageResizer extends UIElement {
         this.currentType = type; 
         this.xy = e.xy;
         this.page = this.read('/item/current/page')
-        this.width = parseParamNumber(this.page.style.width)
-        this.height = parseParamNumber(this.page.style.height)
+        this.width = parseParamNumber(this.page.width)
+        this.height = parseParamNumber(this.page.height)
     }
 
     'pointermove document | debounce(10) | isDownCheck' (e) {

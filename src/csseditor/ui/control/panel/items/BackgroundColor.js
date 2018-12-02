@@ -23,8 +23,8 @@ export default class BackgroundColor extends UIElement {
 
     refresh() {
         this.read('/item/current/layer', (layer) => {
-            this.refs.$color.css('background-color', layer.style['background-color'])
-            this.refs.$colortext.text(layer.style['background-color'])
+            this.refs.$color.css('background-color', layer.backgroundColor)
+            this.refs.$colortext.text(layer.backgroundColor)
         });
     }
 

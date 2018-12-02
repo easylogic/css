@@ -22,7 +22,7 @@ export default class MixBlendList extends BasePropertyItem {
 
         return  `<div>${list.map((blend) => {
 
-                    var selected = blend == item.style['mix-blend-mode'] ? 'selected' : '' 
+                    var selected = blend == item.mixBlendMode ? 'selected' : '' 
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container">
@@ -53,7 +53,7 @@ export default class MixBlendList extends BasePropertyItem {
             this.load()
 
             this.read('/item/current/layer', (layer) => {
-                this.refs.$desc.text(layer.style['mix-blend-mode'])
+                this.refs.$desc.text(layer.mixBlendMode)
             })        
         }
     }
@@ -73,7 +73,7 @@ export default class MixBlendList extends BasePropertyItem {
 
         if (!item) return; 
         
-        item.style['mix-blend-mode'] = e.$delegateTarget.attr('data-mode')
+        item.mixBlendMode = e.$delegateTarget.attr('data-mode')
 
         this.dispatch('/item/set', item, true)
 

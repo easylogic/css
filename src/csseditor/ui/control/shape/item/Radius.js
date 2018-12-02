@@ -5,7 +5,7 @@ export default class Radius extends TopLeftRadius {
     initialize () {
         super.initialize()
 
-        this.radiusKey = 'border-radius'
+        this.radiusKey = 'borderRadius'
     }
 
     template () {

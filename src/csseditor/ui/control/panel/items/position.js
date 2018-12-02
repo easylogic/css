@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { parseParamNumber } from "../../../../../util/filter/functions";
 
 export default class Position extends BasePropertyItem {
     template () {
@@ -27,27 +28,22 @@ export default class Position extends BasePropertyItem {
 
     refresh() {
         this.read('/item/current/layer', (item) => {
-            if (item.style.x) {
-                this.refs.$x.val(item.style.x.replace('px', ''))
-            }
-    
-            if (item.style.y) {
-                this.refs.$y.val(item.style.y.replace('px', ''))
-            }
+            this.refs.$x.val(parseParamNumber(item.x))
+            this.refs.$y.val(parseParamNumber(item.y))
         })
         
     }
 
     'input $x' () {
         this.read('/item/current/layer', (item) => {
-            item.style.x = this.refs.$x.int() + 'px'
+            item.x = this.refs.$x.int() + 'px'
             this.dispatch('/item/set', item)
         })
     }
 
     'input $y' () {
         this.read('/item/current/layer', (item) => {
-            item.style.y = this.refs.$y.int() + 'px'
+            item.y = this.refs.$y.int() + 'px'
             this.dispatch('/item/set', item)
         })
     }    

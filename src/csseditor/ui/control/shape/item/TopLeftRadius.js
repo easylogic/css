@@ -1,11 +1,12 @@
 import UIElement from '../../../../../colorpicker/UIElement';
+import { parseParamNumber } from '../../../../../util/filter/functions';
 
 export default class TopLeftRadius extends UIElement {
 
     initialize () {
         super.initialize()
 
-        this.radiusKey = 'border-top-left-radius'
+        this.radiusKey = 'borderTopLeftRadius'
     }
 
     template () {
@@ -27,10 +28,7 @@ export default class TopLeftRadius extends UIElement {
 
         if (!layer) return; 
 
-        var width = layer.style.width
-        var height = layer.style.height
-        var x  = layer.style.x
-        var y  = layer.style.y        
+        var {x, y, width, height} = layer;
 
         this.setRadiusPosition(x, y, width, height, layer);
 
@@ -38,7 +36,7 @@ export default class TopLeftRadius extends UIElement {
 
     setRadiusPosition (x, y, width, height, layer) {
 
-        var radius = layer.style[this.radiusKey] || '0px'
+        var radius = layer[this.radiusKey] || '0px'
         this.$el.css('left', radius)
     }
 
@@ -64,7 +62,7 @@ export default class TopLeftRadius extends UIElement {
 //        console.log(dx);
 
         var radius = this.getRealRadius(this.layerRadius, dx);
-        this.layer.style[this.radiusKey] = radius + 'px'
+        this.layer[this.radiusKey] = radius + 'px'
 
         this.dispatch('/item/set', this.layer);
         this.refresh();
@@ -82,10 +80,10 @@ export default class TopLeftRadius extends UIElement {
         this.xy = e.xy;
         this.layer = layer; 
 
-        this.layerRadius = +(layer.style[this.radiusKey] || '0px').replace('px', '')
+        this.layerRadius = parseParamNumber(layer[this.radiusKey] || '0px')
         
-        this.layerWidth = +this.layer.style.width.replace('px', '') 
-        this.layerHeight = +this.layer.style.height.replace('px', '') 
+        this.layerWidth = parseParamNumber(this.layer.width) 
+        this.layerHeight = parseParamNumber(this.layer.height) 
 
         this.emit('startRadius')                    
     }

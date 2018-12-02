@@ -89,8 +89,8 @@ export default class Transform3d extends BasePropertyItem {
             ]
 
             attr.forEach( key => {
-                if (item.style[key]) {
-                    this.refs[`$${key}`].val(item.style[key])    
+                if (item[key]) {
+                    this.refs[`$${key}`].val(item[key])    
                 }
             })        
         })
@@ -99,7 +99,7 @@ export default class Transform3d extends BasePropertyItem {
 
     updateTransform (key) {
         this.read('/item/current/layer', (item) => {
-            item.style[key] = this.refs['$' + key].val()
+            item[key] = this.refs['$' + key].val()
             this.dispatch('/item/set', item)
         })
     }

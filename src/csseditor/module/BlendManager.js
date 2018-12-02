@@ -19,7 +19,7 @@ export default class BlendManager extends BaseModule {
 
         item = $store.read('/clone', item);
 
-        item.style['mix-blend-mode'] = mixBlend;
+        item.mixBlendMode = mixBlend;
 
         return $store.read('/layer/toString', item, withStyle)
     }    

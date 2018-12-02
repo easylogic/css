@@ -34,8 +34,8 @@ export default class GuideManager extends BaseModule {
         var x, y;
         if (list.length) {
 
-            var height = parseParamNumber(layer.style.height)
-            var width = parseParamNumber(layer.style.width)
+            var height = parseParamNumber(layer.height)
+            var width = parseParamNumber(layer.width)
             var topY = Math.min(...list.filter(it => it.align == 'top').map(it => it.y))
             var middleY = Math.min(...list.filter(it => it.align == 'middle').map(it => it.y))
             var bottomY = Math.min(...list.filter(it => it.align == 'bottom').map(it => it.y))
@@ -71,8 +71,6 @@ export default class GuideManager extends BaseModule {
         var page = $store.read('/item/current/page');
 
         if (!page) return []
-        if (!page.style) return []
-
         if (page.selected) return []
 
 
@@ -80,16 +78,16 @@ export default class GuideManager extends BaseModule {
         list[index++] = $store.read('/guide/rect', { 
             x: 0, 
             y: 0, 
-            width: page.style.width, 
-            height: page.style.height 
+            width: page.width, 
+            height: page.height 
         })
 
         $store.read('/item/each/children', page.id, (item) => {
             var newItem = $store.read('/guide/rect', { 
-                x: item.style.x, 
-                y: item.style.y,
-                width: item.style.width,
-                height: item.style.height
+                x: item.x, 
+                y: item.y,
+                width: item.width,
+                height: item.height
             })
 
             if (selectedId == item.id) {

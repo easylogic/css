@@ -10313,8 +10313,8 @@ var LayerManager = function (_BaseModule) {
                 if (!layer.clipPathCenter) return;
                 if (!layer.clipPathRadius) return;
 
-                var width = parseParamNumber$1(layer.style.width);
-                var height = parseParamNumber$1(layer.style.height);
+                var width = parseParamNumber$1(layer.width);
+                var height = parseParamNumber$1(layer.height);
 
                 var placeCenter = [Math.floor(layer.clipPathCenter[0] / width * 100) + '%', // centerX 
                 Math.floor(layer.clipPathCenter[1] / height * 100) + '%' // centerY
@@ -10479,46 +10479,45 @@ var LayerManager = function (_BaseModule) {
 
             var results = [];
 
-            if (layer.style['rotate']) {
-                results.push("rotate(" + layer.style['rotate'] + "deg)");
+            if (layer.rotate) {
+                results.push("rotate(" + layer.rotate + "deg)");
             }
 
-            if (layer.style['skewX']) {
-                results.push("skewX(" + layer.style['skewX'] + "deg)");
+            if (layer.skewX) {
+                results.push("skewX(" + layer.skewX + "deg)");
             }
 
-            if (layer.style['skewY']) {
-                results.push("skewY(" + layer.style['skewY'] + "deg)");
+            if (layer.skewY) {
+                results.push("skewY(" + layer.skewY + "deg)");
             }
 
-            if (layer.style['scale']) {
-                results.push("scale(" + layer.style['scale'] + ")");
+            if (layer.scale) {
+                results.push("scale(" + layer.scale + ")");
             }
 
-            if (layer.style['translateX']) {
-                results.push("translateX(" + layer.style['translateX'] + "px)");
+            if (layer.translateX) {
+                results.push("translateX(" + layer.translateX + "px)");
             }
 
-            if (layer.style['translateY']) {
-                results.push("translateY(" + layer.style['translateY'] + "px)");
+            if (layer.translateY) {
+                results.push("translateY(" + layer.translateY + "px)");
             }
 
-            if (layer.style['translateZ']) {
-                results.push("translateZ(" + layer.style['translateZ'] + "px)");
+            if (layer.translateZ) {
+                results.push("translateZ(" + layer.translateZ + "px)");
             }
 
-            if (layer.style['rotate3dX'] || layer.style['rotate3dY'] || layer.style['rotate3dZ'] || layer.style['rotate3dA']) {
-                results.push("rotate3d( " + (layer.style['rotate3dX'] || 0) + ", " + (layer.style['rotate3dY'] || 0) + ", " + (layer.style['rotate3dZ'] || 0) + ", " + (layer.style['rotate3dA'] || 0) + "deg  )");
+            if (layer.rotate3dX || layer.rotate3dY || layer.rotate3dZ || layer.rotate3dA) {
+                results.push("rotate3d( " + (layer.rotate3dX || 0) + ", " + (layer.rotate3dY || 0) + ", " + (layer.rotate3dZ || 0) + ", " + (layer.rotate3dA || 0) + "deg  )");
             }
 
-            if (layer.style['scale3dX'] || layer.style['scale3dY'] || layer.style['scale3dZ']) {
-                results.push("scale3d( " + (layer.style['scale3dX'] || 1) + ", " + (layer.style['scale3dY'] || 1) + ", " + (layer.style['scale3dZ'] || 1) + ")");
+            if (layer.scale3dX || layer.scale3dY || layer.scale3dZ) {
+                results.push("scale3d( " + (layer.scale3dX || 1) + ", " + (layer.scale3dY || 1) + ", " + (layer.scale3dZ || 1) + ")");
             }
 
-            if (layer.style['translate3dX'] || layer.style['translate3dY'] || layer.style['translate3dZ']) {
-                results.push("translate3d( " + (layer.style['translate3dX'] || 0) + "px, " + (layer.style['translate3dY'] || 0) + "px, " + (layer.style['translate3dZ'] || 0) + "px)");
+            if (layer.translate3dX || layer.translate3dY || layer.translate3dZ) {
+                results.push("translate3d( " + (layer.translate3dX || 0) + "px, " + (layer.translate3dY || 0) + "px, " + (layer.translate3dZ || 0) + "px)");
             }
-
             return results.length ? results.join(' ') : 'none';
         }
     }, {
@@ -10531,8 +10530,8 @@ var LayerManager = function (_BaseModule) {
             var transform = '';
 
             if (layer.fitClipPathSize) {
-                var widthScale = parseParamNumber$1(layer.style.width) / layer.clipPathSvgWidth;
-                var heightScale = parseParamNumber$1(layer.style.height) / layer.clipPathSvgHeight;
+                var widthScale = parseParamNumber$1(layer.width) / layer.clipPathSvgWidth;
+                var heightScale = parseParamNumber$1(layer.height) / layer.clipPathSvgHeight;
 
                 transform = "scale(" + widthScale + " " + heightScale + ")";
             }
@@ -10559,16 +10558,16 @@ var LayerManager = function (_BaseModule) {
         value: function layerGetBorderRadius($store, layer) {
             var css = {};
             if (layer.fixedRadius) {
-                css['border-radius'] = layer.style['border-radius'];
+                css['border-radius'] = layer.borderRadius;
                 css['border-top-left-radius'] = '';
                 css['border-top-right-radius'] = '';
                 css['border-bottom-left-radius'] = '';
                 css['border-bottom-right-radius'] = '';
             } else {
-                css['border-top-left-radius'] = layer.style['border-top-left-radius'];
-                css['border-top-right-radius'] = layer.style['border-top-right-radius'];
-                css['border-bottom-left-radius'] = layer.style['border-bottom-left-radius'];
-                css['border-bottom-right-radius'] = layer.style['border-bottom-right-radius'];
+                css['border-top-left-radius'] = layer.borderTopLeftRadius;
+                css['border-top-right-radius'] = layer.borderTopRightRadius;
+                css['border-bottom-left-radius'] = layer.borderBottomLeftRadius;
+                css['border-bottom-right-radius'] = layer.borderBottomRightRadius;
             }
 
             return css;
@@ -10581,19 +10580,19 @@ var LayerManager = function (_BaseModule) {
             var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
             var isExport = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
 
-            var css = Object.assign({}, withStyle ? layer.style || {} : {});
+            var css = Object.assign({}, withStyle ? layer || {} : {});
 
             if (withStyle) {
-                css.left = css.x;
-                css.top = css.y;
+                css.left = layer.x;
+                css.top = layer.y;
             }
 
-            if (layer.style['background-color']) {
-                css['background-color'] = layer.style['background-color'];
+            if (layer.backgroundColor) {
+                css['background-color'] = layer.backgroundColor;
             }
 
-            if (layer.style['mix-blend-mode']) {
-                css['mix-blend-mode'] = layer.style['mix-blend-mode'] || "";
+            if (layer.mixBlendMode) {
+                css['mix-blend-mode'] = layer.mixBlendMode || "";
             }
 
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
@@ -10619,18 +10618,20 @@ var LayerManager = function (_BaseModule) {
         value: function layerCacheToCSS($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
-            var layer = Object.assign({}, item.layer, { images: item.images });
-            var css = Object.assign({}, layer.style);
+            var layer = Object.assign({}, $store.read('/item/convert/style', item.layer), { images: item.images });
+            var css = {
+                left: layer.x,
+                top: layer.y,
+                width: layer.width,
+                height: layer.height
+            };
 
-            css.left = css.x;
-            css.top = css.y;
-
-            if (layer.style['background-color']) {
-                css['background-color'] = layer.style['background-color'];
+            if (layer.backgroundColor) {
+                css['background-color'] = layer.backgroundColor;
             }
 
-            if (layer.style['mix-blend-mode']) {
-                css['mix-blend-mode'] = layer.style['mix-blend-mode'] || "";
+            if (layer.mixBlendMode) {
+                css['mix-blend-mode'] = layer.mixBlendMode;
             }
 
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
@@ -10752,7 +10753,7 @@ var BlendManager = function (_BaseModule) {
 
             item = $store.read('/clone', item);
 
-            item.style['mix-blend-mode'] = mixBlend;
+            item.mixBlendMode = mixBlend;
 
             return $store.read('/layer/toString', item, withStyle);
         }
@@ -10997,7 +10998,7 @@ var GradientManager = function (_BaseModule) {
                 $store.run('/item/set', image);
             } else {
                 $store.read('/item/current/layer', function (layer) {
-                    layer.style['background-color'] = obj.color;
+                    layer.backgroundColor = obj.color;
                     $store.run('/item/set', layer);
                 });
             }
@@ -11051,7 +11052,7 @@ var GradientManager = function (_BaseModule) {
                 $store.run('/item/move/in', image.id, newImage.id);
             } else {
                 // $store.read('/item/current/layer', (layer) => {
-                //     layer.style['background-color'] = obj.color;
+                //     layer.backgroundColor = obj.color;
                 //     $store.run('/item/set', layer);
                 // })
 
@@ -11088,10 +11089,8 @@ var PAGE_DEFAULT_OBJECT = {
     name: '',
     parentId: '',
     index: 0,
-    style: {
-        width: '400px',
-        height: '300px'
-    }
+    width: '400px',
+    height: '300px'
 };
 
 var LAYER_DEFAULT_OBJECT = {
@@ -11107,11 +11106,8 @@ var LAYER_DEFAULT_OBJECT = {
     clipPathWidth: '',
     clipPathHeight: '',
     fitClipPathSize: false,
-    style: {
-        x: '0px',
-        y: '0px',
-        'mix-blend-mode': 'normal'
-    },
+    x: '0px',
+    y: '0px',
     filters: {}
 };
 
@@ -11199,6 +11195,50 @@ var EDITOR_MODE_IMAGE_RADIAL = 'image-radial';
 var EDITOR_MODE_IMAGE_STATIC = 'image-static';
 var EDITOR_MODE_IMAGE_IMAGE = 'image-image';
 
+var itemField = {
+    'mix-blend-mode': 'mixBlendMode',
+    'background-blend-mode': 'backgroundBlendMode',
+    'background-color': 'backgroundColor',
+    'x': 'x',
+    'y': 'y',
+    'width': 'width',
+    'height': 'height',
+    'rotate': 'rotate',
+    'border-radius': 'borderRadius',
+    'border-top-left-radius': 'borderTopLeftRadius',
+    'border-top-right-radius': 'borderTopRightRadius',
+    'border-bottom-left-radius': 'borderBottomLeftRadius',
+    'border-bottom-right-radius': 'borderBottomRightRadius',
+    'skewX': 'skewX',
+    'skewY': 'skewY',
+    'scale': 'scale',
+    'translateX': 'translateX',
+    'translateY': 'translateY',
+    'translateZ': 'translateZ',
+    'rotate3dX': 'rotate3dX',
+    'rotate3dY': 'rotate3dY',
+    'rotate3dZ': 'rotate3dZ',
+    'rotate3dA': 'rotate3dA',
+    'scale3dX': 'scale3dX',
+    'scale3dY': 'scale3dY',
+    'scale3dZ': 'scale3dZ',
+    'translate3dX': 'translate3dX',
+    'translate3dY': 'translate3dY',
+    'translate3dZ': 'translate3dZ'
+};
+
+var convertStyle = function convertStyle(item) {
+    var style = item.style || {};
+
+    Object.keys(style).forEach(function (key) {
+        item[itemField[key]] = style[key];
+    });
+
+    delete item.style;
+
+    return item;
+};
+
 var ItemManager = function (_BaseModule) {
     inherits(ItemManager, _BaseModule);
 
@@ -11220,6 +11260,11 @@ var ItemManager = function (_BaseModule) {
         key: "afterDispatch",
         value: function afterDispatch() {
             this.$store.emit('changeEditor');
+        }
+    }, {
+        key: '*/item/convert/style',
+        value: function itemConvertStyle($store, item) {
+            return convertStyle(item);
         }
     }, {
         key: '*/item/create/object',
@@ -11345,6 +11390,7 @@ var ItemManager = function (_BaseModule) {
         key: '*/item/current/page',
         value: function itemCurrentPage($store, callback) {
             var item = $store.read('/item/current');
+
             var path = $store.read('/item/path', item.id);
 
             var page = $store.read('/item/get', path[path.length - 1]);
@@ -11848,6 +11894,11 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '/item/load',
         value: function itemLoad($store) {
+
+            $store.read('/item/keys').forEach(function (id) {
+                $store.items[id] = convertStyle($store.items[id]);
+            });
+
             $store.run('/history/initialize');
         }
     }, {
@@ -11863,7 +11914,9 @@ var ItemManager = function (_BaseModule) {
             if (item.itemType == 'layer') {
                 var page = $store.read('/item/get', parentId);
 
-                item.style = Object.assign(item.style, page.style);
+                item.width = page.width;
+                item.height = page.height;
+                // item.style = Object.assign(item.style, page.style)
             }
 
             item.index = Number.MAX_SAFE_INTEGER;
@@ -11984,8 +12037,9 @@ var ItemManager = function (_BaseModule) {
             // 레이어 생성 
             var layer = $store.read('/item/get', layerId);
             layer.parentId = pageId;
-
-            layer.style = Object.assign({}, layer.style, page.style);
+            layer.width = page.width;
+            layer.height = page.height;
+            // layer.style = Object.assign({}, layer.style, page.style)        
             $store.run('/item/set', layer);
 
             // 이미지 생성 
@@ -12032,7 +12086,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/recover/layer',
         value: function itemRecoverLayer($store, layer, parentId) {
-            var newLayerId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, layer.layer));
+            var newLayerId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, convertStyle(layer.layer)));
             layer.images.forEach(function (image) {
                 $store.read('/item/recover/image', image, newLayerId);
             });
@@ -12042,7 +12096,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/recover/page',
         value: function itemRecoverPage($store, page) {
-            var newPageId = $store.read('/item/create/object', page.page);
+            var newPageId = $store.read('/item/create/object', convertStyle(page.page));
             page.layers.forEach(function (layer) {
                 $store.read('/item/recover/layer', layer, newPageId);
             });
@@ -12214,8 +12268,8 @@ var GuideManager = function (_BaseModule) {
             var x, y;
             if (list.length) {
 
-                var height = parseParamNumber$1(layer.style.height);
-                var width = parseParamNumber$1(layer.style.width);
+                var height = parseParamNumber$1(layer.height);
+                var width = parseParamNumber$1(layer.width);
                 var topY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'top';
                 }).map(function (it) {
@@ -12278,24 +12332,22 @@ var GuideManager = function (_BaseModule) {
             var page = $store.read('/item/current/page');
 
             if (!page) return [];
-            if (!page.style) return [];
-
             if (page.selected) return [];
 
             var index = 0;
             list$1[index++] = $store.read('/guide/rect', {
                 x: 0,
                 y: 0,
-                width: page.style.width,
-                height: page.style.height
+                width: page.width,
+                height: page.height
             });
 
             $store.read('/item/each/children', page.id, function (item) {
                 var newItem = $store.read('/guide/rect', {
-                    x: item.style.x,
-                    y: item.style.y,
-                    width: item.style.width,
-                    height: item.style.height
+                    x: item.x,
+                    y: item.y,
+                    width: item.width,
+                    height: item.height
                 });
 
                 if (selectedId == item.id) {
@@ -13032,32 +13084,28 @@ var PageManager = function (_BaseModule) {
         value: function pageToCSS($store) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var css = page.style || {};
+            var sample = $store.read('/item/convert/style', page || {});
 
-            var realCSS = {};
-            Object.keys(css).filter(function (key) {
-                return !!css[key];
-            }).forEach(function (key) {
-                realCSS[key] = css[key];
-            });
+            var css = {
+                width: sample.width,
+                height: sample.height
+            };
 
-            return realCSS;
+            return $store.read('/css/sorting', css);
         }
     }, {
         key: '*/page/cache/toCSS',
         value: function pageCacheToCSS($store) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var css = page.style || {};
+            var sample = $store.read('/item/convert/style', page || {});
 
-            var realCSS = {};
-            Object.keys(css).filter(function (key) {
-                return !!css[key];
-            }).forEach(function (key) {
-                realCSS[key] = css[key];
-            });
+            var css = {
+                width: sample.width,
+                height: sample.height
+            };
 
-            return realCSS;
+            return $store.read('/css/sorting', css);
         }
     }, {
         key: '*/page/cache/toString',
@@ -13119,19 +13167,33 @@ var HistoryManager = function (_BaseModule) {
     }, {
         key: '/history/initialize',
         value: function historyInitialize($store) {
+            var _this2 = this;
+
             $store.read('/item/current/page', function (page) {
+                _this2.setHistory($store, page);
+            });
+        }
+    }, {
+        key: 'setHistory',
+        value: function setHistory($store, page) {
+            if (page && !$store.historyOriginal[page.id]) {
                 $store.historyOriginal[page.id] = {
                     items: $store.clone('/item/get/all', page.id),
                     selectedId: $store.selectedId
                 };
                 $store.histories[page.id] = [];
                 $store.historyIndex[page.id] = 0;
-            });
+            }
         }
     }, {
         key: '/history/push',
         value: function historyPush($store, title) {
+            var _this3 = this;
+
             $store.read('/item/current/page', function (page) {
+
+                _this3.setHistory($store, page);
+
                 var index = $store.historyIndex[page.id];
                 if (index < 0) index = -1;
                 var histories = index < 0 ? [] : $store.histories[page.id].slice(0, index + 1);
@@ -13154,7 +13216,7 @@ var HistoryManager = function (_BaseModule) {
     }, {
         key: '/history/undo',
         value: function historyUndo($store) {
-            var _this2 = this;
+            var _this4 = this;
 
             $store.read('/item/current/page', function (page) {
 
@@ -13163,13 +13225,13 @@ var HistoryManager = function (_BaseModule) {
                 }
 
                 $store.historyIndex[page.id]--;
-                _this2.changeHistory($store, page);
+                _this4.changeHistory($store, page);
             });
         }
     }, {
         key: '/history/redo',
         value: function historyRedo($store) {
-            var _this3 = this;
+            var _this5 = this;
 
             $store.read('/item/current/page', function (page) {
                 if ($store.historyIndex[page.id] > $store.histories[page.id].length - 1) {
@@ -13177,7 +13239,7 @@ var HistoryManager = function (_BaseModule) {
                 }
 
                 $store.historyIndex[page.id]++;
-                _this3.changeHistory($store, page);
+                _this5.changeHistory($store, page);
             });
         }
     }]);
@@ -13433,21 +13495,20 @@ var Size = function (_BasePropertyItem) {
             var item = this.read('/item/current');
 
             if (item.itemType == 'image') return;
-            if (!item.style) return;
-            if (item.style.width) {
-                this.refs.$width.val(parseParamNumber$1(item.style.width));
+            if (item.width) {
+                this.refs.$width.val(parseParamNumber$1(item.width));
             }
 
-            if (item.style.height) {
-                this.refs.$height.val(parseParamNumber$1(item.style.height));
+            if (item.height) {
+                this.refs.$height.val(parseParamNumber$1(item.height));
             }
 
-            if (item.style.x) {
-                this.refs.$x.val(parseParamNumber$1(item.style.x));
+            if (item.x) {
+                this.refs.$x.val(parseParamNumber$1(item.x));
             }
 
-            if (item.style.y) {
-                this.refs.$y.val(parseParamNumber$1(item.style.y));
+            if (item.y) {
+                this.refs.$y.val(parseParamNumber$1(item.y));
             }
         }
     }, {
@@ -13457,8 +13518,8 @@ var Size = function (_BasePropertyItem) {
 
             if (item.itemType == 'image') return;
 
-            item.style.width = this.refs.$width.int() + 'px';
-            item.style.height = item.style.width;
+            item.width = this.refs.$width.int() + 'px';
+            item.height = item.width;
             this.dispatch('/item/set', item);
         }
     }, {
@@ -13467,7 +13528,7 @@ var Size = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style.width = _this2.refs.$width.int() + 'px';
+                item.width = _this2.refs.$width.int() + 'px';
                 _this2.dispatch('/item/set', item);
             });
         }
@@ -13477,7 +13538,7 @@ var Size = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style.height = _this3.refs.$height.int() + 'px';
+                item.height = _this3.refs.$height.int() + 'px';
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -13487,7 +13548,7 @@ var Size = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style.x = _this4.refs.$x.int() + 'px';
+                item.x = _this4.refs.$x.int() + 'px';
                 _this4.dispatch('/item/set', item);
             });
         }
@@ -13497,7 +13558,7 @@ var Size = function (_BasePropertyItem) {
             var _this5 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style.y = _this5.refs.$y.int() + 'px';
+                item.y = _this5.refs.$y.int() + 'px';
                 _this5.dispatch('/item/set', item);
             });
         }
@@ -13514,9 +13575,9 @@ var Position = function (_BasePropertyItem) {
     }
 
     createClass(Position, [{
-        key: 'template',
+        key: "template",
         value: function template() {
-            return '\n            <div class=\'property-item position show\'>\n                <div class=\'title\' ref="$title">Position</div>\n                <div class=\'items\'>            \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <input type=\'number\' ref="$x"> <span>px</span>\n                        </div>\n                        <label>Y</label>\n                        <div>\n                            <input type=\'number\' ref="$y"> <span>px</span>\n                        </div>\n                    </div>               \n                </div>\n            </div>\n        ';
+            return "\n            <div class='property-item position show'>\n                <div class='title' ref=\"$title\">Position</div>\n                <div class='items'>            \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <input type='number' ref=\"$x\"> <span>px</span>\n                        </div>\n                        <label>Y</label>\n                        <div>\n                            <input type='number' ref=\"$y\"> <span>px</span>\n                        </div>\n                    </div>               \n                </div>\n            </div>\n        ";
         }
     }, {
         key: '@changeEditor',
@@ -13524,18 +13585,13 @@ var Position = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
-        key: 'refresh',
+        key: "refresh",
         value: function refresh() {
             var _this2 = this;
 
             this.read('/item/current/layer', function (item) {
-                if (item.style.x) {
-                    _this2.refs.$x.val(item.style.x.replace('px', ''));
-                }
-
-                if (item.style.y) {
-                    _this2.refs.$y.val(item.style.y.replace('px', ''));
-                }
+                _this2.refs.$x.val(parseParamNumber$1(item.x));
+                _this2.refs.$y.val(parseParamNumber$1(item.y));
             });
         }
     }, {
@@ -13544,7 +13600,7 @@ var Position = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style.x = _this3.refs.$x.int() + 'px';
+                item.x = _this3.refs.$x.int() + 'px';
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -13554,7 +13610,7 @@ var Position = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style.y = _this4.refs.$y.int() + 'px';
+                item.y = _this4.refs.$y.int() + 'px';
                 _this4.dispatch('/item/set', item);
             });
         }
@@ -13589,14 +13645,13 @@ var Radius = function (_BasePropertyItem) {
 
                 if (item.fixedRadius) {
                     _this2.refs.$fixedRadius.el.checked = true;
-                    var radius = item.style['border-radius'] || '';
+                    var radius = item.borderRadius || '';
                     radius = radius.replace('px', '');
                     _this2.refs.$topLeftRadius.val(radius);
                     _this2.refs.$topRightRadius.val('');
                     _this2.refs.$bottomLeftRadius.val('');
                     _this2.refs.$bottomRightRadius.val('');
 
-                    // this.refs.$topLeftRadius.val(item.style['border-top-left-radius'].replace('px', ''))
                     _this2.refs.$topRightRadius.attr('disabled', true);
                     _this2.refs.$bottomLeftRadius.attr('disabled', true);
                     _this2.refs.$bottomRightRadius.attr('disabled', true);
@@ -13605,20 +13660,20 @@ var Radius = function (_BasePropertyItem) {
                     _this2.refs.$bottomLeftRadius.removeAttr('disabled');
                     _this2.refs.$bottomRightRadius.removeAttr('disabled');
 
-                    if (item.style['border-top-left-radius']) {
-                        _this2.refs.$topLeftRadius.val(parseParamNumber$1(item.style['border-top-left-radius']));
+                    if (item.borderTopLeftRadius) {
+                        _this2.refs.$topLeftRadius.val(parseParamNumber$1(item.borderTopLeftRadius));
                     }
 
-                    if (item.style['border-top-right-radius']) {
-                        _this2.refs.$topRightRadius.val(parseParamNumber$1(item.style['border-top-right-radius']));
+                    if (item.borderTopRightRadius) {
+                        _this2.refs.$topRightRadius.val(parseParamNumber$1(item.borderTopRightRadius));
                     }
 
-                    if (item.style['border-bottom-left-radius']) {
-                        _this2.refs.$bottomLeftRadius.val(parseParamNumber$1(['border-bottom-left-radius']));
+                    if (item.borderBottomLeftRadius) {
+                        _this2.refs.$bottomLeftRadius.val(parseParamNumber$1(item.borderBottomLeftRadius));
                     }
 
-                    if (item.style['border-bottom-right-radius']) {
-                        _this2.refs.$bottomRightRadius.val(parseParamNumber$1(item.style['border-bottom-right-radius']));
+                    if (item.borderBottomRightRadius) {
+                        _this2.refs.$bottomRightRadius.val(parseParamNumber$1(item.borderBottomRightRadius));
                     }
                 }
             });
@@ -13629,7 +13684,7 @@ var Radius = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style[key] = $el.int() + 'px';
+                item[key] = $el.int() + 'px';
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -13651,26 +13706,26 @@ var Radius = function (_BasePropertyItem) {
 
             this.read('/item/current/layer', function (item) {
                 if (item.fixedRadius) {
-                    _this5.refreshValue('border-radius', _this5.refs.$topLeftRadius);
+                    _this5.refreshValue('borderRadius', _this5.refs.$topLeftRadius);
                 } else {
-                    _this5.refreshValue('border-top-left-radius', _this5.refs.$topLeftRadius);
+                    _this5.refreshValue('borderTopLeftRadius', _this5.refs.$topLeftRadius);
                 }
             });
         }
     }, {
         key: 'input:change $topRightRadius',
         value: function inputChange$topRightRadius() {
-            this.refreshValue('border-top-right-radius', this.refs.$topRightRadius);
+            this.refreshValue('borderTopRightRadius', this.refs.$topRightRadius);
         }
     }, {
         key: 'input:change $bottomLeftRadius',
         value: function inputChange$bottomLeftRadius() {
-            this.refreshValue('border-bottom-left-radius', this.refs.$bottomLeftRadius);
+            this.refreshValue('borderBottomLeftRadius', this.refs.$bottomLeftRadius);
         }
     }, {
         key: 'input:change $bottomRightRadius',
         value: function inputChange$bottomRightRadius() {
-            this.refreshValue('border-bottom-right-radius', this.refs.$bottomRightRadius);
+            this.refreshValue('borderBottomRightRadius', this.refs.$bottomRightRadius);
         }
     }]);
     return Radius;
@@ -14659,7 +14714,7 @@ var ColorPickerLayer = function (_UIElement) {
             if (!item) return;
 
             if (this.read('/item/is/mode', 'layer')) {
-                item.style['background-color'] = color;
+                item.backgroundColor = color;
                 this.dispatch('/item/set', item);
             } else if (this.read('/item/is/mode', 'image')) {
 
@@ -14689,9 +14744,9 @@ var ColorPickerLayer = function (_UIElement) {
 
             if (this.read('/item/is/mode', 'layer')) {
                 this.read('/item/current/layer', function (layer) {
-                    if (layer.style['background-color']) {
-                        if (layer.style['background-color'].includes('rgb')) return;
-                        _this4.colorPicker.initColorWithoutChangeEvent(layer.style['background-color']);
+                    if (layer.backgroundColor) {
+                        if (layer.backgroundColor.includes('rgb')) return;
+                        _this4.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
                     }
                 });
             } else if (this.read('/item/is/mode', 'image')) {
@@ -14775,8 +14830,8 @@ var Transform = function (_BasePropertyItem) {
                 var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY', 'translateZ'];
 
                 attr.forEach(function (key) {
-                    if (item.style[key]) {
-                        _this2.refs['$' + key].val(item.style[key]);
+                    if (item[key]) {
+                        _this2.refs['$' + key].val(item[key]);
                     }
                 });
             });
@@ -14787,7 +14842,7 @@ var Transform = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style[key] = _this3.refs['$' + key].val();
+                item[key] = _this3.refs['$' + key].val();
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -14858,8 +14913,8 @@ var Transform3d = function (_BasePropertyItem) {
                 var attr = ['rotate3dX', 'rotate3dY', 'rotate3dZ', 'rotate3dA', 'scale3dX', 'scale3dY', 'scale3dZ', 'translate3dX', 'translate3dY', 'translate3dZ'];
 
                 attr.forEach(function (key) {
-                    if (item.style[key]) {
-                        _this2.refs['$' + key].val(item.style[key]);
+                    if (item[key]) {
+                        _this2.refs['$' + key].val(item[key]);
                     }
                 });
             });
@@ -14870,7 +14925,7 @@ var Transform3d = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/item/current/layer', function (item) {
-                item.style[key] = _this3.refs['$' + key].val();
+                item[key] = _this3.refs['$' + key].val();
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -15135,7 +15190,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.style.height);
+            return parseParamNumber$1(layer.height);
         }
     }, {
         key: "getMaxY",
@@ -15144,7 +15199,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.style.height) * 2;
+            return parseParamNumber$1(layer.height) * 2;
         }
     }, {
         key: "getMaxWidth",
@@ -15153,7 +15208,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.style.width);
+            return parseParamNumber$1(layer.width);
         }
     }, {
         key: "getMaxX",
@@ -15162,7 +15217,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.style.width) * 2;
+            return parseParamNumber$1(layer.width) * 2;
         }
     }, {
         key: 'click $size button',
@@ -15275,13 +15330,8 @@ var PageSize = function (_UIElement) {
             var _this2 = this;
 
             this.read('/item/current/page', function (item) {
-                if (item.style && item.style.width) {
-                    _this2.refs.$width.val(parseParamNumber$2(item.style.width));
-                }
-
-                if (item.style && item.style.height) {
-                    _this2.refs.$height.val(parseParamNumber$2(item.style.height));
-                }
+                _this2.refs.$width.val(parseParamNumber$2(item.width));
+                _this2.refs.$height.val(parseParamNumber$2(item.height));
             });
         }
     }, {
@@ -15290,8 +15340,8 @@ var PageSize = function (_UIElement) {
             var _this3 = this;
 
             this.read('/item/current/page', function (item) {
-                item.style.width = _this3.refs.$width.int() + 'px';
-                item.style.height = item.style.width;
+                item.width = _this3.refs.$width.int() + 'px';
+                item.height = item.width;
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -15301,7 +15351,7 @@ var PageSize = function (_UIElement) {
             var _this4 = this;
 
             this.read('/item/current/page', function (item) {
-                item.style.width = _this4.refs.$width.int() + 'px';
+                item.width = _this4.refs.$width.int() + 'px';
                 _this4.dispatch('/item/set', item);
             });
         }
@@ -15311,7 +15361,7 @@ var PageSize = function (_UIElement) {
             var _this5 = this;
 
             this.read('/item/current/page', function (item) {
-                item.style.height = _this5.refs.$height.int() + 'px';
+                item.height = _this5.refs.$height.int() + 'px';
                 _this5.dispatch('/item/set', item);
             });
         }
@@ -15498,7 +15548,7 @@ var MixBlendList = function (_BasePropertyItem) {
 
             return '<div>' + list.map(function (blend) {
 
-                var selected = blend == item.style['mix-blend-mode'] ? 'selected' : '';
+                var selected = blend == item.mixBlendMode ? 'selected' : '';
                 return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read('/blend/toStringWithoutDimension', item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join('') + '</div>';
         }
@@ -15524,7 +15574,7 @@ var MixBlendList = function (_BasePropertyItem) {
                 this.load();
 
                 this.read('/item/current/layer', function (layer) {
-                    _this3.refs.$desc.text(layer.style['mix-blend-mode']);
+                    _this3.refs.$desc.text(layer.mixBlendMode);
                 });
             }
         }
@@ -15547,7 +15597,7 @@ var MixBlendList = function (_BasePropertyItem) {
 
             if (!item) return;
 
-            item.style['mix-blend-mode'] = e.$delegateTarget.attr('data-mode');
+            item.mixBlendMode = e.$delegateTarget.attr('data-mode');
 
             this.dispatch('/item/set', item, true);
 
@@ -15759,8 +15809,8 @@ var BackgroundColor = function (_UIElement) {
             var _this2 = this;
 
             this.read('/item/current/layer', function (layer) {
-                _this2.refs.$color.css('background-color', layer.style['background-color']);
-                _this2.refs.$colortext.text(layer.style['background-color']);
+                _this2.refs.$color.css('background-color', layer.backgroundColor);
+                _this2.refs.$colortext.text(layer.backgroundColor);
             });
         }
     }, {
@@ -16203,10 +16253,9 @@ var PredefinedPageResizer = function (_UIElement) {
 
             if (!page) return;
 
-            var style = page.style;
+            var width = page.width,
+                height = page.height;
 
-            var width = style.width;
-            var height = style.height;
 
             var boardOffset = this.$board.offset();
             var pageOffset = this.$page.offset();
@@ -16245,7 +16294,7 @@ var PredefinedPageResizer = function (_UIElement) {
             });
 
             var page = this.read('/item/current/page');
-            page.style = Object.assign(page.style, style);
+            page = Object.assign(page, style);
             this.dispatch('/item/set', page);
             this.refresh();
         }
@@ -16342,8 +16391,8 @@ var PredefinedPageResizer = function (_UIElement) {
             this.currentType = type;
             this.xy = e.xy;
             this.page = this.read('/item/current/page');
-            this.width = parseParamNumber$2(this.page.style.width);
-            this.height = parseParamNumber$2(this.page.style.height);
+            this.width = parseParamNumber$2(this.page.width);
+            this.height = parseParamNumber$2(this.page.height);
         }
     }, {
         key: 'pointermove document | debounce(10) | isDownCheck',
@@ -16380,7 +16429,7 @@ var TopLeftRadius = function (_UIElement) {
         value: function initialize() {
             get(TopLeftRadius.prototype.__proto__ || Object.getPrototypeOf(TopLeftRadius.prototype), 'initialize', this).call(this);
 
-            this.radiusKey = 'border-top-left-radius';
+            this.radiusKey = 'borderTopLeftRadius';
         }
     }, {
         key: 'template',
@@ -16404,10 +16453,11 @@ var TopLeftRadius = function (_UIElement) {
 
             if (!layer) return;
 
-            var width = layer.style.width;
-            var height = layer.style.height;
-            var x = layer.style.x;
-            var y = layer.style.y;
+            var x = layer.x,
+                y = layer.y,
+                width = layer.width,
+                height = layer.height;
+
 
             this.setRadiusPosition(x, y, width, height, layer);
         }
@@ -16415,7 +16465,7 @@ var TopLeftRadius = function (_UIElement) {
         key: 'setRadiusPosition',
         value: function setRadiusPosition(x, y, width, height, layer) {
 
-            var radius = layer.style[this.radiusKey] || '0px';
+            var radius = layer[this.radiusKey] || '0px';
             this.$el.css('left', radius);
         }
     }, {
@@ -16444,7 +16494,7 @@ var TopLeftRadius = function (_UIElement) {
             //        console.log(dx);
 
             var radius = this.getRealRadius(this.layerRadius, dx);
-            this.layer.style[this.radiusKey] = radius + 'px';
+            this.layer[this.radiusKey] = radius + 'px';
 
             this.dispatch('/item/set', this.layer);
             this.refresh();
@@ -16465,10 +16515,10 @@ var TopLeftRadius = function (_UIElement) {
             this.xy = e.xy;
             this.layer = layer;
 
-            this.layerRadius = +(layer.style[this.radiusKey] || '0px').replace('px', '');
+            this.layerRadius = parseParamNumber$1(layer[this.radiusKey] || '0px');
 
-            this.layerWidth = +this.layer.style.width.replace('px', '');
-            this.layerHeight = +this.layer.style.height.replace('px', '');
+            this.layerWidth = parseParamNumber$1(this.layer.width);
+            this.layerHeight = parseParamNumber$1(this.layer.height);
 
             this.emit('startRadius');
         }
@@ -16508,7 +16558,7 @@ var TopRightRadius = function (_TopLeftRadius) {
         value: function initialize() {
             get(TopRightRadius.prototype.__proto__ || Object.getPrototypeOf(TopRightRadius.prototype), 'initialize', this).call(this);
 
-            this.radiusKey = 'border-top-right-radius';
+            this.radiusKey = 'borderTopRightRadius';
         }
     }, {
         key: 'template',
@@ -16518,7 +16568,7 @@ var TopRightRadius = function (_TopLeftRadius) {
     }, {
         key: 'setRadiusPosition',
         value: function setRadiusPosition(x, y, width, height, layer) {
-            var radius = layer.style[this.radiusKey] || '0px';
+            var radius = layer[this.radiusKey] || '0px';
             this.$el.css('right', radius);
         }
     }, {
@@ -16546,7 +16596,7 @@ var BottomLeftRadius = function (_TopLeftRadius) {
         value: function initialize() {
             get(BottomLeftRadius.prototype.__proto__ || Object.getPrototypeOf(BottomLeftRadius.prototype), 'initialize', this).call(this);
 
-            this.radiusKey = 'border-bottom-left-radius';
+            this.radiusKey = 'borderBottomLeftRadius';
         }
     }, {
         key: 'template',
@@ -16570,7 +16620,7 @@ var BottomRightRadius = function (_TopRightRadius) {
         value: function initialize() {
             get(BottomRightRadius.prototype.__proto__ || Object.getPrototypeOf(BottomRightRadius.prototype), "initialize", this).call(this);
 
-            this.radiusKey = 'border-bottom-right-radius';
+            this.radiusKey = 'borderBottomRightRadius';
         }
     }, {
         key: "template",
@@ -16608,7 +16658,7 @@ var LayerRotate = function (_UIElement) {
 
             var angle = caculateAngle(this.targetXY.x - this.layerCenterX, this.targetXY.y - this.layerCenterY);
 
-            this.layer.style.rotate = Math.floor(angle) - 270;
+            this.layer.rotate = Math.floor(angle) - 270;
 
             this.dispatch('/item/set', this.layer);
         }
@@ -16664,7 +16714,7 @@ var Radius$2 = function (_TopLeftRadius) {
         value: function initialize() {
             get(Radius.prototype.__proto__ || Object.getPrototypeOf(Radius.prototype), 'initialize', this).call(this);
 
-            this.radiusKey = 'border-radius';
+            this.radiusKey = 'borderRadius';
         }
     }, {
         key: 'template',
@@ -16795,12 +16845,10 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             if (!layer) return;
 
-            var style = layer.style;
-
-            var width = style.width;
-            var height = style.height;
-            var x = style.x || '0px';
-            var y = style.y || '0px';
+            var x = layer.x,
+                y = layer.y,
+                width = layer.width,
+                height = layer.height;
 
             var boardOffset = this.boardOffset || this.$board.offset();
             var pageOffset = this.pageOffset || this.$page.offset();
@@ -16820,7 +16868,7 @@ var PredefinedLayerResizer = function (_UIElement) {
                 transform: this.read('/layer/make/transform', layer)
             });
 
-            var rotate = layer.style.rotate || 0;
+            var rotate = layer.rotate || 0;
 
             if (rotate == 0) {
                 this.refs.$buttonGroup.show();
@@ -16845,7 +16893,7 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             if (typeof x != 'undefined') {
                 var newWidth = Math.abs(this.moveX - parseParamNumber$1(x));
-                item.style.width = newWidth + 'px';
+                item.width = newWidth + 'px';
             }
         }
     }, {
@@ -16856,8 +16904,8 @@ var PredefinedLayerResizer = function (_UIElement) {
             if (typeof x != 'undefined') {
                 var newWidth = this.width + (this.moveX - parseParamNumber$1(x));
 
-                item.style.x = x;
-                item.style.width = newWidth + 'px';
+                item.x = x;
+                item.width = newWidth + 'px';
             }
         }
     }, {
@@ -16867,7 +16915,7 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             if (typeof y != 'undefined') {
                 var newHeight = Math.abs(this.moveY - parseParamNumber$1(y));
-                item.style.height = newHeight + 'px';
+                item.height = newHeight + 'px';
             }
         }
     }, {
@@ -16878,8 +16926,8 @@ var PredefinedLayerResizer = function (_UIElement) {
             if (typeof y != 'undefined') {
                 var newHeight = this.height + (this.moveY - parseParamNumber$1(y));
 
-                item.style.y = y;
-                item.style.height = newHeight + 'px';
+                item.y = y;
+                item.height = newHeight + 'px';
             }
         }
     }, {
@@ -16940,7 +16988,7 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             var item = this.read('/item/current/layer');
 
-            item.style = Object.assign(item.style, style);
+            item = Object.assign(item, style);
 
             item = this.caculateSnap(item);
 
@@ -16954,10 +17002,10 @@ var PredefinedLayerResizer = function (_UIElement) {
 
             var value = this.activeButton.attr('data-value');
             var position = [];
-            var x = parseParamNumber$1(item.style.x),
-                y = parseParamNumber$1(item.style.y);
-            var width = parseParamNumber$1(item.style.width),
-                height = parseParamNumber$1(item.style.height);
+            var x = parseParamNumber$1(item.x),
+                y = parseParamNumber$1(item.y);
+            var width = parseParamNumber$1(item.width),
+                height = parseParamNumber$1(item.height);
 
             if (value == 'to right') {
                 position = [x + width, y + Math.floor(height / 2)];
@@ -17088,10 +17136,10 @@ var PredefinedLayerResizer = function (_UIElement) {
             this.currentType = type;
             this.xy = e.xy;
             this.layer = layer;
-            this.width = parseParamNumber$1(layer.style.width);
-            this.height = parseParamNumber$1(layer.style.height);
-            this.moveX = parseParamNumber$1(layer.style.x);
-            this.moveY = parseParamNumber$1(layer.style.y);
+            this.width = parseParamNumber$1(layer.width);
+            this.height = parseParamNumber$1(layer.height);
+            this.moveX = parseParamNumber$1(layer.x);
+            this.moveY = parseParamNumber$1(layer.y);
 
             this.boardOffset = this.$board.offset();
             this.pageOffset = this.$page.offset();
@@ -17911,9 +17959,11 @@ var GradientView = function (_BaseTab) {
     }, {
         key: 'makePageCSS',
         value: function makePageCSS(page) {
-            return Object.assign({
-                overflow: page.clip ? 'hidden' : ''
-            }, page.style || {});
+            return {
+                overflow: page.clip ? 'hidden' : '',
+                width: page.width,
+                height: page.height
+            };
         }
     }, {
         key: 'setBackgroundColor',
@@ -18031,7 +18081,7 @@ var GradientView = function (_BaseTab) {
             });
 
             var item = this.layer;
-            item.style = Object.assign(item.style, style);
+            item = Object.assign(item, style);
 
             var list = this.read('/guide/snap/layer', item, 3);
 
@@ -18041,17 +18091,17 @@ var GradientView = function (_BaseTab) {
                     y = _list[1];
 
                 if (typeof x != 'undefined') {
-                    item.style.x = x + 'px';
+                    item.x = x + 'px';
                 }
 
                 if (typeof y != 'undefined') {
-                    item.style.y = y + 'px';
+                    item.y = y + 'px';
                 }
             }
 
             this.$layer.css({
-                left: item.style.x,
-                top: item.style.y
+                left: item.x,
+                top: item.y
             });
             this.dispatch('/item/set', item);
             this.refresh(true);
@@ -18081,8 +18131,8 @@ var GradientView = function (_BaseTab) {
             this.xy = e.xy;
             this.$layer = e.$delegateTarget;
             this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'));
-            this.moveX = parseParamNumber$1(this.layer.style.x || '0px');
-            this.moveY = parseParamNumber$1(this.layer.style.y || '0px');
+            this.moveX = parseParamNumber$1(this.layer.x || '0px');
+            this.moveY = parseParamNumber$1(this.layer.y || '0px');
 
             this.dispatch('/item/select', this.layer.id);
         }
@@ -19689,21 +19739,29 @@ var LayerSampleList = function (_UIElement) {
     }, {
         key: 'click $el .layer-sample-item .add-item',
         value: function click$elLayerSampleItemAddItem(e) {
+            var _this3 = this;
+
             var index = +e.$delegateTarget.attr('data-index');
 
             var newLayer = this.list[index];
 
             if (newLayer) {
-                this.dispatch('/item/addCache/layer', newLayer);
+                this.read('/item/current/layer', function (layer) {
+                    _this3.dispatch('/item/addCache', newLayer, layer.id);
+                });
             }
         }
     }, {
         key: 'click $el .layer-cached-item .add-item',
         value: function click$elLayerCachedItemAddItem(e) {
+            var _this4 = this;
+
             var newLayer = this.read('/storage/layers', e.$delegateTarget.attr('data-sample-id'));
 
             if (newLayer) {
-                this.dispatch('/item/addCache/layer', newLayer);
+                this.read('/item/current/layer', function (layer) {
+                    _this4.dispatch('/item/addCache', newLayer, layer.id);
+                });
             }
         }
     }, {
@@ -19715,13 +19773,13 @@ var LayerSampleList = function (_UIElement) {
     }, {
         key: 'click $el .add-current-layer',
         value: function click$elAddCurrentLayer(e) {
-            var _this3 = this;
+            var _this5 = this;
 
             this.read('/item/current/layer', function (layer) {
-                var newLayer = _this3.read('/collect/layer/one', layer.id);
+                var newLayer = _this5.read('/collect/layer/one', layer.id);
 
-                _this3.dispatch('/storage/add/layer', newLayer);
-                _this3.refresh();
+                _this5.dispatch('/storage/add/layer', newLayer);
+                _this5.refresh();
             });
         }
     }]);
@@ -19801,11 +19859,12 @@ var PageSampleList = function (_UIElement) {
                 return "\n            <div class='page-sample-item'  data-sample-id=\"" + page.id + "\">\n                <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                " + page.layers.map(function (layer) {
                     var data = _this2.read('/layer/cache/toString', layer);
                     return "\n                        <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                    ";
-                }).join('') + "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>          \n            </div>";
+                }).join('') + "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>";
             });
 
             var storageList = this.read('/storage/pages').map(function (page) {
-                var data = _this2.read('/page/cache/toString', page.page);
+                var data = _this2.read('/page/cache/toString', _this2.read('/item/convert/style', page.page));
+
                 var rateX = 160 / parseParamNumber$1(data.obj.width || 400);
                 var rateY = 160 / parseParamNumber$1(data.obj.height || 300);
 
@@ -19844,20 +19903,30 @@ var PageSampleList = function (_UIElement) {
     }, {
         key: 'click $el .page-sample-item .add-item',
         value: function click$elPageSampleItemAddItem(e) {
+            var _this3 = this;
+
             var index = +e.$delegateTarget.attr('data-index');
 
             var newPage = this.list[index];
 
             if (newPage) {
-                this.dispatch('/item/addCache/page', newPage);
+                this.read('/item/current/page', function (page) {
+                    _this3.dispatch('/item/addCache', newPage, page.id);
+                    _this3.emit('changePage');
+                });
             }
         }
     }, {
         key: 'click $el .page-cached-item .add-item',
         value: function click$elPageCachedItemAddItem(e) {
+            var _this4 = this;
+
             var newPage = this.read('/storage/pages', e.$delegateTarget.attr('data-sample-id'));
             if (newPage) {
-                this.dispatch('/item/addCache/page', newPage);
+                this.read('/item/current/page', function (page) {
+                    _this4.dispatch('/item/addCache', newPage, page.id);
+                    _this4.emit('changePage');
+                });
             }
         }
     }, {
@@ -19869,13 +19938,13 @@ var PageSampleList = function (_UIElement) {
     }, {
         key: 'click $el .add-current-page',
         value: function click$elAddCurrentPage(e) {
-            var _this3 = this;
+            var _this5 = this;
 
             this.read('/item/current/page', function (page) {
-                var newPage = _this3.read('/collect/page/one', page.id);
+                var newPage = _this5.read('/collect/page/one', page.id);
 
-                _this3.dispatch('/storage/add/page', newPage);
-                _this3.refresh();
+                _this5.dispatch('/storage/add/page', newPage);
+                _this5.refresh();
             });
         }
     }]);
@@ -20204,12 +20273,12 @@ var ExportCanvasWindow = function (_UIElement) {
     }, {
         key: "getEndShapeForRadial",
         value: function getEndShapeForRadial(image, layer) {
-            var size = layer.style['background-size'];
+            var size = layer.backgroundSize;
 
-            var layerX = parseParamNumber$1(layer.style.x);
-            var layerY = parseParamNumber$1(layer.style.y);
-            var layerWidth = parseParamNumber$1(layer.style.width);
-            var layerHeight = parseParamNumber$1(layer.style.height);
+            var layerX = parseParamNumber$1(layer.x);
+            var layerY = parseParamNumber$1(layer.y);
+            var layerWidth = parseParamNumber$1(layer.width);
+            var layerHeight = parseParamNumber$1(layer.height);
 
             var imageX = 0;
             var imageY = 0;
@@ -20299,8 +20368,8 @@ var ExportCanvasWindow = function (_UIElement) {
 
             var collect = this.read('/collect/one', page.id);
 
-            var width = parseParamNumber$1(collect.page.style.width);
-            var height = parseParamNumber$1(collect.page.style.height);
+            var width = parseParamNumber$1(collect.page.width);
+            var height = parseParamNumber$1(collect.page.height);
 
             // support retina 
             var pixelRatio = window.devicePixelRatio || 1;
@@ -20323,14 +20392,14 @@ var ExportCanvasWindow = function (_UIElement) {
 
                 // ordering layer 
                 // 1. mix-blend-mode ? 
-                if (layer.style['mix-blend-mode']) {
-                    context.globalCompositeOpertation = layer.style['mix-blend-mode'];
+                if (layer.mixBlendMode) {
+                    context.globalCompositeOpertation = layer.mixBlendMode;
                 }
 
-                var x = parseParamNumber$1(layer.style.x);
-                var y = parseParamNumber$1(layer.style.y);
-                var width = parseParamNumber$1(layer.style.width);
-                var height = parseParamNumber$1(layer.style.height);
+                var x = parseParamNumber$1(layer.x);
+                var y = parseParamNumber$1(layer.y);
+                var width = parseParamNumber$1(layer.width);
+                var height = parseParamNumber$1(layer.height);
 
                 // 2. implements transform 
 

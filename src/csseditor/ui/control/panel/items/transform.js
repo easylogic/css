@@ -60,8 +60,8 @@ export default class Transform extends BasePropertyItem {
             var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY', 'translateZ']
 
             attr.forEach( key => {
-                if (item.style[key]) {
-                    this.refs[`$${key}`].val(item.style[key])    
+                if (item[key]) {
+                    this.refs[`$${key}`].val(item[key])    
                 }
             })        
         })
@@ -70,7 +70,7 @@ export default class Transform extends BasePropertyItem {
 
     updateTransform (key) {
         this.read('/item/current/layer', (item) => {
-            item.style[key] = this.refs['$' + key].val()
+            item[key] = this.refs['$' + key].val()
             this.dispatch('/item/set', item)
         })
     }

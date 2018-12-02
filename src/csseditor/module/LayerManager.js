@@ -84,8 +84,8 @@ export default class LayerManager extends BaseModule {
             if (!layer.clipPathCenter) return ;
             if (!layer.clipPathRadius) return ;
 
-            var width = parseParamNumber(layer.style.width);
-            var height = parseParamNumber(layer.style.height);
+            var width = parseParamNumber(layer.width);
+            var height = parseParamNumber(layer.height);
 
 
             var placeCenter = [
@@ -246,46 +246,46 @@ export default class LayerManager extends BaseModule {
 
         var results = [] 
 
-        if (layer.style['rotate']) {
-            results.push(`rotate(${layer.style['rotate']}deg)`)
+        if (layer.rotate) {
+            results.push(`rotate(${layer.rotate}deg)`)
         }
 
-        if (layer.style['skewX']) {
-            results.push(`skewX(${layer.style['skewX']}deg)`)
+        if (layer.skewX) {
+            results.push(`skewX(${layer.skewX}deg)`)
         }        
 
-        if (layer.style['skewY']) {
-            results.push(`skewY(${layer.style['skewY']}deg)`)
+        if (layer.skewY) {
+            results.push(`skewY(${layer.skewY}deg)`)
         }                
 
-        if (layer.style['scale']) {
-            results.push(`scale(${layer.style['scale']})`)
+        if (layer.scale) {
+            results.push(`scale(${layer.scale})`)
         }                        
 
-        if (layer.style['translateX']) {
-            results.push(`translateX(${layer.style['translateX']}px)`)
+        if (layer.translateX) {
+            results.push(`translateX(${layer.translateX}px)`)
         }                                
 
-        if (layer.style['translateY']) {
-            results.push(`translateY(${layer.style['translateY']}px)`)
+        if (layer.translateY) {
+            results.push(`translateY(${layer.translateY}px)`)
         }
 
-        if (layer.style['translateZ']) { 
-            results.push(`translateZ(${layer.style['translateZ']}px)`)
+        if (layer.translateZ) { 
+            results.push(`translateZ(${layer.translateZ}px)`)
         }
 
-        if (layer.style['rotate3dX'] || layer.style['rotate3dY'] || layer.style['rotate3dZ'] || layer.style['rotate3dA']) {
-            results.push(`rotate3d( ${layer.style['rotate3dX']||0}, ${layer.style['rotate3dY']||0}, ${layer.style['rotate3dZ']||0}, ${layer.style['rotate3dA'] || 0}deg  )`);
+        if (layer.rotate3dX || layer.rotate3dY || layer.rotate3dZ || layer.rotate3dA) {
+            results.push(`rotate3d( ${layer.rotate3dX||0}, ${layer.rotate3dY||0}, ${layer.rotate3dZ||0}, ${layer.rotate3dA || 0}deg  )`);
         }
 
-        if (layer.style['scale3dX'] || layer.style['scale3dY'] || layer.style['scale3dZ']) {
-            results.push(`scale3d( ${layer.style['scale3dX'] || 1}, ${layer.style['scale3dY'] || 1}, ${layer.style['scale3dZ'] || 1})`);
+        if (layer.scale3dX || layer.scale3dY || layer.scale3dZ) {
+            results.push(`scale3d( ${layer.scale3dX || 1}, ${layer.scale3dY || 1}, ${layer.scale3dZ || 1})`);
         }        
 
-        if (layer.style['translate3dX'] || layer.style['translate3dY'] || layer.style['translate3dZ']) {
-            results.push(`translate3d( ${layer.style['translate3dX']||0}px, ${layer.style['translate3dY']||0}px, ${layer.style['translate3dZ']||0}px)`);
+        if (layer.translate3dX || layer.translate3dY || layer.translate3dZ) {
+            results.push(`translate3d( ${layer.translate3dX||0}px, ${layer.translate3dY||0}px, ${layer.translate3dZ||0}px)`);
         }                
-
+s
         return results.length ? results.join(' ') : 'none';
     }
 
@@ -297,8 +297,8 @@ export default class LayerManager extends BaseModule {
         let transform = '';
 
         if (layer.fitClipPathSize) {
-            const widthScale = parseParamNumber(layer.style.width) / layer.clipPathSvgWidth;
-            const heightScale = parseParamNumber(layer.style.height) / layer.clipPathSvgHeight;
+            const widthScale = parseParamNumber(layer.width) / layer.clipPathSvgWidth;
+            const heightScale = parseParamNumber(layer.height) / layer.clipPathSvgHeight;
     
             transform = `scale(${widthScale} ${heightScale})`    
         }
@@ -323,36 +323,36 @@ export default class LayerManager extends BaseModule {
     '*/layer/get/border-radius' ($store, layer) {
         var css = {};
         if (layer.fixedRadius) {
-            css['border-radius'] = layer.style['border-radius']
+            css['border-radius'] = layer.borderRadius
             css['border-top-left-radius'] = ''
             css['border-top-right-radius'] = ''
             css['border-bottom-left-radius'] = ''
             css['border-bottom-right-radius'] = ''  
         } else {
-            css['border-top-left-radius'] = layer.style['border-top-left-radius']
-            css['border-top-right-radius'] = layer.style['border-top-right-radius']
-            css['border-bottom-left-radius'] = layer.style['border-bottom-left-radius']
-            css['border-bottom-right-radius'] = layer.style['border-bottom-right-radius']  
+            css['border-top-left-radius'] = layer.borderTopLeftRadius;
+            css['border-top-right-radius'] = layer.borderTopRightRadius;
+            css['border-bottom-left-radius'] = layer.borderBottomLeftRadius;
+            css['border-bottom-right-radius'] = layer.borderBottomRightRadius;
         }
 
         return css;
     }
 
     '*/layer/toCSS' ($store, layer = null, withStyle = true, image = null, isExport = false) {
-        var css = Object.assign({}, withStyle ? (layer.style || {}) : {});
+        var css = Object.assign({}, withStyle ? (layer || {}) : {});
 
 
         if (withStyle) {
-            css.left = css.x 
-            css.top = css.y
+            css.left = layer.x 
+            css.top = layer.y
         }
 
-        if (layer.style['background-color']) {
-            css['background-color'] = layer.style['background-color']
+        if (layer.backgroundColor) {
+            css['background-color'] = layer.backgroundColor
         }         
         
-        if (layer.style['mix-blend-mode']) {
-            css['mix-blend-mode'] = layer.style['mix-blend-mode'] || ""
+        if (layer.mixBlendMode) {
+            css['mix-blend-mode'] = layer.mixBlendMode || ""
         }
 
         Object.assign(css, $store.read('/layer/get/border-radius', layer));
@@ -378,18 +378,20 @@ export default class LayerManager extends BaseModule {
 
 
     '*/layer/cache/toCSS' ($store, item = null) {
-        var layer = Object.assign({}, item.layer, { images: item.images });
-        var css = Object.assign({}, layer.style);
+        var layer = Object.assign({}, $store.read('/item/convert/style', item.layer), { images: item.images });
+        var css = {
+            left: layer.x,
+            top: layer.y,
+            width: layer.width, 
+            height: layer.height
+        }
 
-        css.left = css.x 
-        css.top = css.y
-
-        if (layer.style['background-color']) {
-            css['background-color'] = layer.style['background-color']
+        if (layer.backgroundColor) {
+            css['background-color'] = layer.backgroundColor
         }         
         
-        if (layer.style['mix-blend-mode']) {
-            css['mix-blend-mode'] = layer.style['mix-blend-mode'] || ""
+        if (layer.mixBlendMode) {
+            css['mix-blend-mode'] = layer.mixBlendMode
         }
 
         Object.assign(css, $store.read('/layer/get/border-radius', layer));

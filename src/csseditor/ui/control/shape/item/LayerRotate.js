@@ -20,7 +20,7 @@ export default class LayerRotate extends UIElement {
 
         var angle = caculateAngle (this.targetXY.x - this.layerCenterX,  this.targetXY.y - this.layerCenterY);
 
-        this.layer.style.rotate = Math.floor(angle) - 270; 
+        this.layer.rotate = Math.floor(angle) - 270; 
 
         this.dispatch('/item/set', this.layer);
     }

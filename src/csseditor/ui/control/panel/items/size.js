@@ -48,21 +48,20 @@ export default class Size extends BasePropertyItem {
 
         if (!item) reutrn; 
         if (item.itemType == 'image') return; 
-        if (!item.style) return; 
-        if (item.style.width) {
-            this.refs.$width.val(parseParamNumber(item.style.width))
+        if (item.width) {
+            this.refs.$width.val(parseParamNumber(item.width))
         }
 
-        if (item.style.height) {
-            this.refs.$height.val(parseParamNumber(item.style.height))
+        if (item.height) {
+            this.refs.$height.val(parseParamNumber(item.height))
         }
 
-        if (item.style.x) {
-            this.refs.$x.val(parseParamNumber(item.style.x))
+        if (item.x) {
+            this.refs.$x.val(parseParamNumber(item.x))
         }
 
-        if (item.style.y) {
-            this.refs.$y.val(parseParamNumber(item.style.y))
+        if (item.y) {
+            this.refs.$y.val(parseParamNumber(item.y))
         }        
         
     }
@@ -74,21 +73,21 @@ export default class Size extends BasePropertyItem {
         if (item.itemType == 'image') return; 
 
 
-        item.style.width = this.refs.$width.int() + 'px'
-        item.style.height = item.style.width; 
+        item.width = this.refs.$width.int() + 'px'
+        item.height = item.width; 
         this.dispatch('/item/set', item)
     }
 
     'input $width' () {
         this.read('/item/current/layer', (item) => {
-            item.style.width = this.refs.$width.int() + 'px'
+            item.width = this.refs.$width.int() + 'px'
             this.dispatch('/item/set', item)
         })        
     }
 
     'input $height' () {
         this.read('/item/current/layer', (item) => {
-            item.style.height = this.refs.$height.int() + 'px'
+            item.height = this.refs.$height.int() + 'px'
             this.dispatch('/item/set', item)
         })        
     }    
@@ -96,14 +95,14 @@ export default class Size extends BasePropertyItem {
 
     'input $x' () {
         this.read('/item/current/layer', (item) => {
-            item.style.x = this.refs.$x.int() + 'px'
+            item.x = this.refs.$x.int() + 'px'
             this.dispatch('/item/set', item)
         })
     }
 
     'input $y' () {
         this.read('/item/current/layer', (item) => {
-            item.style.y = this.refs.$y.int() + 'px'
+            item.y = this.refs.$y.int() + 'px'
             this.dispatch('/item/set', item)
         })
     }        

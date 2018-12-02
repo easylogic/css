@@ -13,33 +13,30 @@ export default class PageManager extends BaseModule {
     }
 
     '*/page/toCSS' ($store, page = {}) {
-        var css = page.style || {} 
+        var sample = $store.read('/item/convert/style', page || {}) 
 
-        var realCSS = {}
-        Object.keys(css).filter(key => {
-            return !!css[key]
-        }).forEach(key => {
-            realCSS[key] = css[key]
-        })
+        var css ={
+            width: sample.width,
+            height: sample.height
+        } 
+ 
+        return $store.read('/css/sorting', css); 
 
-        return realCSS; 
     }
 
     '*/page/cache/toCSS' ($store, page = {}) {
-        var css = page.style || {} 
+        var sample = $store.read('/item/convert/style', page || {}) 
 
-        var realCSS = {}
-        Object.keys(css).filter(key => {
-            return !!css[key]
-        }).forEach(key => {
-            realCSS[key] = css[key]
-        })
+        var css ={
+            width: sample.width,
+            height: sample.height
+        } 
  
-        return realCSS; 
+        return $store.read('/css/sorting', css); 
     }    
 
     '*/page/cache/toString' ($store, page) {
-        var obj = $store.read('/page/cache/toCSS', page) || {};
+        var obj = $store.read('/page/cache/toCSS',  page) || {};
 
         return {
             css: $store.read('/css/toString', obj),

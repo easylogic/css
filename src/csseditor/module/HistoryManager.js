@@ -34,17 +34,26 @@ export default class HistoryManager extends BaseModule {
 
     '/history/initialize' ($store) {
         $store.read('/item/current/page', (page) => {
+            this.setHistory($store, page);
+        })
+    }
+
+    setHistory($store, page) {
+        if (page && !$store.historyOriginal[page.id]) {
             $store.historyOriginal[page.id] = { 
                 items: $store.clone('/item/get/all', page.id), 
                 selectedId: $store.selectedId 
             }
             $store.histories[page.id] = [] 
             $store.historyIndex[page.id] = 0;
-        })
+        }
     }
 
     '/history/push' ($store, title) {
         $store.read('/item/current/page', (page) => {
+
+            this.setHistory($store, page);
+
             var index = $store.historyIndex[page.id];
             if (index < 0) index = -1; 
             var histories = (index < 0) ? [] : $store.histories[page.id].slice(0, index + 1);

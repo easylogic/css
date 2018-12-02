@@ -32,7 +32,7 @@ export default class ColorPickerLayer extends UIElement {
         if (!item) return; 
 
         if (this.read('/item/is/mode', 'layer')) {
-            item.style['background-color'] = color; 
+            item.backgroundColor = color; 
             this.dispatch('/item/set', item)
         } else if (this.read('/item/is/mode', 'image')) {
             
@@ -60,9 +60,9 @@ export default class ColorPickerLayer extends UIElement {
     '@changeEditor' () {
         if (this.read('/item/is/mode', 'layer')) {
             this.read('/item/current/layer', (layer) => {
-                if (layer.style['background-color']) {
-                    if (layer.style['background-color'].includes('rgb')) return;
-                    this.colorPicker.initColorWithoutChangeEvent(layer.style['background-color']);
+                if (layer.backgroundColor) {
+                    if (layer.backgroundColor.includes('rgb')) return;
+                    this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
                 }
 
             })

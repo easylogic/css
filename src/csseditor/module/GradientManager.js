@@ -76,7 +76,7 @@ export default class GradientManager extends BaseModule {
             $store.run('/item/set', image);
         } else {
             $store.read('/item/current/layer', (layer) => {
-                layer.style['background-color'] = obj.color;
+                layer.backgroundColor = obj.color;
                 $store.run('/item/set', layer);
             })
 
@@ -131,7 +131,7 @@ export default class GradientManager extends BaseModule {
             
         } else {
             // $store.read('/item/current/layer', (layer) => {
-            //     layer.style['background-color'] = obj.color;
+            //     layer.backgroundColor = obj.color;
             //     $store.run('/item/set', layer);
             // })
 

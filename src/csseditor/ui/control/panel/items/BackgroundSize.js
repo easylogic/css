@@ -141,7 +141,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.style.height)
+        return parseParamNumber(layer.height)
     }
 
     getMaxY () {
@@ -149,7 +149,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.style.height) * 2; 
+        return parseParamNumber(layer.height) * 2; 
     }
 
     getMaxWidth () {
@@ -157,7 +157,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.style.width)
+        return parseParamNumber(layer.width)
     }
 
     getMaxX () {
@@ -165,7 +165,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.style.width) * 2; 
+        return parseParamNumber(layer.width) * 2; 
     }    
 
     'click $size button' (e) {

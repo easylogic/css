@@ -80,9 +80,11 @@ export default class GradientView extends BaseTab {
     }
 
     makePageCSS (page) {
-        return Object.assign({
-            overflow: page.clip ? 'hidden' : ''
-        }, page.style || {}); 
+        return {
+            overflow: page.clip ? 'hidden' : '',
+            width: page.width, 
+            height: page.height
+        }; 
     }
  
     setBackgroundColor() {
@@ -194,7 +196,7 @@ export default class GradientView extends BaseTab {
         })
 
         var item = this.layer
-        item.style = Object.assign(item.style, style);
+        item = Object.assign(item, style);
 
         var list = this.read('/guide/snap/layer', item, 3);
 
@@ -203,17 +205,17 @@ export default class GradientView extends BaseTab {
             var [x, y] = list
 
             if (typeof x != 'undefined') {
-                item.style.x = x + 'px';
+                item.x = x + 'px';
             }
 
             if (typeof y != 'undefined') {
-                item.style.y = y + 'px';
+                item.y = y + 'px';
             }
         }
 
         this.$layer.css({
-            left: item.style.x,
-            top: item.style.y
+            left: item.x,
+            top: item.y
         })
         this.dispatch('/item/set', item);
         this.refresh(true); 
@@ -241,8 +243,8 @@ export default class GradientView extends BaseTab {
         this.xy = e.xy;
         this.$layer = e.$delegateTarget;
         this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'))
-        this.moveX = parseParamNumber(this.layer.style.x || '0px')
-        this.moveY = parseParamNumber(this.layer.style.y || '0px')
+        this.moveX = parseParamNumber(this.layer.x || '0px')
+        this.moveY = parseParamNumber(this.layer.y || '0px')
 
         this.dispatch('/item/select', this.layer.id)
     }    

@@ -76,14 +76,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
         if (!layer) return; 
 
-        var item = layer; 
-        var style = layer.style; 
-
-        var width = style.width
-        var height = style.height
-        var x  = style.x || '0px'
-        var y  = style.y || '0px'
-
+        var {x, y, width, height} = layer; 
         var boardOffset = this.boardOffset || this.$board.offset()
         var pageOffset = this.pageOffset || this.$page.offset()
         var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
@@ -98,7 +91,7 @@ export default class PredefinedLayerResizer extends UIElement {
             transform: this.read('/layer/make/transform', layer)
         })
 
-        var rotate = layer.style.rotate || 0
+        var rotate = layer.rotate || 0
 
         if (rotate == 0) {
             this.refs.$buttonGroup.show()
@@ -118,7 +111,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
         if (typeof x != 'undefined') {
             var newWidth = Math.abs(this.moveX - parseParamNumber(x))
-            item.style.width = newWidth + 'px'; 
+            item.width = newWidth + 'px'; 
         }
     }
 
@@ -128,8 +121,8 @@ export default class PredefinedLayerResizer extends UIElement {
         if (typeof x != 'undefined') {
             var newWidth = this.width + (this.moveX - parseParamNumber(x))
 
-            item.style.x = x 
-            item.style.width = newWidth + 'px'; 
+            item.x = x 
+            item.width = newWidth + 'px'; 
         }
     }
 
@@ -138,7 +131,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
         if (typeof y != 'undefined') {
             var newHeight = Math.abs(this.moveY - parseParamNumber(y));
-            item.style.height = newHeight + 'px'; 
+            item.height = newHeight + 'px'; 
         }
     }
 
@@ -148,8 +141,8 @@ export default class PredefinedLayerResizer extends UIElement {
         if (typeof y != 'undefined') {
             var newHeight = this.height + (this.moveY - parseParamNumber(y))
 
-            item.style.y = y 
-            item.style.height = newHeight + 'px'; 
+            item.y = y 
+            item.height = newHeight + 'px'; 
         }
     }
 
@@ -200,7 +193,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
         var item = this.read('/item/current/layer')
 
-        item.style = Object.assign(item.style, style);
+        item = Object.assign(item, style);
 
         item = this.caculateSnap(item)
 
@@ -213,8 +206,8 @@ export default class PredefinedLayerResizer extends UIElement {
 
         var value = this.activeButton.attr('data-value')
         var position = [] 
-        var x = parseParamNumber(item.style.x), y = parseParamNumber(item.style.y);
-        var width = parseParamNumber(item.style.width), height = parseParamNumber(item.style.height);
+        var x = parseParamNumber(item.x), y = parseParamNumber(item.y);
+        var width = parseParamNumber(item.width), height = parseParamNumber(item.height);
 
         if (value == 'to right') {
             position = [x + width, y + Math.floor(height/2)]
@@ -336,10 +329,10 @@ export default class PredefinedLayerResizer extends UIElement {
         this.currentType = type; 
         this.xy = e.xy;
         this.layer = layer
-        this.width = parseParamNumber(layer.style.width) 
-        this.height = parseParamNumber(layer.style.height)
-        this.moveX = parseParamNumber(layer.style.x)
-        this.moveY = parseParamNumber(layer.style.y)
+        this.width = parseParamNumber(layer.width) 
+        this.height = parseParamNumber(layer.height)
+        this.moveX = parseParamNumber(layer.x)
+        this.moveY = parseParamNumber(layer.y)
 
         this.boardOffset = this.$board.offset()
         this.pageOffset = this.$page.offset()

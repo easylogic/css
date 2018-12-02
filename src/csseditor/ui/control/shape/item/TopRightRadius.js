@@ -5,7 +5,7 @@ export default class TopRightRadius extends TopLeftRadius {
     initialize () {
         super.initialize()
 
-        this.radiusKey = 'border-top-right-radius'
+        this.radiusKey = 'borderTopRightRadius'
     }
 
     template () {
@@ -14,7 +14,7 @@ export default class TopRightRadius extends TopLeftRadius {
 
 
     setRadiusPosition (x, y, width, height, layer) {
-        var radius = layer.style[this.radiusKey] || '0px'
+        var radius = layer[this.radiusKey] || '0px'
         this.$el.css('right', radius)
     } 
 

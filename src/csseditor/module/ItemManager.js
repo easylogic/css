@@ -1,7 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { uuid } from "../../util/functions/math";
 import Dom from "../../util/Dom";
-import { PREVENT } from "../../colorpicker/BaseStore";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -12,10 +11,8 @@ const PAGE_DEFAULT_OBJECT = {
     name: '',
     parentId: '',
     index: 0,
-    style: {
-        width: '400px',
-        height: '300px'
-    }
+    width: '400px',
+    height: '300px'
 }
 
 
@@ -32,11 +29,8 @@ const LAYER_DEFAULT_OBJECT = {
     clipPathWidth: '',
     clipPathHeight: '',
     fitClipPathSize: false,
-    style: {
-        x: '0px',
-        y: '0px',
-        'mix-blend-mode': 'normal'
-    },    
+    x: '0px',
+    y: '0px',
     filters: {}
 }
 
@@ -130,6 +124,50 @@ const isUndefined = (value) => {
     return typeof value == 'undefined' || value == null;
 }
 
+const itemField = {
+    'mix-blend-mode' : 'mixBlendMode',
+    'background-blend-mode' : 'backgroundBlendMode',
+    'background-color': 'backgroundColor',
+    'x': 'x',
+    'y': 'y',
+    'width': 'width',
+    'height': 'height',
+    'rotate': 'rotate',
+    'border-radius': 'borderRadius',
+    'border-top-left-radius': 'borderTopLeftRadius',
+    'border-top-right-radius': 'borderTopRightRadius',
+    'border-bottom-left-radius': 'borderBottomLeftRadius',
+    'border-bottom-right-radius': 'borderBottomRightRadius',
+    'skewX': 'skewX',
+    'skewY': 'skewY',            
+    'scale':'scale',
+    'translateX':'translateX',
+    'translateY':'translateY',
+    'translateZ':'translateZ',
+    'rotate3dX':'rotate3dX',
+    'rotate3dY':'rotate3dY',
+    'rotate3dZ':'rotate3dZ',
+    'rotate3dA':'rotate3dA',
+    'scale3dX':'scale3dX',
+    'scale3dY':'scale3dY',
+    'scale3dZ':'scale3dZ',
+    'translate3dX':'translate3dX',
+    'translate3dY':'translate3dY',
+    'translate3dZ':'translate3dZ',
+}
+
+const convertStyle = (item) => {
+    var style = item.style || {};
+
+    Object.keys(style).forEach(key => {
+        item[itemField[key]] = style[key]
+    })
+
+    delete item.style;
+
+    return item; 
+}
+
 export default class ItemManager extends BaseModule {
 
     initialize () {
@@ -142,6 +180,10 @@ export default class ItemManager extends BaseModule {
 
     afterDispatch () {
         this.$store.emit('changeEditor')
+    }
+
+    '*/item/convert/style' ($store, item) {
+        return convertStyle(item);
     }
 
     '*/item/create/object' ($store, obj, defaultObj = {}) {
@@ -240,6 +282,7 @@ export default class ItemManager extends BaseModule {
 
     '*/item/current/page' ($store, callback) {
         var item = $store.read('/item/current')
+
         var path = $store.read('/item/path', item.id);
 
         var page = $store.read('/item/get', path[path.length-1])
@@ -676,6 +719,11 @@ export default class ItemManager extends BaseModule {
     
     // initialize items 
     '/item/load' ($store) { 
+
+        $store.read('/item/keys').forEach(id => {
+            $store.items[id] = convertStyle($store.items[id])
+        })
+
         $store.run('/history/initialize');
     }  
 
@@ -687,7 +735,9 @@ export default class ItemManager extends BaseModule {
         if (item.itemType == 'layer') {
             var page = $store.read('/item/get', parentId);
 
-            item.style = Object.assign(item.style, page.style)
+            item.width = page.width; 
+            item.height = page.height;
+            // item.style = Object.assign(item.style, page.style)
         }
 
         item.index = Number.MAX_SAFE_INTEGER; 
@@ -777,8 +827,9 @@ export default class ItemManager extends BaseModule {
         // 레이어 생성 
         var layer = $store.read('/item/get', layerId);
         layer.parentId = pageId; 
-
-        layer.style = Object.assign({}, layer.style, page.style)        
+        layer.width = page.width;
+        layer.height = page.height; 
+        // layer.style = Object.assign({}, layer.style, page.style)        
         $store.run('/item/set', layer);
 
         // 이미지 생성 
@@ -825,7 +876,9 @@ export default class ItemManager extends BaseModule {
     }
 
     '*/item/recover/layer' ($store, layer, parentId) {
-        var newLayerId = $store.read('/item/create/object', Object.assign({parentId}, layer.layer));
+        var newLayerId = $store.read('/item/create/object', 
+            Object.assign({parentId}, convertStyle(layer.layer))
+        );
         layer.images.forEach(image => {
             $store.read('/item/recover/image', image, newLayerId);
         })
@@ -834,7 +887,7 @@ export default class ItemManager extends BaseModule {
     }
  
     '*/item/recover/page' ($store, page) {
-        var newPageId = $store.read('/item/create/object', page.page);
+        var newPageId = $store.read('/item/create/object', convertStyle(page.page));
         page.layers.forEach(layer => {
             $store.read('/item/recover/layer', layer, newPageId);
         })

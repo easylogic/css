@@ -5,7 +5,7 @@ export default class BottomLeftRadius extends TopLeftRadius {
     initialize () {
         super.initialize()
 
-        this.radiusKey = 'border-bottom-left-radius'
+        this.radiusKey = 'borderBottomLeftRadius'
     }
 
     template () {

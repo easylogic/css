@@ -21,7 +21,7 @@ export default class LayerSampleList extends UIElement {
         </div>
         `  
     }
-
+ 
     'load $cachedList' () {
         
         var list = this.list.map( (item, index) => {
@@ -96,7 +96,10 @@ export default class LayerSampleList extends UIElement {
         var newLayer = this.list[index];
 
         if (newLayer) {
-            this.dispatch('/item/addCache/layer', newLayer );
+            this.read('/item/current/layer', (layer) => {
+                this.dispatch('/item/addCache', newLayer, layer.id );
+            })
+
         }
 
 
@@ -106,7 +109,9 @@ export default class LayerSampleList extends UIElement {
         var newLayer = this.read('/storage/layers', e.$delegateTarget.attr('data-sample-id'));
         
         if (newLayer) {
-            this.dispatch('/item/addCache/layer', newLayer );
+            this.read('/item/current/layer', (layer) => {
+                this.dispatch('/item/addCache', newLayer, layer.id );
+            })            
         }
     }
 

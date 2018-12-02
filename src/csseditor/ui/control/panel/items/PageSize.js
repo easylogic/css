@@ -33,14 +33,8 @@ export default class PageSize extends UIElement {
 
     refresh() {
         this.read('/item/current/page', (item) => {
-            if (item.style && item.style.width) {
-                this.refs.$width.val(parseParamNumber(item.style.width))
-            }
-    
-            if (item.style && item.style.height) {
-                this.refs.$height.val(parseParamNumber(item.style.height))
-            }
-    
+            this.refs.$width.val(parseParamNumber(item.width))
+            this.refs.$height.val(parseParamNumber(item.height))
         })
         
     }
@@ -48,8 +42,8 @@ export default class PageSize extends UIElement {
     'click $rect' (e) {
 
         this.read('/item/current/page', (item) => {
-            item.style.width = this.refs.$width.int() + 'px'
-            item.style.height = item.style.width; 
+            item.width = this.refs.$width.int() + 'px'
+            item.height = item.width; 
             this.dispatch('/item/set', item)
     
         })
@@ -58,7 +52,7 @@ export default class PageSize extends UIElement {
     'input $width' () {
 
         this.read('/item/current/page', (item) => {
-            item.style.width = this.refs.$width.int() + 'px'
+            item.width = this.refs.$width.int() + 'px'
             this.dispatch('/item/set', item)
         })
     }
@@ -66,7 +60,7 @@ export default class PageSize extends UIElement {
     'input $height' () {
 
         this.read('/item/current/page', (item) => {
-            item.style.height = this.refs.$height.int() + 'px'
+            item.height = this.refs.$height.int() + 'px'
             this.dispatch('/item/set', item)
         })
     }    

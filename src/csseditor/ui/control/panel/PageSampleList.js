@@ -46,12 +46,13 @@ export default class PageSampleList extends UIElement {
 
                 <div class='item-tools'>
                     <button type="button" class='add-item'  data-index="${index}" title="Addd">&times;</button>
-                </div>          
+                </div>           
             </div>`
         })
 
         var storageList = this.read('/storage/pages').map( page => {
-            var data = this.read('/page/cache/toString', page.page)
+            var data = this.read('/page/cache/toString', this.read('/item/convert/style', page.page))
+
             var rateX = 160 / parseParamNumber(data.obj.width || 400);
             var rateY = 160 / parseParamNumber(data.obj.height || 300);
 
@@ -109,16 +110,21 @@ export default class PageSampleList extends UIElement {
         var newPage = this.list[index];
 
         if (newPage) {
-            this.dispatch('/item/addCache/page', newPage );
+            this.read('/item/current/page', page => {
+                this.dispatch('/item/addCache', newPage, page.id );
+                this.emit('changePage');                
+            })
         }
-
-
     }    
 
     'click $el .page-cached-item .add-item' (e) {
         var newPage = this.read('/storage/pages', e.$delegateTarget.attr('data-sample-id'));
         if (newPage) {
-            this.dispatch('/item/addCache/page', newPage );
+            this.read('/item/current/page', page => {
+                this.dispatch('/item/addCache', newPage, page.id );
+                this.emit('changePage');
+            })
+            
         }
     }
 

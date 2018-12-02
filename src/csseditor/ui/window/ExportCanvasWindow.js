@@ -185,12 +185,12 @@ export default class ExportCanvasWindow extends UIElement {
     }
     
     getEndShapeForRadial (image, layer) {
-        var size = layer.style['background-size'];
+        var size = layer.backgroundSize;
         
-        var layerX = parseParamNumber(layer.style.x);
-        var layerY = parseParamNumber(layer.style.y);
-        var layerWidth = parseParamNumber(layer.style.width);
-        var layerHeight = parseParamNumber(layer.style.height);
+        var layerX = parseParamNumber(layer.x);
+        var layerY = parseParamNumber(layer.y);
+        var layerWidth = parseParamNumber(layer.width);
+        var layerHeight = parseParamNumber(layer.height);
 
         var imageX = 0;
         var imageY = 0; 
@@ -283,8 +283,8 @@ export default class ExportCanvasWindow extends UIElement {
 
         var collect = this.read('/collect/one', page.id);
 
-        var width = parseParamNumber(collect.page.style.width);
-        var height = parseParamNumber(collect.page.style.height);
+        var width = parseParamNumber(collect.page.width);
+        var height = parseParamNumber(collect.page.height);
 
         // support retina 
         var pixelRatio = window.devicePixelRatio || 1
@@ -307,14 +307,14 @@ export default class ExportCanvasWindow extends UIElement {
 
             // ordering layer 
             // 1. mix-blend-mode ? 
-            if (layer.style['mix-blend-mode']) {
-                context.globalCompositeOpertation = layer.style['mix-blend-mode'];
+            if (layer.mixBlendMode) {
+                context.globalCompositeOpertation = layer.mixBlendMode;
             }
 
-            var x = parseParamNumber(layer.style.x);
-            var y = parseParamNumber(layer.style.y);
-            var width = parseParamNumber(layer.style.width);
-            var height = parseParamNumber(layer.style.height);
+            var x = parseParamNumber(layer.x);
+            var y = parseParamNumber(layer.y);
+            var width = parseParamNumber(layer.width);
+            var height = parseParamNumber(layer.height);
 
             // 2. implements transform 
 
