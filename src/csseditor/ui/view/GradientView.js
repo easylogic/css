@@ -195,28 +195,28 @@ export default class GradientView extends BaseTab {
             style[key] = style[key] + 'px' 
         })
 
-        var item = this.layer
-        item = Object.assign(item, style);
+        var item = Object.assign(this.layer, style);
+        this.run('/item/set', item);
 
         var list = this.read('/guide/snap/layer', item, 3);
-
+        // var {x, y} = item  
         if (list.length) {
 
-            var [x, y] = list
+            var [newX, newY] = list
 
-            if (typeof x != 'undefined') {
-                item.x = x + 'px';
+            if (typeof newX != 'undefined') {
+                item.x = newX + 'px';
             }
 
-            if (typeof y != 'undefined') {
-                item.y = y + 'px';
+            if (typeof newY != 'undefined') {
+                item.y = newY + 'px';
             }
         }
-
         this.$layer.css({
             left: item.x,
             top: item.y
         })
+
         this.dispatch('/item/set', item);
         this.refresh(true); 
     }
@@ -225,7 +225,6 @@ export default class GradientView extends BaseTab {
     moveXY (dx, dy) {
         var x = this.moveX + dx; 
         var y = this.moveY + dy; 
-
         this.updatePosition({x, y})
     }    
 

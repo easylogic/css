@@ -12317,7 +12317,9 @@ var GuideManager = function (_BaseModule) {
                     x = Math.floor(centerX - width / 2);
                 }
 
-                return [x, y];
+                if (typeof x != 'undefined' && typeof y != 'undefined') {
+                    return [x, y];
+                }
             }
 
             return [];
@@ -12336,8 +12338,8 @@ var GuideManager = function (_BaseModule) {
 
             var index = 0;
             list$1[index++] = $store.read('/guide/rect', {
-                x: 0,
-                y: 0,
+                x: '0px',
+                y: '0px',
                 width: page.width,
                 height: page.height
             });
@@ -12383,11 +12385,8 @@ var GuideManager = function (_BaseModule) {
 
             var results = [];
 
-            // 가로 먼저 체크 
-
             results.push.apply(results, toConsumableArray($store.read('/guide/check/vertical', item1, item2, dist)));
 
-            // 세로 체크 
             results.push.apply(results, toConsumableArray($store.read('/guide/check/horizontal', item1, item2, dist)));
 
             return results;
@@ -12400,7 +12399,6 @@ var GuideManager = function (_BaseModule) {
             var results = [];
 
             verticalKeys.forEach(function (key) {
-
                 // top
                 if (Math.abs(item1.y - item2[key]) < dist) {
                     results.push({ type: '-',
@@ -18080,29 +18078,29 @@ var GradientView = function (_BaseTab) {
                 style[key] = style[key] + 'px';
             });
 
-            var item = this.layer;
-            item = Object.assign(item, style);
+            var item = Object.assign(this.layer, style);
+            this.run('/item/set', item);
 
             var list = this.read('/guide/snap/layer', item, 3);
-
+            // var {x, y} = item  
             if (list.length) {
                 var _list = slicedToArray(list, 2),
-                    x = _list[0],
-                    y = _list[1];
+                    newX = _list[0],
+                    newY = _list[1];
 
-                if (typeof x != 'undefined') {
-                    item.x = x + 'px';
+                if (typeof newX != 'undefined') {
+                    item.x = newX + 'px';
                 }
 
-                if (typeof y != 'undefined') {
-                    item.y = y + 'px';
+                if (typeof newY != 'undefined') {
+                    item.y = newY + 'px';
                 }
             }
-
             this.$layer.css({
                 left: item.x,
                 top: item.y
             });
+
             this.dispatch('/item/set', item);
             this.refresh(true);
         }
@@ -18111,7 +18109,6 @@ var GradientView = function (_BaseTab) {
         value: function moveXY(dx, dy) {
             var x = this.moveX + dx;
             var y = this.moveY + dy;
-
             this.updatePosition({ x: x, y: y });
         }
     }, {

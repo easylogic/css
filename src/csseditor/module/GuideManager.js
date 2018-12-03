@@ -59,7 +59,10 @@ export default class GuideManager extends BaseModule {
                 x =  Math.floor(centerX - width/2)
             }            
 
-            return [x, y]
+            if (typeof x != 'undefined' && typeof y != 'undefined') {
+                return [x, y]
+            }
+
         }
 
         return []
@@ -76,8 +79,8 @@ export default class GuideManager extends BaseModule {
 
         var index = 0; 
         list[index++] = $store.read('/guide/rect', { 
-            x: 0, 
-            y: 0, 
+            x: '0px', 
+            y: '0px', 
             width: page.width, 
             height: page.height 
         })
@@ -117,11 +120,8 @@ export default class GuideManager extends BaseModule {
     '*/guide/check' ($store, item1, item2, dist = MAX_DIST) {
         var results = []
 
-        // 가로 먼저 체크 
-
         results.push(...$store.read('/guide/check/vertical', item1, item2, dist))
 
-        // 세로 체크 
         results.push(...$store.read('/guide/check/horizontal', item1, item2, dist))
 
         return results;
@@ -131,8 +131,6 @@ export default class GuideManager extends BaseModule {
         var results = []
 
         verticalKeys.forEach(key => {
-
-
             // top
             if (Math.abs(item1.y - item2[key]) < dist) {
                 results.push({ type: '-', 
