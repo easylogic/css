@@ -56,7 +56,7 @@ export default class PredefinedLayerResizer extends UIElement {
         this.$el.toggle(isShow)
 
         if (isShow) {
-            this.setPosition()
+        this.setPosition()
         }
     }
 
