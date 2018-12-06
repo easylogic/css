@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { uuid } from "../../util/functions/math";
 import Dom from "../../util/Dom";
+import { CHANGE_EDITOR } from "../types/event";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -32,6 +33,17 @@ const LAYER_DEFAULT_OBJECT = {
     x: '0px',
     y: '0px',
     filters: {}
+}
+
+const GROUP_DEFAULT_OBJECT = {
+    itemType: 'group',
+    name: '',
+    index: 0,    
+    parentId: '',
+    selected: true,
+    visible: true,
+    x: '0px',
+    y: '0px'
 }
 
 const IMAGE_DEFAULT_OBJECT = {
@@ -75,54 +87,10 @@ const COLORSTEP_DEFAULT_OBJECT = {
     color: 'rgba(0, 0, 0, 0)'
 }
 
-const ITEM_KEYS = {
-    'page': Object.keys(PAGE_DEFAULT_OBJECT),
-    'layer': Object.keys(LAYER_DEFAULT_OBJECT),
-    'image': Object.keys(IMAGE_DEFAULT_OBJECT),
-    'colorstep': Object.keys(IMAGE_DEFAULT_OBJECT)
-}
-
-function getAllKeys(itemType1, itemType2) {
-    var results = {}
-
-    var arr = []
-    arr.push(...ITEM_KEYS[itemType1])
-    arr.push(...ITEM_KEYS[itemType2])
-    arr.forEach(key => {
-        results[key] = true; 
-    })
-
-    return Object.keys(results);
-}
-
-var keys = Object.keys(ITEM_KEYS);
-
-const ITEM_DIFF_KEYS = {}
-
-keys.forEach(key => {
-    keys.forEach(key2 => {
-        ITEM_DIFF_KEYS[`${key + key2}`] = getAllKeys(key, key2)
-    })
-})
-
-
 const gradientTypeList = ['linear', 'radial', 'conic']
 const repeatingGradientTypeList = ['repeating-linear', 'repeating-radial', 'repeating-conic']
 const conicList = ['conic', 'repeating-conic']
 
-export const EDITOR_MODE_PAGE = 'page';
-export const EDITOR_MODE_LAYER = 'layer-rect';
-export const EDITOR_MODE_LAYER_BORDER = 'layer-border';
-export const EDITOR_MODE_IMAGE = 'image'; 
-export const EDITOR_MODE_IMAGE_LINEAR = 'image-linear'; 
-export const EDITOR_MODE_IMAGE_RADIAL = 'image-radial'; 
-export const EDITOR_MODE_IMAGE_STATIC = 'image-static'; 
-export const EDITOR_MODE_IMAGE_IMAGE = 'image-image'; 
-
-
-const isUndefined = (value) => {
-    return typeof value == 'undefined' || value == null;
-}
 
 const itemField = {
     'mix-blend-mode' : 'mixBlendMode',
@@ -174,12 +142,10 @@ export default class ItemManager extends BaseModule {
         super.initialize()
 
         this.$store.items = {}
-        this.$store.selectedId = '' 
-        this.$store.selectedMode = 'board';
     }
 
     afterDispatch () {
-        this.$store.emit('changeEditor')
+        this.$store.emit(CHANGE_EDITOR)
     }
 
     '*/item/convert/style' ($store, item) {
@@ -202,6 +168,10 @@ export default class ItemManager extends BaseModule {
     '*/item/create/layer' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, LAYER_DEFAULT_OBJECT);
     }
+
+    '*/item/create/group' ($store, obj = {}) {
+        return $store.read('/item/create/object', obj, GROUP_DEFAULT_OBJECT);
+    }    
 
     '*/item/create/boxshadow' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
@@ -275,71 +245,6 @@ export default class ItemManager extends BaseModule {
         }
         Object.assign($store.items, items);
     }
-
-    '*/item/current' ($store) {
-        return $store.read('/item/get', $store.selectedId)
-    }
-
-    '*/item/current/page' ($store, callback) {
-        var item = $store.read('/item/current')
-
-        var path = $store.read('/item/path', item.id);
-
-        var page = $store.read('/item/get', path[path.length-1])
-
-        if (page) {
-            if (typeof callback == 'function') callback(page);
-            return page; 
-        }
-
-        return null; 
-    }    
-
-
-    '*/item/current/layer' ($store, callback) {
-        var item = $store.read('/item/current')
-
-        if (item.itemType == 'layer') {
-            if (typeof callback == 'function') callback(item)
-            return item; 
-        } else if (item.itemType == 'image' || item.itemType == 'boxshadow') {
-            var layer = $store.read('/item/get', item.parentId);
-            if (typeof callback == 'function') callback(layer)
-            return layer
-        }
-        
-        return null; 
-    }     
-
-    '*/item/is/mode' ($store, mode, mode2) {
-        return $store.selectedMode == mode || $store.selectedMode == mode2;
-    }            
-
-    '*/item/current/image' ($store, callback) {
-        var item = $store.read('/item/current')
-
-        if (item && item.itemType == 'image') {
-            if (typeof callback == 'function') {
-                callback(item);
-            } 
-            return item; 
-        }
-
-        return null; 
-    }
-
-    '*/item/current/boxshadow' ($store, callback) {
-        var item = $store.read('/item/current')
-
-        if (item && item.itemType == 'boxshadow') {
-            if (typeof callback == 'function') {
-                callback(item);
-            } 
-            return item; 
-        }
-
-        return null; 
-    }    
 
     '*/item/keys' ($store) {
         return Object.keys($store.items)
@@ -543,7 +448,7 @@ export default class ItemManager extends BaseModule {
             }
 
             if (nextSelectedId) {
-                $store.run('/item/select', nextSelectedId)
+                $store.run('/selection/one', nextSelectedId)
             } else {
                 if (item.index > 0 ) {
                     for(var i = 0, len = list.length; i < len; i++) {
@@ -555,10 +460,10 @@ export default class ItemManager extends BaseModule {
                     }
 
                     if (nextSelectedId) {
-                        $store.run('/item/select', nextSelectedId)
+                        $store.run('/selection/one', nextSelectedId)
                     }                        
                 } else {
-                    $store.run('/item/select', item.parentId)
+                    $store.run('/selection/one', item.parentId)
                 }
             }
 
@@ -588,121 +493,12 @@ export default class ItemManager extends BaseModule {
         })
     }
 
-    '/item/select' ($store, selectedId = '') {
-        if ($store.selectedId !== selectedId) {
-
-            $store.read('/item/keys').forEach(id => {
-
-                var item = $store.items[id]
-    
-                if (item.itemType == 'colorstep') {
-                    // NOOP 
-                } else {
-                    $store.items[id].selected = id === selectedId; 
-                }
-    
-            })
-        }
-
-
-        if (selectedId) {
-            // $store.items[selectedId].selectTime = Date.now();
-
-            $store.selectedId = selectedId;
-    
-            $store.run('/item/select/mode', $store.items[selectedId].itemType);
-        } else {
-            $store.selectedId = selectedId
-            $store.run('/item/select/mode', 'board');
-        }
-
-        var item = $store.items[$store.selectedId]
-
-        if (item.itemType == 'image' && item.type == 'image') {
-            $store.emit('selectImage');
-        }
-    }
-
-    '/item/select/mode' ($store, mode, editMode) {
-        $store.selectedMode = mode; 
-
-        if (!editMode) {
-
-            switch(mode) {
-            case 'page': 
-                editMode = EDITOR_MODE_PAGE;
-                break; 
-            case 'layer': 
-                editMode = EDITOR_MODE_LAYER;
-                break; 
-            case 'image': 
-
-                var item = $store.items[$store.selectedId];
-
-                switch(item.type) {
-                case 'linear':
-                case 'repeating-linear':
-                    editMode = EDITOR_MODE_IMAGE_LINEAR;    
-                    break; 
-                case 'radial':
-                case 'repeating-radial':
-                    editMode = EDITOR_MODE_IMAGE_RADIAL;    
-                    break;                     
-                case 'static':
-                    editMode = EDITOR_MODE_IMAGE_STATIC;    
-                    break;                                  
-                case 'image':
-                    editMode = EDITOR_MODE_IMAGE_IMAGE;    
-                    break;
-                }
-                break; 
-            }
-        }
-
-
-        $store.run('/item/select/editMode', editMode)
-    }  
-
-    '/item/select/editMode' ($store, editMode) {
-        $store.editMode = editMode 
-    }
-
-    // 현재 기준으로 editMode 를 변경 
-    '/item/switch/editMode' ($store) {
-
-        switch ($store.editMode) {
-        case EDITOR_MODE_LAYER: 
-            $store.editMode = EDITOR_MODE_LAYER_BORDER;
-            break; 
-        case EDITOR_MODE_LAYER_BORDER:
-            $store.editMode = EDITOR_MODE_LAYER;
-            break;
-        }
-
-    }
-
-    diff (prevItem, item) {
-        
-        var diff = {}
-
-        ITEM_DIFF_KEYS[`${prevItem.itemType + item.itemType}`].forEach(key => {
-            if (prevItem[key] != item[key]) {
-                // console.log(item[key])
-                diff[key] = true; 
-            }
-        });
-
-        return Object.keys(diff);
-    }
-
     '/item/set' ($store, obj = {}, isSelected = false) {
         var id = obj.id; 
         var prevItem = $store.clone('/item/get', id)
         $store.items[id] = Object.assign({}, prevItem, obj);
-        $store.lastChangedItemType = $store.items[id].itemType
-        $store.lastDiff = this.diff(prevItem, $store.items[id])
-        // console.log($store.lastDiff);
-        if (isSelected) $store.run('/item/select', id)
+
+        if (isSelected) $store.run('/selection/one', id)
     }
 
     '*/item/add/index' ($store, id, dist = INDEX_DIST) {

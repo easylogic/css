@@ -140,8 +140,7 @@ export default class StorageManager extends BaseModule {
     '/storage/save' ($store) {
         localStorage.setItem(SAVE_ID, JSON.stringify({
             items: $store.items,
-            selectedId: $store.selectedId,
-            selectedMode: $store.selectedMode
+            selection: $store.selection
         }))
     }
 
@@ -191,6 +190,11 @@ export default class StorageManager extends BaseModule {
         if (obj.items) $store.items = obj.items 
         if (obj.selectedId) $store.selectedId = obj.selectedId
         if (obj.selectedMode) $store.selectedMode = obj.selectedMode
+        if (obj.selection) $store.selection = obj.selection
+
+        if ($store.selectedId) {
+            $store.run('/selection/one', $store.selectedId);
+        }
 
         if (typeof callback == 'function') {
             callback(!!obj.items)

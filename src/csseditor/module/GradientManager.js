@@ -32,7 +32,7 @@ export default class GradientManager extends BaseModule {
     }
 
     '/gradient/image/select' ($store, obj) {
-        var image = $store.read('/item/current/image')
+        var image = $store.read('/selection/current/image')
 
         if (image) {
 
@@ -75,7 +75,7 @@ export default class GradientManager extends BaseModule {
 
             $store.run('/item/set', image);
         } else {
-            $store.read('/item/current/layer', (layer) => {
+            $store.read('/selection/current/layer', (layer) => {
                 layer.backgroundColor = obj.color;
                 $store.run('/item/set', layer);
             })
@@ -84,7 +84,7 @@ export default class GradientManager extends BaseModule {
     }
 
     '/gradient/image/add' ($store, obj) {
-        var image = $store.read('/item/current/image')
+        var image = $store.read('/selection/current/image')
 
         if (image) {
 
@@ -130,7 +130,7 @@ export default class GradientManager extends BaseModule {
             $store.run('/item/move/in', image.id, newImage.id);
             
         } else {
-            // $store.read('/item/current/layer', (layer) => {
+            // $store.read('/selection/current/layer', (layer) => {
             //     layer.backgroundColor = obj.color;
             //     $store.run('/item/set', layer);
             // })

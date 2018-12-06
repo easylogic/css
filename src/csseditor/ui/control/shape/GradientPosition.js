@@ -1,4 +1,5 @@
 import UIElement from '../../../../colorpicker/UIElement';
+import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
 
 const DEFINE_POSITIONS = { 
     'center': ['center', 'center'],
@@ -20,18 +21,19 @@ export default class GradientPosition extends UIElement {
 
     refresh () {
 
-        if (this.isShow()) {
-            this.$el.show();
+        var isShow = this.isShow();
+
+        this.$el.toggle(isShow);
+
+        if (isShow) {
             this.refreshUI()            
-        } else {
-            this.$el.hide();
         }
     }
 
     isShow () {
-        if (!this.read('/item/is/mode', 'image')) return false; 
+        if (!this.read('/selection/is/image')) return false; 
 
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return false; 
 
 
@@ -103,7 +105,7 @@ export default class GradientPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('/item/current/image');
+        var item = this.read('/selection/current/image');
 
         if (!item) return ''; 
 
@@ -132,14 +134,15 @@ export default class GradientPosition extends UIElement {
     }
 
     setRadialPosition (radialPosition) {
-        this.read('/item/current/image', (image) => {
-            this.dispatch('/item/set', {id: image.id, radialPosition});
+        this.read('/selection/current/image/id', (id) => {
+
+            this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition});
         });
     }
 
-    '@changeEditor' () {
-        this.refresh()
-    }
+    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
 
     '@changeTool' () {
         this.$el.toggle(this.isShow())

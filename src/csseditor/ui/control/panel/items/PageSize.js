@@ -1,5 +1,6 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/gl/filter/util";
+import { CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class PageSize extends UIElement {
     template () {
@@ -27,12 +28,12 @@ export default class PageSize extends UIElement {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        this.read('/item/current/page', (item) => {
+        this.read('/selection/current/page', (item) => {
             this.refs.$width.val(parseParamNumber(item.width))
             this.refs.$height.val(parseParamNumber(item.height))
         })
@@ -41,27 +42,29 @@ export default class PageSize extends UIElement {
 
     'click $rect' (e) {
 
-        this.read('/item/current/page', (item) => {
-            item.width = this.refs.$width.int() + 'px'
-            item.height = item.width; 
-            this.dispatch('/item/set', item)
-    
+        this.read('/selection/current/page', (item) => {
+            var newValue = {
+                id: item.id, 
+                width: this.refs.$width.int() + 'px'
+            }
+
+            newValue.height = newValue.width; 
+
+            this.commit(CHANGE_PAGE_SIZE, newValue);
         })
     }
 
     'input $width' () {
 
-        this.read('/item/current/page', (item) => {
-            item.width = this.refs.$width.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/page/id', (id) => {
+            this.commit(CHANGE_PAGE_SIZE, { id, width: this.refs.$width.int() + 'px' });
         })
     }
 
     'input $height' () {
 
-        this.read('/item/current/page', (item) => {
-            item.height = this.refs.$height.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/page/id', (id) => {
+            this.commit(CHANGE_PAGE_SIZE, { id, height: this.refs.$height.int() + 'px' });            
         })
     }    
 }

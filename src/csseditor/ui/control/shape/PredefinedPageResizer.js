@@ -1,5 +1,6 @@
 import UIElement from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/gl/filter/util';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_PAGE_SIZE, CHANGE_PAGE_SIZE, EVENT_CHANGE_SELECTION } from '../../../types/event';
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -38,7 +39,7 @@ export default class PredefinedPageResizer extends UIElement {
 
 
     setPosition () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) return; 
 
@@ -60,10 +61,12 @@ export default class PredefinedPageResizer extends UIElement {
     }    
 
     isShow () { 
-        return this.read('/item/is/mode', 'page')
+        return this.read('/selection/is/page')
     }
 
-    '@changeEditor' () { this.refresh(); }
+    [EVENT_CHANGE_PAGE_SIZE] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }    
 
     change (style1 = {}, style2 = {}) {
 
@@ -73,9 +76,9 @@ export default class PredefinedPageResizer extends UIElement {
             style[key] = style[key] + 'px' 
         })
 
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
         page = Object.assign(page, style)
-        this.dispatch('/item/set', page)
+        this.commit(CHANGE_PAGE_SIZE, page)
         this.refresh();
     }
 
@@ -160,7 +163,7 @@ export default class PredefinedPageResizer extends UIElement {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;
-        this.page = this.read('/item/current/page')
+        this.page = this.read('/selection/current/page')
         this.width = parseParamNumber(this.page.width)
         this.height = parseParamNumber(this.page.height)
     }

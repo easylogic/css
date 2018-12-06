@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Color from "../../util/Color";
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
+import { CHANGE_EDITOR } from "../types/event";
 
 const isUndefined = (value) => {
     return typeof value == 'undefined' || value == null;
@@ -20,7 +21,7 @@ export default class ColorStepManager extends BaseModule {
 
 
     afterDispatch () {
-        this.$store.emit('changeEditor')
+        this.$store.emit(CHANGE_EDITOR)
     }    
 
     '*/colorstep/colorSource' ($store) {
@@ -125,7 +126,7 @@ export default class ColorStepManager extends BaseModule {
 
     // 이미지 리스트 얻어오기 
     '*/colorstep/list' ($store) {
-        var image = $store.read('/item/current/image');
+        var image = $store.read('/selection/current/image');
 
         if (image) {
             return $store.read('/colorstep/sort/list', image.id); 

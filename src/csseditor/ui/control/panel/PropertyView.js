@@ -11,8 +11,6 @@ export default class PropertyView extends UIElement {
                 <PageSize></PageSize>
                 <clip></clip>
                 <PageExport></PageExport>
-                <!--<PageLayout></PageLayout>-->
-                <!-- <PageShowGrid></PageShowGrid> -->
             </div>
         ` 
     }

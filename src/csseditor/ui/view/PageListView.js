@@ -1,5 +1,6 @@
 import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
+import { EVENT_CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
 
 export default class PageList extends UIElement {
 
@@ -30,7 +31,7 @@ export default class PageList extends UIElement {
     makeItemNode (node, index) {
         var item = this.read('/item/get', node.id);
 
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         var selectedId = '' 
 
@@ -65,19 +66,20 @@ export default class PageList extends UIElement {
 
     refresh () { 
         this.load()
-        this.read('/item/current/page', (item) => {
+        this.read('/selection/current/page', (item) => {
             this.refs.$check.el.checked = this.read('/tool/get', 'show.grid');
         })        
     }
 
     'click $check' () {
-        this.read('/item/current/page', (item) => {
+        this.read('/selection/current/page', (item) => {
             this.dispatch('/tool/set', 'show.grid', this.refs.$check.el.checked)
         })
     }
 
-    '@changePage' () {
+    [EVENT_CHANGE_PAGE] () {
         this.refresh()
+        this.emit(CHANGE_EDITOR)
     }
 
     'click $pageList .add-page' (e) {
@@ -87,13 +89,8 @@ export default class PageList extends UIElement {
 
     'click $pageList .tree-item | self' (e) { 
 
-        this.dispatch('/item/select', e.$delegateTarget.attr('id'));
+        this.dispatch('/selection/one', e.$delegateTarget.attr('id'));       
         this.refresh();
-
-        if (e.$delegateTarget.attr('type') == 'page') {
-            this.emit('selectPage')
-        } 
-        
     }
 
     'click $saveButton' (e) {

@@ -1,4 +1,5 @@
 import UIElement from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class PageLayout extends UIElement {
     template () {
@@ -23,7 +24,7 @@ export default class PageLayout extends UIElement {
         this.refs.$buttons.addClass(this.read('/storage/get', 'layout') + '-mode')
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 

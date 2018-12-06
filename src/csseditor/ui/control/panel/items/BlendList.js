@@ -1,5 +1,6 @@
 
 import BasePropertyItem from './BasePropertyItem';
+import { EVENT_CHANGE_IMAGE, CHANGE_IMAGE,  EVENT_CHANGE_SELECTION } from '../../../../types/event';
 
 export default class BlendList extends BasePropertyItem {
 
@@ -21,7 +22,7 @@ export default class BlendList extends BasePropertyItem {
     'load $blendList' () {
         var list = this.read('/blend/list')
 
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) { return ''; }
 
         return  `<div>${list.map((blend) => {
@@ -40,11 +41,7 @@ export default class BlendList extends BasePropertyItem {
 
 
     isShow () {
-        var image = this.read('/item/current/image')
-
-        if (image) return true; 
-
-        return false; 
+        return this.read('/selection/is/image'); 
     }    
 
     refresh () {
@@ -53,7 +50,7 @@ export default class BlendList extends BasePropertyItem {
 
         this.$el.toggle(isShow);
 
-        this.read('/item/current/image', (image) => {
+        this.read('/selection/current/image', (image) => {
             this.refs.$desc.text(image.backgroundBlendMode || 'normal')
         })
 
@@ -62,22 +59,25 @@ export default class BlendList extends BasePropertyItem {
         }
     }
 
-    '@changeEditor' () {
-        if (this.isPropertyShow() && this.$store.lastChangedItemType == 'image') {
+    [EVENT_CHANGE_IMAGE] () {
+        if (this.isPropertyShow()) {
+            this.refresh()
+        }
+    }
+
+    [EVENT_CHANGE_SELECTION] () {
+        if (this.isPropertyShow()) {
             this.refresh()
         }
     }
 
 
     'click $blendList .blend-item | self' (e) {
-        var item = this.read('/item/current/image');
-
-        if (!item) return; 
-
-        item.backgroundBlendMode = e.$delegateTarget.attr('data-mode')
-
-        this.dispatch('/item/set', item, true)
-        this.refresh();
+        this.read('/selection/current/image/id', (id) => {
+            this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: e.$delegateTarget.attr('data-mode')}, true)
+            this.refresh();
+        });
+        
     }
 
 }

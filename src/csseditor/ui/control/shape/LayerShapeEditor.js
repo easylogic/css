@@ -1,6 +1,7 @@
 import { parseParamNumber } from '../../../../util/filter/functions';
 import shapeEditor from './shape-editor/index';
 import UIElement from '../../../../colorpicker/UIElement';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../types/event';
 
 
 export default class LayerShapeEditor extends UIElement {
@@ -38,7 +39,7 @@ export default class LayerShapeEditor extends UIElement {
     }
 
     setPosition () {
-        var layer = this.read('/item/current/layer')
+        var layer = this.read('/selection/current/layer')
 
         if (!layer) return; 
 
@@ -58,9 +59,10 @@ export default class LayerShapeEditor extends UIElement {
     }
 
     isShow () {
-        return !this.read('/item/is/mode', 'page');
+        return !this.read('/selection/is/page');
     }
 
-    '@changeEditor' () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
 
 }

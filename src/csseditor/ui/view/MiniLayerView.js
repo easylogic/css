@@ -8,7 +8,6 @@ export default class MiniLayerView extends BaseTab {
             <div class="tab mini-layer-view">
                 <div class="tab-header" ref="$header">
                     <div class="tab-item selected" data-id="color">Color</div>
-                    <!-- <div class="tab-item" data-id="blend">Blend</div> -->
                     <div class="tab-item" data-id="mix">Blend</div>
                     <div class="tab-item" data-id="filter">Filter</div>
                 </div>
@@ -16,9 +15,6 @@ export default class MiniLayerView extends BaseTab {
                     <div class="tab-content selected" data-id="color">
                         <LayerColorPickerPanel></LayerColorPickerPanel>                
                     </div>
-                    <!-- <div class="tab-content" data-id="blend">
-                        <BlendList></BlendList>    
-                    </div> -->
                     <div class="tab-content" data-id="mix">
                         <MixBlendList ref="$mixBlendList"></MixBlendList>
                     </div>

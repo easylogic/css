@@ -4,6 +4,7 @@ $page-item-height: 35px;
 $button-size: 24px;
 $layer-item-padding: 4px;
 $mini-layer-view-height: 420px;
+$layer-preview-size: 40px;
 
 .layers {
     // border-bottom: 1px solid $border-color;
@@ -119,7 +120,7 @@ $mini-layer-view-height: 420px;
         
         .tree-item {
             display: block;
-            height: 50px;            
+            height: $layer-preview-size;            
             box-sizing: border-box;
             cursor: pointer;
             position: relative;
@@ -145,7 +146,7 @@ $mini-layer-view-height: 420px;
                 vertical-align: middle;
                 box-sizing: border-box;
                 height: 100%;
-                width: 50px;
+                width: $layer-preview-size;
                 // border: 1px solid #ececec;
 
                 .item-view {
@@ -210,7 +211,7 @@ $mini-layer-view-height: 420px;
 
                 .tree-item-children {
                     overflow:hidden;
-                    height: 50px;
+                    height: $layer-preview-size;
                     box-sizing: border-box;
                     display: block;
 
@@ -308,7 +309,7 @@ $mini-layer-view-height: 420px;
 .layout-main.small-mode {
     .layer-list {
         .tree-item {
-            height: 40px;
+            height: $layer-preview-size;
             overflow: auto;
         }
     }

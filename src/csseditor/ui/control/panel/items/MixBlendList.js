@@ -1,4 +1,5 @@
 import BasePropertyItem from './BasePropertyItem';
+import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR } from '../../../../types/event';
 
 export default class MixBlendList extends BasePropertyItem {
 
@@ -17,7 +18,7 @@ export default class MixBlendList extends BasePropertyItem {
 
     'load $mixBlendList' () {
         var list = this.read('/blend/list')
-        var item = this.read('/item/current/layer')
+        var item = this.read('/selection/current/layer')
         if (!item) { return ''; }
 
         return  `<div>${list.map((blend) => {
@@ -36,7 +37,7 @@ export default class MixBlendList extends BasePropertyItem {
 
 
     isShow () {
-        var image = this.read('/item/current/image')
+        var image = this.read('/selection/current/image')
 
         if (image) return false; 
 
@@ -52,7 +53,7 @@ export default class MixBlendList extends BasePropertyItem {
         if(isShow && this.parent.selectedTabId == 'mix') {
             this.load()
 
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.refs.$desc.text(layer.mixBlendMode)
             })        
         }
@@ -62,22 +63,21 @@ export default class MixBlendList extends BasePropertyItem {
         this.refresh();
     }
 
-    '@changeEditor' () {
-        if (this.$store.lastChangedItemType == 'layer') {
+    [EVENT_CHANGE_LAYER] () {
+        this.refresh()        
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
+        // if (this.$store.lastChangedItemType == 'layer') {
             this.refresh()
-        }
+        // }
     }
 
     'click $mixBlendList .blend-item | self' (e) {
-        var item = this.read('/item/current/layer');
-
-        if (!item) return; 
-        
-        item.mixBlendMode = e.$delegateTarget.attr('data-mode')
-
-        this.dispatch('/item/set', item, true)
-
-        this.refresh();
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER, {id, mixBlendMode: e.$delegateTarget.attr('data-mode')}, true)
+            this.refresh();
+        });
     } 
 
 }

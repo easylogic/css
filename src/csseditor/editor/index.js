@@ -18,9 +18,10 @@ import LayerSampleView from '../ui/window/LayerSampleWindow';
 import PageSampleView from '../ui/window/PageSampleWindow';
 import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
 import ExportCanvasWindow from '../ui/window/ExportCanvasWindow';
+import { EVENT_CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 
 
-const screenModes = ['expertor', 'beginner']
+// const screenModes = ['expertor', 'beginner']
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -97,9 +98,9 @@ export default class CSSEditor extends BaseCSSEditor {
         }
     } 
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         /*
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             var self = this; 
             var obj = layer.style
             var aniObject = Animation.createTimeline([{
@@ -140,7 +141,7 @@ export default class CSSEditor extends BaseCSSEditor {
             } else {
                 this.dispatch('/item/load');
             }
-            this.emit('changePage')
+            this.emit(CHANGE_PAGE)
         });
     }
 

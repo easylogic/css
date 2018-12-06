@@ -98,7 +98,7 @@ export default class GradientSampleList extends UIElement  {
     }
 
     'click $el .add-current-image' (e) {
-        this.read('/item/current/image', (image) => {
+        this.read('/selection/current/image', (image) => {
             var newImage = this.read('/collect/image/one', image.id)
 
             this.dispatch('/storage/add/image', newImage);

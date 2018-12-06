@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -28,7 +29,7 @@ export default class ImageResource extends BasePropertyItem {
         this.load();
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.$el.toggle(this.isShow())
     }
 
@@ -41,7 +42,7 @@ export default class ImageResource extends BasePropertyItem {
     }    
 
     isShow () {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
 
         if (!item) return false; 
 
@@ -53,7 +54,7 @@ export default class ImageResource extends BasePropertyItem {
         var key = e.$delegateTarget.attr('data-key')
 
         if (index) {
-            this.read('/item/current/image', (image) => {
+            this.read('/selection/current/image', (image) => {
                 var file = this.read('/svg/get/blob', +index);
                 this.read('/image/get/blob', [file], (newImage) => {
                     this.dispatch('/item/set/image/file', image.id, newImage)
@@ -61,7 +62,7 @@ export default class ImageResource extends BasePropertyItem {
             })
         } else if (key) {
 
-            this.read('/item/current/image', (image) => {
+            this.read('/selection/current/image', (image) => {
                 var file = this.read('/svg/get/blob', Number.MAX_SAFE_INTEGER, key);
                 this.read('/image/get/blob', [file], (newImage) => {
                     this.dispatch('/item/set/image/file', image.id, newImage)

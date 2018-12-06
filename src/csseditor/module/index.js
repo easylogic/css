@@ -13,9 +13,10 @@ import SVGManager from "./SVGManager";
 import CollectManager from "./CollectManager";
 import PageManager from "./PageManager";
 import HistoryManager from "./HistoryManager";
+import SelectionManager from "./SelectionManager";
 
-
-export default [
+export default [  
+    SelectionManager,
     HistoryManager,
     PageManager,
     CollectManager,

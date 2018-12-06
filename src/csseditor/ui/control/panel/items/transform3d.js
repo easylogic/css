@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { EVENT_CHANGE_LAYER_TRANSFORM_3D, CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class Transform3d extends BasePropertyItem {
     template () {
@@ -75,12 +76,16 @@ export default class Transform3d extends BasePropertyItem {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_LAYER_TRANSFORM_3D] () {
+        this.refresh();
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        this.read('/item/current/layer', (item) => {
+        this.read('/selection/current/layer', (item) => {
 
             var attr = [
                 'rotate3dX', 'rotate3dY', 'rotate3dZ', 'rotate3dA', 
@@ -98,9 +103,8 @@ export default class Transform3d extends BasePropertyItem {
     }
 
     updateTransform (key) {
-        this.read('/item/current/layer', (item) => {
-            item[key] = this.refs['$' + key].val()
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_TRANSFORM_3D, {id, [key]: this.refs['$' + key].val()})
         })
     }
 

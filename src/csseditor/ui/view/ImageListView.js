@@ -1,4 +1,5 @@
 import UIElement from '../../../colorpicker/UIElement';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_SELECTION } from '../../types/event';
 
 export default class ImageList extends UIElement {
 
@@ -51,10 +52,10 @@ export default class ImageList extends UIElement {
     }       
 
     'load $imageList' () {
-        var item = this.read('/item/current/layer');
+        var item = this.read('/selection/current/layer');
 
         if (!item)  {
-            var page = this.read('/item/current/page');
+            var page = this.read('/selection/current/page');
             if (page) {
                 var list = this.read('/item/list/children', page.id)
                 if (list.length) {
@@ -75,22 +76,35 @@ export default class ImageList extends UIElement {
         this.load()
     }
 
-    '@changeEditor' () {
+    // individual effect
+    [EVENT_CHANGE_IMAGE] () { this.refresh() }
+    [EVENT_CHANGE_IMAGE_ANGLE] () { this.refresh() }
+    [EVENT_CHANGE_IMAGE_COLOR] () { this.refresh() }
+    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] () { this.refresh() }
+    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] () { this.refresh() }
+    [EVENT_CHANGE_IMAGE_RADIAL_TYPE] () { this.refresh() }
+    [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refresh() }
+    // all effect 
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
+    }
+
+    [EVENT_CHANGE_SELECTION] () {
+        this.refresh();
     }
 
     'click $imageList .tree-item | self' (e) { 
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
-            this.dispatch('/item/select', id);
+            this.dispatch('/selection/one', id);
             this.refresh();
         }
 
     }
 
     'click $gradientType .gradient-item' (e) {
-        this.read('/item/current/layer', (item) => {
+        this.read('/selection/current/layer', (item) => {
 
             var type = e.$delegateTarget.attr('data-type')
 

@@ -114,7 +114,11 @@ export default class LayerManager extends BaseModule {
 
     }
 
-    '*/layer/make/filter' ($store, filters, defaultDataObject = {}) {        
+    '*/layer/make/filter' ($store, filters, defaultDataObject = {}) {       
+        
+        if (!filters) return null;
+        if (!Object.keys(filters).length) return null;
+
         return Object.keys(filters).map(id => {
             var dataObject = filters[id] || defaultDataObject;
             

@@ -1,5 +1,6 @@
 import UIElement from '../../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../../util/filter/functions';
+import { CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../../types/event';
 
 export default class TopLeftRadius extends UIElement {
 
@@ -24,7 +25,7 @@ export default class TopLeftRadius extends UIElement {
     }
 
     setPosition () {
-        var layer = this.read('/item/current/layer')
+        var layer = this.read('/selection/current/layer')
 
         if (!layer) return; 
 
@@ -41,11 +42,11 @@ export default class TopLeftRadius extends UIElement {
     }
 
     isShow () {
-        var layer = this.read('/item/current/layer')
+        var layer = this.read('/selection/current/layer')
         if (!layer) return false; 
 
         if (layer.fixedRadius) return false;         
-        return this.read('/item/is/mode', 'layer', 'image');
+        return this.read('/selection/is/layer');
     }
 
     getRealRadius (radius, dx) {
@@ -58,22 +59,22 @@ export default class TopLeftRadius extends UIElement {
     resize () {
         
         var dx = this.targetXY.x - this.xy.x
-
-//        console.log(dx);
-
         var radius = this.getRealRadius(this.layerRadius, dx);
-        this.layer[this.radiusKey] = radius + 'px'
 
-        this.dispatch('/item/set', this.layer);
+        var newValue = {id: this.layer.id, [this.radiusKey]: radius + 'px' }
+
+        this.commit(CHANGE_LAYER_RADIUS, newValue)
         this.refresh();
     }
 
-    '@changeEditor' () { this.refresh(); }
+    [EVENT_CHANGE_LAYER_RADIUS] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
 
 
     'pointerstart' (e) {
 
-        var layer = this.read('/item/current/layer')
+        var layer = this.read('/selection/current/layer')
 
         if (!layer) return; 
 
@@ -92,8 +93,7 @@ export default class TopLeftRadius extends UIElement {
         if (this.xy) {
             this.targetXY = e.xy; 
 
-            this.resize();
-            this.emit('changeRadius')            
+            this.resize();      
         }
 
     }

@@ -96,20 +96,17 @@ export default class LayerSampleList extends UIElement {
         var newLayer = this.list[index];
 
         if (newLayer) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.dispatch('/item/addCache', newLayer, layer.id );
             })
-
         }
-
-
     }    
 
     'click $el .layer-cached-item .add-item' (e) {
         var newLayer = this.read('/storage/layers', e.$delegateTarget.attr('data-sample-id'));
         
         if (newLayer) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.dispatch('/item/addCache', newLayer, layer.id );
             })            
         }
@@ -121,7 +118,7 @@ export default class LayerSampleList extends UIElement {
     }    
 
     'click $el .add-current-layer' (e) {
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             var newLayer = this.read('/collect/layer/one', layer.id)
 
             this.dispatch('/storage/add/layer', newLayer);

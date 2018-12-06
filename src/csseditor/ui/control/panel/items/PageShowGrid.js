@@ -1,4 +1,5 @@
 import UIElement from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class PageShowGrid extends UIElement {
     template () {
@@ -20,18 +21,18 @@ export default class PageShowGrid extends UIElement {
         this.refresh()
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }    
 
     refresh() {
-        this.read('/item/current/page', (item) => {
+        this.read('/selection/current/page', (item) => {
             this.refs.$check.el.checked = this.read('/tool/get', 'show.grid');
         })        
     }
 
     'click $check' () {
-        this.read('/item/current/page', (item) => {
+        this.read('/selection/current/page', (item) => {
             this.dispatch('/tool/set', 'show.grid', this.refs.$check.el.checked)
         })
     }

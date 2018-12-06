@@ -6,6 +6,7 @@ import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
 import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
 import { parseParamNumber } from '../../../util/filter/functions';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE, CHANGE_SELECTION } from '../../types/event';
 
 
 export default class GradientView extends BaseTab {
@@ -26,7 +27,8 @@ export default class GradientView extends BaseTab {
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
                         <PredefinedLayerResizer></PredefinedLayerResizer>                        
-                        <MoveGuide></MoveGuide>                          
+                        <MoveGuide></MoveGuide>     
+                        <div ref="$dragArea"></div>                     
                     </div>          
                 </div>
  
@@ -47,7 +49,7 @@ export default class GradientView extends BaseTab {
     }
 
     'load $colorview' () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) {
             return ''; 
@@ -79,6 +81,14 @@ export default class GradientView extends BaseTab {
         }
     }
 
+    refreshLayer () {
+        this.read('/selection/current/layer', (item) => {
+            var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
+            $el.cssText(this.read('/layer/toString', item, true))
+            $el.html(this.read('/layer/toStringClipPath', item))
+        })
+    }
+
     makePageCSS (page) {
         return {
             overflow: page.clip ? 'hidden' : '',
@@ -89,9 +99,10 @@ export default class GradientView extends BaseTab {
  
     setBackgroundColor() {
 
-        var page = this.read('/item/current/page');
+        var page = this.read('/selection/current/page');
 
-        var pageCSS = this.makePageCSS(page);
+        var pageCSS = this.makePageCSS(page || {clip: false});
+
         var canvasCSS = {
             width: 2000 + 'px',
             height: 2000 + 'px'
@@ -124,7 +135,7 @@ export default class GradientView extends BaseTab {
             this.hasScroll = true; 
         }
 
-        var item = this.read('/item/current/page')
+        var item = this.read('/selection/current/page')
 
         this.refs.$page.toggle(item)
 
@@ -139,7 +150,36 @@ export default class GradientView extends BaseTab {
 
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_PAGE_SIZE] () {
+        this.setBackgroundColor()
+    }
+
+    [EVENT_CHANGE_PAGE] () {
+        this.setBackgroundColor();
+    }
+
+    // indivisual layer effect 
+    [EVENT_CHANGE_LAYER] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_CLIPPATH] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_FILTER] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_POSITION] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_RADIUS] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_SIZE] (newValue) { this.refresh(); }
+    [EVENT_CHANGE_LAYER_TRANSFORM] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_TRANSFORM_3D] (newValue) { this.refreshLayer(); }
+
+    [EVENT_CHANGE_IMAGE] (newValue) { this.refreshLayer() }
+    [EVENT_CHANGE_IMAGE_COLOR] (newValue) { this.refreshLayer() }
+    [EVENT_CHANGE_IMAGE_ANGLE] (newValue) { this.refreshLayer() }
+    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] (newValue) { this.refreshLayer() }
+    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] (newValue) { this.refreshLayer() }
+    [EVENT_CHANGE_IMAGE_RADIAL_TYPE] (newValue) { this.refreshLayer() }
+
+    [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refreshLayer() }
+
+    // all effect 
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh();
     }
 
@@ -155,13 +195,17 @@ export default class GradientView extends BaseTab {
     'click $page .layer | self' (e) {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
-            this.run('/item/select/mode', 'layer')
-            this.dispatch('/item/select', id);
+            this.dispatch('/selection/one', id);
+            this.emit(CHANGE_SELECTION)
         }
     }
 
     selectPageMode () {
-        this.dispatch('/item/select/mode', 'page')    
+        
+        if (!this.dragArea) {
+            this.dispatch('/selection/change', ITEM_TYPE_PAGE) ;
+        }
+
     }
 
 
@@ -178,57 +222,6 @@ export default class GradientView extends BaseTab {
         this.selectPageMode()
     }
 
-    /*
-    'click $colorview' (e) {
-
-        this.read('/item/current/layer', layer => {
-            this.dispatch('/item/select', layer.id);
-            this.refresh();
-        })
-    } */
-
-
-    updatePosition (style1 = {}, style2 = {}) {
-        let style = Object.assign({}, style1, style2);
-
-        Object.keys(style).forEach(key => {
-            style[key] = style[key] + 'px' 
-        })
-
-        var item = Object.assign(this.layer, style);
-        this.run('/item/set', item);
-
-        var list = this.read('/guide/snap/layer', item, 3);
-        // var {x, y} = item  
-        if (list.length) {
-
-            var [newX, newY] = list
-
-            if (typeof newX != 'undefined') {
-                item.x = newX + 'px';
-            }
-
-            if (typeof newY != 'undefined') {
-                item.y = newY + 'px';
-            }
-        }
-        this.$layer.css({
-            left: item.x,
-            top: item.y
-        })
-
-        this.dispatch('/item/set', item);
-        this.refresh(true); 
-    }
-
-
-    moveXY (dx, dy) {
-        var x = this.moveX + dx; 
-        var y = this.moveY + dy; 
-        this.updatePosition({x, y})
-    }    
-
-
     isDownCheck () {
         return this.isDown
     }
@@ -237,36 +230,78 @@ export default class GradientView extends BaseTab {
         return !this.isDown
     }
 
-    'pointerstart $page .layer | isNotDownCheck' (e) {
+    isPageMode () {
+        return this.read('/selection/is/page');
+    }
+
+    'pointerstart $canvas | isPageMode | isNotDownCheck' (e) {
+
         this.isDown = true; 
         this.xy = e.xy;
-        this.$layer = e.$delegateTarget;
-        this.layer = this.read('/item/get', e.$delegateTarget.attr('item-layer-id'))
-        this.moveX = parseParamNumber(this.layer.x || '0px')
-        this.moveY = parseParamNumber(this.layer.y || '0px')
+        var x = this.xy.x;
+        var y = this.xy.y;
+        this.dragArea = true;
+        this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: 0px;height:0px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`)
+        this.refs.$dragArea.show();
+    }     
+    
+    'pointermove document | isPageMode | isNotLayerCheck | isDownCheck' (e) {
+        if (!this.xy) return;         
+        // this.refs.$page.addClass('moving');
+        this.targetXY = e.xy;
 
-        this.dispatch('/item/select', this.layer.id)
+
+        var width = Math.abs(this.targetXY.x - this.xy.x)
+        var height = Math.abs(this.targetXY.y - this.xy.y)
+
+        var offset = this.refs.$board.offset();
+
+        var x = Math.min(this.targetXY.x, this.xy.x) + this.refs.$board.scrollLeft() - offset.left;
+        var y = Math.min(this.targetXY.y, this.xy.y) + this.refs.$board.scrollTop() - offset.top;
+        this.dragArea = true;
+        this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: ${width}px;height:${height}px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`);
+
+
     }    
 
-    'pointermove document | isDownCheck' (e) {
-        this.refs.$page.addClass('moving');
-        this.targetXY = e.xy;
-        this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y)
+    'pointerend document | isPageMode | isNotLayerCheck | isDownCheck' (e) {
+        this.isDown = false; 
+
+        if (!this.xy) return; 
+        if (!this.targetXY) return; 
+
+        var width = Math.abs(this.targetXY.x - this.xy.x)
+        var height = Math.abs(this.targetXY.y - this.xy.y)
+
+        var po = this.refs.$page.offset();
+
+        var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
+        var y = Math.min(this.targetXY.y, this.xy.y) - po.top;
+
+        
+
+        this.run('/selection/change', 'layer');
+        this.dispatch('/selection/area', {x, y, width, height})
+
+        this.refs.$dragArea.px('width', 0);
+        this.refs.$dragArea.px('height', 0);
+        setTimeout(() => {
+            this.dragArea = false;
+            this.refs.$dragArea.hide();
+        }, 100);
+    }    
+
+    isLayerCheck () {
+        return this.isLayer;
+    }
+
+    isNotLayerCheck () {
+        return !this.isLayer;
     }
 
 
     isNotFirstPosition (e) {
         return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y     
     }     
-
-    'pointerend document | isDownCheck' (e) {
-        this.isDown = false; 
-        this.layer = null;
-        this.refs.$page.removeClass('moving');        
-
-        if (this.isNotFirstPosition(e)) {
-            this.dispatch('/history/push', 'Move a layer');
-        }
-    }
 
 }

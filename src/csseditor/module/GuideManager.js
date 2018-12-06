@@ -33,7 +33,6 @@ export default class GuideManager extends BaseModule {
         var list = $store.read('/guide/line/layer', dist);
         var x, y;
         if (list.length) {
-
             var height = parseParamNumber(layer.height)
             var width = parseParamNumber(layer.width)
             var topY = Math.min(...list.filter(it => it.align == 'top').map(it => it.y))
@@ -71,7 +70,7 @@ export default class GuideManager extends BaseModule {
 
     '*/guide/line/layer' ($store , dist = MAX_DIST, selectedId = '') {
 
-        var page = $store.read('/item/current/page');
+        var page = $store.read('/selection/current/page');
 
         if (!page) return []
         if (page.selected) return []
@@ -95,14 +94,28 @@ export default class GuideManager extends BaseModule {
 
             if (selectedId == item.id) {
                 selectedItem = newItem
-            } else if (item.selected) {
+            } else if ($store.read('/selection/check', item.id)) {
                 selectedItem = newItem
             } else {
                 list[index++] = newItem
             }
         })
 
-        lastIndex = index; 
+        list.forEach(it => {
+            var distance = Math.sqrt(
+                Math.pow(it.centerX - selectedItem.centerX,2) + 
+                Math.pow(it.centerY - selectedItem.centerY,2)
+            )
+
+            it.distance = distance
+        })
+
+        list.sort( (a, b) => {
+            if (a.distance == b.distance ) return 0; 
+            return a.distance > b.distance ? 1 : -1; 
+        })
+
+        lastIndex = 3; 
         
         return $store.read('/guide/paths', dist); 
     }

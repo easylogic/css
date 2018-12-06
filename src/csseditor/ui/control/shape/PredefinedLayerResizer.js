@@ -7,6 +7,7 @@ import LayerRotate from './item/LayerRotate';
 import Radius from './item/Radius';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import LayerRadius from './item/LayerRadius';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_SELECTION } from '../../../types/event';
 
 export default class PredefinedLayerResizer extends UIElement {
 
@@ -56,7 +57,7 @@ export default class PredefinedLayerResizer extends UIElement {
         this.$el.toggle(isShow)
 
         if (isShow) {
-        this.setPosition()
+            this.setPosition()
         }
     }
 
@@ -65,18 +66,14 @@ export default class PredefinedLayerResizer extends UIElement {
         var valueList = list.filter(it => it.align == align).map(it => it[key])
 
         if (valueList.length) {
-            return Math.max(  Number.MIN_SAFE_INTEGER,  ...valueList ) + unit  
+            return Math.max(  Number.MIN_SAFE_INTEGER,  ...valueList )
         }
 
         return undefined;
     }    
 
-    setPosition () {
-        var layer = this.read('/item/current/layer')
+    setRectangle ({x, y, width, height, id}) {
 
-        if (!layer) return; 
-
-        var {x, y, width, height} = layer; 
         var boardOffset = this.boardOffset || this.$board.offset()
         var pageOffset = this.pageOffset || this.$page.offset()
         var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
@@ -85,33 +82,51 @@ export default class PredefinedLayerResizer extends UIElement {
         x = parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) + 'px'; 
         y = parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) + 'px'; 
 
+        var transform = "none"; 
+        
+        if (id) {
+            transform = this.read('/layer/make/transform', this.read('/item/get', id));
+        }
+
         this.$el.css({ 
             width, height, 
             left: x, top: y, 
-            transform: this.read('/layer/make/transform', layer)
+            transform
         })
+    }
 
-        var rotate = layer.rotate || 0
+    setPosition () {
 
-        if (rotate == 0) {
-            this.refs.$buttonGroup.show()
+        if (this.read('/selection/is/group')) {
+            this.setRectangle(this.read('/selection/rect'));
         } else {
-            this.refs.$buttonGroup.hide()
+            if (this.read('/selection/is/layer')) {
+                this.setRectangle(this.read('/selection/rect'));
+            }
         }
+
     }
 
     isShow () {
-        return !this.read('/item/is/mode', 'page');
+        if (this.read('/selection/is/group') && this.read('/selection/is/empty')) {
+            return false; 
+        }
+
+        return !this.read('/selection/is/page');
     }
 
-    '@changeEditor' () { this.refresh(); }
+    [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refresh() }
+    [EVENT_CHANGE_LAYER_SIZE] () {this.refresh()}
+    [EVENT_CHANGE_LAYER_POSITION] () {this.refresh()}
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
 
     caculateRightSize (item, list) {
         var x = this.caculatePosition(list, 'x', 'right')
 
         if (typeof x != 'undefined') {
             var newWidth = Math.abs(this.moveX - parseParamNumber(x))
-            item.width = newWidth + 'px'; 
+            item.width = newWidth; 
         }
     }
 
@@ -122,7 +137,7 @@ export default class PredefinedLayerResizer extends UIElement {
             var newWidth = this.width + (this.moveX - parseParamNumber(x))
 
             item.x = x 
-            item.width = newWidth + 'px'; 
+            item.width = newWidth; 
         }
     }
 
@@ -131,7 +146,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
         if (typeof y != 'undefined') {
             var newHeight = Math.abs(this.moveY - parseParamNumber(y));
-            item.height = newHeight + 'px'; 
+            item.height = newHeight; 
         }
     }
 
@@ -142,7 +157,7 @@ export default class PredefinedLayerResizer extends UIElement {
             var newHeight = this.height + (this.moveY - parseParamNumber(y))
 
             item.y = y 
-            item.height = newHeight + 'px'; 
+            item.height = newHeight; 
         }
     }
 
@@ -172,7 +187,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
     caculateSnap (item) {
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
         if (!layer) return item; 
         var list = this.read('/guide/line/layer', 3, layer.id);
 
@@ -183,27 +198,30 @@ export default class PredefinedLayerResizer extends UIElement {
         return item; 
     }
 
-    updatePosition (style1 = {}, style2 = {}) { 
+    updatePosition (items) { 
 
-        let style = Object.assign({}, style1, style2);
+        if (items.length == 1) {
+            items[0] = this.caculateSnap(items[0])    
+            this.caculateActiveButtonPosition(items[0]);
+        }
 
-        Object.keys(style).forEach(key => {
-            style[key] = style[key] + 'px' 
+        items.forEach(item => {
+            this.run('/item/set', {
+                id: item.id,
+                x: item.x + 'px',
+                y: item.y + 'px',
+                width: item.width + 'px',
+                height: item.height + 'px'
+            });
         })
 
-        var item = this.read('/item/current/layer')
 
-        item = Object.assign(item, style);
-
-        item = this.caculateSnap(item)
-
-        this.caculateActiveButtonPosition(item);
-        this.dispatch('/item/set', item);
+        this.emit(CHANGE_LAYER_SIZE);
         this.setPosition();
     }
 
     caculateActiveButtonPosition (item) {
-
+        if (!this.activeButton) return;
         var value = this.activeButton.attr('data-value')
         var position = [] 
         var x = parseParamNumber(item.x), y = parseParamNumber(item.y);
@@ -231,85 +249,163 @@ export default class PredefinedLayerResizer extends UIElement {
     }
 
 
-    toRight () {
+    toRight (item) {
         var dx = this.targetXY.x - this.xy.x;
 
         if (dx < 0 && Math.abs(dx) > this.width) {
-            var width = Math.abs(dx) - this.width; 
-            var x = this.moveX  - width;  
-            return { x, width} 
+            // var width = Math.abs(dx) - this.width; 
+            // var x = this.moveX  - width;  
+            // return { x, width} 
         } else {
-            var width = this.width + dx;   
-            return { width}
+            item.width += dx;   
+
         }
     }
 
-    toLeft () {
+    toLeft (item) {
         // top + height 
         var dx = this.xy.x - this.targetXY.x;
-        var x = this.moveX - dx 
-        var width = this.width + dx; 
 
         if (dx < 0 && Math.abs(dx) > this.width) {
-            var width = Math.abs(dx) - this.width; 
-            var x = this.moveX  + this.width;  
-            return { x, width} 
+            // var width = Math.abs(dx) - this.width; 
+            // var x = this.moveX  + this.width;  
+            // return { x, width} 
         } else {
-            var x = this.moveX - dx 
-            var width = this.width + dx; 
-            return { x, width }
+            item.x -= dx 
+            item.width += dx; 
         }
     }    
 
-    toBottom () {
+    toBottom (item) {
         var dy = this.targetXY.y - this.xy.y;
 
         if (dy < 0 && Math.abs(dy) > this.height) {
-            var height = Math.abs(dy) - this.height; 
-            var y = this.moveY  - height;  
-            return { y, height} 
+            // var height = Math.abs(dy) - this.height; 
+            // var y = this.moveY  - height;  
+            // return { y, height} 
         } else {
-            var height = this.height + dy;   
-            return { height}
+            item.height += dy;   
         }
     }    
 
-    toTop () {
+    toTop (item) {
         var dy = this.xy.y - this.targetXY.y;
         
         if (dy < 0 && Math.abs(dy) > this.height) {
-            var height = Math.abs(dy) - this.height; 
-            var y = this.moveY  + this.height;  
 
-            return { y, height} 
         } else {
-            var y = this.moveY - dy 
-            var height = this.height + dy; 
-
-            return { y, height }
+            item.y -= dy 
+            item.height += dy; 
         }  
+
     }        
 
     resizeComponent () {
-
+        var items = this.read('/clone', this.rectItems);
         if (this.currentType == 'to top') {
-            this.updatePosition(this.toTop())
+            items.forEach(item => { this.toTop(item) })
+            this.updatePosition(items)
         } else if (this.currentType == 'to bottom') {
-            this.updatePosition(this.toBottom())
+            items.forEach(item => { this.toBottom(item) })
+            this.updatePosition(items)
         } else if (this.currentType == 'to right') {
-            this.updatePosition(this.toRight())            
+            items.forEach(item => { this.toRight(item) })
+            this.updatePosition(items)
         } else if (this.currentType == 'to left') {
-            this.updatePosition(this.toLeft())   
+            items.forEach(item => { this.toLeft(item) })
+            this.updatePosition(items)
         } else if (this.currentType == 'to bottom left') {
-            this.updatePosition(this.toBottom(), this.toLeft())
+            items.forEach(item => { this.toBottom(item) })
+            items.forEach(item => { this.toLeft(item) })
+            this.updatePosition(items)       
         } else if (this.currentType == 'to bottom right') {
-            this.updatePosition(this.toBottom(), this.toRight())
+            items.forEach(item => { this.toBottom(item) })
+            items.forEach(item => { this.toRight(item) })
+            this.updatePosition(items)       
         } else if (this.currentType == 'to top right') {
-            this.updatePosition(this.toTop(), this.toRight())
+            items.forEach(item => { this.toTop(item) })
+            items.forEach(item => { this.toRight(item) })
+            this.updatePosition(items)       
         } else if (this.currentType == 'to top left') {
-            this.updatePosition(this.toTop(), this.toLeft())
+            items.forEach(item => { this.toTop(item) })
+            items.forEach(item => { this.toLeft(item) })
+            this.updatePosition(items)       
         }
     }
+
+
+    /* position drag */ 
+
+    isPositionDragCheck () {
+        return this.isPositionDrag;
+    }
+
+    isNotPositionDragCheck () {
+        return !this.isPositionDrag;
+    }    
+
+    'pointerstart $el | isNotPositionDragCheck' (e) {
+        this.isPositionDrag = true; 
+        this.xy = e.xy;
+        var rect = this.read('/selection/rect')
+
+        this.xy = e.xy;
+        this.rect = rect
+        this.xRectItems = this.read('/selection/ids').map(id => this.read('/item/get', id)).map(it => {
+            return {
+                id: it.id,
+                x: parseParamNumber(it.x),
+                y: parseParamNumber(it.y),
+                width: parseParamNumber(it.width),
+                height: parseParamNumber(it.height)
+            }
+        })
+        this.rectItems = this.read('/clone', this.xRectItems)
+        this.moveX = parseParamNumber(rect.x)
+        this.moveY = parseParamNumber(rect.y)    
+    }   
+    
+    isLayerCheck () {
+        return this.isLayer;
+    }
+
+    isNotLayerCheck () {
+        return !this.isLayer;
+    }
+
+    moveXY (dx, dy) {
+        var items = this.read('/clone', this.rectItems);
+
+        items.forEach(item => {
+            item.y += dy;
+            item.x += dx;
+        })
+
+        this.emit(CHANGE_LAYER_SIZE);
+        this.updatePosition(items);
+    }
+
+    'pointermove document | isPositionDragCheck' (e) {
+        this.targetXY = e.xy;
+        this.moveXY(this.targetXY.x - this.xy.x, this.targetXY.y - this.xy.y)
+    }
+
+
+    isNotFirstPosition (e) {
+        return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y     
+    }     
+
+    'pointerend document | isPositionDragCheck' (e) {
+        this.isPositionDrag = false; 
+        this.rect = null;
+
+        if (this.isNotFirstPosition(e)) {
+            this.dispatch('/history/push', 'Move a layer');
+        }
+    }
+
+
+    /* size drag  */
 
     isNotDownCheck () {
         return !this.xy;
@@ -319,20 +415,30 @@ export default class PredefinedLayerResizer extends UIElement {
         return this.xy; 
     }
 
-    'pointerstart $el [data-value] | isNotDownCheck' (e) {
-        var layer = this.read('/item/current/layer')
-        if (!layer) return; 
+    'pointerstart $buttonGroup [data-value] | isNotDownCheck' (e) {
+        e.preventDefault();
+        var rect = this.read('/selection/rect')
 
         this.activeButton = e.$delegateTarget;
         this.activeButton.addClass('active');
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;
-        this.layer = layer
-        this.width = parseParamNumber(layer.width) 
-        this.height = parseParamNumber(layer.height)
-        this.moveX = parseParamNumber(layer.x)
-        this.moveY = parseParamNumber(layer.y)
+        this.rect = rect
+        this.xRectItems = this.read('/selection/ids').map(id => this.read('/item/get', id)).map(it => {
+            return {
+                id: it.id,
+                x: parseParamNumber(it.x),
+                y: parseParamNumber(it.y),
+                width: parseParamNumber(it.width),
+                height: parseParamNumber(it.height)
+            }
+        })
+        this.rectItems = this.read('/clone', this.xRectItems)
+        this.width = parseParamNumber(rect.width) 
+        this.height = parseParamNumber(rect.height)
+        this.moveX = parseParamNumber(rect.x)
+        this.moveY = parseParamNumber(rect.y)
 
         this.boardOffset = this.$board.offset()
         this.pageOffset = this.$page.offset()
@@ -342,6 +448,7 @@ export default class PredefinedLayerResizer extends UIElement {
     }
 
     'pointermove document | isDownCheck' (e) {
+        e.preventDefault();        
         this.targetXY = e.xy; 
         this.$page.addClass('moving')
 
@@ -351,6 +458,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
 
     'pointerend document | isDownCheck' (e) {
+        e.preventDefault();        
         if (this.activeButton) {
             this.activeButton.removeClass('active')
         }

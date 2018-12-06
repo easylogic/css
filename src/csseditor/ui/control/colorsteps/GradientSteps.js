@@ -1,6 +1,14 @@
 import UIElement from '../../../../colorpicker/UIElement';
 import Dom from '../../../../util/Dom';
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from '../../../../util/filter/functions';
+import { 
+    CHANGE_COLOR_STEP, 
+    REMOVE_COLOR_STEP, 
+    ADD_COLOR_STEP, 
+    EVENT_CHANGE_COLOR_STEP, 
+    EVENT_CHANGE_EDITOR,
+    EVENT_CHANGE_SELECTION
+} from '../../../types/event';
 
 export default class GradientSteps extends UIElement {
 
@@ -30,13 +38,6 @@ export default class GradientSteps extends UIElement {
 
         return min + (max - min) * (step.percent / 100);
     }
-
-    '@step/position' (step, callback) {
-        if (typeof callback == 'function') {
-            callback (this.getStepPosition(step));
-        }
-    }
-
 
     getUnitName (step) {
         var unit = step.unit || 'percent'
@@ -71,7 +72,7 @@ export default class GradientSteps extends UIElement {
 
     // load 후에 이벤트를 재설정 해야한다. 
     'load $stepList' () {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
 
         if (!item) return '';
 
@@ -102,13 +103,17 @@ export default class GradientSteps extends UIElement {
 
     isShow() {
 
-        var item = this.read('/item/current');
+        var item = this.read('/selection/current');
+
+        if (!item.length) return false; 
+
+        item = item[0];
 
         if (!this.read('/image/type/isGradient', item.type)) {
             return false; 
         }
 
-        if (!this.read('/item/is/mode', 'image')) {
+        if (!this.read('/selection/is/image')) {
             return false; 
         }
 
@@ -120,7 +125,7 @@ export default class GradientSteps extends UIElement {
         this.$el.toggle(this.isShow())
 
 
-        this.read('/item/current/image', item => {
+        this.read('/selection/current/image', item => {
             var type = item ? item.type : '' 
     
             if (this.read('/image/type/isGradient', type)) {
@@ -139,7 +144,7 @@ export default class GradientSteps extends UIElement {
 
         this.refs.$stepList.css(
             'background-image', 
-            this.read('/image/toLinearRight', this.read('/item/current/image'))
+            this.read('/image/toLinearRight', this.read('/selection/current/image'))
         )
 
     }
@@ -188,16 +193,18 @@ export default class GradientSteps extends UIElement {
 
             if (item) {
 
-                item.px = px; 
-                item.percent = Math.floor(px2percent(px, max - min));
-                item.em = px2em(px, max- min);
+                // item.px = px; 
+                var percent = Math.floor(px2percent(px, max - min));
+                var em = px2em(px, max- min);
+                var newValue = {id: item.id, px, percent, em}
 
-                this.currentUnitPercent.val(item.percent);
-                this.currentUnitPx.val(item.px);
-                this.currentUnitEm.val(item.em);
+                this.currentUnitPercent.val(percent);
+                this.currentUnitPx.val(px);
+                this.currentUnitEm.val(em);
 
-                this.dispatch('/item/set', item);
-                this.dispatch('/colorstep/sort', item.id, this.getSortedStepList());                
+                this.run('/item/set', newValue);
+                this.run('/colorstep/sort', newValue.id, this.getSortedStepList());
+                this.commit(CHANGE_COLOR_STEP, newValue);
                 this.setBackgroundColor();
             }
         }
@@ -205,7 +212,7 @@ export default class GradientSteps extends UIElement {
 
     '@changeColor' () {
 
-        if (this.read('/image/isNotGradientType', this.read('/item/current/image'))) return;
+        if (this.read('/image/isNotGradientType', this.read('/selection/current/image'))) return;
         if (this.read('/tool/colorSource') !=  this.read('/colorstep/colorSource')) return; 
 
         if (this.currentStep) {
@@ -213,19 +220,19 @@ export default class GradientSteps extends UIElement {
             var item = this.read('/item/get', this.currentStep.attr('id'))
 
             if (item) {
-                var rgb = this.read('/tool/get', 'color');
-                item.color = rgb ;
+                var color = this.read('/tool/get', 'color');
+                var newValue = {id: item.id, color} ;
 
-                this.dispatch('/item/set', item);
+                this.commit(CHANGE_COLOR_STEP, newValue);
                 this.refresh();
             }
         }
 
     }    
 
-    '@changeEditor' () {
-        this.refresh()
-    }
+    [EVENT_CHANGE_COLOR_STEP] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
 
     'checkTarget' (e) {
         return this.refs.$back.is(e.target)
@@ -241,7 +248,8 @@ export default class GradientSteps extends UIElement {
 
         var id = e.$delegateTarget.attr('id')
 
-        this.dispatch('/colorstep/remove', id);
+        this.run('/colorstep/remove', id);
+        this.emit(REMOVE_COLOR_STEP, id);
         this.run('/history/push', 'Remove colorstep');        
         this.refresh();
     }
@@ -253,11 +261,12 @@ export default class GradientSteps extends UIElement {
 
         var percent = Math.floor((current - min) / (max - min) * 100)
 
-        var item = this.read('/item/current/image');
+        var item = this.read('/selection/current/image');
 
         if (!item) return; 
 
         this.dispatch('/colorstep/add', item, percent);
+        this.emit(ADD_COLOR_STEP, item, percent);
         this.run('/history/push', 'Add colorstep');
         this.refresh()
     }
@@ -316,8 +325,9 @@ export default class GradientSteps extends UIElement {
         var item = this.read('/item/get', id);
 
         if (item.id) {
-            item.cut = !item.cut;
-            this.dispatch('/item/set', item);
+            // var cut = !item.cut;
+            var newValue = {id: item.id, cut : !item.cut}
+            this.commit(CHANGE_COLOR_STEP, newValue)
             this.run('/history/push', 'Apply cut option');        
 
             this.refresh();
@@ -336,9 +346,9 @@ export default class GradientSteps extends UIElement {
             step.unit = unit;
 
             var unitValue = this.read('/colorstep/unit/value',step, this.getMaxValue());
-            Object.assign(step, unitValue);
-
-            this.dispatch('/item/set', step)            
+            var newValue = {id: step.id, unit, ...unitValue}
+  
+            this.commit(CHANGE_COLOR_STEP, newValue);
 
             var $parent = e.$delegateTarget.parent();
             $parent.removeClass('percent', 'px', 'em').addClass(this.getUnitName(step));
@@ -347,10 +357,10 @@ export default class GradientSteps extends UIElement {
 
 
     'input $steps input.percent' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
 
         var percent = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
@@ -358,25 +368,29 @@ export default class GradientSteps extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.percent = percent; 
-            step.px = percent2px(percent, this.getMaxValue(layer) );
-            step.em = percent2em(percent, this.getMaxValue(layer) );
 
-            this.currentStepBox.px('left', step.px)                
+            var newValue = {
+                id: step.id,
+                percent,
+                px: percent2px(percent, this.getMaxValue(layer) ),
+                em: percent2em(percent, this.getMaxValue(layer) )
+            }
+
+            this.currentStepBox.px('left', newValue.px)                
             // this.currentUnitPercent.val(item.percent);
-            this.currentUnitPx.val(step.px);
-            this.currentUnitEm.val(step.em);
+            this.currentUnitPx.val(newValue.px);
+            this.currentUnitEm.val(newValue.em);
 
-            this.dispatch('/item/set', step)   
+            this.commit(CHANGE_COLOR_STEP, newValue);
             this.setBackgroundColor();         
         }
     }
 
     'input $steps input.px' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
 
         var px = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
@@ -384,25 +398,28 @@ export default class GradientSteps extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.px = px; 
-            step.percent = px2percent(px, this.getMaxValue(layer));
-            step.em = px2em(px, this.getMaxValue(layer));
+            var newValue = {
+                id: step.id,
+                px,
+                percent: px2percent(px, this.getMaxValue(layer)),
+                em: px2em(px, this.getMaxValue(layer))
+            }
 
-            this.currentStepBox.px('left', step.px)                
-            this.currentUnitPercent.val(step.percent);
+            this.currentStepBox.px('left', newValue.px)                
+            this.currentUnitPercent.val(newValue.percent);
             // this.currentUnitPx.val(item.px);
-            this.currentUnitEm.val(step.em);
+            this.currentUnitEm.val(newValue.em);
 
-            this.dispatch('/item/set', step)    
+            this.commit(CHANGE_COLOR_STEP, newValue);
             this.setBackgroundColor();                    
         }
     }
     
     'input $steps input.em' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/item/current/layer');        
+        var layer = this.read('/selection/current/layer');        
 
         var em = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
@@ -410,16 +427,19 @@ export default class GradientSteps extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.em = em; 
-            step.percent = em2percent(em, this.getMaxValue(layer));
-            step.px = em2px(em, this.getMaxValue(layer));   
+            var newValue = {
+                id: step.id, 
+                em, 
+                percent: em2percent(em, this.getMaxValue(layer)),
+                px: em2px(em, this.getMaxValue(layer))
+            }
             
-            this.currentStepBox.px('left', step.px)                
-            this.currentUnitPercent.val(step.percent);
-            this.currentUnitPx.val(step.px);
+            this.currentStepBox.px('left', newValue.px)                
+            this.currentUnitPercent.val(newValue.percent);
+            this.currentUnitPx.val(newValue.px);
             // this.currentUnitEm.val(item.em);
         
-            this.dispatch('/item/set', step)   
+            this.commit(CHANGE_COLOR_STEP, newValue);
             this.setBackgroundColor();         
         }
     }        

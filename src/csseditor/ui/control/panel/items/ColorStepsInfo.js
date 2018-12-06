@@ -1,5 +1,6 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import GradientInfo from "../../colorsteps/GradientInfo";
+import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class ColorStepsInfo extends UIElement {
     template () {
@@ -20,12 +21,12 @@ export default class ColorStepsInfo extends UIElement {
         this.$el.toggle(this.isShow())
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     isShow () {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
 
         if (!item) return false; 
 

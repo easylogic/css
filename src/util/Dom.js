@@ -237,7 +237,11 @@ export default class Dom {
     }
 
     cssText (value) {
-        this.el.cssText = value.split(';').map(it => it.trim()).join(';');
+        if (typeof value == 'undefined')  {
+            return this.el.style.cssText;
+        }
+
+        this.el.style.cssText = value.split(';').map(it => it.trim()).join(';');
 
         return this; 
     }

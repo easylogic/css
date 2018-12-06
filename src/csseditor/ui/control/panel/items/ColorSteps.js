@@ -1,5 +1,6 @@
 import GradientSteps from "../../colorsteps/GradientSteps";
 import BasePropertyItem from "./BasePropertyItem";
+import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class ColorSteps extends BasePropertyItem {
     template () {
@@ -21,12 +22,12 @@ export default class ColorSteps extends BasePropertyItem {
         this.$el.toggle(this.isShow())
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     isShow () {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
 
         if (!item) return false; 
 

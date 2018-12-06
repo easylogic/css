@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
+import { EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class Size extends BasePropertyItem {
     template () {
@@ -39,15 +40,25 @@ export default class Size extends BasePropertyItem {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_LAYER_POSITION] () {
+        this.refresh()
+    }
+
+    [EVENT_CHANGE_LAYER_SIZE] () {
+        this.refresh();
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        var item = this.read('/item/current')
+        var item = this.read('/selection/current')
+        if (!item) return; 
+        if (!item.length) return; 
 
-        if (!item) reutrn; 
-        if (item.itemType == 'image') return; 
+        item = item[0];
+        if (this.read('/selection/is/image')) return; 
         if (item.width) {
             this.refs.$width.val(parseParamNumber(item.width))
         }
@@ -67,43 +78,47 @@ export default class Size extends BasePropertyItem {
     }
 
     'click $rect' (e) {
-        var item = this.read('/item/current')
 
-        if (!item) reutrn; 
-        if (item.itemType == 'image') return; 
+        this.read('/selection/current/layer/id', (id) => {
+            
+            var width = this.refs.$width.int() + 'px'
+            var height = width;
 
+            this.commit(CHANGE_LAYER_SIZE, {id, width, height});
+        })
 
-        item.width = this.refs.$width.int() + 'px'
-        item.height = item.width; 
-        this.dispatch('/item/set', item)
     }
 
     'input $width' () {
-        this.read('/item/current/layer', (item) => {
-            item.width = this.refs.$width.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer/id', (id) => {
+            
+            var width = this.refs.$width.int() + 'px'
+
+            this.commit(CHANGE_LAYER_SIZE, {id, width});
         })        
     }
 
     'input $height' () {
-        this.read('/item/current/layer', (item) => {
-            item.height = this.refs.$height.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer/id', (id) => {
+            
+            var height = this.refs.$height.int() + 'px'
+
+            this.commit(CHANGE_LAYER_SIZE, {id, height});
         })        
     }    
 
 
     'input $x' () {
-        this.read('/item/current/layer', (item) => {
-            item.x = this.refs.$x.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer/id', (id) => {
+            var x = this.refs.$x.int() + 'px'
+            this.commit(CHANGE_LAYER_POSITION, {id, x});
         })
     }
 
     'input $y' () {
-        this.read('/item/current/layer', (item) => {
-            item.y = this.refs.$y.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer', (item) => {
+            var y = this.refs.$y.int() + 'px'
+            this.commit(CHANGE_LAYER_POSITION, {id: item.id, y});
         })
     }        
 }

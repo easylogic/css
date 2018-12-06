@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { CHANGE_LAYER_NAME, CHANGE_LAYER_CLASS_NAME, CHANGE_LAYER_ID, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class Name extends BasePropertyItem {
     template () {
@@ -29,12 +30,16 @@ export default class Name extends BasePropertyItem {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        var item = this.read('/item/current');
+        var item = this.read('/selection/current');
+
+        if (!item.length) return;
+
+        item = item[0];
         
         var name = '';
         var idString = '';
@@ -51,29 +56,20 @@ export default class Name extends BasePropertyItem {
     }
 
     'input $name' () {
-        var item = this.read('/item/current');
-
-        if (item) {
-            item.name = this.refs.$name.val();
-            this.dispatch('/item/set', item)
-        }
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_NAME , {id, name: this.refs.$name.val()});
+        });
     }
 
     'input $class' () {
-        var item = this.read('/item/current');
-
-        if (item) {
-            item.className = this.refs.$class.val();
-            this.dispatch('/item/set', item)
-        }
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_NAME , {id, className: this.refs.$class.val()});
+        });        
     }    
 
     'input $id' () {
-        var item = this.read('/item/current');
-
-        if (item) {
-            item.idString = this.refs.$id.val();
-            this.dispatch('/item/set', item)
-        }
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_NAME , {id, idString: this.refs.$id.val()});
+        });          
     }        
 }

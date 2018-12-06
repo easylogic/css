@@ -1,4 +1,5 @@
 import UIElement from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class CircleEditor extends UIElement {
 
@@ -23,7 +24,7 @@ export default class CircleEditor extends UIElement {
     }
 
     refreshPointer () {
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
 
             if (!layer.clipPathType) return;
             if (!layer.clipPathCenter) return;
@@ -40,7 +41,7 @@ export default class CircleEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read('/item/current/layer')
+        var item = this.read('/selection/current/layer')
 
         if (!item) return false; 
 
@@ -94,7 +95,7 @@ export default class CircleEditor extends UIElement {
 
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
@@ -117,7 +118,7 @@ export default class CircleEditor extends UIElement {
 
     'pointerstart $el' (e) {
         this.isDown = true; 
-        this.layer = this.read('/item/current/layer');
+        this.layer = this.read('/selection/current/layer');
         // this.refreshUI(e);        
     }    
     

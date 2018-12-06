@@ -1,6 +1,16 @@
 
 import ColorPicker from '../../../../../../colorpicker/index'
 import UIElement from '../../../../../../colorpicker/UIElement';
+import { 
+    EVENT_CHANGE_COLOR_STEP, 
+    CHANGE_LAYER_BACKGROUND_COLOR, 
+    CHANGE_COLOR_STEP, 
+    CHANGE_IMAGE_COLOR,
+    EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
+    EVENT_CHANGE_IMAGE , 
+    EVENT_CHANGE_EDITOR,
+    EVENT_CHANGE_SELECTION
+} from '../../../../../types/event';
 
 export default class ColorPickerLayer extends UIElement {
 
@@ -27,47 +37,58 @@ export default class ColorPickerLayer extends UIElement {
     }
 
     changeColor (color) {
-        var item = this.read('/item/current')
+        var item = this.read('/selection/current')
 
-        if (!item) return; 
+        if (!item.length) return; 
 
-        if (this.read('/item/is/mode', 'layer')) {
-            item.backgroundColor = color; 
-            this.dispatch('/item/set', item)
-        } else if (this.read('/item/is/mode', 'image')) {
+        item = item[0];
+
+        if (this.read('/selection/is/layer')) {
+            this.commit(CHANGE_LAYER_BACKGROUND_COLOR, {id: item.id, backgroundColor: color})
+
+        } else if (this.read('/selection/is/image')) {
             
             if (this.read('/image/type/isStatic', item.type)) {
-                item.color = color; 
-                this.dispatch('/item/set', item)
+                this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
             } else if (this.read('/image/type/isGradient',item.type)) {
 
                 this.read('/item/each/children', item.id, (step) => {
                     if (step.selected) {
-                        step.color = color; 
-                        this.dispatch('/item/set', step);
+                        this.commit(CHANGE_COLOR_STEP, {id: step.id, color})
                     }
                 })
             }
-        
         }
 
+    }
+
+    [EVENT_CHANGE_COLOR_STEP] (newValue) {
+        if (typeof newValue.color !== `undefined`) {
+            this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
+        }
     }
 
     '@changeColor' () {
         this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
     } 
 
-    '@changeEditor' () {
-        if (this.read('/item/is/mode', 'layer')) {
-            this.read('/item/current/layer', (layer) => {
+    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] () { this.refresh() }    
+    [EVENT_CHANGE_IMAGE] () { this.refresh() }    
+    // [EVENT_CHANGE_COLOR_STEP] () { this.refresh() }    
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }    
+
+    refresh() {
+        if (this.read('/selection/is/layer')) {
+            this.read('/selection/current/layer', (layer) => {
                 if (layer.backgroundColor) {
                     if (layer.backgroundColor.includes('rgb')) return;
                     this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
                 }
 
             })
-        } else if (this.read('/item/is/mode', 'image')) {
-            this.read('/item/current/image', (image) => {
+        } else if (this.read('/selection/is/image')) {
+            this.read('/selection/current/image', (image) => {
                 if (this.read('/image/type/isStatic', image.type)) {
                     this.colorPicker.initColorWithoutChangeEvent(image.color);
                 } else if (this.read('/image/type/isGradient', image.type)) {
@@ -76,6 +97,5 @@ export default class ColorPickerLayer extends UIElement {
             })
         }
     }
-
 
 }

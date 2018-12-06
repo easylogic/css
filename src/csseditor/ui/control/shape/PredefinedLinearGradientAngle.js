@@ -1,4 +1,5 @@
 import UIElement from '../../../../colorpicker/UIElement';
+import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_SELECTION} from '../../../types/event';
 
 
 export default class PredefinedLinearGradientAngle extends UIElement {
@@ -24,8 +25,8 @@ export default class PredefinedLinearGradientAngle extends UIElement {
 
 
     isShow () {
-        if (!this.read('/item/is/mode', 'image')) return false;         
-        var image = this.read('/item/current/image')
+        if (!this.read('/selection/is/image')) return false;         
+        var image = this.read('/selection/current/image')
 
         if (!image) { return false; }
 
@@ -36,17 +37,14 @@ export default class PredefinedLinearGradientAngle extends UIElement {
     }
 
     'click $el button | self' (e) {
-
-        this.read('/item/current/image', (item) => {
-            item.angle = e.$delegateTarget.attr('data-value'); 
-
-            this.dispatch('/item/set', item);
+        this.read('/selection/current/image/id', (id) => {
+            this.commit(CHANGE_IMAGE_LINEAR_ANGLE, {id, angle: e.$delegateTarget.attr('data-value')})
         })
-        
     }
 
-    '@changeEditor' () { this.refresh(); }
-
+    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
 
     '@changeTool' () {
         this.refresh();

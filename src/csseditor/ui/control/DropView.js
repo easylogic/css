@@ -33,7 +33,7 @@ export default class DropView extends UIElement {
         })
 
         if (dataList.length) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.read('/image/get/url', dataList, (img) => {
                     this.dispatch('/item/prepend/image/url', img, true, layer.id);
                 })
@@ -42,7 +42,7 @@ export default class DropView extends UIElement {
 
         var files = [...dataTransfer.files]; 
         if (files.length) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.read('/image/get/file', files, (img) => {
                     this.dispatch('/item/prepend/image/file', img, true, layer.id);
                 })
@@ -64,7 +64,7 @@ export default class DropView extends UIElement {
         })
 
         if (dataList.length) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.read('/image/get/url', dataList, (url) => {
                     this.dispatch('/item/prepend/image/url', url, true, layer.id);
                 })
@@ -73,7 +73,7 @@ export default class DropView extends UIElement {
 
         var files = [...dataTransfer.files]; 
         if (files.length) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer', (layer) => {
                 this.read('/image/get/file', files, (img) => {
                     this.dispatch('/item/prepend/image/file', img, true, layer.id);
                     this.refresh();

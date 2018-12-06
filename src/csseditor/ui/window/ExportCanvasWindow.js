@@ -148,7 +148,7 @@ export default class ExportCanvasWindow extends UIElement {
     }
 
     generateCode () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) {
             return {html: '', css : ''};  
@@ -161,7 +161,7 @@ export default class ExportCanvasWindow extends UIElement {
     }
 
     loadCode () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) {
             return '';  
@@ -279,7 +279,7 @@ export default class ExportCanvasWindow extends UIElement {
         var $canvas = this.refs.$preview.$('canvas');
 
 
-        var page = this.read('/item/current/page');
+        var page = this.read('/selection/current/page');
 
         var collect = this.read('/collect/one', page.id);
 

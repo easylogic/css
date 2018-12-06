@@ -110,7 +110,7 @@ export default class PageSampleList extends UIElement {
         var newPage = this.list[index];
 
         if (newPage) {
-            this.read('/item/current/page', page => {
+            this.read('/selection/current/page', page => {
                 this.dispatch('/item/addCache', newPage, page.id );
                 this.emit('changePage');                
             })
@@ -120,7 +120,7 @@ export default class PageSampleList extends UIElement {
     'click $el .page-cached-item .add-item' (e) {
         var newPage = this.read('/storage/pages', e.$delegateTarget.attr('data-sample-id'));
         if (newPage) {
-            this.read('/item/current/page', page => {
+            this.read('/selection/current/page', page => {
                 this.dispatch('/item/addCache', newPage, page.id );
                 this.emit('changePage');
             })
@@ -134,7 +134,7 @@ export default class PageSampleList extends UIElement {
     }    
 
     'click $el .add-current-page' (e) {
-        this.read('/item/current/page', (page) => {
+        this.read('/selection/current/page', (page) => {
             var newPage = this.read('/collect/page/one', page.id)
 
             this.dispatch('/storage/add/page', newPage);

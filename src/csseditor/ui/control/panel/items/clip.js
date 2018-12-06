@@ -1,4 +1,5 @@
 import UIElement from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_PAGE, CHANGE_PAGE, EVENT_CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
 
 export default class Clip extends UIElement {
     template () {
@@ -16,20 +17,24 @@ export default class Clip extends UIElement {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_PAGE] () {
+        this.refresh()
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        this.read('/item/current/page', (item) => {
+        this.read('/selection/current/page', (item) => {
             this.refs.$check.el.checked = !!item.clip
         })        
     }
 
     'click $check' () {
-        this.read('/item/current/page', (item) => {
-            item.clip = this.refs.$check.el.checked; 
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/page/id', (id) => {
+            console.log(id, this.refs.$check.el.checked);
+            this.commit(CHANGE_PAGE_SIZE, {id, clip: this.refs.$check.el.checked} )
         })
     }
 }

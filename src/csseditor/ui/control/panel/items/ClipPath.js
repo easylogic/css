@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { EVENT_CHANGE_LAYER, CHANGE_LAYER , EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH} from "../../../../types/event";
 
 export default class ClipPath extends BasePropertyItem {
     template () {
@@ -36,14 +37,18 @@ export default class ClipPath extends BasePropertyItem {
         `
     }
 
-    '@changeEditor' () {
-        this.refresh()
-    }
+    [EVENT_CHANGE_LAYER] () { this.refresh() }
+
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [EVENT_CHANGE_LAYER_CLIPPATH] () { this.refresh() }
 
     refresh() {
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             if (layer.clipPathSvg) {
                 this.refs.$clipPath.html(layer.clipPathSvg)
+            } else {
+                this.refs.$clipPath.empty();
             }
 
             this.refs.$fit.el.checked = !!layer.fitClipPathSize
@@ -56,22 +61,23 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     'click $fit' () {
-        this.read('/item/current/layer', (layer) => {
-            layer.fitClipPathSize = this.refs.$fit.el.checked;
-            this.dispatch('/item/set', layer);
+        this.read('/selection/current/layer', (layer) => {
+
+            this.commit(CHANGE_LAYER, {id: layer.id, fitClipPathSize: this.refs.$fit.el.checked})
+            this.refresh();            
         })
     }
 
     'change $clipType' () {
-        this.read('/item/current/layer', (layer) => {
-            layer.clipPathType = this.refs.$clipType.val();
-
+        this.read('/selection/current/layer', (layer) => {
             if (layer.clipPathType == 'none') {
                 this.refs.$fit.el.checked = false
                 this.refs.$clipPath.empty();
+                layer.clipPathSvg = '';
             }
 
-            this.dispatch('/item/set', layer);
+            this.commit(CHANGE_LAYER, {id: layer.id, clipPathSvg: layer.clipPathSvg,  clipPathType: this.refs.$clipType.val()})
+            this.refresh();
         })
     }
 

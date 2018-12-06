@@ -1,5 +1,6 @@
 import UIElement from "../../../../colorpicker/UIElement";
-import { percent2px, parseParamNumber, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
+import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
+import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR } from "../../../types/event";
 
 function checkPxEm(unit) {
     return ['px', 'em'].includes(unit);
@@ -69,7 +70,7 @@ export default class GradientInfo extends UIElement {
 
     'load $colorsteps' () {
 
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
 
         if (!item) return '';
 
@@ -110,8 +111,12 @@ export default class GradientInfo extends UIElement {
         this.load()
     }
 
-    '@changeEditor' () {
-        this.refresh()
+    [EVENT_CHANGE_COLOR_STEP] () {
+        this.refresh();
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
+        this.refresh() 
     }
 
     initColor (color) {
@@ -122,13 +127,17 @@ export default class GradientInfo extends UIElement {
         var item = this.read('/item/get', e.$delegateTarget.attr('colorstep-id'));
             
         this.read('/item/each/children', item.parentId, (step) => {
-            if (step.selected) step.selected = false; 
+            if (step.selected) {
+                step.selected = false; 
+                this.run('/item/set', step);
+            }
         })
 
         item.selected = true; 
 
-        this.initColor(item.color)     
-        this.dispatch('/item/set', item); 
+        this.initColor(item.color)   
+        var newValue = {id: item.id, selected: item.selected};  
+        this.commit(CHANGE_COLOR_STEP, newValue);
         this.refresh();        
     }    
 
@@ -137,7 +146,7 @@ export default class GradientInfo extends UIElement {
     }
 
     'input $colorsteps input.code' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
         var color = e.$delegateTarget.val()
@@ -146,8 +155,8 @@ export default class GradientInfo extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.color = color; 
-            this.dispatch('/item/set', step)       
+            var newValue = {id: step.id, color}
+            this.commit(CHANGE_COLOR_STEP, newValue)
 
             this.refs.$stepList.$(`.color-view-item[colorstep-id="${step.id}"]`).css({
                 'background-color': color 
@@ -168,8 +177,8 @@ export default class GradientInfo extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.unit = unit;
-            this.dispatch('/item/set', step)            
+            var newValue = {id: step.id, unit};
+            this.commit(CHANGE_COLOR_STEP, newValue )
 
             var $parent = e.$delegateTarget.parent();
             $parent.removeClass('percent', 'px', 'em').addClass(unit);
@@ -177,10 +186,10 @@ export default class GradientInfo extends UIElement {
     }
 
     'input $colorsteps input.percent' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
 
         var percent = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('colorstep-id')
@@ -188,18 +197,21 @@ export default class GradientInfo extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.percent = percent; 
-            step.px = percent2px(percent, this.getMaxValue(layer) );
-            step.em = percent2em(percent, this.getMaxValue(layer) );
-            this.dispatch('/item/set', step)            
+            // percent; 
+            var px = percent2px(percent, this.getMaxValue(layer) );
+            var em = percent2em(percent, this.getMaxValue(layer) );
+            var newValue = {id: step.id, percent, px, em }
+
+            this.commit(CHANGE_COLOR_STEP, newValue);
+
         }
     }
 
     'input $colorsteps input.px' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
 
         var px = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('colorstep-id')
@@ -207,18 +219,19 @@ export default class GradientInfo extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.px = px; 
-            step.percent = px2percent(px, this.getMaxValue(layer));
-            step.em = px2em(px, this.getMaxValue(layer));
-            this.dispatch('/item/set', step)            
+            // step.px = px; 
+            var percent = px2percent(px, this.getMaxValue(layer));
+            var em = px2em(px, this.getMaxValue(layer));
+            var newValue = {id: step.id, percent, px, em }
+            this.commit(CHANGE_COLOR_STEP, newValue);       
         }
     }
     
     'input $colorsteps input.em' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/item/current/layer');        
+        var layer = this.read('/selection/current/layer');        
 
         var em = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('colorstep-id')
@@ -226,20 +239,23 @@ export default class GradientInfo extends UIElement {
         var step = this.read('/item/get', id)
 
         if (step) {
-            step.em = em; 
-            step.percent = em2percent(em, this.getMaxValue(layer));
-            step.px = em2px(em, this.getMaxValue(layer));            
-            this.dispatch('/item/set', step)            
+            // step.em = em; 
+            var percent = em2percent(em, this.getMaxValue(layer));
+            var px = em2px(em, this.getMaxValue(layer));            
+            var newValue = {id: step.id, percent, px, em }
+
+            this.commit(CHANGE_COLOR_STEP, newValue);          
         }
     }    
 
     'click $colorsteps .remove-step' (e) {
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return; 
 
         var id = e.$delegateTarget.attr('colorstep-id')
         
-        this.dispatch('/colorstep/remove', id)
+        this.run('/colorstep/remove', id)
+        this.emit(REMOVE_COLOR_STEP, id);
         this.refresh()
 
     }
@@ -251,7 +267,7 @@ export default class GradientInfo extends UIElement {
 
         if (item.id) {
             item.cut = !item.cut;
-            this.dispatch('/item/set', item);
+            this.commit(CHANGE_COLOR_STEP, {id: item.id, cut: !item.cut})
             this.refresh();
         }
 

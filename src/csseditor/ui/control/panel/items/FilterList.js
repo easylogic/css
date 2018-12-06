@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { CHANGE_LAYER, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class FilterList extends BasePropertyItem {
 
@@ -43,7 +44,7 @@ export default class FilterList extends BasePropertyItem {
 
     'load $filterList' () {
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
 
         if (!layer) return '' 
 
@@ -65,7 +66,7 @@ export default class FilterList extends BasePropertyItem {
     }
 
     refreshFilter (id) {
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             var filter = layer.filters[id]
 
             if (filter) {
@@ -78,14 +79,14 @@ export default class FilterList extends BasePropertyItem {
         this.refreshFilterList()        
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
 
 
     isShow () {
-        var image = this.read('/item/current/image')
+        var image = this.read('/selection/current/image')
 
         if (image) return false; 
 
@@ -105,14 +106,14 @@ export default class FilterList extends BasePropertyItem {
     }
 
     refreshFilterList() {
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             this.refs.$desc.text(this.read('/layer/make/filter', layer.filters)); 
         })        
     }
 
     getFilterList () {
 
-        var layer = this.read('/item/current/layer');
+        var layer = this.read('/selection/current/layer');
 
         if (!layer) return []
 
@@ -120,56 +121,54 @@ export default class FilterList extends BasePropertyItem {
     }
 
     'click $filterList input[type=checkbox]' (e) {
-        var id = e.$delegateTarget.attr('data-filter-id');
+        var filterId = e.$delegateTarget.attr('data-filter-id');
 
-        this.read('/item/current/layer', (layer) => {
-            if (!layer.filters[id]) {
-                layer.filters[id] = { checked: false}
+        this.read('/selection/current/layer', (layer) => {
+            var newValue = {id: layer.id, filters: layer.filters || []}
+            if (!newValue.filters[filterId]) {
+                newValue.filters[filterId] = { checked: false}
             }
 
-            layer.filters[id].checked = e.$delegateTarget.el.checked;
+            newValue.filters[filterId].checked = e.$delegateTarget.el.checked;
 
-            this.dispatch('/item/set', layer);
+            this.commit(CHANGE_LAYER_FILTER, newValue);
             this.refreshFilterList()
         })
     }
 
     'change:input $filterList input[type=range]' (e) {
-        var id = e.$delegateTarget.attr('data-filter-id');
+        var filterId = e.$delegateTarget.attr('data-filter-id');
 
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
+            var newValue = {id: layer.id, filters: layer.filters || []}
 
-            if (!layer.filters) {
-                layer.filters = {}
+
+            if (!newValue.filters[filterId]) {
+                newValue.filters[filterId] = {}
             }
 
-            if (!layer.filters[id]) {
-                layer.filters[id] = {}
-            }
+            newValue.filters[filterId].value = e.$delegateTarget.val();
 
-            layer.filters[id].value = e.$delegateTarget.val();
-
-            this.dispatch('/item/set', layer);
-            this.refreshFilter(id);
+            this.commit(CHANGE_LAYER_FILTER, newValue);
+            this.refreshFilter(newValue);
         })
     }
 
     'input $filterList input[type=number]' (e) {
-        var id = e.$delegateTarget.attr('data-filter-id');
+        var filterId = e.$delegateTarget.attr('data-filter-id');
 
-        this.read('/item/current/layer', (layer) => {
-            layer.filters[id].value = e.$delegateTarget.val();
+        this.read('/selection/current/layer', (layer) => {
 
-            if (!layer.filters) {
-                layer.filters = {}
+            var newValue = {id: layer.id, filters: layer.filters || []}
+            newValue.filters[filterId].value = e.$delegateTarget.val();
+
+
+            if (!newValue.filters[filterId]) {
+                newValue.filters[filterId] = {}
             }
 
-            if (!layer.filters[id]) {
-                layer.filters[id] = {}
-            }
-
-            this.dispatch('/item/set', layer);
-            this.refreshFilter(id);
+            this.commit(CHANGE_LAYER_FILTER, newValue);
+            this.refreshFilter(newValue);
         })
     }    
 

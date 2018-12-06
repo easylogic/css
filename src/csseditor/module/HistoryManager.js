@@ -1,4 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
+import { SELECT_MODE_ONE } from "./SelectionManager";
 
 const HISTORY_MAX = 200; 
 
@@ -26,14 +27,14 @@ export default class HistoryManager extends BaseModule {
         }
 
         if (command) {
-            var {items, selectedId} = command;
-            $store.selectedId = selectedId;
+            var {items, selection} = command;
+            $store.selection = selection || $store.read('/selection/initialize/data');
             $store.dispatch('/item/set/all', page.id, $store.read('/clone', items))
         }
     }        
 
     '/history/initialize' ($store) {
-        $store.read('/item/current/page', (page) => {
+        $store.read('/selection/current/page', (page) => {
             this.setHistory($store, page);
         })
     }
@@ -42,7 +43,7 @@ export default class HistoryManager extends BaseModule {
         if (page && !$store.historyOriginal[page.id]) {
             $store.historyOriginal[page.id] = { 
                 items: $store.clone('/item/get/all', page.id), 
-                selectedId: $store.selectedId 
+                selection: $store.selection || $store.read('/selection/initialize/data')
             }
             $store.histories[page.id] = [] 
             $store.historyIndex[page.id] = 0;
@@ -50,7 +51,7 @@ export default class HistoryManager extends BaseModule {
     }
 
     '/history/push' ($store, title) {
-        $store.read('/item/current/page', (page) => {
+        $store.read('/selection/current/page', (page) => {
 
             this.setHistory($store, page);
 
@@ -61,7 +62,7 @@ export default class HistoryManager extends BaseModule {
             histories.push({ 
                 title, 
                 items: $store.clone('/item/get/all', page.id),
-                selectedId: $store.selectedId
+                selection: $store.selection || $store.read('/selection/initialize/data')
             });
 
             $store.histories[page.id] = histories;
@@ -75,7 +76,7 @@ export default class HistoryManager extends BaseModule {
     }
 
     '/history/undo' ($store) {
-        $store.read('/item/current/page', (page) => {        
+        $store.read('/selection/current/page', (page) => {        
 
             if ($store.historyIndex[page.id] < 0) {
                 return;
@@ -88,7 +89,7 @@ export default class HistoryManager extends BaseModule {
 
 
     '/history/redo' ($store) {
-        $store.read('/item/current/page', (page) => {        
+        $store.read('/selection/current/page', (page) => {        
             if ($store.historyIndex[page.id] > $store.histories[page.id].length -1) {
                 return; 
             }

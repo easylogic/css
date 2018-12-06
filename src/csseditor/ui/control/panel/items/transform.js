@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { EVENT_CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class Transform extends BasePropertyItem {
     template () {
@@ -36,26 +37,26 @@ export default class Transform extends BasePropertyItem {
                         <div>
                             <input type='number' ref="$translateY"> <span>px</span>
                         </div>
-                    </div>                                                         
-                    
-                    <!--
-                    <div>
                         <label>translateZ</label>
                         <div>
                             <input type='number' ref="$translateZ"> <span>px</span>
-                        </div>
-                    </div>   -->                                                                          
+                        </div>                        
+                    </div>                                                         
                 </div>
             </div>
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_LAYER_TRANSFORM] () {
+        this.refresh();
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        this.read('/item/current/layer', (item) => {
+        this.read('/selection/current/layer', (item) => {
 
             var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY', 'translateZ']
 
@@ -69,9 +70,8 @@ export default class Transform extends BasePropertyItem {
     }
 
     updateTransform (key) {
-        this.read('/item/current/layer', (item) => {
-            item[key] = this.refs['$' + key].val()
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_TRANSFORM, {id, [key]: this.refs['$' + key].val()})
         })
     }
 

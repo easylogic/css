@@ -73,6 +73,11 @@ class UIElement extends EventMachin {
         this.$store.emit(...args);
     }
 
+    commit (eventType, ...args) {
+        this.run('/item/set', ...args);
+        this.emit(eventType, ...args);
+    }
+
 }
 
 export default UIElement 

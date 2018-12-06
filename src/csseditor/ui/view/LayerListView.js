@@ -1,7 +1,27 @@
 import UIElement from '../../../colorpicker/UIElement';
 import MiniLayerView from './MiniLayerView';
+import { 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_LAYER, 
+    EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
+    EVENT_CHANGE_LAYER_CLIPPATH, 
+    EVENT_CHANGE_LAYER_POSITION, 
+    EVENT_CHANGE_LAYER_RADIUS, 
+    EVENT_CHANGE_LAYER_SIZE, 
+    EVENT_CHANGE_LAYER_TRANSFORM, 
+    EVENT_CHANGE_LAYER_FILTER, 
+    EVENT_CHANGE_LAYER_TRANSFORM_3D,
+    EVENT_CHANGE_IMAGE,
+    EVENT_CHANGE_IMAGE_ANGLE,
+    EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
+    EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+    EVENT_CHANGE_IMAGE_RADIAL_TYPE,
+    EVENT_CHANGE_IMAGE_COLOR,
+    EVENT_CHANGE_COLOR_STEP,
+    EVENT_CHANGE_SELECTION,
+} from '../../types/event';
 
-export default class LayerList extends UIElement {
+export default class LayerListView extends UIElement {
 
     template () { 
         return `
@@ -28,20 +48,15 @@ export default class LayerList extends UIElement {
     makeItemNode (node, index) {
         var item = this.read('/item/get', node.id);
 
-        var layer = this.read('/item/current/layer')
-
-        var selectedId = '' 
-        if (layer) selectedId = layer.id ; 
-
         if (item.itemType == 'layer') {
-            return this.makeItemNodeLayer(item, selectedId, index);
+            return this.makeItemNodeLayer(item, index);
         }
 
     }
 
    
     makeItemNodeImage (item) {
-        var selected = item.selected ? 'selected' : '' 
+        var selected = this.read('/selection/check', item.id) ? 'selected' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" draggable="true" >
                 <div class="item-view-container">
@@ -58,8 +73,9 @@ export default class LayerList extends UIElement {
             ` 
     }         
  
-    makeItemNodeLayer (item, selectedId, index = 0) {
-        var selected = item.id == selectedId ? 'selected' : ''; 
+    
+    makeItemNodeLayer (item, index = 0) {
+        var selected = this.read('/selection/check', item.id) ? 'selected' : ''; 
         var collapsed = item.gradientCollapsed ? 'collapsed' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" type='layer' draggable="true">
@@ -86,7 +102,7 @@ export default class LayerList extends UIElement {
     }    
 
     'load $layerList' () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) {
             return '';
@@ -97,20 +113,57 @@ export default class LayerList extends UIElement {
         }).reverse();
     }
 
+    refreshSelection() {
+
+    }
+
     refresh () {
         this.load()
 
-        var image = this.read('/item/current/image');
+        var image = this.read('/selection/current/image');
 
         this.$el.toggleClass('show-mini-view', !image);
+
+        this.$el.$(".selected").el.scrollIntoView();
     }
 
-    '@changeEditor' () {
-        this.refresh()
+    refreshLayer () {
+        this.read('/selection/current/layer', (item) => {
+            this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('/layer/toString', item, false))
+        })
     }
+
+    refreshImage() {
+        this.read('/selection/current/image', (item) => {
+            this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('/image/toString', item))
+        })
+    }
+
+    // indivisual effect 
+    [EVENT_CHANGE_LAYER] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_CLIPPATH] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_FILTER] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_POSITION] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_RADIUS] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_SIZE] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_TRANSFORM_3D] () { this.refreshLayer() }
+
+    [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refreshLayer(); this.refreshImage() }
+    [EVENT_CHANGE_IMAGE] () { this.refreshLayer(); this.refreshImage() }
+    [EVENT_CHANGE_IMAGE_ANGLE] () { this.refreshLayer(); this.refreshImage() }
+    [EVENT_CHANGE_IMAGE_COLOR] () { this.refreshLayer(); this.refreshImage() }
+    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] () { this.refreshLayer(); this.refreshImage() }
+    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] () { this.refreshLayer(); this.refreshImage() }
+    [EVENT_CHANGE_IMAGE_RADIAL_TYPE] () { this.refreshLayer(); this.refreshImage() }
+
+    // all effect 
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
 
     'click $addLayer' (e) {
-        this.read('/item/current/page', (page) => {
+        this.read('/selection/current/page', (page) => {
             this.dispatch('/item/add', 'layer', true, page.id)
             this.dispatch('/history/push', 'Add a layer');
             this.refresh();    
@@ -118,8 +171,7 @@ export default class LayerList extends UIElement {
     }
 
     'click $layerList .tree-item | self' (e) { 
-
-        this.dispatch('/item/select', e.$delegateTarget.attr('id'));
+        this.dispatch('/selection/one', e.$delegateTarget.attr('id'));        
         this.refresh();
     }
 

@@ -1,6 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
+import { CHANGE_LAYER } from "../../../../types/event";
 
 export default class ClipPathImageResource extends BasePropertyItem {
     template () {
@@ -41,10 +42,13 @@ export default class ClipPathImageResource extends BasePropertyItem {
         
     }
 
-    setClipPathSvg (layer, svg, callback) {
-
-        layer.clipPathType = 'svg';
-        layer.clipPathSvg = svg; 
+    setClipPathSvg (id, svg, callback) {
+        var newValue = {
+            id,
+            clipPathType:'svg',
+            clipPathSvg: svg
+        }
+        
 
         var $temp = new Dom('div')
         $temp.html(svg);
@@ -68,12 +72,12 @@ export default class ClipPathImageResource extends BasePropertyItem {
             height = parseParamNumber(box[3])
         }
 
-        layer.clipPathSvgWidth = width; 
-        layer.clipPathSvgHeight = height; 
+        newValue.clipPathSvgWidth = width; 
+        newValue.clipPathSvgHeight = height; 
 
         $temp.remove();
 
-        callback && callback ();
+        callback && callback (newValue);
     }
 
     'click $imageList .svg-item' (e) {
@@ -81,22 +85,22 @@ export default class ClipPathImageResource extends BasePropertyItem {
         var key = e.$delegateTarget.attr('data-key')
 
         if (index) {
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer/id', (id) => {
                 var svg = this.read('/svg/get', +index);
 
-                this.setClipPathSvg(layer, svg, () => {
-                    this.dispatch('/item/set', layer);
+                this.setClipPathSvg(id, svg, (newValue) => {
+                    this.commit(CHANGE_LAYER, newValue)
                 });
 
 
             })
         } else if (key) {
 
-            this.read('/item/current/layer', (layer) => {
+            this.read('/selection/current/layer/id', (id) => {
                 var svg = this.read('/svg/get', Number.MAX_SAFE_INTEGER, key);
 
-                this.setClipPathSvg(layer, svg, () => {
-                    this.dispatch('/item/set', layer);
+                this.setClipPathSvg(id, svg, (newValue) => {
+                    this.commit(CHANGE_LAYER, newValue)
                 });
 
             })

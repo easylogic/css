@@ -5,6 +5,7 @@ import GradientPosition from "./shape/GradientPosition";
 import PredefinedLinearGradientAngle from "./shape/PredefinedLinearGradientAngle";
 import PredefinedRadialGradientPosition from "./shape/PredefinedRadialGradientPosition";
 import PredefinedRadialGradientAngle from "./shape/PredefinedRadialGradientAngle";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -51,14 +52,14 @@ export default class SubFeatureControl extends UIElement {
 
 
     isShow () {
-        //if (!this.read('/item/is/mode', 'image')) return false;         
+        //if (!this.read('/selection/is/image')) return false;         
         return true;
     }
 
     isLinearShow () {
-        if (!this.read('/item/is/mode', 'image')) return false; 
+        if (!this.read('/selection/is/image')) return false; 
 
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
 
         if (!item) return false; 
 
@@ -73,9 +74,9 @@ export default class SubFeatureControl extends UIElement {
     }
 
     isRadialShow () {
-        if (!this.read('/item/is/mode', 'image')) return false; 
+        if (!this.read('/selection/is/image')) return false; 
 
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return false; 
 
         var isRadial = this.read('/image/type/isRadial', item.type)
@@ -89,15 +90,14 @@ export default class SubFeatureControl extends UIElement {
     }
 
     isBackgroundShow () {
-        if (!this.read('/item/is/mode', 'image')) return false; 
+        if (!this.read('/selection/is/image')) return false; 
 
-        var item = this.read('/item/current/image')
+        var item = this.read('/selection/current/image')
         if (!item) return false; 
 
         return this.read('/tool/get', 'guide.angle')
     }    
 
-    '@changeEditor' () {
-        this.refresh();
-    }
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
 } 

@@ -1,4 +1,5 @@
 import UIElement from '../../../../../colorpicker/UIElement';
+import { EVENT_CHANGE_LAYER_RADIUS } from '../../../../types/event';
 
 export default class LayerRadius extends UIElement {
     template () {
@@ -7,7 +8,7 @@ export default class LayerRadius extends UIElement {
 
     refresh () {
 
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             var radius = this.read('/layer/get/border-radius', layer);
             this.$el.css(radius); 
         })
@@ -25,7 +26,7 @@ export default class LayerRadius extends UIElement {
         }).show();
     }
 
-    '@changeRadius' () {
+    [EVENT_CHANGE_LAYER_RADIUS] () {
         this.refresh();
 
     }

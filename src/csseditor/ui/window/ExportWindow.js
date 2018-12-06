@@ -148,7 +148,7 @@ export default class ExportWindow extends UIElement {
     }
 
     generateCode () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) {
             return '';  
@@ -175,7 +175,7 @@ ${layerStyle}
     }
 
     loadCode () {
-        var page = this.read('/item/current/page')
+        var page = this.read('/selection/current/page')
 
         if (!page) {
             return '';  

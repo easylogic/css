@@ -1,6 +1,7 @@
 import UIElement from "../../../colorpicker/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
 
 
 export default class FeatureControl extends UIElement {
@@ -26,16 +27,20 @@ export default class FeatureControl extends UIElement {
     }
 
     selectFeature () {
-        var obj = this.read('/item/current')
+
+        var item = this.read('/selection/current');
+
+        if (!item.length) return false; 
+        
         var selectedFeature = this.$el.$('.feature.selected');
         
         if (selectedFeature) selectedFeature.removeClass('selected');
 
         var selectType = 'layer'; 
 
-        if (obj.itemType == 'layer') {
+        if (this.read('/selection/is/layer')) {
             selectType = 'layer';
-        } else if (obj.itemType == 'image') {
+        } else if (this.read('/selection/is/image')) {
             selectType = 'image';
         }
 
@@ -43,7 +48,11 @@ export default class FeatureControl extends UIElement {
 
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.selectFeature()
+    }
+
+    [EVENT_CHANGE_SELECTION] () {
+        this.selectFeature();
     }
 }

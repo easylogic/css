@@ -26,6 +26,21 @@ export default class CssManager extends BaseModule {
         // delete unused css property 
         delete newStyle.x;
         delete newStyle.y;
+        delete newStyle.itemType;
+        delete newStyle.parentId;
+        delete newStyle.mixBlendMode;
+        delete newStyle.visible;
+        delete newStyle.filters;
+        delete newStyle.id;
+        delete newStyle.fixedRadius;
+        delete newStyle.borderRadius;
+        delete newStyle.gradientCollapsed;        
+        delete newStyle.index;
+        delete newStyle.clipPathSvg;
+        delete newStyle.fitClipPathSize;
+        delete newStyle.clipPathType;
+        delete newStyle.clipPathSvgWidth;
+        delete newStyle.clipPathSvgHeight;
         delete newStyle.rotate3dX;
         delete newStyle.rotate3dY;
         delete newStyle.rotate3dZ;
@@ -36,6 +51,10 @@ export default class CssManager extends BaseModule {
         delete newStyle.translate3dX;
         delete newStyle.translate3dY;
         delete newStyle.translate3dZ;
+        delete newStyle.borderBottomRightRadius;
+        delete newStyle.borderBottomLeftRadius;
+        delete newStyle.borderTopLeftRadius;
+        delete newStyle.borderTopRightRadius;        
 
         if (newStyle['background-blend-mode'] == 'normal') {
             delete newStyle['background-blend-mode'];

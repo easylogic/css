@@ -13,7 +13,7 @@ export default class Radius extends TopLeftRadius {
     }
 
     isShow () {
-        var layer = this.read('/item/current/layer')
+        var layer = this.read('/selection/current/layer')
         if (!layer) return false; 
 
         return !!layer.fixedRadius;

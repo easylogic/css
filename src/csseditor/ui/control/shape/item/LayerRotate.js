@@ -1,6 +1,7 @@
 
 import { caculateAngle } from '../../../../../util/functions/math';
 import UIElement from '../../../../../colorpicker/UIElement';
+import { CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_SELECTION } from '../../../../types/event';
 
 
 export default class LayerRotate extends UIElement {
@@ -20,15 +21,33 @@ export default class LayerRotate extends UIElement {
 
         var angle = caculateAngle (this.targetXY.x - this.layerCenterX,  this.targetXY.y - this.layerCenterY);
 
-        this.layer.rotate = Math.floor(angle) - 270; 
+        var newValue = {id: this.layer.id, rotate: Math.floor(angle) - 270}
+        this.commit(CHANGE_LAYER_TRANSFORM, newValue)
+    }
 
-        this.dispatch('/item/set', this.layer);
+    refresh () {
+        var isShow = this.isShow();
+
+        this.$el.toggle(isShow)
+    }
+
+    isShow() {
+        return !this.read('/selection/is/group');
+    }
+
+
+    [EVENT_CHANGE_LAYER_TRANSFORM] () {
+        this.refresh();
+    }
+
+    [EVENT_CHANGE_SELECTION] () {
+        this.refresh();
     }
 
 
     'pointerstart' (e) {
 
-        var layer = this.read('/item/current/layer')
+        var layer = this.read('/selection/current/layer')
 
         if (!layer) return; 
 

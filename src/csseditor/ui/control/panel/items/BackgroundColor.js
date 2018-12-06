@@ -1,4 +1,5 @@
 import UIElement from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class BackgroundColor extends UIElement {
     template () {
@@ -17,12 +18,17 @@ export default class BackgroundColor extends UIElement {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
+    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] (newValue) {
+        this.refs.$color.css('background-color', newValue.backgroundColor)
+        this.refs.$colortext.text(newValue.backgroundColor)
+    }
+
     refresh() {
-        this.read('/item/current/layer', (layer) => {
+        this.read('/selection/current/layer', (layer) => {
             this.refs.$color.css('background-color', layer.backgroundColor)
             this.refs.$colortext.text(layer.backgroundColor)
         });

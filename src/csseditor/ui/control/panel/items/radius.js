@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
+import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 
 export default class Radius extends BasePropertyItem {
@@ -37,12 +38,16 @@ export default class Radius extends BasePropertyItem {
         `
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_LAYER_RADIUS] () {
+        this.refresh();
+    }
+
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     refresh() {
-        this.read('/item/current/layer', (item) => {
+        this.read('/selection/current/layer', (item) => {
 
             if (item.fixedRadius) {
                 this.refs.$fixedRadius.el.checked = true; 
@@ -84,22 +89,20 @@ export default class Radius extends BasePropertyItem {
     }
 
     refreshValue (key, $el) {
-        this.read('/item/current/layer', (item) => {
-            item[key] = $el.int() + 'px'
-            this.dispatch('/item/set', item)
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_RADIUS, { id, [key]:  $el.int() + 'px' })
         })
     }
 
     'click $fixedRadius' (e) {
-        this.read('/item/current/layer', (item) => {
-            item.fixedRadius = this.refs.$fixedRadius.el.checked; 
-            this.dispatch('/item/set', item);
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_RADIUS, {id, fixedRadius: this.refs.$fixedRadius.el.checked })
             this.refresh();
         })
     }
 
     'input:change $topLeftRadius' () {
-        this.read('/item/current/layer', (item) => {
+        this.read('/selection/current/layer', (item) => {
             if (item.fixedRadius) {
                 this.refreshValue('borderRadius', this.refs.$topLeftRadius);
             } else {

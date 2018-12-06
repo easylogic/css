@@ -1,4 +1,5 @@
 import UIElement from '../../../colorpicker/UIElement';
+import { EVENT_CHANGE_EDITOR } from '../../types/event';
 
 export default class LayerToolbar extends UIElement {
 
@@ -48,12 +49,12 @@ export default class LayerToolbar extends UIElement {
         
     }
 
-    '@changeEditor' () {
+    [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
 
     'click $gradientType .gradient-item' (e) {
-        this.read('/item/current/layer', (item) => {
+        this.read('/selection/current/layer', (item) => {
 
             var type = e.$delegateTarget.attr('data-type')
 
