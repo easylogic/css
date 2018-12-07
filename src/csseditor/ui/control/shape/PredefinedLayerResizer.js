@@ -55,16 +55,13 @@ export default class PredefinedLayerResizer extends UIElement {
                 <BottomRightRadius></BottomRightRadius>
                 <LayerRadius></LayerRadius>
                 <LayerRotate></LayerRotate>
-
-                <div class="guide-horizontal"></div>
-                <div class="guide-vertical"></div>
             </div> 
         `
     } 
 
     refresh () {
         var isShow = this.isShow();
-        this.$el.toggle(isShow)
+        this.$el.toggle(isShow).attr('line-type', this.read('/selection/type'))
 
         if (isShow) {
             this.setPosition()
@@ -109,7 +106,7 @@ export default class PredefinedLayerResizer extends UIElement {
     }
 
     isShow () {
-        if (this.read('/selection/is/group') && this.read('/selection/is/empty')) {
+        if (this.read('/selection/is/group')) {
             return false; 
         }
 

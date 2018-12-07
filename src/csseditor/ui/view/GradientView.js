@@ -1,17 +1,35 @@
-import BaseTab from '../BaseTab';
+import UIElement from '../../../colorpicker/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
 import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
-
+import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
 import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
 import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
 import { parseParamNumber } from '../../../util/filter/functions';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE, CHANGE_SELECTION, EVENT_CHANGE_LAYER_MOVE } from '../../types/event';
-import { ITEM_TYPE_PAGE } from '../../module/SelectionManager';
-import Dom from '../../../util/Dom';
+import { 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_LAYER, 
+    EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
+    EVENT_CHANGE_LAYER_CLIPPATH, 
+    EVENT_CHANGE_LAYER_FILTER, 
+    EVENT_CHANGE_LAYER_POSITION, 
+    EVENT_CHANGE_LAYER_RADIUS, 
+    EVENT_CHANGE_LAYER_SIZE, 
+    EVENT_CHANGE_LAYER_TRANSFORM, 
+    EVENT_CHANGE_IMAGE, 
+    EVENT_CHANGE_IMAGE_COLOR, 
+    EVENT_CHANGE_IMAGE_RADIAL_POSITION, 
+    EVENT_CHANGE_IMAGE_RADIAL_TYPE, 
+    EVENT_CHANGE_LAYER_TRANSFORM_3D, 
+    EVENT_CHANGE_IMAGE_ANGLE, 
+    EVENT_CHANGE_IMAGE_LINEAR_ANGLE, 
+    EVENT_CHANGE_COLOR_STEP, 
+    EVENT_CHANGE_PAGE_SIZE, 
+    EVENT_CHANGE_PAGE, 
+    EVENT_CHANGE_LAYER_MOVE 
+} from '../../types/event';
 
-
-export default class GradientView extends BaseTab {
+export default class GradientView extends UIElement {
 
     initialize () {
         super.initialize();
@@ -26,15 +44,15 @@ export default class GradientView extends BaseTab {
                     <div class="page-canvas" ref="$canvas">
                         <div class="gradient-color-view-container" ref="$page">
                             <div class="gradient-color-view" ref="$colorview"></div>
+                            <div class="ghost-color-view" ref="$ghost"></div>
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
+                        <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>
                         <PredefinedLayerResizer></PredefinedLayerResizer>                        
                         <MoveGuide></MoveGuide>     
                         <div ref="$dragArea"></div>                     
                     </div>          
                 </div>
- 
-                <!--<ColorPickerLayer></ColorPickerLayer>-->
                 <SubFeatureControl></SubFeatureControl>
             </div>
         `
@@ -46,6 +64,7 @@ export default class GradientView extends BaseTab {
             SubFeatureControl,
             MoveGuide,
             PredefinedPageResizer,
+            PredefinedGroupLayerResizer,
             PredefinedLayerResizer
         }
     }
@@ -70,6 +89,17 @@ export default class GradientView extends BaseTab {
         return list; 
     }
 
+
+    'load $ghost' () {
+        if (this.read('/selection/is/one')) return []
+
+        var list = this.read('/selection/ids').map(id => this.read('/item/get', id)).map(item => {
+            return `<div class='layer' ghost-layer-id="${item.id}" style='${this.getGhostCss(item)}'></div>`
+        });
+
+        return list; 
+    }
+
     '@animationEditor' () {
         this.load();
     }
@@ -83,6 +113,17 @@ export default class GradientView extends BaseTab {
         }
     }
 
+    getGhostCss (item) {
+        var {x, y, width, height, id} = item; 
+        var transform = "none"; 
+        
+        if (id) {
+            transform = this.read('/layer/make/transform', item);
+        }
+
+        return `left:${x};top:${y};width:${width};height:${height};transform:${transform}`
+    }
+
     refreshLayer () {
         this.read('/selection/current/layer', (items) => {
 
@@ -94,6 +135,12 @@ export default class GradientView extends BaseTab {
                 var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
                 $el.cssText(this.read('/layer/toString', item, true))
                 $el.html(this.read('/layer/toStringClipPath', item))
+
+                var $ghost = this.$el.$(`[ghost-layer-id="${item.id}"]`);
+                if ($ghost) {
+                    $ghost.cssText(this.getGhostCss(item))
+                }
+
             })
         })
     }
@@ -159,13 +206,8 @@ export default class GradientView extends BaseTab {
 
     }
 
-    [EVENT_CHANGE_PAGE_SIZE] () {
-        this.setBackgroundColor()
-    }
-
-    [EVENT_CHANGE_PAGE] () {
-        this.setBackgroundColor();
-    }
+    [EVENT_CHANGE_PAGE_SIZE] () { this.setBackgroundColor() }
+    [EVENT_CHANGE_PAGE] () { this.setBackgroundColor(); }
 
     // indivisual layer effect 
     [EVENT_CHANGE_LAYER] (newValue) { this.refreshLayer(); }
@@ -185,134 +227,14 @@ export default class GradientView extends BaseTab {
     [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] (newValue) { this.refreshLayer() }
     [EVENT_CHANGE_IMAGE_RADIAL_POSITION] (newValue) { this.refreshLayer() }
     [EVENT_CHANGE_IMAGE_RADIAL_TYPE] (newValue) { this.refreshLayer() }
-
     [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refreshLayer() }
 
     // all effect 
-    [EVENT_CHANGE_EDITOR] () {
-        this.refresh();
-    }
+    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
+    updateSelection () { this.refresh(); }
 
     '@changeTool' () {
         // this.refresh()
         this.refs.$colorview.toggleClass('showGrid', this.read('/tool/get', 'show.grid'))
     }
-
-    checkPage (e) {
-        return e.target == this.refs.$colorview.el;
-    }
-
-    'click $page .layer | self' (e) {
-        var id = e.$delegateTarget.attr('item-layer-id')
-        if (id) {
-            this.dispatch('/selection/one', id);
-            this.emit(CHANGE_SELECTION)
-        }
-    }
-
-    selectPageMode () {
-        
-        if (!this.dragArea) {
-            this.dispatch('/selection/change', ITEM_TYPE_PAGE) ;
-        }
-
-    }
-
-
-    // 'click $page' (e) {
-    //     if (!e.$delegateTarget) {
-    //         this.selectPageMode()
-    //     } else if (!e.$delegateTarget.hasClass('layer')) {
-    //         this.selectPageMode()
-    //     }
-
-    // }    
-
-    // 'click $el .page-canvas | self' (e) {
-    //     this.selectPageMode()
-    // }
-
-    isDownCheck () {
-        return this.isDown
-    }
-
-    isNotDownCheck () {
-        return !this.isDown
-    }
-
-    isPageMode (e) {
-        if (this.read('/selection/is/page')) {
-            return true; 
-        }
-
-        var $target = new Dom(e.target)
-
-        if ($target.is(this.refs.$colorview)) {
-            return true;
-        }
-
-        if ($target.is(this.refs.$canvas)) {
-            return true;
-        }
-    }
-
-    hasDragArea () {
-        return this.dragArea
-    }
-
-    hasNotDragArea () {
-        return !this.dragArea
-    }
-
-    'pointerstart $canvas | hasNotDragArea | isPageMode | isNotDownCheck' (e) {
-        this.isDown = true; 
-        this.xy = e.xy;
-        var x = this.xy.x;
-        var y = this.xy.y;
-        this.dragArea = true;
-        this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: 0px;height:0px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`)
-        this.refs.$dragArea.show();
-    }     
-    
-    'pointermove document | hasDragArea | isDownCheck' (e) {
-        if (!this.xy) return;         
-        // this.refs.$page.addClass('moving');
-        this.targetXY = e.xy;
-
-        var width = Math.abs(this.targetXY.x - this.xy.x)
-        var height = Math.abs(this.targetXY.y - this.xy.y)
-
-        var offset = this.refs.$board.offset();
-
-        var x = Math.min(this.targetXY.x, this.xy.x) + this.refs.$board.scrollLeft() - offset.left;
-        var y = Math.min(this.targetXY.y, this.xy.y) + this.refs.$board.scrollTop() - offset.top;
-        this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: ${width}px;height:${height}px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`);
-
-
-    }    
-
-    'pointerend document | hasDragArea | isDownCheck' (e) {
-        this.isDown = false; 
-
-        if (!this.xy) return; 
-        if (!this.targetXY) return; 
-
-        var width = Math.abs(this.targetXY.x - this.xy.x)
-        var height = Math.abs(this.targetXY.y - this.xy.y)
-
-        var po = this.refs.$page.offset();
-
-        var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
-        var y = Math.min(this.targetXY.y, this.xy.y) - po.top;
-        
-        this.dragArea = false;
-        this.refs.$dragArea.hide();
-
-        this.dispatch('/selection/area', {x, y, width, height})        
-    }    
-
-    isNotFirstPosition (e) {
-        return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y     
-    }     
-
 }

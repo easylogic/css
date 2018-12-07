@@ -1,7 +1,6 @@
 import BaseCSSEditor from '../BaseCSSEditor';
 import PageListView from '../ui/view/PageListView';
 import FeatureControl from '../ui/control/FeatureControl';
-import GradientView from '../ui/view/GradientView';
 
 import LayerListView from '../ui/view/LayerListView';
 import LayerToolbar from '../ui/view/LayerToolbar';
@@ -19,9 +18,8 @@ import PageSampleView from '../ui/window/PageSampleWindow';
 import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
 import ExportCanvasWindow from '../ui/window/ExportCanvasWindow';
 import { EVENT_CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
+import HandleView from '../ui/view/HandleView';
 
-
-// const screenModes = ['expertor', 'beginner']
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -57,7 +55,7 @@ export default class CSSEditor extends BaseCSSEditor {
                 <div class="layout-body">
                     <LayerToolbar></LayerToolbar>
                     <VerticalColorStep></VerticalColorStep>
-                    <GradientView></GradientView>                      
+                    <HandleView></HandleView>                      
                 </div>                
                 <div class="layout-right">
                     <FeatureControl></FeatureControl>
@@ -86,7 +84,7 @@ export default class CSSEditor extends BaseCSSEditor {
             DropView,
             ExportView,
             PropertyView,
-            GradientView, 
+            HandleView,
             PageListView,
             FeatureControl, 
             LayerListView, 

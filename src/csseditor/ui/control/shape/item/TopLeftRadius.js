@@ -45,6 +45,9 @@ export default class TopLeftRadius extends UIElement {
         var layer = this.read('/selection/current/layer')
         if (!layer) return false; 
 
+        if (this.read('/selection/is/group')) return false;
+        if (this.read('/selection/ids').length > 1) return false;
+
         if (layer.fixedRadius) return false;         
         return this.read('/selection/is/layer');
     }

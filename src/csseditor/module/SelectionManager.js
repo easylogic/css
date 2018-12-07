@@ -63,6 +63,10 @@ export default class SelectionManager extends BaseModule {
         return $store.selection.ids.includes(id);
     }
 
+    '*/selection/type' ($store) {
+        return $store.selection.type;
+    }
+
     '*/selection/current' ($store) {
         return $store.selection.ids.filter(id => $store.items[id]).map(id => $store.items[id])
     }
@@ -314,6 +318,10 @@ export default class SelectionManager extends BaseModule {
         y = y + 'px'
         width = width + 'px'
         height = height + 'px'
+
+        if (items.length == 1) {
+            return { x, y, width, height, id: items[0].id}
+        }
 
         return { x, y, width, height}
     }

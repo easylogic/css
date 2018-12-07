@@ -14,8 +14,10 @@ import CollectManager from "./CollectManager";
 import PageManager from "./PageManager";
 import HistoryManager from "./HistoryManager";
 import SelectionManager from "./SelectionManager";
+import OrderingManager from "./OrderingManager";
 
 export default [  
+    OrderingManager,
     SelectionManager,
     HistoryManager,
     PageManager,

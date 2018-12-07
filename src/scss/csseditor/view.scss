@@ -71,6 +71,22 @@ $layer-toolbar-height: 30px;
         }
     }
 
+
+    .ghost-color-view {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        box-sizing: border-box;
+        pointer-events: none;
+
+        .layer {
+            box-shadow: 0px 0px 10px 5px #00f3ff;
+        }
+    }
+
     .gradient-color-view {
         width: 100%;
         height: 100%;
@@ -94,7 +110,7 @@ $layer-toolbar-height: 30px;
 
     }
 
-    .gradient-color-view {
+    .gradient-color-view, .ghost-color-view {
 
         .layer {
             position: absolute; 
@@ -112,6 +128,7 @@ $layer-toolbar-height: 30px;
     @import './guide/angluar-group.scss';
     @import './guide/page-resizer.scss';
     @import './guide/layer-resizer.scss';
+    @import './guide/group-layer-resizer.scss';
     @import './guide/layer-shape-editor.scss';
     @import './guide/move-guide.scss';
     @import './guide/colorpicker-layer.scss'; 
