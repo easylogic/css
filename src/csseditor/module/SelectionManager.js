@@ -277,11 +277,15 @@ export default class SelectionManager extends BaseModule {
             }
         })
 
-        $store.selection = { 
-            type: SELECT_MODE_GROUP, 
-            ids: selectItems,
-            itemType: selectItems.length ? ITEM_TYPE_LAYER : ITEM_TYPE_PAGE
-        }
+        if (selectItems.length) {
+            $store.selection = { 
+                type: SELECT_MODE_GROUP, 
+                ids: selectItems,
+                itemType: ITEM_TYPE_LAYER
+            }
+        } else {
+            $store.run('/selection/change', ITEM_TYPE_PAGE)
+        }        
     }
 
     '*/selection/rect' ($store) {
@@ -311,8 +315,7 @@ export default class SelectionManager extends BaseModule {
         width = width + 'px'
         height = height + 'px'
 
-
-        return { x, y, width, height }
+        return { x, y, width, height}
     }
 
 }

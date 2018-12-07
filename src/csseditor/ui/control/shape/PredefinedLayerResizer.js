@@ -7,7 +7,16 @@ import LayerRotate from './item/LayerRotate';
 import Radius from './item/Radius';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import LayerRadius from './item/LayerRadius';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import { 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_LAYER_SIZE, 
+    EVENT_CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_MOVE,
+    EVENT_CHANGE_LAYER_TRANSFORM, 
+    EVENT_CHANGE_SELECTION, 
+    EVENT_CHANGE_LAYER_MOVE
+} from '../../../types/event';
 
 export default class PredefinedLayerResizer extends UIElement {
 
@@ -27,6 +36,7 @@ export default class PredefinedLayerResizer extends UIElement {
     template () { 
         return `
             <div class="predefined-layer-resizer">
+                <div class="event-panel" ref="$eventPanel"></div>
                 <div class='button-group' ref='$buttonGroup'>
                     <button type="button" data-value="to right"></button>
                     <button type="button" data-value="to left"></button>
@@ -73,7 +83,6 @@ export default class PredefinedLayerResizer extends UIElement {
     }    
 
     setRectangle ({x, y, width, height, id}) {
-
         var boardOffset = this.boardOffset || this.$board.offset()
         var pageOffset = this.pageOffset || this.$page.offset()
         var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
@@ -96,15 +105,7 @@ export default class PredefinedLayerResizer extends UIElement {
     }
 
     setPosition () {
-
-        if (this.read('/selection/is/group')) {
-            this.setRectangle(this.read('/selection/rect'));
-        } else {
-            if (this.read('/selection/is/layer')) {
-                this.setRectangle(this.read('/selection/rect'));
-            }
-        }
-
+        this.setRectangle(this.read('/selection/rect'));
     }
 
     isShow () {
@@ -117,6 +118,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
     [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refresh() }
     [EVENT_CHANGE_LAYER_SIZE] () {this.refresh()}
+    [EVENT_CHANGE_LAYER_MOVE] () {this.refresh()}
     [EVENT_CHANGE_LAYER_POSITION] () {this.refresh()}
     [EVENT_CHANGE_EDITOR] () { this.refresh(); }
     [EVENT_CHANGE_SELECTION] () { this.refresh() }
@@ -185,11 +187,9 @@ export default class PredefinedLayerResizer extends UIElement {
         }
     }
 
-    caculateSnap (item) {
+    caculateSnap () {
 
-        var layer = this.read('/selection/current/layer');
-        if (!layer) return item; 
-        var list = this.read('/guide/line/layer', 3, layer.id);
+        var list = this.read('/guide/line/layer', 3);
 
         if (list.length) {
             this.cacualteSizeItem(item, list);
@@ -200,10 +200,8 @@ export default class PredefinedLayerResizer extends UIElement {
 
     updatePosition (items) { 
 
-        if (items.length == 1) {
-            items[0] = this.caculateSnap(items[0])    
-            this.caculateActiveButtonPosition(items[0]);
-        }
+        // this.caculateSnap()
+        // this.caculateActiveButtonPosition(rect);
 
         items.forEach(item => {
             this.run('/item/set', {
@@ -215,8 +213,6 @@ export default class PredefinedLayerResizer extends UIElement {
             });
         })
 
-
-        this.emit(CHANGE_LAYER_SIZE);
         this.setPosition();
     }
 
@@ -304,33 +300,28 @@ export default class PredefinedLayerResizer extends UIElement {
         var items = this.read('/clone', this.rectItems);
         if (this.currentType == 'to top') {
             items.forEach(item => { this.toTop(item) })
-            this.updatePosition(items)
         } else if (this.currentType == 'to bottom') {
             items.forEach(item => { this.toBottom(item) })
-            this.updatePosition(items)
         } else if (this.currentType == 'to right') {
             items.forEach(item => { this.toRight(item) })
-            this.updatePosition(items)
         } else if (this.currentType == 'to left') {
             items.forEach(item => { this.toLeft(item) })
-            this.updatePosition(items)
         } else if (this.currentType == 'to bottom left') {
             items.forEach(item => { this.toBottom(item) })
             items.forEach(item => { this.toLeft(item) })
-            this.updatePosition(items)       
         } else if (this.currentType == 'to bottom right') {
             items.forEach(item => { this.toBottom(item) })
             items.forEach(item => { this.toRight(item) })
-            this.updatePosition(items)       
         } else if (this.currentType == 'to top right') {
             items.forEach(item => { this.toTop(item) })
             items.forEach(item => { this.toRight(item) })
-            this.updatePosition(items)       
         } else if (this.currentType == 'to top left') {
             items.forEach(item => { this.toTop(item) })
             items.forEach(item => { this.toLeft(item) })
-            this.updatePosition(items)       
         }
+     
+        this.updatePosition(items)        
+        this.emit(CHANGE_LAYER_SIZE)               
     }
 
 
@@ -344,7 +335,7 @@ export default class PredefinedLayerResizer extends UIElement {
         return !this.isPositionDrag;
     }    
 
-    'pointerstart $el | isNotPositionDragCheck' (e) {
+    'pointerstart $eventPanel | isNotPositionDragCheck' (e) {
         this.isPositionDrag = true; 
         this.xy = e.xy;
         var rect = this.read('/selection/rect')
@@ -381,8 +372,8 @@ export default class PredefinedLayerResizer extends UIElement {
             item.x += dx;
         })
 
-        this.emit(CHANGE_LAYER_SIZE);
         this.updatePosition(items);
+        this.emit(CHANGE_LAYER_MOVE);        
     }
 
     'pointermove document | isPositionDragCheck' (e) {
@@ -416,7 +407,6 @@ export default class PredefinedLayerResizer extends UIElement {
     }
 
     'pointerstart $buttonGroup [data-value] | isNotDownCheck' (e) {
-        e.preventDefault();
         var rect = this.read('/selection/rect')
 
         this.activeButton = e.$delegateTarget;
@@ -447,7 +437,7 @@ export default class PredefinedLayerResizer extends UIElement {
 
     }
 
-    'pointermove document | isDownCheck' (e) {
+    'pointermove document | isNotPositionDragCheck | isDownCheck' (e) {
         e.preventDefault();        
         this.targetXY = e.xy; 
         this.$page.addClass('moving')
@@ -455,9 +445,7 @@ export default class PredefinedLayerResizer extends UIElement {
         this.resizeComponent();
     }
 
-
-
-    'pointerend document | isDownCheck' (e) {
+    'pointerend document| isNotPositionDragCheck  | isDownCheck' (e) {
         e.preventDefault();        
         if (this.activeButton) {
             this.activeButton.removeClass('active')

@@ -1,7 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { parseParamNumber } from "../../util/filter/functions";
 
-var list = new Array(1000);
+var list = new Array(100);
 var lastIndex = -1;
 var selectedItem = {}
 
@@ -9,7 +9,6 @@ var verticalKeys = ['y', 'centerY', 'y2']
 var verticalAlign = { 'y' : 'top', 'centerY' : 'middle', 'y2' : 'bottom' }
 var horizontalKeys = ['x', 'centerX', 'x2']
 var horizontalAlign = { 'x' : 'left', 'centerX' : 'center', 'x2' : 'right' }
-var maxDist = 1; 
 var MAX_DIST = 1; 
 
 export default class GuideManager extends BaseModule {
@@ -68,15 +67,16 @@ export default class GuideManager extends BaseModule {
 
     } 
 
-    '*/guide/line/layer' ($store , dist = MAX_DIST, selectedId = '') {
+    '*/guide/line/layer' ($store , dist = MAX_DIST, selectedRect) {
 
         var page = $store.read('/selection/current/page');
 
         if (!page) return []
         if (page.selected) return []
 
-
         var index = 0; 
+        selectedItem = $store.read('/guide/rect', selectedRect || $store.read('/selection/rect'));
+
         list[index++] = $store.read('/guide/rect', { 
             x: '0px', 
             y: '0px', 
@@ -85,18 +85,13 @@ export default class GuideManager extends BaseModule {
         })
 
         $store.read('/item/each/children', page.id, (item) => {
-            var newItem = $store.read('/guide/rect', { 
-                x: item.x, 
-                y: item.y,
-                width: item.width,
-                height: item.height
-            })
-
-            if (selectedId == item.id) {
-                selectedItem = newItem
-            } else if ($store.read('/selection/check', item.id)) {
-                selectedItem = newItem
-            } else {
+            if ($store.read('/selection/check', item.id) == false) { 
+                var newItem = $store.read('/guide/rect', { 
+                    x: item.x, 
+                    y: item.y,
+                    width: item.width,
+                    height: item.height
+                })                
                 list[index++] = newItem
             }
         })

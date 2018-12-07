@@ -1,5 +1,11 @@
 import UIElement from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import { 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_LAYER_SIZE, 
+    EVENT_CHANGE_LAYER_MOVE,
+    EVENT_CHANGE_LAYER_POSITION, 
+    EVENT_CHANGE_SELECTION
+} from '../../../types/event';
 
 export default class MoveGuide extends UIElement {
 
@@ -22,7 +28,7 @@ export default class MoveGuide extends UIElement {
         var layer = this.read('/selection/current/layer');
         if (!layer) return []; 
 
-        var list = this.read('/guide/line/layer', 3, layer.id);        
+        var list = this.read('/guide/line/layer', 3);        
 
         var bo = this.$board.offset()
         var po = this.$page.offset()
@@ -54,6 +60,7 @@ export default class MoveGuide extends UIElement {
     }
 
     [EVENT_CHANGE_LAYER_SIZE] () { this.refresh(); }
+    [EVENT_CHANGE_LAYER_MOVE] () { this.refresh(); }
     [EVENT_CHANGE_LAYER_POSITION] () { this.refresh(); }    
     [EVENT_CHANGE_EDITOR] () { this.refresh(); }
     [EVENT_CHANGE_SELECTION] () { this.refresh() }

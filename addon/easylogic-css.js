@@ -9430,6 +9430,7 @@ var CHANGE_LAYER_NAME = 'CHANGE_LAYER_NAME';
 
 var CHANGE_LAYER_FILTER$1 = 'CHANGE_LAYER_FILTER';
 var CHANGE_LAYER_SIZE = 'CHANGE_LAYER_SIZE';
+var CHANGE_LAYER_MOVE = 'CHANGE_LAYER_MOVE';
 var CHANGE_LAYER_POSITION = 'CHANGE_LAYER_POSITION';
 var CHANGE_LAYER_TRANSFORM = 'CHANGE_LAYER_TRANSFORM';
 var CHANGE_LAYER_TRANSFORM_3D = 'CHANGE_LAYER_TRANSFORM_3D';
@@ -9460,6 +9461,7 @@ var EVENT_CHANGE_LAYER = '@' + CHANGE_LAYER;
 
 var EVENT_CHANGE_LAYER_FILTER = '@' + CHANGE_LAYER_FILTER$1;
 var EVENT_CHANGE_LAYER_SIZE = '@' + CHANGE_LAYER_SIZE;
+var EVENT_CHANGE_LAYER_MOVE = '@' + CHANGE_LAYER_MOVE;
 var EVENT_CHANGE_LAYER_POSITION = '@' + CHANGE_LAYER_POSITION;
 var EVENT_CHANGE_LAYER_TRANSFORM = '@' + CHANGE_LAYER_TRANSFORM;
 var EVENT_CHANGE_LAYER_TRANSFORM_3D = '@' + CHANGE_LAYER_TRANSFORM_3D;
@@ -12094,7 +12096,7 @@ var ItemManager = function (_BaseModule) {
     return ItemManager;
 }(BaseModule);
 
-var list$1 = new Array(1000);
+var list$1 = new Array(100);
 var lastIndex = -1;
 var selectedItem = {};
 
@@ -12196,7 +12198,7 @@ var GuideManager = function (_BaseModule) {
         key: '*/guide/line/layer',
         value: function guideLineLayer($store) {
             var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
-            var selectedId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+            var selectedRect = arguments[2];
 
 
             var page = $store.read('/selection/current/page');
@@ -12205,6 +12207,8 @@ var GuideManager = function (_BaseModule) {
             if (page.selected) return [];
 
             var index = 0;
+            selectedItem = $store.read('/guide/rect', selectedRect || $store.read('/selection/rect'));
+
             list$1[index++] = $store.read('/guide/rect', {
                 x: '0px',
                 y: '0px',
@@ -12213,18 +12217,13 @@ var GuideManager = function (_BaseModule) {
             });
 
             $store.read('/item/each/children', page.id, function (item) {
-                var newItem = $store.read('/guide/rect', {
-                    x: item.x,
-                    y: item.y,
-                    width: item.width,
-                    height: item.height
-                });
-
-                if (selectedId == item.id) {
-                    selectedItem = newItem;
-                } else if ($store.read('/selection/check', item.id)) {
-                    selectedItem = newItem;
-                } else {
+                if ($store.read('/selection/check', item.id) == false) {
+                    var newItem = $store.read('/guide/rect', {
+                        x: item.x,
+                        y: item.y,
+                        width: item.width,
+                        height: item.height
+                    });
                     list$1[index++] = newItem;
                 }
             });
@@ -13021,7 +13020,7 @@ var PageManager = function (_BaseModule) {
     return PageManager;
 }(BaseModule);
 
-var ITEM_TYPE_PAGE$1 = 'page';
+var ITEM_TYPE_PAGE = 'page';
 var ITEM_TYPE_LAYER = 'layer';
 var ITEM_TYPE_IMAGE = 'image';
 
@@ -13264,7 +13263,7 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: '*/selection/is/page',
         value: function selectionIsPage($store, type) {
-            return $store.read('/selection/is/item', ITEM_TYPE_PAGE$1);
+            return $store.read('/selection/is/item', ITEM_TYPE_PAGE);
         }
     }, {
         key: '*/selection/is/boxshadow',
@@ -13323,7 +13322,7 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: '/selection/change',
         value: function selectionChange($store, itemType) {
-            if (itemType == ITEM_TYPE_PAGE$1) {
+            if (itemType == ITEM_TYPE_PAGE) {
                 $store.read('/selection/current/page', function (page) {
                     $store.run('/selection/one', page.id);
                 });
@@ -13354,11 +13353,15 @@ var SelectionManager = function (_BaseModule) {
                 }
             });
 
-            $store.selection = {
-                type: SELECT_MODE_GROUP,
-                ids: selectItems,
-                itemType: selectItems.length ? ITEM_TYPE_LAYER : ITEM_TYPE_PAGE$1
-            };
+            if (selectItems.length) {
+                $store.selection = {
+                    type: SELECT_MODE_GROUP,
+                    ids: selectItems,
+                    itemType: ITEM_TYPE_LAYER
+                };
+            } else {
+                $store.run('/selection/change', ITEM_TYPE_PAGE);
+            }
         }
     }, {
         key: '*/selection/rect',
@@ -17273,7 +17276,7 @@ var PredefinedLayerResizer = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="predefined-layer-resizer">\n                <div class=\'button-group\' ref=\'$buttonGroup\'>\n                    <button type="button" data-value="to right"></button>\n                    <button type="button" data-value="to left"></button>\n                    <button type="button" data-value="to top"></button>\n                    <button type="button" data-value="to bottom"></button>\n                    <button type="button" data-value="to top right"></button>\n                    <button type="button" data-value="to bottom right"></button>\n                    <button type="button" data-value="to bottom left"></button>\n                    <button type="button" data-value="to top left"></button>\n                </div>\n\n                <Radius></Radius>\n                <TopLeftRadius></TopLeftRadius>\n                <TopRightRadius></TopRightRadius>\n                <BottomLeftRadius></BottomLeftRadius>\n                <BottomRightRadius></BottomRightRadius>\n                <LayerRadius></LayerRadius>\n                <LayerRotate></LayerRotate>\n\n                <div class="guide-horizontal"></div>\n                <div class="guide-vertical"></div>\n            </div> \n        ';
+            return '\n            <div class="predefined-layer-resizer">\n                <div class="event-panel" ref="$eventPanel"></div>\n                <div class=\'button-group\' ref=\'$buttonGroup\'>\n                    <button type="button" data-value="to right"></button>\n                    <button type="button" data-value="to left"></button>\n                    <button type="button" data-value="to top"></button>\n                    <button type="button" data-value="to bottom"></button>\n                    <button type="button" data-value="to top right"></button>\n                    <button type="button" data-value="to bottom right"></button>\n                    <button type="button" data-value="to bottom left"></button>\n                    <button type="button" data-value="to top left"></button>\n                </div>\n\n                <Radius></Radius>\n                <TopLeftRadius></TopLeftRadius>\n                <TopRightRadius></TopRightRadius>\n                <BottomLeftRadius></BottomLeftRadius>\n                <BottomRightRadius></BottomRightRadius>\n                <LayerRadius></LayerRadius>\n                <LayerRotate></LayerRotate>\n\n                <div class="guide-horizontal"></div>\n                <div class="guide-vertical"></div>\n            </div> \n        ';
         }
     }, {
         key: 'refresh',
@@ -17309,7 +17312,6 @@ var PredefinedLayerResizer = function (_UIElement) {
                 height = _ref.height,
                 id = _ref.id;
 
-
             var boardOffset = this.boardOffset || this.$board.offset();
             var pageOffset = this.pageOffset || this.$page.offset();
             var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
@@ -17337,14 +17339,7 @@ var PredefinedLayerResizer = function (_UIElement) {
     }, {
         key: 'setPosition',
         value: function setPosition() {
-
-            if (this.read('/selection/is/group')) {
-                this.setRectangle(this.read('/selection/rect'));
-            } else {
-                if (this.read('/selection/is/layer')) {
-                    this.setRectangle(this.read('/selection/rect'));
-                }
-            }
+            this.setRectangle(this.read('/selection/rect'));
         }
     }, {
         key: 'isShow',
@@ -17362,6 +17357,11 @@ var PredefinedLayerResizer = function (_UIElement) {
         }
     }, {
         key: EVENT_CHANGE_LAYER_SIZE,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_LAYER_MOVE,
         value: function value() {
             this.refresh();
         }
@@ -17455,11 +17455,9 @@ var PredefinedLayerResizer = function (_UIElement) {
         }
     }, {
         key: 'caculateSnap',
-        value: function caculateSnap(item) {
+        value: function caculateSnap() {
 
-            var layer = this.read('/selection/current/layer');
-            if (!layer) return item;
-            var list = this.read('/guide/line/layer', 3, layer.id);
+            var list = this.read('/guide/line/layer', 3);
 
             if (list.length) {
                 this.cacualteSizeItem(item, list);
@@ -17472,10 +17470,8 @@ var PredefinedLayerResizer = function (_UIElement) {
         value: function updatePosition(items) {
             var _this2 = this;
 
-            if (items.length == 1) {
-                items[0] = this.caculateSnap(items[0]);
-                this.caculateActiveButtonPosition(items[0]);
-            }
+            // this.caculateSnap()
+            // this.caculateActiveButtonPosition(rect);
 
             items.forEach(function (item) {
                 _this2.run('/item/set', {
@@ -17487,7 +17483,6 @@ var PredefinedLayerResizer = function (_UIElement) {
                 });
             });
 
-            this.emit(CHANGE_LAYER_SIZE);
             this.setPosition();
         }
     }, {
@@ -17584,22 +17579,18 @@ var PredefinedLayerResizer = function (_UIElement) {
                 items.forEach(function (item) {
                     _this3.toTop(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to bottom') {
                 items.forEach(function (item) {
                     _this3.toBottom(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to right') {
                 items.forEach(function (item) {
                     _this3.toRight(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to left') {
                 items.forEach(function (item) {
                     _this3.toLeft(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to bottom left') {
                 items.forEach(function (item) {
                     _this3.toBottom(item);
@@ -17607,7 +17598,6 @@ var PredefinedLayerResizer = function (_UIElement) {
                 items.forEach(function (item) {
                     _this3.toLeft(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to bottom right') {
                 items.forEach(function (item) {
                     _this3.toBottom(item);
@@ -17615,7 +17605,6 @@ var PredefinedLayerResizer = function (_UIElement) {
                 items.forEach(function (item) {
                     _this3.toRight(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to top right') {
                 items.forEach(function (item) {
                     _this3.toTop(item);
@@ -17623,7 +17612,6 @@ var PredefinedLayerResizer = function (_UIElement) {
                 items.forEach(function (item) {
                     _this3.toRight(item);
                 });
-                this.updatePosition(items);
             } else if (this.currentType == 'to top left') {
                 items.forEach(function (item) {
                     _this3.toTop(item);
@@ -17631,8 +17619,10 @@ var PredefinedLayerResizer = function (_UIElement) {
                 items.forEach(function (item) {
                     _this3.toLeft(item);
                 });
-                this.updatePosition(items);
             }
+
+            this.updatePosition(items);
+            this.emit(CHANGE_LAYER_SIZE);
         }
 
         /* position drag */
@@ -17648,8 +17638,8 @@ var PredefinedLayerResizer = function (_UIElement) {
             return !this.isPositionDrag;
         }
     }, {
-        key: 'pointerstart $el | isNotPositionDragCheck',
-        value: function pointerstart$elIsNotPositionDragCheck(e) {
+        key: 'pointerstart $eventPanel | isNotPositionDragCheck',
+        value: function pointerstart$eventPanelIsNotPositionDragCheck(e) {
             var _this4 = this;
 
             this.isPositionDrag = true;
@@ -17693,8 +17683,8 @@ var PredefinedLayerResizer = function (_UIElement) {
                 item.x += dx;
             });
 
-            this.emit(CHANGE_LAYER_SIZE);
             this.updatePosition(items);
+            this.emit(CHANGE_LAYER_MOVE);
         }
     }, {
         key: 'pointermove document | isPositionDragCheck',
@@ -17735,7 +17725,6 @@ var PredefinedLayerResizer = function (_UIElement) {
         value: function pointerstart$buttonGroupDataValueIsNotDownCheck(e) {
             var _this5 = this;
 
-            e.preventDefault();
             var rect = this.read('/selection/rect');
 
             this.activeButton = e.$delegateTarget;
@@ -17767,8 +17756,8 @@ var PredefinedLayerResizer = function (_UIElement) {
             this.canvasScrollTop = this.$board.scrollTop();
         }
     }, {
-        key: 'pointermove document | isDownCheck',
-        value: function pointermoveDocumentIsDownCheck(e) {
+        key: 'pointermove document | isNotPositionDragCheck | isDownCheck',
+        value: function pointermoveDocumentIsNotPositionDragCheckIsDownCheck(e) {
             e.preventDefault();
             this.targetXY = e.xy;
             this.$page.addClass('moving');
@@ -17776,8 +17765,8 @@ var PredefinedLayerResizer = function (_UIElement) {
             this.resizeComponent();
         }
     }, {
-        key: 'pointerend document | isDownCheck',
-        value: function pointerendDocumentIsDownCheck(e) {
+        key: 'pointerend document| isNotPositionDragCheck  | isDownCheck',
+        value: function pointerendDocumentIsNotPositionDragCheckIsDownCheck(e) {
             e.preventDefault();
             if (this.activeButton) {
                 this.activeButton.removeClass('active');
@@ -17825,7 +17814,7 @@ var MoveGuide = function (_UIElement) {
             var layer = this.read('/selection/current/layer');
             if (!layer) return [];
 
-            var list = this.read('/guide/line/layer', 3, layer.id);
+            var list = this.read('/guide/line/layer', 3);
 
             var bo = this.$board.offset();
             var po = this.$page.offset();
@@ -17859,6 +17848,11 @@ var MoveGuide = function (_UIElement) {
         }
     }, {
         key: EVENT_CHANGE_LAYER_SIZE,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_LAYER_MOVE,
         value: function value() {
             this.refresh();
         }
@@ -18654,10 +18648,17 @@ var GradientView = function (_BaseTab) {
         value: function refreshLayer() {
             var _this3 = this;
 
-            this.read('/selection/current/layer', function (item) {
-                var $el = _this3.$el.$('[item-layer-id="' + item.id + '"]');
-                $el.cssText(_this3.read('/layer/toString', item, true));
-                $el.html(_this3.read('/layer/toStringClipPath', item));
+            this.read('/selection/current/layer', function (items) {
+
+                if (!items.length) {
+                    items = [items];
+                }
+
+                items.forEach(function (item) {
+                    var $el = _this3.$el.$('[item-layer-id="' + item.id + '"]');
+                    $el.cssText(_this3.read('/layer/toString', item, true));
+                    $el.html(_this3.read('/layer/toStringClipPath', item));
+                });
             });
         }
     }, {
@@ -18766,7 +18767,12 @@ var GradientView = function (_BaseTab) {
     }, {
         key: EVENT_CHANGE_LAYER_SIZE,
         value: function value(newValue) {
-            this.refresh();
+            this.refreshLayer();
+        }
+    }, {
+        key: EVENT_CHANGE_LAYER_MOVE,
+        value: function value(newValue) {
+            this.refreshLayer();
         }
     }, {
         key: EVENT_CHANGE_LAYER_TRANSFORM,
@@ -18849,20 +18855,20 @@ var GradientView = function (_BaseTab) {
                 this.dispatch('/selection/change', ITEM_TYPE_PAGE);
             }
         }
-    }, {
-        key: 'click $page',
-        value: function click$page(e) {
-            if (!e.$delegateTarget) {
-                this.selectPageMode();
-            } else if (!e.$delegateTarget.hasClass('layer')) {
-                this.selectPageMode();
-            }
-        }
-    }, {
-        key: 'click $el .page-canvas | self',
-        value: function click$elPageCanvasSelf(e) {
-            this.selectPageMode();
-        }
+
+        // 'click $page' (e) {
+        //     if (!e.$delegateTarget) {
+        //         this.selectPageMode()
+        //     } else if (!e.$delegateTarget.hasClass('layer')) {
+        //         this.selectPageMode()
+        //     }
+
+        // }    
+
+        // 'click $el .page-canvas | self' (e) {
+        //     this.selectPageMode()
+        // }
+
     }, {
         key: 'isDownCheck',
         value: function isDownCheck() {
@@ -18875,13 +18881,34 @@ var GradientView = function (_BaseTab) {
         }
     }, {
         key: 'isPageMode',
-        value: function isPageMode() {
-            return this.read('/selection/is/page');
+        value: function isPageMode(e) {
+            if (this.read('/selection/is/page')) {
+                return true;
+            }
+
+            var $target = new Dom(e.target);
+
+            if ($target.is(this.refs.$colorview)) {
+                return true;
+            }
+
+            if ($target.is(this.refs.$canvas)) {
+                return true;
+            }
         }
     }, {
-        key: 'pointerstart $canvas | isPageMode | isNotDownCheck',
-        value: function pointerstart$canvasIsPageModeIsNotDownCheck(e) {
-
+        key: 'hasDragArea',
+        value: function hasDragArea() {
+            return this.dragArea;
+        }
+    }, {
+        key: 'hasNotDragArea',
+        value: function hasNotDragArea() {
+            return !this.dragArea;
+        }
+    }, {
+        key: 'pointerstart $canvas | hasNotDragArea | isPageMode | isNotDownCheck',
+        value: function pointerstart$canvasHasNotDragAreaIsPageModeIsNotDownCheck(e) {
             this.isDown = true;
             this.xy = e.xy;
             var x = this.xy.x;
@@ -18891,8 +18918,8 @@ var GradientView = function (_BaseTab) {
             this.refs.$dragArea.show();
         }
     }, {
-        key: 'pointermove document | isPageMode | isNotLayerCheck | isDownCheck',
-        value: function pointermoveDocumentIsPageModeIsNotLayerCheckIsDownCheck(e) {
+        key: 'pointermove document | hasDragArea | isDownCheck',
+        value: function pointermoveDocumentHasDragAreaIsDownCheck(e) {
             if (!this.xy) return;
             // this.refs.$page.addClass('moving');
             this.targetXY = e.xy;
@@ -18904,14 +18931,11 @@ var GradientView = function (_BaseTab) {
 
             var x = Math.min(this.targetXY.x, this.xy.x) + this.refs.$board.scrollLeft() - offset.left;
             var y = Math.min(this.targetXY.y, this.xy.y) + this.refs.$board.scrollTop() - offset.top;
-            this.dragArea = true;
             this.refs.$dragArea.cssText('position:absolute;left: ' + x + 'px;top: ' + y + 'px;width: ' + width + 'px;height:' + height + 'px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;');
         }
     }, {
-        key: 'pointerend document | isPageMode | isNotLayerCheck | isDownCheck',
-        value: function pointerendDocumentIsPageModeIsNotLayerCheckIsDownCheck(e) {
-            var _this4 = this;
-
+        key: 'pointerend document | hasDragArea | isDownCheck',
+        value: function pointerendDocumentHasDragAreaIsDownCheck(e) {
             this.isDown = false;
 
             if (!this.xy) return;
@@ -18925,25 +18949,10 @@ var GradientView = function (_BaseTab) {
             var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
             var y = Math.min(this.targetXY.y, this.xy.y) - po.top;
 
-            this.run('/selection/change', 'layer');
-            this.dispatch('/selection/area', { x: x, y: y, width: width, height: height });
+            this.dragArea = false;
+            this.refs.$dragArea.hide();
 
-            this.refs.$dragArea.px('width', 0);
-            this.refs.$dragArea.px('height', 0);
-            setTimeout(function () {
-                _this4.dragArea = false;
-                _this4.refs.$dragArea.hide();
-            }, 100);
-        }
-    }, {
-        key: 'isLayerCheck',
-        value: function isLayerCheck() {
-            return this.isLayer;
-        }
-    }, {
-        key: 'isNotLayerCheck',
-        value: function isNotLayerCheck() {
-            return !this.isLayer;
+            this.dispatch('/selection/area', { x: x, y: y, width: width, height: height });
         }
     }, {
         key: 'isNotFirstPosition',
@@ -19023,7 +19032,7 @@ var LayerListView = function (_UIElement) {
 
             var selected = this.read('/selection/check', item.id) ? 'selected' : '';
             var collapsed = item.gradientCollapsed ? 'collapsed' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/image/children', item.id, function (item) {
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" item-type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/image/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }).join('') + '\n                </div>\n            </div>       \n            ';
         }
@@ -19054,15 +19063,31 @@ var LayerListView = function (_UIElement) {
 
             this.$el.toggleClass('show-mini-view', !image);
 
-            this.$el.$(".selected").el.scrollIntoView();
+            this.refreshScroll();
+        }
+    }, {
+        key: 'refreshScroll',
+        value: function refreshScroll() {
+            var $el = this.$el.$(".selected");
+
+            if ($el.attr('item-type') == 'layer') {
+                // $el.el.scrollIntoView();
+            }
         }
     }, {
         key: 'refreshLayer',
         value: function refreshLayer() {
             var _this4 = this;
 
-            this.read('/selection/current/layer', function (item) {
-                _this4.$el.$('[id="' + item.id + '"] .item-view').cssText(_this4.read('/layer/toString', item, false));
+            this.read('/selection/current/layer', function (items) {
+
+                if (!items.length) {
+                    items = [items];
+                }
+
+                items.forEach(function (item) {
+                    _this4.$el.$('[id="' + item.id + '"] .item-view').cssText(_this4.read('/layer/toString', item, false));
+                });
             });
         }
     }, {

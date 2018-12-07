@@ -78,7 +78,7 @@ export default class LayerListView extends UIElement {
         var selected = this.read('/selection/check', item.id) ? 'selected' : ''; 
         var collapsed = item.gradientCollapsed ? 'collapsed' : ''; 
         return `
-            <div class='tree-item ${selected}' id="${item.id}" type='layer' draggable="true">
+            <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-view-container">
                     <div class="item-view"  style='${this.read('/layer/toString', item, false)}'></div>
                 </div>
@@ -124,14 +124,29 @@ export default class LayerListView extends UIElement {
 
         this.$el.toggleClass('show-mini-view', !image);
 
-        this.$el.$(".selected").el.scrollIntoView();
+        this.refreshScroll();
+    }
+
+    refreshScroll () {
+        var $el = this.$el.$(".selected")
+
+        if($el.attr('item-type') == 'layer') {
+            // $el.el.scrollIntoView();
+        }
     }
 
     refreshLayer () {
-        this.read('/selection/current/layer', (item) => {
-            this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('/layer/toString', item, false))
+        this.read('/selection/current/layer', (items) => {
+
+            if (!items.length) {
+                items = [items]
+            }
+            
+            items.forEach(item => {
+                this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('/layer/toString', item, false))
+            })
         })
-    }
+    }    
 
     refreshImage() {
         this.read('/selection/current/image', (item) => {
