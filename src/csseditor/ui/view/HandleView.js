@@ -1,15 +1,7 @@
-import UIElement from '../../../colorpicker/UIElement';
-import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
-import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
-
-import MoveGuide from '../control/shape/MoveGuide';
-import SubFeatureControl from '../control/SubFeatureControl';
-import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
-import { parseParamNumber } from '../../../util/filter/functions';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE, CHANGE_SELECTION, EVENT_CHANGE_LAYER_MOVE } from '../../types/event';
 import { ITEM_TYPE_PAGE } from '../../module/SelectionManager';
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
+import { CHANGE_SELECTION } from '../../types/event';
 
 
 export default class HandleView extends GradientView {
@@ -36,22 +28,6 @@ export default class HandleView extends GradientView {
         }
 
     }
-
-/*
-    'click $page' (e) {
-        console.log(e);
-        if (!e.$delegateTarget) {
-            this.selectPageMode()
-        } else if (!e.$delegateTarget.hasClass('layer')) {
-            this.selectPageMode()
-        }
-
-    }    
-
-    'click $el .page-canvas | self' (e) {
-        this.selectPageMode()
-    }
-*/
 
     isDownCheck () {
         return this.isDown

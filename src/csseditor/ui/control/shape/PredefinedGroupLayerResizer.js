@@ -5,9 +5,11 @@ import {
     EVENT_CHANGE_LAYER_SIZE, 
     EVENT_CHANGE_LAYER_POSITION, 
     CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_ROTATE,
     EVENT_CHANGE_LAYER_TRANSFORM, 
     EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_MOVE
+    EVENT_CHANGE_LAYER_MOVE,
+    EVENT_CHANGE_LAYER_ROTATE
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 
@@ -27,12 +29,21 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     } 
 
     'load $el' () {
-        return this.read('/selection/current').map(item => {
 
+        var layers = this.read('/selection/current/layer');
+        var isImage = this.read('/selection/is/image');
+
+        if (!layers) return '';
+
+        if (Array.isArray(layers) == false) {
+            layers = [layers]
+        }
+
+        return layers.map(item => {
             var css = this.setRectangle(item);
-
+            var image = isImage ? 'image' : ''; 
             return `
-                <div class="predefined-layer-resizer" predefined-layer-id="${item.id}" style="${this.read('/css/toString', css)}" >
+                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('/css/toString', css)}" >
                     <div class="event-panel" data-value="move"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="to right"></button>
@@ -94,11 +105,12 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }    
 
     isShow () {
-        return this.read('/selection/is/group')
+        return this.read('/selection/is/not/empty')
     }
 
     [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refresh() }
     [EVENT_CHANGE_LAYER_SIZE] () {this.refresh()}
+    [EVENT_CHANGE_LAYER_ROTATE] () {this.refresh()}
     [EVENT_CHANGE_LAYER_MOVE] () {this.refresh()}
     [EVENT_CHANGE_LAYER_POSITION] () {this.refresh()}
     [EVENT_CHANGE_EDITOR] () { this.refresh(); }
@@ -244,17 +256,19 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var {angle} = this; 
 
         var {rotate} =item;
+
         if (typeof rotate == 'undefined') rotate = 0; 
 
         this.run('/item/set', {
             id: item.id, 
             rotate: (rotate + Math.floor(angle) - 270)
         });
-        console.log(item.id, rotate, angle);
     }
 
     resizeComponent () {
         var items = this.rectItems;
+        var event = CHANGE_LAYER_SIZE;
+
         if (this.currentType == 'to top') {
             items.forEach(item => { this.toTop(item) })
         } else if (this.currentType == 'to bottom') {
@@ -278,11 +292,12 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         } else if (this.currentType == 'move') {
             items.forEach(item => { this.moveXY(item) })
         } else if (this.currentType == 'rotate') {
-            items.forEach(item => { this.rotate(item) })            
+            items.forEach(item => { this.rotate(item) })      
+            event = CHANGE_LAYER_ROTATE 
         }
      
         this.updatePosition(items)        
-        this.emit(CHANGE_LAYER_SIZE)               
+        this.emit(event)               
     }
 
 
@@ -308,7 +323,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             x: parseParamNumber(item.x),
             y: parseParamNumber(item.y),
             width: parseParamNumber(item.width),
-            height: parseParamNumber(item.height)
+            height: parseParamNumber(item.height),
+            rotate: parseParamNumber(item.rotate)
         }
         this.$dom = this.read('/item/dom', item.id);
 
@@ -326,7 +342,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                 x: parseParamNumber(it.x),
                 y: parseParamNumber(it.y),
                 width: parseParamNumber(it.width),
-                height: parseParamNumber(it.height)
+                height: parseParamNumber(it.height),
+                rotate: parseParamNumber(it.rotate || 0)
             }
         })
 

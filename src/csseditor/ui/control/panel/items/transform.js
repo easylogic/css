@@ -4,7 +4,7 @@ import { EVENT_CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_EDIT
 export default class Transform extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item transform show'>
+            <div class='property-item transform'>
                 <div class='title' ref="$title">Transform</div>
                 <div class='items'>            
                     <div>

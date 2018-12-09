@@ -1,12 +1,18 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER } from "../../../../types/event";
 
 export default class FilterList extends BasePropertyItem {
 
     template () { 
         return `
-            <div class='property-item filters'>
-                <div class='title' ref="$title">Filter - <span class='description' ref="$desc"></span></div>
+            <div class='property-item filters show'>
+                <div class='title' ref="$title">
+                    Filter
+
+                    <span style="float:right;">
+                        <button type="button">+</button>
+                    </span>
+                </div>
                 <div class='items no-padding'>                    
                     <div class="filter-list" ref="$filterList">
                         
@@ -52,12 +58,12 @@ export default class FilterList extends BasePropertyItem {
         var filters = this.getFilterList();
 
 
-        return Object.keys(defaultFilterList).map(id => {
-            var viewObject = defaultFilterList[id];
-            var dataObject = filters[id] || {};
+        return filters.map(f => {
+            var viewObject = defaultFilterList[f.type];
+            var dataObject = f || {};
  
             return `
-                <div class='filter-item' data-filter="${id}">
+                <div class='filter-item'>
                     <div class="filter-item-input">
                         ${this.makeInputItem(id, viewObject, dataObject)}
                     </div>
@@ -65,23 +71,13 @@ export default class FilterList extends BasePropertyItem {
         })
     }
 
-    refreshFilter (id) {
-        this.read('/selection/current/layer', (layer) => {
-            var filter = layer.filters[id]
-
-            if (filter) {
-                var $dom = this.$el.$(`[data-filter=${id}]`);
-
-                $dom.$(`.input [data-filter-id=${id}]`).val(filter.value)
-                $dom.$(`.range [data-filter-id=${id}]`).val(filter.value)
-            }
-        })
-        this.refreshFilterList()        
-    }
-
     [EVENT_CHANGE_EDITOR] () {
         this.refresh()
     }
+
+    [EVENT_CHANGE_LAYER] () {
+        this.refresh()
+    }    
 
 
 
@@ -94,21 +90,7 @@ export default class FilterList extends BasePropertyItem {
     }    
 
     refresh () {
-
-        var isShow = this.isShow();
-
-        this.$el.toggle(isShow);
-
-        if(isShow) {
-            this.load()
-            this.refreshFilterList()
-        }
-    }
-
-    refreshFilterList() {
-        this.read('/selection/current/layer', (layer) => {
-            this.refs.$desc.text(this.read('/layer/make/filter', layer.filters)); 
-        })        
+        this.load()
     }
 
     getFilterList () {
@@ -117,7 +99,13 @@ export default class FilterList extends BasePropertyItem {
 
         if (!layer) return []
 
-        return layer.filters || []
+        var filters = layer.filters || []
+
+        if (Array.isArray(filters) == false) {
+            return [];
+        }
+
+        return filters;
     }
 
     'click $filterList input[type=checkbox]' (e) {

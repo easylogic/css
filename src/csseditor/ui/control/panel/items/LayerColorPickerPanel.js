@@ -1,24 +1,19 @@
 import UIElement from "../../../../../colorpicker/UIElement";
-import ColorPicker  from "./color/ColorPicker";
-
+import LayerColorPicker  from "./color/LayerColorPicker";
 
 export default class LayerColorPickerPanel extends UIElement {
     template () {
         return `
-            <div class='property-item layer-colorpicker'>
+            <div class='property-item layer-colorpicker show'>
                 <div class='items'>            
-                    <ColorPicker></ColorPicker>
+                    <LayerColorPicker></LayerColorPicker>
                 </div>
             </div>
         `
     }
 
     components() {
-        return { ColorPicker }
-    }
-
-    '@toggleLayerColorPicker' () {
-        this.$el.toggleClass('show');
+        return { LayerColorPicker }
     }
 
 }

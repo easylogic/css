@@ -4,7 +4,8 @@ import {
     EVENT_CHANGE_LAYER_SIZE, 
     EVENT_CHANGE_LAYER_MOVE,
     EVENT_CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_SELECTION
+    EVENT_CHANGE_SELECTION,
+    EVENT_CHANGE_LAYER_ROTATE
 } from '../../../types/event';
 
 export default class MoveGuide extends UIElement {
@@ -60,6 +61,7 @@ export default class MoveGuide extends UIElement {
     }
 
     [EVENT_CHANGE_LAYER_SIZE] () { this.refresh(); }
+    [EVENT_CHANGE_LAYER_ROTATE] () { this.refresh(); }
     [EVENT_CHANGE_LAYER_MOVE] () { this.refresh(); }
     [EVENT_CHANGE_LAYER_POSITION] () { this.refresh(); }    
     [EVENT_CHANGE_EDITOR] () { this.refresh(); }

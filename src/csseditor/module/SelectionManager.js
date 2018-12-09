@@ -63,6 +63,22 @@ export default class SelectionManager extends BaseModule {
         return $store.selection.ids.includes(id);
     }
 
+    '*/selection/is/empty' ($store) {
+        return $store.selection.ids.length === 0; 
+    }
+
+    '*/selection/is/not/empty' ($store) {
+        return $store.selection.ids.length > 0; 
+    }    
+
+    '*/selection/has/one' ($store) {
+        return $store.selection.ids.length === 1; 
+    }
+
+    '*/selection/has/many' ($store) {
+        return $store.selection.ids.length > 1; 
+    }
+
     '*/selection/type' ($store) {
         return $store.selection.type;
     }

@@ -52,7 +52,6 @@ export default class LayerManager extends BaseModule {
 
         if (image) {
             delete obj['background-color'];
-            delete obj['background-blend-mode'];
             delete obj['mix-blend-mode'];
             delete obj['filter'];
         }
@@ -324,14 +323,28 @@ s
         return items.length ? items[0] : null;
     }
 
+    isFixedRadius (layer) {
+        if (layer.fixedRadius) return [layer.borderRadius]; 
+
+        var count = [
+            layer.borderTopLeftRadius == layer.borderTopRightRadius,
+            layer.borderTopRightRadius == layer.borderBottomRightRadius,
+            layer.borderBottomRightRadius == layer.borderBottomLeftRadius,
+            layer.borderTopLeftRadius == layer.borderBottomLeftRadius,
+        ].filter(it => !it).length
+
+        if (count == 0) {
+            return [layer.borderTopLeftRadius]
+        }
+
+        return []
+    }
+
     '*/layer/get/border-radius' ($store, layer) {
         var css = {};
-        if (layer.fixedRadius) {
-            css['border-radius'] = layer.borderRadius
-            css['border-top-left-radius'] = ''
-            css['border-top-right-radius'] = ''
-            css['border-bottom-left-radius'] = ''
-            css['border-bottom-right-radius'] = ''  
+        var isFixedRadius = this.isFixedRadius(layer);
+        if (isFixedRadius.length) {
+            css['border-radius'] = isFixedRadius[0]
         } else {
             css['border-top-left-radius'] = layer.borderTopLeftRadius;
             css['border-top-right-radius'] = layer.borderTopRightRadius;
@@ -343,12 +356,13 @@ s
     }
 
     '*/layer/toCSS' ($store, layer = null, withStyle = true, image = null, isExport = false) {
-        var css = Object.assign({}, withStyle ? (layer || {}) : {});
-
+        var css = {};
 
         if (withStyle) {
             css.left = layer.x 
             css.top = layer.y
+            css.width = layer.width
+            css.height = layer.height
         }
 
         if (layer.backgroundColor) {

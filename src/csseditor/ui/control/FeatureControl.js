@@ -1,7 +1,6 @@
 import UIElement from "../../../colorpicker/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
-import GroupView from './panel/GroupView';
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
 
 
@@ -9,10 +8,7 @@ export default class FeatureControl extends UIElement {
 
     template () {
         return `
-            <div class='feature-control'>
-                <div class='feature layer-feature' data-type='group'>
-                    <GroupView></GroupView>
-                </div>              
+            <div class='feature-control'>     
                 <div class='feature layer-feature' data-type='layer'>
                     <LayerView></LayerView>
                 </div>                              
@@ -26,8 +22,7 @@ export default class FeatureControl extends UIElement {
     components () {
         return { 
             LayerView,
-            ImageView,
-            GroupView
+            ImageView
         } 
     }
 
@@ -43,9 +38,7 @@ export default class FeatureControl extends UIElement {
 
         var selectType = 'layer'; 
 
-        if (this.read('/selection/is/group')) {
-            selectType = 'group';
-        } else if (this.read('/selection/is/layer')) {
+        if (this.read('/selection/is/layer') || this.read('/selection/is/group')) {
             selectType = 'layer';
         } else if (this.read('/selection/is/image')) {
             selectType = 'image';

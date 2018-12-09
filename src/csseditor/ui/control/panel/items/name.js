@@ -5,7 +5,7 @@ export default class Name extends BasePropertyItem {
     template () {
         return `
             <div class='property-item name show'>
-                <div class='title' ref="$title">Information</div>            
+                <!-- <div class='title' ref="$title">Information</div>      -->      
                 <div class='items'>            
                     <div>
                         <label>Name</label>

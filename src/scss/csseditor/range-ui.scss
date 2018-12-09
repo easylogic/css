@@ -17,11 +17,11 @@ $thumb-border-width: 0px !default;
 $thumb-border-color: #eceff1 !default;
 
 $track-width: 95% !default;
-$track-height: 1px !default;
+$track-height: 2px !default;
 $track-shadow-size: 0px !default;
 $track-shadow-blur: 0px !default;
-$track-shadow-color: rgba(0, 0, 0, .0) !default;
-$track-border-width: 0px !default;
+$track-shadow-color: rgba(0, 0, 0, 1) !default;
+$track-border-width: 1px !default;
 $track-border-color: #cfd8dc !default;
 
 $track-radius: 0px !default;
@@ -55,7 +55,7 @@ $ie-bottom-track-color: darken($track-color, $contrast) !default;
 }
 
 [type='range'] {
-  -webkit-appearance: none;
+  appearance: none;
   background: transparent;
   margin: $thumb-height / 2 0;
   width: $track-width;

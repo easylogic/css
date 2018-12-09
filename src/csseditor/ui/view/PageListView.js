@@ -15,6 +15,7 @@ export default class PageList extends UIElement {
                 
                 </div>
                 <div class='project-tools'>
+                    <button type="button" ref="$exportButton">Export</button>                
                     <div class="property-item">
                         <label>Show Grid <input type='checkbox' ref="$check"></label>
                     </div>
@@ -100,5 +101,9 @@ export default class PageList extends UIElement {
     'click $viewSample' (e) {
         this.emit('togglePageSampleView');
     }    
+
+    'click $exportButton' (e) {
+        this.emit('showExport')
+    }
 
 } 

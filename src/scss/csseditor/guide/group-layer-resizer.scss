@@ -20,6 +20,10 @@
         // box-shadow: 0 0 0 1px $editor-line-color;
         box-sizing: border-box;      
 
+        &.image > * {
+            display: none;
+        }
+
         .event-panel {
             pointer-events: all;
             position: absolute;
@@ -66,6 +70,7 @@
             width: $editor-resizer-width;
             height: $editor-resizer-width;
             // border-radius: 50%;     
+            box-shadow: 1px 1px 1px 0px rgba(#000000, 0.3);            
             
             /* linear */
             &[data-value='to top'] {

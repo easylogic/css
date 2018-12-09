@@ -1,56 +1,56 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { 
+    EVENT_CHANGE_LAYER_POSITION, 
+    EVENT_CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_POSITION, 
+    EVENT_CHANGE_EDITOR,
+    EVENT_CHANGE_SELECTION
+} from "../../../../types/event";
 
 export default class Size extends BasePropertyItem {
     template () {
         return `
             <div class='property-item size show'>
-                <div class='title' ref="$title">Dimesion</div>
                 <div class='items'>
                     <div>
-                        <label>fixed</label>
+                        <label><button type="button" ref="$rect">*</button>Width</label>
                         <div>
-                            <button type="button" ref="$rect">like width</button>
+                            <div class='input two'> 
+                                <input type='number' ref="$width"> <span>px</span>
+                            </div>
                         </div>
-                    </div>                   
-                    <div>
-                        <label>Width</label>
+                        <label class='second'>height</label>
                         <div>
-                            <input type='number' ref="$width"> <span>px</span>
-                        </div>
-                        <label>Height</label>
-                        <div>
-                            <input type='number' ref="$height"> <span>px</span>
-                        </div>
+                            <div class="input two">
+                                <input type='number' ref="$height"> <span>px</span>
+                            </div>
+                        </div>                        
                     </div>   
                     <div>
                         <label>X</label>
                         <div>
-                            <input type='number' ref="$x"> <span>px</span>
+                            <div class='input two'> 
+                                <input type='number' ref="$x"> <span>px</span>
+                            </div>
                         </div>
-                        <label>Y</label>
+                        <label class='second'>Y</label>
                         <div>
-                            <input type='number' ref="$y"> <span>px</span>
+                            <div class='input two'>
+                                <input type='number' ref="$y"> <span>px</span>
+                            </div>
                         </div>
-                    </div>                                 
-                                 
+                    </div>
                 </div>
             </div>
         `
     }
 
-    [EVENT_CHANGE_LAYER_POSITION] () {
-        this.refresh()
-    }
-
-    [EVENT_CHANGE_LAYER_SIZE] () {
-        this.refresh();
-    }
-
-    [EVENT_CHANGE_EDITOR] () {
-        this.refresh()
-    }
+    [EVENT_CHANGE_LAYER_POSITION] () { this.refresh() }
+    [EVENT_CHANGE_LAYER_SIZE] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] ()  { this.refresh() }
 
     refresh() {
         var item = this.read('/selection/current')
@@ -80,10 +80,8 @@ export default class Size extends BasePropertyItem {
     'click $rect' (e) {
 
         this.read('/selection/current/layer/id', (id) => {
-            
             var width = this.refs.$width.int() + 'px'
             var height = width;
-
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
         })
 
@@ -91,18 +89,14 @@ export default class Size extends BasePropertyItem {
 
     'input $width' () {
         this.read('/selection/current/layer/id', (id) => {
-            
             var width = this.refs.$width.int() + 'px'
-
             this.commit(CHANGE_LAYER_SIZE, {id, width});
         })        
     }
 
     'input $height' () {
         this.read('/selection/current/layer/id', (id) => {
-            
             var height = this.refs.$height.int() + 'px'
-
             this.commit(CHANGE_LAYER_SIZE, {id, height});
         })        
     }    
@@ -116,9 +110,9 @@ export default class Size extends BasePropertyItem {
     }
 
     'input $y' () {
-        this.read('/selection/current/layer', (item) => {
+        this.read('/selection/current/layer/id', (id) => {
             var y = this.refs.$y.int() + 'px'
-            this.commit(CHANGE_LAYER_POSITION, {id: item.id, y});
+            this.commit(CHANGE_LAYER_POSITION, {id, y});
         })
     }        
 }

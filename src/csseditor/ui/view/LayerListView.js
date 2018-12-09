@@ -1,5 +1,4 @@
 import UIElement from '../../../colorpicker/UIElement';
-import MiniLayerView from './MiniLayerView';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER, 
@@ -19,6 +18,7 @@ import {
     EVENT_CHANGE_IMAGE_COLOR,
     EVENT_CHANGE_COLOR_STEP,
     EVENT_CHANGE_SELECTION,
+    EVENT_CHANGE_LAYER_ROTATE,
 } from '../../types/event';
 
 export default class LayerListView extends UIElement {
@@ -36,13 +36,8 @@ export default class LayerListView extends UIElement {
                     </div>
                 </div>             
                 <div class="layer-list" ref="$layerList"></div>
-                <MiniLayerView></MiniLayerView>
             </div>
         `
-    }
-
-    components () {
-        return { MiniLayerView }
     }
 
     makeItemNode (node, index) {
@@ -123,16 +118,6 @@ export default class LayerListView extends UIElement {
         var image = this.read('/selection/current/image');
 
         this.$el.toggleClass('show-mini-view', !image);
-
-        this.refreshScroll();
-    }
-
-    refreshScroll () {
-        var $el = this.$el.$(".selected")
-
-        if($el.attr('item-type') == 'layer') {
-            // $el.el.scrollIntoView();
-        }
     }
 
     refreshLayer () {
@@ -162,6 +147,7 @@ export default class LayerListView extends UIElement {
     [EVENT_CHANGE_LAYER_POSITION] () { this.refreshLayer() }
     [EVENT_CHANGE_LAYER_RADIUS] () { this.refreshLayer() }
     [EVENT_CHANGE_LAYER_SIZE] () { this.refreshLayer() }
+    [EVENT_CHANGE_LAYER_ROTATE] () { this.refreshLayer() }
     [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refreshLayer() }
     [EVENT_CHANGE_LAYER_TRANSFORM_3D] () { this.refreshLayer() }
 

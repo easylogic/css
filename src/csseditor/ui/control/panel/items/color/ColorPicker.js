@@ -3,10 +3,8 @@ import ColorPicker from '../../../../../../colorpicker/index'
 import UIElement from '../../../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_COLOR_STEP, 
-    CHANGE_LAYER_BACKGROUND_COLOR, 
     CHANGE_COLOR_STEP, 
     CHANGE_IMAGE_COLOR,
-    EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
     EVENT_CHANGE_IMAGE , 
     EVENT_CHANGE_EDITOR,
     EVENT_CHANGE_SELECTION
@@ -43,10 +41,7 @@ export default class ColorPickerLayer extends UIElement {
 
         item = item[0];
 
-        if (this.read('/selection/is/layer')) {
-            this.commit(CHANGE_LAYER_BACKGROUND_COLOR, {id: item.id, backgroundColor: color})
-
-        } else if (this.read('/selection/is/image')) {
+        if (this.read('/selection/is/image')) {
             
             if (this.read('/image/type/isStatic', item.type)) {
                 this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
@@ -72,22 +67,13 @@ export default class ColorPickerLayer extends UIElement {
         this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
     } 
 
-    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] () { this.refresh() }    
     [EVENT_CHANGE_IMAGE] () { this.refresh() }    
     // [EVENT_CHANGE_COLOR_STEP] () { this.refresh() }    
     [EVENT_CHANGE_EDITOR] () { this.refresh() }
     [EVENT_CHANGE_SELECTION] () { this.refresh() }    
 
     refresh() {
-        if (this.read('/selection/is/layer')) {
-            this.read('/selection/current/layer', (layer) => {
-                if (layer.backgroundColor) {
-                    if (layer.backgroundColor.includes('rgb')) return;
-                    this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
-                }
-
-            })
-        } else if (this.read('/selection/is/image')) {
+        if (this.read('/selection/is/image')) {
             this.read('/selection/current/image', (image) => {
                 if (this.read('/image/type/isStatic', image.type)) {
                     this.colorPicker.initColorWithoutChangeEvent(image.color);

@@ -14,6 +14,8 @@ var ordering = {
     'background-size' : 100,
     'background-position' : 100,
 
+    'transform': 1000
+
 }
 
 const MAX_ORDER = Number.MAX_SAFE_INTEGER;
@@ -21,40 +23,7 @@ const MAX_ORDER = Number.MAX_SAFE_INTEGER;
 export default class CssManager extends BaseModule {
 
     '*/css/filtering' ($store, style) {
-        var newStyle = Object.assign({}, style);
-
-        // delete unused css property 
-        delete newStyle.x;
-        delete newStyle.y;
-        delete newStyle.itemType;
-        delete newStyle.parentId;
-        delete newStyle.mixBlendMode;
-        delete newStyle.visible;
-        delete newStyle.filters;
-        delete newStyle.id;
-        delete newStyle.fixedRadius;
-        delete newStyle.borderRadius;
-        delete newStyle.gradientCollapsed;        
-        delete newStyle.index;
-        delete newStyle.clipPathSvg;
-        delete newStyle.fitClipPathSize;
-        delete newStyle.clipPathType;
-        delete newStyle.clipPathSvgWidth;
-        delete newStyle.clipPathSvgHeight;
-        delete newStyle.rotate3dX;
-        delete newStyle.rotate3dY;
-        delete newStyle.rotate3dZ;
-        delete newStyle.rotate3dA;
-        delete newStyle.scale3dX;
-        delete newStyle.scale3dY;
-        delete newStyle.scale3dZ;
-        delete newStyle.translate3dX;
-        delete newStyle.translate3dY;
-        delete newStyle.translate3dZ;
-        delete newStyle.borderBottomRightRadius;
-        delete newStyle.borderBottomLeftRadius;
-        delete newStyle.borderTopLeftRadius;
-        delete newStyle.borderTopRightRadius;        
+        var newStyle = style; 
 
         if (newStyle['background-blend-mode'] == 'normal') {
             delete newStyle['background-blend-mode'];
@@ -64,16 +33,16 @@ export default class CssManager extends BaseModule {
             delete newStyle['mix-blend-mode'];
         }        
 
-        if (parseParamNumber(newStyle['left']) == 0) {
-            delete newStyle['left'];
+        if (parseParamNumber(newStyle.left) == 0) {
+            delete newStyle.left;
         }
 
-        if (parseParamNumber(newStyle['top']) == 0) {
-            delete newStyle['top'];
+        if (parseParamNumber(newStyle.top) == 0) {
+            delete newStyle.top;
         }        
 
-        if (newStyle['transform'] == 'none') {
-            delete newStyle['transform'];
+        if (newStyle.transform == 'none') {
+            delete newStyle.transform;
         }
 
         return newStyle; 

@@ -1,6 +1,6 @@
 
-    $editor-line-color: #5f80de;
-
+    $editor-button-color: #5f80de;
+    $editor-line-color: rgba($editor-button-color, 0.3);
 
     .predefined-layer-resizer {
         display: none;
@@ -50,7 +50,7 @@
             pointer-events: all;
             padding: 0px;
             background-color: rgba(white, 1);
-            border: 1px solid $editor-line-color;
+            border: 1px solid $editor-button-color;
             appearance: none;
             outline: none;
             cursor: pointer;
@@ -60,6 +60,7 @@
             width: $editor-resizer-width;
             height: $editor-resizer-width;
             // border-radius: 50%;     
+            box-shadow: 1px 1px 1px 0px rgba(#000000, 0.3);
 
             /* linear */
             &[data-value='to top'] {

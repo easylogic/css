@@ -129,7 +129,6 @@ $layer-preview-size: 40px;
             overflow: hidden;
             // padding: 5px;
             border-left: 5px solid rgba($border-color, 0.5);
-            border-bottom: 1px solid $border-color;
 
             &.selected {
                 border-left-color: #333;

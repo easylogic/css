@@ -32,7 +32,9 @@ const LAYER_DEFAULT_OBJECT = {
     fitClipPathSize: false,
     x: '0px',
     y: '0px',
-    filters: {}
+    rotate: 0,
+    opacity: 1,
+    filters: []
 }
 
 const GROUP_DEFAULT_OBJECT = {

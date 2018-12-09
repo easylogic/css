@@ -1,0 +1,78 @@
+$align-center-color: black;
+$align-main-color: rgb(21, 118, 228);
+$align-sub-color: #ccc;
+
+@mixin background-image-generator () {
+    background-image: linear-gradient(to right, $align-main-color, $align-main-color),
+                        linear-gradient(to right, $align-sub-color, $align-sub-color),
+                        linear-gradient(to right, $align-center-color, $align-center-color);
+    background-repeat: no-repeat;
+}
+
+@mixin background-image-generator-2 () {
+    background-image: linear-gradient(to right, $align-main-color, $align-main-color),
+                        linear-gradient(to right, $align-center-color, $align-center-color),
+                        linear-gradient(to right, $align-sub-color, $align-sub-color);                        
+    background-repeat: no-repeat;
+}
+
+&.group-align {
+    button {
+        appearance: none;
+        width: 30px;
+        height: 30px;
+        box-sizing: border-box;
+        display:inline-block;
+        border:0px;
+        outline: none;
+        cursor:pointer;
+
+        &[data-value="left"] {
+            @include background-image-generator();
+            background-size: 20px 8px, 16px 8px, 2px 24px;
+            background-position: 6px 6px, 6px 16px, 2px 3px;
+        }
+
+        &[data-value="right"] {
+            @include background-image-generator();
+            background-size: 20px 8px, 16px 8px, 2px 24px;
+            background-position: 5px 6px, 9px 16px, 27px 3px;
+        }
+        
+        &[data-value="center"] {
+            @include background-image-generator();
+            background-size: 20px 8px, 16px 8px, 2px 24px;
+            background-position: 5px 6px, 7px 16px, 14px 3px;
+        }   
+        
+        &[data-value="middle"] {
+            @include background-image-generator();
+            background-size: 8px 20px, 8px 16px, 24px 2px;
+            background-position: 6px 5px, 16px 7px, 3px 14px;
+        }       
+        
+        &[data-value="top"] {
+            @include background-image-generator();
+            background-size: 8px 20px, 8px 16px, 24px 2px;
+            background-position: 6px 8px, 16px 8px, 3px 4px;
+        }               
+
+        &[data-value="bottom"] {
+            @include background-image-generator();
+            background-size: 8px 20px, 8px 16px, 24px 2px;
+            background-position: 6px 4px, 16px 8px, 3px 26px;
+        }        
+        
+        &[data-value="vertical"] {
+            @include background-image-generator-2();
+            background-size: 24px 2px, 18px 10px, 24px 2px;
+            background-position: 3px 6px, 6px 11px, 3px 24px ;
+        }           
+
+        &[data-value="horizontal"] {
+            @include background-image-generator-2();
+            background-size: 2px 24px, 10px 18px, 2px 24px;
+            background-position: 6px 3px, 11px 6px, 24px 3px ;
+        }                   
+    }
+}

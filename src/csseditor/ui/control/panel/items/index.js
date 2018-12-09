@@ -22,16 +22,22 @@ import PageLayout from "./PageLayout";
 import ClipPath from "./ClipPath";
 import PageShowGrid from "./PageShowGrid";
 import GroupAlign from "./GroupAlign";
-// import ClipPathImageResource from "./ClipPathImageResource";
+import BackgroundBlend from "./BackgroundBlend";
+import LayerBlend from "./LayerBlend";
+import Rotate from "./rotate";
+import RadiusFixed from "./radius-fixed";
 
 export default {
+    RadiusFixed,
+    Rotate,
+    LayerBlend,
     GroupAlign,    
     PageShowGrid,
     ClipPath,
-    // ClipPathImageResource,    
     PageLayout,  
     ImageResource,
     BackgroundColor,
+    BackgroundBlend,    
     BlendList,
     MixBlendList,
     FilterList,    

@@ -1,6 +1,6 @@
 import UIElement from '../../../colorpicker/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
-import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
+// import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
 import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
 import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
@@ -26,7 +26,8 @@ import {
     EVENT_CHANGE_COLOR_STEP, 
     EVENT_CHANGE_PAGE_SIZE, 
     EVENT_CHANGE_PAGE, 
-    EVENT_CHANGE_LAYER_MOVE 
+    EVENT_CHANGE_LAYER_MOVE, 
+    EVENT_CHANGE_LAYER_ROTATE
 } from '../../types/event';
 
 export default class GradientView extends UIElement {
@@ -44,11 +45,10 @@ export default class GradientView extends UIElement {
                     <div class="page-canvas" ref="$canvas">
                         <div class="gradient-color-view-container" ref="$page">
                             <div class="gradient-color-view" ref="$colorview"></div>
-                            <div class="ghost-color-view" ref="$ghost"></div>
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
                         <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>
-                        <PredefinedLayerResizer></PredefinedLayerResizer>                        
+                        <!-- <PredefinedLayerResizer></PredefinedLayerResizer> -->
                         <MoveGuide></MoveGuide>     
                         <div ref="$dragArea"></div>                     
                     </div>          
@@ -64,8 +64,8 @@ export default class GradientView extends UIElement {
             SubFeatureControl,
             MoveGuide,
             PredefinedPageResizer,
-            PredefinedGroupLayerResizer,
-            PredefinedLayerResizer
+            PredefinedGroupLayerResizer
+            // PredefinedLayerResizer
         }
     }
 
@@ -89,17 +89,6 @@ export default class GradientView extends UIElement {
         return list; 
     }
 
-
-    'load $ghost' () {
-        if (this.read('/selection/is/one')) return []
-
-        var list = this.read('/selection/ids').map(id => this.read('/item/get', id)).map(item => {
-            return `<div class='layer' ghost-layer-id="${item.id}" style='${this.getGhostCss(item)}'></div>`
-        });
-
-        return list; 
-    }
-
     '@animationEditor' () {
         this.load();
     }
@@ -112,18 +101,7 @@ export default class GradientView extends UIElement {
             // this.refs.$page.el.scrollIntoView()
         }
     }
-
-    getGhostCss (item) {
-        var {x, y, width, height, id} = item; 
-        var transform = "none"; 
-        
-        if (id) {
-            transform = this.read('/layer/make/transform', item);
-        }
-
-        return `left:${x};top:${y};width:${width};height:${height};transform:${transform}`
-    }
-
+    
     refreshLayer () {
         this.read('/selection/current/layer', (items) => {
 
@@ -135,12 +113,6 @@ export default class GradientView extends UIElement {
                 var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
                 $el.cssText(this.read('/layer/toString', item, true))
                 $el.html(this.read('/layer/toStringClipPath', item))
-
-                var $ghost = this.$el.$(`[ghost-layer-id="${item.id}"]`);
-                if ($ghost) {
-                    $ghost.cssText(this.getGhostCss(item))
-                }
-
             })
         })
     }
@@ -217,6 +189,7 @@ export default class GradientView extends UIElement {
     [EVENT_CHANGE_LAYER_POSITION] (newValue) { this.refreshLayer(); }
     [EVENT_CHANGE_LAYER_RADIUS] (newValue) { this.refreshLayer(); }
     [EVENT_CHANGE_LAYER_SIZE] (newValue) { this.refreshLayer(); }
+    [EVENT_CHANGE_LAYER_ROTATE] (newValue) { this.refreshLayer(); }
     [EVENT_CHANGE_LAYER_MOVE] (newValue) { this.refreshLayer(); }    
     [EVENT_CHANGE_LAYER_TRANSFORM] (newValue) { this.refreshLayer(); }
     [EVENT_CHANGE_LAYER_TRANSFORM_3D] (newValue) { this.refreshLayer(); }

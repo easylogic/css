@@ -885,6 +885,74 @@
       width: 30px;
       height: 30px;
       border-radius: 2px; }
+  .codemirror-colorpicker.xd {
+    display: inline-block;
+    padding-top: 12px;
+    width: 245px; }
+    .codemirror-colorpicker.xd .color {
+      display: inline-block;
+      margin-left: 12px;
+      margin-bottom: 12px;
+      width: 170px;
+      height: 170px;
+      vertical-align: middle;
+      border-radius: 3px;
+      overflow: hidden;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      border: 1px solid #cecece; }
+      .codemirror-colorpicker.xd .color > .saturation > .value > .drag-pointer {
+        border: 2px solid white;
+        width: 7px;
+        height: 7px;
+        -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
+                box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black; }
+    .codemirror-colorpicker.xd .control {
+      height: 170px;
+      padding: 0px;
+      vertical-align: middle;
+      display: inline-block;
+      margin-right: 12px;
+      margin-bottom: 12px; }
+      .codemirror-colorpicker.xd .control .hue, .codemirror-colorpicker.xd .control .opacity {
+        margin: 0px;
+        padding: 0px;
+        width: 13px;
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        border-radius: 3px;
+        margin-left: 8px; }
+      .codemirror-colorpicker.xd .control .hue > .hue-container {
+        border-radius: 0px;
+        overflow: hidden;
+        height: 100%;
+        background: -webkit-gradient(linear, left bottom, left top, from(#ff0000), color-stop(17%, #ffff00), color-stop(33%, #00ff00), color-stop(50%, #00ffff), color-stop(67%, #0000ff), color-stop(83%, #ff00ff), to(#ff0000));
+        background: linear-gradient(to top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); }
+      .codemirror-colorpicker.xd .control .opacity > .opacity-container {
+        border-radius: 0px;
+        overflow: hidden;
+        height: 100%; }
+      .codemirror-colorpicker.xd .control .drag-bar, .codemirror-colorpicker.xd .control .drag-bar2 {
+        border: 0px;
+        background-color: transparent;
+        border: 2px solid white;
+        -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
+                box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
+        width: 10px;
+        height: 10px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        -webkit-transform: none;
+                transform: none;
+        overflow: hidden;
+        left: 50%;
+        -webkit-transform: translateX(-50%) translateY(-50%);
+                transform: translateX(-50%) translateY(-50%); }
+    .codemirror-colorpicker.xd .information {
+      margin-top: 5px; }
 
 .colorsets-contextmenu {
   position: fixed;
@@ -1049,6 +1117,8 @@ html, body {
       transition: all 0.15s linear; }
   .csseditor [type='range'] {
     -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
     background: transparent;
     margin: 5px 0;
     width: 95%; }
@@ -1064,14 +1134,14 @@ html, body {
         background: #fbfbfc; }
     .csseditor [type='range']::-webkit-slider-runnable-track {
       cursor: default;
-      height: 1px;
+      height: 2px;
       -webkit-transition: all .2s ease;
       transition: all .2s ease;
       width: 95%;
-      -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
-              box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
+      -webkit-box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
+              box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
       background: #eceff1;
-      border: 0px solid #cfd8dc;
+      border: 1px solid #cfd8dc;
       border-radius: 0px; }
     .csseditor [type='range']::-webkit-slider-thumb {
       -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
@@ -1083,18 +1153,18 @@ html, body {
       height: 10px;
       width: 10px;
       -webkit-appearance: none;
-      margin-top: -4.5px; }
+      margin-top: -5px; }
     .csseditor [type='range']::-moz-range-track {
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
+      box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
       cursor: default;
-      height: 1px;
+      height: 2px;
       -webkit-transition: all .2s ease;
       transition: all .2s ease;
       width: 95%;
       background: #eceff1;
-      border: 0px solid #cfd8dc;
+      border: 1px solid #cfd8dc;
       border-radius: 0px;
-      height: 0.5px; }
+      height: 1px; }
     .csseditor [type='range']::-moz-range-thumb {
       box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
       background: #03A9F4;
@@ -1105,7 +1175,7 @@ html, body {
       width: 6px; }
     .csseditor [type='range']::-ms-track {
       cursor: default;
-      height: 1px;
+      height: 2px;
       -webkit-transition: all .2s ease;
       transition: all .2s ease;
       width: 95%;
@@ -1114,14 +1184,14 @@ html, body {
       border-width: 5px 0;
       color: transparent; }
     .csseditor [type='range']::-ms-fill-lower {
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
+      box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
       background: #dde3e6;
-      border: 0px solid #cfd8dc;
+      border: 1px solid #cfd8dc;
       border-radius: 0px; }
     .csseditor [type='range']::-ms-fill-upper {
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
+      box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
       background: #eceff1;
-      border: 0px solid #cfd8dc;
+      border: 1px solid #cfd8dc;
       border-radius: 0px; }
     .csseditor [type='range']::-ms-thumb {
       box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
@@ -1131,7 +1201,7 @@ html, body {
       cursor: default;
       height: 6px;
       width: 6px;
-      margin-top: 0.25px; }
+      margin-top: 0.5px; }
     .csseditor [type='range']:disabled::-webkit-slider-thumb {
       cursor: not-allowed; }
     .csseditor [type='range']:disabled::-moz-range-thumb {
@@ -1588,8 +1658,7 @@ html, body {
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        border-left: 5px solid rgba(199, 199, 199, 0.5);
-        border-bottom: 1px solid #c7c7c7; }
+        border-left: 5px solid rgba(199, 199, 199, 0.5); }
         .csseditor .layers .layer-list .tree-item.selected {
           border-left-color: #333;
           background-color: #ececec; }
@@ -3052,20 +3121,6 @@ html, body {
         display: none !important; }
       .csseditor .page-view .gradient-color-view-container.moving .move-guide {
         display: block !important; }
-    .csseditor .page-view .ghost-color-view {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      -webkit-transform: translateX(-50%) translateY(-50%);
-              transform: translateX(-50%) translateY(-50%);
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      pointer-events: none; }
-      .csseditor .page-view .ghost-color-view .layer {
-        -webkit-box-shadow: 0px 0px 10px 5px #00f3ff;
-                box-shadow: 0px 0px 10px 5px #00f3ff; }
     .csseditor .page-view .gradient-color-view {
       width: 100%;
       height: 100%;
@@ -3380,8 +3435,8 @@ html, body {
       height: 100%;
       pointer-events: none;
       z-index: 100;
-      -webkit-box-shadow: 0 0 0 1px #5f80de;
-              box-shadow: 0 0 0 1px #5f80de;
+      -webkit-box-shadow: 0 0 0 1px rgba(95, 128, 222, 0.3);
+              box-shadow: 0 0 0 1px rgba(95, 128, 222, 0.3);
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
       .csseditor .page-view .predefined-layer-resizer .event-panel {
@@ -3401,7 +3456,7 @@ html, body {
                 transform: translateX(-50%);
         top: -10px;
         bottom: -10px;
-        background-color: #5f80de;
+        background-color: rgba(95, 128, 222, 0.3);
         display: none; }
       .csseditor .page-view .predefined-layer-resizer .guide-vertical {
         position: absolute;
@@ -3411,7 +3466,7 @@ html, body {
                 transform: translateY(-50%);
         left: -10px;
         right: -10px;
-        background-color: #5f80de;
+        background-color: rgba(95, 128, 222, 0.3);
         display: none; }
       .csseditor .page-view .predefined-layer-resizer button {
         pointer-events: all;
@@ -3429,6 +3484,8 @@ html, body {
                 box-sizing: border-box;
         width: 10px;
         height: 10px;
+        -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
+                box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
         /* linear */ }
         .csseditor .page-view .predefined-layer-resizer button[data-value='to top'] {
           top: -6px;
@@ -3541,6 +3598,8 @@ html, body {
         pointer-events: none;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box; }
+        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer.image > * {
+          display: none; }
         .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer .event-panel {
           pointer-events: all;
           position: absolute;
@@ -3586,6 +3645,8 @@ html, body {
                   box-sizing: border-box;
           width: 10px;
           height: 10px;
+          -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
+                  box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
           /* linear */ }
           .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to top'] {
             top: -6px;
@@ -3955,10 +4016,8 @@ html, body {
                 width: 40px; }
     .csseditor .property-view .property-item {
       padding: 0px;
-      border-bottom: 1px solid #ececec;
       font-size: 12px;
-      overflow: hidden;
-      margin-bottom: 2px; }
+      overflow: hidden; }
       .csseditor .property-view .property-item > .title {
         font-size: 12px;
         font-weight: bold;
@@ -3968,7 +4027,8 @@ html, body {
         height: 30px;
         background-image: -webkit-gradient(linear, left bottom, left top, from(#e0e0e0), to(#ffffff));
         background-image: linear-gradient(to top, #e0e0e0 0%, #ffffff 100%);
-        border-bottom: 1px solid #c7c7c7;
+        border-bottom: 1px solid rgba(199, 199, 199, 0.5);
+        border-top: 1px solid rgba(199, 199, 199, 0.5);
         color: #333;
         cursor: pointer; }
         .csseditor .property-view .property-item > .title > span button {
@@ -3983,19 +4043,21 @@ html, body {
       .csseditor .property-view .property-item > .items {
         display: none;
         padding: 4px 5px;
-        padding-top: 0px; }
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        min-height: 30px; }
         .csseditor .property-view .property-item > .items.no-padding {
           padding: 0px !important; }
       .csseditor .property-view .property-item.show .items {
-        display: block;
-        margin-top: 4px; }
+        display: block; }
         .csseditor .property-view .property-item.show .items.max-height {
           max-height: 200px;
           overflow: auto; }
       .csseditor .property-view .property-item > .items > div {
         display: -webkit-box;
         display: -ms-flexbox;
-        display: flex; }
+        display: flex;
+        margin-bottom: 2px; }
         .csseditor .property-view .property-item > .items > div > label {
           width: 70px;
           display: inline-block;
@@ -4010,13 +4072,21 @@ html, body {
             text-align: left; }
           .csseditor .property-view .property-item > .items > div > label:first-child {
             margin-left: 0px; }
+          .csseditor .property-view .property-item > .items > div > label.second {
+            width: 50px; }
         .csseditor .property-view .property-item > .items > div > div {
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex; }
+          .csseditor .property-view .property-item > .items > div > div input[type=range] {
+            width: 90px;
+            vertical-align: middle;
+            margin-right: 2px; }
           .csseditor .property-view .property-item > .items > div > div input[type=number], .csseditor .property-view .property-item > .items > div > div input[type=text] {
             width: 40px;
-            vertical-align: middle; }
+            vertical-align: middle;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box; }
             .csseditor .property-view .property-item > .items > div > div input[type=number].full, .csseditor .property-view .property-item > .items > div > div input[type=text].full {
               width: 160px;
               height: 20px; }
@@ -4024,8 +4094,20 @@ html, body {
               background-color: #c7c7c7;
               border: 1px solid #c7c7c7;
               cursor: not-allowed; }
-          .csseditor .property-view .property-item > .items > div > div .input input[type=number], .csseditor .property-view .property-item > .items > div > div .input input[type=text] {
-            width: 30px; }
+          .csseditor .property-view .property-item > .items > div > div .input {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex; }
+            .csseditor .property-view .property-item > .items > div > div .input input[type=number], .csseditor .property-view .property-item > .items > div > div .input input[type=text] {
+              -webkit-box-flex: 1;
+                  -ms-flex: 1 1 auto;
+                      flex: 1 1 auto; }
+            .csseditor .property-view .property-item > .items > div > div .input.two input[type=number], .csseditor .property-view .property-item > .items > div > div .input.two input[type=text] {
+              width: 40px; }
+            .csseditor .property-view .property-item > .items > div > div .input.two span {
+              display: inline-block;
+              vertical-align: middle;
+              padding: 2px; }
           .csseditor .property-view .property-item > .items > div > div .input-field.hex input[type=number], .csseditor .property-view .property-item > .items > div > div .input-field.hex input[type=text] {
             width: 100%; }
           .csseditor .property-view .property-item > .items > div > div > span {
@@ -4048,6 +4130,8 @@ html, body {
             display: inline-block;
             width: 36px;
             text-align: center; }
+          .csseditor .property-view .property-item > .items > div > div .input-text.two span {
+            width: 80px; }
       .csseditor .property-view .property-item.gradient-steps {
         height: 90px;
         padding: 0px; }
@@ -4438,6 +4522,77 @@ html, body {
         border: 1px solid #c7c7c7; }
         .csseditor .property-view .property-item.clip-path .clip-path-container svg {
           width: 100%; }
+      .csseditor .property-view .property-item.group-align button {
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        width: 30px;
+        height: 30px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        display: inline-block;
+        border: 0px;
+        outline: none;
+        cursor: pointer; }
+        .csseditor .property-view .property-item.group-align button[data-value="left"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 20px 8px, 16px 8px, 2px 24px;
+          background-position: 6px 6px, 6px 16px, 2px 3px; }
+        .csseditor .property-view .property-item.group-align button[data-value="right"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 20px 8px, 16px 8px, 2px 24px;
+          background-position: 5px 6px, 9px 16px, 27px 3px; }
+        .csseditor .property-view .property-item.group-align button[data-value="center"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 20px 8px, 16px 8px, 2px 24px;
+          background-position: 5px 6px, 7px 16px, 14px 3px; }
+        .csseditor .property-view .property-item.group-align button[data-value="middle"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 8px 20px, 8px 16px, 24px 2px;
+          background-position: 6px 5px, 16px 7px, 3px 14px; }
+        .csseditor .property-view .property-item.group-align button[data-value="top"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 8px 20px, 8px 16px, 24px 2px;
+          background-position: 6px 8px, 16px 8px, 3px 4px; }
+        .csseditor .property-view .property-item.group-align button[data-value="bottom"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 8px 20px, 8px 16px, 24px 2px;
+          background-position: 6px 4px, 16px 8px, 3px 26px; }
+        .csseditor .property-view .property-item.group-align button[data-value="vertical"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
+          background-repeat: no-repeat;
+          background-size: 24px 2px, 18px 10px, 24px 2px;
+          background-position: 3px 6px, 6px 11px, 3px 24px; }
+        .csseditor .property-view .property-item.group-align button[data-value="horizontal"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
+          background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
+          background-repeat: no-repeat;
+          background-size: 2px 24px, 10px 18px, 2px 24px;
+          background-position: 6px 3px, 11px 6px, 24px 3px; }
+      .csseditor .property-view .property-item.fixed-radius {
+        border-bottom: 0px; }
+      .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd {
+        padding-top: 0px; }
+        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd .color {
+          margin-left: 6px; }
+        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .color,
+        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .control {
+          margin-bottom: 0px; }
+        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .colorsets {
+          display: none; }
     .csseditor .property-view .gradient-view {
       height: 230px;
       width: 100%; }

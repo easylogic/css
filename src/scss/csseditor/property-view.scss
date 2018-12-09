@@ -114,10 +114,10 @@
 
     .property-item {
         padding: 0px;
-        border-bottom: 1px solid #ececec;
+        // border-bottom: 1px solid #ececec;
         font-size: 12px;
         overflow: hidden; 
-        margin-bottom: 2px;
+        // margin-bottom: 2px;
         
         > .title {
             font-size: 12px;
@@ -126,7 +126,8 @@
             box-sizing: border-box;
             height: 30px;
             background-image: linear-gradient(to top, #e0e0e0 0%, #ffffff 100%);
-            border-bottom: 1px solid $border-color;
+            border-bottom: 1px solid rgba($border-color, 0.5);
+            border-top: 1px solid rgba($border-color, 0.5);
             color: #333;
             cursor: pointer;
 
@@ -146,9 +147,10 @@
         > .items {
             display: none; 
             padding: 4px 5px; 
-            padding-top: 0px;
+            box-sizing: border-box;
+            min-height: 30px;
 
-            &.no-padding {
+            &.no-padding { 
                 padding: 0px !important;
             }
         }
@@ -156,7 +158,6 @@
         &.show {
             .items {
                 display: block; 
-                margin-top: 4px;
 
                 &.max-height {
                     max-height: 200px;
@@ -168,6 +169,7 @@
 
         > .items > div {
             display: flex; 
+            margin-bottom: 2px;
 
             > label {
                 width: 70px;
@@ -186,14 +188,25 @@
                 &:first-child {
                     margin-left: 0px;
                 }
+
+                &.second {
+                    width: 50px;
+                }
             }
 
             > div {
                 display: flex; 
 
+                input[type=range] {
+                    width: 90px;
+                    vertical-align: middle;
+                    margin-right: 2px;
+                }
+
                 input[type=number], input[type=text] {
                     width: 40px;
-                    vertical-align: middle;                    
+                    vertical-align: middle;        
+                    box-sizing: border-box;            
 
                     &.full {
                         width: 160px;
@@ -209,9 +222,24 @@
                 }
 
                 .input {
+                    display: flex;
                     input[type=number], input[type=text] {
-                        width: 30px;
+                        // width: 30px;
+                        flex:1 1 auto;
                     }
+
+                    &.two {
+                        input[type=number], input[type=text] {
+                            width: 40px;
+                        }
+
+                        span {
+                            display: inline-block;
+                            vertical-align: middle;
+                            padding:2px;
+                        }
+                    }
+
                 }
 
                 .input-field.hex {
@@ -248,6 +276,12 @@
                         width: 36px;
                         text-align: center;
                     }
+
+                    &.two {
+                        span {
+                            width: 80px;
+                        }
+                    }
                 }
             }
         }
@@ -260,6 +294,9 @@
         @import './property-items/image-list-view.scss'; 
         @import './property-items/layout.scss';
         @import './property-items/clip-path.scss';
+        @import './property-items/group-align.scss';
+        @import './property-items/radius.scss';
+        @import './property-items/layer-colorpicker.scss';
     }
 
     .gradient-view {

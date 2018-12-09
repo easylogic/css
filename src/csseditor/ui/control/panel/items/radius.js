@@ -1,22 +1,17 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../../types/event";
 
 
 export default class Radius extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item radius show'>
-                <div class='title' ref="$title">Radius 
-                    <span>
-                        <label><input type='checkbox' ref="$fixedRadius" /> fixed</label>
-                    </span> 
-                </div>
+            <div class='property-item radius'>
                 <div class='items'>         
                     <div>
-                        <label style="width:80px;" class="fixedRadiusOnly">T Left</label>
+                        <label style="width:80px;" >T Left</label>
                         <div>
-                            <input type='number' min="0" max="500" class="fixedRadiusOnly" ref="$topLeftRadius"> <span>px</span>
+                            <input type='number' min="0" max="500" ref="$topLeftRadius"> <span>px</span>
                         </div>
                         <label style="width:50px;">Right</label>
                         <div>
@@ -38,47 +33,29 @@ export default class Radius extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_LAYER_RADIUS] () {
-        this.refresh();
-    }
-
-    [EVENT_CHANGE_EDITOR] () {
-        this.refresh()
-    }
+    [EVENT_CHANGE_LAYER_RADIUS] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh() }
 
     refresh() {
         this.read('/selection/current/layer', (item) => {
 
             if (item.fixedRadius) {
-                this.refs.$fixedRadius.el.checked = true; 
-                var radius = item.borderRadius || ''
-                radius = radius.replace('px', '')
+                var radius = parseParamNumber(item.borderRadius || '0px')
                 this.refs.$topLeftRadius.val(radius)
-                this.refs.$topRightRadius.val('')
-                this.refs.$bottomLeftRadius.val('')
-                this.refs.$bottomRightRadius.val('')
-
-                this.refs.$topRightRadius.attr('disabled', true)
-                this.refs.$bottomLeftRadius.attr('disabled', true)
-                this.refs.$bottomRightRadius.attr('disabled', true)
-
+                this.refs.$topRightRadius.val(radius)
+                this.refs.$bottomLeftRadius.val(radius)
+                this.refs.$bottomRightRadius.val(radius)
             } else {
-                this.refs.$topRightRadius.removeAttr('disabled')
-                this.refs.$bottomLeftRadius.removeAttr('disabled')
-                this.refs.$bottomRightRadius.removeAttr('disabled') 
-
                 if (item.borderTopLeftRadius) {
                     this.refs.$topLeftRadius.val(parseParamNumber(item.borderTopLeftRadius))
                 }
-        
                 if (item.borderTopRightRadius) {
                     this.refs.$topRightRadius.val(parseParamNumber(item.borderTopRightRadius))
                 }
-    
                 if (item.borderBottomLeftRadius) {
                     this.refs.$bottomLeftRadius.val(parseParamNumber(item.borderBottomLeftRadius))
                 }
-    
                 if (item.borderBottomRightRadius) {
                     this.refs.$bottomRightRadius.val(parseParamNumber(item.borderBottomRightRadius))
                 }
@@ -88,39 +65,36 @@ export default class Radius extends BasePropertyItem {
         
     }
 
-    refreshValue (key, $el) {
+    refreshValue () {
         this.read('/selection/current/layer/id', (id) => {
-            this.commit(CHANGE_LAYER_RADIUS, { id, [key]:  $el.int() + 'px' })
-        })
-    }
-
-    'click $fixedRadius' (e) {
-        this.read('/selection/current/layer/id', (id) => {
-            this.commit(CHANGE_LAYER_RADIUS, {id, fixedRadius: this.refs.$fixedRadius.el.checked })
-            this.refresh();
+            this.commit(CHANGE_LAYER_RADIUS, { 
+                id, 
+                borderTopLeftRadius:  this.refs.$topLeftRadius.val() + 'px', 
+                borderTopRightRadius:  this.refs.$topRightRadius.val() + 'px', 
+                borderBottomLeftRadius:  this.refs.$bottomLeftRadius.val() + 'px', 
+                borderBottomRightRadius:  this.refs.$bottomRightRadius.val() + 'px', 
+                fixedRadius: false 
+            })
         })
     }
 
     'input:change $topLeftRadius' () {
-        this.read('/selection/current/layer', (item) => {
-            if (item.fixedRadius) {
-                this.refreshValue('borderRadius', this.refs.$topLeftRadius);
-            } else {
-                this.refreshValue('borderTopLeftRadius', this.refs.$topLeftRadius);
-            }
-        })
-        
+        this.refreshValue();
     }
 
     'input:change $topRightRadius' () {
-        this.refreshValue('borderTopRightRadius', this.refs.$topRightRadius);
+        this.refreshValue();
     }
 
     'input:change $bottomLeftRadius' () {
-        this.refreshValue('borderBottomLeftRadius', this.refs.$bottomLeftRadius);
+        this.refreshValue();
     }
 
     'input:change $bottomRightRadius' () {
-        this.refreshValue('borderBottomRightRadius', this.refs.$bottomRightRadius);
+        this.refreshValue();
+    }
+
+    '@toggleRadius' () {
+        this.$el.toggleClass('show');
     }
 }
