@@ -5,13 +5,7 @@ export default class LayerToolbar extends UIElement {
 
     template () {  
         return `
-            <div class='layer-toolbar'>
-                <label></label>
-                <div class="button-group">
-                    <button class="dodo" ref="$undo" title="Undo">Undo</button>
-                    <button class="dodo" ref="$redo" title="Redo">Redo</button>
-                </div>               
-                <label>Gradients</label>
+            <div class='layer-toolbar'>            
                 <div class='gradient-type' ref="$gradientType">
                     <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>
                     <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>
@@ -40,7 +34,23 @@ export default class LayerToolbar extends UIElement {
                 <div class="button-group">
                     <button class="cut" ref="$cutOff" title="Cut Off"></button>
                     <button class="cut on" ref="$cutOn" title="Cut On"></button>
-                </div>           
+                </div>      
+                <label></label>
+                <div class="button-group">
+                    <button class="dodo" ref="$undo" title="Undo">Undo</button>
+                    <button class="dodo" ref="$redo" title="Redo">Redo</button>
+                </div> 
+                
+                <div class="button-group group-align" ref="$groupAlign">
+                    <button type="button" title="left" data-value="left"></button>
+                    <button type="button" title="center" data-value="center"></button>
+                    <button type="button" title="right" data-value="right"></button>
+                    <button type="button" title="top" data-value="top"></button>
+                    <button type="button" title="middle" data-value="middle"></button>
+                    <button type="button" title="bottom" data-value="bottom"></button>
+                    <button type="button" title="vertical" data-value="vertical"></button>
+                    <button type="button" title="horizontal" data-value="horizontal"></button>
+                </div>
             </div>
         `
     }
@@ -51,6 +61,11 @@ export default class LayerToolbar extends UIElement {
 
     [EVENT_CHANGE_EDITOR] () {
         this.refresh()
+    }
+
+
+    'click $$groupAlign button' (e) {
+        this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))
     }
 
     'click $gradientType .gradient-item' (e) {

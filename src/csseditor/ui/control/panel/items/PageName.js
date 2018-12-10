@@ -4,12 +4,12 @@ import { CHANGE_PAGE_NAME, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 export default class PageName extends UIElement {
     template () {
         return `
-            <div class='property-item name'>
-                <div class='items no-padding'>            
+            <div class='property-item name show'>
+                <div class='items'>            
                     <div>
-                        <label>page name</label>
+                        <label>Name</label>
                         <div>
-                            <input type='text' ref="$name" class='full'> 
+                            <input type='text' ref="$name" style="width: 100px;"> 
                         </div>
                     </div>
                 </div>

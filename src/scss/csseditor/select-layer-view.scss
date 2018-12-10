@@ -1,0 +1,25 @@
+.select-layer-view {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    box-sizing: border-box;
+
+    .item-info {
+        position: absolute;
+        left: $left-page-size;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        display: flex;
+        flex-direction: column;
+
+        .page-info {
+            position: relative;
+            height: 150px;
+            flex: none; 
+            border-bottom: 1px solid $border-color;
+        }
+    }
+}

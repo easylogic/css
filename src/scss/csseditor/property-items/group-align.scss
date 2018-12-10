@@ -16,7 +16,8 @@ $align-sub-color: #ccc;
     background-repeat: no-repeat;
 }
 
-&.group-align {
+.group-align {
+    float:right;
     button {
         appearance: none;
         width: 30px;

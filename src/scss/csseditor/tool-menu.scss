@@ -1,0 +1,23 @@
+.tool-menu {
+    height: 100%;
+    box-sizing: border-box;
+    .items {
+        text-align: right;
+        height: 100%;
+        box-sizing: border-box;
+
+        > * {
+            appearance: none;
+            border: 0px;
+            vertical-align: middle;
+            border-left: 1px solid $border-color;
+            height: 100%;
+            display: inline-block;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            text-decoration: none;
+            color: #333333;
+            line-height: 1.6;
+        }
+    }
+}

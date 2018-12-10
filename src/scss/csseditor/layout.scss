@@ -4,14 +4,16 @@ $font-color: black;
 $pointer-color: rgba(#ececec, 0.8);
 $gutter: 8px;
 $tool-size: 40px;
-$left-size: 250px;
+$top-size: 40px;
+$left-size: 300px;
+$left-page-size: 70px;
 $toggle-left-size: 80px;
 $right-size: 250px;
 $timeline-header-size: 30px;
 $timeline-size: 300px;
 $show-timeline-animation: all 0.15s linear; 
 $gradient-box-size: 0px;
-$layer-toolbar-height: 30px;
+$layer-toolbar-height: 0px;
 
 .layout-main {
     position: absolute;
@@ -32,45 +34,6 @@ $layer-toolbar-height: 30px;
 
     }
 
-    &.beginner-mode {
-
-    }
-
-    &.expertor-mode {
-        .layout-left {
-            top: 70px;            
-            // width: $left-size - 50px;
-            border-right: 1px solid $border-color;
-        }
-        .layout-right {
-            top: 70px; 
-            right: 0px;
-            width: $right-size;
-            left: auto;
-            border-right: 0px;
-        } 
-        
-        .layout-body {
-            top: 70px;
-            // left: $left-size - 50px + $gradient-box-size; 
-            right: $right-size;
-        }
-
-        .layout-top {
-            height: 40px;
-            top: 30px;
-        }
-
-        .layout-header {
-            height: 30px;
-
-            .header-title {
-                font-size: 20px;
-            }
-        }
-    }
-
-
 
     .layout-top {
         position: absolute;
@@ -87,8 +50,8 @@ $layer-toolbar-height: 30px;
         position: absolute;
         right : 0px;
         // left: $left-size;
-        width: $left-size;
-        top: $tool-size * 2;
+        width: $right-size;
+        top: $tool-size + $top-size;
         bottom: 0px;
         // overflow: auto;
         box-sizing: border-box;
@@ -104,7 +67,7 @@ $layer-toolbar-height: 30px;
         position: absolute;
         left: 0px;
         width: $left-size;
-        top: $tool-size * 2;
+        top: $tool-size + $top-size;
         bottom: 0px;
         box-sizing: border-box;
         border-right: 1px solid $border-color;
@@ -115,8 +78,8 @@ $layer-toolbar-height: 30px;
     .layout-body {
         position: absolute;
         left: $left-size + $gradient-box-size;
-        right: $left-size;
-        top: $tool-size * 2;  
+        right: $right-size;
+        top: $tool-size + $top-size;
         bottom: 0px;
         box-sizing: border-box;
         // transition: $show-timeline-animation;        
@@ -183,7 +146,9 @@ $layer-toolbar-height: 30px;
 
 @import './element/unit-range.scss';
 
+@import './select-layer-view.scss';
 @import './colorpicker-ui.scss';
+@import './tool-menu.scss';
 @import './page-manager.scss';
 @import './layer-manager.scss';
 @import './layer-toolbar.scss';
@@ -198,6 +163,7 @@ $layer-toolbar-height: 30px;
 @import './layer-sample-view.scss';
 @import './page-sample-view.scss';
 @import './view.scss';       
+
 
 @import './drag-angle.scss';
 @import './drag-position.scss';

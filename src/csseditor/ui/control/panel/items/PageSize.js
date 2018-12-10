@@ -5,18 +5,17 @@ import { CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 export default class PageSize extends UIElement {
     template () {
         return `
-            <div class='property-item size'>
-                <div class='title'>page size
-                    <span>
-                        <button type="button" ref="$rect">rect</button>
-                    </span>
-                </div>
-                <div class='items no-padding'>
+            <div class='property-item size show'>
+                <div class='items'>
                     <div>
-                        <label>Width</label>
+                        <label>   Width</label>
+                        
                         <div>
                             <input type='number' ref="$width"> <span>px</span>
+                            <button type="button" ref="$rect">rect</button>
                         </div>
+                    </div>
+                    <div>
                         <label>Height</label>
                         <div>
                             <input type='number' ref="$height"> <span>px</span>

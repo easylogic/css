@@ -7,7 +7,6 @@ export default class LayerView extends UIElement {
     template () {
         return `
             <div class='property-view'>
-                <GroupAlign></GroupAlign>
                 <Name></Name>            
                 <size></size>                
                 <Rotate></Rotate>        

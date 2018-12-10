@@ -2,7 +2,7 @@ import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
 import { EVENT_CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
 
-export default class PageList extends UIElement {
+export default class PageListView extends UIElement {
 
     components () {
         return { PageShowGrid }
@@ -15,15 +15,9 @@ export default class PageList extends UIElement {
                 
                 </div>
                 <div class='project-tools'>
-                    <button type="button" ref="$exportButton">Export</button>                
-                    <div class="property-item">
-                        <label>Show Grid <input type='checkbox' ref="$check"></label>
-                    </div>
                     <button type="button" class='view-sample' ref="$viewSample">
                         <div class="arrow"></div>
                     </button>                
-                    <button type="button" ref="$saveButton">Save</button>
-                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>
                 </div>
             </div>
         `
@@ -48,6 +42,7 @@ export default class PageList extends UIElement {
         var selected = item.id == selectedId ? 'selected' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" type='page'>
+                <div class="item-preview"></div>
                 <div class="item-title">
                     ${item.name || `Project ${index}`}
                 </div>   
@@ -60,23 +55,15 @@ export default class PageList extends UIElement {
             return this.makeItemNode(item, index); 
         }).join('');
 
-        str += `<button type="button" class='add-page'>+ Project</button>`
+        str += `<button type="button" class='add-page'></button>`
 
         return str; 
     }
 
     refresh () { 
         this.load()
-        this.read('/selection/current/page', (item) => {
-            this.refs.$check.el.checked = this.read('/tool/get', 'show.grid');
-        })        
     }
 
-    'click $check' () {
-        this.read('/selection/current/page', (item) => {
-            this.dispatch('/tool/set', 'show.grid', this.refs.$check.el.checked)
-        })
-    }
 
     [EVENT_CHANGE_PAGE] () {
         this.refresh()

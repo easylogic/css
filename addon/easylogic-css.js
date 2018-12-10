@@ -13721,160 +13721,6 @@ var BaseCSSEditor = function (_UIElement) {
     return BaseCSSEditor;
 }(UIElement);
 
-var PageShowGrid = function (_UIElement) {
-    inherits(PageShowGrid, _UIElement);
-
-    function PageShowGrid() {
-        classCallCheck(this, PageShowGrid);
-        return possibleConstructorReturn(this, (PageShowGrid.__proto__ || Object.getPrototypeOf(PageShowGrid)).apply(this, arguments));
-    }
-
-    createClass(PageShowGrid, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='property-item hidden'>\n                <div class='items'>            \n                    <div>\n                        <label>Show Grid</label>\n                        <div>\n                            <input type='checkbox' ref=\"$check\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var _this2 = this;
-
-            this.read('/selection/current/page', function (item) {
-                _this2.refs.$check.el.checked = _this2.read('/tool/get', 'show.grid');
-            });
-        }
-    }, {
-        key: 'click $check',
-        value: function click$check() {
-            var _this3 = this;
-
-            this.read('/selection/current/page', function (item) {
-                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.el.checked);
-            });
-        }
-    }]);
-    return PageShowGrid;
-}(UIElement);
-
-var PageList = function (_UIElement) {
-    inherits(PageList, _UIElement);
-
-    function PageList() {
-        classCallCheck(this, PageList);
-        return possibleConstructorReturn(this, (PageList.__proto__ || Object.getPrototypeOf(PageList)).apply(this, arguments));
-    }
-
-    createClass(PageList, [{
-        key: 'components',
-        value: function components() {
-            return { PageShowGrid: PageShowGrid };
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" ref="$exportButton">Export</button>                \n                    <div class="property-item">\n                        <label>Show Grid <input type=\'checkbox\' ref="$check"></label>\n                    </div>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'makeItemNode',
-        value: function makeItemNode(node, index) {
-            var item = this.read('/item/get', node.id);
-
-            var page = this.read('/selection/current/page');
-
-            var selectedId = '';
-
-            if (page) selectedId = page.id;
-
-            if (item.itemType == 'page') {
-                return this.makeItemNodePage(item, index, selectedId);
-            }
-        }
-    }, {
-        key: 'makeItemNodePage',
-        value: function makeItemNodePage(item, index, selectedId) {
-            var selected = item.id == selectedId ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'page\'>\n                <div class="item-title">\n                    ' + (item.name || 'Project ' + index) + '\n                </div>   \n            </div>\n            ';
-        }
-    }, {
-        key: 'load $pageList',
-        value: function load$pageList() {
-            var _this2 = this;
-
-            var str = this.read('/item/map/page', function (item, index) {
-                return _this2.makeItemNode(item, index);
-            }).join('');
-
-            str += '<button type="button" class=\'add-page\'>+ Project</button>';
-
-            return str;
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this3 = this;
-
-            this.load();
-            this.read('/selection/current/page', function (item) {
-                _this3.refs.$check.el.checked = _this3.read('/tool/get', 'show.grid');
-            });
-        }
-    }, {
-        key: 'click $check',
-        value: function click$check() {
-            var _this4 = this;
-
-            this.read('/selection/current/page', function (item) {
-                _this4.dispatch('/tool/set', 'show.grid', _this4.refs.$check.el.checked);
-            });
-        }
-    }, {
-        key: EVENT_CHANGE_PAGE,
-        value: function value() {
-            this.refresh();
-            this.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: 'click $pageList .add-page',
-        value: function click$pageListAddPage(e) {
-            this.dispatch('/item/add/page', true);
-            this.refresh();
-        }
-    }, {
-        key: 'click $pageList .tree-item | self',
-        value: function click$pageListTreeItemSelf(e) {
-
-            this.dispatch('/selection/one', e.$delegateTarget.attr('id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $saveButton',
-        value: function click$saveButton(e) {
-            this.run('/storage/save');
-        }
-    }, {
-        key: 'click $viewSample',
-        value: function click$viewSample(e) {
-            this.emit('togglePageSampleView');
-        }
-    }, {
-        key: 'click $exportButton',
-        value: function click$exportButton(e) {
-            this.emit('showExport');
-        }
-    }]);
-    return PageList;
-}(UIElement);
-
 var BasePropertyItem = function (_UIElement) {
     inherits(BasePropertyItem, _UIElement);
 
@@ -14183,7 +14029,7 @@ var Clip = function (_UIElement) {
     createClass(Clip, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item hidden'>\n                <div class='items'>            \n                    <div>\n                        <label>Clip</label>\n                        <div>\n                            <input type='checkbox' ref=\"$check\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item show'>\n                <div class='items'>            \n                    <div>\n                        <label>Clip</label>\n                        <div>\n                            <input type='checkbox' ref=\"$check\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_PAGE,
@@ -15831,7 +15677,7 @@ var PageSize = function (_UIElement) {
     createClass(PageSize, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size'>\n                <div class='title'>page size\n                    <span>\n                        <button type=\"button\" ref=\"$rect\">rect</button>\n                    </span>\n                </div>\n                <div class='items no-padding'>\n                    <div>\n                        <label>Width</label>\n                        <div>\n                            <input type='number' ref=\"$width\"> <span>px</span>\n                        </div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>px</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        \n                        <div>\n                            <input type='number' ref=\"$width\"> <span>px</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>px</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_EDITOR,
@@ -15897,7 +15743,7 @@ var PageName = function (_UIElement) {
     createClass(PageName, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item name'>\n                <div class='items no-padding'>            \n                    <div>\n                        <label>page name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" class='full'> \n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item name show'>\n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" style=\"width: 100px;\"> \n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_EDITOR,
@@ -16638,6 +16484,51 @@ var ClipPath = function (_BasePropertyItem) {
     return ClipPath;
 }(BasePropertyItem);
 
+var PageShowGrid = function (_UIElement) {
+    inherits(PageShowGrid, _UIElement);
+
+    function PageShowGrid() {
+        classCallCheck(this, PageShowGrid);
+        return possibleConstructorReturn(this, (PageShowGrid.__proto__ || Object.getPrototypeOf(PageShowGrid)).apply(this, arguments));
+    }
+
+    createClass(PageShowGrid, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item hidden'>\n                <div class='items'>            \n                    <div>\n                        <label>Show Grid</label>\n                        <div>\n                            <input type='checkbox' ref=\"$check\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/page', function (item) {
+                _this2.refs.$check.el.checked = _this2.read('/tool/get', 'show.grid');
+            });
+        }
+    }, {
+        key: 'click $check',
+        value: function click$check() {
+            var _this3 = this;
+
+            this.read('/selection/current/page', function (item) {
+                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.el.checked);
+            });
+        }
+    }]);
+    return PageShowGrid;
+}(UIElement);
+
 var GroupAlign = function (_BasePropertyItem) {
     inherits(GroupAlign, _BasePropertyItem);
 
@@ -16967,7 +16858,7 @@ var LayerView = function (_UIElement) {
     createClass(LayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <GroupAlign></GroupAlign>\n                <Name></Name>            \n                <size></size>                \n                <Rotate></Rotate>        \n                <RadiusFixed></RadiusFixed>\n                <radius></radius>                      \n                <LayerBlend></LayerBlend>                            \n                <LayerColorPickerPanel></LayerColorPickerPanel>\n                <ClipPath></ClipPath>           \n                <FilterList></FilterList>      \n                <transform></transform>\n                <transform3d></transform3d>                \n            </div> \n        ";
+            return "\n            <div class='property-view'>\n                <Name></Name>            \n                <size></size>                \n                <Rotate></Rotate>        \n                <RadiusFixed></RadiusFixed>\n                <radius></radius>                      \n                <LayerBlend></LayerBlend>                            \n                <LayerColorPickerPanel></LayerColorPickerPanel>\n                <ClipPath></ClipPath>           \n                <FilterList></FilterList>      \n                <transform></transform>\n                <transform3d></transform3d>                \n            </div> \n        ";
         }
     }, {
         key: "components",
@@ -17383,7 +17274,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>\n                <label></label>\n                <div class="button-group">\n                    <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                    <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                </div>               \n                <label>Gradients</label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button ref="$ordering" title="Full Ordering">=|=</button>\n                    <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>           \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button ref="$ordering" title="Full Ordering">=|=</button>\n                    <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>      \n                <label></label>\n                <div class="button-group">\n                    <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                    <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                </div> \n                \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -17392,6 +17283,11 @@ var LayerToolbar = function (_UIElement) {
         key: EVENT_CHANGE_EDITOR,
         value: function value() {
             this.refresh();
+        }
+    }, {
+        key: 'click $$groupAlign button',
+        value: function click$$groupAlignButton(e) {
+            this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'));
         }
     }, {
         key: 'click $gradientType .gradient-item',
@@ -18342,28 +18238,6 @@ var SubFeatureControl = function (_UIElement) {
         }
     }]);
     return SubFeatureControl;
-}(UIElement);
-
-var PropertyView = function (_UIElement) {
-    inherits(PropertyView, _UIElement);
-
-    function PropertyView() {
-        classCallCheck(this, PropertyView);
-        return possibleConstructorReturn(this, (PropertyView.__proto__ || Object.getPrototypeOf(PropertyView)).apply(this, arguments));
-    }
-
-    createClass(PropertyView, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='property-view inline'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n            </div>\n        ";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return items;
-        }
-    }]);
-    return PropertyView;
 }(UIElement);
 
 var colorpicker_class = 'codemirror-colorview';
@@ -21435,6 +21309,195 @@ var HandleView = function (_GradientView) {
     return HandleView;
 }(GradientView);
 
+var ToolMenu = function (_UIElement) {
+    inherits(ToolMenu, _UIElement);
+
+    function ToolMenu() {
+        classCallCheck(this, ToolMenu);
+        return possibleConstructorReturn(this, (ToolMenu.__proto__ || Object.getPrototypeOf(ToolMenu)).apply(this, arguments));
+    }
+
+    createClass(ToolMenu, [{
+        key: 'components',
+        value: function components() {
+            return { PageShowGrid: PageShowGrid };
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'tool-menu\'>         \n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'click $check',
+        value: function click$check() {
+            var _this2 = this;
+
+            this.read('/selection/current/page', function (item) {
+                _this2.dispatch('/tool/set', 'show.grid', _this2.refs.$check.el.checked);
+            });
+        }
+    }, {
+        key: 'click $saveButton',
+        value: function click$saveButton(e) {
+            this.run('/storage/save');
+        }
+    }, {
+        key: 'click $viewSample',
+        value: function click$viewSample(e) {
+            this.emit('togglePageSampleView');
+        }
+    }, {
+        key: 'click $exportButton',
+        value: function click$exportButton(e) {
+            this.emit('showExport');
+        }
+    }]);
+    return ToolMenu;
+}(UIElement);
+
+var PageListView = function (_UIElement) {
+    inherits(PageListView, _UIElement);
+
+    function PageListView() {
+        classCallCheck(this, PageListView);
+        return possibleConstructorReturn(this, (PageListView.__proto__ || Object.getPrototypeOf(PageListView)).apply(this, arguments));
+    }
+
+    createClass(PageListView, [{
+        key: 'components',
+        value: function components() {
+            return { PageShowGrid: PageShowGrid };
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'makeItemNode',
+        value: function makeItemNode(node, index) {
+            var item = this.read('/item/get', node.id);
+
+            var page = this.read('/selection/current/page');
+
+            var selectedId = '';
+
+            if (page) selectedId = page.id;
+
+            if (item.itemType == 'page') {
+                return this.makeItemNodePage(item, index, selectedId);
+            }
+        }
+    }, {
+        key: 'makeItemNodePage',
+        value: function makeItemNodePage(item, index, selectedId) {
+            var selected = item.id == selectedId ? 'selected' : '';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'page\'>\n                <div class="item-preview"></div>\n                <div class="item-title">\n                    ' + (item.name || 'Project ' + index) + '\n                </div>   \n            </div>\n            ';
+        }
+    }, {
+        key: 'load $pageList',
+        value: function load$pageList() {
+            var _this2 = this;
+
+            var str = this.read('/item/map/page', function (item, index) {
+                return _this2.makeItemNode(item, index);
+            }).join('');
+
+            str += '<button type="button" class=\'add-page\'></button>';
+
+            return str;
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT_CHANGE_PAGE,
+        value: function value() {
+            this.refresh();
+            this.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: 'click $pageList .add-page',
+        value: function click$pageListAddPage(e) {
+            this.dispatch('/item/add/page', true);
+            this.refresh();
+        }
+    }, {
+        key: 'click $pageList .tree-item | self',
+        value: function click$pageListTreeItemSelf(e) {
+
+            this.dispatch('/selection/one', e.$delegateTarget.attr('id'));
+            this.refresh();
+        }
+    }, {
+        key: 'click $saveButton',
+        value: function click$saveButton(e) {
+            this.run('/storage/save');
+        }
+    }, {
+        key: 'click $viewSample',
+        value: function click$viewSample(e) {
+            this.emit('togglePageSampleView');
+        }
+    }, {
+        key: 'click $exportButton',
+        value: function click$exportButton(e) {
+            this.emit('showExport');
+        }
+    }]);
+    return PageListView;
+}(UIElement);
+
+var PageInfoView = function (_UIElement) {
+    inherits(PageInfoView, _UIElement);
+
+    function PageInfoView() {
+        classCallCheck(this, PageInfoView);
+        return possibleConstructorReturn(this, (PageInfoView.__proto__ || Object.getPrototypeOf(PageInfoView)).apply(this, arguments));
+    }
+
+    createClass(PageInfoView, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='page-info property-view'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return items;
+        }
+    }]);
+    return PageInfoView;
+}(UIElement);
+
+var SelectLayerView = function (_UIElement) {
+    inherits(SelectLayerView, _UIElement);
+
+    function SelectLayerView() {
+        classCallCheck(this, SelectLayerView);
+        return possibleConstructorReturn(this, (SelectLayerView.__proto__ || Object.getPrototypeOf(SelectLayerView)).apply(this, arguments));
+    }
+
+    createClass(SelectLayerView, [{
+        key: "template",
+        value: function template() {
+            return "    \n            <div class=\"select-layer-view\">\n                <PageListView></PageListView>\n                <div class=\"item-info\">\n                    <PageInfoView></PageInfoView>\n                    <LayerListView></LayerListView>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return {
+                PageListView: PageListView,
+                PageInfoView: PageInfoView,
+                LayerListView: LayerListView
+            };
+        }
+    }]);
+    return SelectLayerView;
+}(UIElement);
+
 var CSSEditor$1 = function (_BaseCSSEditor) {
     inherits(CSSEditor, _BaseCSSEditor);
 
@@ -21448,10 +21511,6 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
         value: function afterRender() {
             var _this2 = this;
 
-            // this.refs.$layoutMain.removeClass('beginner-mode')
-            // this.refs.$layoutMain.removeClass('expertor-mode')
-            // this.refs.$layoutMain.addClass(this.read('/storage/get', 'layout') + '-mode')
-
             setTimeout(function () {
                 _this2.emit('changeEditor');
             }, 100);
@@ -21459,12 +21518,14 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <PageListView></PageListView>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <PropertyView></PropertyView>\n                </div>\n                <div class="layout-left">      \n                    <LayerListView></LayerListView>\n                    <!--<ImageListView></ImageListView>-->\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <ExportCanvasWindow></ExportCanvasWindow>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <LayerToolbar></LayerToolbar>\n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <ExportCanvasWindow></ExportCanvasWindow>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
+                SelectLayerView: SelectLayerView,
+                ToolMenu: ToolMenu,
                 ExportCanvasWindow: ExportCanvasWindow,
                 LayerToolbar: LayerToolbar,
                 ClipPathImageList: ClipPathImageList,
@@ -21472,9 +21533,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
                 VerticalColorStep: VerticalColorStep,
                 DropView: DropView,
                 ExportView: ExportWindow,
-                PropertyView: PropertyView,
                 HandleView: HandleView,
-                PageListView: PageList,
                 FeatureControl: FeatureControl,
                 LayerListView: LayerListView,
                 SubFeatureControl: SubFeatureControl,

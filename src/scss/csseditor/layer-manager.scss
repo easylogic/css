@@ -9,11 +9,8 @@ $layer-preview-size: 40px;
 .layers {
     // border-bottom: 1px solid $border-color;
     box-sizing: border-box;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    position: relative;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
 

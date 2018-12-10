@@ -1,13 +1,7 @@
 .layer-toolbar {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    height: 30px;
     background-color: white;
-    z-index: 100;
-    border-bottom: 1px solid $border-color;
-
+    box-sizing: border-box;
+    padding: 4px 10px;
     label {
         display: inline-block;
         line-height: 2;
@@ -98,4 +92,6 @@
       
         }
     }
+
+    @import './property-items/group-align.scss'; 
 }
