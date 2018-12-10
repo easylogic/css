@@ -127,7 +127,8 @@
                 box-sizing: border-box;
         border: 1px solid #ececec; }
         .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header .color-tab-item.active {
-          background-color: white; }
+          background-color: white;
+          border-bottom-color: white; }
     .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-body {
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
@@ -978,10 +979,14 @@
         .codemirror-colorpicker.ring-tab .colorpicker-body .color-chooser .color-chooser-container .colorsets-list .color-item {
           -webkit-transform: scale(1.2);
                   transform: scale(1.2); }
-  .codemirror-colorpicker.ring-tab .colorpicker-body .colorsets .menu {
-    display: none; }
-  .codemirror-colorpicker.ring-tab .colorpicker-body .colorsets .color-list {
-    margin-right: 0px; }
+  .codemirror-colorpicker.ring-tab .colorpicker-body .colorsets {
+    border-top: 0px; }
+    .codemirror-colorpicker.ring-tab .colorpicker-body .colorsets .menu {
+      display: none; }
+    .codemirror-colorpicker.ring-tab .colorpicker-body .colorsets .color-list {
+      margin-right: 0px;
+      padding-top: 5px;
+      padding-left: 0px; }
   .codemirror-colorpicker.ring-tab .control {
     padding-top: 0px; }
     .codemirror-colorpicker.ring-tab .control .value {
@@ -1471,10 +1476,12 @@ html, body {
       -webkit-box-orient: vertical;
       -webkit-box-direction: normal;
           -ms-flex-direction: column;
-              flex-direction: column; }
+              flex-direction: column;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
       .csseditor .select-layer-view .item-info .page-info {
         position: relative;
-        height: 150px;
+        height: 120px;
         -webkit-box-flex: 0;
             -ms-flex: none;
                 flex: none;
@@ -1487,22 +1494,19 @@ html, body {
             box-shadow: none; }
     .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body {
       width: 240px; }
-      .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body .color-list {
-        padding-top: 5px;
-        padding-left: 5px; }
-        .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body .color-list .current-color-sets .color-item {
-          width: 20px;
-          height: 20px;
-          margin: 2px !important;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box; }
-        .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body .color-list .current-color-sets .add-color-item {
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          width: 20px;
-          height: 20px;
-          margin: 0px !important;
-          padding: 3px; }
+      .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body .color-list .current-color-sets .color-item {
+        width: 20px;
+        height: 20px;
+        margin: 2px !important;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
+      .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body .color-list .current-color-sets .add-color-item {
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        width: 20px;
+        height: 20px;
+        margin: 0px !important;
+        padding: 3px; }
       .csseditor .colorpicker-layer .codemirror-colorpicker .colorpicker-body .wheel {
         border: 0px;
         background-color: transparent; }
@@ -1540,9 +1544,8 @@ html, body {
     bottom: 0px;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
-    overflow-y: auto;
-    white-space: nowrap;
-    background-color: rgba(199, 199, 199, 0.2); }
+    background-color: rgba(199, 199, 199, 0.2);
+    border-right: 1px solid rgba(199, 199, 199, 0.2); }
     .csseditor .pages .project-tools {
       padding: 10px;
       -webkit-box-sizing: border-box;
@@ -1637,7 +1640,8 @@ html, body {
         vertical-align: top; }
         .csseditor .pages .page-list .tree-item.selected {
           background-color: white;
-          border-right: 1px solid rgba(199, 199, 199, 0.2); }
+          border-right: 1px solid white;
+          margin-right: -1px; }
         .csseditor .pages .page-list .tree-item .item-preview {
           height: 50px;
           width: 100%;

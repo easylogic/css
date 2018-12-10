@@ -21537,7 +21537,7 @@ var SelectLayerView = function (_UIElement) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"select-layer-view\">\n                <PageListView></PageListView>\n                <div class=\"item-info\">\n                    <PageInfoView></PageInfoView>\n                    <LayerListView></LayerListView>\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"select-layer-view\">\n\n                <div class=\"item-info\">\n                    <PageInfoView></PageInfoView>\n                    <LayerListView></LayerListView>\n                </div>\n                <PageListView></PageListView>                            \n            </div>\n        ";
         }
     }, {
         key: "components",

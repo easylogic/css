@@ -11,9 +11,8 @@ $layer-item-padding: 4px;
     top: 0px;
     bottom: 0px;
     box-sizing: border-box;
-    overflow-y: auto;
-    white-space: nowrap;
     background-color: rgba(#c7c7c7, 0.2);
+    border-right: 1px solid rgba(#c7c7c7, 0.2);
     
     .project-tools {
         padding: 10px;
@@ -116,7 +115,8 @@ $layer-item-padding: 4px;
 
             &.selected {
                 background-color: white;
-                border-right: 1px solid rgba($border-color, 0.2);
+                border-right: 1px solid white;
+                margin-right: -1px;
             }
 
             .item-preview {

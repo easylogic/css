@@ -60,12 +60,15 @@
         }
 
         .colorsets {
+            border-top: 0px;
             .menu {
                 display: none;
             }
 
             .color-list {
                 margin-right: 0px;
+                padding-top: 5px;
+                padding-left: 0px;
             }
         }
 

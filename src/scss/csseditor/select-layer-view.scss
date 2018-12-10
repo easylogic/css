@@ -14,10 +14,11 @@
         bottom: 0px;
         display: flex;
         flex-direction: column;
+        box-sizing: border-box;
 
         .page-info {
             position: relative;
-            height: 150px;
+            height: 120px;
             flex: none; 
             border-bottom: 1px solid $border-color;
         }

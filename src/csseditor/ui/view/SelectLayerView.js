@@ -7,11 +7,12 @@ export default class SelectLayerView extends UIElement {
     template() {
         return `    
             <div class="select-layer-view">
-                <PageListView></PageListView>
+
                 <div class="item-info">
                     <PageInfoView></PageInfoView>
                     <LayerListView></LayerListView>
                 </div>
+                <PageListView></PageListView>                            
             </div>
         `
     }
