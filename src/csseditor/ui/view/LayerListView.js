@@ -1,4 +1,4 @@
-import UIElement from '../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER, 
@@ -27,11 +27,7 @@ export default class LayerListView extends UIElement {
         return `
             <div class='layers'>
                 <div class='title'> 
-                    <h1>Layers</h1>
-                    <div class="tools">
-                        <button type="button" class='add-layer' ref="$addLayer">+</button>
-                        <button type="button" class='view-sample arrow' ref="$viewSample"></button>
-                    </div>
+                    <h1 ref="$pageName"></h1>
                 </div>             
                 <div class="layer-list" ref="$layerList"></div>
             </div>
@@ -94,6 +90,11 @@ export default class LayerListView extends UIElement {
             `
     }    
 
+    'load $pageName' () {
+        var obj = this.read('/selection/current/page') || { name: 'Untitled Project'};
+        return obj.name === '' ? '<span>Untitled Project</span>' : `<span>${obj.name}</span>`;
+    }
+
     'load $layerList' () {
         var page = this.read('/selection/current/page')
 
@@ -138,36 +139,34 @@ export default class LayerListView extends UIElement {
     }
 
     // indivisual effect 
-    [EVENT_CHANGE_LAYER] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_CLIPPATH] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_FILTER] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_POSITION] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_RADIUS] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_SIZE] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_ROTATE] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refreshLayer() }
-    [EVENT_CHANGE_LAYER_TRANSFORM_3D] () { this.refreshLayer() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER,
+        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
+        EVENT_CHANGE_LAYER_CLIPPATH,
+        EVENT_CHANGE_LAYER_FILTER,
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_LAYER_RADIUS,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_ROTATE,
+        EVENT_CHANGE_LAYER_TRANSFORM,
+        EVENT_CHANGE_LAYER_TRANSFORM_3D,
+            
+        EVENT_CHANGE_COLOR_STEP,
+        EVENT_CHANGE_IMAGE,
+        EVENT_CHANGE_IMAGE_ANGLE,
+        EVENT_CHANGE_IMAGE_COLOR,
+        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
+        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        EVENT_CHANGE_IMAGE_RADIAL_TYPE
+    )]() {
+        this.refreshLayer()
+    }
 
-    [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refreshLayer(); this.refreshImage() }
-    [EVENT_CHANGE_IMAGE] () { this.refreshLayer(); this.refreshImage() }
-    [EVENT_CHANGE_IMAGE_ANGLE] () { this.refreshLayer(); this.refreshImage() }
-    [EVENT_CHANGE_IMAGE_COLOR] () { this.refreshLayer(); this.refreshImage() }
-    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] () { this.refreshLayer(); this.refreshImage() }
-    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] () { this.refreshLayer(); this.refreshImage() }
-    [EVENT_CHANGE_IMAGE_RADIAL_TYPE] () { this.refreshLayer(); this.refreshImage() }
+
 
     // all effect 
     [EVENT_CHANGE_EDITOR] () { this.refresh() }
     [EVENT_CHANGE_SELECTION] () { this.refresh(); }
-
-    'click $addLayer' (e) {
-        this.read('/selection/current/page', (page) => {
-            this.dispatch('/item/add', 'layer', true, page.id)
-            this.dispatch('/history/push', 'Add a layer');
-            this.refresh();    
-        });
-    }
 
     'click $layerList .tree-item | self' (e) { 
         this.dispatch('/selection/one', e.$delegateTarget.attr('id'));        

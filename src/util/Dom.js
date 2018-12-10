@@ -241,7 +241,7 @@ export default class Dom {
             return this.el.style.cssText;
         }
 
-        this.el.style.cssText = value.split(';').map(it => it.trim()).join(';');
+        this.el.style.cssText = value;
 
         return this; 
     }

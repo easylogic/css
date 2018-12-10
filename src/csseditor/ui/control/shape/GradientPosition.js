@@ -1,4 +1,4 @@
-import UIElement from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
 
 const DEFINE_POSITIONS = { 
@@ -140,9 +140,13 @@ export default class GradientPosition extends UIElement {
         });
     }
 
-    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { 
+        this.refresh() 
+    }
 
     '@changeTool' () {
         this.$el.toggle(this.isShow())

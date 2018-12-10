@@ -21,7 +21,7 @@ const LAYER_DEFAULT_OBJECT = {
     itemType: 'layer',
     name: '',
     index: 0,    
-    backgroundColor: '',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
     parentId: '',
     mixBlendMode: 'normal',
     selected: true,
@@ -32,10 +32,17 @@ const LAYER_DEFAULT_OBJECT = {
     fitClipPathSize: false,
     x: '0px',
     y: '0px',
+    width: '200px',
+    height: '200px',
     rotate: 0,
     opacity: 1,
     filters: []
 }
+
+const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+    borderRadius: '100px',
+    fixedRadius: true
+})
 
 const GROUP_DEFAULT_OBJECT = {
     itemType: 'group',
@@ -170,6 +177,10 @@ export default class ItemManager extends BaseModule {
     '*/item/create/layer' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, LAYER_DEFAULT_OBJECT);
     }
+
+    '*/item/create/circle' ($store, obj = {}) {
+        return $store.read('/item/create/object', obj, CIRCLE_DEFAULT_OBJECT);
+    }    
 
     '*/item/create/group' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, GROUP_DEFAULT_OBJECT);
@@ -529,14 +540,6 @@ export default class ItemManager extends BaseModule {
         var id = $store.read('/item/create', itemType);
         var item = $store.read('/item/get', id);
         item.parentId = parentId; 
-
-        if (item.itemType == 'layer') {
-            var page = $store.read('/item/get', parentId);
-
-            item.width = page.width; 
-            item.height = page.height;
-            // item.style = Object.assign(item.style, page.style)
-        }
 
         item.index = Number.MAX_SAFE_INTEGER; 
 

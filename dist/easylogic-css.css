@@ -1129,7 +1129,6 @@ html, body {
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      border-right: 1px solid #c7c7c7;
       border-left: 1px solid #c7c7c7;
       background-color: white;
       border-left: 1px solid #c7c7c7;
@@ -1464,9 +1463,17 @@ html, body {
     bottom: 0px;
     -webkit-box-sizing: border-box;
             box-sizing: border-box; }
+    .csseditor .select-layer-view.has-page-panel .pages {
+      display: block; }
+    .csseditor .select-layer-view.has-page-panel .item-info {
+      left: 70px; }
+      .csseditor .select-layer-view.has-page-panel .item-info .page-info {
+        display: block; }
+      .csseditor .select-layer-view.has-page-panel .item-info .layers {
+        top: 0px; }
     .csseditor .select-layer-view .item-info {
       position: absolute;
-      left: 70px;
+      left: 0px;
       top: 0px;
       right: 0px;
       bottom: 0px;
@@ -1480,6 +1487,7 @@ html, body {
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
       .csseditor .select-layer-view .item-info .page-info {
+        display: none;
         position: relative;
         height: 120px;
         -webkit-box-flex: 0;
@@ -1518,7 +1526,8 @@ html, body {
       text-align: right;
       height: 100%;
       -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
+              box-sizing: border-box;
+      float: right; }
       .csseditor .tool-menu .items > * {
         -webkit-appearance: none;
            -moz-appearance: none;
@@ -1536,7 +1545,48 @@ html, body {
         line-height: 1.6;
         outline: none;
         cursor: pointer; }
+    .csseditor .tool-menu .add-items {
+      display: inline-block;
+      padding: 5px 0px;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      height: 100%; }
+      .csseditor .tool-menu .add-items button {
+        background-color: transparent;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border: 1px solid #ececec;
+        cursor: pointer;
+        position: relative;
+        pointer-events: all;
+        vertical-align: middle;
+        margin-bottom: 2px; }
+        .csseditor .tool-menu .add-items button:first-child {
+          margin-right: 1px; }
+        .csseditor .tool-menu .add-items button.rect {
+          border-color: #333;
+          background-color: #333; }
+        .csseditor .tool-menu .add-items button.circle {
+          border-color: #333;
+          border-radius: 50%;
+          background-color: #333; }
+        .csseditor .tool-menu .add-items button.view-sample {
+          width: 30px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          position: relative; }
+          .csseditor .tool-menu .add-items button.view-sample.arrow {
+            background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
+            background-size: 5px 5px;
+            background-repeat: round; }
   .csseditor .pages {
+    display: none;
     position: absolute;
     left: 0px;
     width: 70px;
@@ -1703,21 +1753,6 @@ html, body {
         top: 0px;
         right: 0px;
         bottom: 0px; }
-        .csseditor .layers > .title .tools button {
-          border-left: 1px solid #c7c7c7;
-          border-top: 0px;
-          border-bottom: 0px;
-          border-right: 0px;
-          padding: 0px 10px; }
-          .csseditor .layers > .title .tools button.view-sample {
-            width: 30px;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            position: relative; }
-            .csseditor .layers > .title .tools button.view-sample.arrow {
-              background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
-              background-size: 5px 5px;
-              background-repeat: round; }
     .csseditor .layers .layer-list {
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
@@ -1872,7 +1907,12 @@ html, body {
     background-color: white;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
-    padding: 4px 10px; }
+    padding: 3px 10px; }
+    .csseditor .layer-toolbar .panel-toolbar {
+      display: inline-block;
+      vertical-align: middle;
+      width: 280px;
+      height: 100%; }
     .csseditor .layer-toolbar label {
       display: inline-block;
       line-height: 2;
@@ -1881,23 +1921,6 @@ html, body {
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       vertical-align: middle; }
-    .csseditor .layer-toolbar .gradient-type {
-      padding-top: 1px; }
-    .csseditor .layer-toolbar .gradient-sample-list {
-      display: inline-block;
-      height: 26px;
-      width: 30px;
-      vertical-align: middle;
-      position: relative;
-      text-align: center;
-      border: 1px solid #f1f1f1;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      margin-bottom: 2px; }
-      .csseditor .layer-toolbar .gradient-sample-list.arrow {
-        background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
-        background-size: 5px 5px;
-        background-repeat: round; }
     .csseditor .layer-toolbar .button-group {
       display: -webkit-inline-box;
       display: -ms-inline-flexbox;
@@ -1930,6 +1953,28 @@ html, body {
           .csseditor .layer-toolbar .button-group button.cut.on {
             background-position: center 6px;
             background-repeat: repeat-x; }
+    .csseditor .layer-toolbar .gradient-type {
+      padding-top: 1px; }
+    .csseditor .layer-toolbar .gradient-sample-list {
+      display: inline-block;
+      height: 30px;
+      width: 30px;
+      vertical-align: middle;
+      position: relative;
+      text-align: center;
+      border: 1px solid #f1f1f1;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      margin-bottom: 2px; }
+      .csseditor .layer-toolbar .gradient-sample-list.arrow {
+        background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
+        background-size: 5px 5px;
+        background-repeat: round; }
+    .csseditor .layer-toolbar .step-align {
+      float: right;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px; }
     .csseditor .layer-toolbar .group-align {
       float: right; }
       .csseditor .layer-toolbar .group-align button {
@@ -2429,7 +2474,10 @@ html, body {
         display: block; }
     .csseditor .feature-control .image-feature .color-tab {
       bottom: auto;
-      height: 315px; }
+      height: 325px; }
+      .csseditor .feature-control .image-feature .color-tab .color-tab-body {
+        border: 1px solid #ececec;
+        border-top: 0px; }
     .csseditor .feature-control .image-feature .color-steps-tab {
       top: 620px; }
   .csseditor .sub-feature-control {

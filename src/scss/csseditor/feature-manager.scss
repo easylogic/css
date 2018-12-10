@@ -29,7 +29,12 @@ $layer-item-padding: 4px;
     .image-feature {
         .color-tab {
             bottom: auto;
-            height: 315px;
+            height: 325px;
+
+            .color-tab-body {
+                border:1px solid #ececec;
+                border-top: 0px;
+            }
         }
 
         .color-steps-tab {

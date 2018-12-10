@@ -1,4 +1,4 @@
-import UIElement from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/gl/filter/util';
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_PAGE_SIZE, CHANGE_PAGE_SIZE, EVENT_CHANGE_SELECTION } from '../../../types/event';
 
@@ -64,9 +64,11 @@ export default class PredefinedPageResizer extends UIElement {
         return this.read('/selection/is/page')
     }
 
-    [EVENT_CHANGE_PAGE_SIZE] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }    
+    [MULTI_EVENT(
+        EVENT_CHANGE_PAGE_SIZE,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }    
 
     change (style1 = {}, style2 = {}) {
 
@@ -160,6 +162,7 @@ export default class PredefinedPageResizer extends UIElement {
     }    
 
     'pointerstart $el [data-value] | isNotDownCheck' (e) {
+        e.stopPropagation();
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;

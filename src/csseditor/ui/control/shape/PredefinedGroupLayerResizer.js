@@ -1,4 +1,4 @@
-import UIElement from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import { 
     EVENT_CHANGE_EDITOR, 
@@ -108,13 +108,15 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.read('/selection/is/not/empty')
     }
 
-    [EVENT_CHANGE_LAYER_TRANSFORM] () { this.refresh() }
-    [EVENT_CHANGE_LAYER_SIZE] () {this.refresh()}
-    [EVENT_CHANGE_LAYER_ROTATE] () {this.refresh()}
-    [EVENT_CHANGE_LAYER_MOVE] () {this.refresh()}
-    [EVENT_CHANGE_LAYER_POSITION] () {this.refresh()}
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER_TRANSFORM,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_ROTATE,
+        EVENT_CHANGE_LAYER_MOVE,
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }
 
     caculateRightSize (item, list) {
         var x = this.caculatePosition(list, 'x', 'right')
@@ -312,7 +314,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
     'pointerstart $el [data-value] | isNotDownCheck' (e) {
-
+        e.stopPropagation();
         this.activeButton = e.$delegateTarget;
         this.activeButton.addClass('active');
         var type = e.$delegateTarget.attr('data-value');

@@ -6075,9 +6075,7 @@ var Dom = function () {
                 return this.el.style.cssText;
             }
 
-            this.el.style.cssText = value.split(';').map(function (it) {
-                return it.trim();
-            }).join(';');
+            this.el.style.cssText = value;
 
             return this;
         }
@@ -7142,6 +7140,19 @@ var EventMachin = function () {
 }();
 
 var CHECK_STORE_EVENT_PATTERN = /^@/;
+var CHECK_STORE_MULTI_EVENT_PATTERN = /^ME@/;
+
+var EVENT_PREFIX = '@';
+var MULTI_EVENT_PREFIX = 'ME@';
+var EVENT_SPLITTER = '|';
+
+var MULTI_EVENT = function MULTI_EVENT() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    return MULTI_EVENT_PREFIX + args.join(EVENT_SPLITTER);
+};
 
 var UIElement = function (_EventMachin) {
     inherits(UIElement, _EventMachin);
@@ -7173,6 +7184,15 @@ var UIElement = function (_EventMachin) {
     createClass(UIElement, [{
         key: 'created',
         value: function created() {}
+    }, {
+        key: 'getRealEventName',
+        value: function getRealEventName(e) {
+            var s = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EVENT_PREFIX;
+
+            var arr = e.split(s);
+            arr.shift();
+            return arr.join(s);
+        }
 
         /**
          * initialize store event 
@@ -7188,13 +7208,25 @@ var UIElement = function (_EventMachin) {
             var _this2 = this;
 
             this.storeEvents = {};
+
             this.filterProps(CHECK_STORE_EVENT_PATTERN).forEach(function (key) {
-                var arr = key.split('@');
-                arr.shift();
-                var event = arr.join('@');
+                var event = _this2.getRealEventName(key);
 
                 _this2.storeEvents[event] = _this2[key].bind(_this2);
                 _this2.$store.on(event, _this2.storeEvents[event], _this2);
+            });
+
+            this.filterProps(CHECK_STORE_MULTI_EVENT_PATTERN).forEach(function (key) {
+                var events = _this2.getRealEventName(key, MULTI_EVENT_PREFIX);
+
+                var callback = _this2[key].bind(_this2);
+
+                events.split(EVENT_SPLITTER).forEach(function (e) {
+                    e = _this2.getRealEventName(e);
+
+                    _this2.storeEvents[e] = callback;
+                    _this2.$store.on(e, _this2.storeEvents[e], _this2);
+                });
             });
         }
     }, {
@@ -7226,7 +7258,6 @@ var UIElement = function (_EventMachin) {
             var _$store3;
 
             this.$store.source = this.source;
-            this.$store.sourceName = this.sourceName;
             return (_$store3 = this.$store).dispatch.apply(_$store3, arguments);
         }
     }, {
@@ -7240,8 +7271,8 @@ var UIElement = function (_EventMachin) {
     }, {
         key: 'commit',
         value: function commit(eventType) {
-            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
+            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                args[_key2 - 1] = arguments[_key2];
             }
 
             this.run.apply(this, ['/item/set'].concat(args));
@@ -11373,7 +11404,7 @@ var LAYER_DEFAULT_OBJECT = {
     itemType: 'layer',
     name: '',
     index: 0,
-    backgroundColor: '',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
     parentId: '',
     mixBlendMode: 'normal',
     selected: true,
@@ -11384,10 +11415,17 @@ var LAYER_DEFAULT_OBJECT = {
     fitClipPathSize: false,
     x: '0px',
     y: '0px',
+    width: '200px',
+    height: '200px',
     rotate: 0,
     opacity: 1,
     filters: []
 };
+
+var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+    borderRadius: '100px',
+    fixedRadius: true
+});
 
 var GROUP_DEFAULT_OBJECT = {
     itemType: 'group',
@@ -11539,6 +11577,13 @@ var ItemManager = function (_BaseModule) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             return $store.read('/item/create/object', obj, LAYER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: '*/item/create/circle',
+        value: function itemCreateCircle($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('/item/create/object', obj, CIRCLE_DEFAULT_OBJECT);
         }
     }, {
         key: '*/item/create/group',
@@ -11981,14 +12026,6 @@ var ItemManager = function (_BaseModule) {
             var id = $store.read('/item/create', itemType);
             var item = $store.read('/item/get', id);
             item.parentId = parentId;
-
-            if (item.itemType == 'layer') {
-                var page = $store.read('/item/get', parentId);
-
-                item.width = page.width;
-                item.height = page.height;
-                // item.style = Object.assign(item.style, page.style)
-            }
 
             item.index = Number.MAX_SAFE_INTEGER;
 
@@ -17104,17 +17141,7 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -17368,7 +17395,7 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
         value: function click$center(e) {
             var _this4 = this;
 
-            this.read('/selection/current/image', function (id) {
+            this.read('/selection/current/image/id', function (id) {
                 _this4.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: 'center' });
             });
         }
@@ -17420,23 +17447,8 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
             return this.read('/tool/get', 'guide.angle') && (isRadial || isConic);
         }
     }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, '@changeTool'),
         value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
             this.refresh();
         }
     }]);
@@ -17609,17 +17621,7 @@ var GradientPosition = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -17762,7 +17764,7 @@ var LayerListView = function (_UIElement) {
     createClass(LayerListView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1>Layers</h1>\n                    <div class="tools">\n                        <button type="button" class=\'add-layer\' ref="$addLayer">+</button>\n                        <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                    </div>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
+            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1 ref="$pageName"></h1>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',
@@ -17791,6 +17793,12 @@ var LayerListView = function (_UIElement) {
             return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" item-type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('/item/map/image/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }).join('') + '\n                </div>\n            </div>       \n            ';
+        }
+    }, {
+        key: 'load $pageName',
+        value: function load$pageName() {
+            var obj = this.read('/selection/current/page') || { name: 'Untitled Project' };
+            return obj.name === '' ? '<span>Untitled Project</span>' : '<span>' + obj.name + '</span>';
         }
     }, {
         key: 'load $layerList',
@@ -17848,89 +17856,9 @@ var LayerListView = function (_UIElement) {
         // indivisual effect 
 
     }, {
-        key: EVENT_CHANGE_LAYER,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE),
         value: function value() {
             this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_CLIPPATH,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_FILTER,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_POSITION,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_RADIUS,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_SIZE,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_ROTATE,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_TRANSFORM,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_TRANSFORM_3D,
-        value: function value() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_COLOR_STEP,
-        value: function value(newValue) {
-            this.refreshLayer();this.refreshImage();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value() {
-            this.refreshLayer();this.refreshImage();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_ANGLE,
-        value: function value() {
-            this.refreshLayer();this.refreshImage();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_COLOR,
-        value: function value() {
-            this.refreshLayer();this.refreshImage();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        value: function value() {
-            this.refreshLayer();this.refreshImage();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value() {
-            this.refreshLayer();this.refreshImage();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        value: function value() {
-            this.refreshLayer();this.refreshImage();
         }
 
         // all effect 
@@ -17944,17 +17872,6 @@ var LayerListView = function (_UIElement) {
         key: EVENT_CHANGE_SELECTION,
         value: function value() {
             this.refresh();
-        }
-    }, {
-        key: 'click $addLayer',
-        value: function click$addLayer(e) {
-            var _this6 = this;
-
-            this.read('/selection/current/page', function (page) {
-                _this6.dispatch('/item/add', 'layer', true, page.id);
-                _this6.dispatch('/history/push', 'Add a layer');
-                _this6.refresh();
-            });
         }
     }, {
         key: 'click $layerList .tree-item | self',
@@ -18077,7 +17994,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button ref="$ordering" title="Full Ordering">=|=</button>\n                    <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>      \n                <label></label>\n                <div class="button-group">\n                    <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                    <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                </div> \n                \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n\n                <label>\n                    2. Add Gradient \n                </label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                    <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                    </div>                    \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="step-align">\n                    <label>Steps</label>\n                    <div class="button-group">\n                        <button ref="$ordering" title="Full Ordering">=|=</button>\n                        <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                        <button ref="$orderingRight" title="Right Ordering">|=</button>\n                    </div>\n\n                    <div class="button-group">\n                        <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                        <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                    </div>      \n                </div>\n                                \n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -18151,194 +18068,13 @@ var LayerToolbar = function (_UIElement) {
         value: function click$redo(e) {
             this.dispatch('/history/redo');
         }
+    }, {
+        key: 'click $togglePagePanel',
+        value: function click$togglePagePanel() {
+            this.emit('togglePagePanel');
+        }
     }]);
     return LayerToolbar;
-}(UIElement);
-
-var ImageList = function (_UIElement) {
-    inherits(ImageList, _UIElement);
-
-    function ImageList() {
-        classCallCheck(this, ImageList);
-        return possibleConstructorReturn(this, (ImageList.__proto__ || Object.getPrototypeOf(ImageList)).apply(this, arguments));
-    }
-
-    createClass(ImageList, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'images\'>\n                <div class="title">Gradients</div>\n                <div class=\'image-tools\'>   \n                    <div class="image-list" ref="$imageList"> </div>    \n                    <div class=\'menu-buttons\'>\n                        <div class="title">+ Add Gradients</div>\n                        <div class=\'gradient-type\' ref="$gradientType">\n                            <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                            <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                            <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                            <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                            <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                            <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                            <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                            <div class="gradient-item image" data-type="image" title="Background Image">\n                                <div class="m1"></div>\n                                <div class="m2"></div>\n                                <div class="m3"></div> \n                            </div>                                                  \n                        </div>\n                        <div class="gradient-sample-list">\n                            <div class="arrow">\n                            </div>\n                        </div>\n                    </div> \n\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'makeItemNodeImage',
-        value: function makeItemNodeImage(item) {
-            var selected = item.selected ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' data-id="' + item.id + '" draggable="true" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>                \n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">&times;</button>\n                </div>            \n            </div>\n            ';
-        }
-    }, {
-        key: 'load $imageList',
-        value: function load$imageList() {
-            var _this2 = this;
-
-            var item = this.read('/selection/current/layer');
-
-            if (!item) {
-                var page = this.read('/selection/current/page');
-                if (page) {
-                    var list = this.read('/item/list/children', page.id);
-                    if (list.length) {
-                        item = { id: list[0] };
-                    } else {
-                        return '';
-                    }
-                }
-            }
-
-            return this.read('/item/map/children', item.id, function (item) {
-                return _this2.makeItemNodeImage(item);
-            });
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-
-        // individual effect
-
-    }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_ANGLE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_COLOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_COLOR_STEP,
-        value: function value(newValue) {
-            this.refresh();
-        }
-        // all effect 
-
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .tree-item | self',
-        value: function click$imageListTreeItemSelf(e) {
-            var id = e.$delegateTarget.attr('data-id');
-
-            if (id) {
-                this.dispatch('/selection/one', id);
-                this.refresh();
-            }
-        }
-    }, {
-        key: 'click $gradientType .gradient-item',
-        value: function click$gradientTypeGradientItem(e) {
-            var _this3 = this;
-
-            this.read('/selection/current/layer', function (item) {
-
-                var type = e.$delegateTarget.attr('data-type');
-
-                _this3.dispatch('/item/prepend/image', type, true, item.id);
-                _this3.refresh();
-            });
-        }
-    }, {
-        key: 'dragstart $imageList .tree-item',
-        value: function dragstart$imageListTreeItem(e) {
-            this.draggedImage = e.$delegateTarget;
-            this.draggedImage.css('opacity', 0.5);
-            // e.preventDefault();
-        }
-    }, {
-        key: 'dragend $imageList .tree-item',
-        value: function dragend$imageListTreeItem(e) {
-
-            if (this.draggedImage) {
-                this.draggedImage.css('opacity', 1);
-            }
-        }
-    }, {
-        key: 'dragover $imageList .tree-item',
-        value: function dragover$imageListTreeItem(e) {
-            e.preventDefault();
-        }
-    }, {
-        key: 'drop $imageList .tree-item | self',
-        value: function drop$imageListTreeItemSelf(e) {
-            e.preventDefault();
-
-            var destId = e.$delegateTarget.attr('data-id');
-            var sourceId = this.draggedImage.attr('data-id');
-
-            this.draggedImage = null;
-            this.dispatch('/item/move/in', destId, sourceId);
-            this.refresh();
-        }
-    }, {
-        key: 'drop $imageList',
-        value: function drop$imageList(e) {
-            e.preventDefault();
-
-            if (this.draggedImage) {
-                var sourceId = this.draggedImage.attr('data-id');
-
-                this.draggedImage = null;
-                this.dispatch('/item/move/last', sourceId);
-                this.refresh();
-            }
-        }
-    }, {
-        key: 'click $imageList .copy-item',
-        value: function click$imageListCopyItem(e) {
-            this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $imageList .delete-item',
-        value: function click$imageListDeleteItem(e) {
-            this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'));
-            this.refresh();
-        }
-    }, {
-        key: 'click $el .gradient-sample-list',
-        value: function click$elGradientSampleList(e) {
-            this.emit('toggleGradientSampleView');
-        }
-    }]);
-    return ImageList;
 }(UIElement);
 
 var SubFeatureControl = function (_UIElement) {
@@ -20373,17 +20109,7 @@ var PredefinedPageResizer = function (_UIElement) {
             return this.read('/selection/is/page');
         }
     }, {
-        key: EVENT_CHANGE_PAGE_SIZE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20494,6 +20220,7 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'pointerstart $el [data-value] | isNotDownCheck',
         value: function pointerstart$elDataValueIsNotDownCheck(e) {
+            e.stopPropagation();
             var type = e.$delegateTarget.attr('data-value');
             this.currentType = type;
             this.xy = e.xy;
@@ -20629,37 +20356,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.read('/selection/is/not/empty');
         }
     }, {
-        key: EVENT_CHANGE_LAYER_TRANSFORM,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_SIZE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_ROTATE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_MOVE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20919,7 +20616,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: 'pointerstart $el [data-value] | isNotDownCheck',
         value: function pointerstart$elDataValueIsNotDownCheck(e) {
-
+            e.stopPropagation();
             this.activeButton = e.$delegateTarget;
             this.activeButton.addClass('active');
             var type = e.$delegateTarget.attr('data-value');
@@ -21239,12 +20936,7 @@ var GradientView = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT_CHANGE_PAGE_SIZE,
-        value: function value() {
-            this.setBackgroundColor();
-        }
-    }, {
-        key: EVENT_CHANGE_PAGE,
+        key: MULTI_EVENT(EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE),
         value: function value() {
             this.setBackgroundColor();
         }
@@ -21252,93 +20944,8 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: EVENT_CHANGE_LAYER,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_CLIPPATH,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_FILTER,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_POSITION,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_RADIUS,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_SIZE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_ROTATE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_MOVE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_TRANSFORM,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_TRANSFORM_3D,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_COLOR,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_ANGLE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        value: function value(newValue) {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT_CHANGE_COLOR_STEP,
-        value: function value(newValue) {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        value: function value() {
             this.refreshLayer();
         }
 
@@ -21512,7 +21119,7 @@ var ToolMenu = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'tool-menu\'>         \n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    1. Add Layer \n                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n                    &nbsp;\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'click $check',
@@ -21537,6 +21144,26 @@ var ToolMenu = function (_UIElement) {
         key: 'click $exportButton',
         value: function click$exportButton(e) {
             this.emit('showExport');
+        }
+    }, {
+        key: 'click $addLayer',
+        value: function click$addLayer(e) {
+            var _this3 = this;
+
+            this.read('/selection/current/page', function (page) {
+                _this3.dispatch('/item/add', 'layer', true, page.id);
+                _this3.dispatch('/history/push', 'Add a layer');
+            });
+        }
+    }, {
+        key: 'click $addLayerCircle',
+        value: function click$addLayerCircle(e) {
+            var _this4 = this;
+
+            this.read('/selection/current/page', function (page) {
+                _this4.dispatch('/item/add', 'circle', true, page.id);
+                _this4.dispatch('/history/push', 'Add a layer');
+            });
         }
     }]);
     return ToolMenu;
@@ -21681,6 +21308,11 @@ var SelectLayerView = function (_UIElement) {
                 LayerListView: LayerListView
             };
         }
+    }, {
+        key: '@togglePagePanel',
+        value: function togglePagePanel() {
+            this.$el.toggleClass('has-page-panel');
+        }
     }]);
     return SelectLayerView;
 }(UIElement);
@@ -21724,7 +21356,6 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
                 FeatureControl: FeatureControl,
                 LayerListView: LayerListView,
                 SubFeatureControl: SubFeatureControl,
-                ImageListView: ImageList,
                 Timeline: Timeline,
                 LayerSampleView: LayerSampleWindow,
                 PageSampleView: PageSampleWindow

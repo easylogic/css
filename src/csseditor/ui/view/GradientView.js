@@ -1,4 +1,4 @@
-import UIElement from '../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
 // import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
 import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
@@ -178,29 +178,34 @@ export default class GradientView extends UIElement {
 
     }
 
-    [EVENT_CHANGE_PAGE_SIZE] () { this.setBackgroundColor() }
-    [EVENT_CHANGE_PAGE] () { this.setBackgroundColor(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_PAGE_SIZE,
+        EVENT_CHANGE_PAGE
+    )] () { this.setBackgroundColor(); }
 
     // indivisual layer effect 
-    [EVENT_CHANGE_LAYER] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_CLIPPATH] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_FILTER] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_POSITION] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_RADIUS] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_SIZE] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_ROTATE] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_MOVE] (newValue) { this.refreshLayer(); }    
-    [EVENT_CHANGE_LAYER_TRANSFORM] (newValue) { this.refreshLayer(); }
-    [EVENT_CHANGE_LAYER_TRANSFORM_3D] (newValue) { this.refreshLayer(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
+        EVENT_CHANGE_LAYER_CLIPPATH,
+        EVENT_CHANGE_LAYER_FILTER,
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_LAYER_RADIUS,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_ROTATE,
+        EVENT_CHANGE_LAYER_MOVE,
+        EVENT_CHANGE_LAYER_TRANSFORM,
+        EVENT_CHANGE_LAYER_TRANSFORM_3D,
+        EVENT_CHANGE_IMAGE,
+        EVENT_CHANGE_IMAGE_COLOR,
+        EVENT_CHANGE_IMAGE_ANGLE,
+        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
+        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        EVENT_CHANGE_IMAGE_RADIAL_TYPE,
+        EVENT_CHANGE_COLOR_STEP
+    )]() { 
+        this.refreshLayer(); 
+    }
 
-    [EVENT_CHANGE_IMAGE] (newValue) { this.refreshLayer() }
-    [EVENT_CHANGE_IMAGE_COLOR] (newValue) { this.refreshLayer() }
-    [EVENT_CHANGE_IMAGE_ANGLE] (newValue) { this.refreshLayer() }
-    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] (newValue) { this.refreshLayer() }
-    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] (newValue) { this.refreshLayer() }
-    [EVENT_CHANGE_IMAGE_RADIAL_TYPE] (newValue) { this.refreshLayer() }
-    [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refreshLayer() }
 
     // all effect 
     [EVENT_CHANGE_EDITOR] () { this.refresh(); }

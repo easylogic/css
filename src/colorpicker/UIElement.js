@@ -2,6 +2,15 @@ import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
 
 const CHECK_STORE_EVENT_PATTERN = /^@/
+const CHECK_STORE_MULTI_EVENT_PATTERN = /^ME@/
+
+const EVENT_PREFIX = '@'
+const MULTI_EVENT_PREFIX = 'ME@'
+const EVENT_SPLITTER = '|'
+
+export const MULTI_EVENT = (...args) => {
+    return MULTI_EVENT_PREFIX + args.join(EVENT_SPLITTER)
+}
 
 class UIElement extends EventMachin {
     constructor (opt, props) {
@@ -29,6 +38,12 @@ class UIElement extends EventMachin {
 
     }
 
+    getRealEventName(e, s = EVENT_PREFIX) {
+        const arr = e.split(s)
+            arr.shift();
+        return arr.join(s);
+    }
+
     /**
      * initialize store event 
      * 
@@ -38,14 +53,27 @@ class UIElement extends EventMachin {
      */
     initializeStoreEvent () {
         this.storeEvents = {}
+
         this.filterProps(CHECK_STORE_EVENT_PATTERN).forEach((key) => {
-            const arr = key.split('@')
-            arr.shift();
-            const event = arr.join('@');
+            const event = this.getRealEventName(key);
 
             this.storeEvents[event] = this[key].bind(this)
             this.$store.on(event, this.storeEvents[event], this);
         });
+
+        this.filterProps(CHECK_STORE_MULTI_EVENT_PATTERN).forEach((key) => {
+            const events = this.getRealEventName(key, MULTI_EVENT_PREFIX);
+
+            var callback = this[key].bind(this)
+
+            events.split(EVENT_SPLITTER).forEach(e => {
+                e = this.getRealEventName(e);
+
+                this.storeEvents[e] = callback                
+                this.$store.on(e, this.storeEvents[e], this);
+            })
+            
+        });        
     }
 
     destoryStoreEvent () {
@@ -64,7 +92,6 @@ class UIElement extends EventMachin {
 
     dispatch (...args) {
         this.$store.source = this.source ; 
-        this.$store.sourceName = this.sourceName;
         return this.$store.dispatch(...args) 
     }
 

@@ -5,6 +5,7 @@
         text-align: right;
         height: 100%;
         box-sizing: border-box;
+        float: right;
 
         > * {
             appearance: none;
@@ -21,5 +22,56 @@
             outline: none;
             cursor: pointer;
         }
+    }
+
+    .add-items {
+        display: inline-block;
+        padding: 5px 0px;
+        box-sizing: border-box;
+        height: 100%;
+
+        button {
+
+            background-color: transparent;
+            appearance: none;
+
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            box-sizing: border-box;
+            border: 1px solid #ececec;
+            cursor: pointer;
+            position: relative;
+            pointer-events: all;
+            vertical-align: middle;
+            margin-bottom: 2px;
+    
+            &:first-child {
+                margin-right: 1px; 
+            }            
+
+            &.rect {
+                border-color: #333; 
+                background-color: #333;
+            }
+
+            &.circle {
+                border-color: #333;                 
+                border-radius: 50%;
+                background-color: #333;                
+            }
+
+            &.view-sample {
+                width: 30px;
+                box-sizing: border-box;
+                position: relative;
+                &.arrow {
+                    background-image: radial-gradient(ellipse at center, rgba(216,216,216, 0) 0%,rgba(119,119,119,0.45) 0%,rgba(119,119,119,0.45) 33.33%,rgba(67,67,67,0.69) 33.33%,rgba(67,67,67,0.69) 66.67%,rgb(0,0,0) 66.67%,rgb(0,0,0) 100%);
+                    background-size: 5px 5px;
+                    background-repeat: round;                 
+                }
+            }
+        }        
+
     }
 }

@@ -3,7 +3,6 @@ import FeatureControl from '../ui/control/FeatureControl';
 
 import LayerListView from '../ui/view/LayerListView';
 import LayerToolbar from '../ui/view/LayerToolbar';
-import ImageListView from '../ui/view/ImageListView'
 import SubFeatureControl from '../ui/control/SubFeatureControl';
 import ExportView from '../ui/window/ExportWindow';
 import Timeline from '../ui/control/Timeline';
@@ -24,7 +23,7 @@ import SelectLayerView from '../ui/view/SelectLayerView';
 export default class CSSEditor extends BaseCSSEditor {
 
 
-    afterRender() {
+    afterRender() { 
         setTimeout(() => {
             this.emit('changeEditor');
         }, 100)
@@ -83,7 +82,6 @@ export default class CSSEditor extends BaseCSSEditor {
             FeatureControl, 
             LayerListView, 
             SubFeatureControl, 
-            ImageListView,
             Timeline,
             LayerSampleView,
             PageSampleView

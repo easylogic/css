@@ -6,9 +6,27 @@
     bottom: 0px;
     box-sizing: border-box;
 
+    &.has-page-panel {
+        .pages {
+            display: block; 
+        }
+
+        .item-info {
+            .page-info {
+                display: block;
+            }
+
+            left: $left-page-size;
+
+            .layers {
+                top: 0px;
+            }
+        }
+    }
+
     .item-info {
         position: absolute;
-        left: $left-page-size;
+        left: 0px;
         top: 0px;
         right: 0px;
         bottom: 0px;
@@ -17,6 +35,7 @@
         box-sizing: border-box;
 
         .page-info {
+            display: none;
             position: relative;
             height: 120px;
             flex: none; 

@@ -24,4 +24,8 @@ export default class SelectLayerView extends UIElement {
             LayerListView
         }
     }
+
+    '@togglePagePanel' () {
+        this.$el.toggleClass('has-page-panel')
+    }
 }

@@ -6,6 +6,20 @@ export default class LayerToolbar extends UIElement {
     template () {  
         return `
             <div class='layer-toolbar'>            
+                <div class="panel-toolbar">
+                    <div class="button-group">
+                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>
+                    </div>
+                    <label>&nbsp;</label>
+                    <div class="button-group">
+                        <button class="dodo" ref="$undo" title="Undo">Undo</button>
+                        <button class="dodo" ref="$redo" title="Redo">Redo</button>
+                    </div> 
+                </div>
+
+                <label>
+                    2. Add Gradient 
+                </label>
                 <div class='gradient-type' ref="$gradientType">
                     <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>
                     <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>
@@ -19,26 +33,10 @@ export default class LayerToolbar extends UIElement {
                         <div class="m2"></div>
                         <div class="m3"></div> 
                     </div>                                                  
+                    <div class="gradient-sample-list arrow" title="Gradient Sample View">
+                    </div>                    
                 </div>
-                <div class="gradient-sample-list arrow" title="Gradient Sample View">
-                </div>
-                <label>Steps</label>
-                <div class="button-group">
-                    <button ref="$ordering" title="Full Ordering">=|=</button>
-                    <button ref="$orderingLeft" title="Left Ordering">=|</button>
-                    <button ref="$orderingRight" title="Right Ordering">|=</button>
-                </div>
-
-                <div class="button-group">
-                    <button class="cut" ref="$cutOff" title="Cut Off"></button>
-                    <button class="cut on" ref="$cutOn" title="Cut On"></button>
-                </div>      
-                <label></label>
-                <div class="button-group">
-                    <button class="dodo" ref="$undo" title="Undo">Undo</button>
-                    <button class="dodo" ref="$redo" title="Redo">Redo</button>
-                </div> 
-                
+               
                 <div class="button-group group-align" ref="$groupAlign">
                     <button type="button" title="left" data-value="left"></button>
                     <button type="button" title="center" data-value="center"></button>
@@ -49,6 +47,21 @@ export default class LayerToolbar extends UIElement {
                     <button type="button" title="vertical" data-value="vertical"></button>
                     <button type="button" title="horizontal" data-value="horizontal"></button>
                 </div>
+
+                <div class="step-align">
+                    <label>Steps</label>
+                    <div class="button-group">
+                        <button ref="$ordering" title="Full Ordering">=|=</button>
+                        <button ref="$orderingLeft" title="Left Ordering">=|</button>
+                        <button ref="$orderingRight" title="Right Ordering">|=</button>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="cut" ref="$cutOff" title="Cut Off"></button>
+                        <button class="cut on" ref="$cutOn" title="Cut On"></button>
+                    </div>      
+                </div>
+                                
             </div>
         `
     }
@@ -113,4 +126,8 @@ export default class LayerToolbar extends UIElement {
     'click $redo' (e) {
         this.dispatch('/history/redo')
     }    
+
+    'click $togglePagePanel' () {
+        this.emit('togglePagePanel');
+    }
 }

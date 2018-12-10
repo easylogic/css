@@ -43,7 +43,7 @@ export default class PredefinedRadialGradientAngle extends UIElement {
     }
 
     'click $center' (e) {
-        this.read('/selection/current/image', (id) => {
+        this.read('/selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition: 'center'})
         });
     }
