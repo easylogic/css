@@ -4,6 +4,7 @@ import MiniColorPicker from './mini/index'
 import MiniVerticalColorPicker from './mini-vertical/index'
 import RingColorPicker from './ring/index'
 import XDColorPicker from './xd/index'
+import RingTabColorPicker from './ring-tab/index';
 
 export default {
     create (opts) {
@@ -13,7 +14,9 @@ export default {
         case 'xd': 
             return new XDColorPicker(opts);            
         case 'ring': 
-            return new RingColorPicker(opts);            
+            return new RingColorPicker(opts);          
+        case 'ring-tab': 
+            return new RingTabColorPicker(opts);
         case 'mini': 
             return new MiniColorPicker(opts);            
         case 'mini-vertical': 

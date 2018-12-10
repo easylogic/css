@@ -8786,6 +8786,8 @@ var ColorSetsChooser = function (_UIElement) {
         value: function click$colorsetsListColorsetsItem(e) {
             var $item = e.$delegateTarget;
 
+            console.log($item);
+
             if ($item) {
 
                 var index = parseInt($item.attr(DATA_COLORSETS_INDEX));
@@ -9034,7 +9036,7 @@ var ColorPalette = function (_UIElement) {
     createClass(ColorPalette, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="color">\n            <div ref="$saturation" class="saturation">\n                <div ref="$value" class="value">\n                    <div ref="$drag_pointer" class="drag-pointer"></div>\n                </div>\n            </div>        \n        </div>        \n        ';
+            return '\n        <div class="color-panel">\n            <div ref="$saturation" class="saturation">\n                <div ref="$value" class="value">\n                    <div ref="$drag_pointer" class="drag-pointer"></div>\n                </div>\n            </div>        \n        </div>        \n        ';
         }
     }, {
         key: 'setBackgroundColor',
@@ -9522,6 +9524,52 @@ var XDColorPicker = function (_BaseColorPicker) {
     return XDColorPicker;
 }(BaseColorPicker);
 
+var RingTabColorPicker = function (_BaseColorPicker) {
+    inherits(RingTabColorPicker, _BaseColorPicker);
+
+    function RingTabColorPicker() {
+        classCallCheck(this, RingTabColorPicker);
+        return possibleConstructorReturn(this, (RingTabColorPicker.__proto__ || Object.getPrototypeOf(RingTabColorPicker)).apply(this, arguments));
+    }
+
+    createClass(RingTabColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color">Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing></ColorRing>\n                            <Palette></Palette> \n                            <div class="control">\n                                <Value></Value>\n                                <Opacity></Opacity>\n                                <div class="empty"></div>\n                                <ColorView></ColorView>\n                            </div>\n                            <Information></Information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+        }
+    }, {
+        key: 'click $tabHeader .color-tab-item',
+        value: function click$tabHeaderColorTabItem(e) {
+            if (!e.$delegateTarget.hasClass('active')) {
+                var selectedItem = this.refs.$tabHeader.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                e.$delegateTarget.addClass('active');
+
+                var selectedItem = this.refs.$tabBody.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                var activeItem = this.refs.$tabBody.$('[item-id=\'' + e.$delegateTarget.attr('item-id') + '\']');
+                if (activeItem) activeItem.addClass('active');
+            }
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Value: Value,
+                Opacity: Opacity,
+                ColorView: ColorView,
+                ColorRing: ColorRing,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return RingTabColorPicker;
+}(BaseColorPicker);
+
 var ColorPicker = {
     create: function create(opts) {
         switch (opts.type) {
@@ -9531,6 +9579,8 @@ var ColorPicker = {
                 return new XDColorPicker(opts);
             case 'ring':
                 return new RingColorPicker(opts);
+            case 'ring-tab':
+                return new RingTabColorPicker(opts);
             case 'mini':
                 return new MiniColorPicker(opts);
             case 'mini-vertical':
@@ -14930,6 +14980,11 @@ var GradientInfo = function (_UIElement) {
             this.refresh();
         }
     }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
         key: "initColor",
         value: function initColor(color) {
             this.dispatch('/colorstep/initColor', color);
@@ -15124,10 +15179,14 @@ var ColorStepsInfo = function (_UIElement) {
             this.refresh();
         }
     }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
         key: "isShow",
         value: function isShow() {
             var item = this.read('/selection/current/image');
-
             if (!item) return false;
 
             return this.read('/image/type/isGradient', item.type);
@@ -15151,7 +15210,7 @@ var ColorPickerLayer = function (_UIElement) {
 
             var defaultColor = this.read('/getSelectedColor');
             this.colorPicker = ColorPicker.create({
-                type: 'ring',
+                type: 'ring-tab',
                 position: 'inline',
                 container: this.$el.el,
                 color: defaultColor,
@@ -15633,7 +15692,7 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background'>\n                <!-- <div class='title' ref=\"$title\">Background</div> -->   \n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "updateWidth",
@@ -16695,7 +16754,7 @@ var BackgroundBlend = function (_BasePropertyItem) {
     createClass(BackgroundBlend, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend Mode</label>\n                    <div class=\'size-list\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read('/blend/list').map(function (blend) {
+            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read('/blend/list').map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }).join('') + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
@@ -17002,6 +17061,611 @@ var LayerView = function (_UIElement) {
     return LayerView;
 }(UIElement);
 
+var PredefinedLinearGradientAngle = function (_UIElement) {
+    inherits(PredefinedLinearGradientAngle, _UIElement);
+
+    function PredefinedLinearGradientAngle() {
+        classCallCheck(this, PredefinedLinearGradientAngle);
+        return possibleConstructorReturn(this, (PredefinedLinearGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedLinearGradientAngle)).apply(this, arguments));
+    }
+
+    createClass(PredefinedLinearGradientAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read('/selection/is/image')) return false;
+            var image = this.read('/selection/current/image');
+
+            if (!image) {
+                return false;
+            }
+
+            var isLinear = this.read('/image/type/isLinear', image.type);
+            var isConic = this.read('/image/type/isConic', image.type);
+
+            return this.read('/tool/get', 'guide.angle') && (isLinear || isConic);
+        }
+    }, {
+        key: 'click $el button | self',
+        value: function click$elButtonSelf(e) {
+            var _this2 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+                _this2.commit(CHANGE_IMAGE_LINEAR_ANGLE, { id: id, angle: e.$delegateTarget.attr('data-value') });
+            });
+        }
+    }, {
+        key: EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedLinearGradientAngle;
+}(UIElement);
+
+var GradientAngle = function (_UIElement) {
+    inherits(GradientAngle, _UIElement);
+
+    function GradientAngle() {
+        classCallCheck(this, GradientAngle);
+        return possibleConstructorReturn(this, (GradientAngle.__proto__ || Object.getPrototypeOf(GradientAngle)).apply(this, arguments));
+    }
+
+    createClass(GradientAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            if (this.isShow()) {
+                this.$el.show();
+
+                this.refreshUI();
+            } else {
+                this.$el.hide();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read('/selection/is/image')) return false;
+
+            var item = this.read('/selection/current/image');
+
+            if (!item) return false;
+
+            var isLinear = this.read('/image/type/isLinear', item.type);
+            var isConic = this.read('/image/type/isConic', item.type);
+
+            if (isLinear == false && isConic == false) {
+                return false;
+            }
+
+            return this.read('/tool/get', 'guide.angle');
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
+            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.refs.$dragAngle.width();
+            var height = this.refs.$dragAngle.height();
+            var radius = Math.floor(width / 2 * 0.7);
+
+            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
+                left = _refs$$dragAngle$offs.left,
+                top = _refs$$dragAngle$offs.top;
+
+            var minX = left;
+            var minY = top;
+            var centerX = minX + width / 2;
+            var centerY = minY + height / 2;
+
+            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            var image = this.read('/selection/current/image');
+            if (!image) return 0;
+
+            var angle = this.read('/image/angle', image.angle);
+            return angle - 90;
+        }
+    }, {
+        key: 'refreshAngleText',
+        value: function refreshAngleText(angleText) {
+            this.refs.$angleText.text(angleText + ' °');
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                radius = _getRectangle.radius,
+                centerX = _getRectangle.centerX,
+                centerY = _getRectangle.centerY;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
+                x = _getCurrentXY.x,
+                y = _getCurrentXY.y;
+
+            var rx = x - centerX,
+                ry = y - centerY,
+                angle = caculateAngle(rx, ry);
+
+            {
+                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
+                    x = _getCurrentXY2.x,
+                    y = _getCurrentXY2.y;
+            }
+
+            // set drag pointer position 
+            this.refs.$dragPointer.px('left', x - minX);
+            this.refs.$dragPointer.px('top', y - minY);
+
+            var lastAngle = Math.round(angle + 90) % 360;
+
+            this.refreshAngleText(lastAngle);
+
+            if (e) {
+
+                this.setAngle(lastAngle);
+            }
+        }
+    }, {
+        key: 'setAngle',
+        value: function setAngle(angle) {
+            var _this2 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+                _this2.commit(CHANGE_IMAGE_ANGLE, { id: id, angle: angle });
+            });
+        }
+    }, {
+        key: EVENT_CHANGE_IMAGE_ANGLE,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isDownCheck',
+        value: function isDownCheck() {
+            return this.isDown;
+        }
+    }, {
+        key: 'isNotDownCheck',
+        value: function isNotDownCheck() {
+            return !this.isDown;
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'pointerend document | isDownCheck',
+        value: function pointerendDocumentIsDownCheck(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: 'pointermove document | debounce(10) | isDownCheck',
+        value: function pointermoveDocumentDebounce10IsDownCheck(e) {
+            this.refreshUI(e);
+        }
+    }, {
+        key: 'pointerstart $drag_pointer | isNotDownCheck',
+        value: function pointerstart$drag_pointerIsNotDownCheck(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: 'pointerstart $dragAngle | isNotDownCheck',
+        value: function pointerstart$dragAngleIsNotDownCheck(e) {
+            this.isDown = true;
+            this.refreshUI(e);
+        }
+    }]);
+    return GradientAngle;
+}(UIElement);
+
+var PredefinedRadialGradientAngle = function (_UIElement) {
+    inherits(PredefinedRadialGradientAngle, _UIElement);
+
+    function PredefinedRadialGradientAngle() {
+        classCallCheck(this, PredefinedRadialGradientAngle);
+        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
+    }
+
+    createClass(PredefinedRadialGradientAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-radial-gradient-angle">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="ellipse">ellipse</option>                \n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                    <option value="circle">circle</option>\n                    <option value="circle closest-side">circle closest-side</option> \n                    <option value="circle closest-corner">circle closest-corner</option>\n                    <option value="circle farthest-side">circle farthest-side</option>\n                    <option value="circle farthest-corner">circle farthest-corner</option>                                        \n                </select>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/image', function (image) {
+                _this2.refs.$select.val(image.radialType);
+            });
+        }
+    }, {
+        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_IMAGE_RADIAL_TYPE,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'change $select',
+        value: function change$select(e) {
+            var _this3 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+                _this3.commit(CHANGE_IMAGE_RADIAL_TYPE, { id: id, radialType: _this3.refs.$select.val() });
+            });
+        }
+    }, {
+        key: 'click $center',
+        value: function click$center(e) {
+            var _this4 = this;
+
+            this.read('/selection/current/image', function (id) {
+                _this4.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: 'center' });
+            });
+        }
+    }]);
+    return PredefinedRadialGradientAngle;
+}(UIElement);
+
+var PredefinedRadialGradientPosition = function (_UIElement) {
+    inherits(PredefinedRadialGradientPosition, _UIElement);
+
+    function PredefinedRadialGradientPosition() {
+        classCallCheck(this, PredefinedRadialGradientPosition);
+        return possibleConstructorReturn(this, (PredefinedRadialGradientPosition.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientPosition)).apply(this, arguments));
+    }
+
+    createClass(PredefinedRadialGradientPosition, [{
+        key: 'template',
+        value: function template() {
+            return ' \n            <div class="predefined-angluar-group radial-position">\n                <button type="button" data-value="top"></button>                          \n                <button type="button" data-value="left"></button>                                                  \n                <button type="button" data-value="bottom"></button>                            \n                <button type="button" data-value="right"></button>                                        \n            </div>\n        ';
+        }
+    }, {
+        key: 'click $el button',
+        value: function click$elButton(e) {
+            var _this2 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+                _this2.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: e.$delegateTarget.attr('data-value') });
+            });
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read('/selection/is/image')) return false;
+
+            var image = this.read('/selection/current/image');
+
+            if (!image) {
+                return false;
+            }
+
+            var isRadial = this.read('/image/type/isRadial', image.type);
+            var isConic = this.read('/image/type/isConic', image.type);
+
+            return this.read('/tool/get', 'guide.angle') && (isRadial || isConic);
+        }
+    }, {
+        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedRadialGradientPosition;
+}(UIElement);
+
+var DEFINE_POSITIONS = {
+    'center': ['center', 'center'],
+    'right': ['right', 'center'],
+    'top': ['center', 'top'],
+    'left': ['left', 'center'],
+    'bottom': ['center', 'bottom']
+};
+
+var GradientPosition = function (_UIElement) {
+    inherits(GradientPosition, _UIElement);
+
+    function GradientPosition() {
+        classCallCheck(this, GradientPosition);
+        return possibleConstructorReturn(this, (GradientPosition.__proto__ || Object.getPrototypeOf(GradientPosition)).apply(this, arguments));
+    }
+
+    createClass(GradientPosition, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="drag-position">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.refreshUI();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read('/selection/is/image')) return false;
+
+            var item = this.read('/selection/current/image');
+            if (!item) return false;
+
+            var isRadial = this.read('/image/type/isRadial', item.type);
+            var isConic = this.read('/image/type/isConic', item.type);
+
+            if (isRadial == false && isConic == false) {
+                // radial , conic 만 보여주기 
+                return false;
+            }
+
+            return this.read('/tool/get', 'guide.angle');
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, position) {
+
+            if (e) {
+                var xy = e.xy;
+
+                return [xy.x, xy.y];
+            }
+
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                maxX = _getRectangle.maxX,
+                maxY = _getRectangle.maxY,
+                width = _getRectangle.width,
+                height = _getRectangle.height;
+
+            var p = position;
+            if (typeof p == 'string' && DEFINE_POSITIONS[p]) {
+                p = DEFINE_POSITIONS[p];
+            } else if (typeof p === 'string') {
+                p = p.split(' ');
+            }
+
+            p = p.map(function (item, index) {
+                if (item == 'center') {
+                    if (index == 0) {
+                        return minX + width / 2;
+                    } else if (index == 1) {
+                        return minY + height / 2;
+                    }
+                } else if (item === 'left') {
+                    return minX;
+                } else if (item === 'right') {
+                    return maxX;
+                } else if (item === 'top') {
+                    return minY;
+                } else if (item === 'bottom') {
+                    return maxY;
+                } else {
+                    if (index == 0) {
+                        return minX * width * (+item / 100);
+                    } else if (index == 1) {
+                        return minY * height * (+item / 100);
+                    }
+                }
+            });
+
+            return p;
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var minX = this.$el.offsetLeft();
+            var minY = this.$el.offsetTop();
+
+            var maxX = minX + width;
+            var maxY = minY + height;
+
+            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+
+            var item = this.read('/selection/current/image');
+
+            if (!item) return '';
+
+            return item.radialPosition || '';
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle2 = this.getRectangle(),
+                minX = _getRectangle2.minX,
+                minY = _getRectangle2.minY,
+                maxX = _getRectangle2.maxX,
+                maxY = _getRectangle2.maxY,
+                width = _getRectangle2.width,
+                height = _getRectangle2.height;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue()),
+                _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
+                x = _getCurrentXY2[0],
+                y = _getCurrentXY2[1];
+
+            x = Math.max(Math.min(maxX, x), minX);
+            y = Math.max(Math.min(maxY, y), minY);
+
+            var left = x - minX;
+            var top = y - minY;
+
+            this.refs.$dragPointer.px('left', left);
+            this.refs.$dragPointer.px('top', top);
+
+            if (e) {
+
+                this.setRadialPosition([Math.floor(left / width * 100) + '%', Math.floor(top / height * 100) + '%']);
+            }
+        }
+    }, {
+        key: 'setRadialPosition',
+        value: function setRadialPosition(radialPosition) {
+            var _this2 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+
+                _this2.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: radialPosition });
+            });
+        }
+    }, {
+        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT_CHANGE_SELECTION,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: '@changeTool',
+        value: function changeTool() {
+            this.$el.toggle(this.isShow());
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'pointerend document',
+        value: function pointerendDocument(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: 'pointermove document',
+        value: function pointermoveDocument(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: 'pointerstart $dragPointer',
+        value: function pointerstart$dragPointer(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: 'pointerstart $el',
+        value: function pointerstart$el(e) {
+            this.isDown = true;
+            // this.refreshUI(e);        
+        }
+    }, {
+        key: 'dblclick $dragPointer',
+        value: function dblclick$dragPointer(e) {
+            e.preventDefault();
+            this.setRadialPosition('center');
+            this.refreshUI();
+        }
+    }]);
+    return GradientPosition;
+}(UIElement);
+
 var ImageView = function (_UIElement) {
     inherits(ImageView, _UIElement);
 
@@ -17013,12 +17677,18 @@ var ImageView = function (_UIElement) {
     createClass(ImageView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <BackgroundBlend></BackgroundBlend>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>\n                <!-- <ImageResource></ImageResource> -->\n                <!-- <BlendList></BlendList>            -- >        \n            </div>  \n        ";
+            return "\n            <div class='property-view'>\n                <BackgroundBlend></BackgroundBlend>\n                <div class='sub-feature'>\n                    <BackgroundSize></BackgroundSize>\n                </div>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>\n                <!-- <ImageResource></ImageResource> -->\n                <!-- <BlendList></BlendList>            -- >        \n            </div>  \n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return items;
+            return _extends({
+                PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
+                GradientAngle: GradientAngle,
+                PredefinedRadialGradientAngle: PredefinedRadialGradientAngle,
+                PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
+                GradientPosition: GradientPosition
+            }, items);
         }
     }]);
     return ImageView;
@@ -17092,7 +17762,7 @@ var LayerListView = function (_UIElement) {
     createClass(LayerListView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1>Layers</h1>\n                    <div class="tools">\n                        <button type="button" class=\'add-layer\' ref="$addLayer">+</button>\n                        <button type="button" class=\'view-sample\' ref="$viewSample">\n                            <div class="arrow"></div>\n                        </button>\n                    </div>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
+            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1>Layers</h1>\n                    <div class="tools">\n                        <button type="button" class=\'add-layer\' ref="$addLayer">+</button>\n                        <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                    </div>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',
@@ -17407,7 +18077,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list" title="Gradient Sample View">\n                    <div class="arrow">\n                    </div> \n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button ref="$ordering" title="Full Ordering">=|=</button>\n                    <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>      \n                <label></label>\n                <div class="button-group">\n                    <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                    <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                </div> \n                \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                </div>\n                <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                </div>\n                <label>Steps</label>\n                <div class="button-group">\n                    <button ref="$ordering" title="Full Ordering">=|=</button>\n                    <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                    <button ref="$orderingRight" title="Right Ordering">|=</button>\n                </div>\n\n                <div class="button-group">\n                    <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                    <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                </div>      \n                <label></label>\n                <div class="button-group">\n                    <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                    <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                </div> \n                \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -17671,611 +18341,6 @@ var ImageList = function (_UIElement) {
     return ImageList;
 }(UIElement);
 
-var GradientAngle = function (_UIElement) {
-    inherits(GradientAngle, _UIElement);
-
-    function GradientAngle() {
-        classCallCheck(this, GradientAngle);
-        return possibleConstructorReturn(this, (GradientAngle.__proto__ || Object.getPrototypeOf(GradientAngle)).apply(this, arguments));
-    }
-
-    createClass(GradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            if (this.isShow()) {
-                this.$el.show();
-
-                this.refreshUI();
-            } else {
-                this.$el.hide();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!this.read('/selection/is/image')) return false;
-
-            var item = this.read('/selection/current/image');
-
-            if (!item) return false;
-
-            var isLinear = this.read('/image/type/isLinear', item.type);
-            var isConic = this.read('/image/type/isConic', item.type);
-
-            if (isLinear == false && isConic == false) {
-                return false;
-            }
-
-            return this.read('/tool/get', 'guide.angle');
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
-            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.refs.$dragAngle.width();
-            var height = this.refs.$dragAngle.height();
-            var radius = Math.floor(width / 2 * 0.7);
-
-            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
-                left = _refs$$dragAngle$offs.left,
-                top = _refs$$dragAngle$offs.top;
-
-            var minX = left;
-            var minY = top;
-            var centerX = minX + width / 2;
-            var centerY = minY + height / 2;
-
-            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            var image = this.read('/selection/current/image');
-            if (!image) return 0;
-
-            var angle = this.read('/image/angle', image.angle);
-            return angle - 90;
-        }
-    }, {
-        key: 'refreshAngleText',
-        value: function refreshAngleText(angleText) {
-            this.refs.$angleText.text(angleText + ' °');
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(e) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                angle = caculateAngle(rx, ry);
-
-            {
-                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
-            }
-
-            // set drag pointer position 
-            this.refs.$dragPointer.px('left', x - minX);
-            this.refs.$dragPointer.px('top', y - minY);
-
-            var lastAngle = Math.round(angle + 90) % 360;
-
-            this.refreshAngleText(lastAngle);
-
-            if (e) {
-
-                this.setAngle(lastAngle);
-            }
-        }
-    }, {
-        key: 'setAngle',
-        value: function setAngle(angle) {
-            var _this2 = this;
-
-            this.read('/selection/current/image/id', function (id) {
-                _this2.commit(CHANGE_IMAGE_ANGLE, { id: id, angle: angle });
-            });
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_ANGLE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.isDown;
-        }
-    }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.isDown;
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'pointerend document | isDownCheck',
-        value: function pointerendDocumentIsDownCheck(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: 'pointermove document | debounce(10) | isDownCheck',
-        value: function pointermoveDocumentDebounce10IsDownCheck(e) {
-            this.refreshUI(e);
-        }
-    }, {
-        key: 'pointerstart $drag_pointer | isNotDownCheck',
-        value: function pointerstart$drag_pointerIsNotDownCheck(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: 'pointerstart $dragAngle | isNotDownCheck',
-        value: function pointerstart$dragAngleIsNotDownCheck(e) {
-            this.isDown = true;
-            this.refreshUI(e);
-        }
-    }]);
-    return GradientAngle;
-}(UIElement);
-
-var DEFINE_POSITIONS = {
-    'center': ['center', 'center'],
-    'right': ['right', 'center'],
-    'top': ['center', 'top'],
-    'left': ['left', 'center'],
-    'bottom': ['center', 'bottom']
-};
-
-var GradientPosition = function (_UIElement) {
-    inherits(GradientPosition, _UIElement);
-
-    function GradientPosition() {
-        classCallCheck(this, GradientPosition);
-        return possibleConstructorReturn(this, (GradientPosition.__proto__ || Object.getPrototypeOf(GradientPosition)).apply(this, arguments));
-    }
-
-    createClass(GradientPosition, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="drag-position">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.refreshUI();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!this.read('/selection/is/image')) return false;
-
-            var item = this.read('/selection/current/image');
-            if (!item) return false;
-
-            var isRadial = this.read('/image/type/isRadial', item.type);
-            var isConic = this.read('/image/type/isConic', item.type);
-
-            if (isRadial == false && isConic == false) {
-                // radial , conic 만 보여주기 
-                return false;
-            }
-
-            return this.read('/tool/get', 'guide.angle');
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(e, position) {
-
-            if (e) {
-                var xy = e.xy;
-
-                return [xy.x, xy.y];
-            }
-
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY,
-                width = _getRectangle.width,
-                height = _getRectangle.height;
-
-            var p = position;
-            if (typeof p == 'string' && DEFINE_POSITIONS[p]) {
-                p = DEFINE_POSITIONS[p];
-            } else if (typeof p === 'string') {
-                p = p.split(' ');
-            }
-
-            p = p.map(function (item, index) {
-                if (item == 'center') {
-                    if (index == 0) {
-                        return minX + width / 2;
-                    } else if (index == 1) {
-                        return minY + height / 2;
-                    }
-                } else if (item === 'left') {
-                    return minX;
-                } else if (item === 'right') {
-                    return maxX;
-                } else if (item === 'top') {
-                    return minY;
-                } else if (item === 'bottom') {
-                    return maxY;
-                } else {
-                    if (index == 0) {
-                        return minX * width * (+item / 100);
-                    } else if (index == 1) {
-                        return minY * height * (+item / 100);
-                    }
-                }
-            });
-
-            return p;
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.$el.width();
-            var height = this.$el.height();
-            var minX = this.$el.offsetLeft();
-            var minY = this.$el.offsetTop();
-
-            var maxX = minX + width;
-            var maxY = minY + height;
-
-            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-
-            var item = this.read('/selection/current/image');
-
-            if (!item) return '';
-
-            return item.radialPosition || '';
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(e) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue()),
-                _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
-                x = _getCurrentXY2[0],
-                y = _getCurrentXY2[1];
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.refs.$dragPointer.px('left', left);
-            this.refs.$dragPointer.px('top', top);
-
-            if (e) {
-
-                this.setRadialPosition([Math.floor(left / width * 100) + '%', Math.floor(top / height * 100) + '%']);
-            }
-        }
-    }, {
-        key: 'setRadialPosition',
-        value: function setRadialPosition(radialPosition) {
-            var _this2 = this;
-
-            this.read('/selection/current/image/id', function (id) {
-
-                _this2.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: radialPosition });
-            });
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
-            this.$el.toggle(this.isShow());
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'pointerend document',
-        value: function pointerendDocument(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: 'pointermove document',
-        value: function pointermoveDocument(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: 'pointerstart $dragPointer',
-        value: function pointerstart$dragPointer(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: 'pointerstart $el',
-        value: function pointerstart$el(e) {
-            this.isDown = true;
-            // this.refreshUI(e);        
-        }
-    }, {
-        key: 'dblclick $dragPointer',
-        value: function dblclick$dragPointer(e) {
-            e.preventDefault();
-            this.setRadialPosition('center');
-            this.refreshUI();
-        }
-    }]);
-    return GradientPosition;
-}(UIElement);
-
-var PredefinedLinearGradientAngle = function (_UIElement) {
-    inherits(PredefinedLinearGradientAngle, _UIElement);
-
-    function PredefinedLinearGradientAngle() {
-        classCallCheck(this, PredefinedLinearGradientAngle);
-        return possibleConstructorReturn(this, (PredefinedLinearGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedLinearGradientAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedLinearGradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!this.read('/selection/is/image')) return false;
-            var image = this.read('/selection/current/image');
-
-            if (!image) {
-                return false;
-            }
-
-            var isLinear = this.read('/image/type/isLinear', image.type);
-            var isConic = this.read('/image/type/isConic', image.type);
-
-            return this.read('/tool/get', 'guide.angle') && (isLinear || isConic);
-        }
-    }, {
-        key: 'click $el button | self',
-        value: function click$elButtonSelf(e) {
-            var _this2 = this;
-
-            this.read('/selection/current/image/id', function (id) {
-                _this2.commit(CHANGE_IMAGE_LINEAR_ANGLE, { id: id, angle: e.$delegateTarget.attr('data-value') });
-            });
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedLinearGradientAngle;
-}(UIElement);
-
-var PredefinedRadialGradientPosition = function (_UIElement) {
-    inherits(PredefinedRadialGradientPosition, _UIElement);
-
-    function PredefinedRadialGradientPosition() {
-        classCallCheck(this, PredefinedRadialGradientPosition);
-        return possibleConstructorReturn(this, (PredefinedRadialGradientPosition.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientPosition)).apply(this, arguments));
-    }
-
-    createClass(PredefinedRadialGradientPosition, [{
-        key: 'template',
-        value: function template() {
-            return ' \n            <div class="predefined-angluar-group radial-position">\n                <button type="button" data-value="top"></button>                          \n                <button type="button" data-value="left"></button>                                                  \n                <button type="button" data-value="bottom"></button>                            \n                <button type="button" data-value="right"></button>                                        \n            </div>\n        ';
-        }
-    }, {
-        key: 'click $el button',
-        value: function click$elButton(e) {
-            var _this2 = this;
-
-            this.read('/selection/current/image/id', function (id) {
-                _this2.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: e.$delegateTarget.attr('data-value') });
-            });
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!this.read('/selection/is/image')) return false;
-
-            var image = this.read('/selection/current/image');
-
-            if (!image) {
-                return false;
-            }
-
-            var isRadial = this.read('/image/type/isRadial', image.type);
-            var isConic = this.read('/image/type/isConic', image.type);
-
-            return this.read('/tool/get', 'guide.angle') && (isRadial || isConic);
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: '@changeTool',
-        value: function changeTool() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedRadialGradientPosition;
-}(UIElement);
-
-var PredefinedRadialGradientAngle = function (_UIElement) {
-    inherits(PredefinedRadialGradientAngle, _UIElement);
-
-    function PredefinedRadialGradientAngle() {
-        classCallCheck(this, PredefinedRadialGradientAngle);
-        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedRadialGradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-radial-gradient-angle">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="ellipse">ellipse</option>                \n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                    <option value="circle">circle</option>\n                    <option value="circle closest-side">circle closest-side</option> \n                    <option value="circle closest-corner">circle closest-corner</option>\n                    <option value="circle farthest-side">circle farthest-side</option>\n                    <option value="circle farthest-corner">circle farthest-corner</option>                                        \n                </select>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this2 = this;
-
-            this.read('/selection/current/image', function (image) {
-                _this2.refs.$select.val(image.radialType);
-            });
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: 'change $select',
-        value: function change$select(e) {
-            var _this3 = this;
-
-            this.read('/selection/current/image/id', function (id) {
-                _this3.commit(CHANGE_IMAGE_RADIAL_TYPE, { id: id, radialType: _this3.refs.$select.val() });
-            });
-        }
-    }, {
-        key: 'click $center',
-        value: function click$center(e) {
-            var _this4 = this;
-
-            this.read('/selection/current/image', function (id) {
-                _this4.commit(CHANGE_IMAGE_RADIAL_POSITION, { id: id, radialPosition: 'center' });
-            });
-        }
-    }]);
-    return PredefinedRadialGradientAngle;
-}(UIElement);
-
 var SubFeatureControl = function (_UIElement) {
     inherits(SubFeatureControl, _UIElement);
 
@@ -18287,7 +18352,7 @@ var SubFeatureControl = function (_UIElement) {
     createClass(SubFeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$background\">\n                        <BackgroundSize></BackgroundSize>\n                    </div>\n                    <div class=\"property-view\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>                    \n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -18304,7 +18369,6 @@ var SubFeatureControl = function (_UIElement) {
         key: "refresh",
         value: function refresh() {
             this.$el.toggle(this.isShow());
-            this.refs.$background.toggleClass('hide', !this.isBackgroundShow());
             this.refs.$linear.toggleClass('hide', !this.isLinearShow());
             this.refs.$radial.toggleClass('hide', !this.isRadialShow());
         }
@@ -18346,16 +18410,6 @@ var SubFeatureControl = function (_UIElement) {
             if (isRadial == false && isConic == false) {
                 return false;
             }
-
-            return this.read('/tool/get', 'guide.angle');
-        }
-    }, {
-        key: "isBackgroundShow",
-        value: function isBackgroundShow() {
-            if (!this.read('/selection/is/image')) return false;
-
-            var item = this.read('/selection/current/image');
-            if (!item) return false;
 
             return this.read('/tool/get', 'guide.angle');
         }
@@ -21504,7 +21558,7 @@ var PageListView = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample">\n                        <div class="arrow"></div>\n                    </button>                \n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample"></button>                \n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',

@@ -11,8 +11,7 @@ export default class BackgroundSize extends UIElement {
     }
     template () {
         return `
-            <div class='property-item background'>
-                <!-- <div class='title' ref="$title">Background</div> -->   
+            <div class='property-item background show'>
                 <div class='items'>
                     <div>
                         <label>size</label>

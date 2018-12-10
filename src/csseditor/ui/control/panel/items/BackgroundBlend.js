@@ -9,7 +9,7 @@ export default class BackgroundBlend extends BasePropertyItem {
         <div class='property-item blend show'>
             <div class='items max-height'>         
                 <div>
-                    <label>Blend Mode</label>
+                    <label>Blend</label>
                     <div class='size-list' ref="$size">
                         <select ref="$blend">
                         ${this.read('/blend/list').map(blend => {

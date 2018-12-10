@@ -1,4 +1,4 @@
-&.ring {
+&.ring-tab {
     .colorpicker-body {
 
         .color-panel {
@@ -37,6 +37,39 @@
                 z-index:2;
             }
         }
+        .color-chooser {
+            opacity: 1;
+            pointer-events: all;
+
+            .color-chooser-container {
+                top: 0px;
+                opacity: 1;
+    
+                .colorsets-item-header {
+                    display: none;
+                }
+    
+                .colorsets-list {
+                    top: 4px;
+
+                    .color-item {
+                        transform: scale(1.2);
+                    }
+                }
+            }
+        }
+
+        .colorsets {
+            .menu {
+                display: none;
+            }
+
+            .color-list {
+                margin-right: 0px;
+            }
+        }
+
+        
 
     }
 

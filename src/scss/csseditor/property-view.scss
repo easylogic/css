@@ -297,12 +297,15 @@
         @import './property-items/group-align.scss';
         @import './property-items/radius.scss';
         @import './property-items/layer-colorpicker.scss';
+
     }
 
     .gradient-view {
         height: 230px;
         width: 100%;
     }
+
+    @import './property-items/sub-feature.scss';        
 }
 
 .layout-main.expertor-mode {

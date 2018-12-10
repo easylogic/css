@@ -1,6 +1,5 @@
 $pointer-color: rgba(#0f72cf, 0.8);
 $direction-border: 2px solid $pointer-color;
-$guide-border-hover-color: rgba(0 , 0, 0, 0.2);
 .page-view {
     position: absolute;
     left: 0px;
@@ -108,7 +107,6 @@ $guide-border-hover-color: rgba(0 , 0, 0, 0.2);
         display: none;
     }
 
-    @import './guide/angluar-group.scss';
     @import './guide/page-resizer.scss';
     @import './guide/layer-resizer.scss';
     @import './guide/group-layer-resizer.scss';

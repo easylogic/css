@@ -5,7 +5,7 @@ export default class ColorPalette extends UIElement {
 
     template () {
         return `
-        <div class="color">
+        <div class="color-panel">
             <div ref="$saturation" class="saturation">
                 <div ref="$value" class="value">
                     <div ref="$drag_pointer" class="drag-pointer"></div>

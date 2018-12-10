@@ -39,6 +39,7 @@
 
   .colorpicker-body {
     @import './component/button';
+    @import './component/color-tab';
     @import './component/palette';
     @import './component/control';
     @import './component/information';
@@ -58,6 +59,7 @@
   @import './themes/mini';   
   @import './themes/mini-vertical';   
   @import './themes/ring';   
+  @import './themes/ring-tab';   
   @import './themes/xd';
 }    
 

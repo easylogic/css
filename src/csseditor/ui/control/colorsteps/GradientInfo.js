@@ -1,6 +1,6 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
-import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR } from "../../../types/event";
+import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../types/event";
 
 function checkPxEm(unit) {
     return ['px', 'em'].includes(unit);
@@ -111,13 +111,9 @@ export default class GradientInfo extends UIElement {
         this.load()
     }
 
-    [EVENT_CHANGE_COLOR_STEP] () {
-        this.refresh();
-    }
-
-    [EVENT_CHANGE_EDITOR] () {
-        this.refresh() 
-    }
+    [EVENT_CHANGE_COLOR_STEP] () { this.refresh(); }
+    [EVENT_CHANGE_EDITOR] () { this.refresh() }
+    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
 
     initColor (color) {
         this.dispatch('/colorstep/initColor', color)        

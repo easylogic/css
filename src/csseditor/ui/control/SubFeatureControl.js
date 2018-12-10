@@ -14,15 +14,12 @@ export default class SubFeatureControl extends UIElement {
         return `
             <div class='sub-feature-control'>         
                 <div class='feature'>
-                    <div class="property-view" ref="$background">
-                        <BackgroundSize></BackgroundSize>
-                    </div>
-                    <div class="property-view" ref="$linear">
+                    <div class="property-view linear" ref="$linear">
                         <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>
                         <GradientAngle></GradientAngle>                            
                     </div>
-                    <div class="property-view" ref="$radial">
-                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>                    
+                    <div class="property-view radial" ref="$radial">
+                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>
                         <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>
                         <GradientPosition></GradientPosition>
                     </div>
@@ -45,7 +42,6 @@ export default class SubFeatureControl extends UIElement {
 
     refresh () {
         this.$el.toggle(this.isShow())
-        this.refs.$background.toggleClass('hide', !this.isBackgroundShow())
         this.refs.$linear.toggleClass('hide', !this.isLinearShow())
         this.refs.$radial.toggleClass('hide', !this.isRadialShow())
     }
@@ -88,15 +84,6 @@ export default class SubFeatureControl extends UIElement {
 
         return this.read('/tool/get', 'guide.angle')
     }
-
-    isBackgroundShow () {
-        if (!this.read('/selection/is/image')) return false; 
-
-        var item = this.read('/selection/current/image')
-        if (!item) return false; 
-
-        return this.read('/tool/get', 'guide.angle')
-    }    
 
     [EVENT_CHANGE_EDITOR] () { this.refresh(); }
     [EVENT_CHANGE_SELECTION] () { this.refresh(); }

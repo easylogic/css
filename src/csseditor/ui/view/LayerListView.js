@@ -30,9 +30,7 @@ export default class LayerListView extends UIElement {
                     <h1>Layers</h1>
                     <div class="tools">
                         <button type="button" class='add-layer' ref="$addLayer">+</button>
-                        <button type="button" class='view-sample' ref="$viewSample">
-                            <div class="arrow"></div>
-                        </button>
+                        <button type="button" class='view-sample arrow' ref="$viewSample"></button>
                     </div>
                 </div>             
                 <div class="layer-list" ref="$layerList"></div>

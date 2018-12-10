@@ -20,9 +20,7 @@ export default class LayerToolbar extends UIElement {
                         <div class="m3"></div> 
                     </div>                                                  
                 </div>
-                <div class="gradient-sample-list" title="Gradient Sample View">
-                    <div class="arrow">
-                    </div> 
+                <div class="gradient-sample-list arrow" title="Gradient Sample View">
                 </div>
                 <label>Steps</label>
                 <div class="button-group">
