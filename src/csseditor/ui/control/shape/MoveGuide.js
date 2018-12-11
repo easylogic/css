@@ -1,4 +1,4 @@
-import UIElement from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER_SIZE, 
@@ -60,12 +60,14 @@ export default class MoveGuide extends UIElement {
         return this.$page.hasClass('moving');
     }
 
-    [EVENT_CHANGE_LAYER_SIZE] () { this.refresh(); }
-    [EVENT_CHANGE_LAYER_ROTATE] () { this.refresh(); }
-    [EVENT_CHANGE_LAYER_MOVE] () { this.refresh(); }
-    [EVENT_CHANGE_LAYER_POSITION] () { this.refresh(); }    
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_ROTATE,
+        EVENT_CHANGE_LAYER_MOVE,
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }
 
 
     'resize window | debounce(300)' (e) {

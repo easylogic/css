@@ -17,9 +17,7 @@ export default class ImageView extends UIElement {
                     <BackgroundSize></BackgroundSize>
                 </div>
                 <ColorPickerPanel></ColorPickerPanel>
-                <ColorStepsInfo></ColorStepsInfo>
-                <!-- <ImageResource></ImageResource> -->
-                <!-- <BlendList></BlendList>            -- >        
+                <ColorStepsInfo></ColorStepsInfo>   
             </div>  
         `
     }

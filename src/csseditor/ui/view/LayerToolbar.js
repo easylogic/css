@@ -1,5 +1,5 @@
 import UIElement from '../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR } from '../../types/event';
+import ImageListView from './ImageListView';
 
 export default class LayerToolbar extends UIElement {
 
@@ -34,7 +34,8 @@ export default class LayerToolbar extends UIElement {
                         <div class="m3"></div> 
                     </div>                                                  
                     <div class="gradient-sample-list arrow" title="Gradient Sample View">
-                    </div>                    
+                    </div>     
+                    <ImageListView></ImageListView>               
                 </div>
                
                 <div class="button-group group-align" ref="$groupAlign">
@@ -66,14 +67,9 @@ export default class LayerToolbar extends UIElement {
         `
     }
 
-    refresh () {
-        
+    components () {
+        return { ImageListView }
     }
-
-    [EVENT_CHANGE_EDITOR] () {
-        this.refresh()
-    }
-
 
     'click $$groupAlign button' (e) {
         this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))

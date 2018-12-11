@@ -28,6 +28,7 @@ export default class SelectionManager extends BaseModule {
         this.$store.selection = {
             type: SELECT_MODE_ONE,
             ids: [],
+            items: [],
             itemType: ''
         }
     }
@@ -51,6 +52,7 @@ export default class SelectionManager extends BaseModule {
         return {
             type: SELECT_MODE_ONE,
             ids: [],
+            items: [],
             itemType: ''
         }
     }
@@ -84,7 +86,7 @@ export default class SelectionManager extends BaseModule {
     }
 
     '*/selection/current' ($store) {
-        return $store.selection.ids.filter(id => $store.items[id]).map(id => $store.items[id])
+        return $store.selection.ids.map(id => $store.items[id])
     }
 
     '*/selection/current/image' ($store, callback) {

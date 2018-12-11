@@ -1,6 +1,7 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { EVENT_CHANGE_IMAGE, CHANGE_IMAGE,  EVENT_CHANGE_SELECTION } from '../../../../types/event';
+import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 
 export default class BackgroundBlend extends BasePropertyItem {
 
@@ -35,11 +36,10 @@ export default class BackgroundBlend extends BasePropertyItem {
 
     }
 
-    [EVENT_CHANGE_IMAGE] () {
-        this.refresh()
-    }
-
-    [EVENT_CHANGE_SELECTION] () {
+    [MULTI_EVENT(
+        EVENT_CHANGE_IMAGE,
+        EVENT_CHANGE_SELECTION
+    )] () {
         this.refresh()
     }
 

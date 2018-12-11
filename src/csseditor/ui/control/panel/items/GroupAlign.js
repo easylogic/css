@@ -1,5 +1,4 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_NAME, EVENT_CHANGE_EDITOR, CHANGE_EDITOR } from "../../../../types/event";
 
 export default class GroupAlign extends BasePropertyItem {
     template () {

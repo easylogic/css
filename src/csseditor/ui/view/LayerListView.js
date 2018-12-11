@@ -169,7 +169,9 @@ export default class LayerListView extends UIElement {
     [EVENT_CHANGE_SELECTION] () { this.refresh(); }
 
     'click $layerList .tree-item | self' (e) { 
-        this.dispatch('/selection/one', e.$delegateTarget.attr('id'));        
+        var id = e.$delegateTarget.attr('id');
+        this.dispatch('/selection/one', id);        
+        this.run('/item/focus', id);
         this.refresh();
     }
 

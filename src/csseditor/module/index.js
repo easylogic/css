@@ -15,8 +15,10 @@ import PageManager from "./PageManager";
 import HistoryManager from "./HistoryManager";
 import SelectionManager from "./SelectionManager";
 import OrderingManager from "./OrderingManager";
+import MatrixManager from "./MatrixManager";
 
 export default [  
+    MatrixManager,
     OrderingManager,
     SelectionManager,
     HistoryManager,

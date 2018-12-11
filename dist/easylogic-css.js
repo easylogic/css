@@ -6812,10 +6812,12 @@ var EventMachin = function () {
     value: function eachChildren(callback) {
       var _this4 = this;
 
+      var isFunction = typeof callback == 'function';
+
+      if (!isFunction) return;
+
       Object.keys(this.children).forEach(function (ChildComponentName) {
-        if (typeof callback == 'function') {
-          callback(_this4.children[ChildComponentName]);
-        }
+        callback(_this4.children[ChildComponentName]);
       });
     }
 
@@ -11908,6 +11910,15 @@ var ItemManager = function (_BaseModule) {
             }
         }
     }, {
+        key: '/item/focus',
+        value: function itemFocus($store, id) {
+            var $el = $store.read('/item/dom', id);
+
+            if ($el && $el.el) {
+                $el.el.focus();
+            }
+        }
+    }, {
         key: '/item/remove',
         value: function itemRemove($store, id) {
             if (id) {
@@ -13250,6 +13261,7 @@ var SelectionManager = function (_BaseModule) {
             this.$store.selection = {
                 type: SELECT_MODE_ONE,
                 ids: [],
+                items: [],
                 itemType: ''
             };
         }
@@ -13283,6 +13295,7 @@ var SelectionManager = function (_BaseModule) {
             return {
                 type: SELECT_MODE_ONE,
                 ids: [],
+                items: [],
                 itemType: ''
             };
         }
@@ -13324,9 +13337,7 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: '*/selection/current',
         value: function selectionCurrent($store) {
-            return $store.selection.ids.filter(function (id) {
-                return $store.items[id];
-            }).map(function (id) {
+            return $store.selection.ids.map(function (id) {
                 return $store.items[id];
             });
         }
@@ -13898,7 +13909,37 @@ var OrderingManager = function (_BaseModule) {
     return OrderingManager;
 }(BaseModule);
 
-var ModuleList = [OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var MatrixManager = function (_BaseModule) {
+    inherits(MatrixManager, _BaseModule);
+
+    function MatrixManager() {
+        classCallCheck(this, MatrixManager);
+        return possibleConstructorReturn(this, (MatrixManager.__proto__ || Object.getPrototypeOf(MatrixManager)).apply(this, arguments));
+    }
+
+    createClass(MatrixManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_LAYER_POSITION);
+        }
+    }, {
+        key: '/matrix/move',
+        value: function matrixMove($store, newValue) {
+            var item = $store.read('/item/get', newValue.id);
+
+            Object.keys(newValue).filter(function (key) {
+                return key != 'id';
+            }).forEach(function (key) {
+                item[key] = parseParamNumber$2(item[key]) + newValue[key] + 'px';
+            });
+
+            $store.run('/item/set', item);
+        }
+    }]);
+    return MatrixManager;
+}(BaseModule);
+
+var ModuleList = [MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -15211,12 +15252,7 @@ var ColorStepsInfo = function (_UIElement) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15303,19 +15339,7 @@ var ColorPickerLayer = function (_UIElement) {
             this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
         }
     }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value() {
-            this.refresh();
-        }
-        // [EVENT_CHANGE_COLOR_STEP] () { this.refresh() }    
-
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15360,12 +15384,7 @@ var ColorPickerPanel = function (_UIElement) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15856,12 +15875,7 @@ var BackgroundSize = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value(e) {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR),
         value: function value() {
             this.refresh();
         }
@@ -16087,14 +16101,7 @@ var BlendList = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value() {
-            if (this.isPropertyShow()) {
-                this.refresh();
-            }
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_SELECTION),
         value: function value() {
             if (this.isPropertyShow()) {
                 this.refresh();
@@ -16441,17 +16448,7 @@ var LayerColorPickerLayer = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16642,22 +16639,7 @@ var ClipPath = function (_BasePropertyItem) {
             return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Image</div>\n                <div class='items'>            \n                    <div>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                <option value=\"none\">none</option>\n                                <!-- <option value=\"circle\">circle</option>-->\n                                <!-- <option value=\"inset\">inset</option> -->\n                                <!-- <option value=\"polygon\">polygon</option> -->\n                                <option value=\"svg\">svg</option>\n                            </select>\n                        </div>\n                    </div>                                \n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT_CHANGE_LAYER,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_CLIPPATH,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH),
         value: function value() {
             this.refresh();
         }
@@ -16767,9 +16749,9 @@ var GroupAlign = function (_BasePropertyItem) {
     }
 
     createClass(GroupAlign, [{
-        key: "template",
+        key: 'template',
         value: function template() {
-            return "\n            <div class='property-item group-align show'>\n                <!-- <div class='title' ref=\"$title\">Align</div> -->\n                <div class='items'>            \n                    <div>\n                        <div>\n                            <button type=\"button\" title=\"left\" data-value=\"left\"></button>\n                            <button type=\"button\" title=\"center\" data-value=\"center\"></button>\n                            <button type=\"button\" title=\"right\" data-value=\"right\"></button>\n                            <button type=\"button\" title=\"top\" data-value=\"top\"></button>\n                            <button type=\"button\" title=\"middle\" data-value=\"middle\"></button>\n                            <button type=\"button\" title=\"bottom\" data-value=\"bottom\"></button>\n                            <button type=\"button\" title=\"vertical\" data-value=\"vertical\"></button>\n                            <button type=\"button\" title=\"horizontal\" data-value=\"horizontal\"></button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return '\n            <div class=\'property-item group-align show\'>\n                <!-- <div class=\'title\' ref="$title">Align</div> -->\n                <div class=\'items\'>            \n                    <div>\n                        <div>\n                            <button type="button" title="left" data-value="left"></button>\n                            <button type="button" title="center" data-value="center"></button>\n                            <button type="button" title="right" data-value="right"></button>\n                            <button type="button" title="top" data-value="top"></button>\n                            <button type="button" title="middle" data-value="middle"></button>\n                            <button type="button" title="bottom" data-value="bottom"></button>\n                            <button type="button" title="vertical" data-value="vertical"></button>\n                            <button type="button" title="horizontal" data-value="horizontal"></button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'click $el button',
@@ -16810,12 +16792,7 @@ var BackgroundBlend = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT_CHANGE_IMAGE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -17281,17 +17258,7 @@ var GradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT_CHANGE_IMAGE_ANGLE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -17679,7 +17646,7 @@ var ImageView = function (_UIElement) {
     createClass(ImageView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <BackgroundBlend></BackgroundBlend>\n                <div class='sub-feature'>\n                    <BackgroundSize></BackgroundSize>\n                </div>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>\n                <!-- <ImageResource></ImageResource> -->\n                <!-- <BlendList></BlendList>            -- >        \n            </div>  \n        ";
+            return "\n            <div class='property-view'>\n                <BackgroundBlend></BackgroundBlend>\n                <div class='sub-feature'>\n                    <BackgroundSize></BackgroundSize>\n                </div>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>   \n            </div>  \n        ";
         }
     }, {
         key: "components",
@@ -17740,12 +17707,7 @@ var FeatureControl = function (_UIElement) {
             this.$el.$(".feature[data-type=" + selectType + "]").addClass('selected');
         }
     }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.selectFeature();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.selectFeature();
         }
@@ -17876,7 +17838,9 @@ var LayerListView = function (_UIElement) {
     }, {
         key: 'click $layerList .tree-item | self',
         value: function click$layerListTreeItemSelf(e) {
-            this.dispatch('/selection/one', e.$delegateTarget.attr('id'));
+            var id = e.$delegateTarget.attr('id');
+            this.dispatch('/selection/one', id);
+            this.run('/item/focus', id);
             this.refresh();
         }
     }, {
@@ -17983,6 +17947,112 @@ var LayerListView = function (_UIElement) {
     return LayerListView;
 }(UIElement);
 
+var ImageListView = function (_UIElement) {
+    inherits(ImageListView, _UIElement);
+
+    function ImageListView() {
+        classCallCheck(this, ImageListView);
+        return possibleConstructorReturn(this, (ImageListView.__proto__ || Object.getPrototypeOf(ImageListView)).apply(this, arguments));
+    }
+
+    createClass(ImageListView, [{
+        key: 'template',
+        value: function template() {
+            return '<div class="image-list"> </div> ';
+        }
+    }, {
+        key: 'makeItemNodeImage',
+        value: function makeItemNodeImage(item) {
+            var selected = this.read('/selection/check', item.id) ? 'selected' : '';
+            return '\n            <div class=\'tree-item ' + selected + '\' data-id="' + item.id + '" draggable="true" title="' + item.type + '" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('/image/toString', item) + '\'></div>\n                </div>\n            </div>\n            ';
+        }
+    }, {
+        key: 'load $el',
+        value: function load$el() {
+            var _this2 = this;
+
+            var id = this.read('/selection/current/layer/id');
+
+            if (!id) {
+                return '';
+            }
+
+            return this.read('/item/map/children', id, function (item) {
+                return _this2.makeItemNodeImage(item);
+            });
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+
+        // individual effect
+
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value(newValue) {
+            this.refresh();
+        }
+    }, {
+        key: 'click $el .tree-item | self',
+        value: function click$elTreeItemSelf(e) {
+            var id = e.$delegateTarget.attr('data-id');
+
+            if (id) {
+                this.dispatch('/selection/one', id);
+                this.refresh();
+            }
+        }
+    }, {
+        key: 'dragstart $el .tree-item',
+        value: function dragstart$elTreeItem(e) {
+            this.draggedImage = e.$delegateTarget;
+            this.draggedImage.css('opacity', 0.5);
+            // e.preventDefault();
+        }
+    }, {
+        key: 'dragend $el .tree-item',
+        value: function dragend$elTreeItem(e) {
+
+            if (this.draggedImage) {
+                this.draggedImage.css('opacity', 1);
+            }
+        }
+    }, {
+        key: 'dragover $el .tree-item',
+        value: function dragover$elTreeItem(e) {
+            e.preventDefault();
+        }
+    }, {
+        key: 'drop $el .tree-item | self',
+        value: function drop$elTreeItemSelf(e) {
+            e.preventDefault();
+
+            var destId = e.$delegateTarget.attr('data-id');
+            var sourceId = this.draggedImage.attr('data-id');
+
+            this.draggedImage = null;
+            this.dispatch('/item/move/in', destId, sourceId);
+            this.refresh();
+        }
+    }, {
+        key: 'drop $el',
+        value: function drop$el(e) {
+            e.preventDefault();
+
+            if (this.draggedImage) {
+                var sourceId = this.draggedImage.attr('data-id');
+
+                this.draggedImage = null;
+                this.dispatch('/item/move/last', sourceId);
+                this.refresh();
+            }
+        }
+    }]);
+    return ImageListView;
+}(UIElement);
+
 var LayerToolbar = function (_UIElement) {
     inherits(LayerToolbar, _UIElement);
 
@@ -17994,15 +18064,12 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n\n                <label>\n                    2. Add Gradient \n                </label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                    <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                    </div>                    \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="step-align">\n                    <label>Steps</label>\n                    <div class="button-group">\n                        <button ref="$ordering" title="Full Ordering">=|=</button>\n                        <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                        <button ref="$orderingRight" title="Right Ordering">|=</button>\n                    </div>\n\n                    <div class="button-group">\n                        <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                        <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                    </div>      \n                </div>\n                                \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n\n                <label>\n                    2. Add Gradient \n                </label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                    <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                    </div>     \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="step-align">\n                    <label>Steps</label>\n                    <div class="button-group">\n                        <button ref="$ordering" title="Full Ordering">=|=</button>\n                        <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                        <button ref="$orderingRight" title="Right Ordering">|=</button>\n                    </div>\n\n                    <div class="button-group">\n                        <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                        <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                    </div>      \n                </div>\n                                \n            </div>\n        ';
         }
     }, {
-        key: 'refresh',
-        value: function refresh() {}
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
+        key: 'components',
+        value: function components() {
+            return { ImageListView: ImageListView };
         }
     }, {
         key: 'click $$groupAlign button',
@@ -18150,12 +18217,7 @@ var SubFeatureControl = function (_UIElement) {
             return this.read('/tool/get', 'guide.angle');
         }
     }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18988,12 +19050,7 @@ var VerticalColorStep = function (_UIElement) {
             this.$el.px('width', this.$store.step.width);
         }
     }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19363,7 +19420,6 @@ var PageSampleList = function (_UIElement) {
         value: function initialize() {
             get(PageSampleList.prototype.__proto__ || Object.getPrototypeOf(PageSampleList.prototype), "initialize", this).call(this);
 
-            // this.list = this.read('/page/list/sample', this.props.type); 
             this.list = [];
             this.dispatch('/storage/load/page');
         }
@@ -20289,7 +20345,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return layers.map(function (item) {
                 var css = _this2.setRectangle(item);
                 var image = isImage ? 'image' : '';
-                return '\n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('/css/toString', css) + '" >\n                    <div class="event-panel" data-value="move"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="to right"></button>\n                        <button type="button" data-value="to left"></button>\n                        <button type="button" data-value="to top"></button>\n                        <button type="button" data-value="to bottom"></button>\n                        <button type="button" data-value="to top right"></button>\n                        <button type="button" data-value="to bottom right"></button>\n                        <button type="button" data-value="to bottom left"></button>\n                        <button type="button" data-value="to top left"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'rotate\'></button>                    \n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('/css/toString', css) + '" >\n                    <div class="event-panel" data-value="move"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="to right"></button>\n                        <button type="button" data-value="to left"></button>\n                        <button type="button" data-value="to top"></button>\n                        <button type="button" data-value="to bottom"></button>\n                        <button type="button" data-value="to top right"></button>\n                        <button type="button" data-value="to bottom right"></button>\n                        <button type="button" data-value="to bottom left"></button>\n                        <button type="button" data-value="to top left"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'rotate\'></button>                    \n                </div> \n            ';
             });
         }
     }, {
@@ -20621,16 +20677,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.activeButton.addClass('active');
             var type = e.$delegateTarget.attr('data-value');
             this.currentType = type;
-            var item = this.read('/item/get', e.$delegateTarget.parent().attr('predefined-layer-id'));
-            this.currentItem = {
-                id: item.id,
-                x: parseParamNumber$1(item.x),
-                y: parseParamNumber$1(item.y),
-                width: parseParamNumber$1(item.width),
-                height: parseParamNumber$1(item.height),
-                rotate: parseParamNumber$1(item.rotate)
-            };
-            this.$dom = this.read('/item/dom', item.id);
+            var layerId = e.$delegateTarget.parent().attr('predefined-layer-id');
+            this.$dom = this.read('/item/dom', layerId);
 
             if (this.$dom) {
                 var rect = this.$dom.rect();
@@ -20756,32 +20804,7 @@ var MoveGuide = function (_UIElement) {
             return this.$page.hasClass('moving');
         }
     }, {
-        key: EVENT_CHANGE_LAYER_SIZE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_ROTATE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_MOVE,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_POSITION,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20794,7 +20817,6 @@ var MoveGuide = function (_UIElement) {
     return MoveGuide;
 }(UIElement);
 
-// import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
 var GradientView = function (_UIElement) {
     inherits(GradientView, _UIElement);
 
@@ -20813,7 +20835,7 @@ var GradientView = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>\n                        <!-- <PredefinedLayerResizer></PredefinedLayerResizer> -->\n                        <MoveGuide></MoveGuide>     \n                        <div ref="$dragArea"></div>                     \n                    </div>          \n                </div>\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>\n                        <MoveGuide></MoveGuide>     \n                        <div ref="$dragArea"></div>                     \n                    </div>          \n                </div>\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -20824,7 +20846,6 @@ var GradientView = function (_UIElement) {
                 MoveGuide: MoveGuide,
                 PredefinedPageResizer: PredefinedPageResizer,
                 PredefinedGroupLayerResizer: PredefinedGroupLayerResizer
-                // PredefinedLayerResizer
             };
         }
     }, {
@@ -20839,7 +20860,7 @@ var GradientView = function (_UIElement) {
             }
 
             var list = this.read('/item/map/children', page.id, function (item, index) {
-                return '<div \n                class=\'layer\' \n                item-layer-id="' + item.id + '" \n                title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                style=\'' + _this2.read('/layer/toString', item, true) + '\'>\n                    ' + _this2.read('/layer/toStringClipPath', item) + '\n                </div>';
+                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                    style=\'' + _this2.read('/layer/toString', item, true) + '\'>\n                    ' + _this2.read('/layer/toStringClipPath', item) + '\n                </div>';
             });
 
             return list;
@@ -20944,7 +20965,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
         value: function value() {
             this.refreshLayer();
         }
@@ -20992,8 +21013,46 @@ var HandleView = function (_GradientView) {
                 this.dispatch('/selection/one', id);
                 this.emit(CHANGE_SELECTION);
 
-                // console.log(e);
+                this.run('/item/focus', id);
             }
+        }
+    }, {
+        key: 'keydown $colorview .layer | ArrowDown ',
+        value: function keydown$colorviewLayerArrowDown(e) {
+            e.preventDefault();
+            var y = e.altKey ? 1 : 5;
+            this.refreshPosition({ y: y });
+        }
+    }, {
+        key: 'keydown $colorview .layer | ArrowUp ',
+        value: function keydown$colorviewLayerArrowUp(e) {
+            e.preventDefault();
+            var y = e.altKey ? -1 : -5;
+            this.refreshPosition({ y: y });
+        }
+    }, {
+        key: 'keydown $colorview .layer | ArrowLeft ',
+        value: function keydown$colorviewLayerArrowLeft(e) {
+            e.preventDefault();
+            var x = e.altKey ? -1 : -5;
+            this.refreshPosition({ x: x });
+        }
+    }, {
+        key: 'keydown $colorview .layer | ArrowRight ',
+        value: function keydown$colorviewLayerArrowRight(e) {
+            e.preventDefault();
+            var x = e.altKey ? 1 : 5;
+            this.refreshPosition({ x: x });
+        }
+    }, {
+        key: 'refreshPosition',
+        value: function refreshPosition(obj) {
+            var _this2 = this;
+
+            this.read('/selection/current').forEach(function (item) {
+                _this2.dispatch('/matrix/move', Object.assign({ id: item.id }, obj));
+                _this2.refreshLayer();
+            });
         }
     }, {
         key: 'selectPageMode',
@@ -21074,7 +21133,7 @@ var HandleView = function (_GradientView) {
     }, {
         key: 'pointerend document | hasDragArea | isDownCheck',
         value: function pointerendDocumentHasDragAreaIsDownCheck(e) {
-            var _this2 = this;
+            var _this3 = this;
 
             this.isDown = false;
 
@@ -21089,6 +21148,12 @@ var HandleView = function (_GradientView) {
             this.dispatch('/selection/area', { x: x, y: y, width: width, height: height });
             this.updateSelection();
 
+            if (this.read('/selection/is/layer')) {
+
+                var items = this.read('/selection/current');
+                this.run('/item/focus', items[0].id);
+            }
+
             this.targetXY = null;
             this.xy = null;
 
@@ -21096,7 +21161,7 @@ var HandleView = function (_GradientView) {
 
             this.refs.$dragArea.hide();
             setTimeout(function () {
-                _this2.dragArea = false;
+                _this3.dragArea = false;
             }, 100);
         }
     }]);

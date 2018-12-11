@@ -1,6 +1,6 @@
 
 import ColorPicker from '../../../../../../colorpicker/index'
-import UIElement from '../../../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_COLOR_STEP, 
     CHANGE_COLOR_STEP, 
@@ -67,10 +67,11 @@ export default class ColorPickerLayer extends UIElement {
         this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
     } 
 
-    [EVENT_CHANGE_IMAGE] () { this.refresh() }    
-    // [EVENT_CHANGE_COLOR_STEP] () { this.refresh() }    
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }    
+    [MULTI_EVENT(
+      EVENT_CHANGE_IMAGE,
+      EVENT_CHANGE_EDITOR,
+      EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }    
 
     refresh() {
         if (this.read('/selection/is/image')) {

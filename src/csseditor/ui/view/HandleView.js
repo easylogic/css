@@ -17,9 +17,43 @@ export default class HandleView extends GradientView {
             this.dispatch('/selection/one', id);
             this.emit(CHANGE_SELECTION)
 
-            // console.log(e);
+            this.run('/item/focus', id);
         }
     }
+
+
+    'keydown $colorview .layer | ArrowDown ' (e) {
+        e.preventDefault()
+        var y = e.altKey ? 1 : 5;
+        this.refreshPosition({y})
+    }    
+
+    'keydown $colorview .layer | ArrowUp ' (e) {
+        e.preventDefault()
+        var y = e.altKey ? -1 : -5;
+        this.refreshPosition({y})
+    }     
+    
+    'keydown $colorview .layer | ArrowLeft ' (e) {
+        e.preventDefault()
+        var x = e.altKey ? -1 : -5;
+        this.refreshPosition({x})
+    }         
+
+    'keydown $colorview .layer | ArrowRight ' (e) {
+        e.preventDefault()
+        var x = e.altKey ? 1 : 5;
+        this.refreshPosition({x})
+    }       
+    
+    refreshPosition (obj) {
+        this.read('/selection/current').forEach(item => {
+            this.dispatch('/matrix/move', Object.assign({id: item.id}, obj))
+            this.refreshLayer();
+        })    
+    }
+
+    
 
     selectPageMode () {
         
@@ -104,6 +138,12 @@ export default class HandleView extends GradientView {
 
         this.dispatch('/selection/area', {x, y, width, height})
         this.updateSelection();
+
+        if (this.read('/selection/is/layer')) {
+
+            var items = this.read('/selection/current');            
+            this.run('/item/focus', items[0].id);                        
+        }
 
         this.targetXY = null;
         this.xy = null;

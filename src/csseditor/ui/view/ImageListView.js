@@ -1,73 +1,41 @@
-import UIElement from '../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_SELECTION } from '../../types/event';
+import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
+import { 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_IMAGE, 
+    EVENT_CHANGE_IMAGE_ANGLE, 
+    EVENT_CHANGE_IMAGE_COLOR, 
+    EVENT_CHANGE_IMAGE_RADIAL_POSITION, 
+    EVENT_CHANGE_IMAGE_RADIAL_TYPE, 
+    EVENT_CHANGE_IMAGE_LINEAR_ANGLE, 
+    EVENT_CHANGE_COLOR_STEP, 
+    EVENT_CHANGE_SELECTION 
+} from '../../types/event';
 
-export default class ImageList extends UIElement {
+export default class ImageListView extends UIElement {
 
     template () {  
-        return `
-            <div class='images'>
-                <div class="title">Gradients</div>
-                <div class='image-tools'>   
-                    <div class="image-list" ref="$imageList"> </div>    
-                    <div class='menu-buttons'>
-                        <div class="title">+ Add Gradients</div>
-                        <div class='gradient-type' ref="$gradientType">
-                            <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>
-                            <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>
-                            <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            
-                            <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>
-                            <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>
-                            <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            
-                            <div class="gradient-item static" data-type="static" title="Static Color"></div>                                
-                            <div class="gradient-item image" data-type="image" title="Background Image">
-                                <div class="m1"></div>
-                                <div class="m2"></div>
-                                <div class="m3"></div> 
-                            </div>                                                  
-                        </div>
-                        <div class="gradient-sample-list">
-                            <div class="arrow">
-                            </div>
-                        </div>
-                    </div> 
-
-                </div>
-            </div>
-        `
+        return `<div class="image-list"> </div> `
     }
 
     makeItemNodeImage (item) {
-        var selected = item.selected ? 'selected' : '' 
+        var selected = this.read('/selection/check', item.id) ? 'selected' : '' 
         return `
-            <div class='tree-item ${selected}' data-id="${item.id}" draggable="true" >
+            <div class='tree-item ${selected}' data-id="${item.id}" draggable="true" title="${item.type}" >
                 <div class="item-view-container">
                     <div class="item-view"  style='${this.read('/image/toString', item)}'></div>
                 </div>
-                <div class='item-tools'>
-                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>                
-                    <button type="button" class='copy-item' item-id='${item.id}' title="Copy">&times;</button>
-                </div>            
             </div>
             ` 
     }       
 
-    'load $imageList' () {
-        var item = this.read('/selection/current/layer');
+    'load $el' () {
+        var id = this.read('/selection/current/layer/id');
 
-        if (!item)  {
-            var page = this.read('/selection/current/page');
-            if (page) {
-                var list = this.read('/item/list/children', page.id)
-                if (list.length) {
-                    item = { id: list[0]}
-                } else {
-                    return '';
-                }
-            }
-            
-        }; 
+        if (!id) {
+            return '';
+        }
 
-        return this.read('/item/map/children', item.id, (item) => {
+        return this.read('/item/map/children', id, (item) => {
             return this.makeItemNodeImage(item)
         })
     }
@@ -77,23 +45,19 @@ export default class ImageList extends UIElement {
     }
 
     // individual effect
-    [EVENT_CHANGE_IMAGE] () { this.refresh() }
-    [EVENT_CHANGE_IMAGE_ANGLE] () { this.refresh() }
-    [EVENT_CHANGE_IMAGE_COLOR] () { this.refresh() }
-    [EVENT_CHANGE_IMAGE_LINEAR_ANGLE] () { this.refresh() }
-    [EVENT_CHANGE_IMAGE_RADIAL_POSITION] () { this.refresh() }
-    [EVENT_CHANGE_IMAGE_RADIAL_TYPE] () { this.refresh() }
-    [EVENT_CHANGE_COLOR_STEP] (newValue) { this.refresh() }
-    // all effect 
-    [EVENT_CHANGE_EDITOR] () {
-        this.refresh()
-    }
+    [MULTI_EVENT(
+        EVENT_CHANGE_IMAGE,
+        EVENT_CHANGE_IMAGE_ANGLE,
+        EVENT_CHANGE_IMAGE_COLOR,
+        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
+        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
+        EVENT_CHANGE_IMAGE_RADIAL_TYPE,
+        EVENT_CHANGE_COLOR_STEP,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] (newValue) { this.refresh() }
 
-    [EVENT_CHANGE_SELECTION] () {
-        this.refresh();
-    }
-
-    'click $imageList .tree-item | self' (e) { 
+    'click $el .tree-item | self' (e) { 
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
@@ -102,35 +66,26 @@ export default class ImageList extends UIElement {
         }
 
     }
+ 
 
-    'click $gradientType .gradient-item' (e) {
-        this.read('/selection/current/layer', (item) => {
-
-            var type = e.$delegateTarget.attr('data-type')
-
-            this.dispatch('/item/prepend/image', type, true, item.id)
-            this.refresh()
-        }); 
-    }       
-
-    'dragstart $imageList .tree-item' (e) {
+    'dragstart $el .tree-item' (e) {
         this.draggedImage = e.$delegateTarget;
         this.draggedImage.css('opacity', 0.5);
         // e.preventDefault();
     }
 
-    'dragend $imageList .tree-item' (e) {
+    'dragend $el .tree-item' (e) {
 
         if (this.draggedImage) {
             this.draggedImage.css('opacity', 1);        
         }
     }    
 
-    'dragover $imageList .tree-item' (e) {
+    'dragover $el .tree-item' (e) {
         e.preventDefault();        
     }        
 
-    'drop $imageList .tree-item | self' (e) {
+    'drop $el .tree-item | self' (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('data-id')
@@ -141,7 +96,7 @@ export default class ImageList extends UIElement {
         this.refresh()
     }       
     
-    'drop $imageList' (e) {
+    'drop $el' (e) {
         e.preventDefault();        
 
         if (this.draggedImage) {
@@ -154,17 +109,5 @@ export default class ImageList extends UIElement {
 
     }           
 
-    'click $imageList .copy-item' (e) {
-        this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.refresh()
-    }
 
-    'click $imageList .delete-item' (e) {
-        this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'))
-        this.refresh()
-    }   
-
-    'click $el .gradient-sample-list' (e) {
-        this.emit('toggleGradientSampleView');
-    }
 }

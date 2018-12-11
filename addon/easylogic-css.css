@@ -2037,212 +2037,81 @@ html, body {
           background-repeat: no-repeat;
           background-size: 2px 24px, 10px 18px, 2px 24px;
           background-position: 6px 3px, 11px 6px, 24px 3px; }
-  .csseditor .images {
+  .csseditor .image-list {
+    display: inline-block;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
-    position: absolute;
-    top: 0px;
-    right: -1px;
-    bottom: 0px;
-    width: 0px;
-    border-right: 1px solid #c7c7c7;
-    background-color: white; }
-    .csseditor .images > .title {
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      top: 0px;
-      height: 32px;
-      border-bottom: 1px solid #c7c7c7;
+    text-align: center;
+    margin-left: 20px;
+    border-left: 1px solid #ececec; }
+    .csseditor .image-list .tree-item {
+      display: inline-block;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #dedede;
+      vertical-align: middle;
+      height: 30px;
+      width: 30px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      font-size: 12px;
-      padding: 5px 10px;
-      font-weight: bold; }
-    .csseditor .images .image-tools {
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      bottom: 0px;
-      top: 32px;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-              flex-direction: column; }
-      .csseditor .images .image-tools button {
-        display: inline-block;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        width: 64px;
-        height: 64px;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        border: 1px solid #dedede;
-        vertical-align: middle;
-        font-size: 12px;
-        cursor: pointer;
-        outline: none;
+      margin-right: 1px; }
+      .csseditor .image-list .tree-item.selected {
+        border-color: #333; }
+      .csseditor .image-list .tree-item:hover .item-tools {
+        display: inline-block; }
+      .csseditor .image-list .tree-item .item-view-container {
         position: relative;
-        pointer-events: all; }
-      .csseditor .images .image-tools > .tools {
-        -webkit-box-flex: 0;
-            -ms-flex: none;
-                flex: none;
-        width: 74px;
-        height: 100px; }
-      .csseditor .images .image-tools .image-list {
+        pointer-events: none;
+        display: inline-block;
+        vertical-align: middle;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        overflow: auto;
-        -webkit-box-flex: 1;
-            -ms-flex: 1 1 auto;
-                flex: 1 1 auto;
-        overflow-y: auto;
-        overflow-x: hidden;
-        text-align: center; }
-        .csseditor .images .image-tools .image-list .tree-item {
-          display: inline-block;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          border: 3px solid #dedede;
-          vertical-align: middle;
-          margin: 5px 2px; }
-          .csseditor .images .image-tools .image-list .tree-item.selected {
-            border: 3px solid #333; }
-          .csseditor .images .image-tools .image-list .tree-item:hover .item-tools {
-            display: inline-block; }
-          .csseditor .images .image-tools .image-list .tree-item .item-view-container {
-            position: relative;
-            pointer-events: none;
-            display: inline-block;
-            vertical-align: middle;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            height: 64px;
-            width: 64px; }
-            .csseditor .images .image-tools .image-list .tree-item .item-view-container .item-view {
-              position: absolute;
-              top: 0px;
-              left: 0px;
-              right: 0px;
-              bottom: 0px; }
-          .csseditor .images .image-tools .image-list .tree-item .item-tools {
-            position: absolute;
-            right: 0px;
-            top: 0px;
-            bottom: 0px;
-            left: 0px;
-            display: none;
-            padding: 5px;
-            pointer-events: none; }
-            .csseditor .images .image-tools .image-list .tree-item .item-tools button {
-              height: 20px;
-              width: 20px;
-              position: absolute;
-              display: inline-block;
-              border: 0px solid #dedede;
-              cursor: pointer;
-              pointer-events: all;
-              border-radius: 50%;
-              background-color: rgba(255, 255, 255, 0.5); }
-              .csseditor .images .image-tools .image-list .tree-item .item-tools button.copy-item {
-                right: 1px;
-                top: 50%;
-                -webkit-transform: translateY(-50%) rotate(45deg);
-                        transform: translateY(-50%) rotate(45deg); }
-              .csseditor .images .image-tools .image-list .tree-item .item-tools button.left-item {
-                left: 1px;
-                bottom: 1px; }
-              .csseditor .images .image-tools .image-list .tree-item .item-tools button.right-item {
-                right: 1px;
-                bottom: 1px; }
-              .csseditor .images .image-tools .image-list .tree-item .item-tools button.delete-item {
-                top: 1px;
-                right: 1px; }
-      .csseditor .images .image-tools .menu-buttons {
-        height: 150px;
-        -webkit-box-flex: 0;
-            -ms-flex: none;
-                flex: none;
-        padding: 5px;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        border-top: 1px solid #c7c7c7;
-        position: relative; }
-        .csseditor .images .image-tools .menu-buttons .title {
-          font-size: 12px;
-          border-bottom: 1px solid #c7c7c7;
+        height: 60px;
+        width: 60px;
+        -webkit-transform: scale(0.5);
+                transform: scale(0.5);
+        -webkit-transform-origin: 0 0;
+                transform-origin: 0 0; }
+        .csseditor .image-list .tree-item .item-view-container .item-view {
           position: absolute;
-          left: 0px;
           top: 0px;
+          left: 0px;
           right: 0px;
+          bottom: 0px; }
+      .csseditor .image-list .tree-item .item-tools {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        display: none;
+        padding: 5px;
+        pointer-events: none; }
+        .csseditor .image-list .tree-item .item-tools button {
+          height: 20px;
+          width: 20px;
+          position: absolute;
           display: inline-block;
-          padding: 2px;
-          text-align: center; }
-        .csseditor .images .image-tools .menu-buttons .gradient-sample-list {
-          position: absolute;
-          bottom: 0px;
-          left: 0px;
-          right: 0px;
-          height: 30px;
-          display: block;
-          border-top: 1px solid #c7c7c7;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          text-align: center; }
-          .csseditor .images .image-tools .menu-buttons .gradient-sample-list .arrow {
-            display: inline-block;
-            width: 30px;
-            height: 100%;
-            position: relative;
-            cursor: pointer; }
-            .csseditor .images .image-tools .menu-buttons .gradient-sample-list .arrow:before {
-              content: "";
-              position: absolute;
-              height: 1px;
-              width: 100%;
-              top: 10px;
-              left: 0px;
-              pointer-events: none;
-              background-color: black; }
-            .csseditor .images .image-tools .menu-buttons .gradient-sample-list .arrow:after {
-              content: "";
-              position: absolute;
-              height: 1px;
-              width: 100%;
-              top: 15px;
-              left: 0px;
-              pointer-events: none;
-              background-color: black; }
-        .csseditor .images .image-tools .menu-buttons .gradient-type {
-          position: absolute;
-          left: 0px;
-          right: 0px;
-          top: 30px;
-          bottom: 30px;
-          padding: 5px;
-          display: block;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box; }
-          .csseditor .images .image-tools .menu-buttons .gradient-type > button {
-            height: auto; }
-          .csseditor .images .image-tools .menu-buttons .gradient-type .gradient-item {
-            width: 22px;
-            height: 22px;
-            display: inline-block;
-            vertical-align: middle; }
-    .csseditor .images .add-tools {
-      padding: 5px;
-      height: 74px; }
-  .csseditor .layout-main.expertor-mode .image-tools .menu-buttons .gradient-type .gradient-item {
-    width: 22px;
-    height: 22px;
-    border-width: 1px !important; }
+          border: 0px solid #dedede;
+          cursor: pointer;
+          pointer-events: all;
+          border-radius: 50%;
+          background-color: rgba(255, 255, 255, 0.5); }
+          .csseditor .image-list .tree-item .item-tools button.copy-item {
+            right: 1px;
+            top: 50%;
+            -webkit-transform: translateY(-50%) rotate(45deg);
+                    transform: translateY(-50%) rotate(45deg); }
+          .csseditor .image-list .tree-item .item-tools button.left-item {
+            left: 1px;
+            bottom: 1px; }
+          .csseditor .image-list .tree-item .item-tools button.right-item {
+            right: 1px;
+            bottom: 1px; }
+          .csseditor .image-list .tree-item .item-tools button.delete-item {
+            top: 1px;
+            right: 1px; }
   .csseditor .predefined-angluar-group {
     display: none;
     text-align: center;
@@ -2986,7 +2855,7 @@ html, body {
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 10px;
+    top: 40px;
     width: 400px;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
@@ -3530,12 +3399,13 @@ html, body {
         background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
         background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
         background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px; }
-    .csseditor .page-view .gradient-color-view .layer, .csseditor .page-view .ghost-color-view .layer {
+    .csseditor .page-view .gradient-color-view .layer {
       position: absolute;
       left: 0px;
       top: 0px;
       width: 100%;
-      height: 100%; }
+      height: 100%;
+      outline: none; }
     .csseditor .page-view .dropzone {
       display: none; }
     .csseditor .page-view .predefined-page-resizer {

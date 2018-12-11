@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT } from "../../../colorpicker/UIElement";
 import items from './panel/items/index';
 import GradientAngle from "./shape/GradientAngle";
 import GradientPosition from "./shape/GradientPosition";
@@ -85,6 +85,8 @@ export default class SubFeatureControl extends UIElement {
         return this.read('/tool/get', 'guide.angle')
     }
 
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh(); }
 } 

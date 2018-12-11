@@ -7,7 +7,6 @@ export default class PageSampleList extends UIElement {
     initialize () {
         super.initialize();
 
-        // this.list = this.read('/page/list/sample', this.props.type); 
         this.list = [] 
         this.dispatch('/storage/load/page')
 

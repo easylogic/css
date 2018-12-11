@@ -1,4 +1,4 @@
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import GradientInfo from "../../colorsteps/GradientInfo";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../../types/event";
 
@@ -21,8 +21,10 @@ export default class ColorStepsInfo extends UIElement {
         this.$el.toggle(this.isShow())
     }
 
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh(); }
 
     isShow () {
         var item = this.read('/selection/current/image')

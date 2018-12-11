@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT } from "../../../colorpicker/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
 
@@ -23,8 +23,10 @@ export default class VerticalColorStep extends UIElement {
         this.$el.px('width', this.$store.step.width);
     }
 
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }
 
     isShow () {
         var item = this.read('/selection/current/image')

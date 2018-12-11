@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { EVENT_CHANGE_LAYER, CHANGE_LAYER , EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH} from "../../../../types/event";
+import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class ClipPath extends BasePropertyItem {
     template () {
@@ -37,11 +38,12 @@ export default class ClipPath extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_LAYER] () { this.refresh() }
-
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
-    [EVENT_CHANGE_LAYER_CLIPPATH] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION,
+        EVENT_CHANGE_LAYER_CLIPPATH
+    )] () { this.refresh() }
 
     refresh() {
         this.read('/selection/current/layer', (layer) => {

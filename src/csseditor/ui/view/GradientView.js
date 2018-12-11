@@ -1,6 +1,5 @@
 import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
-// import PredefinedLayerResizer from '../control/shape/PredefinedLayerResizer';
 import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
 import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
@@ -48,7 +47,6 @@ export default class GradientView extends UIElement {
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
                         <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>
-                        <!-- <PredefinedLayerResizer></PredefinedLayerResizer> -->
                         <MoveGuide></MoveGuide>     
                         <div ref="$dragArea"></div>                     
                     </div>          
@@ -65,7 +63,6 @@ export default class GradientView extends UIElement {
             MoveGuide,
             PredefinedPageResizer,
             PredefinedGroupLayerResizer
-            // PredefinedLayerResizer
         }
     }
 
@@ -78,10 +75,11 @@ export default class GradientView extends UIElement {
 
         var list = this.read('/item/map/children', page.id, (item, index) => {
             return `<div 
-                class='layer' 
-                item-layer-id="${item.id}" 
-                title="${index+1}. ${item.name || 'Layer'}" 
-                style='${this.read('/layer/toString', item, true)}'>
+                    tabindex='${index}'
+                    class='layer' 
+                    item-layer-id="${item.id}" 
+                    title="${index+1}. ${item.name || 'Layer'}" 
+                    style='${this.read('/layer/toString', item, true)}'>
                     ${this.read('/layer/toStringClipPath', item)}
                 </div>`
         });
@@ -185,6 +183,7 @@ export default class GradientView extends UIElement {
 
     // indivisual layer effect 
     [MULTI_EVENT(
+        EVENT_CHANGE_LAYER,
         EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
         EVENT_CHANGE_LAYER_CLIPPATH,
         EVENT_CHANGE_LAYER_FILTER,

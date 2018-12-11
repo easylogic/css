@@ -165,10 +165,12 @@ export default class EventMachin {
   }
 
   eachChildren (callback) {
+    var isFunction = typeof callback == 'function';
+
+    if (!isFunction) return; 
+
     Object.keys(this.children).forEach(ChildComponentName => {
-      if (typeof callback == 'function') {
-        callback(this.children[ChildComponentName])
-      }
+      callback(this.children[ChildComponentName])
     })
   }
 

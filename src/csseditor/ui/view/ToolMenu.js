@@ -1,6 +1,5 @@
 import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
-import { EVENT_CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
 
 export default class ToolMenu extends UIElement {
 

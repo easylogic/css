@@ -439,6 +439,14 @@ export default class ItemManager extends BaseModule {
         }
     }
 
+    '/item/focus' ($store, id) {
+        var $el = $store.read('/item/dom', id);
+
+        if ($el && $el.el) {
+            $el.el.focus();
+        }
+    }
+
 
     '/item/remove' ($store, id) {
         if (id) {

@@ -1,5 +1,5 @@
 import UnitRange from "./element/UnitRange";
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_IMAGE, EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
@@ -207,11 +207,10 @@ export default class BackgroundSize extends UIElement {
         })
     }
 
-    [EVENT_CHANGE_IMAGE] (e) {
-        this.refresh();
-    }
-
-    [EVENT_CHANGE_EDITOR] () {
+    [MULTI_EVENT(
+        EVENT_CHANGE_IMAGE,
+        EVENT_CHANGE_EDITOR
+    )] () {
         this.refresh()
     }
 

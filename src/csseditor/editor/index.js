@@ -19,7 +19,6 @@ import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 
-
 export default class CSSEditor extends BaseCSSEditor {
 
 

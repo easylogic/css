@@ -39,10 +39,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             layers = [layers]
         }
 
-        return layers.map(item => {
+        return layers.map(item => { 
             var css = this.setRectangle(item);
             var image = isImage ? 'image' : ''; 
-            return `
+            return ` 
                 <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('/css/toString', css)}" >
                     <div class="event-panel" data-value="move"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
@@ -319,23 +319,14 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.activeButton.addClass('active');
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
-        var item = this.read('/item/get', e.$delegateTarget.parent().attr('predefined-layer-id'));
-        this.currentItem = {
-            id: item.id,
-            x: parseParamNumber(item.x),
-            y: parseParamNumber(item.y),
-            width: parseParamNumber(item.width),
-            height: parseParamNumber(item.height),
-            rotate: parseParamNumber(item.rotate)
-        }
-        this.$dom = this.read('/item/dom', item.id);
+        var layerId = e.$delegateTarget.parent().attr('predefined-layer-id')
+        this.$dom = this.read('/item/dom', layerId);
 
         if (this.$dom) {
             var rect = this.$dom.rect()
             this.layerCenterX = rect.left + rect.width/2;
             this.layerCenterY = rect.top + rect.height/2;
         }
-
 
         this.xy = e.xy;
         this.rectItems = this.read('/selection/current').map(it => {
