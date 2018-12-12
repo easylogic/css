@@ -27,6 +27,7 @@ $align-sub-color: #ccc;
         border:0px;
         outline: none;
         cursor:pointer;
+        background-color: white;
 
         &[data-value="left"] {
             @include background-image-generator();

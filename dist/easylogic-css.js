@@ -13274,6 +13274,12 @@ var SelectionManager = function (_BaseModule) {
         key: "checkInArea",
         value: function checkInArea(area, item) {
 
+            if (area.width === 0) {
+                return false;
+            }
+            if (area.height === 0) {
+                return false;
+            }
             if (area.x2 < item.x) {
                 return false;
             }
@@ -18082,12 +18088,10 @@ var LayerToolbar = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/layer', function (item) {
-
                 var type = e.$delegateTarget.attr('data-type');
 
                 _this2.dispatch('/item/prepend/image', type, true, item.id);
                 _this2.dispatch('/history/push', 'Add ' + type + ' gradient');
-                _this2.refresh();
             });
         }
     }, {
@@ -21145,7 +21149,22 @@ var HandleView = function (_GradientView) {
             var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
             var y = Math.min(this.targetXY.y, this.xy.y) - po.top;
 
-            this.dispatch('/selection/area', { x: x, y: y, width: width, height: height });
+            var area = { x: x, y: y, width: width, height: height };
+
+            if (width != 0 && height != 0) {
+                // noop 
+            } else {
+                var $target = new Dom(e.target);
+
+                if ($target.hasClass('layer')) {
+                    area = { x: x, y: y, width: 1, height: 1 };
+                } else {
+                    area = { x: x, y: y, width: 0, height: 0 };
+                }
+            }
+
+            this.dispatch('/selection/area', area);
+
             this.updateSelection();
 
             if (this.read('/selection/is/layer')) {

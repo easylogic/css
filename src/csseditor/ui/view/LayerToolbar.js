@@ -77,12 +77,10 @@ export default class LayerToolbar extends UIElement {
 
     'click $gradientType .gradient-item' (e) {
         this.read('/selection/current/layer', (item) => {
-
             var type = e.$delegateTarget.attr('data-type')
 
             this.dispatch('/item/prepend/image', type, true, item.id)
             this.dispatch('/history/push', `Add ${type} gradient` );        
-            this.refresh()
         }); 
     }       
 

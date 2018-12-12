@@ -1988,7 +1988,8 @@ html, body {
         display: inline-block;
         border: 0px;
         outline: none;
-        cursor: pointer; }
+        cursor: pointer;
+        background-color: white; }
         .csseditor .layer-toolbar .group-align button[data-value="left"] {
           background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
           background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
@@ -2855,7 +2856,7 @@ html, body {
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 40px;
+    top: 10px;
     width: 400px;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
@@ -4589,7 +4590,8 @@ html, body {
           display: inline-block;
           border: 0px;
           outline: none;
-          cursor: pointer; }
+          cursor: pointer;
+          background-color: white; }
           .csseditor .property-view .property-item .group-align button[data-value="left"] {
             background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
             background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);

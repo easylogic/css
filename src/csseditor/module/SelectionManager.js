@@ -40,6 +40,8 @@ export default class SelectionManager extends BaseModule {
 
     checkInArea (area, item) {
 
+        if (area.width === 0) {return false; }
+        if (area.height === 0) {return false; } 
         if (area.x2 < item.x) { return false; }
         if (area.y2 < item.y) { return false; }
         if (area.x > item.x2) { return false; }

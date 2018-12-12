@@ -133,17 +133,32 @@ export default class HandleView extends GradientView {
         var po = this.refs.$page.offset();
 
         var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
-        var y = Math.min(this.targetXY.y, this.xy.y) - po.top;
+        var y = Math.min(this.targetXY.y, this.xy.y) - po.top;        
 
+        var area = {x, y, width, height}
 
-        this.dispatch('/selection/area', {x, y, width, height})
-        this.updateSelection();
+        if (width != 0 && height != 0) {    
+            // noop 
+        } else {
+            var $target = new Dom(e.target)
 
+            if ($target.hasClass('layer')) {
+                area = {x, y, width:1, height:1}
+            } else {
+                area = {x, y, width:0, height:0}
+            }
+        }
+
+        this.dispatch('/selection/area', area)
+
+        this.updateSelection();         
+        
         if (this.read('/selection/is/layer')) {
-
+    
             var items = this.read('/selection/current');            
             this.run('/item/focus', items[0].id);                        
         }
+
 
         this.targetXY = null;
         this.xy = null;
@@ -154,5 +169,6 @@ export default class HandleView extends GradientView {
         setTimeout(() => {
             this.dragArea = false;
         }, 100)
+
     }    
 }
