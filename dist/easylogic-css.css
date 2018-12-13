@@ -4178,6 +4178,10 @@ html, body {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     overflow: auto; }
+    .csseditor .property-view .tab .tab-body {
+      border: 0px; }
+    .csseditor .property-view .tab .tab-item {
+      text-align: center; }
     .csseditor .property-view.inline {
       overflow: hidden; }
       .csseditor .property-view.inline .property-item {

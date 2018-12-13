@@ -15284,7 +15284,7 @@ var Transform = function (_BasePropertyItem) {
     createClass(Transform, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform'>\n                <div class='title' ref=\"$title\">Transform</div>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='number' ref=\"$rotate\"> <span>deg</span>\n                        </div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\"> <span></span>\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='number' ref=\"$skewX\"> <span>deg</span>\n                        </div>\n                        <label>SkewY</label>\n                        <div>\n                            <input type='number' ref=\"$skewY\"> <span>deg</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='number' ref=\"$translateX\"> <span>px</span>\n                        </div>\n                        <label>translateY</label>\n                        <div>\n                            <input type='number' ref=\"$translateY\"> <span>px</span>\n                        </div>\n                        <label>translateZ</label>\n                        <div>\n                            <input type='number' ref=\"$translateZ\"> <span>px</span>\n                        </div>                        \n                    </div>                                                         \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform</div>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='number' ref=\"$rotate\"> <span>deg</span>\n                        </div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\"> <span></span>\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='number' ref=\"$skewX\"> <span>deg</span>\n                        </div>\n                        <label>SkewY</label>\n                        <div>\n                            <input type='number' ref=\"$skewY\"> <span>deg</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='number' ref=\"$translateX\"> <span>px</span>\n                        </div>\n                        <label>translateY</label>\n                        <div>\n                            <input type='number' ref=\"$translateY\"> <span>px</span>\n                        </div>\n                        <label>translateZ</label>\n                        <div>\n                            <input type='number' ref=\"$translateZ\"> <span>px</span>\n                        </div>                        \n                    </div>                                                         \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_LAYER_TRANSFORM,
@@ -15371,7 +15371,7 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Rotate 3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$rotate3dX\"> \n                                <input type='number' ref=\"$rotate3dY\"> \n                                <input type='number' ref=\"$rotate3dZ\"> \n                                <input type='number' ref=\"$rotate3dA\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            \n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                                <span>Angle</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale 3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$scale3dX\"> \n                                <input type='number' ref=\"$scale3dY\"> \n                                <input type='number' ref=\"$scale3dZ\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$translate3dX\"> \n                                <input type='number' ref=\"$translate3dY\"> \n                                <input type='number' ref=\"$translate3dZ\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>                            \n                        <div>\n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Rotate 3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$rotate3dX\"> \n                                <input type='number' ref=\"$rotate3dY\"> \n                                <input type='number' ref=\"$rotate3dZ\"> \n                                <input type='number' ref=\"$rotate3dA\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            \n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                                <span>Angle</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale 3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$scale3dX\"> \n                                <input type='number' ref=\"$scale3dY\"> \n                                <input type='number' ref=\"$scale3dZ\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$translate3dX\"> \n                                <input type='number' ref=\"$translate3dY\"> \n                                <input type='number' ref=\"$translate3dZ\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>                            \n                        <div>\n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_LAYER_TRANSFORM_3D,
@@ -16931,6 +16931,74 @@ var items = {
 
 };
 
+var BaseTab = function (_UIElement) {
+    inherits(BaseTab, _UIElement);
+
+    function BaseTab() {
+        classCallCheck(this, BaseTab);
+        return possibleConstructorReturn(this, (BaseTab.__proto__ || Object.getPrototypeOf(BaseTab)).apply(this, arguments));
+    }
+
+    createClass(BaseTab, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="tab">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="1">1</div>\n                <div class="tab-item" data-id="2">2</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="1"></div>\n                <div class="tab-content" data-id="2"></div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'isNotSelectedTab',
+        value: function isNotSelectedTab(e) {
+            return !e.$delegateTarget.hasClass('selected');
+        }
+    }, {
+        key: 'click $header .tab-item | isNotSelectedTab',
+        value: function click$headerTabItemIsNotSelectedTab(e) {
+            this.selectTab(e.$delegateTarget.attr('data-id'));
+        }
+    }, {
+        key: 'selectTab',
+        value: function selectTab(id) {
+
+            this.selectedTabId = id;
+
+            this.refs.$header.children().forEach(function ($dom) {
+                $dom.toggleClass('selected', $dom.attr('data-id') == id);
+            });
+
+            this.refs.$body.children().forEach(function ($dom) {
+                $dom.toggleClass('selected', $dom.attr('data-id') == id);
+            });
+
+            this.onTabShow();
+        }
+    }, {
+        key: 'onTabShow',
+        value: function onTabShow() {}
+    }]);
+    return BaseTab;
+}(UIElement);
+
+var LayerTabView = function (_BaseTab) {
+    inherits(LayerTabView, _BaseTab);
+
+    function LayerTabView() {
+        classCallCheck(this, LayerTabView);
+        return possibleConstructorReturn(this, (LayerTabView.__proto__ || Object.getPrototypeOf(LayerTabView)).apply(this, arguments));
+    }
+
+    createClass(LayerTabView, [{
+        key: "template",
+        value: function template() {
+            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"inspect\">I</div>\n                <div class=\"tab-item\" data-id=\"clippath\">C</div>\n                <div class=\"tab-item\" data-id=\"effect\">E</div>\n                <div class=\"tab-item\" data-id=\"transform\">T</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"inspect\">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>                      \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class=\"tab-content\" data-id=\"clippath\">\n                    <ClipPath></ClipPath>                          \n                </div>\n                <div class=\"tab-content\" data-id=\"effect\">\n                    <FilterList></FilterList>                             \n                </div>\n                <div class=\"tab-content\" data-id=\"transform\">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>                \n            </div>\n        </div>\n\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return items;
+        }
+    }]);
+    return LayerTabView;
+}(BaseTab);
+
 var LayerView = function (_UIElement) {
     inherits(LayerView, _UIElement);
 
@@ -16942,12 +17010,12 @@ var LayerView = function (_UIElement) {
     createClass(LayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <Name></Name>            \n                <size></size>                \n                <Rotate></Rotate>        \n                <RadiusFixed></RadiusFixed>\n                <radius></radius>                      \n                <LayerBlend></LayerBlend>                            \n                <LayerColorPickerPanel></LayerColorPickerPanel>\n                <ClipPath></ClipPath>           \n                <FilterList></FilterList>      \n                <transform></transform>\n                <transform3d></transform3d>                \n            </div> \n        ";
+            return "\n            <div class='property-view'>\n                <LayerTabView></LayerTabView>\n            </div> \n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return items;
+            return { LayerTabView: LayerTabView };
         }
     }]);
     return LayerView;

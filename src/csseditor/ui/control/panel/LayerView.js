@@ -1,28 +1,19 @@
 import UIElement from "../../../../colorpicker/UIElement";
 
-import items  from './items/index'
+import LayerTabView from "./LayerTabView";
+
 
 export default class LayerView extends UIElement {
 
     template () {
         return `
             <div class='property-view'>
-                <Name></Name>            
-                <size></size>                
-                <Rotate></Rotate>        
-                <RadiusFixed></RadiusFixed>
-                <radius></radius>                      
-                <LayerBlend></LayerBlend>                            
-                <LayerColorPickerPanel></LayerColorPickerPanel>
-                <ClipPath></ClipPath>           
-                <FilterList></FilterList>      
-                <transform></transform>
-                <transform3d></transform3d>                
+                <LayerTabView></LayerTabView>
             </div> 
         `
     }
 
     components () {
-        return items 
+        return {LayerTabView} 
     }
 }

@@ -7,6 +7,16 @@
     box-sizing: border-box;
     overflow: auto;
 
+    .tab {
+        .tab-body {
+            border: 0px;
+        }
+
+        .tab-item {
+            text-align: center;
+        }
+    }
+
     &.inline {
         overflow: hidden;
         .property-item {
