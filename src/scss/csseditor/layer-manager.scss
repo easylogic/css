@@ -176,9 +176,6 @@ $layer-preview-size: 40px;
                     .tree-item {
                         display: inline-block;
                         vertical-align: middle;
-                        &.selected {
-                            border-bottom: 2px solid black; 
-                        }
                         .item-title, .item-tools {
                             display: none;
                         }

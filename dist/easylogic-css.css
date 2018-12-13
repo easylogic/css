@@ -1853,8 +1853,6 @@ html, body {
           .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item {
             display: inline-block;
             vertical-align: middle; }
-            .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item.selected {
-              border-bottom: 2px solid black; }
             .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-title, .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-tools {
               display: none; }
         .csseditor .layers .layer-list .gradient-list-group .gradient-collapse-button {

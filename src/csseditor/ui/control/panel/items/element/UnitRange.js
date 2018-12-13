@@ -12,6 +12,10 @@ const unit_names = {
     'em': 'em'
 }
 
+const position_list = [
+    'left', 'top', 'right', 'bottom', 'center'
+]
+
 export default class UnitRange extends UIElement {
 
 
@@ -32,11 +36,13 @@ export default class UnitRange extends UIElement {
     
     template () {
 
+        var value = position_list.includes(this.value) ? "" : this.value;
+
         return `
             <div class='unit-range'>
                 <div class='base-value'>
-                    <input ref="$range" type="range" class='range' min="${this.min}" max="${this.max}" step="${this.step}" value="${this.value}" />
-                    <input ref="$number" type="number" class='number' min="${this.min}" max="${this.max}" step="${this.step}" value="${this.value}"  />
+                    <input ref="$range" type="range" class='range' min="${this.min}" max="${this.max}" step="${this.step}" value="${value}" />
+                    <input ref="$number" type="number" class='number' min="${this.min}" max="${this.max}" step="${this.step}" value="${value}"  />
                     <button ref="$unit" type="button" class='unit'>${this.unit}</button>
                 </div>
                 <div class="multi-value" ref="$multiValue">
@@ -64,7 +70,9 @@ export default class UnitRange extends UIElement {
             unit = 'em'
         }
 
-        this.selectUnit(unit, parseParamNumber(value));
+        value = position_list.includes(value) ? "" : parseParamNumber(value);
+
+        this.selectUnit(unit, value);
     }
     
     initializeRangeMax (unit) {
@@ -89,7 +97,7 @@ export default class UnitRange extends UIElement {
 
     selectUnit (unit, value) {
         this.unit = unit;         
-        this.value = value; 
+        this.value = position_list.includes(value) ? "" : value; 
 
         this.refs.$range.val(this.value);
         this.refs.$number.val(this.value);

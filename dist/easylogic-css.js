@@ -15601,6 +15601,8 @@ var unit_names = {
     'em': 'em'
 };
 
+var position_list = ['left', 'top', 'right', 'bottom', 'center'];
+
 var UnitRange = function (_UIElement) {
     inherits(UnitRange, _UIElement);
 
@@ -15630,7 +15632,9 @@ var UnitRange = function (_UIElement) {
         key: "template",
         value: function template() {
 
-            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + this.value + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + this.value + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"px\" unit='px'></div>\n                    <div ref=\"$percent\" class=\"percent\" unit='percent'></div>\n                    <div ref=\"$em\" class=\"em\" unit='em'></div>\n                </div>\n            </div>\n        ";
+            var value = position_list.includes(this.value) ? "" : this.value;
+
+            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"px\" unit='px'></div>\n                    <div ref=\"$percent\" class=\"percent\" unit='percent'></div>\n                    <div ref=\"$em\" class=\"em\" unit='em'></div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: 'click $multiValue div',
@@ -15653,7 +15657,9 @@ var UnitRange = function (_UIElement) {
                 unit = 'em';
             }
 
-            this.selectUnit(unit, parseParamNumber$2(value));
+            value = position_list.includes(value) ? "" : parseParamNumber$2(value);
+
+            this.selectUnit(unit, value);
         }
     }, {
         key: "initializeRangeMax",
@@ -15680,7 +15686,7 @@ var UnitRange = function (_UIElement) {
         key: "selectUnit",
         value: function selectUnit(unit, value) {
             this.unit = unit;
-            this.value = value;
+            this.value = position_list.includes(value) ? "" : value;
 
             this.refs.$range.val(this.value);
             this.refs.$number.val(this.value);
@@ -20982,8 +20988,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.xy.x != e.xy.x || this.xy.y != e.xy.y;
         }
     }, {
-        key: 'pointerend document | isMoved | isDownCheck',
-        value: function pointerendDocumentIsMovedIsDownCheck(e) {
+        key: 'pointerend document | isDownCheck',
+        value: function pointerendDocumentIsDownCheck(e) {
             this.currentType = null;
             this.xy = null;
             this.moveX = null;

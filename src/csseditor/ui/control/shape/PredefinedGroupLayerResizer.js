@@ -364,7 +364,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy.x != e.xy.x || this.xy.y != e.xy.y; 
     }
 
-    'pointerend document | isMoved | isDownCheck' (e) {
+    'pointerend document | isDownCheck' (e) {
         this.currentType = null; 
         this.xy = null 
         this.moveX = null;
