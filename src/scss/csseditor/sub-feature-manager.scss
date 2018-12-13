@@ -55,7 +55,7 @@ $layer-item-padding: 4px;
    
                     }
 
-
+                    /*
                     .size-list {
                         display: flex; 
                         width: 150px;
@@ -83,8 +83,8 @@ $layer-item-padding: 4px;
                                 background-color: #ffffff;
                             }
                         }
-                    }
-
+                    }*/
+                    /*
                     .repeat-list {
                         display: flex; 
                         width: 180px;
@@ -166,10 +166,11 @@ $layer-item-padding: 4px;
                                 span:nth-child(9) { top : 20px; left : 20px; width: $b-width; height: $b-width;}
                             }                                                        
                         }
-                    }
+                    } */
                 }
             }
 
+            /*
             &.image-list {
                 background-color: transparent;
                 position: absolute;
@@ -249,7 +250,7 @@ $layer-item-padding: 4px;
                         }
                     }
                 }
-            }
+            } */
         }
     }
 }

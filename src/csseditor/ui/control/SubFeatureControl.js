@@ -6,6 +6,8 @@ import PredefinedLinearGradientAngle from "./shape/PredefinedLinearGradientAngle
 import PredefinedRadialGradientPosition from "./shape/PredefinedRadialGradientPosition";
 import PredefinedRadialGradientAngle from "./shape/PredefinedRadialGradientAngle";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
+import BackgroundResizer from "./shape/BackgroundResizer";
+import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -14,6 +16,10 @@ export default class SubFeatureControl extends UIElement {
         return `
             <div class='sub-feature-control'>         
                 <div class='feature'>
+                    <div class="property-view" ref="$backgroundSize">
+                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>
+                        <BackgroundResizer></BackgroundResizer>
+                    </div>
                     <div class="property-view linear" ref="$linear">
                         <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>
                         <GradientAngle></GradientAngle>                            
@@ -35,6 +41,8 @@ export default class SubFeatureControl extends UIElement {
             GradientPosition, 
             PredefinedLinearGradientAngle, 
             PredefinedRadialGradientPosition, 
+            BackgroundResizer,
+            PredefinedBackgroundPosition,
             ...items
         } 
     }
@@ -42,6 +50,7 @@ export default class SubFeatureControl extends UIElement {
 
     refresh () {
         this.$el.toggle(this.isShow())
+        this.refs.$backgroundSize.toggleClass('hide', this.isNotImage() )
         this.refs.$linear.toggleClass('hide', !this.isLinearShow())
         this.refs.$radial.toggleClass('hide', !this.isRadialShow())
     }
@@ -50,6 +59,10 @@ export default class SubFeatureControl extends UIElement {
     isShow () {
         //if (!this.read('/selection/is/image')) return false;         
         return true;
+    }
+
+    isNotImage () {
+        return this.read('/selection/is/image') == false;
     }
 
     isLinearShow () {

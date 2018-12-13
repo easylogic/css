@@ -168,6 +168,8 @@ $layer-toolbar-height: 0px;
 
 @import './drag-angle.scss';
 @import './drag-position.scss';
+@import './guide/background-resizer.scss';
+@import './guide/background-position.scss';
 @import './blends.scss';
 @import './property-view.scss';
 @import './filters.scss';

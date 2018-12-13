@@ -56,7 +56,7 @@ export default class UnitRange extends UIElement {
     }
 
     refresh (value = '') {
-        value = value || '' 
+        value = (value || '') + '' 
         var unit = 'px' 
         if (value.includes('%')) {
             unit = 'percent'

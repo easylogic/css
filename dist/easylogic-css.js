@@ -10255,9 +10255,8 @@ var ImageManager = function (_BaseModule) {
         key: '*/image/toBackgroundPositionString',
         value: function imageToBackgroundPositionString($store, image$$1) {
 
-            var x = image$$1.backgroundPositionX || 'center';
-            var y = image$$1.backgroundPositionY || 'center';
-
+            var x = image$$1.backgroundPositionX != null ? image$$1.backgroundPositionX : 'center';
+            var y = image$$1.backgroundPositionY != null ? image$$1.backgroundPositionY : 'center';
             if (typeof x == 'number') {
                 x = x + 'px';
             }
@@ -11457,8 +11456,8 @@ var IMAGE_DEFAULT_OBJECT = {
     backgroundSizeWidth: 0,
     backgroundSizeHeight: 0,
     backgroundOrigin: null,
-    backgroundPositionX: 0,
-    backgroundPositionY: 0,
+    backgroundPositionX: undefined,
+    backgroundPositionY: undefined,
     backgroundBlendMode: 'normal',
     backgroundColor: null,
     backgroundAttachment: null,
@@ -15646,7 +15645,7 @@ var UnitRange = function (_UIElement) {
         value: function refresh() {
             var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-            value = value || '';
+            value = (value || '') + '';
             var unit = 'px';
             if (value.includes('%')) {
                 unit = 'percent';
@@ -18148,6 +18147,253 @@ var LayerToolbar = function (_UIElement) {
     return LayerToolbar;
 }(UIElement);
 
+var BackgroundResizer = function (_UIElement) {
+    inherits(BackgroundResizer, _UIElement);
+
+    function BackgroundResizer() {
+        classCallCheck(this, BackgroundResizer);
+        return possibleConstructorReturn(this, (BackgroundResizer.__proto__ || Object.getPrototypeOf(BackgroundResizer)).apply(this, arguments));
+    }
+
+    createClass(BackgroundResizer, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="background-resizer">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n                <div ref="$backgroundRect" class=\'background-rect\'></div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.refreshUI();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (this.read('/selection/is/image')) return true;
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, position) {
+
+            if (e) {
+                var xy = e.xy;
+
+                return [xy.x, xy.y];
+            }
+
+            return position;
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var minX = this.$el.offsetLeft();
+            var minY = this.$el.offsetTop();
+
+            var maxX = minX + width;
+            var maxY = minY + height;
+
+            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+
+            var item = this.read('/selection/current/image');
+
+            if (!item) return '';
+
+            var x = parseParamNumber$1(item.backgroundPositionX);
+            var y = parseParamNumber$1(item.backgroundPositionY);
+            var width = parseParamNumber$1(item.backgroundSizeWidth);
+            var height = parseParamNumber$1(item.backgroundSizeHeight);
+
+            return { x: x, y: y, width: width, height: height };
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                maxX = _getRectangle.maxX,
+                maxY = _getRectangle.maxY;
+
+            var _getDefaultValue = this.getDefaultValue(),
+                x = _getDefaultValue.x,
+                y = _getDefaultValue.y,
+                width = _getDefaultValue.width,
+                height = _getDefaultValue.height;
+
+            if (e) {
+                var _getCurrentXY = this.getCurrentXY(e),
+                    _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
+                    x = _getCurrentXY2[0],
+                    y = _getCurrentXY2[1];
+
+                x = Math.max(Math.min(maxX, x), minX);
+                y = Math.max(Math.min(maxY, y), minY);
+
+                var left = x - minX;
+                var top = y - minY;
+            } else {
+
+                var left = x;
+                var top = y;
+            }
+
+            left = Math.floor(left);
+            top = Math.floor(top);
+
+            this.refs.$dragPointer.px('left', left);
+            this.refs.$dragPointer.px('top', top);
+            this.refs.$backgroundRect.px('left', left);
+            this.refs.$backgroundRect.px('top', top);
+            this.refs.$backgroundRect.px('width', width);
+            this.refs.$backgroundRect.px('height', height);
+
+            if (e) {
+
+                this.setBackgroundPosition(left, top);
+            }
+        }
+    }, {
+        key: 'setBackgroundPosition',
+        value: function setBackgroundPosition(backgroundPositionX, backgroundPositionY) {
+            var _this2 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+                _this2.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'pointerend document',
+        value: function pointerendDocument(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: 'pointermove document',
+        value: function pointermoveDocument(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: 'pointerstart $dragPointer',
+        value: function pointerstart$dragPointer(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: 'pointerstart $el',
+        value: function pointerstart$el(e) {
+            this.isDown = true;
+            // this.refreshUI(e);        
+        }
+    }]);
+    return BackgroundResizer;
+}(UIElement);
+
+var defined_position = {
+    'to right': {
+        backgroundPositionX: 'right',
+        backgroundPositionY: 'center'
+    },
+    'to left': {
+        backgroundPositionX: 'left',
+        backgroundPositionY: 'center'
+    },
+    'to top': {
+        backgroundPositionX: 'center',
+        backgroundPositionY: 'top'
+    },
+    'to bottom': {
+        backgroundPositionX: 'center',
+        backgroundPositionY: 'bottom'
+    },
+    'to top right': {
+        backgroundPositionX: 'right',
+        backgroundPositionY: 'top'
+    },
+    'to bottom right': {
+        backgroundPositionX: 'right',
+        backgroundPositionY: 'bottom'
+    },
+    'to bottom left': {
+        backgroundPositionX: 'left',
+        backgroundPositionY: 'bottom'
+    },
+    'to top left': {
+        backgroundPositionX: 'left',
+        backgroundPositionY: 'top'
+    }
+};
+
+var PredefinedBackgroundPosition = function (_UIElement) {
+    inherits(PredefinedBackgroundPosition, _UIElement);
+
+    function PredefinedBackgroundPosition() {
+        classCallCheck(this, PredefinedBackgroundPosition);
+        return possibleConstructorReturn(this, (PredefinedBackgroundPosition.__proto__ || Object.getPrototypeOf(PredefinedBackgroundPosition)).apply(this, arguments));
+    }
+
+    createClass(PredefinedBackgroundPosition, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-background-position">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read('/selection/is/image');
+        }
+    }, {
+        key: 'getPosition',
+        value: function getPosition(type) {
+            return defined_position[type] || {
+                backgroundPositionX: '0px',
+                backgroundPositionY: '0px'
+            };
+        }
+    }, {
+        key: 'click $el button | self',
+        value: function click$elButtonSelf(e) {
+            var _this2 = this;
+
+            this.read('/selection/current/image/id', function (id) {
+                var pos = _this2.getPosition(e.$delegateTarget.attr('data-value'));
+                _this2.commit(CHANGE_IMAGE, _extends({ id: id }, pos));
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedBackgroundPosition;
+}(UIElement);
+
 var SubFeatureControl = function (_UIElement) {
     inherits(SubFeatureControl, _UIElement);
 
@@ -18159,7 +18405,7 @@ var SubFeatureControl = function (_UIElement) {
     createClass(SubFeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                        <BackgroundResizer></BackgroundResizer>\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -18169,13 +18415,16 @@ var SubFeatureControl = function (_UIElement) {
                 GradientAngle: GradientAngle,
                 GradientPosition: GradientPosition,
                 PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
-                PredefinedRadialGradientPosition: PredefinedRadialGradientPosition
+                PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
+                BackgroundResizer: BackgroundResizer,
+                PredefinedBackgroundPosition: PredefinedBackgroundPosition
             }, items);
         }
     }, {
         key: "refresh",
         value: function refresh() {
             this.$el.toggle(this.isShow());
+            this.refs.$backgroundSize.toggleClass('hide', this.isNotImage());
             this.refs.$linear.toggleClass('hide', !this.isLinearShow());
             this.refs.$radial.toggleClass('hide', !this.isRadialShow());
         }
@@ -18184,6 +18433,11 @@ var SubFeatureControl = function (_UIElement) {
         value: function isShow() {
             //if (!this.read('/selection/is/image')) return false;         
             return true;
+        }
+    }, {
+        key: "isNotImage",
+        value: function isNotImage() {
+            return this.read('/selection/is/image') == false;
         }
     }, {
         key: "isLinearShow",
@@ -21168,7 +21422,6 @@ var HandleView = function (_GradientView) {
             this.updateSelection();
 
             if (this.read('/selection/is/layer')) {
-
                 var items = this.read('/selection/current');
                 this.run('/item/focus', items[0].id);
             }

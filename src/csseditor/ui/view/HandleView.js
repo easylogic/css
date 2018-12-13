@@ -154,9 +154,8 @@ export default class HandleView extends GradientView {
         this.updateSelection();         
         
         if (this.read('/selection/is/layer')) {
-    
-            var items = this.read('/selection/current');            
-            this.run('/item/focus', items[0].id);                        
+            var items = this.read('/selection/current');
+            this.run('/item/focus', items[0].id);                 
         }
 
 

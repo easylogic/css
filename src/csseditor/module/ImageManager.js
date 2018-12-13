@@ -254,9 +254,8 @@ export default class ImageManager extends BaseModule {
 
     '*/image/toBackgroundPositionString' ($store, image) {
 
-        var x = image.backgroundPositionX || 'center';
-        var y = image.backgroundPositionY || 'center';
-
+        var x = image.backgroundPositionX != null ? image.backgroundPositionX : 'center';
+        var y = image.backgroundPositionY != null ? image.backgroundPositionY : 'center';
         if (typeof x == 'number') {
             x = x + 'px';
         }

@@ -5,6 +5,7 @@ import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
 import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
 import { parseParamNumber } from '../../../util/filter/functions';
+
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER, 
@@ -28,6 +29,7 @@ import {
     EVENT_CHANGE_LAYER_MOVE, 
     EVENT_CHANGE_LAYER_ROTATE
 } from '../../types/event';
+
 
 export default class GradientView extends UIElement {
 
