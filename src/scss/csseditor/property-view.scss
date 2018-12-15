@@ -135,7 +135,7 @@
             padding: 8px 5px !important;
             box-sizing: border-box;
             height: 30px;
-            background-image: linear-gradient(to top, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
+            background-color: #f3f3f3;
             color: #333;
             cursor: pointer;
 
@@ -305,6 +305,7 @@
         @import './property-items/group-align.scss';
         @import './property-items/radius.scss';
         @import './property-items/layer-colorpicker.scss';
+        @import './property-items/box-shadow.scss';
 
     }
 

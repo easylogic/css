@@ -2,6 +2,16 @@ import ImageLoader from '../../util/ImageLoader'
 import BaseModule from "../../colorpicker/BaseModule";
 import { ImageToRGB, palette } from '../../util/functions/image';
 import { get } from '../../util/functions/func';
+import { 
+    IMAGE_ITEM_TYPE_LINEAR, 
+    IMAGE_ITEM_TYPE_REPEATING_LINEAR, 
+    IMAGE_ITEM_TYPE_RADIAL, 
+    IMAGE_ITEM_TYPE_REPEATING_RADIAL, 
+    IMAGE_ITEM_TYPE_CONIC, 
+    IMAGE_ITEM_TYPE_REPEATING_CONIC, 
+    IMAGE_ITEM_TYPE_IMAGE, 
+    IMAGE_ITEM_TYPE_STATIC 
+} from './ItemTypes';
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -116,23 +126,23 @@ export default class ImageManager extends BaseModule {
     }    
 
     '*/image/type/isLinear' ($store, type) {
-        return ['linear', 'repeating-linear'].includes(type)
+        return [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR].includes(type)
     }
 
     '*/image/type/isRadial' ($store, type) {
-        return ['radial', 'repeating-radial'].includes(type)
+        return [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL].includes(type)
     }    
 
     '*/image/type/isConic' ($store, type) {
-        return ['conic', 'repeating-conic'].includes(type)
+        return [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC].includes(type)
     }        
 
     '*/image/type/isImage' ($store, type) {
-        return ['image'].includes(type)
+        return [IMAGE_ITEM_TYPE_IMAGE].includes(type)
     }
 
     '*/image/type/isStatic' ($store, type) {
-        return ['static'].includes(type)
+        return [IMAGE_ITEM_TYPE_STATIC].includes(type)
     }    
 
     '*/image/angle' ($store, angle = '') {
@@ -221,15 +231,15 @@ export default class ImageManager extends BaseModule {
     '*/image/toImageString' ($store, image, isExport = false) {
         var type = image.type
 
-        if (type == 'linear' || type == 'repeating-linear') {
+        if (type == IMAGE_ITEM_TYPE_LINEAR || type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
             return $store.read('/image/toLinear', image, isExport)
-        } else if (type == 'radial' || type == 'repeating-radial') {
+        } else if (type == IMAGE_ITEM_TYPE_RADIAL || type == IMAGE_ITEM_TYPE_REPEATING_RADIAL) {
             return $store.read('/image/toRadial', image, isExport)
-        } else if (type == 'conic' || type == 'repeating-conic' ) {
+        } else if (type == IMAGE_ITEM_TYPE_CONIC || type == IMAGE_ITEM_TYPE_REPEATING_CONIC ) {
             return $store.read('/image/toConic', image, isExport)            
-        } else if (type == 'image' ) {
+        } else if (type == IMAGE_ITEM_TYPE_IMAGE ) {
             return $store.read('/image/toImage', image, isExport)
-        } else if (type == 'static' ) {
+        } else if (type == IMAGE_ITEM_TYPE_STATIC ) {
             return $store.read('/image/toStatic', image, isExport)
         }
     }

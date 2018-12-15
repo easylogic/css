@@ -1,4 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
+import { ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW } from "./ItemTypes";
 
 export default class CollectManager extends BaseModule {
 
@@ -16,12 +17,16 @@ export default class CollectManager extends BaseModule {
         var item = $store.read('/item/get', id);
 
         switch(item.itemType) {
-        case 'page': 
+        case ITEM_TYPE_PAGE: 
             return $store.read('/collect/page/one', id);
-        case 'layer': 
+        case ITEM_TYPE_LAYER: 
             return $store.read('/collect/layer/one', id);
-        case 'image': 
+        case ITEM_TYPE_IMAGE: 
             return $store.read('/collect/image/one', id);
+        case ITEM_TYPE_BOXSHADOW: 
+            return $store.read('/collect/boxshadow/one', id);            
+        case ITEM_TYPE_TEXTSHADOW: 
+            return $store.read('/collect/textshadow/one', id);
         }
 
         return null;
@@ -38,11 +43,39 @@ export default class CollectManager extends BaseModule {
         }
     }
 
+    '*/collect/boxshadow/one' ($store, boxshadowId) {
+        var boxshadow = $store.read('/clone', $store.items[boxshadowId]);
+        delete boxshadow.id;
+        delete boxshadow.parentId;
+
+        return { boxshadow }
+    }    
+
+    '*/collect/textshadow/one' ($store, textshadowId) {
+        var textshadow = $store.read('/clone', $store.items[textshadowId]);
+        delete textshadow.id;
+        delete textshadow.parentId;
+
+        return { textshadow }
+    }        
+
     '*/collect/images' ($store, layerId) {
-        return $store.read('/item/map/children', layerId, (image) => {
+        return $store.read('/item/map/image/children', layerId, (image) => {
             return $store.read('/collect/image/one', image.id)
         })
     }
+
+    '*/collect/boxshadows' ($store, layerId) {
+        return $store.read('/item/map/boxshadow/children', layerId, (image) => {
+            return $store.read('/collect/boxshadow/one', image.id)
+        })
+    }    
+
+    '*/collect/textshadows' ($store, layerId) {
+        return $store.read('/item/map/textshadow/children', layerId, (image) => {
+            return $store.read('/collect/textshadow/one', image.id)
+        })
+    }        
 
     '*/collect/layer/one' ($store, layerId) {
         var results = {} 
@@ -57,7 +90,9 @@ export default class CollectManager extends BaseModule {
 
         return {
             layer,
-            images: $store.read('/collect/images', layerId)
+            images: $store.read('/collect/images', layerId),
+            boxshadows: $store.read('/collect/boxshadows', layerId),
+            textshadows: $store.read('/collect/textshadows', layerId)
         }
     }
 

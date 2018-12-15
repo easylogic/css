@@ -3,6 +3,10 @@
     flex-direction: column;
     height: 350px;
 
+    &.xd {
+        height: 260px;
+    }
+
     .color-tab-header {
         flex: none; 
         display: flex; 
@@ -29,6 +33,7 @@
     .color-tab-body {
         flex: 1 1 auto; 
         position: relative;
+        border: 1px solid #ececec;
 
         .color-tab-content {
             display: none;

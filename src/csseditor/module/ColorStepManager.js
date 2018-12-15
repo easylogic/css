@@ -2,12 +2,13 @@ import BaseModule from "../../colorpicker/BaseModule";
 import Color from "../../util/Color";
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
 import { CHANGE_EDITOR } from "../types/event";
+import { ITEM_TYPE_COLORSTEP } from "./ItemTypes";
 
 const isUndefined = (value) => {
     return typeof value == 'undefined' || value == null;
 }
 
-const INIT_COLOR_SOURCE = 'colorstep'
+const INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP
 
 export default class ColorStepManager extends BaseModule {
 

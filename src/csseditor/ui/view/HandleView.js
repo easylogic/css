@@ -1,7 +1,7 @@
-import { ITEM_TYPE_PAGE } from '../../module/SelectionManager';
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
 import { CHANGE_SELECTION } from '../../types/event';
+import { ITEM_TYPE_PAGE } from '../../module/ItemTypes';
 
 
 export default class HandleView extends GradientView {

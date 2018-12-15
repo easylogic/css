@@ -2,6 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { parseParamNumber } from "../../util/filter/functions";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
+import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
 const filterInfo = {
 
     'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: 'px', defaultValue: 0 },
@@ -218,13 +219,40 @@ export default class LayerManager extends BaseModule {
         return $store.read('/css/generate', $store.read('/image/toCSS', image));
     }    
 
-    '*/layer/make/box-shadow' ($store, layer) {
-        var results = $store.read('/item/map/boxshadow/children', layer.id).map(it => {
-            return `${it.inset ? 'inset' : ''} ${it.offsetX}px ${it.offsetY}px ${it.blurRadius}px ${it.spreadRadius}px ${it.color}`
+    '*/layer/make/map' ($store, layer, itemType, isExport) {
+        var results = {}
+        $store.read(`/item/map/${itemType}/children`, layer.id, (item)  => {
+            var css = $store.read(`/${itemType}/toCSS`, item, isExport);
+
+            Object.keys(css).forEach(key => {
+                if (!results[key]) {
+                    results[key] = [] 
+                }
+
+                results[key].push(css[key]);
+            })
         })
 
-        return results.join(', ');
+        Object.keys(results).forEach(key => {
+            if (Array.isArray(results[key])) {
+                results[key] = results[key].join(', ')
+            }
+        })
+
+        return results;
     }
+
+    '*/layer/make/box-shadow' ($store, layer, isExport) {
+        return $store.read('/layer/make/map', layer, ITEM_TYPE_BOXSHADOW, isExport);
+    }
+
+    '*/layer/make/image' ($store, layer, isExport) {
+        return $store.read('/layer/make/map', layer, ITEM_TYPE_IMAGE, isExport);
+    }    
+
+    '*/layer/make/text-shadow' ($store, layer, isExport) {
+        return $store.read('/layer/make/map', layer, ITEM_TYPE_TEXTSHADOW, isExport);
+    }    
 
     '*/layer/make/transform' ($store, layer) {
 
@@ -361,12 +389,13 @@ s
         Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
         css['transform'] = $store.read('/layer/make/transform', layer)
-        css['box-shadow'] = $store.read('/layer/make/box-shadow', layer)
         css['filter'] = $store.read('/layer/make/filter', layer.filters);
         css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
         var results = Object.assign(css, 
-             (image) ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/toImageCSS', layer, isExport)
+            $store.read('/layer/make/box-shadow', layer),
+            $store.read('/layer/make/text-shadow', layer),
+            (image) ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport)
         )
 
         var realCSS = {}

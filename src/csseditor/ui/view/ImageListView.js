@@ -35,7 +35,7 @@ export default class ImageListView extends UIElement {
             return '';
         }
 
-        return this.read('/item/map/children', id, (item) => {
+        return this.read('/item/map/image/children', id, (item) => {
             return this.makeItemNodeImage(item)
         })
     }

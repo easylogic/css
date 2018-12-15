@@ -1,5 +1,6 @@
 import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
+import { ITEM_TYPE_LAYER, ITEM_TYPE_CIRCLE } from '../../module/ItemTypes';
 
 export default class ToolMenu extends UIElement {
 
@@ -52,14 +53,14 @@ export default class ToolMenu extends UIElement {
 
     'click $addLayer' (e) {
         this.read('/selection/current/page', (page) => {
-            this.dispatch('/item/add', 'layer', true, page.id)
+            this.dispatch('/item/add', ITEM_TYPE_LAYER, true, page.id)
             this.dispatch('/history/push', 'Add a layer');
         });
     }
 
     'click $addLayerCircle' (e) {
         this.read('/selection/current/page', (page) => {
-            this.dispatch('/item/add', 'circle', true, page.id)
+            this.dispatch('/item/add', ITEM_TYPE_CIRCLE, true, page.id)
             this.dispatch('/history/push', 'Add a layer');
         });
     }

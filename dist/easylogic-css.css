@@ -102,6 +102,8 @@
         -ms-flex-direction: column;
             flex-direction: column;
     height: 350px; }
+    .codemirror-colorpicker .colorpicker-body .color-tab.xd {
+      height: 260px; }
     .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header {
       -webkit-box-flex: 0;
           -ms-flex: none;
@@ -133,7 +135,8 @@
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
               flex: 1 1 auto;
-      position: relative; }
+      position: relative;
+      border: 1px solid #ececec; }
       .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-body .color-tab-content {
         display: none;
         position: absolute;
@@ -1064,6 +1067,70 @@
                 transform: translateX(-50%) translateY(-50%); }
     .codemirror-colorpicker.xd .information {
       margin-top: 5px; }
+  .codemirror-colorpicker.xd-tab .color-panel {
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 6px;
+    width: 170px;
+    height: 170px;
+    vertical-align: middle;
+    border-radius: 3px;
+    overflow: hidden;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    border: 1px solid #cecece; }
+    .codemirror-colorpicker.xd-tab .color-panel > .saturation > .value > .drag-pointer {
+      border: 2px solid white;
+      width: 7px;
+      height: 7px;
+      -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
+              box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black; }
+  .codemirror-colorpicker.xd-tab .control {
+    height: 170px;
+    padding: 0px;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 12px;
+    margin-top: 10px; }
+    .codemirror-colorpicker.xd-tab .control .hue, .codemirror-colorpicker.xd-tab .control .opacity {
+      margin: 0px;
+      padding: 0px;
+      width: 13px;
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      border-radius: 3px;
+      margin-left: 8px; }
+    .codemirror-colorpicker.xd-tab .control .hue > .hue-container {
+      border-radius: 0px;
+      overflow: hidden;
+      height: 100%;
+      background: -webkit-gradient(linear, left bottom, left top, from(#ff0000), color-stop(17%, #ffff00), color-stop(33%, #00ff00), color-stop(50%, #00ffff), color-stop(67%, #0000ff), color-stop(83%, #ff00ff), to(#ff0000));
+      background: linear-gradient(to top, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); }
+    .codemirror-colorpicker.xd-tab .control .opacity > .opacity-container {
+      border-radius: 0px;
+      overflow: hidden;
+      height: 100%; }
+    .codemirror-colorpicker.xd-tab .control .drag-bar, .codemirror-colorpicker.xd-tab .control .drag-bar2 {
+      border: 0px;
+      background-color: transparent;
+      border: 2px solid white;
+      -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
+              box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
+      width: 10px;
+      height: 10px;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      -webkit-transform: none;
+              transform: none;
+      overflow: hidden;
+      left: 50%;
+      -webkit-transform: translateX(-50%) translateY(-50%);
+              transform: translateX(-50%) translateY(-50%); }
+  .codemirror-colorpicker.xd-tab .information {
+    margin-top: 5px; }
 
 .colorsets-contextmenu {
   position: fixed;
@@ -4315,8 +4382,7 @@ html, body {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         height: 30px;
-        background-image: -webkit-gradient(linear, left bottom, left top, from(#e0e0e0), color-stop(50%, #ffffff), to(#e0e0e0));
-        background-image: linear-gradient(to top, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
+        background-color: #f3f3f3;
         color: #333;
         cursor: pointer; }
         .csseditor .property-view .property-item > .title > span button {
@@ -4890,6 +4956,55 @@ html, body {
           margin-bottom: 0px; }
         .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .colorsets {
           display: none; }
+      .csseditor .property-view .property-item.box-shadow .box-shadow-list {
+        display: block; }
+        .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item {
+          margin-top: 2px;
+          padding: 2px 0px; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.checked {
+            background-color: #f1f1f1; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item .color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            cursor: pointer;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item .select {
+            width: 40px;
+            vertical-align: middle;
+            text-align: center; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item button {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            background-color: transparent;
+            border: 0px;
+            text-align: center;
+            font-weight: 500; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label label input[type='checkbox'] {
+            visibility: hidden; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label .color, .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label button {
+            visibility: hidden; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label .select label {
+            font-size: 14px;
+            color: #ccc;
+            padding: 5px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            height: 100%;
+            vertical-align: middle;
+            display: inline-block;
+            margin-top: 2px; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label .input input {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            border: 0px;
+            background-color: transparent;
+            color: #ccc;
+            pointer-events: none;
+            text-align: center; }
     .csseditor .property-view .gradient-view {
       height: 230px;
       width: 100%; }

@@ -2,103 +2,53 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { uuid } from "../../util/functions/math";
 import Dom from "../../util/Dom";
 import { CHANGE_EDITOR } from "../types/event";
+import { 
+    PAGE_DEFAULT_OBJECT, 
+    LAYER_DEFAULT_OBJECT, 
+    CIRCLE_DEFAULT_OBJECT, 
+    GROUP_DEFAULT_OBJECT, 
+    BOXSHADOW_DEFAULT_OBJECT, 
+    IMAGE_DEFAULT_OBJECT, 
+    COLORSTEP_DEFAULT_OBJECT,
+    FILTER_DEFAULT_OBJECT,
+    BACKDROPFILTER_DEFAULT_OBJECT,
+    TEXTSHADOW_DEFAULT_OBJECT,
+    ITEM_TYPE_IMAGE,
+    ITEM_TYPE_COLORSTEP,
+    ITEM_TYPE_BOXSHADOW,
+    ITEM_TYPE_TEXTSHADOW,
+    ITEM_TYPE_FILTER,
+    ITEM_TYPE_BACKDROP_FILTER,
+    ITEM_TYPE_PAGE,
+    ITEM_TYPE_LAYER,
+    IMAGE_ITEM_TYPE_LINEAR,
+    IMAGE_ITEM_TYPE_RADIAL,
+    IMAGE_ITEM_TYPE_CONIC,
+    IMAGE_ITEM_TYPE_REPEATING_LINEAR,
+    IMAGE_ITEM_TYPE_REPEATING_RADIAL,
+    IMAGE_ITEM_TYPE_REPEATING_CONIC,
+    IMAGE_ITEM_TYPE_STATIC,
+    IMAGE_ITEM_TYPE_IMAGE
+} from "./ItemTypes";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
 const NONE_INDEX = -99999;
 
-const PAGE_DEFAULT_OBJECT = {
-    itemType: 'page',
-    name: '',
-    parentId: '',
-    index: 0,
-    width: '400px',
-    height: '300px'
-}
-
-
-const LAYER_DEFAULT_OBJECT = {
-    itemType: 'layer',
-    name: '',
-    index: 0,    
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    parentId: '',
-    mixBlendMode: 'normal',
-    selected: true,
-    visible: true,
-    clipPathSvg: '',
-    clipPathWidth: '',
-    clipPathHeight: '',
-    fitClipPathSize: false,
-    x: '0px',
-    y: '0px',
-    width: '200px',
-    height: '200px',
-    rotate: 0,
-    opacity: 1,
-    filters: []
-}
-
-const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    borderRadius: '100px',
-    fixedRadius: true
-})
-
-const GROUP_DEFAULT_OBJECT = {
-    itemType: 'group',
-    name: '',
-    index: 0,    
-    parentId: '',
-    selected: true,
-    visible: true,
-    x: '0px',
-    y: '0px'
-}
-
-const IMAGE_DEFAULT_OBJECT = {
-    itemType: 'image',
-    type: 'static',
-    fileType: '',       // select file type as imagefile,  png, gif, jpg, svg if type is image 
-    index: 0,    
-    parentId: '',    
-    angle: 90,
-    color: 'red',
-    radialType: 'ellipse',
-    radialPosition: 'center',
-    visible: true,
-    isClipPath: false, 
-    backgroundRepeat: null,
-    backgroundSize: null,
-    backgroundSizeWidth: 0,
-    backgroundSizeHeight: 0,
-    backgroundOrigin: null, 
-    backgroundPositionX: undefined,
-    backgroundPositionY: undefined,
-    backgroundBlendMode: 'normal',
-    backgroundColor: null,
-    backgroundAttachment: null,
-    backgroundClip: null
-}
-
-const BOXSHADOW_DEFAULT_OBJECT = {
-    offsetX: 0,
-    offsetY: 0,
-    inset: false,
-    blurRadius: 0,
-    spreadRadius: 0,
-    color: 'transparent'
-}
-
-const COLORSTEP_DEFAULT_OBJECT = {
-    itemType: 'colorstep',
-    parentId: '',
-    percent: 0,
-    color: 'rgba(0, 0, 0, 0)'
-}
-
-const gradientTypeList = ['linear', 'radial', 'conic']
-const repeatingGradientTypeList = ['repeating-linear', 'repeating-radial', 'repeating-conic']
-const conicList = ['conic', 'repeating-conic']
+const gradientTypeList = [
+    IMAGE_ITEM_TYPE_LINEAR,
+    IMAGE_ITEM_TYPE_RADIAL,
+    IMAGE_ITEM_TYPE_CONIC
+]
+const repeatingGradientTypeList = [
+    IMAGE_ITEM_TYPE_REPEATING_LINEAR,
+    IMAGE_ITEM_TYPE_REPEATING_RADIAL,
+    IMAGE_ITEM_TYPE_REPEATING_CONIC
+]
+const conicList = [
+    IMAGE_ITEM_TYPE_CONIC,
+    IMAGE_ITEM_TYPE_REPEATING_CONIC
+]
 
 
 const itemField = {
@@ -206,14 +156,26 @@ export default class ItemManager extends BaseModule {
     '*/item/create/boxshadow' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
     }
+
+    '*/item/create/textshadow' ($store, obj = {}) {
+        return $store.read('/item/create/object', obj, TEXTSHADOW_DEFAULT_OBJECT);
+    }    
+
+    '*/item/create/filter' ($store, obj = {}) {
+        return $store.read('/item/create/object', obj, FILTER_DEFAULT_OBJECT);
+    }    
+
+    '*/item/create/backdrop-filter' ($store, obj = {}) {
+        return $store.read('/item/create/object', obj, BACKDROPFILTER_DEFAULT_OBJECT);
+    }        
     
     '*/item/create/image' ($store, obj = {}) {
 
         var imageId = $store.read('/item/create/object', obj, IMAGE_DEFAULT_OBJECT);
 
-        if (obj.type == 'static') {
+        if (obj.type == IMAGE_ITEM_TYPE_STATIC) {
  
-        } else if (obj.type == 'image') {
+        } else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {
 
         } else if (gradientTypeList.includes(obj.type)) {
 
@@ -342,17 +304,29 @@ export default class ItemManager extends BaseModule {
         });
     }        
 
-    '*/item/map/image/children' ($store, parentId, callback = ((item) => iteem)) {
-        return $store.read('/item/map/type/children', parentId, 'image', callback);
+    '*/item/map/image/children' ($store, parentId, callback = ((item) => item)) {
+        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_IMAGE, callback);
     }
 
-    '*/item/map/colorstep/children' ($store, parentId, callback = ((item) => iteem)) {
-        return $store.read('/item/map/type/children', parentId, 'colorstep', callback);
+    '*/item/map/colorstep/children' ($store, parentId, callback = ((item) => item)) {
+        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_COLORSTEP, callback);
     }    
 
-    '*/item/map/boxshadow/children' ($store, parentId, callback = ((item) => iteem)) {
-        return $store.read('/item/map/type/children', parentId, 'boxshadow', callback);
+    '*/item/map/boxshadow/children' ($store, parentId, callback = ((item) => item)) {
+        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BOXSHADOW, callback);
     }    
+
+    '*/item/map/textshadow/children' ($store, parentId, callback = ((item) => item)) {
+        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW, callback);
+    }        
+
+    '*/item/map/filter/children' ($store, parentId, callback = ((item) => item)) {
+        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_FILTER, callback);
+    }        
+    
+    '*/item/map/backdrop-filter/children' ($store, parentId, callback = ((item) => item)) {
+        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BACKDROP_FILTER, callback);
+    }            
 
     '*/item/filter/children' ($store, parentId, callback) {
         return $store.read('/item/list/children', parentId).filter(function (id, index) { 
@@ -465,9 +439,10 @@ export default class ItemManager extends BaseModule {
         if (id) {
 
             var item = $store.read('/item/get', id);
+            var itemType = item.itemType; 
 
             if (item.parentId) {
-                var list = $store.read('/item/list/children', item.parentId);
+                var list = $store.read('/item/list/children', item.parentId, itemType);
             } else {
                 var list = $store.read('/item/list/page');
             }
@@ -480,6 +455,7 @@ export default class ItemManager extends BaseModule {
                     break;
                 }
             }
+
 
             if (nextSelectedId) {
                 $store.run('/selection/one', nextSelectedId)
@@ -591,7 +567,7 @@ export default class ItemManager extends BaseModule {
     '/item/add/image/file' ($store, img, isSelected = false, parentId = '', index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read('/item/create/image');
         var item = $store.read('/item/get', id);
-        item.type = 'image'; 
+        item.type = ITEM_TYPE_IMAGE; 
         item.parentId = parentId; 
         item.index = index;
         item.colors = img.colors;         
@@ -606,7 +582,7 @@ export default class ItemManager extends BaseModule {
 
     '/item/set/image/file' ($store, id, img) {
         var item = $store.read('/item/get', id);
-        item.type = 'image'; 
+        item.type = ITEM_TYPE_IMAGE; 
         item.colors = img.colors;         
         item.fileType = img.fileType || 'svg';
         if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg; 
@@ -625,7 +601,7 @@ export default class ItemManager extends BaseModule {
     '/item/add/image/url' ($store, img, isSelected = false, parentId = '', index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read('/item/create/image');
         var item = $store.read('/item/get', id);
-        item.type = 'image'; 
+        item.type = ITEM_TYPE_IMAGE; 
         item.parentId = parentId; 
         item.index = index;
         item.colors = img.colors;         
@@ -638,9 +614,9 @@ export default class ItemManager extends BaseModule {
     }         
 
     '/item/add/page' ($store, isSelected = false) {
-        var pageId = $store.read('/item/create', 'page');        
-        var layerId = $store.read('/item/create', 'layer');
-        var imageId = $store.read('/item/create', 'image');
+        var pageId = $store.read('/item/create', ITEM_TYPE_PAGE);        
+        var layerId = $store.read('/item/create', ITEM_TYPE_LAYER);
+        var imageId = $store.read('/item/create', ITEM_TYPE_IMAGE);
 
         // 페이지 생성 
         var page = $store.read('/item/get', pageId);
@@ -686,6 +662,10 @@ export default class ItemManager extends BaseModule {
             return $store.read('/item/recover/layer', item, parentId);
         } else if (item.image) {
             return $store.read('/item/recover/image', item, parentId);            
+        } else if (item.boxshadow) {
+            return $store.read('/item/recover/boxshadow', item, parentId);                        
+        } else if (item.textshadow) {
+            return $store.read('/item/recover/textshadow', item, parentId);                                    
         }
     }
 
@@ -698,12 +678,28 @@ export default class ItemManager extends BaseModule {
         return newImageId;
     }
 
+    '*/item/recover/boxshadow' ($store, boxshadow, parentId) {
+        return $store.read('/item/create/object', Object.assign({parentId}, boxshadow.boxshadow));
+    }    
+
+    '*/item/recover/textshadow' ($store, textshadow, parentId) {
+        return $store.read('/item/create/object', Object.assign({parentId}, textshadow.textshadow));
+    }        
+
     '*/item/recover/layer' ($store, layer, parentId) {
         var newLayerId = $store.read('/item/create/object', 
             Object.assign({parentId}, convertStyle(layer.layer))
         );
         layer.images.forEach(image => {
             $store.read('/item/recover/image', image, newLayerId);
+        })
+
+        layer.boxshadows.forEach(boxshadow => {
+            $store.read('/item/recover/boxshadow', boxshadow, newLayerId);
+        })
+
+        layer.textshadows.forEach(textshadow => {
+            $store.read('/item/recover/textshadow', textshadow, newLayerId);
         })
 
         return newLayerId;
@@ -811,9 +807,10 @@ export default class ItemManager extends BaseModule {
 
     '/item/sort' ($store, id) {
         var item = $store.read('/item/get', id);
+        var itemType = item.itemType; 
 
         if (item.parentId) {
-            var list = $store.read('/item/list/children', item.parentId);
+            var list = $store.read('/item/list/children', item.parentId, itemType);
         } else {
             var list = $store.read('/item/list/page');
         }

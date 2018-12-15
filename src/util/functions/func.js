@@ -2,13 +2,13 @@ export function debounce (callback, delay) {
 
     var t = undefined;
 
-    return function (cm, e) {
+    return function (...args) {
         if (t) {
             clearTimeout(t);
         }
 
         t = setTimeout(function () {
-            callback(cm, e);
+            callback(...args);
         }, delay || 300);
     }
 }

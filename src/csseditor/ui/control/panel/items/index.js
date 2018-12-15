@@ -30,10 +30,12 @@ import Opacity from "./opacity";
 import ClipPathImageResource from "./ClipPathImageResource";
 import BoxShadow from "./BoxShadow";
 import TextShadow from "./TextShadow";
+import FillColorPickerPanel from "./FillColorPickerPanel";
 
 
 
 export default {
+    FillColorPickerPanel,
     TextShadow,
     BoxShadow,
     ClipPathImageResource,

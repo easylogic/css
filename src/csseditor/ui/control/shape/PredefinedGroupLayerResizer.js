@@ -329,7 +329,6 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             this.layerCenterX = rect.left + rect.width/2;
             this.layerCenterY = rect.top + rect.height/2;
         }
-
         this.xy = e.xy;
         this.rectItems = this.read('/selection/current').map(it => {
             return {

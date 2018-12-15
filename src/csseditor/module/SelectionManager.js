@@ -1,6 +1,15 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_SELECTION } from "../types/event";
 import { parseParamNumber } from "../../util/filter/functions";
+import { 
+    ITEM_TYPE_IMAGE, 
+    ITEM_TYPE_LAYER, 
+    ITEM_TYPE_BOXSHADOW, 
+    ITEM_TYPE_FILTER, 
+    ITEM_TYPE_TEXTSHADOW, 
+    ITEM_TYPE_BACKDROP_FILTER, 
+    ITEM_TYPE_PAGE 
+} from "./ItemTypes";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -11,10 +20,6 @@ export const EDITOR_MODE_IMAGE_LINEAR = 'image-linear';
 export const EDITOR_MODE_IMAGE_RADIAL = 'image-radial'; 
 export const EDITOR_MODE_IMAGE_STATIC = 'image-static'; 
 export const EDITOR_MODE_IMAGE_IMAGE = 'image-image'; 
-
-export const ITEM_TYPE_PAGE = 'page';
-export const ITEM_TYPE_LAYER = 'layer';
-export const ITEM_TYPE_IMAGE = 'image';
 
 export const SELECT_MODE_ONE = `SELECT_MODE_ONE`
 export const SELECT_MODE_AREA = `SELECT_MODE_AREA`
@@ -91,53 +96,81 @@ export default class SelectionManager extends BaseModule {
         return $store.selection.ids.map(id => $store.items[id])
     }
 
-    '*/selection/current/image' ($store, callback) {
-        var images = null
+    getCurrentItem ($store, itemType, callback) {
+        var items = null
 
-        if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
-            var images = $store.read('/selection/current')
+        if ($store.selection.itemType == itemType) {
+            var items = $store.read('/selection/current')
         }
 
-        if (Array.isArray(images) && images.length) {
+        if (Array.isArray(items) && items.length) {
             if ($store.read('/selection/is/one')) {
-                if (typeof callback == 'function') callback (images[0])
-                return images[0]
+                if (typeof callback == 'function') callback (items[0])
+                return items[0]
             } else {
-                if (typeof callback == 'function') callback (images)
-                return images
+                if (typeof callback == 'function') callback (items)
+                return items
             }    
             
         }
 
-        return images;
+        return items;
     }
 
-    '*/selection/current/image/id' ($store, callback) {
-        var images = null
+    getCurrentItemId ($store, itemType, callback) {
+        var items = null
 
-        if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
-            var images = $store.read('/selection/current')
+        if ($store.selection.itemType == itemType) {
+            var items = $store.read('/selection/current')
         }
 
-        if (Array.isArray(images) && images.length) {
+        if (Array.isArray(items) && items.length) {
             if ($store.read('/selection/is/one') ) {
-                if (typeof callback == 'function') callback (images[0].id)
-                return images[0].id
+                if (typeof callback == 'function') callback (items[0].id)
+                return items[0].id
             } else {
-                if (typeof callback == 'function') callback (images.map(it => it.id))
-                return images.map(it => it.id)
+                if (typeof callback == 'function') callback (items.map(it => it.id))
+                return items.map(it => it.id)
             }   
         }
 
-        return images;
+        return items;
+    }
+
+    '*/selection/current/image' ($store, callback) {
+        return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
+    }
+
+    '*/selection/current/image/id' ($store, callback) {
+        return this.getCurrentItemId($store, ITEM_TYPE_IMAGE, callback);
     }   
+
+    '*/selection/current/boxshadow' ($store, callback) {
+        return this.getCurrentItem($store, ITEM_TYPE_BOXSHADOW, callback);
+    }
+
+    '*/selection/current/boxshadow/id' ($store, callback) {
+        return this.getCurrentItemId($store, ITEM_TYPE_BOXSHADOW, callback);
+    }       
+
+    '*/selection/current/textshadow' ($store, callback) {
+        return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW, callback);
+    }
+
+    '*/selection/current/textshadow/id' ($store, callback) {
+        return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW, callback);
+    }       
 
     '*/selection/current/layer' ($store, callback) {
         var layers = null
 
         if ($store.selection.itemType == ITEM_TYPE_LAYER) {
             var layers = $store.read('/selection/current')
-        } else if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
+        } else if (
+            $store.selection.itemType == ITEM_TYPE_IMAGE 
+            || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
+            || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
+        ) {
             var layers = $store.read('/selection/current').map(item => $store.items[item.parentId]) 
         }
         if (Array.isArray(layers) && layers.length) {
@@ -158,7 +191,10 @@ export default class SelectionManager extends BaseModule {
 
         if ($store.selection.itemType == ITEM_TYPE_LAYER) {
             var layers = $store.read('/selection/current')
-        } else if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
+        } else if (
+                $store.selection.itemType == ITEM_TYPE_IMAGE 
+                || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
+        ) {
             var layers = $store.read('/selection/current').map(item => $store.items[item.parentId]) 
         }
 
@@ -237,8 +273,20 @@ export default class SelectionManager extends BaseModule {
     }                
 
     '*/selection/is/boxshadow' ($store, type) {
-        return $store.read('/selection/is/item', 'boxshadow');
+        return $store.read('/selection/is/item', ITEM_TYPE_BOXSHADOW);
     }                    
+
+    '*/selection/is/textshadow' ($store, type) {
+        return $store.read('/selection/is/item', ITEM_TYPE_TEXTSHADOW);
+    }                    
+    
+    '*/selection/is/filter' ($store, type) {
+        return $store.read('/selection/is/item', ITEM_TYPE_FILTER);
+    }                    
+    
+    '*/selection/is/backdrop-filter' ($store, type) {
+        return $store.read('/selection/is/item', ITEM_TYPE_BACKDROP_FILTER);
+    }                        
 
     '*/selection/is/one' ($store) {
         return $store.read('/selection/is', SELECT_MODE_ONE)

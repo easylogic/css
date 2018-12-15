@@ -28,7 +28,9 @@ import {
     EVENT_CHANGE_PAGE, 
     EVENT_CHANGE_LAYER_MOVE, 
     EVENT_CHANGE_LAYER_ROTATE,
-    EVENT_CHANGE_LAYER_OPACITY
+    EVENT_CHANGE_LAYER_OPACITY,
+    EVENT_CHANGE_BOXSHADOW,
+    EVENT_CHANGE_TEXTSHADOW
 } from '../../types/event';
 
 
@@ -118,6 +120,20 @@ export default class GradientView extends UIElement {
         })
     }
 
+    refreshLayerPosition () {
+        this.read('/selection/current/layer', (items) => {
+
+            if (!items.length) {
+                items = [items]
+            }
+            
+            items.forEach(item => {
+                var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
+                $el.cssText(this.read('/layer/toString', item, true))
+            })
+        })
+    }    
+
     makePageCSS (page) {
         return {
             overflow: page.clip ? 'hidden' : '',
@@ -184,18 +200,23 @@ export default class GradientView extends UIElement {
         EVENT_CHANGE_PAGE
     )] () { this.setBackgroundColor(); }
 
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_MOVE,        
+    )] () {
+        this.refreshLayerPosition();
+    }
+
     // indivisual layer effect 
     [MULTI_EVENT(
         EVENT_CHANGE_LAYER,
         EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
         EVENT_CHANGE_LAYER_CLIPPATH,
         EVENT_CHANGE_LAYER_FILTER,
-        EVENT_CHANGE_LAYER_POSITION,
         EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_LAYER_SIZE,
         EVENT_CHANGE_LAYER_ROTATE,
         EVENT_CHANGE_LAYER_OPACITY,
-        EVENT_CHANGE_LAYER_MOVE,
         EVENT_CHANGE_LAYER_TRANSFORM,
         EVENT_CHANGE_LAYER_TRANSFORM_3D,
         EVENT_CHANGE_IMAGE,
@@ -204,7 +225,9 @@ export default class GradientView extends UIElement {
         EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
         EVENT_CHANGE_IMAGE_RADIAL_POSITION,
         EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        EVENT_CHANGE_COLOR_STEP
+        EVENT_CHANGE_COLOR_STEP,
+        EVENT_CHANGE_BOXSHADOW,
+        EVENT_CHANGE_TEXTSHADOW
     )]() { 
         this.refreshLayer(); 
     }

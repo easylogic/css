@@ -24,9 +24,10 @@ export default class LayerTabView extends BaseTab {
                     <LayerColorPickerPanel></LayerColorPickerPanel>
                 </div>
                 <div class="tab-content" data-id="fill">
-                    <FilterList></FilterList>
+                    <FillColorPickerPanel></FillColorPickerPanel>
                     <BoxShadow></BoxShadow>
                     <TextShadow></TextShadow>
+                    <FilterList></FilterList>                    
                 </div>                
                 <div class="tab-content" data-id="shape">
                     <ClipPath></ClipPath>   

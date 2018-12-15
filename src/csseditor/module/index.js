@@ -16,8 +16,12 @@ import HistoryManager from "./HistoryManager";
 import SelectionManager from "./SelectionManager";
 import OrderingManager from "./OrderingManager";
 import MatrixManager from "./MatrixManager";
+import BoxShadowManager from "./BoxShadowManager";
+import TextShadowManager from "./TextShadowManager";
 
 export default [  
+    TextShadowManager,
+    BoxShadowManager,
     MatrixManager,
     OrderingManager,
     SelectionManager,

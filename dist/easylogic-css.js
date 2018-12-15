@@ -153,7 +153,7 @@ function caculateAngle(rx, ry) {
 
 function uuid() {
     var dt = new Date().getTime();
-    var uuid = 'xxxxzxxx-xxxx-45xxx'.replace(/[xy]/g, function (c) {
+    var uuid = 'xxx12-xx-34xx'.replace(/[xy]/g, function (c) {
         var r = (dt + Math.random() * 16) % 16 | 0;
         dt = Math.floor(dt / 16);
         return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
@@ -5735,13 +5735,17 @@ function debounce(callback, delay) {
 
     var t = undefined;
 
-    return function (cm, e) {
+    return function () {
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
         if (t) {
             clearTimeout(t);
         }
 
         t = setTimeout(function () {
-            callback(cm, e);
+            callback.apply(undefined, args);
         }, delay || 300);
     };
 }
@@ -9603,6 +9607,50 @@ var RingTabColorPicker = function (_BaseColorPicker) {
     return RingTabColorPicker;
 }(BaseColorPicker);
 
+var XDTabColorPicker = function (_BaseColorPicker) {
+    inherits(XDTabColorPicker, _BaseColorPicker);
+
+    function XDTabColorPicker() {
+        classCallCheck(this, XDTabColorPicker);
+        return possibleConstructorReturn(this, (XDTabColorPicker.__proto__ || Object.getPrototypeOf(XDTabColorPicker)).apply(this, arguments));
+    }
+
+    createClass(XDTabColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color">Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette></palette> \n                            <div class="control">\n                                <Hue></Hue>\n                                <Opacity></Opacity>\n                            </div>\n                            <information></information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+        }
+    }, {
+        key: 'click $tabHeader .color-tab-item',
+        value: function click$tabHeaderColorTabItem(e) {
+            if (!e.$delegateTarget.hasClass('active')) {
+                var selectedItem = this.refs.$tabHeader.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                e.$delegateTarget.addClass('active');
+
+                var selectedItem = this.refs.$tabBody.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                var activeItem = this.refs.$tabBody.$('[item-id=\'' + e.$delegateTarget.attr('item-id') + '\']');
+                if (activeItem) activeItem.addClass('active');
+            }
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Hue: VerticalHue,
+                Opacity: VerticalOpacity,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return XDTabColorPicker;
+}(BaseColorPicker);
+
 var ColorPicker = {
     create: function create(opts) {
         switch (opts.type) {
@@ -9610,6 +9658,8 @@ var ColorPicker = {
                 return new MacOSColorPicker(opts);
             case 'xd':
                 return new XDColorPicker(opts);
+            case 'xd-tab':
+                return new XDTabColorPicker(opts);
             case 'ring':
                 return new RingColorPicker(opts);
             case 'ring-tab':
@@ -9663,6 +9713,9 @@ var CHANGE_IMAGE_RADIAL_POSITION = 'CHANGE_IMAGE_RADIAL_POSITION';
 var CHANGE_IMAGE_RADIAL_TYPE = 'CHANGE_IMAGE_RADIAL_TYPE';
 var CHANGE_IMAGE_LINEAR_ANGLE = 'CHANGE_IMAGE_LINEAR_ANGLE';
 
+var CHANGE_BOXSHADOW = 'CHANGE_BOXSHADOW';
+var CHANGE_TEXTSHADOW = 'CHANGE_TEXTSHADOW';
+
 var CHANGE_COLOR_STEP = 'CHANGE_COLOR_STEP';
 var ADD_COLOR_STEP = 'ADD_COLOR_STEP';
 var REMOVE_COLOR_STEP = 'REMOVE_COLOR_STEP';
@@ -9696,13 +9749,145 @@ var EVENT_CHANGE_IMAGE_RADIAL_POSITION = '@' + CHANGE_IMAGE_RADIAL_POSITION;
 var EVENT_CHANGE_IMAGE_RADIAL_TYPE = '@' + CHANGE_IMAGE_RADIAL_TYPE;
 var EVENT_CHANGE_IMAGE_LINEAR_ANGLE = '@' + CHANGE_IMAGE_LINEAR_ANGLE;
 
+var EVENT_CHANGE_BOXSHADOW = '@' + CHANGE_BOXSHADOW;
+var EVENT_CHANGE_TEXTSHADOW = '@' + CHANGE_TEXTSHADOW;
+
 var EVENT_CHANGE_COLOR_STEP = '@' + CHANGE_COLOR_STEP;
+
+var ITEM_TYPE_PAGE = 'page';
+var ITEM_TYPE_LAYER = 'layer';
+var ITEM_TYPE_CIRCLE = 'circle';
+var ITEM_TYPE_GROUP = 'group';
+var ITEM_TYPE_IMAGE = 'image';
+var ITEM_TYPE_FILTER = 'filter';
+var ITEM_TYPE_BACKDROP_FILTER = 'backdrop-filter';
+var ITEM_TYPE_BOXSHADOW = 'boxshadow';
+var ITEM_TYPE_TEXTSHADOW$1 = 'textshadow';
+var ITEM_TYPE_COLORSTEP = 'colorstep';
+
+var PAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_PAGE,
+    name: '',
+    parentId: '',
+    index: 0,
+    width: '400px',
+    height: '300px'
+};
+
+var LAYER_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_LAYER,
+    name: '',
+    index: 0,
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    parentId: '',
+    mixBlendMode: 'normal',
+    selected: true,
+    visible: true,
+    clipPathSvg: '',
+    clipPathWidth: '',
+    clipPathHeight: '',
+    fitClipPathSize: false,
+    x: '0px',
+    y: '0px',
+    width: '200px',
+    height: '200px',
+    rotate: 0,
+    opacity: 1,
+    filters: []
+};
+
+var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+    borderRadius: '100px',
+    fixedRadius: true
+});
+
+var GROUP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_GROUP,
+    name: '',
+    index: 0,
+    parentId: '',
+    selected: true,
+    visible: true,
+    x: '0px',
+    y: '0px'
+};
+
+var IMAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_IMAGE,
+    type: 'static',
+    fileType: '', // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    index: 0,
+    parentId: '',
+    angle: 90,
+    color: 'red',
+    radialType: 'ellipse',
+    radialPosition: 'center',
+    visible: true,
+    isClipPath: false,
+    backgroundRepeat: null,
+    backgroundSize: null,
+    backgroundSizeWidth: 0,
+    backgroundSizeHeight: 0,
+    backgroundOrigin: null,
+    backgroundPositionX: undefined,
+    backgroundPositionY: undefined,
+    backgroundBlendMode: 'normal',
+    backgroundColor: null,
+    backgroundAttachment: null,
+    backgroundClip: null
+};
+
+var BOXSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_BOXSHADOW,
+    offsetX: 0,
+    offsetY: 0,
+    inset: false,
+    blurRadius: 0,
+    spreadRadius: 0,
+    color: 'gray'
+};
+
+var FILTER_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_FILTER,
+    type: 'blur',
+    value: 0
+};
+
+var BACKDROPFILTER_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_BACKDROP_FILTER,
+    type: 'blur',
+    value: 0
+};
+
+var TEXTSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TEXTSHADOW$1,
+    offsetX: 0,
+    offsetY: 0,
+    blurRadius: 0,
+    color: 'gray'
+};
+
+var COLORSTEP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_COLORSTEP,
+    parentId: '',
+    percent: 0,
+    color: 'rgba(0, 0, 0, 0)'
+};
+
+var IMAGE_ITEM_TYPE_LINEAR = 'linear';
+var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
+var IMAGE_ITEM_TYPE_RADIAL = 'radial';
+var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
+var IMAGE_ITEM_TYPE_CONIC = 'conic';
+var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
+var IMAGE_ITEM_TYPE_STATIC = 'static';
+var IMAGE_ITEM_TYPE_IMAGE = 'image';
 
 var isUndefined$1 = function isUndefined(value) {
     return typeof value == 'undefined' || value == null;
 };
 
-var INIT_COLOR_SOURCE = 'colorstep';
+var INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP;
 
 var ColorStepManager = function (_BaseModule) {
     inherits(ColorStepManager, _BaseModule);
@@ -10099,27 +10284,27 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/type/isLinear',
         value: function imageTypeIsLinear($store, type) {
-            return ['linear', 'repeating-linear'].includes(type);
+            return [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR].includes(type);
         }
     }, {
         key: '*/image/type/isRadial',
         value: function imageTypeIsRadial($store, type) {
-            return ['radial', 'repeating-radial'].includes(type);
+            return [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL].includes(type);
         }
     }, {
         key: '*/image/type/isConic',
         value: function imageTypeIsConic($store, type) {
-            return ['conic', 'repeating-conic'].includes(type);
+            return [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC].includes(type);
         }
     }, {
         key: '*/image/type/isImage',
         value: function imageTypeIsImage($store, type) {
-            return ['image'].includes(type);
+            return [IMAGE_ITEM_TYPE_IMAGE].includes(type);
         }
     }, {
         key: '*/image/type/isStatic',
         value: function imageTypeIsStatic($store, type) {
-            return ['static'].includes(type);
+            return [IMAGE_ITEM_TYPE_STATIC].includes(type);
         }
     }, {
         key: '*/image/angle',
@@ -10226,15 +10411,15 @@ var ImageManager = function (_BaseModule) {
 
             var type = image$$1.type;
 
-            if (type == 'linear' || type == 'repeating-linear') {
+            if (type == IMAGE_ITEM_TYPE_LINEAR || type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
                 return $store.read('/image/toLinear', image$$1, isExport);
-            } else if (type == 'radial' || type == 'repeating-radial') {
+            } else if (type == IMAGE_ITEM_TYPE_RADIAL || type == IMAGE_ITEM_TYPE_REPEATING_RADIAL) {
                 return $store.read('/image/toRadial', image$$1, isExport);
-            } else if (type == 'conic' || type == 'repeating-conic') {
+            } else if (type == IMAGE_ITEM_TYPE_CONIC || type == IMAGE_ITEM_TYPE_REPEATING_CONIC) {
                 return $store.read('/image/toConic', image$$1, isExport);
-            } else if (type == 'image') {
+            } else if (type == IMAGE_ITEM_TYPE_IMAGE) {
                 return $store.read('/image/toImage', image$$1, isExport);
-            } else if (type == 'static') {
+            } else if (type == IMAGE_ITEM_TYPE_STATIC) {
                 return $store.read('/image/toStatic', image$$1, isExport);
             }
         }
@@ -10742,13 +10927,43 @@ var LayerManager = function (_BaseModule) {
             return $store.read('/css/generate', $store.read('/image/toCSS', image));
         }
     }, {
-        key: '*/layer/make/box-shadow',
-        value: function layerMakeBoxShadow($store, layer) {
-            var results = $store.read('/item/map/boxshadow/children', layer.id).map(function (it) {
-                return (it.inset ? 'inset' : '') + " " + it.offsetX + "px " + it.offsetY + "px " + it.blurRadius + "px " + it.spreadRadius + "px " + it.color;
+        key: '*/layer/make/map',
+        value: function layerMakeMap($store, layer, itemType, isExport) {
+            var results = {};
+            $store.read("/item/map/" + itemType + "/children", layer.id, function (item) {
+                var css = $store.read("/" + itemType + "/toCSS", item, isExport);
+
+                Object.keys(css).forEach(function (key) {
+                    if (!results[key]) {
+                        results[key] = [];
+                    }
+
+                    results[key].push(css[key]);
+                });
             });
 
-            return results.join(', ');
+            Object.keys(results).forEach(function (key) {
+                if (Array.isArray(results[key])) {
+                    results[key] = results[key].join(', ');
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: '*/layer/make/box-shadow',
+        value: function layerMakeBoxShadow($store, layer, isExport) {
+            return $store.read('/layer/make/map', layer, ITEM_TYPE_BOXSHADOW, isExport);
+        }
+    }, {
+        key: '*/layer/make/image',
+        value: function layerMakeImage($store, layer, isExport) {
+            return $store.read('/layer/make/map', layer, ITEM_TYPE_IMAGE, isExport);
+        }
+    }, {
+        key: '*/layer/make/text-shadow',
+        value: function layerMakeTextShadow($store, layer, isExport) {
+            return $store.read('/layer/make/map', layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
         }
     }, {
         key: '*/layer/make/transform',
@@ -10893,11 +11108,10 @@ var LayerManager = function (_BaseModule) {
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
             css['transform'] = $store.read('/layer/make/transform', layer);
-            css['box-shadow'] = $store.read('/layer/make/box-shadow', layer);
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
             css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
-            var results = Object.assign(css, image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/toImageCSS', layer, isExport));
+            var results = Object.assign(css, $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport));
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -11379,97 +11593,9 @@ var INDEX_DIST = 100;
 var COPY_INDEX_DIST = 1;
 var NONE_INDEX = -99999;
 
-var PAGE_DEFAULT_OBJECT = {
-    itemType: 'page',
-    name: '',
-    parentId: '',
-    index: 0,
-    width: '400px',
-    height: '300px'
-};
-
-var LAYER_DEFAULT_OBJECT = {
-    itemType: 'layer',
-    name: '',
-    index: 0,
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    parentId: '',
-    mixBlendMode: 'normal',
-    selected: true,
-    visible: true,
-    clipPathSvg: '',
-    clipPathWidth: '',
-    clipPathHeight: '',
-    fitClipPathSize: false,
-    x: '0px',
-    y: '0px',
-    width: '200px',
-    height: '200px',
-    rotate: 0,
-    opacity: 1,
-    filters: []
-};
-
-var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    borderRadius: '100px',
-    fixedRadius: true
-});
-
-var GROUP_DEFAULT_OBJECT = {
-    itemType: 'group',
-    name: '',
-    index: 0,
-    parentId: '',
-    selected: true,
-    visible: true,
-    x: '0px',
-    y: '0px'
-};
-
-var IMAGE_DEFAULT_OBJECT = {
-    itemType: 'image',
-    type: 'static',
-    fileType: '', // select file type as imagefile,  png, gif, jpg, svg if type is image 
-    index: 0,
-    parentId: '',
-    angle: 90,
-    color: 'red',
-    radialType: 'ellipse',
-    radialPosition: 'center',
-    visible: true,
-    isClipPath: false,
-    backgroundRepeat: null,
-    backgroundSize: null,
-    backgroundSizeWidth: 0,
-    backgroundSizeHeight: 0,
-    backgroundOrigin: null,
-    backgroundPositionX: undefined,
-    backgroundPositionY: undefined,
-    backgroundBlendMode: 'normal',
-    backgroundColor: null,
-    backgroundAttachment: null,
-    backgroundClip: null
-};
-
-var BOXSHADOW_DEFAULT_OBJECT = {
-    offsetX: 0,
-    offsetY: 0,
-    inset: false,
-    blurRadius: 0,
-    spreadRadius: 0,
-    color: 'transparent'
-};
-
-var COLORSTEP_DEFAULT_OBJECT = {
-    itemType: 'colorstep',
-    parentId: '',
-    percent: 0,
-    color: 'rgba(0, 0, 0, 0)'
-};
-
-var gradientTypeList = ['linear', 'radial', 'conic'];
-var repeatingGradientTypeList = ['repeating-linear', 'repeating-radial', 'repeating-conic'];
-var conicList = ['conic', 'repeating-conic'];
+var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
+var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 
 var itemField = {
     'mix-blend-mode': 'mixBlendMode',
@@ -11608,6 +11734,27 @@ var ItemManager = function (_BaseModule) {
             return $store.read('/item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
         }
     }, {
+        key: '*/item/create/textshadow',
+        value: function itemCreateTextshadow($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('/item/create/object', obj, TEXTSHADOW_DEFAULT_OBJECT);
+        }
+    }, {
+        key: '*/item/create/filter',
+        value: function itemCreateFilter($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('/item/create/object', obj, FILTER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: '*/item/create/backdrop-filter',
+        value: function itemCreateBackdropFilter($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('/item/create/object', obj, BACKDROPFILTER_DEFAULT_OBJECT);
+        }
+    }, {
         key: '*/item/create/image',
         value: function itemCreateImage($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -11615,7 +11762,7 @@ var ItemManager = function (_BaseModule) {
 
             var imageId = $store.read('/item/create/object', obj, IMAGE_DEFAULT_OBJECT);
 
-            if (obj.type == 'static') {} else if (obj.type == 'image') {} else if (gradientTypeList.includes(obj.type)) {
+            if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
 
                 if (conicList.includes(obj.type)) {
                     $store.items[imageId].angle = 0;
@@ -11775,28 +11922,55 @@ var ItemManager = function (_BaseModule) {
         key: '*/item/map/image/children',
         value: function itemMapImageChildren($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return iteem;
+                return item;
             };
 
-            return $store.read('/item/map/type/children', parentId, 'image', callback);
+            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_IMAGE, callback);
         }
     }, {
         key: '*/item/map/colorstep/children',
         value: function itemMapColorstepChildren($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return iteem;
+                return item;
             };
 
-            return $store.read('/item/map/type/children', parentId, 'colorstep', callback);
+            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_COLORSTEP, callback);
         }
     }, {
         key: '*/item/map/boxshadow/children',
         value: function itemMapBoxshadowChildren($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return iteem;
+                return item;
             };
 
-            return $store.read('/item/map/type/children', parentId, 'boxshadow', callback);
+            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BOXSHADOW, callback);
+        }
+    }, {
+        key: '*/item/map/textshadow/children',
+        value: function itemMapTextshadowChildren($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
+                return item;
+            };
+
+            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
+        }
+    }, {
+        key: '*/item/map/filter/children',
+        value: function itemMapFilterChildren($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
+                return item;
+            };
+
+            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_FILTER, callback);
+        }
+    }, {
+        key: '*/item/map/backdrop-filter/children',
+        value: function itemMapBackdropFilterChildren($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
+                return item;
+            };
+
+            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BACKDROP_FILTER, callback);
         }
     }, {
         key: '*/item/filter/children',
@@ -11925,9 +12099,10 @@ var ItemManager = function (_BaseModule) {
             if (id) {
 
                 var item = $store.read('/item/get', id);
+                var itemType = item.itemType;
 
                 if (item.parentId) {
-                    var list = $store.read('/item/list/children', item.parentId);
+                    var list = $store.read('/item/list/children', item.parentId, itemType);
                 } else {
                     var list = $store.read('/item/list/page');
                 }
@@ -12084,7 +12259,7 @@ var ItemManager = function (_BaseModule) {
 
             var id = $store.read('/item/create/image');
             var item = $store.read('/item/get', id);
-            item.type = 'image';
+            item.type = ITEM_TYPE_IMAGE;
             item.parentId = parentId;
             item.index = index;
             item.colors = img.colors;
@@ -12100,7 +12275,7 @@ var ItemManager = function (_BaseModule) {
         key: '/item/set/image/file',
         value: function itemSetImageFile($store, id, img) {
             var item = $store.read('/item/get', id);
-            item.type = 'image';
+            item.type = ITEM_TYPE_IMAGE;
             item.colors = img.colors;
             item.fileType = img.fileType || 'svg';
             if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
@@ -12128,7 +12303,7 @@ var ItemManager = function (_BaseModule) {
 
             var id = $store.read('/item/create/image');
             var item = $store.read('/item/get', id);
-            item.type = 'image';
+            item.type = ITEM_TYPE_IMAGE;
             item.parentId = parentId;
             item.index = index;
             item.colors = img.colors;
@@ -12144,9 +12319,9 @@ var ItemManager = function (_BaseModule) {
         value: function itemAddPage($store) {
             var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-            var pageId = $store.read('/item/create', 'page');
-            var layerId = $store.read('/item/create', 'layer');
-            var imageId = $store.read('/item/create', 'image');
+            var pageId = $store.read('/item/create', ITEM_TYPE_PAGE);
+            var layerId = $store.read('/item/create', ITEM_TYPE_LAYER);
+            var imageId = $store.read('/item/create', ITEM_TYPE_IMAGE);
 
             // 페이지 생성 
             var page = $store.read('/item/get', pageId);
@@ -12190,6 +12365,10 @@ var ItemManager = function (_BaseModule) {
                 return $store.read('/item/recover/layer', item, parentId);
             } else if (item.image) {
                 return $store.read('/item/recover/image', item, parentId);
+            } else if (item.boxshadow) {
+                return $store.read('/item/recover/boxshadow', item, parentId);
+            } else if (item.textshadow) {
+                return $store.read('/item/recover/textshadow', item, parentId);
             }
         }
     }, {
@@ -12203,11 +12382,29 @@ var ItemManager = function (_BaseModule) {
             return newImageId;
         }
     }, {
+        key: '*/item/recover/boxshadow',
+        value: function itemRecoverBoxshadow($store, boxshadow, parentId) {
+            return $store.read('/item/create/object', Object.assign({ parentId: parentId }, boxshadow.boxshadow));
+        }
+    }, {
+        key: '*/item/recover/textshadow',
+        value: function itemRecoverTextshadow($store, textshadow, parentId) {
+            return $store.read('/item/create/object', Object.assign({ parentId: parentId }, textshadow.textshadow));
+        }
+    }, {
         key: '*/item/recover/layer',
         value: function itemRecoverLayer($store, layer, parentId) {
             var newLayerId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, convertStyle(layer.layer)));
             layer.images.forEach(function (image) {
                 $store.read('/item/recover/image', image, newLayerId);
+            });
+
+            layer.boxshadows.forEach(function (boxshadow) {
+                $store.read('/item/recover/boxshadow', boxshadow, newLayerId);
+            });
+
+            layer.textshadows.forEach(function (textshadow) {
+                $store.read('/item/recover/textshadow', textshadow, newLayerId);
             });
 
             return newLayerId;
@@ -12320,9 +12517,10 @@ var ItemManager = function (_BaseModule) {
         key: '/item/sort',
         value: function itemSort($store, id) {
             var item = $store.read('/item/get', id);
+            var itemType = item.itemType;
 
             if (item.parentId) {
-                var list = $store.read('/item/list/children', item.parentId);
+                var list = $store.read('/item/list/children', item.parentId, itemType);
             } else {
                 var list = $store.read('/item/list/page');
             }
@@ -13129,12 +13327,16 @@ var CollectManager = function (_BaseModule) {
             var item = $store.read('/item/get', id);
 
             switch (item.itemType) {
-                case 'page':
+                case ITEM_TYPE_PAGE:
                     return $store.read('/collect/page/one', id);
-                case 'layer':
+                case ITEM_TYPE_LAYER:
                     return $store.read('/collect/layer/one', id);
-                case 'image':
+                case ITEM_TYPE_IMAGE:
                     return $store.read('/collect/image/one', id);
+                case ITEM_TYPE_BOXSHADOW:
+                    return $store.read('/collect/boxshadow/one', id);
+                case ITEM_TYPE_TEXTSHADOW:
+                    return $store.read('/collect/textshadow/one', id);
             }
 
             return null;
@@ -13152,10 +13354,42 @@ var CollectManager = function (_BaseModule) {
             };
         }
     }, {
+        key: '*/collect/boxshadow/one',
+        value: function collectBoxshadowOne($store, boxshadowId) {
+            var boxshadow = $store.read('/clone', $store.items[boxshadowId]);
+            delete boxshadow.id;
+            delete boxshadow.parentId;
+
+            return { boxshadow: boxshadow };
+        }
+    }, {
+        key: '*/collect/textshadow/one',
+        value: function collectTextshadowOne($store, textshadowId) {
+            var textshadow = $store.read('/clone', $store.items[textshadowId]);
+            delete textshadow.id;
+            delete textshadow.parentId;
+
+            return { textshadow: textshadow };
+        }
+    }, {
         key: '*/collect/images',
         value: function collectImages($store, layerId) {
-            return $store.read('/item/map/children', layerId, function (image) {
+            return $store.read('/item/map/image/children', layerId, function (image) {
                 return $store.read('/collect/image/one', image.id);
+            });
+        }
+    }, {
+        key: '*/collect/boxshadows',
+        value: function collectBoxshadows($store, layerId) {
+            return $store.read('/item/map/boxshadow/children', layerId, function (image) {
+                return $store.read('/collect/boxshadow/one', image.id);
+            });
+        }
+    }, {
+        key: '*/collect/textshadows',
+        value: function collectTextshadows($store, layerId) {
+            return $store.read('/item/map/textshadow/children', layerId, function (image) {
+                return $store.read('/collect/textshadow/one', image.id);
             });
         }
     }, {
@@ -13173,7 +13407,9 @@ var CollectManager = function (_BaseModule) {
 
             return {
                 layer: layer,
-                images: $store.read('/collect/images', layerId)
+                images: $store.read('/collect/images', layerId),
+                boxshadows: $store.read('/collect/boxshadows', layerId),
+                textshadows: $store.read('/collect/textshadows', layerId)
             };
         }
     }, {
@@ -13265,10 +13501,6 @@ var PageManager = function (_BaseModule) {
     }]);
     return PageManager;
 }(BaseModule);
-
-var ITEM_TYPE_PAGE = 'page';
-var ITEM_TYPE_LAYER = 'layer';
-var ITEM_TYPE_IMAGE = 'image';
 
 var SELECT_MODE_ONE = "SELECT_MODE_ONE";
 var SELECT_MODE_AREA = "SELECT_MODE_AREA";
@@ -13377,50 +13609,80 @@ var SelectionManager = function (_BaseModule) {
             });
         }
     }, {
-        key: '*/selection/current/image',
-        value: function selectionCurrentImage($store, callback) {
-            var images = null;
+        key: "getCurrentItem",
+        value: function getCurrentItem($store, itemType, callback) {
+            var items = null;
 
-            if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
-                var images = $store.read('/selection/current');
+            if ($store.selection.itemType == itemType) {
+                var items = $store.read('/selection/current');
             }
 
-            if (Array.isArray(images) && images.length) {
+            if (Array.isArray(items) && items.length) {
                 if ($store.read('/selection/is/one')) {
-                    if (typeof callback == 'function') callback(images[0]);
-                    return images[0];
+                    if (typeof callback == 'function') callback(items[0]);
+                    return items[0];
                 } else {
-                    if (typeof callback == 'function') callback(images);
-                    return images;
+                    if (typeof callback == 'function') callback(items);
+                    return items;
                 }
             }
 
-            return images;
+            return items;
         }
     }, {
-        key: '*/selection/current/image/id',
-        value: function selectionCurrentImageId($store, callback) {
-            var images = null;
+        key: "getCurrentItemId",
+        value: function getCurrentItemId($store, itemType, callback) {
+            var items = null;
 
-            if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
-                var images = $store.read('/selection/current');
+            if ($store.selection.itemType == itemType) {
+                var items = $store.read('/selection/current');
             }
 
-            if (Array.isArray(images) && images.length) {
+            if (Array.isArray(items) && items.length) {
                 if ($store.read('/selection/is/one')) {
-                    if (typeof callback == 'function') callback(images[0].id);
-                    return images[0].id;
+                    if (typeof callback == 'function') callback(items[0].id);
+                    return items[0].id;
                 } else {
-                    if (typeof callback == 'function') callback(images.map(function (it) {
+                    if (typeof callback == 'function') callback(items.map(function (it) {
                         return it.id;
                     }));
-                    return images.map(function (it) {
+                    return items.map(function (it) {
                         return it.id;
                     });
                 }
             }
 
-            return images;
+            return items;
+        }
+    }, {
+        key: '*/selection/current/image',
+        value: function selectionCurrentImage($store, callback) {
+            return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
+        }
+    }, {
+        key: '*/selection/current/image/id',
+        value: function selectionCurrentImageId($store, callback) {
+            return this.getCurrentItemId($store, ITEM_TYPE_IMAGE, callback);
+        }
+    }, {
+        key: '*/selection/current/boxshadow',
+        value: function selectionCurrentBoxshadow($store, callback) {
+            return this.getCurrentItem($store, ITEM_TYPE_BOXSHADOW, callback);
+        }
+    }, {
+        key: '*/selection/current/boxshadow/id',
+        value: function selectionCurrentBoxshadowId($store, callback) {
+            return this.getCurrentItemId($store, ITEM_TYPE_BOXSHADOW, callback);
+        }
+    }, {
+        key: '*/selection/current/textshadow',
+        value: function selectionCurrentTextshadow($store, callback) {
+            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+        }
+    }, {
+        key: '*/selection/current/textshadow/id',
+        value: function selectionCurrentTextshadowId($store, callback) {
+            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW$1, callback);
         }
     }, {
         key: '*/selection/current/layer',
@@ -13429,7 +13691,7 @@ var SelectionManager = function (_BaseModule) {
 
             if ($store.selection.itemType == ITEM_TYPE_LAYER) {
                 var layers = $store.read('/selection/current');
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
+            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
                 var layers = $store.read('/selection/current').map(function (item) {
                     return $store.items[item.parentId];
                 });
@@ -13453,7 +13715,7 @@ var SelectionManager = function (_BaseModule) {
 
             if ($store.selection.itemType == ITEM_TYPE_LAYER) {
                 var layers = $store.read('/selection/current');
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE) {
+            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW) {
                 var layers = $store.read('/selection/current').map(function (item) {
                     return $store.items[item.parentId];
                 });
@@ -13545,7 +13807,22 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: '*/selection/is/boxshadow',
         value: function selectionIsBoxshadow($store, type) {
-            return $store.read('/selection/is/item', 'boxshadow');
+            return $store.read('/selection/is/item', ITEM_TYPE_BOXSHADOW);
+        }
+    }, {
+        key: '*/selection/is/textshadow',
+        value: function selectionIsTextshadow($store, type) {
+            return $store.read('/selection/is/item', ITEM_TYPE_TEXTSHADOW$1);
+        }
+    }, {
+        key: '*/selection/is/filter',
+        value: function selectionIsFilter($store, type) {
+            return $store.read('/selection/is/item', ITEM_TYPE_FILTER);
+        }
+    }, {
+        key: '*/selection/is/backdrop-filter',
+        value: function selectionIsBackdropFilter($store, type) {
+            return $store.read('/selection/is/item', ITEM_TYPE_BACKDROP_FILTER);
         }
     }, {
         key: '*/selection/is/one',
@@ -13974,7 +14251,149 @@ var MatrixManager = function (_BaseModule) {
     return MatrixManager;
 }(BaseModule);
 
-var ModuleList = [MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var BoxShadowManager = function (_BaseModule) {
+    inherits(BoxShadowManager, _BaseModule);
+
+    function BoxShadowManager() {
+        classCallCheck(this, BoxShadowManager);
+        return possibleConstructorReturn(this, (BoxShadowManager.__proto__ || Object.getPrototypeOf(BoxShadowManager)).apply(this, arguments));
+    }
+
+    createClass(BoxShadowManager, [{
+        key: '*/boxshadow/toCSS',
+        value: function boxshadowToCSS($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var boxshadow = $store.read('/boxshadow/toBoxShadowString', item, isExport);
+
+            if (boxshadow) {
+                results['box-shadow'] = boxshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: '*/boxshadow/cache/toCSS',
+        value: function boxshadowCacheToCSS($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var results = {};
+            var boxshadow = $store.read('/boxshadow/toBoxShadowString', item, isExport);
+
+            if (boxshadow) {
+                results['box-shadow'] = boxshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: '*/boxshadow/toString',
+        value: function boxshadowToString($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+
+            var obj = $store.read('/boxshadow/toCSS', image);
+
+            return Object.keys(obj).map(function (key) {
+                return key + ': ' + obj[key] + ';';
+            }).join(' ');
+        }
+    }, {
+        key: '*/boxshadow/toBoxShadowString',
+        value: function boxshadowToBoxShadowString($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+            if (!item) return '';
+
+            var results = [''];
+
+            if (item.inset) {
+                results[0] = 'inset';
+            }
+
+            results.push(item.offsetX || '0px', item.offsetY || '0px', item.blurRadius || '0px', item.spreadRadius || '0px', item.color);
+
+            return results.join(' ');
+        }
+    }]);
+    return BoxShadowManager;
+}(BaseModule);
+
+var TextShadowManager = function (_BaseModule) {
+    inherits(TextShadowManager, _BaseModule);
+
+    function TextShadowManager() {
+        classCallCheck(this, TextShadowManager);
+        return possibleConstructorReturn(this, (TextShadowManager.__proto__ || Object.getPrototypeOf(TextShadowManager)).apply(this, arguments));
+    }
+
+    createClass(TextShadowManager, [{
+        key: '*/textshadow/toCSS',
+        value: function textshadowToCSS($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var textshadow = $store.read('/textshadow/totextShadowString', item, isExport);
+
+            if (textshadow) {
+                results['text-shadow'] = textshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: '*/textshadow/cache/toCSS',
+        value: function textshadowCacheToCSS($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var results = {};
+            var textshadow = $store.read('/textshadow/toTextShadowString', item, isExport);
+
+            if (textshadow) {
+                results['text-shadow'] = textshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: '*/textshadow/toString',
+        value: function textshadowToString($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+
+            var obj = $store.read('/textshadow/toCSS', image);
+
+            return Object.keys(obj).map(function (key) {
+                return key + ': ' + obj[key] + ';';
+            }).join(' ');
+        }
+    }, {
+        key: '*/textshadow/toTextShadowString',
+        value: function textshadowToTextShadowString($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+            if (!item) return '';
+
+            results = [];
+
+            results.push(item.offsetX || '0px', item.offsetY || '0px', item.blurRadius || '0px', item.color);
+
+            return results.join(' ');
+        }
+    }]);
+    return TextShadowManager;
+}(BaseModule);
+
+var ModuleList = [TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -17275,67 +17694,129 @@ var BoxShadow = function (_BasePropertyItem) {
     createClass(BoxShadow, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item box-shadow\'>\n            <div class=\'title\' ref="$title">\n                Box Shadow \n                <span style="float:right;">\n                    <button type="button">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="box-shadow-list" ref="$boxShadowList"></div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item box-shadow show\'>\n            <div class=\'title\' ref="$title">\n                Box Shadow \n                <span style="float:right;">\n                    <button type="button" ref="$add">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="box-shadow-list" ref="$boxShadowList"></div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'makeField',
+        value: function makeField() {
+            return '\n        <div class=\'box-shadow-item label\'>  \n                <div class="color"></div>\n                <div class="select">\n                    <label>Inset</label>\n                </div>                      \n                <div class="input">\n                    <input class="x" type="text" value="X" />\n                </div>                \n                <div class="input">\n                    <input class="y" type="text" value="Y" />\n                </div>\n                <div class="input">\n                    <input class="blur" type="text" value="B" />\n                </div>\n                <div class="input">\n                    <input class="spread" type="text" value="S" />\n                </div>  \n                <button type="button">X</button>                                              \n            </div>\n    ';
         }
     }, {
         key: 'makeItemNodeBoxShadow',
         value: function makeItemNodeBoxShadow(item) {
-            return '\n            <div class=\'box-shadow-item\' box-shadow-id="' + item.id + '">\n                <label><input type="checkbox" /></label>\n                <div class="color" style="background-color: ' + item.color + ';"></div>\n                <div class="input">\n                    <input class="x" type="number" min="0" max="100" value="' + item.x + '" /> <span class="unit">px</span>\n                </div>\n                <div class="input">\n                    <input class="y" type="number" min="0" max="100" value="' + item.y + '" /> <span class="unit">px</span>\n                </div>\n                <div class="input">\n                    <input class="blur" type="number" min="0" max="100" value="' + item.blur + '" /> <span class="unit">px</span>\n                </div>\n                <div class="input">\n                    <input class="spread" type="number" min="0" max="100" value="' + item.spread + '" /> <span class="unit">px</span>\n                </div>                                                \n            </div>\n        ';
+
+            var offsetX = parseParamNumber$1(item.offsetX);
+            var offsetY = parseParamNumber$1(item.offsetY);
+            var blurRadius = parseParamNumber$1(item.blurRadius);
+            var spreadRadius = parseParamNumber$1(item.spreadRadius);
+
+            var checked = this.read('/selection/check', item.id) ? 'checked' : '';
+
+            return '\n            <div class=\'box-shadow-item ' + checked + '\' box-shadow-id="' + item.id + '">  \n                <div class="color" style="background-color: ' + item.color + ';"></div>\n                <div class="select">\n                    <label><input type="checkbox" ' + (item.inset ? 'checked="checked"' : '') + '/></label>\n                </div>                          \n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                </div>                \n\n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'spreadRadius\' value="' + spreadRadius + '" />\n                </div>  \n                <button type="button" class=\'delete-boxshadow\'>&times;</button>                                                                                                            \n            </div>\n        ';
         }
     }, {
         key: 'load $boxShadowList',
         value: function load$boxShadowList() {
             var _this2 = this;
 
-            var list = this.read('/blend/list');
-
             var item = this.read('/selection/current/layer');
             if (!item) {
                 return '';
             }
 
-            return this.read('/item/map/image/children', item.id, function (item) {
+            var results = this.read('/item/map/boxshadow/children', item.id, function (item) {
                 return _this2.makeItemNodeBoxShadow(item);
             });
+
+            results.push(this.makeField());
+
+            return results;
         }
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('/selection/is/image');
+            return true;
+            // return this.read('/selection/is/layer'); 
         }
     }, {
         key: 'refresh',
         value: function refresh() {
-            var _this3 = this;
 
             var isShow = this.isShow();
 
             this.$el.toggle(isShow);
 
-            this.read('/selection/current/image', function (image) {
-                _this3.refs.$desc.text(image.backgroundBlendMode || 'normal');
-            });
-
-            if (isShow && this.$el.hasClass('show')) {
+            if (isShow) {
                 this.load();
             }
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_SELECTION),
+        key: EVENT_CHANGE_BOXSHADOW,
+        value: function value(newValue) {
+            this.refreshBoxShadow(newValue);
+        }
+    }, {
+        key: 'refreshBoxShadow',
+        value: function refreshBoxShadow(newValue) {
+            var $el = this.refs.$boxShadowList.$('[box-shadow-id="' + newValue.id + '"] .color');
+            if ($el) {
+                $el.css('background-color', newValue.color);
+            }
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_EDITOR),
         value: function value() {
             if (this.isPropertyShow()) {
                 this.refresh();
             }
         }
     }, {
-        key: 'click $blendList .blend-item | self',
-        value: function click$blendListBlendItemSelf(e) {
-            var _this4 = this;
+        key: 'click $add',
+        value: function click$add(e) {
+            var _this3 = this;
 
-            this.read('/selection/current/image/id', function (id) {
-                _this4.commit(CHANGE_IMAGE, { id: id, backgroundBlendMode: e.$delegateTarget.attr('data-mode') }, true);
-                _this4.refresh();
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.dispatch('/item/add', ITEM_TYPE_BOXSHADOW, false, id);
+                _this3.dispatch('/history/push', 'Add Box Shadow');
+                _this3.refresh();
             });
+        }
+    }, {
+        key: 'input $boxShadowList input[type=number]',
+        value: function input$boxShadowListInputTypeNumber(e) {
+            var $el = e.$delegateTarget;
+            var field = $el.attr('data-type');
+            var id = $el.parent().parent().attr('box-shadow-id');
+
+            this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, $el.val() + 'px'));
+        }
+    }, {
+        key: 'click $boxShadowList input[type=checkbox]',
+        value: function click$boxShadowListInputTypeCheckbox(e) {
+            var $el = e.$delegateTarget;
+            var id = $el.parent().parent().parent().attr('box-shadow-id');
+
+            this.commit(CHANGE_BOXSHADOW, { id: id, inset: $el.el.checked });
+        }
+    }, {
+        key: 'click $boxShadowList .delete-boxshadow',
+        value: function click$boxShadowListDeleteBoxshadow(e) {
+            var $el = e.$delegateTarget;
+            var id = $el.parent().attr('box-shadow-id');
+
+            this.run('/item/initialize', id);
+            this.emit(CHANGE_BOXSHADOW);
+            this.refresh();
+        }
+    }, {
+        key: 'click $boxShadowList .color',
+        value: function click$boxShadowListColor(e) {
+            var $el = e.$delegateTarget;
+            var id = $el.parent().attr('box-shadow-id');
+
+            this.dispatch('/selection/one', id);
+            this.emit('fillColorId', id);
+            this.refresh();
         }
     }]);
     return BoxShadow;
@@ -17418,7 +17899,94 @@ var TextShadow = function (_BasePropertyItem) {
     return TextShadow;
 }(BasePropertyItem);
 
+var FillColorPicker = function (_UIElement) {
+    inherits(FillColorPicker, _UIElement);
+
+    function FillColorPicker() {
+        classCallCheck(this, FillColorPicker);
+        return possibleConstructorReturn(this, (FillColorPicker.__proto__ || Object.getPrototypeOf(FillColorPicker)).apply(this, arguments));
+    }
+
+    createClass(FillColorPicker, [{
+        key: 'afterRender',
+        value: function afterRender() {
+            var _this2 = this;
+
+            var defaultColor = 'rgba(0, 0, 0, 0)';
+
+            this.colorPicker = ColorPicker.create({
+                type: 'xd-tab',
+                position: 'inline',
+                container: this.$el.el,
+                color: defaultColor,
+                onChange: function onChange(c) {
+                    _this2.changeColor(c);
+                }
+            });
+
+            setTimeout(function () {
+                _this2.colorPicker.dispatch('/initColor', defaultColor);
+            }, 100);
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '<div class=\'colorpicker-layer\'> </div>';
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor(color) {
+            if (this.changeColorId) {
+                this.commit(CHANGE_BOXSHADOW, { id: this.changeColorId, color: color });
+            }
+        }
+    }, {
+        key: '@fillColorId',
+        value: function fillColorId(id) {
+            this.changeColorId = id;
+            this.refresh();
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            if (this.changeColorId) {
+                var item = this.read('/item/get', this.changeColorId);
+                this.colorPicker.initColorWithoutChangeEvent(item.color);
+            }
+        }
+    }]);
+    return FillColorPicker;
+}(UIElement);
+
+var FillColorPickerPanel = function (_UIElement) {
+    inherits(FillColorPickerPanel, _UIElement);
+
+    function FillColorPickerPanel() {
+        classCallCheck(this, FillColorPickerPanel);
+        return possibleConstructorReturn(this, (FillColorPickerPanel.__proto__ || Object.getPrototypeOf(FillColorPickerPanel)).apply(this, arguments));
+    }
+
+    createClass(FillColorPickerPanel, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item fill-colorpicker show'>\n                <div class='items'>            \n                    <FillColorPicker></FillColorPicker>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { FillColorPicker: FillColorPicker };
+        }
+    }]);
+    return FillColorPickerPanel;
+}(UIElement);
+
 var items = {
+    FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow,
     ClipPathImageResource: ClipPathImageResource,
@@ -17511,7 +18079,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: "template",
         value: function template() {
-            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"info\">Info</div>\n                <div class=\"tab-item\" data-id=\"fill\">Fill</div>                \n                <div class=\"tab-item\" data-id=\"shape\">Shape</div>\n                <div class=\"tab-item\" data-id=\"transform\">Trans</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"info\">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class=\"tab-content\" data-id=\"fill\">\n                    <FilterList></FilterList>\n                    <BoxShadow></BoxShadow>\n                    <TextShadow></TextShadow>\n                </div>                \n                <div class=\"tab-content\" data-id=\"shape\">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class=\"tab-content\" data-id=\"transform\">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>                \n            </div>\n        </div>\n\n        ";
+            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"info\">Info</div>\n                <div class=\"tab-item\" data-id=\"fill\">Fill</div>                \n                <div class=\"tab-item\" data-id=\"shape\">Shape</div>\n                <div class=\"tab-item\" data-id=\"transform\">Trans</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"info\">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class=\"tab-content\" data-id=\"fill\">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <TextShadow></TextShadow>\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class=\"tab-content\" data-id=\"shape\">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class=\"tab-content\" data-id=\"transform\">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>                \n            </div>\n        </div>\n\n        ";
         }
     }, {
         key: "components",
@@ -18446,7 +19014,7 @@ var ImageListView = function (_UIElement) {
                 return '';
             }
 
-            return this.read('/item/map/children', id, function (item) {
+            return this.read('/item/map/image/children', id, function (item) {
                 return _this2.makeItemNodeImage(item);
             });
         }
@@ -21377,7 +21945,6 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 this.layerCenterX = rect.left + rect.width / 2;
                 this.layerCenterY = rect.top + rect.height / 2;
             }
-
             this.xy = e.xy;
             this.rectItems = this.read('/selection/current').map(function (it) {
                 return {
@@ -21589,6 +22156,23 @@ var GradientView = function (_UIElement) {
             });
         }
     }, {
+        key: 'refreshLayerPosition',
+        value: function refreshLayerPosition() {
+            var _this4 = this;
+
+            this.read('/selection/current/layer', function (items) {
+
+                if (!items.length) {
+                    items = [items];
+                }
+
+                items.forEach(function (item) {
+                    var $el = _this4.$el.$('[item-layer-id="' + item.id + '"]');
+                    $el.cssText(_this4.read('/layer/toString', item, true));
+                });
+            });
+        }
+    }, {
         key: 'makePageCSS',
         value: function makePageCSS(page) {
             return {
@@ -21653,11 +22237,16 @@ var GradientView = function (_UIElement) {
         value: function value() {
             this.setBackgroundColor();
         }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_MOVE),
+        value: function value() {
+            this.refreshLayerPosition();
+        }
 
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW),
         value: function value() {
             this.refreshLayer();
         }
@@ -21922,7 +22511,7 @@ var ToolMenu = function (_UIElement) {
             var _this3 = this;
 
             this.read('/selection/current/page', function (page) {
-                _this3.dispatch('/item/add', 'layer', true, page.id);
+                _this3.dispatch('/item/add', ITEM_TYPE_LAYER, true, page.id);
                 _this3.dispatch('/history/push', 'Add a layer');
             });
         }
@@ -21932,7 +22521,7 @@ var ToolMenu = function (_UIElement) {
             var _this4 = this;
 
             this.read('/selection/current/page', function (page) {
-                _this4.dispatch('/item/add', 'circle', true, page.id);
+                _this4.dispatch('/item/add', ITEM_TYPE_CIRCLE, true, page.id);
                 _this4.dispatch('/history/push', 'Add a layer');
             });
         }
