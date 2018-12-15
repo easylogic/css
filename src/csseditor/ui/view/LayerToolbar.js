@@ -48,20 +48,6 @@ export default class LayerToolbar extends UIElement {
                     <button type="button" title="vertical" data-value="vertical"></button>
                     <button type="button" title="horizontal" data-value="horizontal"></button>
                 </div>
-
-                <div class="step-align">
-                    <label>Steps</label>
-                    <div class="button-group">
-                        <button ref="$ordering" title="Full Ordering">=|=</button>
-                        <button ref="$orderingLeft" title="Left Ordering">=|</button>
-                        <button ref="$orderingRight" title="Right Ordering">|=</button>
-                    </div>
-
-                    <div class="button-group">
-                        <button class="cut" ref="$cutOff" title="Cut Off"></button>
-                        <button class="cut on" ref="$cutOn" title="Cut On"></button>
-                    </div>      
-                </div>
                                 
             </div>
         `
@@ -71,7 +57,7 @@ export default class LayerToolbar extends UIElement {
         return { ImageListView }
     }
 
-    'click $$groupAlign button' (e) {
+    'click $groupAlign button' (e) {
         this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))
     }
 
@@ -86,32 +72,7 @@ export default class LayerToolbar extends UIElement {
 
     'click $el .gradient-sample-list' (e) {
         this.emit('toggleGradientSampleView');
-    }
-
-    'click $ordering' (e) {
-        this.dispatch('/colorstep/ordering/equals')
-        this.dispatch('/history/push', `Ordering gradient` );        
     } 
-
-    'click $orderingLeft' (e) {
-        this.dispatch('/colorstep/ordering/equals/left')
-        this.dispatch('/history/push', `Ordering gradient` );        
-    }    
-
-    'click $orderingRight' (e) {
-        this.dispatch('/colorstep/ordering/equals/right')
-        this.dispatch('/history/push', `Ordering gradient` );        
-    }        
-
-    'click $cutOff' (e) {
-        this.dispatch('/colorstep/cut/off')
-        this.dispatch('/history/push', `Cut off static gradient pattern` );
-    }
-
-    'click $cutOn' (e) {
-        this.dispatch('/colorstep/cut/on')
-        this.dispatch('/history/push', `Cut on static gradient pattern` );
-    }    
 
     'click $undo' (e) {
         this.dispatch('/history/undo')

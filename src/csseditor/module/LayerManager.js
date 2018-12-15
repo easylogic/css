@@ -215,26 +215,7 @@ export default class LayerManager extends BaseModule {
     }    
 
     '*/layer/image/toImageCSS' ($store, image) {    
-        var results = {}
-
-        var css = $store.read('/image/toCSS', image);
-
-        Object.keys(css).forEach(key => {
-            if (!results[key]) {
-                results[key] = [] 
-            }
-
-            results[key].push(css[key]);
-        })
-
-
-        Object.keys(results).forEach(key => {
-            if (Array.isArray(results[key])) {
-                results[key] = results[key].join(', ')
-            }
-        })
-
-        return results; 
+        return $store.read('/css/generate', $store.read('/image/toCSS', image));
     }    
 
     '*/layer/make/box-shadow' ($store, layer) {
@@ -371,6 +352,10 @@ s
         
         if (layer.mixBlendMode) {
             css['mix-blend-mode'] = layer.mixBlendMode || ""
+        }
+
+        if (layer.opacity) {
+            css['opacity'] = layer.opacity;
         }
 
         Object.assign(css, $store.read('/layer/get/border-radius', layer));

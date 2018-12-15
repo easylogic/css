@@ -19,6 +19,7 @@ import {
     EVENT_CHANGE_COLOR_STEP,
     EVENT_CHANGE_SELECTION,
     EVENT_CHANGE_LAYER_ROTATE,
+    EVENT_CHANGE_LAYER_OPACITY,
 } from '../../types/event';
 
 export default class LayerListView extends UIElement {
@@ -148,6 +149,7 @@ export default class LayerListView extends UIElement {
         EVENT_CHANGE_LAYER_RADIUS,
         EVENT_CHANGE_LAYER_SIZE,
         EVENT_CHANGE_LAYER_ROTATE,
+        EVENT_CHANGE_LAYER_OPACITY,
         EVENT_CHANGE_LAYER_TRANSFORM,
         EVENT_CHANGE_LAYER_TRANSFORM_3D,
             

@@ -135,9 +135,7 @@
             padding: 8px 5px !important;
             box-sizing: border-box;
             height: 30px;
-            background-image: linear-gradient(to top, #e0e0e0 0%, #ffffff 100%);
-            border-bottom: 1px solid rgba($border-color, 0.5);
-            border-top: 1px solid rgba($border-color, 0.5);
+            background-image: linear-gradient(to top, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
             color: #333;
             cursor: pointer;
 

@@ -6,7 +6,7 @@ import { CHANGE_LAYER } from "../../../../types/event";
 export default class ClipPathImageResource extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item image-resource'>
+            <div class='property-item image-resource show'>
                 <div class='items' ref="$imageList">
 
                 </div>

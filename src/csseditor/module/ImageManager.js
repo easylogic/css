@@ -168,7 +168,6 @@ export default class ImageManager extends BaseModule {
             results['background-repeat'] = backgroundRepeat;
         }      
         
-        // console.log(backgroundBlendMode);
         if (backgroundBlendMode) {
             results['background-blend-mode'] = backgroundBlendMode;
         }              

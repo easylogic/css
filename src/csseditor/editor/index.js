@@ -18,6 +18,9 @@ import { EVENT_CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
+import ImageToolbar from '../ui/view/ImageToolbar';
+
+
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -46,6 +49,7 @@ export default class CSSEditor extends BaseCSSEditor {
                     <SelectLayerView></SelectLayerView>
                 </div>
                 <div class="layout-body">
+                    <ImageToolbar></ImageToolbar>
                     <VerticalColorStep></VerticalColorStep>
                     <HandleView></HandleView>                      
                 </div>                
@@ -68,6 +72,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     components() {      
         return { 
+            ImageToolbar,
             SelectLayerView,
             ToolMenu,
             ExportCanvasWindow,

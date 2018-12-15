@@ -55,7 +55,9 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                         <button type="button" data-value="to bottom left"></button>
                         <button type="button" data-value="to top left"></button>
                     </div>
-                    <button type='button' data-value='rotate'></button>                    
+                    <button type='button' data-value='rotate'></button>         
+                    
+                    
                 </div> 
             `
         })

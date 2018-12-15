@@ -26,8 +26,18 @@ import BackgroundBlend from "./BackgroundBlend";
 import LayerBlend from "./LayerBlend";
 import Rotate from "./rotate";
 import RadiusFixed from "./radius-fixed";
+import Opacity from "./opacity";
+import ClipPathImageResource from "./ClipPathImageResource";
+import BoxShadow from "./BoxShadow";
+import TextShadow from "./TextShadow";
+
+
 
 export default {
+    TextShadow,
+    BoxShadow,
+    ClipPathImageResource,
+    Opacity,
     RadiusFixed,
     Rotate,
     LayerBlend,

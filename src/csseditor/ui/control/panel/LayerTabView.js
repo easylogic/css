@@ -7,26 +7,30 @@ export default class LayerTabView extends BaseTab {
         return `
         <div class="tab">
             <div class="tab-header" ref="$header">
-                <div class="tab-item selected" data-id="inspect">I</div>
-                <div class="tab-item" data-id="clippath">C</div>
-                <div class="tab-item" data-id="effect">E</div>
-                <div class="tab-item" data-id="transform">T</div>
+                <div class="tab-item selected" data-id="info">Info</div>
+                <div class="tab-item" data-id="fill">Fill</div>                
+                <div class="tab-item" data-id="shape">Shape</div>
+                <div class="tab-item" data-id="transform">Trans</div>
             </div>
             <div class="tab-body" ref="$body">
-                <div class="tab-content selected" data-id="inspect">
+                <div class="tab-content selected" data-id="info">
                     <Name></Name>            
                     <size></size>                
                     <Rotate></Rotate>        
                     <RadiusFixed></RadiusFixed>
-                    <radius></radius>                      
+                    <radius></radius>        
+                    <opacity></opacity>              
                     <LayerBlend></LayerBlend>                            
                     <LayerColorPickerPanel></LayerColorPickerPanel>
                 </div>
-                <div class="tab-content" data-id="clippath">
-                    <ClipPath></ClipPath>                          
-                </div>
-                <div class="tab-content" data-id="effect">
-                    <FilterList></FilterList>                             
+                <div class="tab-content" data-id="fill">
+                    <FilterList></FilterList>
+                    <BoxShadow></BoxShadow>
+                    <TextShadow></TextShadow>
+                </div>                
+                <div class="tab-content" data-id="shape">
+                    <ClipPath></ClipPath>   
+                    <ClipPathImageResource></ClipPathImageResource>
                 </div>
                 <div class="tab-content" data-id="transform">
                     <transform></transform>

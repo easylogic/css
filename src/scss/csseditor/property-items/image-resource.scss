@@ -1,4 +1,9 @@
 &.image-resource {
+    position: absolute;
+    left: auto;
+    bottom: auto;
+    top: auto;
+    width: auto;
     .items {
         max-height: 300px;
         overflow: auto;

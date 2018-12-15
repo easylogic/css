@@ -151,6 +151,7 @@ export default class ItemManager extends BaseModule {
         super.initialize()
 
         this.$store.items = {}
+        this.$store.itemKeys = []
     }
 
     afterDispatch () {
@@ -161,11 +162,27 @@ export default class ItemManager extends BaseModule {
         return convertStyle(item);
     }
 
+    '*/item/keys' ($store) {
+        return $store.itemKeys;
+    }
+
+    '/item/keys/generate' ($store) {
+        $store.itemKeys =  Object.keys($store.items);
+    }
+
+    '/item/initialize' ($store, id) {
+        delete $store.items[id];
+
+        $store.run('/item/keys/generate')
+    }    
+
     '*/item/create/object' ($store, obj, defaultObj = {}) {
         obj = Object.assign({}, $store.read('/clone', defaultObj), obj);         
         obj.id = Date.now() + '-' + uuid();
 
         $store.items[obj.id] = obj;
+
+        $store.run('/item/keys/generate')
 
         return obj.id; 
     }
@@ -257,10 +274,6 @@ export default class ItemManager extends BaseModule {
             $store.run('/item/remove/all', parentId);
         }
         Object.assign($store.items, items);
-    }
-
-    '*/item/keys' ($store) {
-        return Object.keys($store.items)
     }
 
     '*/item/list' ($store, filterCallback) {
@@ -495,16 +508,18 @@ export default class ItemManager extends BaseModule {
             if ($store.items[id].backgroundImage) {
                 URL.revokeObjectURL($store.items[id].backgroundImage);
             }
-            delete $store.items[id]
+            $store.run('/item/initialize', id);
         }
     }
+    
 
     '/item/remove/all' ($store, parentId) {
         $store.read('/item/each/children', parentId, (item) => {
 
             $store.run('/item/remove/all', item.id);
 
-            delete $store.items[item.id];
+            $store.run('/item/initialize', item.id);
+
         })
     }
 
@@ -536,7 +551,6 @@ export default class ItemManager extends BaseModule {
     
     // initialize items 
     '/item/load' ($store) { 
-
         $store.read('/item/keys').forEach(id => {
             $store.items[id] = convertStyle($store.items[id])
         })

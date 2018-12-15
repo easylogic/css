@@ -10,6 +10,8 @@ var ordering = {
     'width': 3,
     'height': 3,
 
+    'opacity': 4,
+
     'background-image' : 100,
     'background-size' : 100,
     'background-position' : 100,
@@ -32,6 +34,10 @@ export default class CssManager extends BaseModule {
         if (newStyle['mix-blend-mode'] == 'normal') {
             delete newStyle['mix-blend-mode'];
         }        
+
+        if (parseParamNumber(newStyle.opacity) == 1) {
+            delete newStyle.opacity;
+        }
 
         if (parseParamNumber(newStyle.left) == 0) {
             delete newStyle.left;
@@ -79,5 +85,25 @@ export default class CssManager extends BaseModule {
         }).map(key => {
             return `${key}: ${newStyle[key]}`
         }).join(';'); 
+    }
+
+    '*/css/generate' ($store, css) {
+        var results = {};
+
+        Object.keys(css).forEach(key => {
+            if (!results[key]) {
+                results[key] = [] 
+            }
+
+            results[key].push(css[key]);
+        })
+
+        Object.keys(results).forEach(key => {
+            if (Array.isArray(results[key])) {
+                results[key] = results[key].join(', ')
+            }
+        })
+
+        return results;
     }
 }

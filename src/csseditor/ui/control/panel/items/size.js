@@ -8,6 +8,7 @@ import {
     EVENT_CHANGE_EDITOR,
     EVENT_CHANGE_SELECTION
 } from "../../../../types/event";
+import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class Size extends BasePropertyItem {
     template () {
@@ -47,10 +48,12 @@ export default class Size extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_LAYER_POSITION] () { this.refresh() }
-    [EVENT_CHANGE_LAYER_SIZE] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] ()  { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] ()  { this.refresh() }
 
     refresh() {
         var item = this.read('/selection/current')
@@ -83,6 +86,7 @@ export default class Size extends BasePropertyItem {
             var width = this.refs.$width.int() + 'px'
             var height = width;
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
+            this.refs.$height.val(this.refs.$width.val());            
         })
 
     }

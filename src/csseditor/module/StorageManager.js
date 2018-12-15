@@ -192,6 +192,8 @@ export default class StorageManager extends BaseModule {
         if (obj.selectedMode) $store.selectedMode = obj.selectedMode
         if (obj.selection) $store.selection = obj.selection
 
+        $store.run('/item/keys/generate');
+
         if ($store.selectedId) {
             $store.run('/selection/one', $store.selectedId);
         }
