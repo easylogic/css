@@ -5,12 +5,14 @@ export default class LayerTabView extends BaseTab {
 
     template () {
         return `
-        <div class="tab">
+        <div class="tab horizontal">
             <div class="tab-header" ref="$header">
                 <div class="tab-item selected" data-id="info">Info</div>
+                <div class="tab-item" data-id="text">Text</div>
                 <div class="tab-item" data-id="fill">Fill</div>                
                 <div class="tab-item" data-id="shape">Shape</div>
                 <div class="tab-item" data-id="transform">Trans</div>
+                <div class="tab-item" data-id="css">CSS</div>
             </div>
             <div class="tab-body" ref="$body">
                 <div class="tab-content selected" data-id="info">
@@ -22,6 +24,9 @@ export default class LayerTabView extends BaseTab {
                     <opacity></opacity>              
                     <LayerBlend></LayerBlend>                            
                     <LayerColorPickerPanel></LayerColorPickerPanel>
+                </div>
+                <div class="tab-content" data-id="text">
+                    <Text></Text>
                 </div>
                 <div class="tab-content" data-id="fill">
                     <FillColorPickerPanel></FillColorPickerPanel>
@@ -36,7 +41,10 @@ export default class LayerTabView extends BaseTab {
                 <div class="tab-content" data-id="transform">
                     <transform></transform>
                     <transform3d></transform3d> 
-                </div>                
+                </div>               
+                <div class="tab-content" data-id="css">
+                    <LayerCode></LayerCode>
+                </div>               
             </div>
         </div>
 

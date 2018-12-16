@@ -7,7 +7,7 @@
     box-sizing: border-box;
     overflow: auto;
 
-    .tab {
+    .tab:not(.horizontal) {
         .tab-body {
             border: 0px;
         }
@@ -306,6 +306,11 @@
         @import './property-items/radius.scss';
         @import './property-items/layer-colorpicker.scss';
         @import './property-items/box-shadow.scss';
+        @import './property-items/text-shadow.scss';
+        @import './property-items/background-info.scss';
+        @import './property-items/fill-colorpicker.scss';
+        @import './property-items/layer-code.scss';
+        @import './property-items/background-code.scss';
 
     }
 

@@ -1,11 +1,11 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_NAME, CHANGE_LAYER_CLASS_NAME, CHANGE_LAYER_ID, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_LAYER_NAME, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 
 export default class Name extends BasePropertyItem {
     template () {
         return `
             <div class='property-item name show'>
-                <!-- <div class='title' ref="$title">Information</div>      -->      
+                <div class='title' ref="$title">Properties</div>   
                 <div class='items'>            
                     <div>
                         <label>Name</label>

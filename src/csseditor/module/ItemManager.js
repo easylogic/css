@@ -95,6 +95,8 @@ const convertStyle = (item) => {
     return item; 
 }
 
+export const DEFAULT_FUNCTION = (item) => item; 
+
 export default class ItemManager extends BaseModule {
 
     initialize () {
@@ -292,39 +294,39 @@ export default class ItemManager extends BaseModule {
         return $store.read('/item/list/children', parentId).length;
     }    
 
-    '*/item/map/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/list/children', parentId).map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }    
 
-    '*/item/map/type/children' ($store, parentId, itemType, callback = ((item) => item)) {
+    '*/item/map/type/children' ($store, parentId, itemType, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/list/children', parentId, itemType).map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }        
 
-    '*/item/map/image/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/image/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_IMAGE, callback);
     }
 
-    '*/item/map/colorstep/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/colorstep/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_COLORSTEP, callback);
     }    
 
-    '*/item/map/boxshadow/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/boxshadow/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BOXSHADOW, callback);
     }    
 
-    '*/item/map/textshadow/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/textshadow/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW, callback);
     }        
 
-    '*/item/map/filter/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/filter/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_FILTER, callback);
     }        
     
-    '*/item/map/backdrop-filter/children' ($store, parentId, callback = ((item) => item)) {
+    '*/item/map/backdrop-filter/children' ($store, parentId, callback = DEFAULT_FUNCTIONs) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BACKDROP_FILTER, callback);
     }            
 

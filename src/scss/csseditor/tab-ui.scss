@@ -2,6 +2,8 @@ $tab-header-height: 30px;
 $tab-background-color: rgb(255, 255, 255);
 $tab-border-color: #dedede;
 $tab-selected-color: #dedede;
+
+$tab-horizontal-header-width: 50px;
 .tab {
     position: absolute;
     left: 0px;
@@ -33,8 +35,6 @@ $tab-selected-color: #dedede;
         height: $tab-header-height;
         // top: 1px;
         // background-color: #ececec;
-
-        display: block;
         z-index: 1;
         display: flex;
 
@@ -105,6 +105,29 @@ $tab-selected-color: #dedede;
         > .tab-body {
             top: 0px;
             bottom: $tab-header-height;
+        }
+    }
+
+    &.horizontal {
+        .tab-header {
+            left: auto;
+            top: 0px;
+            bottom: 0px;
+            width: $tab-horizontal-header-width;
+            flex-direction: column; 
+
+            .tab-item {
+                border: 0px;
+                border-bottom: 1px solid $border-color;
+                text-align: center;
+            }
+        }
+
+        .tab-body {
+            top: 0px;
+            right: $tab-horizontal-header-width;
+            border:0px;
+            border-right: 1px solid $border-color;
         }
     }
 }

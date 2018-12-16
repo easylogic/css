@@ -31,10 +31,18 @@ import ClipPathImageResource from "./ClipPathImageResource";
 import BoxShadow from "./BoxShadow";
 import TextShadow from "./TextShadow";
 import FillColorPickerPanel from "./FillColorPickerPanel";
+import BackgroundInfo from "./BackgroundInfo";
+import Text from "./text";
+import LayerCode from "./LayerCode";
+import BackgroundCode from "./BackgroundCode";
 
 
 
 export default {
+    BackgroundCode,
+    LayerCode,
+    Text,
+    BackgroundInfo,
     FillColorPickerPanel,
     TextShadow,
     BoxShadow,

@@ -1191,7 +1191,7 @@ html, body {
     .csseditor .layout-main .layout-right {
       position: absolute;
       right: 0px;
-      width: 250px;
+      width: 300px;
       top: 80px;
       bottom: 0px;
       -webkit-box-sizing: border-box;
@@ -1213,7 +1213,7 @@ html, body {
     .csseditor .layout-main .layout-body {
       position: absolute;
       left: 300px;
-      right: 250px;
+      right: 300px;
       top: 80px;
       bottom: 0px;
       -webkit-box-sizing: border-box;
@@ -1392,7 +1392,6 @@ html, body {
       left: 0px;
       right: 0px;
       height: 30px;
-      display: block;
       z-index: 1;
       display: -webkit-box;
       display: -ms-flexbox;
@@ -1445,6 +1444,24 @@ html, body {
     .csseditor .tab.bottom > .tab-body {
       top: 0px;
       bottom: 30px; }
+    .csseditor .tab.horizontal .tab-header {
+      left: auto;
+      top: 0px;
+      bottom: 0px;
+      width: 50px;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column; }
+      .csseditor .tab.horizontal .tab-header .tab-item {
+        border: 0px;
+        border-bottom: 1px solid #c7c7c7;
+        text-align: center; }
+    .csseditor .tab.horizontal .tab-body {
+      top: 0px;
+      right: 50px;
+      border: 0px;
+      border-right: 1px solid #c7c7c7; }
   .csseditor .layer-menu-tab > .tab-header,
   .csseditor .page-menu-tab > .tab-header,
   .csseditor .image-menu-tab > .tab-header {
@@ -4296,9 +4313,9 @@ html, body {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     overflow: auto; }
-    .csseditor .property-view .tab .tab-body {
+    .csseditor .property-view .tab:not(.horizontal) .tab-body {
       border: 0px; }
-    .csseditor .property-view .tab .tab-item {
+    .csseditor .property-view .tab:not(.horizontal) .tab-item {
       text-align: center; }
     .csseditor .property-view.inline {
       overflow: hidden; }
@@ -5005,6 +5022,113 @@ html, body {
             color: #ccc;
             pointer-events: none;
             text-align: center; }
+      .csseditor .property-view .property-item.text-shadow .text-shadow-list {
+        display: block; }
+        .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item {
+          margin-top: 2px;
+          padding: 2px 0px; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.checked {
+            background-color: #f1f1f1; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid black;
+            cursor: pointer;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item button {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            background-color: transparent;
+            border: 0px;
+            text-align: center;
+            font-weight: 500; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .input input {
+            width: 50px; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.label .color, .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.label button {
+            visibility: hidden; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.label .input input {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            border: 0px;
+            background-color: transparent;
+            color: #ccc;
+            pointer-events: none;
+            text-align: center; }
+      .csseditor .property-view .property-item.background-info .gradient {
+        display: inline-block;
+        vertical-align: middle;
+        height: 20px;
+        width: 20px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="static"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
+          background-image: linear-gradient(to right, #333, #333); }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="linear"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(gray));
+          background-image: linear-gradient(to right, black, gray); }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="radial"] {
+          background-image: radial-gradient(closest-side, black, #ebf8e1, gray); }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="conic"] {
+          background-image: conic-gradient(black, #ebf8e1); }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="repeating-linear"] {
+          background-image: repeating-linear-gradient(45deg, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="repeating-radial"] {
+          background-image: repeating-radial-gradient(circle, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
+        .csseditor .property-view .property-item.background-info .gradient[data-type="repeating-conic"] {
+          background-image: repeating-conic-gradient(#3f87a6, #ebf8e1 5%, #f69d3c 10%); }
+      .csseditor .property-view .property-item.background-info .gradient + label {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 16px;
+        margin-left: 10px; }
+      .csseditor .property-view .property-item.fill-colorpicker .items {
+        padding: 0px; }
+        .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body {
+          width: 100%; }
+          .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-panel {
+            margin-left: 12px; }
+          .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-tab-body {
+            border: 0px; }
+      .csseditor .property-view .property-item.layer-code .key-value-view {
+        display: block;
+        -webkit-user-select: text;
+           -moz-user-select: text;
+            -ms-user-select: text;
+                user-select: text; }
+        .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item {
+          display: block; }
+          .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item .key {
+            display: block;
+            font-weight: bold;
+            padding: 2px 5px; }
+          .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item .value {
+            margin: 0px;
+            padding: 0px 5px;
+            padding-left: 20px;
+            font-size: 12px;
+            display: block; }
+      .csseditor .property-view .property-item.background-code .key-value-view {
+        display: block;
+        -webkit-user-select: text;
+           -moz-user-select: text;
+            -ms-user-select: text;
+                user-select: text; }
+        .csseditor .property-view .property-item.background-code .key-value-view .key-value-item {
+          display: block; }
+          .csseditor .property-view .property-item.background-code .key-value-view .key-value-item .key {
+            display: block;
+            font-weight: bold;
+            padding: 2px 5px; }
+          .csseditor .property-view .property-item.background-code .key-value-view .key-value-item .value {
+            margin: 0px;
+            padding: 0px 5px;
+            padding-left: 20px;
+            font-size: 12px;
+            display: block; }
     .csseditor .property-view .gradient-view {
       height: 230px;
       width: 100%; }
@@ -5471,8 +5595,8 @@ html, body {
           overflow: auto; }
   .csseditor .image-resource {
     position: absolute;
-    left: -251px;
-    width: 250px;
+    left: -301px;
+    width: 300px;
     top: 0px;
     bottom: 0px;
     display: none;

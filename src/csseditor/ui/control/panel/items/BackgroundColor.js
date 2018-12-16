@@ -1,21 +1,21 @@
-import UIElement from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import BasePropertyItem from "./BasePropertyItem";
 
-export default class BackgroundColor extends UIElement {
+export default class BackgroundColor extends BasePropertyItem {
     template () {
         return `
             <div class='property-item background-color show'>
+                <div class='title' ref="$title">Background Color</div>            
                 <div class='items'>            
                     <div>
-                        <label>Background Color</label>
                         <div style='cursor:pointer;' ref="$colorview" title="Click me!!">
                             <span class='color' ref="$color"></span>
                             <span class='color-text' ref="$colortext"></span>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
-        `
+        ` 
     }
 
     [EVENT_CHANGE_EDITOR] () {

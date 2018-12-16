@@ -429,11 +429,14 @@ s
         Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
         css['transform'] = $store.read('/layer/make/transform', layer)
-        css['box-shadow'] = $store.read('/layer/make/box-shadow', layer)
         css['filter'] = $store.read('/layer/make/filter', layer.filters);
         css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
-        var results = Object.assign(css, $store.read('/layer/cache/toImageCSS', layer.images))
+        var results = Object.assign(css, 
+            $store.read('/layer/make/box-shadow', layer),
+            $store.read('/layer/make/text-shadow', layer),
+            $store.read('/layer/cache/toImageCSS', layer.images)
+        )
 
         var realCSS = {}
         Object.keys(results).filter(key => {

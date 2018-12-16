@@ -1,0 +1,56 @@
+&.text-shadow {
+    .text-shadow-list {
+        display: block;
+
+        .text-shadow-item {
+            // display: block;
+            margin-top: 2px;
+            padding: 2px 0px;
+
+            &.checked {
+                background-color: #f1f1f1;
+            }
+
+            .color {
+                width: 20px;
+                height: 20px;
+                border:1px solid black; 
+                cursor: pointer;
+                box-sizing: border-box;
+            }
+
+            button {
+                appearance: none;
+                background-color: transparent;
+                border:0px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .input {
+                input {
+                    width: 50px;
+                }
+            }
+
+            &.label {           
+
+                .color, button {
+                    visibility: hidden;
+                }
+
+                .input {
+                    input {
+                        appearance: none;
+                        border:0px;
+                        background-color: transparent;
+                        color: #ccc;
+                        pointer-events: none;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+
+}

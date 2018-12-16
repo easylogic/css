@@ -11146,11 +11146,10 @@ var LayerManager = function (_BaseModule) {
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
 
             css['transform'] = $store.read('/layer/make/transform', layer);
-            css['box-shadow'] = $store.read('/layer/make/box-shadow', layer);
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
             css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
-            var results = Object.assign(css, $store.read('/layer/cache/toImageCSS', layer.images));
+            var results = Object.assign(css, $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), $store.read('/layer/cache/toImageCSS', layer.images));
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -11641,6 +11640,10 @@ var convertStyle = function convertStyle(item) {
     return item;
 };
 
+var DEFAULT_FUNCTION = function DEFAULT_FUNCTION(item) {
+    return item;
+};
+
 var ItemManager = function (_BaseModule) {
     inherits(ItemManager, _BaseModule);
 
@@ -11899,9 +11902,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/map/children',
         value: function itemMapChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/list/children', parentId).map(function (id, index) {
                 return callback($store.items[id], index);
@@ -11910,9 +11911,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/map/type/children',
         value: function itemMapTypeChildren($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
 
             return $store.read('/item/list/children', parentId, itemType).map(function (id, index) {
                 return callback($store.items[id], index);
@@ -11921,54 +11920,42 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/map/image/children',
         value: function itemMapImageChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_IMAGE, callback);
         }
     }, {
         key: '*/item/map/colorstep/children',
         value: function itemMapColorstepChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_COLORSTEP, callback);
         }
     }, {
         key: '*/item/map/boxshadow/children',
         value: function itemMapBoxshadowChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BOXSHADOW, callback);
         }
     }, {
         key: '*/item/map/textshadow/children',
         value: function itemMapTextshadowChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
         }
     }, {
         key: '*/item/map/filter/children',
         value: function itemMapFilterChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_FILTER, callback);
         }
     }, {
         key: '*/item/map/backdrop-filter/children',
         value: function itemMapBackdropFilterChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function (item) {
-                return item;
-            };
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTIONs;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BACKDROP_FILTER, callback);
         }
@@ -14340,7 +14327,7 @@ var TextShadowManager = function (_BaseModule) {
 
 
             var results = {};
-            var textshadow = $store.read('/textshadow/totextShadowString', item, isExport);
+            var textshadow = $store.read('/textshadow/toTextShadowString', item, isExport);
 
             if (textshadow) {
                 results['text-shadow'] = textshadow;
@@ -14383,7 +14370,7 @@ var TextShadowManager = function (_BaseModule) {
 
             if (!item) return '';
 
-            results = [];
+            var results = [];
 
             results.push(item.offsetX || '0px', item.offsetY || '0px', item.blurRadius || '0px', item.color);
 
@@ -14812,7 +14799,7 @@ var Name = function (_BasePropertyItem) {
     createClass(Name, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item name show'>\n                <!-- <div class='title' ref=\"$title\">Information</div>      -->      \n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" class='full'> \n                        </div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div>\n                            <input type='text' ref=\"$id\" class='full'> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div>\n                            <input type='text' ref=\"$class\" class='full'> \n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item name show'>\n                <div class='title' ref=\"$title\">Properties</div>   \n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" class='full'> \n                        </div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div>\n                            <input type='text' ref=\"$id\" class='full'> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div>\n                            <input type='text' ref=\"$class\" class='full'> \n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_EDITOR,
@@ -16836,8 +16823,8 @@ var FilterList$1 = function (_BasePropertyItem) {
     return FilterList;
 }(BasePropertyItem);
 
-var BackgroundColor = function (_UIElement) {
-    inherits(BackgroundColor, _UIElement);
+var BackgroundColor = function (_BasePropertyItem) {
+    inherits(BackgroundColor, _BasePropertyItem);
 
     function BackgroundColor() {
         classCallCheck(this, BackgroundColor);
@@ -16847,7 +16834,7 @@ var BackgroundColor = function (_UIElement) {
     createClass(BackgroundColor, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background-color show'>\n                <div class='items'>            \n                    <div>\n                        <label>Background Color</label>\n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='color' ref=\"$color\"></span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background-color show'>\n                <div class='title' ref=\"$title\">Background Color</div>            \n                <div class='items'>            \n                    <div>\n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='color' ref=\"$color\"></span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div> \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT_CHANGE_EDITOR,
@@ -16877,7 +16864,7 @@ var BackgroundColor = function (_UIElement) {
         }
     }]);
     return BackgroundColor;
-}(UIElement);
+}(BasePropertyItem);
 
 var LayerColorPickerLayer = function (_UIElement) {
     inherits(LayerColorPickerLayer, _UIElement);
@@ -16958,7 +16945,7 @@ var LayerColorPickerPanel = function (_UIElement) {
     createClass(LayerColorPickerPanel, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item layer-colorpicker show'>\n                <div class=\"item\">\n                    <div style='padding-left: 14px'>\n                        <label>Background Color</label>\n                    </div>\n                </div>\n                <div class='items'>            \n                    <LayerColorPicker></LayerColorPicker>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item layer-colorpicker show'>\n                <div class='title' ref=\"$title\">Background Color</div>\n                <div class='items'>            \n                    <LayerColorPicker></LayerColorPicker>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -17512,22 +17499,7 @@ var Opacity$3 = function (_BasePropertyItem) {
             return "\n            <div class='property-item opacity show'>\n                <div class='items'>            \n                    <div>\n                        <label>Opacity</label>\n                        <div>\n                            <input type='range' ref=\"$opacityRange\" min=\"0\" max=\"1\" step=\"0.01\">\n                            <input type='number' ref=\"$opacity\" min=\"0\" max=\"1\" step=\"0.01\">\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT_CHANGE_LAYER,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_OPACITY,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -17833,67 +17805,119 @@ var TextShadow = function (_BasePropertyItem) {
     createClass(TextShadow, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item box-shadow\'>\n            <div class=\'title\' ref="$title">\n                Text Shadow \n                <span style="float:right;">\n                    <button type="button">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="box-shadow-list" ref="$boxShadowList"></div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item text-shadow show\'>\n            <div class=\'title\' ref="$title">\n                Text Shadow \n                <span style="float:right;">\n                    <button type="button" ref="$add">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="text-shadow-list" ref="$textShadowList"></div>\n            </div>\n        </div>\n        ';
         }
     }, {
-        key: 'makeItemNodeBoxShadow',
-        value: function makeItemNodeBoxShadow(item) {
-            return '\n            <div class=\'box-shadow-item\' box-shadow-id="' + item.id + '">\n                <label><input type="checkbox" /></label>\n                <div class="color" style="background-color: ' + item.color + ';"></div>\n                <div class="input">\n                    <input class="x" type="number" min="0" max="100" value="' + item.x + '" /> <span class="unit">px</span>\n                </div>\n                <div class="input">\n                    <input class="y" type="number" min="0" max="100" value="' + item.y + '" /> <span class="unit">px</span>\n                </div>\n                <div class="input">\n                    <input class="blur" type="number" min="0" max="100" value="' + item.blur + '" /> <span class="unit">px</span>\n                </div>\n                <div class="input">\n                    <input class="spread" type="number" min="0" max="100" value="' + item.spread + '" /> <span class="unit">px</span>\n                </div>                                                \n            </div>\n        ';
+        key: 'makeField',
+        value: function makeField() {
+            return '\n        <div class=\'text-shadow-item label\'>  \n                <div class="color"></div>                     \n                <div class="input">\n                    <input class="x" type="text" value="X" />\n                </div>                \n                <div class="input">\n                    <input class="y" type="text" value="Y" />\n                </div>\n                <div class="input">\n                    <input class="blur" type="text" value="B" />\n                </div>\n                <button type="button">&times;</button>                                              \n            </div>\n    ';
         }
     }, {
-        key: 'load $boxShadowList',
-        value: function load$boxShadowList() {
-            var _this2 = this;
+        key: 'makeItemNodetextShadow',
+        value: function makeItemNodetextShadow(item) {
 
-            var list = this.read('/blend/list');
+            var offsetX = parseParamNumber$1(item.offsetX);
+            var offsetY = parseParamNumber$1(item.offsetY);
+            var blurRadius = parseParamNumber$1(item.blurRadius);
+            var checked = this.read('/selection/check', item.id) ? 'checked' : '';
+
+            return '\n            <div class=\'text-shadow-item ' + checked + '\' text-shadow-id="' + item.id + '">  \n                <div class="color" style="background-color: ' + item.color + ';"></div>                      \n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                </div>                \n\n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />\n                </div>\n                <button type="button" class=\'delete-textshadow\'>&times;</button>                                                                                                            \n            </div>\n        ';
+        }
+    }, {
+        key: 'load $textShadowList',
+        value: function load$textShadowList() {
+            var _this2 = this;
 
             var item = this.read('/selection/current/layer');
             if (!item) {
                 return '';
             }
 
-            return this.read('/item/map/image/children', item.id, function (item) {
-                return _this2.makeItemNodeBoxShadow(item);
+            var results = this.read('/item/map/textshadow/children', item.id, function (item) {
+                return _this2.makeItemNodetextShadow(item);
             });
+
+            results.push(this.makeField());
+
+            return results;
         }
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('/selection/is/image');
+            return true;
+            // return this.read('/selection/is/layer'); 
         }
     }, {
         key: 'refresh',
         value: function refresh() {
-            var _this3 = this;
 
             var isShow = this.isShow();
 
             this.$el.toggle(isShow);
 
-            this.read('/selection/current/image', function (image) {
-                _this3.refs.$desc.text(image.backgroundBlendMode || 'normal');
-            });
-
-            if (isShow && this.$el.hasClass('show')) {
+            if (isShow) {
                 this.load();
             }
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_SELECTION),
+        key: EVENT_CHANGE_TEXTSHADOW,
+        value: function value(newValue) {
+            this.refreshTextShadow(newValue);
+        }
+    }, {
+        key: 'refreshTextShadow',
+        value: function refreshTextShadow(newValue) {
+            var $el = this.refs.$textShadowList.$('[text-shadow-id="' + newValue.id + '"] .color');
+            if ($el) {
+                $el.css('background-color', newValue.color);
+            }
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_EDITOR),
         value: function value() {
             if (this.isPropertyShow()) {
                 this.refresh();
             }
         }
     }, {
-        key: 'click $blendList .blend-item | self',
-        value: function click$blendListBlendItemSelf(e) {
-            var _this4 = this;
+        key: 'click $add',
+        value: function click$add(e) {
+            var _this3 = this;
 
-            this.read('/selection/current/image/id', function (id) {
-                _this4.commit(CHANGE_IMAGE, { id: id, backgroundBlendMode: e.$delegateTarget.attr('data-mode') }, true);
-                _this4.refresh();
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.dispatch('/item/add', ITEM_TYPE_TEXTSHADOW$1, false, id);
+                _this3.dispatch('/history/push', 'Add text Shadow');
+                _this3.refresh();
             });
+        }
+    }, {
+        key: 'input $textShadowList input[type=number]',
+        value: function input$textShadowListInputTypeNumber(e) {
+            var $el = e.$delegateTarget;
+            var field = $el.attr('data-type');
+            var id = $el.parent().parent().attr('text-shadow-id');
+
+            this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, $el.val() + 'px'));
+        }
+    }, {
+        key: 'click $textShadowList .delete-textshadow',
+        value: function click$textShadowListDeleteTextshadow(e) {
+            var $el = e.$delegateTarget;
+            var id = $el.parent().attr('text-shadow-id');
+
+            this.run('/item/initialize', id);
+            this.emit(CHANGE_TEXTSHADOW);
+            this.refresh();
+        }
+    }, {
+        key: 'click $textShadowList .color',
+        value: function click$textShadowListColor(e) {
+            var $el = e.$delegateTarget;
+            var id = $el.parent().attr('text-shadow-id');
+
+            this.dispatch('/selection/one', id);
+            this.emit('fillColorId', id);
+            this.refresh();
         }
     }]);
     return TextShadow;
@@ -17937,13 +17961,22 @@ var FillColorPicker = function (_UIElement) {
         key: 'changeColor',
         value: function changeColor(color) {
             if (this.changeColorId) {
-                this.commit(CHANGE_BOXSHADOW, { id: this.changeColorId, color: color });
+                this.commit(this.eventType, { id: this.changeColorId, color: color });
             }
         }
     }, {
         key: '@fillColorId',
         value: function fillColorId(id) {
             this.changeColorId = id;
+            this.itemType = this.read('/item/get', id).itemType;
+            this.eventType = CHANGE_BOXSHADOW;
+
+            if (this.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+                this.eventType = CHANGE_TEXTSHADOW;
+            } else if (this.itemType == ITEM_TYPE_FILTER) {
+                this.eventType = CHANGE_LAYER_FILTER$1;
+            }
+
             this.refresh();
         }
     }, {
@@ -17985,7 +18018,181 @@ var FillColorPickerPanel = function (_UIElement) {
     return FillColorPickerPanel;
 }(UIElement);
 
+var BackgroundInfo = function (_BasePropertyItem) {
+    inherits(BackgroundInfo, _BasePropertyItem);
+
+    function BackgroundInfo() {
+        classCallCheck(this, BackgroundInfo);
+        return possibleConstructorReturn(this, (BackgroundInfo.__proto__ || Object.getPrototypeOf(BackgroundInfo)).apply(this, arguments));
+    }
+
+    createClass(BackgroundInfo, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class=\'property-item background-info show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Gradient</label>\n                    <div>\n                        <div class="gradient" ref="$typeView"></div>\n                        <label ref="$type"></label>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read('/selection/is/image');
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/image', function (image) {
+                _this2.refs.$type.text(image.type);
+                _this2.refs.$typeView.attr('data-type', image.type);
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return BackgroundInfo;
+}(BasePropertyItem);
+
+var Text = function (_BasePropertyItem) {
+    inherits(Text, _BasePropertyItem);
+
+    function Text() {
+        classCallCheck(this, Text);
+        return possibleConstructorReturn(this, (Text.__proto__ || Object.getPrototypeOf(Text)).apply(this, arguments));
+    }
+
+    createClass(Text, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Text</div>            \n                <div class='items'>\n                    <div>\n                                          \n                    </div>   \n                </div>\n            </div>\n        ";
+        }
+    }]);
+    return Text;
+}(BasePropertyItem);
+
+var LayerCode = function (_BasePropertyItem) {
+    inherits(LayerCode, _BasePropertyItem);
+
+    function LayerCode() {
+        classCallCheck(this, LayerCode);
+        return possibleConstructorReturn(this, (LayerCode.__proto__ || Object.getPrototypeOf(LayerCode)).apply(this, arguments));
+    }
+
+    createClass(LayerCode, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item layer-code show'>\n                <div class='title' ref=\"$title\">CSS code</div>\n                <div class='items'>            \n                    <div class=\"key-value-view\" ref=\"$keys\">\n\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: 'load $keys',
+        value: function load$keys() {
+            var layer = this.read('/selection/current/layer');
+
+            if (!layer) return '';
+
+            return this.read('/layer/toExport', layer, true).split(';').map(function (it) {
+                var _it$split = it.split(':'),
+                    _it$split2 = slicedToArray(_it$split, 2),
+                    key = _it$split2[0],
+                    value = _it$split2[1];
+
+                if (key == 'background-image') {
+                    var ret = convertMatches(value);
+
+                    var str = ret.str.split(',').join(',\n  ');
+
+                    str = str.replace(/\(/g, '(\n');
+                    str = str.replace(/\)/g, '\n)');
+
+                    value = reverseMatches(str, ret.matches);
+                }
+
+                return "\n                <div class=\"key-value-item\">\n                    <div class=\"key\">" + key + ":</div>\n                    <pre class=\"value\">" + value + ";</pre>\n                </div>\n            ";
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "getLayerCssCode",
+        value: function getLayerCssCode(item) {
+            var css = this.read('/layer/toExport', item, true).split(';').map(function (it) {
+                return it + ';';
+            }).join('\n');
+
+            return css;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }]);
+    return LayerCode;
+}(BasePropertyItem);
+
+var BackgroundCode = function (_BasePropertyItem) {
+    inherits(BackgroundCode, _BasePropertyItem);
+
+    function BackgroundCode() {
+        classCallCheck(this, BackgroundCode);
+        return possibleConstructorReturn(this, (BackgroundCode.__proto__ || Object.getPrototypeOf(BackgroundCode)).apply(this, arguments));
+    }
+
+    createClass(BackgroundCode, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item background-code show'>\n                <div class='title' ref=\"$title\">CSS code</div>\n                <div class='items'>            \n                    <div class=\"key-value-view\" ref=\"$keys\">\n\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: 'load $keys',
+        value: function load$keys() {
+            var image = this.read('/selection/current/image');
+
+            if (!image) return '';
+
+            var obj = this.read('/layer/image/toImageCSS', image);
+
+            return Object.keys(obj).map(function (key) {
+                var value = obj[key];
+
+                if (key == 'background-image') {
+                    var ret = convertMatches(value);
+
+                    var str = ret.str.split(',').join(',\n  ');
+
+                    str = str.replace('(', '(\n');
+                    str = str.replace(')', '\n)');
+
+                    value = reverseMatches(str, ret.matches);
+                }
+
+                return "\n                <div class=\"key-value-item\">\n                    <div class=\"key\">" + key + ":</div>\n                    <pre class=\"value\">" + value + ";</pre>\n                </div>\n            ";
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }]);
+    return BackgroundCode;
+}(BasePropertyItem);
+
 var items = {
+    BackgroundCode: BackgroundCode,
+    LayerCode: LayerCode,
+    Text: Text,
+    BackgroundInfo: BackgroundInfo,
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow,
@@ -18079,7 +18286,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: "template",
         value: function template() {
-            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"info\">Info</div>\n                <div class=\"tab-item\" data-id=\"fill\">Fill</div>                \n                <div class=\"tab-item\" data-id=\"shape\">Shape</div>\n                <div class=\"tab-item\" data-id=\"transform\">Trans</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"info\">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class=\"tab-content\" data-id=\"fill\">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <TextShadow></TextShadow>\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class=\"tab-content\" data-id=\"shape\">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class=\"tab-content\" data-id=\"transform\">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>                \n            </div>\n        </div>\n\n        ";
+            return "\n        <div class=\"tab horizontal\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"info\">Info</div>\n                <div class=\"tab-item\" data-id=\"text\">Text</div>\n                <div class=\"tab-item\" data-id=\"fill\">Fill</div>                \n                <div class=\"tab-item\" data-id=\"shape\">Shape</div>\n                <div class=\"tab-item\" data-id=\"transform\">Trans</div>\n                <div class=\"tab-item\" data-id=\"css\">CSS</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"info\">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class=\"tab-content\" data-id=\"text\">\n                    <Text></Text>\n                </div>\n                <div class=\"tab-content\" data-id=\"fill\">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <TextShadow></TextShadow>\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class=\"tab-content\" data-id=\"shape\">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class=\"tab-content\" data-id=\"transform\">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class=\"tab-content\" data-id=\"css\">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ";
         }
     }, {
         key: "components",
@@ -18672,18 +18879,18 @@ var GradientPosition = function (_UIElement) {
     return GradientPosition;
 }(UIElement);
 
-var ImageView = function (_UIElement) {
-    inherits(ImageView, _UIElement);
+var ImageTabView = function (_BaseTab) {
+    inherits(ImageTabView, _BaseTab);
 
-    function ImageView() {
-        classCallCheck(this, ImageView);
-        return possibleConstructorReturn(this, (ImageView.__proto__ || Object.getPrototypeOf(ImageView)).apply(this, arguments));
+    function ImageTabView() {
+        classCallCheck(this, ImageTabView);
+        return possibleConstructorReturn(this, (ImageTabView.__proto__ || Object.getPrototypeOf(ImageTabView)).apply(this, arguments));
     }
 
-    createClass(ImageView, [{
+    createClass(ImageTabView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <BackgroundBlend></BackgroundBlend>\n                <div class='sub-feature'>\n                    <BackgroundSize></BackgroundSize>\n                </div>\n                <ColorPickerPanel></ColorPickerPanel>\n                <ColorStepsInfo></ColorStepsInfo>   \n            </div>  \n        ";
+            return "\n            <div class=\"tab horizontal\">\n                <div class=\"tab-header\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item\" data-id=\"css\">CSS</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"gradient\">\n                        <BackgroundInfo></BackgroundInfo>\n                        <BackgroundBlend></BackgroundBlend>\n                        <div class='sub-feature'>\n                            <BackgroundSize></BackgroundSize>\n                        </div>\n                        <ColorPickerPanel></ColorPickerPanel>\n                        <ColorStepsInfo></ColorStepsInfo>   \n                    </div>\n                    <div class=\"tab-content\" data-id=\"css\">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ";
         }
     }, {
         key: "components",
@@ -18695,6 +18902,30 @@ var ImageView = function (_UIElement) {
                 PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
                 GradientPosition: GradientPosition
             }, items);
+        }
+    }]);
+    return ImageTabView;
+}(BaseTab);
+
+var ImageView = function (_UIElement) {
+    inherits(ImageView, _UIElement);
+
+    function ImageView() {
+        classCallCheck(this, ImageView);
+        return possibleConstructorReturn(this, (ImageView.__proto__ || Object.getPrototypeOf(ImageView)).apply(this, arguments));
+    }
+
+    createClass(ImageView, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-view'>\n                <ImageTabView></ImageTabView> \n            </div>  \n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return {
+                ImageTabView: ImageTabView
+            };
         }
     }]);
     return ImageView;
@@ -22246,7 +22477,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
         value: function value() {
             this.refreshLayer();
         }

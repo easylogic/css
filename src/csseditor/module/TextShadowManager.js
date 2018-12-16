@@ -5,7 +5,7 @@ export default class TextShadowManager extends BaseModule {
     '*/textshadow/toCSS' ($store, item = null, isExport = false) {
 
         var results = {} 
-        var textshadow = $store.read('/textshadow/totextShadowString', item, isExport)
+        var textshadow = $store.read('/textshadow/toTextShadowString', item, isExport)
 
         if (textshadow) {
             results['text-shadow'] = textshadow; 
@@ -41,7 +41,7 @@ export default class TextShadowManager extends BaseModule {
 
         if (!item) return '';
 
-        results = []
+        var results = []
 
         results.push(
             item.offsetX || '0px',
