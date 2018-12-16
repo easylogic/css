@@ -34,6 +34,10 @@ export default class ImageTabView extends BaseTab {
         `
     }
 
+    onTabShow () {
+        this.emit('ImageTabSelect')
+    }
+
     components () {
         return {            
             PredefinedLinearGradientAngle,

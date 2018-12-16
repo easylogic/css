@@ -51,6 +51,11 @@ export default class LayerTabView extends BaseTab {
         `
     }
 
+
+    onTabShow () {
+        this.emit('LayerTabSelect')
+    }
+
     components () {
         return items 
     }

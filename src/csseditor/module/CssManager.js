@@ -11,6 +11,11 @@ var ordering = {
     'height': 3,
 
     'opacity': 4,
+    'border-radius': 4,
+    
+    'box-shadow': 5,
+    'text-shadow': 5,
+    'filter': 5,
 
     'background-image' : 100,
     'background-size' : 100,

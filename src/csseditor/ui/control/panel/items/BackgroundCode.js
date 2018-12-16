@@ -70,7 +70,11 @@ export default class BackgroundCode extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.load();
+
+        if (this.parent.selectedTabId == 'css') {
+            this.load();
+        }
+
     }
     
 }

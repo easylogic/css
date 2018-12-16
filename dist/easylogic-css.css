@@ -5106,6 +5106,7 @@ html, body {
             font-weight: bold;
             padding: 2px 5px; }
           .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item .value {
+            white-space: pre-wrap;
             margin: 0px;
             padding: 0px 5px;
             padding-left: 20px;
@@ -5124,6 +5125,7 @@ html, body {
             font-weight: bold;
             padding: 2px 5px; }
           .csseditor .property-view .property-item.background-code .key-value-view .key-value-item .value {
+            white-space: pre-wrap;
             margin: 0px;
             padding: 0px 5px;
             padding-left: 20px;

@@ -42,7 +42,7 @@ export default class LayerCode extends BasePropertyItem {
         return this.read('/layer/toExport', layer, true).split(';').map(it => {
             var [key, value] = it.split(':');
 
-            if (key == 'background-image') {
+            if (key == 'background-image' || key == 'box-shadow' || key == 'text-shadow') {
                 var ret = convertMatches(value) ;
 
                 var str = ret.str.split(',').join(',\n  ')
@@ -78,19 +78,17 @@ export default class LayerCode extends BasePropertyItem {
         EVENT_CHANGE_BOXSHADOW,
         EVENT_CHANGE_TEXTSHADOW,
         EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+        EVENT_CHANGE_SELECTION,
+        '@LayerTabSelect'
     )] () { this.refresh() }    
 
-    getLayerCssCode (item) {
-        var css = this.read('/layer/toExport', item, true).split(';').map(it => {
-            return it + ';';
-        }).join('\n');
-
-        return css; 
-    }
-
     refresh() {
-        this.load();
+
+        if (this.parent.selectedTabId == 'css') {
+            this.load();
+        }
+
+
     }
     
 }
