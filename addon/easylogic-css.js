@@ -11007,6 +11007,11 @@ var LayerManager = function (_BaseModule) {
                 css['mix-blend-mode'] = layer.mixBlendMode || "";
             }
 
+            if (layer.backgroundClip) {
+                css['background-clip'] = layer.backgroundClip || "";
+                css['-webkit-background-clip'] = layer.backgroundClip || "";
+            }
+
             if (layer.opacity) {
                 css['opacity'] = layer.opacity;
             }
@@ -11047,6 +11052,11 @@ var LayerManager = function (_BaseModule) {
 
             if (layer.mixBlendMode) {
                 css['mix-blend-mode'] = layer.mixBlendMode;
+            }
+
+            if (layer.backgroundClip) {
+                css['background-clip'] = layer.backgroundClip || "";
+                css['-webkit-background-clip'] = layer.backgroundClip || "";
             }
 
             Object.assign(css, $store.read('/layer/get/border-radius', layer));
@@ -12958,6 +12968,9 @@ var ordering = {
     'box-shadow': 15,
     'text-shadow': 15,
     'filter': 15,
+
+    'background-clip': 50,
+    '-webkit-background-clip': 50,
 
     'background-repeat': 100,
     'background-blend-mode': 100,
@@ -18328,7 +18341,53 @@ var Font = function (_BasePropertyItem) {
     return Font;
 }(BasePropertyItem);
 
+var BackgroundClip = function (_BasePropertyItem) {
+    inherits(BackgroundClip, _BasePropertyItem);
+
+    function BackgroundClip() {
+        classCallCheck(this, BackgroundClip);
+        return possibleConstructorReturn(this, (BackgroundClip.__proto__ || Object.getPrototypeOf(BackgroundClip)).apply(this, arguments));
+    }
+
+    createClass(BackgroundClip, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Clip Area</label>\n                    <div class=\'size-list\'>\n                        <select ref="$clip">\n                            <option value="content-box">content-box</option>\n                            <option value="border-box">border-box</option>\n                            <option value="padding-box">padding-box</option>\n                            <option value="text">text</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read('/selection/is/layer');
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                _this2.refs.$clip.val(layer.backgroundClip);
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'change $clip',
+        value: function change$clip(e) {
+            var _this3 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.commit(CHANGE_LAYER, { id: id, backgroundClip: _this3.refs.$clip.val() }, true);
+            });
+        }
+    }]);
+    return BackgroundClip;
+}(BasePropertyItem);
+
 var items = {
+    BackgroundClip: BackgroundClip,
     Font: Font,
     LayerTextColorPickerPanel: LayerTextColorPickerPanel,
     BackgroundCode: BackgroundCode,
@@ -18428,7 +18487,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>\n                    <Font></Font>\n                    <Text></Text>\n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <BackgroundClip></BackgroundClip>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: 'onTabShow',

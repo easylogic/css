@@ -20,6 +20,9 @@ var ordering = {
     'text-shadow': 15,
     'filter': 15,
 
+    'background-clip': 50, 
+    '-webkit-background-clip': 50, 
+
     'background-repeat': 100,
     'background-blend-mode': 100,
     'background-image' : 100,

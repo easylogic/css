@@ -411,6 +411,11 @@ s
             css['mix-blend-mode'] = layer.mixBlendMode || ""
         }
 
+        if (layer.backgroundClip) {
+            css['background-clip'] = layer.backgroundClip || ""
+            css['-webkit-background-clip'] = layer.backgroundClip || ""            
+        }        
+
         if (layer.opacity) {
             css['opacity'] = layer.opacity;
         }
@@ -455,6 +460,11 @@ s
         if (layer.mixBlendMode) {
             css['mix-blend-mode'] = layer.mixBlendMode
         }
+
+        if (layer.backgroundClip) {
+            css['background-clip'] = layer.backgroundClip || ""
+            css['-webkit-background-clip'] = layer.backgroundClip || ""
+        }                
 
         Object.assign(css, $store.read('/layer/get/border-radius', layer));
 

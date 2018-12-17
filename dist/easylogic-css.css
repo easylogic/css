@@ -5163,7 +5163,8 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7; }
+        border: 1px solid #c7c7c7;
+        font-size: 20px; }
     .csseditor .property-view .gradient-view {
       height: 230px;
       width: 100%; }

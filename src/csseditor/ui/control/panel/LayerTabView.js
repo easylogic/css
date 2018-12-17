@@ -22,13 +22,15 @@ export default class LayerTabView extends BaseTab {
                     <RadiusFixed></RadiusFixed>
                     <radius></radius>        
                     <opacity></opacity>              
-                    <LayerBlend></LayerBlend>                            
+                    <LayerBlend></LayerBlend>        
+                    <BackgroundClip></BackgroundClip>                    
                     <LayerColorPickerPanel></LayerColorPickerPanel>
                 </div>
                 <div class="tab-content" data-id="text">
-                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>
-                    <Font></Font>
-                    <Text></Text>
+                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    
+                    <Font></Font>                    
+                    <Text></Text>                    
+                    <BackgroundClip></BackgroundClip>                    
                     <TextShadow></TextShadow>                    
                 </div>
                 <div class="tab-content" data-id="fill">
