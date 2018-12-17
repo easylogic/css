@@ -30,7 +30,8 @@ import {
     EVENT_CHANGE_LAYER_ROTATE,
     EVENT_CHANGE_LAYER_OPACITY,
     EVENT_CHANGE_BOXSHADOW,
-    EVENT_CHANGE_TEXTSHADOW
+    EVENT_CHANGE_TEXTSHADOW,
+    EVENT_CHANGE_LAYER_TEXT
 } from '../../types/event';
 
 
@@ -79,14 +80,13 @@ export default class GradientView extends UIElement {
         }
 
         var list = this.read('/item/map/children', page.id, (item, index) => {
+            var content = item.content || '';
             return `<div 
                     tabindex='${index}'
                     class='layer' 
                     item-layer-id="${item.id}" 
                     title="${index+1}. ${item.name || 'Layer'}" 
-                    style='${this.read('/layer/toString', item, true)}'>
-                    ${this.read('/layer/toStringClipPath', item)}
-                </div>`
+                    style='${this.read('/layer/toString', item, true)}'>${content}${this.read('/layer/toStringClipPath', item)}</div>`
         });
 
         return list; 
@@ -115,7 +115,9 @@ export default class GradientView extends UIElement {
             items.forEach(item => {
                 var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
                 $el.cssText(this.read('/layer/toString', item, true))
-                $el.html(this.read('/layer/toStringClipPath', item))
+
+                var content = item.content || '';
+                $el.html(content + this.read('/layer/toStringClipPath', item))
             })
         })
     }
@@ -219,6 +221,7 @@ export default class GradientView extends UIElement {
         EVENT_CHANGE_LAYER_OPACITY,
         EVENT_CHANGE_LAYER_TRANSFORM,
         EVENT_CHANGE_LAYER_TRANSFORM_3D,
+        EVENT_CHANGE_LAYER_TEXT,
         EVENT_CHANGE_BOXSHADOW,
         EVENT_CHANGE_TEXTSHADOW,
         EVENT_CHANGE_IMAGE,

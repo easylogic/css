@@ -10,13 +10,18 @@ var ordering = {
     'width': 3,
     'height': 3,
 
-    'opacity': 4,
-    'border-radius': 4,
-    
-    'box-shadow': 5,
-    'text-shadow': 5,
-    'filter': 5,
+    'font-size': 4,
+    'font-family': 4, 
 
+    'opacity': 10,
+    'border-radius': 10,
+
+    'box-shadow': 15,
+    'text-shadow': 15,
+    'filter': 15,
+
+    'background-repeat': 100,
+    'background-blend-mode': 100,
     'background-image' : 100,
     'background-size' : 100,
     'background-position' : 100,

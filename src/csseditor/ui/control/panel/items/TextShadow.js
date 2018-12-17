@@ -154,7 +154,7 @@ export default class TextShadow extends BasePropertyItem {
         var id = $el.parent().attr('text-shadow-id')
 
         this.dispatch('/selection/one', id);
-        this.emit('fillColorId', id);
+        this.emit('textFillColorId', id, CHANGE_TEXTSHADOW);
         this.refresh();
     }
 

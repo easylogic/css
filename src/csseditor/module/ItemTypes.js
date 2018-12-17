@@ -38,6 +38,13 @@ export const LAYER_DEFAULT_OBJECT = {
     height: '200px',
     rotate: 0,
     opacity: 1,
+    fontFamily: 'serif',
+    fontSize: '13px',
+    fontWeight: 400,
+    wordBreak: 'break-word',
+    wordWrap: 'break-word',
+    lineHeight: 1.6,
+    content: '',
     filters: []
 }
 

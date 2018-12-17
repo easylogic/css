@@ -8,8 +8,8 @@ export default class LayerTabView extends BaseTab {
         <div class="tab horizontal">
             <div class="tab-header" ref="$header">
                 <div class="tab-item selected" data-id="info">Info</div>
+                <div class="tab-item" data-id="fill">Fill</div>       
                 <div class="tab-item" data-id="text">Text</div>
-                <div class="tab-item" data-id="fill">Fill</div>                
                 <div class="tab-item" data-id="shape">Shape</div>
                 <div class="tab-item" data-id="transform">Trans</div>
                 <div class="tab-item" data-id="css">CSS</div>
@@ -26,12 +26,15 @@ export default class LayerTabView extends BaseTab {
                     <LayerColorPickerPanel></LayerColorPickerPanel>
                 </div>
                 <div class="tab-content" data-id="text">
+                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>
+                    <Font></Font>
                     <Text></Text>
+                    <TextShadow></TextShadow>                    
                 </div>
                 <div class="tab-content" data-id="fill">
                     <FillColorPickerPanel></FillColorPickerPanel>
                     <BoxShadow></BoxShadow>
-                    <TextShadow></TextShadow>
+
                     <FilterList></FilterList>                    
                 </div>                
                 <div class="tab-content" data-id="shape">

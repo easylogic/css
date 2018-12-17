@@ -6,8 +6,8 @@ import {
     EVENT_CHANGE_SELECTION
 } from '../../../../../types/event';
 
-export default class FillColorPicker extends UIElement {
-
+export default class TextFillColorPicker extends UIElement {
+ 
     afterRender () {
         var defaultColor = 'rgba(0, 0, 0, 0)'
 
@@ -37,7 +37,7 @@ export default class FillColorPicker extends UIElement {
         }
     }
 
-    '@fillColorId' (id, eventType) {
+    '@textFillColorId' (id, eventType) {
         this.changeColorId = id;
         this.itemType = this.read('/item/get', id).itemType;
         this.eventType = eventType;

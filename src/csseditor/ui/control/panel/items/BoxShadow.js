@@ -175,7 +175,7 @@ export default class BoxShadow extends BasePropertyItem {
         var id = $el.parent().attr('box-shadow-id')
 
         this.dispatch('/selection/one', id);
-        this.emit('fillColorId', id);
+        this.emit('fillColorId', id, CHANGE_BOXSHADOW);
         this.refresh();
     }
 

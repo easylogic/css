@@ -35,10 +35,12 @@ import BackgroundInfo from "./BackgroundInfo";
 import Text from "./text";
 import LayerCode from "./LayerCode";
 import BackgroundCode from "./BackgroundCode";
-
-
+import LayerTextColorPickerPanel from "./LayerTextColorPickerPanel";
+import Font from "./Font";
 
 export default {
+    Font,
+    LayerTextColorPickerPanel,
     BackgroundCode,
     LayerCode,
     Text,

@@ -78,19 +78,23 @@ export default class UnitRange extends UIElement {
     initializeRangeMax (unit) {
         
         if (unit == 'percent') {
-            this.refs.$range.attr('max', 300);
+            var max = this.props.unit == 'percent' ? this.props.max : 300;
+            this.refs.$range.attr('max', max);
             this.refs.$range.attr('step', 0.01);
-            this.refs.$number.attr('max', 300);
+            this.refs.$number.attr('max', max);
             this.refs.$number.attr('step', 0.01);
         } else if (unit == 'px') {
-            this.refs.$range.attr('max', 1000);
+            var max = this.props.unit == 'px' ? this.props.max : 1000;
+
+            this.refs.$range.attr('max', max);
             this.refs.$range.attr('step', 1);
-            this.refs.$number.attr('max', 1000);
+            this.refs.$number.attr('max', max);
             this.refs.$number.attr('step', 1);
         } else if (unit == 'em') {
-            this.refs.$range.attr('max', 300);
+            var max = this.props.unit == 'em' ? this.props.max : 300;
+            this.refs.$range.attr('max', max);
             this.refs.$range.attr('step', 0.01);
-            this.refs.$number.attr('max', 300);
+            this.refs.$number.attr('max', max);
             this.refs.$number.attr('step', 0.01);            
         }
     }

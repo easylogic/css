@@ -114,7 +114,9 @@ export default class ExportWindow extends UIElement {
                 clipPath = `\t\t\n${clipPath}`
             }
 
-            return `\t<div ${selector.join(' ')}>${clipPath}</div>`
+            var content = item.content || ''
+
+            return `\t<div ${selector.join(' ')}>${content}${clipPath}</div>`
         }).join('\n')}
 </div>`
 

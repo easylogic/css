@@ -246,6 +246,35 @@ export default class LayerManager extends BaseModule {
         return $store.read('/layer/make/map', layer, ITEM_TYPE_BOXSHADOW, isExport);
     }
 
+    '*/layer/make/font' ($store, layer, isExport) {
+        var results = {}
+
+        if (layer.color) {
+            results['color'] = layer.color;
+        }
+
+        if (layer.fontSize) {
+            results['font-size'] = layer.fontSize;
+        }
+
+        if (layer.fontFamily) {
+            results['font-family'] = layer.fontFamily;
+        }
+
+        if (layer.fontWeight) {
+            results['font-weight'] = layer.fontWeight;
+        }        
+
+        if (typeof layer.lineHeight != 'undefined') {
+            results['line-height']  = layer.lineHeight
+        }
+
+        results['word-wrap'] = layer.wordWrap || 'break-word';
+        results['word-break'] = layer.wordBreak || 'break-word';
+
+        return results;
+    }
+
     '*/layer/make/image' ($store, layer, isExport) {
         return $store.read('/layer/make/map', layer, ITEM_TYPE_IMAGE, isExport);
     }    
@@ -393,6 +422,7 @@ s
         css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
         var results = Object.assign(css, 
+            $store.read('/layer/make/font', layer),            
             $store.read('/layer/make/box-shadow', layer),
             $store.read('/layer/make/text-shadow', layer),
             (image) ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport)
@@ -433,6 +463,7 @@ s
         css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
         var results = Object.assign(css, 
+            $store.read('/layer/make/font', layer),
             $store.read('/layer/make/box-shadow', layer),
             $store.read('/layer/make/text-shadow', layer),
             $store.read('/layer/cache/toImageCSS', layer.images)

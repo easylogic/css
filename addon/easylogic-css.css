@@ -1456,7 +1456,9 @@ html, body {
       .csseditor .tab.horizontal .tab-header .tab-item {
         border: 0px;
         border-bottom: 1px solid #c7c7c7;
-        text-align: center; }
+        text-align: center;
+        min-height: 40px;
+        line-height: 2; }
     .csseditor .tab.horizontal .tab-body {
       top: 0px;
       right: 50px;
@@ -5093,6 +5095,14 @@ html, body {
             margin-left: 12px; }
           .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-tab-body {
             border: 0px; }
+      .csseditor .property-view .property-item.text-colorpicker .items {
+        padding: 0px; }
+        .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body {
+          width: 100%; }
+          .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-panel {
+            margin-left: 12px; }
+          .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-tab-body {
+            border: 0px; }
       .csseditor .property-view .property-item.layer-code .key-value-view {
         display: block;
         -webkit-user-select: text;
@@ -5106,6 +5116,7 @@ html, body {
             font-weight: bold;
             padding: 2px 5px; }
           .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item .value {
+            white-space: pre-wrap;
             margin: 0px;
             padding: 0px 5px;
             padding-left: 20px;
@@ -5124,11 +5135,35 @@ html, body {
             font-weight: bold;
             padding: 2px 5px; }
           .csseditor .property-view .property-item.background-code .key-value-view .key-value-item .value {
+            white-space: pre-wrap;
             margin: 0px;
             padding: 0px 5px;
             padding-left: 20px;
             font-size: 12px;
             display: block; }
+      .csseditor .property-view .property-item.text .color {
+        width: 20px !important;
+        height: 20px !important;
+        cursor: pointer !important;
+        border: 1px solid #333 !important;
+        display: inline-block !important;
+        vertical-align: middle !important; }
+      .csseditor .property-view .property-item.text .color-text {
+        width: 100px !important;
+        -webkit-appearance: none !important;
+           -moz-appearance: none !important;
+                appearance: none !important;
+        border: 0px !important;
+        background-color: transparent !important;
+        pointer-events: none;
+        margin-left: 5px; }
+      .csseditor .property-view .property-item.text .content {
+        width: 100%;
+        height: 100px;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 1px solid #c7c7c7; }
     .csseditor .property-view .gradient-view {
       height: 230px;
       width: 100%; }

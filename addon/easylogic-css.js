@@ -9572,6 +9572,7 @@ var CHANGE_LAYER_TRANSFORM_3D = 'CHANGE_LAYER_TRANSFORM_3D';
 var CHANGE_LAYER_RADIUS = 'CHANGE_LAYER_RADIUS';
 var CHANGE_LAYER_BACKGROUND_COLOR = 'CHANGE_LAYER_BACKGROUND_COLOR';
 var CHANGE_LAYER_CLIPPATH = 'CHANGE_LAYER_CLIPPATH';
+var CHANGE_LAYER_TEXT = 'CHANGE_LAYER_TEXT';
 
 var CHANGE_IMAGE = 'CHANGE_IMAGE';
 var CHANGE_IMAGE_COLOR = 'CHANGE_IMAGE_COLOR';
@@ -9608,6 +9609,7 @@ var EVENT_CHANGE_LAYER_TRANSFORM_3D = '@' + CHANGE_LAYER_TRANSFORM_3D;
 var EVENT_CHANGE_LAYER_RADIUS = '@' + CHANGE_LAYER_RADIUS;
 var EVENT_CHANGE_LAYER_BACKGROUND_COLOR = '@' + CHANGE_LAYER_BACKGROUND_COLOR;
 var EVENT_CHANGE_LAYER_CLIPPATH = '@' + CHANGE_LAYER_CLIPPATH;
+var EVENT_CHANGE_LAYER_TEXT = '@' + CHANGE_LAYER_TEXT;
 
 var EVENT_CHANGE_IMAGE = '@' + CHANGE_IMAGE;
 var EVENT_CHANGE_IMAGE_COLOR = '@' + CHANGE_IMAGE_COLOR;
@@ -9660,6 +9662,13 @@ var LAYER_DEFAULT_OBJECT = {
     height: '200px',
     rotate: 0,
     opacity: 1,
+    fontFamily: 'serif',
+    fontSize: '13px',
+    fontWeight: 400,
+    wordBreak: 'break-word',
+    wordWrap: 'break-word',
+    lineHeight: 1.6,
+    content: '',
     filters: []
 };
 
@@ -10823,6 +10832,36 @@ var LayerManager = function (_BaseModule) {
             return $store.read('/layer/make/map', layer, ITEM_TYPE_BOXSHADOW, isExport);
         }
     }, {
+        key: '*/layer/make/font',
+        value: function layerMakeFont($store, layer, isExport) {
+            var results = {};
+
+            if (layer.color) {
+                results['color'] = layer.color;
+            }
+
+            if (layer.fontSize) {
+                results['font-size'] = layer.fontSize;
+            }
+
+            if (layer.fontFamily) {
+                results['font-family'] = layer.fontFamily;
+            }
+
+            if (layer.fontWeight) {
+                results['font-weight'] = layer.fontWeight;
+            }
+
+            if (typeof layer.lineHeight != 'undefined') {
+                results['line-height'] = layer.lineHeight;
+            }
+
+            results['word-wrap'] = layer.wordWrap || 'break-word';
+            results['word-break'] = layer.wordBreak || 'break-word';
+
+            return results;
+        }
+    }, {
         key: '*/layer/make/image',
         value: function layerMakeImage($store, layer, isExport) {
             return $store.read('/layer/make/map', layer, ITEM_TYPE_IMAGE, isExport);
@@ -10978,7 +11017,7 @@ var LayerManager = function (_BaseModule) {
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
             css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
-            var results = Object.assign(css, $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport));
+            var results = Object.assign(css, $store.read('/layer/make/font', layer), $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport));
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -11016,7 +11055,7 @@ var LayerManager = function (_BaseModule) {
             css['filter'] = $store.read('/layer/make/filter', layer.filters);
             css['clip-path'] = $store.read('/layer/make/clip-path', layer);
 
-            var results = Object.assign(css, $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), $store.read('/layer/cache/toImageCSS', layer.images));
+            var results = Object.assign(css, $store.read('/layer/make/font', layer), $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), $store.read('/layer/cache/toImageCSS', layer.images));
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -12910,13 +12949,18 @@ var ordering = {
     'width': 3,
     'height': 3,
 
-    'opacity': 4,
-    'border-radius': 4,
+    'font-size': 4,
+    'font-family': 4,
 
-    'box-shadow': 5,
-    'text-shadow': 5,
-    'filter': 5,
+    'opacity': 10,
+    'border-radius': 10,
 
+    'box-shadow': 15,
+    'text-shadow': 15,
+    'filter': 15,
+
+    'background-repeat': 100,
+    'background-blend-mode': 100,
     'background-image': 100,
     'background-size': 100,
     'background-position': 100,
@@ -15991,19 +16035,23 @@ var UnitRange = function (_UIElement) {
         value: function initializeRangeMax(unit) {
 
             if (unit == 'percent') {
-                this.refs.$range.attr('max', 300);
+                var max = this.props.unit == 'percent' ? this.props.max : 300;
+                this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 0.01);
-                this.refs.$number.attr('max', 300);
+                this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 0.01);
             } else if (unit == 'px') {
-                this.refs.$range.attr('max', 1000);
+                var max = this.props.unit == 'px' ? this.props.max : 1000;
+
+                this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 1);
-                this.refs.$number.attr('max', 1000);
+                this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 1);
             } else if (unit == 'em') {
-                this.refs.$range.attr('max', 300);
+                var max = this.props.unit == 'em' ? this.props.max : 300;
+                this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 0.01);
-                this.refs.$number.attr('max', 300);
+                this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 0.01);
             }
         }
@@ -17659,7 +17707,7 @@ var BoxShadow = function (_BasePropertyItem) {
             var id = $el.parent().attr('box-shadow-id');
 
             this.dispatch('/selection/one', id);
-            this.emit('fillColorId', id);
+            this.emit('fillColorId', id, CHANGE_BOXSHADOW);
             this.refresh();
         }
     }]);
@@ -17788,7 +17836,7 @@ var TextShadow = function (_BasePropertyItem) {
             var id = $el.parent().attr('text-shadow-id');
 
             this.dispatch('/selection/one', id);
-            this.emit('fillColorId', id);
+            this.emit('textFillColorId', id, CHANGE_TEXTSHADOW);
             this.refresh();
         }
     }]);
@@ -17838,16 +17886,10 @@ var FillColorPicker = function (_UIElement) {
         }
     }, {
         key: '@fillColorId',
-        value: function fillColorId(id) {
+        value: function fillColorId(id, eventType) {
             this.changeColorId = id;
             this.itemType = this.read('/item/get', id).itemType;
-            this.eventType = CHANGE_BOXSHADOW;
-
-            if (this.itemType == ITEM_TYPE_TEXTSHADOW$1) {
-                this.eventType = CHANGE_TEXTSHADOW;
-            } else if (this.itemType == ITEM_TYPE_FILTER) {
-                this.eventType = CHANGE_LAYER_FILTER$1;
-            }
+            this.eventType = eventType;
 
             this.refresh();
         }
@@ -17938,7 +17980,41 @@ var Text = function (_BasePropertyItem) {
     createClass(Text, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Text</div>            \n                <div class='items'>\n                    <div>\n                                          \n                    </div>   \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Content</div>\n                <div class='items'>\n                    <div>\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_TEXT),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                _this2.refs.$color.css('background-color', layer.color);
+                _this2.refs.$colorText.val(layer.color);
+                _this2.refs.$content.val(layer.content || '');
+            });
+        }
+    }, {
+        key: 'input $content',
+        value: function input$content(e) {
+            var _this3 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.commit(CHANGE_LAYER_TEXT, { id: id, content: _this3.refs.$content.val() });
+            });
+        }
+    }, {
+        key: 'click $color',
+        value: function click$color(e) {
+            var _this4 = this;
+
+            this.read('/selection/current/layer', function (item) {
+                _this4.emit('textFillColorId', item.id, CHANGE_LAYER_TEXT);
+            });
         }
     }]);
     return Text;
@@ -18057,7 +18133,204 @@ var BackgroundCode = function (_BasePropertyItem) {
     return BackgroundCode;
 }(BasePropertyItem);
 
+var TextFillColorPicker = function (_UIElement) {
+    inherits(TextFillColorPicker, _UIElement);
+
+    function TextFillColorPicker() {
+        classCallCheck(this, TextFillColorPicker);
+        return possibleConstructorReturn(this, (TextFillColorPicker.__proto__ || Object.getPrototypeOf(TextFillColorPicker)).apply(this, arguments));
+    }
+
+    createClass(TextFillColorPicker, [{
+        key: 'afterRender',
+        value: function afterRender() {
+            var _this2 = this;
+
+            var defaultColor = 'rgba(0, 0, 0, 0)';
+
+            this.colorPicker = ColorPicker.create({
+                type: 'xd-tab',
+                position: 'inline',
+                container: this.$el.el,
+                color: defaultColor,
+                onChange: function onChange(c) {
+                    _this2.changeColor(c);
+                }
+            });
+
+            setTimeout(function () {
+                _this2.colorPicker.dispatch('/initColor', defaultColor);
+            }, 100);
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '<div class=\'colorpicker-layer\'> </div>';
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor(color) {
+            if (this.changeColorId) {
+                this.commit(this.eventType, { id: this.changeColorId, color: color });
+            }
+        }
+    }, {
+        key: '@textFillColorId',
+        value: function textFillColorId(id, eventType) {
+            this.changeColorId = id;
+            this.itemType = this.read('/item/get', id).itemType;
+            this.eventType = eventType;
+
+            this.refresh();
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            if (this.changeColorId) {
+                var item = this.read('/item/get', this.changeColorId);
+                this.colorPicker.initColorWithoutChangeEvent(item.color);
+            }
+        }
+    }]);
+    return TextFillColorPicker;
+}(UIElement);
+
+var LayerTextColorPickerPanel = function (_UIElement) {
+    inherits(LayerTextColorPickerPanel, _UIElement);
+
+    function LayerTextColorPickerPanel() {
+        classCallCheck(this, LayerTextColorPickerPanel);
+        return possibleConstructorReturn(this, (LayerTextColorPickerPanel.__proto__ || Object.getPrototypeOf(LayerTextColorPickerPanel)).apply(this, arguments));
+    }
+
+    createClass(LayerTextColorPickerPanel, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <TextFillColorPicker></TextFillColorPicker>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { TextFillColorPicker: TextFillColorPicker };
+        }
+    }]);
+    return LayerTextColorPickerPanel;
+}(UIElement);
+
+var fontFamilyList = ['Georgia', "Times New Roman", 'serif', 'sans-serif'];
+
+var fontWeightList = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
+
+var MAX_FONT_SIZE = 300;
+var MAX_LINE_HEIGHT = 100;
+
+var Font = function (_BasePropertyItem) {
+    inherits(Font, _BasePropertyItem);
+
+    function Font() {
+        classCallCheck(this, Font);
+        return possibleConstructorReturn(this, (Font.__proto__ || Object.getPrototypeOf(Font)).apply(this, arguments));
+    }
+
+    createClass(Font, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item font show'>\n                <div class='title' ref=\"$title\">Font</div>            \n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div>\n                            <select ref=\"$fontFamily\">\n                                " + fontFamilyList.map(function (f) {
+                return "<option value=\"" + f + "\">" + f + "</option>";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
+                return "<option value=\"" + f + "\">" + f + "</option>";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"px\" \n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"px\" \n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { UnitRange: UnitRange };
+        }
+    }, {
+        key: "getMaxFontSize",
+        value: function getMaxFontSize() {
+            return MAX_FONT_SIZE;
+        }
+    }, {
+        key: "getMaxLineHeight",
+        value: function getMaxLineHeight() {
+            return MAX_LINE_HEIGHT;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                _this2.refs.$fontFamily.val(layer.fontFamily);
+                _this2.refs.$fontWeight.val(layer.fontWeight);
+                _this2.children.$fontSize.refresh(layer.fontSize);
+                _this2.children.$lineHeight.refresh(layer.lineHeight);
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "updateFontSize",
+        value: function updateFontSize(fontSize) {
+            var _this3 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.commit(CHANGE_LAYER_TEXT, { id: id, fontSize: fontSize });
+            });
+        }
+    }, {
+        key: "updateLineHeight",
+        value: function updateLineHeight(lineHeight) {
+            var _this4 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this4.commit(CHANGE_LAYER_TEXT, { id: id, lineHeight: lineHeight });
+            });
+        }
+    }, {
+        key: "updateFontFamily",
+        value: function updateFontFamily(fontFamily) {
+            var _this5 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this5.commit(CHANGE_LAYER_TEXT, { id: id, fontFamily: fontFamily });
+            });
+        }
+    }, {
+        key: "updateFontWeight",
+        value: function updateFontWeight(fontWeight) {
+            var _this6 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this6.commit(CHANGE_LAYER_TEXT, { id: id, fontWeight: fontWeight });
+            });
+        }
+    }, {
+        key: 'change $fontFamily',
+        value: function change$fontFamily(e) {
+            this.updateFontFamily(this.refs.$fontFamily.val());
+        }
+    }, {
+        key: 'change $fontWeight',
+        value: function change$fontWeight(e) {
+            this.updateFontWeight(this.refs.$fontWeight.val());
+        }
+    }]);
+    return Font;
+}(BasePropertyItem);
+
 var items = {
+    Font: Font,
+    LayerTextColorPickerPanel: LayerTextColorPickerPanel,
     BackgroundCode: BackgroundCode,
     LayerCode: LayerCode,
     Text: Text,
@@ -18155,7 +18428,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="fill">Fill</div>                \n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class="tab-content" data-id="text">\n                    <Text></Text>\n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <TextShadow></TextShadow>\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>                            \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>\n                    <Font></Font>\n                    <Text></Text>\n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: 'onTabShow',
@@ -20142,7 +20415,9 @@ var ExportWindow = function (_UIElement) {
                     clipPath = "\t\t\n" + clipPath;
                 }
 
-                return "\t<div " + selector.join(' ') + ">" + clipPath + "</div>";
+                var content = item.content || '';
+
+                return "\t<div " + selector.join(' ') + ">" + content + clipPath + "</div>";
             }).join('\n') + "\n</div>";
 
             return html;
@@ -22230,7 +22505,8 @@ var GradientView = function (_UIElement) {
             }
 
             var list = this.read('/item/map/children', page.id, function (item, index) {
-                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                    style=\'' + _this2.read('/layer/toString', item, true) + '\'>\n                    ' + _this2.read('/layer/toStringClipPath', item) + '\n                </div>';
+                var content = item.content || '';
+                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                    style=\'' + _this2.read('/layer/toString', item, true) + '\'>' + content + _this2.read('/layer/toStringClipPath', item) + '</div>';
             });
 
             return list;
@@ -22262,7 +22538,9 @@ var GradientView = function (_UIElement) {
                 items.forEach(function (item) {
                     var $el = _this3.$el.$('[item-layer-id="' + item.id + '"]');
                     $el.cssText(_this3.read('/layer/toString', item, true));
-                    $el.html(_this3.read('/layer/toStringClipPath', item));
+
+                    var content = item.content || '';
+                    $el.html(content + _this3.read('/layer/toStringClipPath', item));
                 });
             });
         }
@@ -22357,7 +22635,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
         value: function value() {
             this.refreshLayer();
         }
