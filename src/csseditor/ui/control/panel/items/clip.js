@@ -27,14 +27,13 @@ export default class Clip extends UIElement {
 
     refresh() {
         this.read('/selection/current/page', (item) => {
-            this.refs.$check.el.checked = !!item.clip
+            this.refs.$check.checked(item.clip)
         })        
     }
 
     'click $check' () {
         this.read('/selection/current/page/id', (id) => {
-            console.log(id, this.refs.$check.el.checked);
-            this.commit(CHANGE_PAGE_SIZE, {id, clip: this.refs.$check.el.checked} )
+            this.commit(CHANGE_PAGE_SIZE, {id, clip: this.refs.$check.checked() } )
         })
     }
 }

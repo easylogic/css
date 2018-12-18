@@ -34,7 +34,7 @@ export default class Text extends BasePropertyItem {
                     <div class="not-clip">
                         <label></label>
                         <div class='size-list'>
-                            <label><input type="checkbox" ref="$clipText" /> Only Text </label>
+                            <label><input type="checkbox" ref="$clipText" /> only text </label>
                         </div>
                     </div>    
 
@@ -60,7 +60,7 @@ export default class Text extends BasePropertyItem {
             this.refs.$colorText.val(layer.color || '');
             this.refs.$content.val(layer.content || '');
             this.refs.$clip.val(layer.backgroundClip)
-            this.refs.$clipText.el.checked = layer.clipText || false; 
+            this.refs.$clipText.checked(layer.clipText || false); 
             
             this.$el.toggleClass('has-clip-text', layer.clipText || false)
         })
@@ -87,7 +87,7 @@ export default class Text extends BasePropertyItem {
 
     'click $clipText' (e) {
         this.read('/selection/current/layer/id', (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, clipText: this.refs.$clipText.el.checked }, true)
+            this.commit(CHANGE_LAYER_TEXT, {id, clipText: this.refs.$clipText.checked() }, true)
         });
     }
 }

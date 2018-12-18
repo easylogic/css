@@ -6,24 +6,6 @@
     bottom: 0px;
     box-sizing: border-box;
 
-    &.has-page-panel {
-        .pages {
-            display: block; 
-        }
-
-        .item-info {
-            .page-info {
-                display: block;
-            }
-
-            left: $left-page-size;
-
-            .layers {
-                top: 0px;
-            }
-        }
-    }
-
     .item-info {
         position: absolute;
         left: 0px;

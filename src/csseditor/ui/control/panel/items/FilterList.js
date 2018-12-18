@@ -55,7 +55,7 @@ export default class FilterList extends BasePropertyItem {
         var filters = this.getFilterList();
 
 
-        return defaultFilterList.map(f => {
+        return filters.map(f => {
             var viewObject = filters[f.type];
             var dataObject = f || {};
  
@@ -108,7 +108,7 @@ export default class FilterList extends BasePropertyItem {
                 newValue.filters[filterId] = { checked: false}
             }
 
-            newValue.filters[filterId].checked = e.$delegateTarget.el.checked;
+            newValue.filters[filterId].checked = e.$delegateTarget.checked();
 
             this.commit(CHANGE_LAYER_FILTER, newValue);
             this.refreshFilterList()

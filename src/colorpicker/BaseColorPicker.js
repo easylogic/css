@@ -173,6 +173,7 @@ export default class BaseColorPicker extends UIElement {
         this.opt[key] = value; 
     }
 
+    /*
     isType (key) {
         return this.getOption('type') == key;
     }
@@ -183,7 +184,7 @@ export default class BaseColorPicker extends UIElement {
 
     isSketchType() {
         return this.isType('sketch');
-    }
+    } */
 
     getContainer () {
         return this.opt.container || document.body;

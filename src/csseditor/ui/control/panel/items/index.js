@@ -38,8 +38,11 @@ import BackgroundCode from "./BackgroundCode";
 import LayerTextColorPickerPanel from "./LayerTextColorPickerPanel";
 import Font from "./Font";
 import BackgroundClip from "./BackgroundClip";
+import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
+
 
 export default {
+    LayerInfoColorPickerPanel,
     BackgroundClip,
     Font,
     LayerTextColorPickerPanel,

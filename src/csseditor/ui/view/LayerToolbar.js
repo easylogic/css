@@ -9,6 +9,7 @@ export default class LayerToolbar extends UIElement {
                 <div class="panel-toolbar">
                     <div class="button-group">
                         <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>
+                        <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button>
                     </div>
                     <label>&nbsp;</label>
                     <div class="button-group">
@@ -85,4 +86,8 @@ export default class LayerToolbar extends UIElement {
     'click $togglePagePanel' () {
         this.emit('togglePagePanel');
     }
+
+    'click $toggleLayerPanel' () {
+        this.emit('toggleLayerPanel');
+    }    
 }

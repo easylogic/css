@@ -150,4 +150,12 @@ export default class CSSEditor extends BaseCSSEditor {
 
         // this.refs.$layoutMain.addClass(`${layout}-mode`)
     }
+
+    '@togglePagePanel' () {
+        this.$el.toggleClass('has-page-panel')
+    }
+
+    '@toggleLayerPanel' () {
+        this.$el.toggleClass('has-layer-panel')
+    }
 }

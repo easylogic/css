@@ -16,6 +16,7 @@ export default class LayerTabView extends BaseTab {
             </div>
             <div class="tab-body" ref="$body">
                 <div class="tab-content selected" data-id="info">
+                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    
                     <Name></Name>            
                     <size></size>                
                     <Rotate></Rotate>        
@@ -24,7 +25,6 @@ export default class LayerTabView extends BaseTab {
                     <opacity></opacity>              
                     <LayerBlend></LayerBlend>        
                     <BackgroundClip></BackgroundClip>                    
-                    <LayerColorPickerPanel></LayerColorPickerPanel>
                 </div>
                 <div class="tab-content" data-id="text">
                     <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    

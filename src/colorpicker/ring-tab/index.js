@@ -11,13 +11,12 @@ import ColorRing from '../ui/ColorRing';
 import Palette from '../ui/ColorPalette';
 
 export default class RingTabColorPicker extends BaseColorPicker {
- 
     template () {
         return `
             <div class='colorpicker-body'>
                 <div class='color-tab' ref="$tab">
                     <div class='color-tab-header' ref="$tabHeader">
-                        <div class='color-tab-item active' item-id="color">Color</div>
+                        <div class='color-tab-item active' item-id="color"><span >${this.opt.tabTitle}</span> Color</div>
                         <div class='color-tab-item' item-id="swatch">Swatch</div>
                         <div class='color-tab-item' item-id="colorset">Color Set</div>
                     </div>

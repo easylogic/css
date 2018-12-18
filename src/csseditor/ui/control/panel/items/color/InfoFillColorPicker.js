@@ -3,17 +3,19 @@ import ColorPicker from '../../../../../../colorpicker/index'
 import UIElement, { MULTI_EVENT } from '../../../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION
+    EVENT_CHANGE_SELECTION,
+    EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
+    CHANGE_LAYER_BACKGROUND_COLOR
 } from '../../../../../types/event';
 
-export default class TextFillColorPicker extends UIElement {
+export default class InfoFillColorPicker extends UIElement {
  
     afterRender () {
         var defaultColor = 'rgba(0, 0, 0, 0)'
 
         this.colorPicker = ColorPicker.create({
             type: 'xd-tab',
-            tabTitle: 'Text',            
+            tabTitle: 'Background',  
             position: 'inline',
             container: this.$el.el,
             color: defaultColor,
@@ -33,30 +35,27 @@ export default class TextFillColorPicker extends UIElement {
     }
 
     changeColor (color) {
-        if (this.changeColorId) {
-            this.commit(this.eventType, {id: this.changeColorId, color})
-        }
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_BACKGROUND_COLOR, {id, backgroundColor: color})
+        })
     }
 
-    '@textFillColorId' (id, eventType) {
-        this.changeColorId = id;
-        this.itemType = this.read('/item/get', id).itemType;
-        this.eventType = eventType;
-
-        this.refresh();
-    }
-
+    
     [MULTI_EVENT (
+        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION
     )] () { this.refresh() }    
 
     refresh() {
-        if (this.changeColorId) {
-            var item = this.read('/item/get', this.changeColorId);
-            this.colorPicker.initColorWithoutChangeEvent(item.color);
+        if (this.read('/selection/is/layer')) {
+            this.read('/selection/current/layer', (layer) => {
+                if (layer.backgroundColor) {
+                    if (layer.backgroundColor.includes('rgb')) return;
+                    this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
+                }
+
+            })
         }
-
     }
-
 }

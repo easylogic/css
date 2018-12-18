@@ -27,13 +27,13 @@ export default class PageShowGrid extends UIElement {
 
     refresh() {
         this.read('/selection/current/page', (item) => {
-            this.refs.$check.el.checked = this.read('/tool/get', 'show.grid');
+            this.refs.$check.checked(this.read('/tool/get', 'show.grid'));
         })        
     }
 
     'click $check' () {
         this.read('/selection/current/page', (item) => {
-            this.dispatch('/tool/set', 'show.grid', this.refs.$check.el.checked)
+            this.dispatch('/tool/set', 'show.grid', this.refs.$check.checked())
         })
     }
 }

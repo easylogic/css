@@ -6,6 +6,7 @@ $gutter: 8px;
 $tool-size: 40px;
 $top-size: 40px;
 $left-size: 300px;
+$left-layer-panel: 70px;
 $left-page-size: 70px;
 $toggle-left-size: 80px;
 $right-size: 300px;
@@ -14,6 +15,7 @@ $timeline-size: 300px;
 $show-timeline-animation: all 0.15s linear; 
 $gradient-box-size: 0px;
 $layer-toolbar-height: 0px;
+
 
 .layout-main {
     position: absolute;
@@ -34,6 +36,130 @@ $layer-toolbar-height: 0px;
 
     }
 
+
+    &.has-page-panel {
+
+        .select-layer-view {
+            .pages {
+                display: block; 
+            }
+    
+            .item-info {
+                .page-info {
+                    display: block;
+                }
+    
+                left: $left-page-size;
+    
+                .layers {
+                    top: 0px;
+                }
+            }
+        }
+
+    }    
+
+    &.has-layer-panel {
+        
+        .layout-left {
+            width: $left-layer-panel;
+
+            .select-layer-view {
+                .item-info {
+                    .page-info {
+                        display: none;
+                    }
+    
+                    .layers.show-mini-view {
+                        .title {
+                            display: none;
+                        }
+                    }
+                }
+            }     
+
+            .layer-list {
+                padding-left:0px;
+                padding-right: 0px;
+                border-top: 0px; 
+                .tree-item {
+                    padding: 8px;
+                    border-left: 0px;
+                    height: auto;
+
+                    &.selected {
+                        background-color: #333;
+                    }
+
+                    .item-view-container {
+                        width: 100%;
+                        height: 53px;
+                    }        
+                    
+                    .item-title, .item-tools {
+                        display: none;
+                    }            
+                }
+                .gradient-list-group {
+                    display:none;
+                }
+            }
+        }
+
+        .layout-body {
+            left: $left-layer-panel + $gradient-box-size;
+        }
+    }
+
+    &.has-page-panel.has-layer-panel {
+        .select-layer-view {
+            .item-info {
+                .page-info {
+                    display: none;
+                }
+
+                .layers.show-mini-view {
+                    .title {
+                        display: none;
+                    }
+                }
+            }
+        }        
+        .layout-left {
+            width: $left-page-size + $left-layer-panel;
+
+            .layer-list {
+                padding-left:0px;
+                padding-right: 0px;
+                border-top: 0px;                 
+                .tree-item {
+                    padding: 8px;
+                    border-left: 0px;
+                    height: auto;     
+
+                    &.selected {
+                        background-color: #333;
+                    }
+
+                    .item-view-container {
+                        width: 100%;
+                        height: 53px;
+                    }
+
+                    .item-title, .item-tools {
+                        display: none;
+                    }
+
+                }                
+                .gradient-list-group {
+                    display:none;
+                }
+            }
+        }        
+        .layout-body {
+            left: $left-page-size + $left-layer-panel + $gradient-box-size;
+        }
+    }
 
     .layout-top {
         position: absolute;

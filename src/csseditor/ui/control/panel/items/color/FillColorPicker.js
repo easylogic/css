@@ -13,6 +13,7 @@ export default class FillColorPicker extends UIElement {
 
         this.colorPicker = ColorPicker.create({
             type: 'xd-tab',
+            tabTitle: 'Fill',            
             position: 'inline',
             container: this.$el.el,
             color: defaultColor,

@@ -15,7 +15,7 @@ export default class XDTabColorPicker extends BaseColorPicker {
             <div class='colorpicker-body'>
                 <div class='color-tab xd' ref="$tab">
                     <div class='color-tab-header' ref="$tabHeader">
-                        <div class='color-tab-item active' item-id="color">Color</div>
+                        <div class='color-tab-item active' item-id="color"><span >${this.opt.tabTitle}</span> Color</div>
                         <div class='color-tab-item' item-id="swatch">Swatch</div>
                         <div class='color-tab-item' item-id="colorset">Color Set</div>
                     </div>

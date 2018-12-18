@@ -2,10 +2,10 @@
 import ColorPicker from '../../../../../../colorpicker/index'
 import UIElement, { MULTI_EVENT } from '../../../../../../colorpicker/UIElement';
 import { 
-    CHANGE_LAYER_BACKGROUND_COLOR, 
     EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
     EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION
+    EVENT_CHANGE_SELECTION,
+    CHANGE_LAYER_BACKGROUND_COLOR
 } from '../../../../../types/event';
 
 export default class LayerColorPickerLayer extends UIElement {
@@ -42,7 +42,7 @@ export default class LayerColorPickerLayer extends UIElement {
     }
 
     [MULTI_EVENT (
-        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
+        EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION
     )] () { this.refresh() }    

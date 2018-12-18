@@ -34,7 +34,7 @@ export default class ToolMenu extends UIElement {
 
     'click $check' () {
         this.read('/selection/current/page', (item) => {
-            this.dispatch('/tool/set', 'show.grid', this.refs.$check.el.checked)
+            this.dispatch('/tool/set', 'show.grid', this.refs.$check.checked())
         })
     }
 

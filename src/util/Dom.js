@@ -458,7 +458,14 @@ export default class Dom {
     }
 
     checked (isChecked = false) {
-        this.el.checked = isChecked;
+
+        if (arguments.length == 0) {
+            return !!this.el.checked; 
+        }
+
+        this.el.checked = !!isChecked;
+
+        return this;
     }
 }
 

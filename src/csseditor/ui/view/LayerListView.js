@@ -120,6 +120,16 @@ export default class LayerListView extends UIElement {
         this.$el.toggleClass('show-mini-view', !image);
     }
 
+    refreshSelection (id) {
+        var $selected = this.$el.$(".selected")
+
+        if ($selected) {
+            $selected.removeClass('selected')
+        }
+
+        this.$el.$(`[id="${id}"]`).addClass('selected');
+    }
+
     refreshLayer () {
         this.read('/selection/current/layer', (items) => {
 
@@ -174,7 +184,7 @@ export default class LayerListView extends UIElement {
         var id = e.$delegateTarget.attr('id');
         this.dispatch('/selection/one', id);        
         this.run('/item/focus', id);
-        this.refresh();
+        this.refreshSelection(id);
     }
 
     'dragstart $layerList .tree-item' (e) {

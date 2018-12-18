@@ -158,7 +158,7 @@ export default class BoxShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().parent().parent().attr('box-shadow-id')
 
-        this.commit(CHANGE_BOXSHADOW, {id, inset: $el.el.checked })
+        this.commit(CHANGE_BOXSHADOW, {id, inset: $el.checked() })
     }
 
     'click $boxShadowList .delete-boxshadow' (e) {

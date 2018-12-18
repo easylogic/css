@@ -6199,7 +6199,14 @@ var Dom = function () {
         value: function checked() {
             var isChecked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-            this.el.checked = isChecked;
+
+            if (arguments.length == 0) {
+                return !!this.el.checked;
+            }
+
+            this.el.checked = !!isChecked;
+
+            return this;
         }
     }], [{
         key: 'getScrollTop',
@@ -7620,21 +7627,18 @@ var BaseColorPicker = function (_UIElement) {
         value: function setOption(key, value) {
             this.opt[key] = value;
         }
-    }, {
-        key: 'isType',
-        value: function isType(key) {
+
+        /*
+        isType (key) {
             return this.getOption('type') == key;
         }
-    }, {
-        key: 'isPaletteType',
-        value: function isPaletteType() {
+         isPaletteType() {
             return this.isType('palette');
         }
-    }, {
-        key: 'isSketchType',
-        value: function isSketchType() {
+         isSketchType() {
             return this.isType('sketch');
-        }
+        } */
+
     }, {
         key: 'getContainer',
         value: function getContainer() {
@@ -9439,7 +9443,7 @@ var RingTabColorPicker = function (_BaseColorPicker) {
     createClass(RingTabColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color">Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing></ColorRing>\n                            <Palette></Palette> \n                            <div class="control">\n                                <Value></Value>\n                                <Opacity></Opacity>\n                                <div class="empty"></div>\n                                <ColorView></ColorView>\n                            </div>\n                            <Information></Information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing></ColorRing>\n                            <Palette></Palette> \n                            <div class="control">\n                                <Value></Value>\n                                <Opacity></Opacity>\n                                <div class="empty"></div>\n                                <ColorView></ColorView>\n                            </div>\n                            <Information></Information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
         }
     }, {
         key: 'click $tabHeader .color-tab-item',
@@ -9485,7 +9489,7 @@ var XDTabColorPicker = function (_BaseColorPicker) {
     createClass(XDTabColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color">Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette></palette> \n                            <div class="control">\n                                <Hue></Hue>\n                                <Opacity></Opacity>\n                            </div>\n                            <information></information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette></palette> \n                            <div class="control">\n                                <Hue></Hue>\n                                <Opacity></Opacity>\n                            </div>\n                            <information></information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
         }
     }, {
         key: 'click $tabHeader .color-tab-item',
@@ -14707,7 +14711,7 @@ var Clip = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/page', function (item) {
-                _this2.refs.$check.el.checked = !!item.clip;
+                _this2.refs.$check.checked(item.clip);
             });
         }
     }, {
@@ -14716,8 +14720,7 @@ var Clip = function (_UIElement) {
             var _this3 = this;
 
             this.read('/selection/current/page/id', function (id) {
-                console.log(id, _this3.refs.$check.el.checked);
-                _this3.commit(CHANGE_PAGE_SIZE, { id: id, clip: _this3.refs.$check.el.checked });
+                _this3.commit(CHANGE_PAGE_SIZE, { id: id, clip: _this3.refs.$check.checked() });
             });
         }
     }]);
@@ -16653,7 +16656,7 @@ var FilterList$1 = function (_BasePropertyItem) {
             var defaultFilterList = this.read('/layer/filter/list');
             var filters = this.getFilterList();
 
-            return defaultFilterList.map(function (f) {
+            return filters.map(function (f) {
                 var viewObject = filters[f.type];
                 var dataObject = f || {};
 
@@ -16704,7 +16707,7 @@ var FilterList$1 = function (_BasePropertyItem) {
                     newValue.filters[filterId] = { checked: false };
                 }
 
-                newValue.filters[filterId].checked = e.$delegateTarget.el.checked;
+                newValue.filters[filterId].checked = e.$delegateTarget.checked();
 
                 _this3.commit(CHANGE_LAYER_FILTER, newValue);
                 _this3.refreshFilterList();
@@ -17049,7 +17052,7 @@ var ClipPath = function (_BasePropertyItem) {
                     _this2.refs.$clipPath.empty();
                 }
 
-                _this2.refs.$fit.el.checked = !!layer.fitClipPathSize;
+                _this2.refs.$fit.checked(layer.fitClipPathSize);
                 _this2.refs.$clipType.val(layer.clipPathType);
             });
         }
@@ -17065,7 +17068,7 @@ var ClipPath = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
 
-                _this3.commit(CHANGE_LAYER, { id: layer.id, fitClipPathSize: _this3.refs.$fit.el.checked });
+                _this3.commit(CHANGE_LAYER, { id: layer.id, fitClipPathSize: _this3.refs.$fit.checked() });
                 _this3.refresh();
             });
         }
@@ -17076,7 +17079,7 @@ var ClipPath = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
                 if (layer.clipPathType == 'none') {
-                    _this4.refs.$fit.el.checked = false;
+                    _this4.refs.$fit.checked(false);
                     _this4.refs.$clipPath.empty();
                     layer.clipPathSvg = '';
                 }
@@ -17118,7 +17121,7 @@ var PageShowGrid = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/page', function (item) {
-                _this2.refs.$check.el.checked = _this2.read('/tool/get', 'show.grid');
+                _this2.refs.$check.checked(_this2.read('/tool/get', 'show.grid'));
             });
         }
     }, {
@@ -17127,7 +17130,7 @@ var PageShowGrid = function (_UIElement) {
             var _this3 = this;
 
             this.read('/selection/current/page', function (item) {
-                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.el.checked);
+                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.checked());
             });
         }
     }]);
@@ -17698,7 +17701,7 @@ var BoxShadow = function (_BasePropertyItem) {
             var $el = e.$delegateTarget;
             var id = $el.parent().parent().parent().attr('box-shadow-id');
 
-            this.commit(CHANGE_BOXSHADOW, { id: id, inset: $el.el.checked });
+            this.commit(CHANGE_BOXSHADOW, { id: id, inset: $el.checked() });
         }
     }, {
         key: 'click $boxShadowList .delete-boxshadow',
@@ -17870,6 +17873,7 @@ var FillColorPicker = function (_UIElement) {
 
             this.colorPicker = ColorPicker.create({
                 type: 'xd-tab',
+                tabTitle: 'Fill',
                 position: 'inline',
                 container: this.$el.el,
                 color: defaultColor,
@@ -17990,7 +17994,7 @@ var Text = function (_BasePropertyItem) {
     createClass(Text, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Content</div>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> Only Text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Content</div>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_TEXT),
@@ -18007,7 +18011,7 @@ var Text = function (_BasePropertyItem) {
                 _this2.refs.$colorText.val(layer.color || '');
                 _this2.refs.$content.val(layer.content || '');
                 _this2.refs.$clip.val(layer.backgroundClip);
-                _this2.refs.$clipText.el.checked = layer.clipText || false;
+                _this2.refs.$clipText.checked(layer.clipText || false);
 
                 _this2.$el.toggleClass('has-clip-text', layer.clipText || false);
             });
@@ -18045,7 +18049,7 @@ var Text = function (_BasePropertyItem) {
             var _this6 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                _this6.commit(CHANGE_LAYER_TEXT, { id: id, clipText: _this6.refs.$clipText.el.checked }, true);
+                _this6.commit(CHANGE_LAYER_TEXT, { id: id, clipText: _this6.refs.$clipText.checked() }, true);
             });
         }
     }]);
@@ -18182,6 +18186,7 @@ var TextFillColorPicker = function (_UIElement) {
 
             this.colorPicker = ColorPicker.create({
                 type: 'xd-tab',
+                tabTitle: 'Text',
                 position: 'inline',
                 container: this.$el.el,
                 color: defaultColor,
@@ -18405,7 +18410,97 @@ var BackgroundClip = function (_BasePropertyItem) {
     return BackgroundClip;
 }(BasePropertyItem);
 
+var InfoFillColorPicker = function (_UIElement) {
+    inherits(InfoFillColorPicker, _UIElement);
+
+    function InfoFillColorPicker() {
+        classCallCheck(this, InfoFillColorPicker);
+        return possibleConstructorReturn(this, (InfoFillColorPicker.__proto__ || Object.getPrototypeOf(InfoFillColorPicker)).apply(this, arguments));
+    }
+
+    createClass(InfoFillColorPicker, [{
+        key: 'afterRender',
+        value: function afterRender() {
+            var _this2 = this;
+
+            var defaultColor = 'rgba(0, 0, 0, 0)';
+
+            this.colorPicker = ColorPicker.create({
+                type: 'xd-tab',
+                tabTitle: 'Background',
+                position: 'inline',
+                container: this.$el.el,
+                color: defaultColor,
+                onChange: function onChange(c) {
+                    _this2.changeColor(c);
+                }
+            });
+
+            setTimeout(function () {
+                _this2.colorPicker.dispatch('/initColor', defaultColor);
+            }, 100);
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '<div class=\'colorpicker-layer\'> </div>';
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor(color) {
+            var _this3 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.commit(CHANGE_LAYER_BACKGROUND_COLOR, { id: id, backgroundColor: color });
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this4 = this;
+
+            if (this.read('/selection/is/layer')) {
+                this.read('/selection/current/layer', function (layer) {
+                    if (layer.backgroundColor) {
+                        if (layer.backgroundColor.includes('rgb')) return;
+                        _this4.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
+                    }
+                });
+            }
+        }
+    }]);
+    return InfoFillColorPicker;
+}(UIElement);
+
+var LayerInfoColorPickerPanel = function (_UIElement) {
+    inherits(LayerInfoColorPickerPanel, _UIElement);
+
+    function LayerInfoColorPickerPanel() {
+        classCallCheck(this, LayerInfoColorPickerPanel);
+        return possibleConstructorReturn(this, (LayerInfoColorPickerPanel.__proto__ || Object.getPrototypeOf(LayerInfoColorPickerPanel)).apply(this, arguments));
+    }
+
+    createClass(LayerInfoColorPickerPanel, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <InfoFillColorPicker></InfoFillColorPicker>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { InfoFillColorPicker: InfoFillColorPicker };
+        }
+    }]);
+    return LayerInfoColorPickerPanel;
+}(UIElement);
+
 var items = {
+    LayerInfoColorPickerPanel: LayerInfoColorPickerPanel,
     BackgroundClip: BackgroundClip,
     Font: Font,
     LayerTextColorPickerPanel: LayerTextColorPickerPanel,
@@ -18506,7 +18601,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                    <LayerColorPickerPanel></LayerColorPickerPanel>\n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: 'onTabShow',
@@ -19288,6 +19383,17 @@ var LayerListView = function (_UIElement) {
             this.$el.toggleClass('show-mini-view', !image);
         }
     }, {
+        key: 'refreshSelection',
+        value: function refreshSelection(id) {
+            var $selected = this.$el.$(".selected");
+
+            if ($selected) {
+                $selected.removeClass('selected');
+            }
+
+            this.$el.$('[id="' + id + '"]').addClass('selected');
+        }
+    }, {
         key: 'refreshLayer',
         value: function refreshLayer() {
             var _this4 = this;
@@ -19339,7 +19445,7 @@ var LayerListView = function (_UIElement) {
             var id = e.$delegateTarget.attr('id');
             this.dispatch('/selection/one', id);
             this.run('/item/focus', id);
-            this.refresh();
+            this.refreshSelection(id);
         }
     }, {
         key: 'dragstart $layerList .tree-item',
@@ -19562,7 +19668,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n\n                <label>\n                    2. Add Gradient \n                </label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                    <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                    </div>     \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n                                \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                        <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n\n                <label>\n                    2. Add Gradient \n                </label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                    <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                    </div>     \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n                                \n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -19605,6 +19711,11 @@ var LayerToolbar = function (_UIElement) {
         key: 'click $togglePagePanel',
         value: function click$togglePagePanel() {
             this.emit('togglePagePanel');
+        }
+    }, {
+        key: 'click $toggleLayerPanel',
+        value: function click$toggleLayerPanel() {
+            this.emit('toggleLayerPanel');
         }
     }]);
     return LayerToolbar;
@@ -22954,7 +23065,7 @@ var ToolMenu = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/page', function (item) {
-                _this2.dispatch('/tool/set', 'show.grid', _this2.refs.$check.el.checked);
+                _this2.dispatch('/tool/set', 'show.grid', _this2.refs.$check.checked());
             });
         }
     }, {
@@ -23135,11 +23246,6 @@ var SelectLayerView = function (_UIElement) {
                 LayerListView: LayerListView
             };
         }
-    }, {
-        key: '@togglePagePanel',
-        value: function togglePagePanel() {
-            this.$el.toggleClass('has-page-panel');
-        }
     }]);
     return SelectLayerView;
 }(UIElement);
@@ -23315,6 +23421,16 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
             // })
 
             // this.refs.$layoutMain.addClass(`${layout}-mode`)
+        }
+    }, {
+        key: '@togglePagePanel',
+        value: function togglePagePanel() {
+            this.$el.toggleClass('has-page-panel');
+        }
+    }, {
+        key: '@toggleLayerPanel',
+        value: function toggleLayerPanel() {
+            this.$el.toggleClass('has-layer-panel');
         }
     }]);
     return CSSEditor;

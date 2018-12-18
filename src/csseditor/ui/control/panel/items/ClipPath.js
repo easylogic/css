@@ -53,7 +53,7 @@ export default class ClipPath extends BasePropertyItem {
                 this.refs.$clipPath.empty();
             }
 
-            this.refs.$fit.el.checked = !!layer.fitClipPathSize
+            this.refs.$fit.checked(layer.fitClipPathSize)
             this.refs.$clipType.val(layer.clipPathType);
         });
     }
@@ -65,7 +65,7 @@ export default class ClipPath extends BasePropertyItem {
     'click $fit' () {
         this.read('/selection/current/layer', (layer) => {
 
-            this.commit(CHANGE_LAYER, {id: layer.id, fitClipPathSize: this.refs.$fit.el.checked})
+            this.commit(CHANGE_LAYER, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
             this.refresh();            
         })
     }
@@ -73,7 +73,7 @@ export default class ClipPath extends BasePropertyItem {
     'change $clipType' () {
         this.read('/selection/current/layer', (layer) => {
             if (layer.clipPathType == 'none') {
-                this.refs.$fit.el.checked = false
+                this.refs.$fit.checked(false)
                 this.refs.$clipPath.empty();
                 layer.clipPathSvg = '';
             }

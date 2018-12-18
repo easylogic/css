@@ -60,7 +60,7 @@ export default class GradientView extends UIElement {
                 <SubFeatureControl></SubFeatureControl>
             </div>
         `
-    } 
+    }     
 
     components () {
         return {  

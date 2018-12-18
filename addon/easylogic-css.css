@@ -1178,6 +1178,64 @@ html, body {
       bottom: 300px; }
     .csseditor .layout-main.show-timeline .layout-footer {
       height: 300px; }
+    .csseditor .layout-main.has-page-panel .select-layer-view .pages {
+      display: block; }
+    .csseditor .layout-main.has-page-panel .select-layer-view .item-info {
+      left: 70px; }
+      .csseditor .layout-main.has-page-panel .select-layer-view .item-info .page-info {
+        display: block; }
+      .csseditor .layout-main.has-page-panel .select-layer-view .item-info .layers {
+        top: 0px; }
+    .csseditor .layout-main.has-layer-panel .layout-left {
+      width: 70px; }
+      .csseditor .layout-main.has-layer-panel .layout-left .select-layer-view .item-info .page-info {
+        display: none; }
+      .csseditor .layout-main.has-layer-panel .layout-left .select-layer-view .item-info .layers.show-mini-view .title {
+        display: none; }
+      .csseditor .layout-main.has-layer-panel .layout-left .layer-list {
+        padding-left: 0px;
+        padding-right: 0px;
+        border-top: 0px; }
+        .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item {
+          padding: 8px;
+          border-left: 0px;
+          height: auto; }
+          .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item.selected {
+            background-color: #333; }
+          .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item .item-view-container {
+            width: 100%;
+            height: 53px; }
+          .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item .item-title, .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item .item-tools {
+            display: none; }
+        .csseditor .layout-main.has-layer-panel .layout-left .layer-list .gradient-list-group {
+          display: none; }
+    .csseditor .layout-main.has-layer-panel .layout-body {
+      left: 70px; }
+    .csseditor .layout-main.has-page-panel.has-layer-panel .select-layer-view .item-info .page-info {
+      display: none; }
+    .csseditor .layout-main.has-page-panel.has-layer-panel .select-layer-view .item-info .layers.show-mini-view .title {
+      display: none; }
+    .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left {
+      width: 140px; }
+      .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list {
+        padding-left: 0px;
+        padding-right: 0px;
+        border-top: 0px; }
+        .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item {
+          padding: 8px;
+          border-left: 0px;
+          height: auto; }
+          .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item.selected {
+            background-color: #333; }
+          .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item .item-view-container {
+            width: 100%;
+            height: 53px; }
+          .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item .item-title, .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item .item-tools {
+            display: none; }
+        .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .gradient-list-group {
+          display: none; }
+    .csseditor .layout-main.has-page-panel.has-layer-panel .layout-body {
+      left: 140px; }
     .csseditor .layout-main .layout-top {
       position: absolute;
       left: 0px;
@@ -1549,14 +1607,6 @@ html, body {
     bottom: 0px;
     -webkit-box-sizing: border-box;
             box-sizing: border-box; }
-    .csseditor .select-layer-view.has-page-panel .pages {
-      display: block; }
-    .csseditor .select-layer-view.has-page-panel .item-info {
-      left: 70px; }
-      .csseditor .select-layer-view.has-page-panel .item-info .page-info {
-        display: block; }
-      .csseditor .select-layer-view.has-page-panel .item-info .layers {
-        top: 0px; }
     .csseditor .select-layer-view .item-info {
       position: absolute;
       left: 0px;
@@ -5141,6 +5191,8 @@ html, body {
             padding-left: 20px;
             font-size: 12px;
             display: block; }
+      .csseditor .property-view .property-item.text.has-clip-text .no-clip {
+        pointer-events: none; }
       .csseditor .property-view .property-item.text .color {
         width: 20px !important;
         height: 20px !important;
