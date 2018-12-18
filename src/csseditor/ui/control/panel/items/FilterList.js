@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER } from "../../../../types/event";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER } from "../../../../types/event";
+import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class FilterList extends BasePropertyItem {
 
@@ -8,10 +9,6 @@ export default class FilterList extends BasePropertyItem {
             <div class='property-item filters show'>
                 <div class='title' ref="$title">
                     Filter
-
-                    <span style="float:right;">
-                        <button type="button">+</button>
-                    </span>
                 </div>
                 <div class='items no-padding'>                    
                     <div class="filter-list" ref="$filterList">
@@ -58,8 +55,8 @@ export default class FilterList extends BasePropertyItem {
         var filters = this.getFilterList();
 
 
-        return filters.map(f => {
-            var viewObject = defaultFilterList[f.type];
+        return defaultFilterList.map(f => {
+            var viewObject = filters[f.type];
             var dataObject = f || {};
  
             return `
@@ -71,21 +68,15 @@ export default class FilterList extends BasePropertyItem {
         })
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION,
+        EVENT_CHANGE_LAYER_FILTER
+    )] () {
         this.refresh()
     }
 
-    [EVENT_CHANGE_LAYER] () {
-        this.refresh()
-    }    
-
-
-
     isShow () {
-        var image = this.read('/selection/current/image')
-
-        if (image) return false; 
-
         return true; 
     }    
 
@@ -156,7 +147,6 @@ export default class FilterList extends BasePropertyItem {
             }
 
             this.commit(CHANGE_LAYER_FILTER, newValue);
-            this.refreshFilter(newValue);
         })
     }    
 

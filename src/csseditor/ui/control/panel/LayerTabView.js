@@ -30,7 +30,6 @@ export default class LayerTabView extends BaseTab {
                     <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    
                     <Font></Font>                    
                     <Text></Text>                    
-                    <BackgroundClip></BackgroundClip>                    
                     <TextShadow></TextShadow>                    
                 </div>
                 <div class="tab-content" data-id="fill">

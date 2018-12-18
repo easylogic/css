@@ -1,5 +1,12 @@
 &.text {
 
+    &.has-clip-text {
+        .no-clip {
+            pointer-events: none;
+        }
+    }
+
+
     .color {
         width: 20px !important;
         height: 20px !important;

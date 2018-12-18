@@ -44,6 +44,7 @@ export const LAYER_DEFAULT_OBJECT = {
     wordBreak: 'break-word',
     wordWrap: 'break-word',
     lineHeight: 1.6,
+    clipText: false,
     content: '',
     filters: []
 }

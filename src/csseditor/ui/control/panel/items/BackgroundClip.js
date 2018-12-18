@@ -16,7 +16,6 @@ export default class BackgroundClip extends BasePropertyItem {
                             <option value="content-box">content-box</option>
                             <option value="border-box">border-box</option>
                             <option value="padding-box">padding-box</option>
-                            <option value="text">text</option>
                         </select>
                     </div>
                 </div>

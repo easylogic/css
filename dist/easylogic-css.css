@@ -5141,6 +5141,8 @@ html, body {
             padding-left: 20px;
             font-size: 12px;
             display: block; }
+      .csseditor .property-view .property-item.text.has-clip-text .no-clip {
+        pointer-events: none; }
       .csseditor .property-view .property-item.text .color {
         width: 20px !important;
         height: 20px !important;

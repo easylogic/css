@@ -272,6 +272,12 @@ export default class LayerManager extends BaseModule {
         results['word-wrap'] = layer.wordWrap || 'break-word';
         results['word-break'] = layer.wordBreak || 'break-word';
 
+        if (layer.clipText) {
+            results['color'] = 'transparent';
+            results['background-clip'] = 'text';
+            results['-webkit-background-clip'] = 'text';
+        }
+
         return results;
     }
 
@@ -411,7 +417,8 @@ s
             css['mix-blend-mode'] = layer.mixBlendMode || ""
         }
 
-        if (layer.backgroundClip) {
+
+        if (layer.backgroundClip && !layer.clipText) {
             css['background-clip'] = layer.backgroundClip || ""
             css['-webkit-background-clip'] = layer.backgroundClip || ""            
         }        
@@ -461,7 +468,7 @@ s
             css['mix-blend-mode'] = layer.mixBlendMode
         }
 
-        if (layer.backgroundClip) {
+        if (layer.backgroundClip && !layer.clipText) {
             css['background-clip'] = layer.backgroundClip || ""
             css['-webkit-background-clip'] = layer.backgroundClip || ""
         }                
