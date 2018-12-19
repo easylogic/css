@@ -1,5 +1,6 @@
 import GLFilter from './filter/index'
 import {makeFragmentShaderSource, makeVertexShaderSource} from './filter/util'
+import { px } from '../css/types';
 
 
 
@@ -12,8 +13,8 @@ class GLCanvas {
         height: '300px'
     }) {
         this.img = opt.img; 
-        this.width = parseFloat(this.img.width || opt.width || '400px');
-        this.height = parseFloat(this.img.height || opt.height || '300px');
+        this.width = parseFloat(this.img.width || opt.width || px(400));
+        this.height = parseFloat(this.img.height || opt.height || px(300));
         this.init()
 
 
@@ -22,8 +23,8 @@ class GLCanvas {
     resize () {
         this.canvas.width = this.width; 
         this.canvas.height = this.height; 
-        this.canvas.style.width = this.width + 'px';
-        this.canvas.style.height = this.height + 'px';
+        this.canvas.style.width = px( this.width );
+        this.canvas.style.height = px( this.height);
 
         this.viewport()
     }

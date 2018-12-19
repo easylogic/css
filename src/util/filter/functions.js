@@ -3,6 +3,7 @@ import Matrix from '../Matrix'
 import ImageFilter from './index' 
 import Color from '../Color'
 import { round } from '../functions/math';
+import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, UNIT_PX } from '../css/types';
 
 let makeId = 0 
 
@@ -303,11 +304,11 @@ export function unit2px(unitValue, maxValue) {
 
     var value = parseParamNumber(unitValue);
 
-    if (unitValue.includes('%')) {
+    if (unitValue.includes(UNIT_PERCENT_STRING)) {
         return percent2px(value, maxValue);
-    } else if (unitValue.includes('px')) {
+    } else if (unitValue.includes(UNIT_PX_STRING)) {
         return value;
-    } else if (unitValue.includes('em')) {
+    } else if (unitValue.includes(UNIT_EM_STRING)) {
         return em2px(value, maxValue);
     }
 }
@@ -316,11 +317,11 @@ export function unit2percent(unitValue, maxValue) {
 
     var value = parseParamNumber(unitValue);
 
-    if (unitValue.includes('%')) {
+    if (unitValue.includes(UNIT_PERCENT_STRING)) {
         return value;
-    } else if (unitValue.includes('px')) {
+    } else if (unitValue.includes(UNIT_PX_STRING)) {
         return px2percent(value, maxValue);
-    } else if (unitValue.includes('em')) {
+    } else if (unitValue.includes(UNIT_EM_STRING)) {
         return em2percent(value, maxValue);
     }
 }
@@ -329,11 +330,11 @@ export function unit2em(unitValue, maxValue) {
 
     var value = parseParamNumber(unitValue);
 
-    if (unitValue.includes('%')) {
+    if (unitValue.includes(UNIT_PERCENT_STRING)) {
         return percent2em(value, maxValue);
-    } else if (unitValue.includes('px')) {
+    } else if (unitValue.includes(UNIT_PX_STRING)) {
         return px2em(value, maxValue);
-    } else if (unitValue.includes('em')) {
+    } else if (unitValue.includes(UNIT_EM_STRING)) {
         return value;
     }
 }

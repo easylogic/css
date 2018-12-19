@@ -2,6 +2,7 @@ import UnitRange from "./element/UnitRange";
 import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_IMAGE, EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { UNIT_PX } from "../../../../../util/css/types";
 
 export default class BackgroundSize extends UIElement {
     components () {
@@ -25,7 +26,7 @@ export default class BackgroundSize extends UIElement {
                         <label>x</label>
                         <UnitRange 
                             ref="$x" 
-                            min="-100" max="1000" step="1" value="0" unit="px" 
+                            min="-100" max="1000" step="1" value="0" unit=${UNIT_PX}"
                             maxValueFunction="getMaxX"
                             updateFunction="updateX"
                         ></UnitRange>
@@ -34,7 +35,7 @@ export default class BackgroundSize extends UIElement {
                         <label>y</label>
                         <UnitRange 
                             ref="$y" 
-                            min="-100" max="1000" step="1" value="0" unit="px" 
+                            min="-100" max="1000" step="1" value="0" unit=${UNIT_PX}"
                             maxValueFunction="getMaxY"
                             updateFunction="updateY"
                         ></UnitRange>
@@ -43,7 +44,7 @@ export default class BackgroundSize extends UIElement {
                         <label>width</label>
                         <UnitRange 
                             ref="$width" 
-                            min="0" max="1000" step="1" value="0" unit="px" 
+                            min="0" max="1000" step="1" value="0" unit=${UNIT_PX}"
                             maxValueFunction="getMaxWidth"
                             updateFunction="updateWidth"
                         ></UnitRange>
@@ -52,7 +53,7 @@ export default class BackgroundSize extends UIElement {
                         <label>height</label>
                         <UnitRange 
                             ref="$height" 
-                            min="0" max="1000" step="1" value="0" unit="px" 
+                            min="0" max="1000" step="1" value="0" unit=${UNIT_PX}"
                             maxValueFunction="getMaxHeight"
                             updateFunction="updateHeight"
                         ></UnitRange>

@@ -219,8 +219,8 @@ export default class BaseColorPicker extends UIElement {
 
         // set position
         this.$root.css({
-            left: (elementScreenLeft) + 'px',
-            top: (elementScreenTop) + 'px'
+            left: px(elementScreenLeft),
+            top: px(elementScreenTop)
         });
 
         // this.definePositionForArrow(opt, elementScreenLeft, elementScreenTop);

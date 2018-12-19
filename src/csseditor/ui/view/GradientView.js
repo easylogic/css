@@ -33,6 +33,7 @@ import {
     EVENT_CHANGE_TEXTSHADOW,
     EVENT_CHANGE_LAYER_TEXT
 } from '../../types/event';
+import { px } from '../../../util/css/types';
 
 
 export default class GradientView extends UIElement {
@@ -151,8 +152,8 @@ export default class GradientView extends UIElement {
         var pageCSS = this.makePageCSS(page || {clip: false});
 
         var canvasCSS = {
-            width: 2000 + 'px',
-            height: 2000 + 'px'
+            width: px( 2000 ),
+            height: px( 2000 )
         }
         this.refs.$canvas.css(canvasCSS);
         this.refs.$page.css(pageCSS)

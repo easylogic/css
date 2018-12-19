@@ -3,7 +3,8 @@ import {
     EVENT_CHANGE_EDITOR,
     EVENT_CHANGE_SELECTION,
     CHANGE_LAYER_TEXT,
-    EVENT_CHANGE_LAYER_TEXT
+    EVENT_CHANGE_LAYER_TEXT,
+    TEXT_FILL_COLOR
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 
@@ -74,7 +75,7 @@ export default class Text extends BasePropertyItem {
 
     'click $color' (e) {
         this.read('/selection/current/layer', item => {
-            this.emit('textFillColorId', item.id, CHANGE_LAYER_TEXT);
+            this.emit(TEXT_FILL_COLOR, item.id, CHANGE_LAYER_TEXT);
         })
     }
 

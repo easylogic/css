@@ -5,6 +5,7 @@ $button-size: 24px;
 $layer-item-padding: 4px;
 $mini-layer-view-height: 420px;
 $layer-preview-size: 40px;
+$image-preview-size: 30px;
 
 .layers {
     // border-bottom: 1px solid $border-color;
@@ -79,12 +80,13 @@ $layer-preview-size: 40px;
         .tree-item {
             display: block;
             height: $layer-preview-size;            
-            box-sizing: border-box;
+            // box-sizing: border-box;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             // padding: 5px;
             border-left: 5px solid rgba($border-color, 0.5);
+            margin-top: 10px;
 
             &.selected {
                 border-left-color: #333;
@@ -169,13 +171,23 @@ $layer-preview-size: 40px;
 
                 .tree-item-children {
                     overflow:hidden;
-                    height: $layer-preview-size;
+                    height: $image-preview-size + 2px;
                     box-sizing: border-box;
                     display: block;
 
-                    .tree-item {
+                    .tree-item {                
+                        width: $image-preview-size;        
+                        box-sizing: border-box;
                         display: inline-block;
                         vertical-align: middle;
+                        border-bottom: 0px;
+                        border-left: 0px;                        
+                        border: 2px solid rgba($border-color, 0.5);
+                        margin-top:1px;
+
+                        &.selected {
+                            border-color: #333;
+                        }
                         .item-title, .item-tools {
                             display: none;
                         }
@@ -190,7 +202,7 @@ $layer-preview-size: 40px;
                 height: 20px;
                 box-sizing: border-box;
                 left: 25px;
-                top: 20px;
+                top: 15px;
                 cursor: pointer;
                 transform: translateY(-50%) translateX(-50%);
                 background-image: linear-gradient(to right, black, black),linear-gradient(to right, black, black);
@@ -205,12 +217,17 @@ $layer-preview-size: 40px;
                 .tree-item {
                     border:0px;
                     background-color: white; 
-                    border-bottom: 1px solid $border-color;
+                    // border-bottom: 1px solid $border-color;
                     border-left: 5px solid rgba($border-color, 0.5);
                     transition: all 0.3s linear; 
+                    height: $image-preview-size;
+
+                    .item-view-container {
+                        width: $image-preview-size;
+                    }
     
                     &:first-child {
-                        border-top: 1px solid $border-color;
+                        // border-top: 1px solid $border-color;
                     }
 
                     &.selected {

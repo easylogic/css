@@ -5,12 +5,7 @@ import {
     em2percent, em2px 
 } from "../../../../../../util/filter/functions";
 import { parseParamNumber } from "../../../../../../util/gl/filter/util";
-
-const unit_names = {
-    'percent' : '%',
-    'px' : 'px',
-    'em': 'em'
-}
+import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString } from "../../../../../../util/css/types";
 
 const position_list = [
     'left', 'top', 'right', 'bottom', 'center'
@@ -24,7 +19,7 @@ export default class UnitRange extends UIElement {
         this.max = this.props.max || 1000;
         this.step = this.props.step || 1;
         this.value = this.props.value || 0;
-        this.unit = this.props.unit || 'px' 
+        this.unit = this.props.unit || UNIT_PX 
         this.showClass = 'show'
         this.maxValueFunction = this.parent[this.props.maxvaluefunction].bind(this.parent);
         this.updateFunction = this.parent[this.props.updatefunction].bind(this.parent);
@@ -46,9 +41,9 @@ export default class UnitRange extends UIElement {
                     <button ref="$unit" type="button" class='unit'>${this.unit}</button>
                 </div>
                 <div class="multi-value" ref="$multiValue">
-                    <div ref="$px" class="px" unit='px'></div>
-                    <div ref="$percent" class="percent" unit='percent'></div>
-                    <div ref="$em" class="em" unit='em'></div>
+                    <div ref="$px" class="${UNIT_PX}" unit='${UNIT_PX}'></div>
+                    <div ref="$percent" class="${UNIT_PERCENT}" unit='${UNIT_PERCENT}'></div>
+                    <div ref="$em" class="${UNIT_EM}" unit='${UNIT_EM}'></div>
                 </div>
             </div>
         `
@@ -63,11 +58,11 @@ export default class UnitRange extends UIElement {
 
     refresh (value = '') {
         value = (value || '') + '' 
-        var unit = 'px' 
-        if (value.includes('%')) {
-            unit = 'percent'
-        } else if (value.includes('em')) {
-            unit = 'em'
+        var unit = UNIT_PX
+        if (value.includes(UNIT_PERCENT)) {
+            unit = UNIT_PERCENT
+        } else if (value.includes(UNIT_EM)) {
+            unit = UNIT_EM
         }
 
         value = position_list.includes(value) ? "" : parseParamNumber(value);
@@ -77,21 +72,21 @@ export default class UnitRange extends UIElement {
     
     initializeRangeMax (unit) {
         
-        if (unit == 'percent') {
-            var max = this.props.unit == 'percent' ? this.props.max : 300;
+        if (isPercent (unit)) {
+            var max = isPercent(this.props.unit) ? this.props.max : 300;
             this.refs.$range.attr('max', max);
             this.refs.$range.attr('step', 0.01);
             this.refs.$number.attr('max', max);
             this.refs.$number.attr('step', 0.01);
-        } else if (unit == 'px') {
-            var max = this.props.unit == 'px' ? this.props.max : 1000;
+        } else if (isPX(unit)) {
+            var max = isPX(this.props.unit) ? this.props.max : 1000;
 
             this.refs.$range.attr('max', max);
             this.refs.$range.attr('step', 1);
             this.refs.$number.attr('max', max);
             this.refs.$number.attr('step', 1);
-        } else if (unit == 'em') {
-            var max = this.props.unit == 'em' ? this.props.max : 300;
+        } else if (isEM(unit)) {
+            var max = isEM(this.props.unit) ? this.props.max : 300;
             this.refs.$range.attr('max', max);
             this.refs.$range.attr('step', 0.01);
             this.refs.$number.attr('max', max);
@@ -105,7 +100,7 @@ export default class UnitRange extends UIElement {
 
         this.refs.$range.val(this.value);
         this.refs.$number.val(this.value);
-        this.refs.$unit.text(unit_names[this.unit]);
+        this.refs.$unit.text(unitString(this.unit));
 
         this.initializeRangeMax(this.unit);
     }
@@ -116,9 +111,9 @@ export default class UnitRange extends UIElement {
 
     updateRange () {
         var unit = this.unit; 
-        var px = unit == 'px' ? this.refs.$range.val() : undefined;
-        var percent = unit == 'percent' ? this.refs.$range.val() : undefined;
-        var em = unit == 'em' ? this.refs.$range.val() : undefined;
+        var px = isPX(unit) ? this.refs.$range.val() : undefined;
+        var percent = isPercent(unit) ? this.refs.$range.val() : undefined;
+        var em = isEM(unit) ? this.refs.$range.val() : undefined;
         var maxValue = this.maxValueFunction();
 
         if (px) { 
@@ -139,12 +134,12 @@ export default class UnitRange extends UIElement {
     'input $range' (e) {
         this.refs.$number.val(this.refs.$range.val())
         this.updateRange();    
-        this.updateFunction(this.refs.$range.val() + unit_names[this.unit]);    
+        this.updateFunction(unit(this.refs.$range.val(), this.unit));    
     }
 
     'input $number' (e) {
         this.refs.$range.val(this.refs.$number.val())
         this.updateRange();        
-        this.updateFunction(this.refs.$range.val() + unit_names[this.unit]);
+        this.updateFunction(unit(this.refs.$range.val(), this.unit));
     }    
 }

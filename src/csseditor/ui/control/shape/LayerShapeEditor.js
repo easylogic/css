@@ -2,6 +2,7 @@ import { parseParamNumber } from '../../../../util/filter/functions';
 import shapeEditor from './shape-editor/index';
 import UIElement from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import { px } from '../../../../util/css/types';
 
 
 export default class LayerShapeEditor extends UIElement {
@@ -48,8 +49,8 @@ export default class LayerShapeEditor extends UIElement {
         var boardOffset = this.$board.offset()
         var pageOffset = this.$page.offset()
 
-        x = parseParamNumber(x, x => x + pageOffset.left - boardOffset.left) + 'px'; 
-        y = parseParamNumber(y, y => y + pageOffset.top - boardOffset.top) + 'px'; 
+        x = px( parseParamNumber(x, x => x + pageOffset.left - boardOffset.left) ); 
+        y = px( parseParamNumber(y, y => y + pageOffset.top - boardOffset.top) ); 
 
         this.$el.css({ 
             width, height, 

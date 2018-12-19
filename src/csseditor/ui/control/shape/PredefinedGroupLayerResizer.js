@@ -9,9 +9,24 @@ import {
     EVENT_CHANGE_LAYER_TRANSFORM, 
     EVENT_CHANGE_SELECTION, 
     EVENT_CHANGE_LAYER_MOVE,
-    EVENT_CHANGE_LAYER_ROTATE
+    EVENT_CHANGE_LAYER_ROTATE,
+    EVENT_CHANGE_PAGE_SIZE
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
+import { px, UNIT_PX } from '../../../../util/css/types';
+
+const SNAP_GRID = 20; 
+
+const SEGMENT_TYPE_ROTATE = 'rotate';
+const SEGMENT_TYPE_MOVE = 'move';
+const SEGMENT_TYPE_TOP = 'to top';
+const SEGMENT_TYPE_LEFT = 'to left';
+const SEGMENT_TYPE_RIGHT = 'to right';
+const SEGMENT_TYPE_BOTTOM = 'to bottom';
+const SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+const SEGMENT_TYPE_TOP_LEFT = 'to top left';
+const SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+const SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
 
 export default class PredefinedGroupLayerResizer extends UIElement {
 
@@ -44,18 +59,18 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             var image = isImage ? 'image' : ''; 
             return ` 
                 <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('/css/toString', css)}" >
-                    <div class="event-panel" data-value="move"></div>
+                    <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
-                        <button type="button" data-value="to right"></button>
-                        <button type="button" data-value="to left"></button>
-                        <button type="button" data-value="to top"></button>
-                        <button type="button" data-value="to bottom"></button>
-                        <button type="button" data-value="to top right"></button>
-                        <button type="button" data-value="to bottom right"></button>
-                        <button type="button" data-value="to bottom left"></button>
-                        <button type="button" data-value="to top left"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_TOP}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_BOTTOM}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_TOP_RIGHT}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_BOTTOM_RIGHT}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_BOTTOM_LEFT}"></button>
+                        <button type="button" data-value="${SEGMENT_TYPE_TOP_LEFT}"></button>
                     </div>
-                    <button type='button' data-value='rotate'></button>         
+                    <button type='button' data-value='${SEGMENT_TYPE_ROTATE}'></button>         
                     
                     
                 </div> 
@@ -70,8 +85,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
         var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-        x = parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) + 'px'; 
-        y = parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) + 'px'; 
+        x = px( parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) ); 
+        y = px( parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) ); 
 
         var transform = "none"; 
         
@@ -95,7 +110,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         }
     }
 
-    caculatePosition (list, key, align, unit = 'px') {
+    caculatePosition (list, key, align, unit = UNIT_PX ) {
 
         var valueList = list.filter(it => it.align == align).map(it => it[key])
 
@@ -117,7 +132,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         EVENT_CHANGE_LAYER_MOVE,
         EVENT_CHANGE_LAYER_POSITION,
         EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+        EVENT_CHANGE_SELECTION,
+        EVENT_CHANGE_PAGE_SIZE
     )] () { this.refresh() }
 
     caculateRightSize (item, list) {
@@ -213,7 +229,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.run('/item/set', {
             id: item.id,
-            width: (item.width + dx) + 'px'
+            width: px (item.width + dx)
         });            
     }
 
@@ -222,8 +238,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.run('/item/set', {
             id: item.id,
-            width: (item.width - dx) + 'px',
-            x: (item.x + dx) + 'px'
+            width: px (item.width - dx),
+            x: px (item.x + dx)
         });            
     }    
 
@@ -232,7 +248,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.run('/item/set', {
             id: item.id,
-            height: (item.height + dy) + 'px'
+            height: px (item.height + dy) 
         });            
     }    
 
@@ -241,8 +257,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         
         this.run('/item/set', {
             id: item.id,
-            height: (item.height - dy) + 'px',
-            y: (item.y + dy) + 'px'
+            height: px (item.height - dy) ,
+            y: px (item.y + dy)
         });            
     }    
     
@@ -251,8 +267,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         
         this.run('/item/set', {
             id: item.id,
-            x: (item.x + dx) + 'px',
-            y: (item.y + dy) + 'px'
+            x: px (item.x + dx) ,
+            y: px (item.y + dy)
         });
     }
 
@@ -273,33 +289,33 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var items = this.rectItems;
         var event = CHANGE_LAYER_SIZE;
 
-        if (this.currentType == 'to top') {
+        if (this.currentType == SEGMENT_TYPE_TOP) {
             items.forEach(item => { this.toTop(item) })
-        } else if (this.currentType == 'to bottom') {
+        } else if (this.currentType == SEGMENT_TYPE_BOTTOM) {
             items.forEach(item => { this.toBottom(item) })
-        } else if (this.currentType == 'to right') {
+        } else if (this.currentType == SEGMENT_TYPE_RIGHT) {
             items.forEach(item => { this.toRight(item) })
-        } else if (this.currentType == 'to left') {
+        } else if (this.currentType == SEGMENT_TYPE_LEFT) {
             items.forEach(item => { this.toLeft(item) })
-        } else if (this.currentType == 'to bottom left') {
+        } else if (this.currentType == SEGMENT_TYPE_BOTTOM_LEFT) {
             items.forEach(item => { this.toBottom(item) })
             items.forEach(item => { this.toLeft(item) })
-        } else if (this.currentType == 'to bottom right') {
+        } else if (this.currentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
             items.forEach(item => { this.toBottom(item) })
             items.forEach(item => { this.toRight(item) })
-        } else if (this.currentType == 'to top right') {
+        } else if (this.currentType == SEGMENT_TYPE_TOP_RIGHT) {
             items.forEach(item => { this.toTop(item) })
             items.forEach(item => { this.toRight(item) })
-        } else if (this.currentType == 'to top left') {
+        } else if (this.currentType == SEGMENT_TYPE_TOP_LEFT) {
             items.forEach(item => { this.toTop(item) })
             items.forEach(item => { this.toLeft(item) })
-        } else if (this.currentType == 'move') {
+        } else if (this.currentType == SEGMENT_TYPE_MOVE) {
             items.forEach(item => { this.moveXY(item) })
-        } else if (this.currentType == 'rotate') {
+        } else if (this.currentType == SEGMENT_TYPE_ROTATE) {
             items.forEach(item => { this.rotate(item) })      
             event = CHANGE_LAYER_ROTATE 
         }
-     
+
         this.updatePosition(items)        
         this.emit(event)               
     }
@@ -323,9 +339,12 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.currentType = type; 
         var layerId = e.$delegateTarget.parent().attr('predefined-layer-id')
         this.$dom = this.read('/item/dom', layerId);
+        this.$selectLayer = this.read('/item/get', layerId);
 
         if (this.$dom) {
             var rect = this.$dom.rect()
+            this.layerX = parseParamNumber(this.$selectLayer.x);
+            this.layerY = parseParamNumber(this.$selectLayer.y);
             this.layerCenterX = rect.left + rect.width/2;
             this.layerCenterY = rect.top + rect.height/2;
         }
@@ -347,7 +366,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.canvasScrollTop = this.$board.scrollTop();        
     }
 
-    'pointermove document | isDownCheck' (e) {
+    'pointermove document | debounce(10) | isDownCheck' (e) {
         this.targetXY = e.xy; 
 
         this.dx = e.xy.x - this.xy.x;
@@ -355,6 +374,25 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         if (this.currentType == 'rotate') {
             this.angle = caculateAngle (e.xy.x - this.layerCenterX,  e.xy.y - this.layerCenterY);
+        }
+
+        if (this.read('/tool/get', 'snap.grid')) {
+
+            if (this.currentType == 'move') {
+                var moveX = this.layerX + this.dx
+                var moveY = this.layerY + this.dy
+        
+                var tempX = moveX - moveX % SNAP_GRID
+                var tempY = moveY - moveY % SNAP_GRID
+        
+                // console.log({tempX, tempY})
+        
+                this.dx = Math.floor( tempX / SNAP_GRID) * SNAP_GRID - this.layerX; 
+                this.dy = Math.floor( tempY / SNAP_GRID) * SNAP_GRID - this.layerY; 
+
+                // console.log('dy', this.dx, 'dx', this.dy)                
+            }
+
         }
 
         this.resizeComponent();

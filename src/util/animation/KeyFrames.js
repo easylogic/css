@@ -1,6 +1,7 @@
 import { parseParamNumber } from "../filter/functions";
 import Scale from "./Scale";
 import ValueGenerator from "./ValueGenerator";
+import { UNIT_PX } from "../css/types";
 
 const KeyFrames = {
     parse (obj, ani) {
@@ -62,7 +63,7 @@ const KeyFrames = {
 
             return {
                 functions,
-                type: transitionPropertyItem[0].itemType || 'px',
+                type: transitionPropertyItem[0].itemType || UNIT_PX,
                 values: transitionPropertyItem
             }; 
         })

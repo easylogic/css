@@ -9,6 +9,7 @@ export default class ToolManager extends BaseModule {
             color : '',
             colorSource : '',
             'show.grid': false,
+            'snap.grid': false,
             'guide.only': false,            
             'guide.angle': true,
             'guide.position': true

@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { parseParamNumber } from "../../util/filter/functions";
+import { px } from "../../util/css/types";
 
 export default class OrderingManager extends BaseModule {
 
@@ -23,8 +24,7 @@ export default class OrderingManager extends BaseModule {
         }));
 
         items.forEach(item => {
-            var newX = x + 'px'
-            $store.run('/item/set', {id: item.id, x: newX})
+            $store.run('/item/set', {id: item.id, x: px(newX)})
         })
     }
 
@@ -42,7 +42,7 @@ export default class OrderingManager extends BaseModule {
         var centerX = x + Math.floor((x2 - x)/2)
 
         items.forEach(item => {
-            var newX = Math.floor(centerX - parseParamNumber(item.width)/2) + 'px';
+            var newX = px(Math.floor(centerX - parseParamNumber(item.width)/2));
             $store.run('/item/set', {id: item.id, x: newX })
         })
     }
@@ -55,7 +55,7 @@ export default class OrderingManager extends BaseModule {
         }));
 
         items.forEach(item => {
-            var newX = (x2 - parseParamNumber(item.width)) + 'px';
+            var newX = px(x2 - parseParamNumber(item.width));
             $store.run('/item/set', {id: item.id, x: newX })
         })
     }
@@ -67,8 +67,7 @@ export default class OrderingManager extends BaseModule {
         }));
 
         items.forEach(item => {
-            var newY = y + 'px'
-            $store.run('/item/set', {id: item.id, y: newY})
+            $store.run('/item/set', {id: item.id, y: px(y)})
         })
     }
 
@@ -86,7 +85,7 @@ export default class OrderingManager extends BaseModule {
         var centerY = y + (y2 - y)/2
 
         items.forEach(item => {
-            var newY = Math.floor(centerY  - parseParamNumber(item.height)/2) + 'px';
+            var newY = px(Math.floor(centerY  - parseParamNumber(item.height)/2));
             $store.run('/item/set', {id: item.id, y: newY })
         })
     }
@@ -99,16 +98,44 @@ export default class OrderingManager extends BaseModule {
         }));
 
         items.forEach(item => {
-            var newY = (y2 - parseParamNumber(item.height)) + 'px';
+            var newY = px(y2 - parseParamNumber(item.height));
             $store.run('/item/set', {id: item.id, y: newY })
         })
     }
 
-    vertical ($store) {
-        
+    '/ordering/type' ($store, type) {
+        if (this[type]) {
+            this[type].call(this, $store);
+        }
     }
 
-    '/ordering/type' ($store, type) {
+    forward ($store) {
+        $store.read('/selection/current/layer/id', id => {
+            $store.run('/item/move/next', id) 
+        })                     
+    }
+
+    backward ($store) {
+        $store.read('/selection/current/layer/id', id => {
+            $store.run('/item/move/prev', id) 
+        })           
+    }
+    
+    front ($store) {
+        $store.read('/selection/current/layer/id', id => {
+            $store.run('/item/move/last', id) 
+        })
+    }
+    
+    back ($store) {
+        $store.read('/selection/current/layer/id', id => {
+            $store.run('/item/move/first', id) 
+        })                
+
+    }    
+
+
+    '/ordering/index' ($store, type) {
         if (this[type]) {
             this[type].call(this, $store);
         }

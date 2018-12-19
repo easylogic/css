@@ -1,9 +1,10 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
 import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../types/event";
+import { UNIT_PX, UNIT_EM, UNIT_PERCENT, isPercent, isPX, isEM } from "../../../../util/css/types";
 
 function checkPxEm(unit) {
-    return ['px', 'em'].includes(unit);
+    return [UNIT_PX, UNIT_EM].includes(unit);
 }
 
 export default class GradientInfo extends UIElement {
@@ -19,7 +20,7 @@ export default class GradientInfo extends UIElement {
     }
 
     getUnitName (step) {
-        var unit = step.unit || '%'
+        var unit = step.unit || UNIT_PERCENT
 
         if (checkPxEm(unit)) {
             return unit; 
@@ -30,30 +31,30 @@ export default class GradientInfo extends UIElement {
 
     getUnitSelect (step) {
 
-        var unit = step.unit || '%'
+        var unit = step.unit || UNIT_PERCENT
 
         if (checkPxEm(unit) == false) {
-            unit = '%';
+            unit = UNIT_PERCENT;
         }
 
         return `
         <select class='unit' colorstep-id="${step.id}">
-            <option value='%' ${unit == '%' ? 'selected' : ''}>%</option>
-            <option value='px' ${unit == 'px' ? 'selected' : ''}>px</option>
-            <option value='em' ${unit == 'em' ? 'selected' : ''}>em</option>
+            <option value='${UNIT_PERCENT}' ${isPercent (unit) ? 'selected' : ''}>%</option>
+            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : ''}>px</option>
+            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : ''}>em</option>
         </select>
         `
     }
 
     getUnitValue (step) {
 
-        if (step.unit == 'px') {
+        if (isPX(step.unit)) {
             return {
                 px: step.px,
                 percent: px2percent(step.px, this.getMaxValue()),
                 em: px2em(step.px, this.getMaxValue())
             }
-        } else if (step.unit == 'em') {
+        } else if (isEM(step.unit)) {
             return {
                 em: step.em,
                 percent: em2percent(step.em, this.getMaxValue()),
@@ -93,9 +94,9 @@ export default class GradientInfo extends UIElement {
                                     <input type="text" class="code" value='${step.color}' colorstep-id="${step.id}"  />
                                 </div>
                                 <div class="color-unit ${this.getUnitName(step)}">
-                                    <input type="number" class="percent" min="0" max="100" step="0.1"  value="${unitValue.percent}" colorstep-id="${step.id}"  />
-                                    <input type="number" class="px" min="0" max="1000" step="1"  value="${unitValue.px}" colorstep-id="${step.id}"  />
-                                    <input type="number" class="em" min="0" max="500" step="0.1"  value="${unitValue.em}" colorstep-id="${step.id}"  />
+                                    <input type="number" class="${UNIT_PERCENT}" min="0" max="100" step="0.1"  value="${unitValue.percent}" colorstep-id="${step.id}"  />
+                                    <input type="number" class="${UNIT_PX}" min="0" max="1000" step="1"  value="${unitValue.px}" colorstep-id="${step.id}"  />
+                                    <input type="number" class="${UNIT_EM}" min="0" max="500" step="0.1"  value="${unitValue.em}" colorstep-id="${step.id}"  />
                                     ${this.getUnitSelect(step)}
                                 </div>                       
                                 <div class="tools">
@@ -177,7 +178,7 @@ export default class GradientInfo extends UIElement {
             this.commit(CHANGE_COLOR_STEP, newValue )
 
             var $parent = e.$delegateTarget.parent();
-            $parent.removeClass('percent', 'px', 'em').addClass(unit);
+            $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(unit);
         }        
     }
 

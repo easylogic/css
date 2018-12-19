@@ -241,10 +241,10 @@ export default class ItemManager extends BaseModule {
     }
 
     '*/item/list' ($store, filterCallback) {
-        var list = $store.read('/item/keys').filter(filterCallback)
+        var list = $store.itemKeys.filter(filterCallback)
 
-        list.sort( (a, b) => {
-            return $store.items[a].index > $store.items[b].index ? 1 : -1;
+        list.sort( (aId, bId) => {
+            return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
         })
 
         return list; 

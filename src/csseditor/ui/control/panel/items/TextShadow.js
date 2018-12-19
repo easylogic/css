@@ -5,11 +5,13 @@ import {
     CHANGE_TEXTSHADOW,  
     EVENT_CHANGE_SELECTION, 
     EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER 
+    EVENT_CHANGE_LAYER, 
+    TEXT_FILL_COLOR
 } from '../../../../types/event';
 import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
 import { parseParamNumber } from '../../../../../util/filter/functions';
+import { px } from '../../../../../util/css/types';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -137,7 +139,7 @@ export default class TextShadow extends BasePropertyItem {
         var field = $el.attr('data-type');
         var id = $el.parent().parent().attr('text-shadow-id')
 
-        this.commit(CHANGE_TEXTSHADOW, {id, [field]: $el.val() + 'px' })
+        this.commit(CHANGE_TEXTSHADOW, {id, [field]: px($el.val()) })
     }
 
     'click $textShadowList .delete-textshadow' (e) {
@@ -154,7 +156,7 @@ export default class TextShadow extends BasePropertyItem {
         var id = $el.parent().attr('text-shadow-id')
 
         this.dispatch('/selection/one', id);
-        this.emit('textFillColorId', id, CHANGE_TEXTSHADOW);
+        this.emit(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
         this.refresh();
     }
 

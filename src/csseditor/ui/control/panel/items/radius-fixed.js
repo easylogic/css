@@ -7,6 +7,7 @@ import {
     CHANGE_LAYER_RADIUS 
 } from "../../../../types/event";
 import { parseParamNumber } from "../../../../../util/gl/filter/util";
+import { px } from "../../../../../util/css/types";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {
@@ -46,14 +47,14 @@ export default class RadiusFixed extends BasePropertyItem {
                 this.commit(CHANGE_LAYER_RADIUS, {
                     id, 
                     fixedRadius: true, 
-                    borderRadius: this.refs.$radius.val() + 'px'
+                    borderRadius: px( this.refs.$radius.val() )
                 })
                 this.refs.$radiusRange.val(this.refs.$radius.val())
             } else if (type == 'range') {
                 this.commit(CHANGE_LAYER_RADIUS, {
                     id, 
                     fixedRadius: true, 
-                    borderRadius: this.refs.$radiusRange.val() + 'px'
+                    borderRadius: px( this.refs.$radiusRange.val() )
                 })
                 this.refs.$radius.val(this.refs.$radiusRange.val())
             }

@@ -3340,6 +3340,42 @@ var multi$2 = {
 
 var FilterList = _extends({}, image$1, pixel$1, matrix$1, multi$2);
 
+var _UNIT_STRINGS;
+
+var UNIT_PX_STRING = 'px';
+var UNIT_EM_STRING = 'em';
+var UNIT_PERCENT_STRING = '%';
+
+var UNIT_PX = 'px';
+var UNIT_EM = 'em';
+var UNIT_PERCENT = 'percent';
+
+var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), _UNIT_STRINGS);
+
+function px$1(value) {
+    return value + UNIT_PX_STRING;
+}
+function em(value) {
+    return value + UNIT_EM_STRING;
+}
+function percent(value) {
+    return value + UNIT_PERCENT_STRING;
+}
+
+function isPX(unit) {
+    return unit === UNIT_PX;
+}
+function isEM(unit) {
+    return unit === UNIT_EM;
+}
+function isPercent(unit) {
+    return unit === UNIT_PERCENT;
+}
+
+function unitString(unit) {
+    return UNIT_STRINGS[unit];
+}
+
 var _functions;
 
 var makeId = 0;
@@ -3651,11 +3687,11 @@ function unit2px(unitValue, maxValue) {
 
     var value = parseParamNumber$1(unitValue);
 
-    if (unitValue.includes('%')) {
+    if (unitValue.includes(UNIT_PERCENT_STRING)) {
         return percent2px(value, maxValue);
-    } else if (unitValue.includes('px')) {
+    } else if (unitValue.includes(UNIT_PX_STRING)) {
         return value;
-    } else if (unitValue.includes('em')) {
+    } else if (unitValue.includes(UNIT_EM_STRING)) {
         return em2px(value, maxValue);
     }
 }
@@ -3674,22 +3710,22 @@ function px2em(px, maxValue) {
     return round(px / fontSize, 100);
 }
 
-function em2px(em, maxValue) {
+function em2px(em$$1, maxValue) {
     var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
 
-    return Math.floor(round(em * fontSize, 100));
+    return Math.floor(round(em$$1 * fontSize, 100));
 }
 
-function em2percent(em, maxValue) {
-    return px2percent(em2px(em), maxValue);
+function em2percent(em$$1, maxValue) {
+    return px2percent(em2px(em$$1), maxValue);
 }
 
-function percent2px(percent, maxValue) {
-    return Math.floor(round(maxValue * (percent / 100), 100));
+function percent2px(percent$$1, maxValue) {
+    return Math.floor(round(maxValue * (percent$$1 / 100), 100));
 }
 
-function percent2em(percent, maxValue) {
-    return px2em(percent2px(percent, maxValue), maxValue);
+function percent2em(percent$$1, maxValue) {
+    return px2em(percent2px(percent$$1, maxValue), maxValue);
 }
 
 var filter_regexp = /(([\w_\-]+)(\(([^\)]*)\))?)+/gi;
@@ -4738,8 +4774,8 @@ var GLCanvas = function () {
         classCallCheck(this, GLCanvas);
 
         this.img = opt.img;
-        this.width = parseFloat(this.img.width || opt.width || '400px');
-        this.height = parseFloat(this.img.height || opt.height || '300px');
+        this.width = parseFloat(this.img.width || opt.width || px$1(400));
+        this.height = parseFloat(this.img.height || opt.height || px$1(300));
         this.init();
     }
 
@@ -4748,8 +4784,8 @@ var GLCanvas = function () {
         value: function resize() {
             this.canvas.width = this.width;
             this.canvas.height = this.height;
-            this.canvas.style.width = this.width + 'px';
-            this.canvas.style.height = this.height + 'px';
+            this.canvas.style.width = px$1(this.width);
+            this.canvas.style.height = px$1(this.height);
 
             this.viewport();
         }
@@ -5962,8 +5998,8 @@ var Dom = function () {
         }
     }, {
         key: 'px',
-        value: function px(key, value) {
-            return this.css(key, value + 'px');
+        value: function px$$1(key, value) {
+            return this.css(key, px$1(value));
         }
     }, {
         key: 'rect',
@@ -7681,8 +7717,8 @@ var BaseColorPicker = function (_UIElement) {
 
             // set position
             this.$root.css({
-                left: elementScreenLeft + 'px',
-                top: elementScreenTop + 'px'
+                left: px(elementScreenLeft),
+                top: px(elementScreenTop)
             });
 
             // this.definePositionForArrow(opt, elementScreenLeft, elementScreenTop);
@@ -7993,7 +8029,7 @@ var BaseSlider = function (_BaseBox) {
     }, {
         key: 'setMousePosition',
         value: function setMousePosition(x) {
-            this.refs.$bar.css({ left: x + 'px' });
+            this.refs.$bar.css({ left: px$1(x) });
         }
 
         /** set mouse position in page */
@@ -8693,8 +8729,6 @@ var ColorSetsChooser = function (_UIElement) {
         key: 'click $colorsetsList .colorsets-item',
         value: function click$colorsetsListColorsetsItem(e) {
             var $item = e.$delegateTarget;
-
-            console.log($item);
 
             if ($item) {
 
@@ -9555,6 +9589,7 @@ var ColorPicker = {
     XDColorPicker: XDColorPicker
 };
 
+/* event trigger */
 var CHANGE_EDITOR = 'CHANGE_EDITOR';
 var CHANGE_SELECTION = 'CHANGE_SELECTION';
 var CHANGE_PAGE = 'CHANGE_PAGE';
@@ -9592,6 +9627,9 @@ var CHANGE_COLOR_STEP = 'CHANGE_COLOR_STEP';
 var ADD_COLOR_STEP = 'ADD_COLOR_STEP';
 var REMOVE_COLOR_STEP = 'REMOVE_COLOR_STEP';
 
+var TEXT_FILL_COLOR = 'TEXT_FILL_COLOR';
+
+/* defiend event */
 var EVENT_CHANGE_EDITOR = '@' + CHANGE_EDITOR;
 var EVENT_CHANGE_SELECTION = '@' + CHANGE_SELECTION;
 var EVENT_CHANGE_PAGE = '@' + CHANGE_PAGE;
@@ -9626,6 +9664,10 @@ var EVENT_CHANGE_BOXSHADOW = '@' + CHANGE_BOXSHADOW;
 var EVENT_CHANGE_TEXTSHADOW = '@' + CHANGE_TEXTSHADOW;
 
 var EVENT_CHANGE_COLOR_STEP = '@' + CHANGE_COLOR_STEP;
+
+
+
+var EVENT_TEXT_FILL_COLOR = '@' + TEXT_FILL_COLOR;
 
 var ITEM_TYPE_PAGE = 'page';
 var ITEM_TYPE_LAYER = 'layer';
@@ -9816,13 +9858,13 @@ var ColorStepManager = function (_BaseModule) {
         }
     }, {
         key: '/colorstep/add',
-        value: function colorstepAdd($store, item, percent) {
+        value: function colorstepAdd($store, item, percent$$1) {
 
             var list = $store.read('/item/list/children', item.id);
 
             if (!list.length) {
 
-                $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent, index: 0 });
+                $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
                 $store.read('/item/create/colorstep', { parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
 
                 $store.run('/item/set', item);
@@ -9833,21 +9875,21 @@ var ColorStepManager = function (_BaseModule) {
                 return $store.items[id];
             });
 
-            if (percent < colorsteps[0].percent) {
+            if (percent$$1 < colorsteps[0].percent) {
 
                 colorsteps[0].index = 1;
 
-                $store.read('/item/create/colorstep', { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent });
+                $store.read('/item/create/colorstep', { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent$$1 });
                 $store.run('/item/set', colorsteps[0]);
                 $store.run('/item/set', item);
                 return;
             }
 
-            if (colorsteps[colorsteps.length - 1].percent < percent) {
+            if (colorsteps[colorsteps.length - 1].percent < percent$$1) {
                 var color = colorsteps[colorsteps.length - 1].color;
                 var index = colorsteps[colorsteps.length - 1].index;
 
-                $store.read('/item/create/colorstep', { parentId: item.id, index: index + 1, color: color, percent: percent });
+                $store.read('/item/create/colorstep', { parentId: item.id, index: index + 1, color: color, percent: percent$$1 });
                 $store.run('/item/set', item);
                 return;
             }
@@ -9856,10 +9898,10 @@ var ColorStepManager = function (_BaseModule) {
                 var step = colorsteps[i];
                 var nextStep = colorsteps[i + 1];
 
-                if (step.percent <= percent && percent <= nextStep.percent) {
-                    var color = Color$1.mix(step.color, nextStep.color, (percent - step.percent) / (nextStep.percent - step.percent), 'rgb');
+                if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
+                    var color = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
 
-                    $store.read('/item/create/colorstep', { parentId: item.id, index: step.index + 1, color: color, percent: percent });
+                    $store.read('/item/create/colorstep', { parentId: item.id, index: step.index + 1, color: color, percent: percent$$1 });
                     $store.run('/item/set', item);
                     return;
                 }
@@ -9964,7 +10006,7 @@ var ColorStepManager = function (_BaseModule) {
         key: "getUnitValue",
         value: function getUnitValue(step, maxValue) {
 
-            if (step.unit == 'px') {
+            if (isPX(step.unit)) {
                 if (typeof step.px == 'undefined') {
                     step.px = percent2px(step.percent, maxValue);
                 }
@@ -9974,7 +10016,7 @@ var ColorStepManager = function (_BaseModule) {
                     percent: px2percent(step.px, maxValue),
                     em: px2em(step.px, maxValue)
                 };
-            } else if (step.unit == 'em') {
+            } else if (isEM(step.unit)) {
                 if (typeof step.em == 'undefined') {
                     step.em = percent2em(step.percent, maxValue);
                 }
@@ -10324,12 +10366,12 @@ var ImageManager = function (_BaseModule) {
 
             var x = image$$1.backgroundPositionX != null ? image$$1.backgroundPositionX : 'center';
             var y = image$$1.backgroundPositionY != null ? image$$1.backgroundPositionY : 'center';
-            if (typeof x == 'number') {
-                x = x + 'px';
-            }
 
+            if (typeof x == 'number') {
+                x = px$1(x);
+            }
             if (typeof y == 'number') {
-                y = y + 'px';
+                y = px$1(y);
             }
 
             return [x, y].join(' ');
@@ -10351,20 +10393,20 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: '*/image/get/unitValue',
         value: function imageGetUnitValue($store, step) {
-            if (step.unit == 'px') {
-                return step.px + 'px';
-            } else if (step.unit == 'em') {
-                return step.em + 'em';
+            if (isPX(step.unit)) {
+                return px$1(step.px);
+            } else if (isEM(step.unit)) {
+                return em(step.em);
             }
 
-            return step.percent + '%';
+            return percent(step.percent);
         }
     }, {
         key: '*/image/get/stepValue',
         value: function imageGetStepValue($store, step) {
-            if (step.unit == 'px') {
+            if (isPX(step.unit)) {
                 return step.px;
-            } else if (step.unit == 'em') {
+            } else if (isEM(step.unit)) {
                 return step.em;
             }
 
@@ -10578,20 +10620,20 @@ var layerList = [
 
 var filterInfo = {
 
-    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: 'px', defaultValue: 0 },
-    'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
+    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'hue-rotate': { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'invert': { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 0 },
-    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: '%', defaultValue: 100 },
-    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: '%', defaultValue: 100 },
+    'invert': { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'drop-shadow': {
         title: 'Drop Shadow',
         type: 'multi',
         items: [{ title: 'Offset X', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Offset Y', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Spread Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Color', type: 'color', defaultValue: 'black' }]
     },
-    'opacity': { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
-    'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
-    'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 0 }
+    'opacity': { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
 };
 
 var LayerManager = function (_BaseModule) {
@@ -10673,14 +10715,14 @@ var LayerManager = function (_BaseModule) {
                 var width = parseParamNumber$1(layer.width);
                 var height = parseParamNumber$1(layer.height);
 
-                var placeCenter = [Math.floor(layer.clipPathCenter[0] / width * 100) + '%', // centerX 
-                Math.floor(layer.clipPathCenter[1] / height * 100) + '%' // centerY
+                var placeCenter = [percent(Math.floor(layer.clipPathCenter[0] / width * 100)), // centerX 
+                percent(Math.floor(layer.clipPathCenter[1] / height * 100)) // centerY
                 ];
 
                 var radiusSize = Math.sqrt(Math.pow(layer.clipPathRadius[0] - layer.clipPathCenter[0], 2) + Math.pow(layer.clipPathRadius[1] - layer.clipPathCenter[1], 2)) / Math.sqrt(2);
 
                 var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
-                var radiusPercent = Math.floor(radiusSize / dist * 100) + '%';
+                var radiusPercent = percent(Math.floor(radiusSize / dist * 100));
 
                 return "circle(" + radiusPercent + " at " + placeCenter.join(' ') + ")";
             } else if (layer.clipPathType == 'none') {
@@ -11008,6 +11050,7 @@ var LayerManager = function (_BaseModule) {
                 css.top = layer.y;
                 css.width = layer.width;
                 css.height = layer.height;
+                css['z-index'] = layer.index;
             }
 
             if (layer.backgroundColor) {
@@ -11108,6 +11151,7 @@ var ToolManager = function (_BaseModule) {
                 color: '',
                 colorSource: '',
                 'show.grid': false,
+                'snap.grid': false,
                 'guide.only': false,
                 'guide.angle': true,
                 'guide.position': true
@@ -11769,10 +11813,10 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/list',
         value: function itemList($store, filterCallback) {
-            var list = $store.read('/item/keys').filter(filterCallback);
+            var list = $store.itemKeys.filter(filterCallback);
 
-            list.sort(function (a, b) {
-                return $store.items[a].index > $store.items[b].index ? 1 : -1;
+            list.sort(function (aId, bId) {
+                return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
             });
 
             return list;
@@ -13881,10 +13925,10 @@ var SelectionManager = function (_BaseModule) {
             var width = x2 - x;
             var height = y2 - y;
 
-            x = x + 'px';
-            y = y + 'px';
-            width = width + 'px';
-            height = height + 'px';
+            x = px$1(x);
+            y = px$1(y);
+            width = px$1(width);
+            height = px$1(height);
 
             if (items.length == 1) {
                 return { x: x, y: y, width: width, height: height, id: items[0].id };
@@ -14049,8 +14093,7 @@ var OrderingManager = function (_BaseModule) {
             })));
 
             items.forEach(function (item) {
-                var newX = x + 'px';
-                $store.run('/item/set', { id: item.id, x: newX });
+                $store.run('/item/set', { id: item.id, x: px$1(newX) });
             });
         }
     }, {
@@ -14069,7 +14112,7 @@ var OrderingManager = function (_BaseModule) {
             var centerX = x + Math.floor((x2 - x) / 2);
 
             items.forEach(function (item) {
-                var newX = Math.floor(centerX - parseParamNumber$1(item.width) / 2) + 'px';
+                var newX = px$1(Math.floor(centerX - parseParamNumber$1(item.width) / 2));
                 $store.run('/item/set', { id: item.id, x: newX });
             });
         }
@@ -14083,7 +14126,7 @@ var OrderingManager = function (_BaseModule) {
             })));
 
             items.forEach(function (item) {
-                var newX = x2 - parseParamNumber$1(item.width) + 'px';
+                var newX = px$1(x2 - parseParamNumber$1(item.width));
                 $store.run('/item/set', { id: item.id, x: newX });
             });
         }
@@ -14096,8 +14139,7 @@ var OrderingManager = function (_BaseModule) {
             })));
 
             items.forEach(function (item) {
-                var newY = y + 'px';
-                $store.run('/item/set', { id: item.id, y: newY });
+                $store.run('/item/set', { id: item.id, y: px$1(y) });
             });
         }
     }, {
@@ -14116,7 +14158,7 @@ var OrderingManager = function (_BaseModule) {
             var centerY = y + (y2 - y) / 2;
 
             items.forEach(function (item) {
-                var newY = Math.floor(centerY - parseParamNumber$1(item.height) / 2) + 'px';
+                var newY = px$1(Math.floor(centerY - parseParamNumber$1(item.height) / 2));
                 $store.run('/item/set', { id: item.id, y: newY });
             });
         }
@@ -14130,16 +14172,48 @@ var OrderingManager = function (_BaseModule) {
             })));
 
             items.forEach(function (item) {
-                var newY = y2 - parseParamNumber$1(item.height) + 'px';
+                var newY = px$1(y2 - parseParamNumber$1(item.height));
                 $store.run('/item/set', { id: item.id, y: newY });
             });
         }
     }, {
-        key: "vertical",
-        value: function vertical($store) {}
-    }, {
         key: '/ordering/type',
         value: function orderingType($store, type) {
+            if (this[type]) {
+                this[type].call(this, $store);
+            }
+        }
+    }, {
+        key: "forward",
+        value: function forward($store) {
+            $store.read('/selection/current/layer/id', function (id) {
+                $store.run('/item/move/next', id);
+            });
+        }
+    }, {
+        key: "backward",
+        value: function backward($store) {
+            $store.read('/selection/current/layer/id', function (id) {
+                $store.run('/item/move/prev', id);
+            });
+        }
+    }, {
+        key: "front",
+        value: function front($store) {
+            $store.read('/selection/current/layer/id', function (id) {
+                $store.run('/item/move/last', id);
+            });
+        }
+    }, {
+        key: "back",
+        value: function back($store) {
+            $store.read('/selection/current/layer/id', function (id) {
+                $store.run('/item/move/first', id);
+            });
+        }
+    }, {
+        key: '/ordering/index',
+        value: function orderingIndex($store, type) {
             if (this[type]) {
                 this[type].call(this, $store);
             }
@@ -14169,7 +14243,7 @@ var MatrixManager = function (_BaseModule) {
             Object.keys(newValue).filter(function (key) {
                 return key != 'id';
             }).forEach(function (key) {
-                item[key] = parseParamNumber$2(item[key]) + newValue[key] + 'px';
+                item[key] = px$1(parseParamNumber$2(item[key]) + newValue[key]);
             });
 
             $store.run('/item/set', item);
@@ -14442,7 +14516,7 @@ var Size = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                var width = _this2.refs.$width.int() + 'px';
+                var width = px$1(_this2.refs.$width.int());
                 var height = width;
                 _this2.commit(CHANGE_LAYER_SIZE, { id: id, width: width, height: height });
                 _this2.refs.$height.val(_this2.refs.$width.val());
@@ -14454,7 +14528,7 @@ var Size = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                var width = _this3.refs.$width.int() + 'px';
+                var width = px$1(_this3.refs.$width.int());
                 _this3.commit(CHANGE_LAYER_SIZE, { id: id, width: width });
             });
         }
@@ -14464,7 +14538,7 @@ var Size = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                var height = _this4.refs.$height.int() + 'px';
+                var height = px$1(_this4.refs.$height.int());
                 _this4.commit(CHANGE_LAYER_SIZE, { id: id, height: height });
             });
         }
@@ -14474,7 +14548,7 @@ var Size = function (_BasePropertyItem) {
             var _this5 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                var x = _this5.refs.$x.int() + 'px';
+                var x = px$1(_this5.refs.$x.int());
                 _this5.commit(CHANGE_LAYER_POSITION, { id: id, x: x });
             });
         }
@@ -14484,7 +14558,7 @@ var Size = function (_BasePropertyItem) {
             var _this6 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                var y = _this6.refs.$y.int() + 'px';
+                var y = px$1(_this6.refs.$y.int());
                 _this6.commit(CHANGE_LAYER_POSITION, { id: id, y: y });
             });
         }
@@ -14526,7 +14600,7 @@ var Position = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('/selection/current/layer', function (item) {
-                item.x = _this3.refs.$x.int() + 'px';
+                item.x = px$1(_this3.refs.$x.int());
                 _this3.dispatch('/item/set', item);
             });
         }
@@ -14536,7 +14610,7 @@ var Position = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('/selection/current/layer', function (item) {
-                item.y = _this4.refs.$y.int() + 'px';
+                item.y = px$1(_this4.refs.$y.int());
                 _this4.dispatch('/item/set', item);
             });
         }
@@ -14617,10 +14691,10 @@ var Radius = function (_BasePropertyItem) {
             this.read('/selection/current/layer/id', function (id) {
                 _this3.commit(CHANGE_LAYER_RADIUS, {
                     id: id,
-                    borderTopLeftRadius: _this3.refs.$topLeftRadius.val() + 'px',
-                    borderTopRightRadius: _this3.refs.$topRightRadius.val() + 'px',
-                    borderBottomLeftRadius: _this3.refs.$bottomLeftRadius.val() + 'px',
-                    borderBottomRightRadius: _this3.refs.$bottomRightRadius.val() + 'px',
+                    borderTopLeftRadius: px$1(_this3.refs.$topLeftRadius.val()),
+                    borderTopRightRadius: px$1(_this3.refs.$topRightRadius.val()),
+                    borderBottomLeftRadius: px$1(_this3.refs.$bottomLeftRadius.val()),
+                    borderBottomRightRadius: px$1(_this3.refs.$bottomRightRadius.val()),
                     fixedRadius: false
                 });
             });
@@ -14823,7 +14897,7 @@ var GradientSteps = function (_UIElement) {
             min -= left;
             max -= left;
 
-            if (step.unit == 'px') {
+            if (isPX(step.unit)) {
                 return step.px;
             }
 
@@ -14832,25 +14906,25 @@ var GradientSteps = function (_UIElement) {
     }, {
         key: 'getUnitName',
         value: function getUnitName(step) {
-            var unit = step.unit || 'percent';
+            var unit = step.unit || UNIT_PERCENT;
 
-            if (['px', 'em'].includes(unit)) {
+            if ([UNIT_PX, UNIT_EM].includes(unit)) {
                 return unit;
             }
 
-            return 'percent';
+            return UNIT_PERCENT;
         }
     }, {
         key: 'getUnitSelect',
         value: function getUnitSelect(step) {
 
-            var unit = step.unit || '%';
+            var unit = step.unit || UNIT_PERCENT;
 
-            if (['px', 'em'].includes(unit) == false) {
-                unit = '%';
+            if ([UNIT_PX, UNIT_EM].includes(unit) == false) {
+                unit = UNIT_PERCENT;
             }
 
-            return '\n        <select class=\'unit\' data-colorstep-id="' + step.id + '">\n            <option value=\'%\' ' + (unit == '%' ? 'selected' : '') + '>%</option>\n            <option value=\'px\' ' + (unit == 'px' ? 'selected' : '') + '>px</option>\n            <option value=\'em\' ' + (unit == 'em' ? 'selected' : '') + '>em</option>\n        </select>\n        ';
+            return '\n        <select class=\'unit\' data-colorstep-id="' + step.id + '">\n            <option value=\'' + UNIT_PERCENT + '\' ' + (isPercent(unit) ? 'selected' : '') + '>%</option>\n            <option value=\'' + UNIT_PX + '\' ' + (isPX(unit) ? 'selected' : '') + '>px</option>\n            <option value=\'' + UNIT_EM + '\' ' + (isEM(unit) ? 'selected' : '') + '>em</option>\n        </select>\n        ';
         }
     }, {
         key: 'getMaxValue',
@@ -14873,7 +14947,7 @@ var GradientSteps = function (_UIElement) {
 
                 var cut = step.cut ? 'cut' : '';
                 var unitValue = _this2.read('/colorstep/unit/value', step, _this2.getMaxValue());
-                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="' + unitValue.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="px" min="-100" max="1000" step="1"  value="' + unitValue.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="' + unitValue.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
+                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="' + UNIT_PERCENT + '" min="-100" max="100" step="0.1"  value="' + unitValue.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_PX + '" min="-100" max="1000" step="1"  value="' + unitValue.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_EM + '" min="-100" max="500" step="0.1"  value="' + unitValue.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
             });
         }
     }, {
@@ -14983,13 +15057,13 @@ var GradientSteps = function (_UIElement) {
                 if (item) {
 
                     // item.px = px; 
-                    var percent = Math.floor(px2percent(px, max - min));
-                    var em = px2em(px, max - min);
-                    var newValue = { id: item.id, px: px, percent: percent, em: em };
+                    var percent$$1 = Math.floor(px2percent(px, max - min));
+                    var em$$1 = px2em(px, max - min);
+                    var newValue = { id: item.id, px: px, percent: percent$$1, em: em$$1 };
 
-                    this.currentUnitPercent.val(percent);
+                    this.currentUnitPercent.val(percent$$1);
                     this.currentUnitPx.val(px);
-                    this.currentUnitEm.val(em);
+                    this.currentUnitEm.val(em$$1);
 
                     this.run('/item/set', newValue);
                     this.run('/colorstep/sort', newValue.id, this.getSortedStepList());
@@ -15067,14 +15141,14 @@ var GradientSteps = function (_UIElement) {
 
             var current = this.getCurrent(e);
 
-            var percent = Math.floor((current - min) / (max - min) * 100);
+            var percent$$1 = Math.floor((current - min) / (max - min) * 100);
 
             var item = this.read('/selection/current/image');
 
             if (!item) return;
 
-            this.dispatch('/colorstep/add', item, percent);
-            this.emit(ADD_COLOR_STEP, item, percent);
+            this.dispatch('/colorstep/add', item, percent$$1);
+            this.emit(ADD_COLOR_STEP, item, percent$$1);
             this.run('/history/push', 'Add colorstep');
             this.refresh();
         }
@@ -15167,7 +15241,7 @@ var GradientSteps = function (_UIElement) {
                 this.commit(CHANGE_COLOR_STEP, newValue);
 
                 var $parent = e.$delegateTarget.parent();
-                $parent.removeClass('percent', 'px', 'em').addClass(this.getUnitName(step));
+                $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(this.getUnitName(step));
             }
         }
     }, {
@@ -15178,7 +15252,7 @@ var GradientSteps = function (_UIElement) {
 
             var layer = this.read('/selection/current/layer');
 
-            var percent = +e.$delegateTarget.val();
+            var percent$$1 = +e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
             var step = this.read('/item/get', id);
@@ -15187,9 +15261,9 @@ var GradientSteps = function (_UIElement) {
 
                 var newValue = {
                     id: step.id,
-                    percent: percent,
-                    px: percent2px(percent, this.getMaxValue(layer)),
-                    em: percent2em(percent, this.getMaxValue(layer))
+                    percent: percent$$1,
+                    px: percent2px(percent$$1, this.getMaxValue(layer)),
+                    em: percent2em(percent$$1, this.getMaxValue(layer))
                 };
 
                 this.currentStepBox.px('left', newValue.px);
@@ -15239,7 +15313,7 @@ var GradientSteps = function (_UIElement) {
 
             var layer = this.read('/selection/current/layer');
 
-            var em = +e.$delegateTarget.val();
+            var em$$1 = +e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
             var step = this.read('/item/get', id);
@@ -15247,9 +15321,9 @@ var GradientSteps = function (_UIElement) {
             if (step) {
                 var newValue = {
                     id: step.id,
-                    em: em,
-                    percent: em2percent(em, this.getMaxValue(layer)),
-                    px: em2px(em, this.getMaxValue(layer))
+                    em: em$$1,
+                    percent: em2percent(em$$1, this.getMaxValue(layer)),
+                    px: em2px(em$$1, this.getMaxValue(layer))
                 };
 
                 this.currentStepBox.px('left', newValue.px);
@@ -15364,7 +15438,7 @@ var ColorSteps = function (_BasePropertyItem) {
 }(BasePropertyItem);
 
 function checkPxEm(unit) {
-    return ['px', 'em'].includes(unit);
+    return [UNIT_PX, UNIT_EM].includes(unit);
 }
 
 var GradientInfo = function (_UIElement) {
@@ -15383,7 +15457,7 @@ var GradientInfo = function (_UIElement) {
     }, {
         key: "getUnitName",
         value: function getUnitName(step) {
-            var unit = step.unit || '%';
+            var unit = step.unit || UNIT_PERCENT;
 
             if (checkPxEm(unit)) {
                 return unit;
@@ -15395,25 +15469,25 @@ var GradientInfo = function (_UIElement) {
         key: "getUnitSelect",
         value: function getUnitSelect(step) {
 
-            var unit = step.unit || '%';
+            var unit = step.unit || UNIT_PERCENT;
 
             if (checkPxEm(unit) == false) {
-                unit = '%';
+                unit = UNIT_PERCENT;
             }
 
-            return "\n        <select class='unit' colorstep-id=\"" + step.id + "\">\n            <option value='%' " + (unit == '%' ? 'selected' : '') + ">%</option>\n            <option value='px' " + (unit == 'px' ? 'selected' : '') + ">px</option>\n            <option value='em' " + (unit == 'em' ? 'selected' : '') + ">em</option>\n        </select>\n        ";
+            return "\n        <select class='unit' colorstep-id=\"" + step.id + "\">\n            <option value='" + UNIT_PERCENT + "' " + (isPercent(unit) ? 'selected' : '') + ">%</option>\n            <option value='" + UNIT_PX + "' " + (isPX(unit) ? 'selected' : '') + ">px</option>\n            <option value='" + UNIT_EM + "' " + (isEM(unit) ? 'selected' : '') + ">em</option>\n        </select>\n        ";
         }
     }, {
         key: "getUnitValue",
         value: function getUnitValue(step) {
 
-            if (step.unit == 'px') {
+            if (isPX(step.unit)) {
                 return {
                     px: step.px,
                     percent: px2percent(step.px, this.getMaxValue()),
                     em: px2em(step.px, this.getMaxValue())
                 };
-            } else if (step.unit == 'em') {
+            } else if (isEM(step.unit)) {
                 return {
                     em: step.em,
                     percent: em2percent(step.em, this.getMaxValue()),
@@ -15441,7 +15515,7 @@ var GradientInfo = function (_UIElement) {
             return "<div class='step-list' ref=\"$stepList\">\n                    " + colorsteps.map(function (step) {
                 var cut = step.cut ? 'cut' : '';
                 var unitValue = _this2.getUnitValue(step);
-                return "\n                            <div class='color-step " + (step.selected ? 'selected' : '') + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + _this2.getUnitName(step) + "\">\n                                    <input type=\"number\" class=\"percent\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"px\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"em\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
+                return "\n                            <div class='color-step " + (step.selected ? 'selected' : '') + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + _this2.getUnitName(step) + "\">\n                                    <input type=\"number\" class=\"" + UNIT_PERCENT + "\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_PX + "\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_EM + "\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
             }).join('') + "\n                </div>";
         }
     }, {
@@ -15534,7 +15608,7 @@ var GradientInfo = function (_UIElement) {
                 this.commit(CHANGE_COLOR_STEP, newValue);
 
                 var $parent = e.$delegateTarget.parent();
-                $parent.removeClass('percent', 'px', 'em').addClass(unit);
+                $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(unit);
             }
         }
     }, {
@@ -15545,16 +15619,16 @@ var GradientInfo = function (_UIElement) {
 
             var layer = this.read('/selection/current/layer');
 
-            var percent = e.$delegateTarget.val();
+            var percent$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.read('/item/get', id);
 
             if (step) {
                 // percent; 
-                var px = percent2px(percent, this.getMaxValue(layer));
-                var em = percent2em(percent, this.getMaxValue(layer));
-                var newValue = { id: step.id, percent: percent, px: px, em: em };
+                var px = percent2px(percent$$1, this.getMaxValue(layer));
+                var em$$1 = percent2em(percent$$1, this.getMaxValue(layer));
+                var newValue = { id: step.id, percent: percent$$1, px: px, em: em$$1 };
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
             }
@@ -15574,9 +15648,9 @@ var GradientInfo = function (_UIElement) {
 
             if (step) {
                 // step.px = px; 
-                var percent = px2percent(px, this.getMaxValue(layer));
-                var em = px2em(px, this.getMaxValue(layer));
-                var newValue = { id: step.id, percent: percent, px: px, em: em };
+                var percent$$1 = px2percent(px, this.getMaxValue(layer));
+                var em$$1 = px2em(px, this.getMaxValue(layer));
+                var newValue = { id: step.id, percent: percent$$1, px: px, em: em$$1 };
                 this.commit(CHANGE_COLOR_STEP, newValue);
             }
         }
@@ -15588,16 +15662,16 @@ var GradientInfo = function (_UIElement) {
 
             var layer = this.read('/selection/current/layer');
 
-            var em = e.$delegateTarget.val();
+            var em$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.read('/item/get', id);
 
             if (step) {
                 // step.em = em; 
-                var percent = em2percent(em, this.getMaxValue(layer));
-                var px = em2px(em, this.getMaxValue(layer));
-                var newValue = { id: step.id, percent: percent, px: px, em: em };
+                var percent$$1 = em2percent(em$$1, this.getMaxValue(layer));
+                var px = em2px(em$$1, this.getMaxValue(layer));
+                var newValue = { id: step.id, percent: percent$$1, px: px, em: em$$1 };
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
             }
@@ -15686,6 +15760,7 @@ var ColorPickerLayer = function (_UIElement) {
             var defaultColor = this.read('/getSelectedColor');
             this.colorPicker = ColorPicker.create({
                 type: 'ring-tab',
+                tabTitle: 'Color Step',
                 position: 'inline',
                 container: this.$el.el,
                 color: defaultColor,
@@ -15987,12 +16062,6 @@ var Transform3d = function (_BasePropertyItem) {
     return Transform3d;
 }(BasePropertyItem);
 
-var unit_names = {
-    'percent': '%',
-    'px': 'px',
-    'em': 'em'
-};
-
 var position_list = ['left', 'top', 'right', 'bottom', 'center'];
 
 var UnitRange = function (_UIElement) {
@@ -16010,7 +16079,7 @@ var UnitRange = function (_UIElement) {
             this.max = this.props.max || 1000;
             this.step = this.props.step || 1;
             this.value = this.props.value || 0;
-            this.unit = this.props.unit || 'px';
+            this.unit = this.props.unit || UNIT_PX;
             this.showClass = 'show';
             this.maxValueFunction = this.parent[this.props.maxvaluefunction].bind(this.parent);
             this.updateFunction = this.parent[this.props.updatefunction].bind(this.parent);
@@ -16026,7 +16095,7 @@ var UnitRange = function (_UIElement) {
 
             var value = position_list.includes(this.value) ? "" : this.value;
 
-            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"px\" unit='px'></div>\n                    <div ref=\"$percent\" class=\"percent\" unit='percent'></div>\n                    <div ref=\"$em\" class=\"em\" unit='em'></div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"" + UNIT_PX + "\" unit='" + UNIT_PX + "'></div>\n                    <div ref=\"$percent\" class=\"" + UNIT_PERCENT + "\" unit='" + UNIT_PERCENT + "'></div>\n                    <div ref=\"$em\" class=\"" + UNIT_EM + "\" unit='" + UNIT_EM + "'></div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: 'click $multiValue div',
@@ -16042,11 +16111,11 @@ var UnitRange = function (_UIElement) {
             var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
             value = (value || '') + '';
-            var unit = 'px';
-            if (value.includes('%')) {
-                unit = 'percent';
-            } else if (value.includes('em')) {
-                unit = 'em';
+            var unit = UNIT_PX;
+            if (value.includes(UNIT_PERCENT)) {
+                unit = UNIT_PERCENT;
+            } else if (value.includes(UNIT_EM)) {
+                unit = UNIT_EM;
             }
 
             value = position_list.includes(value) ? "" : parseParamNumber$2(value);
@@ -16057,21 +16126,21 @@ var UnitRange = function (_UIElement) {
         key: "initializeRangeMax",
         value: function initializeRangeMax(unit) {
 
-            if (unit == 'percent') {
-                var max = this.props.unit == 'percent' ? this.props.max : 300;
+            if (isPercent(unit)) {
+                var max = isPercent(this.props.unit) ? this.props.max : 300;
                 this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 0.01);
                 this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 0.01);
-            } else if (unit == 'px') {
-                var max = this.props.unit == 'px' ? this.props.max : 1000;
+            } else if (isPX(unit)) {
+                var max = isPX(this.props.unit) ? this.props.max : 1000;
 
                 this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 1);
                 this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 1);
-            } else if (unit == 'em') {
-                var max = this.props.unit == 'em' ? this.props.max : 300;
+            } else if (isEM(unit)) {
+                var max = isEM(this.props.unit) ? this.props.max : 300;
                 this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 0.01);
                 this.refs.$number.attr('max', max);
@@ -16086,7 +16155,7 @@ var UnitRange = function (_UIElement) {
 
             this.refs.$range.val(this.value);
             this.refs.$number.val(this.value);
-            this.refs.$unit.text(unit_names[this.unit]);
+            this.refs.$unit.text(unitString(this.unit));
 
             this.initializeRangeMax(this.unit);
         }
@@ -16100,23 +16169,23 @@ var UnitRange = function (_UIElement) {
         key: "updateRange",
         value: function updateRange() {
             var unit = this.unit;
-            var px = unit == 'px' ? this.refs.$range.val() : undefined;
-            var percent = unit == 'percent' ? this.refs.$range.val() : undefined;
-            var em = unit == 'em' ? this.refs.$range.val() : undefined;
+            var px = isPX(unit) ? this.refs.$range.val() : undefined;
+            var percent$$1 = isPercent(unit) ? this.refs.$range.val() : undefined;
+            var em$$1 = isEM(unit) ? this.refs.$range.val() : undefined;
             var maxValue = this.maxValueFunction();
 
             if (px) {
                 this.refs.$px.text(px + ' px').attr('value', px);
                 this.refs.$percent.text(px2percent(px, maxValue) + ' %').attr('value', px2percent(px, maxValue));
                 this.refs.$em.text(px2em(px, maxValue) + ' em').attr('value', px2em(px, maxValue));
-            } else if (percent) {
-                this.refs.$percent.text(percent + ' %').attr('value', percent);
-                this.refs.$px.text(percent2px(percent, maxValue) + ' px').attr('value', percent2px(percent, maxValue));
-                this.refs.$em.text(percent2em(percent, maxValue) + ' em').attr('value', percent2em(percent, maxValue));
-            } else if (em) {
-                this.refs.$em.text(em + ' em').attr('value', em);
-                this.refs.$percent.text(em2percent(em, maxValue) + ' %').attr('value', em2percent(em, maxValue));
-                this.refs.$px.text(em2px(em, maxValue) + ' px').attr('value', em2px(em, maxValue));
+            } else if (percent$$1) {
+                this.refs.$percent.text(percent$$1 + ' %').attr('value', percent$$1);
+                this.refs.$px.text(percent2px(percent$$1, maxValue) + ' px').attr('value', percent2px(percent$$1, maxValue));
+                this.refs.$em.text(percent2em(percent$$1, maxValue) + ' em').attr('value', percent2em(percent$$1, maxValue));
+            } else if (em$$1) {
+                this.refs.$em.text(em$$1 + ' em').attr('value', em$$1);
+                this.refs.$percent.text(em2percent(em$$1, maxValue) + ' %').attr('value', em2percent(em$$1, maxValue));
+                this.refs.$px.text(em2px(em$$1, maxValue) + ' px').attr('value', em2px(em$$1, maxValue));
             }
         }
     }, {
@@ -16124,14 +16193,14 @@ var UnitRange = function (_UIElement) {
         value: function input$range(e) {
             this.refs.$number.val(this.refs.$range.val());
             this.updateRange();
-            this.updateFunction(this.refs.$range.val() + unit_names[this.unit]);
+            this.updateFunction(unit(this.refs.$range.val(), this.unit));
         }
     }, {
         key: 'input $number',
         value: function input$number(e) {
             this.refs.$range.val(this.refs.$number.val());
             this.updateRange();
-            this.updateFunction(this.refs.$range.val() + unit_names[this.unit]);
+            this.updateFunction(unit(this.refs.$range.val(), this.unit));
         }
     }]);
     return UnitRange;
@@ -16155,7 +16224,7 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\" \n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "updateWidth",
@@ -16352,7 +16421,7 @@ var PageSize = function (_UIElement) {
             this.read('/selection/current/page', function (item) {
                 var newValue = {
                     id: item.id,
-                    width: _this3.refs.$width.int() + 'px'
+                    width: px$1(_this3.refs.$width.int())
                 };
 
                 newValue.height = newValue.width;
@@ -16366,7 +16435,7 @@ var PageSize = function (_UIElement) {
             var _this4 = this;
 
             this.read('/selection/current/page/id', function (id) {
-                _this4.commit(CHANGE_PAGE_SIZE, { id: id, width: _this4.refs.$width.int() + 'px' });
+                _this4.commit(CHANGE_PAGE_SIZE, { id: id, width: px$1(_this4.refs.$width.int()) });
             });
         }
     }, {
@@ -16375,7 +16444,7 @@ var PageSize = function (_UIElement) {
             var _this5 = this;
 
             this.read('/selection/current/page/id', function (id) {
-                _this5.commit(CHANGE_PAGE_SIZE, { id: id, height: _this5.refs.$height.int() + 'px' });
+                _this5.commit(CHANGE_PAGE_SIZE, { id: id, height: px$1(_this5.refs.$height.int()) });
             });
         }
     }]);
@@ -17130,7 +17199,8 @@ var PageShowGrid = function (_UIElement) {
             var _this3 = this;
 
             this.read('/selection/current/page', function (item) {
-                _this3.dispatch('/tool/set', 'show.grid', _this3.refs.$check.checked());
+                _this3.run('/tool/set', 'show.grid', _this3.refs.$check.checked());
+                _this3.dispatch('/tool/set', 'snap.grid', _this3.refs.$check.checked());
             });
         }
     }]);
@@ -17386,14 +17456,14 @@ var RadiusFixed = function (_BasePropertyItem) {
                     _this3.commit(CHANGE_LAYER_RADIUS, {
                         id: id,
                         fixedRadius: true,
-                        borderRadius: _this3.refs.$radius.val() + 'px'
+                        borderRadius: px$1(_this3.refs.$radius.val())
                     });
                     _this3.refs.$radiusRange.val(_this3.refs.$radius.val());
                 } else if (type == 'range') {
                     _this3.commit(CHANGE_LAYER_RADIUS, {
                         id: id,
                         fixedRadius: true,
-                        borderRadius: _this3.refs.$radiusRange.val() + 'px'
+                        borderRadius: px$1(_this3.refs.$radiusRange.val())
                     });
                     _this3.refs.$radius.val(_this3.refs.$radiusRange.val());
                 }
@@ -17693,7 +17763,7 @@ var BoxShadow = function (_BasePropertyItem) {
             var field = $el.attr('data-type');
             var id = $el.parent().parent().attr('box-shadow-id');
 
-            this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, $el.val() + 'px'));
+            this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, px$1($el.val())));
         }
     }, {
         key: 'click $boxShadowList input[type=checkbox]',
@@ -17830,7 +17900,7 @@ var TextShadow = function (_BasePropertyItem) {
             var field = $el.attr('data-type');
             var id = $el.parent().parent().attr('text-shadow-id');
 
-            this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, $el.val() + 'px'));
+            this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, px$1($el.val())));
         }
     }, {
         key: 'click $textShadowList .delete-textshadow',
@@ -17849,7 +17919,7 @@ var TextShadow = function (_BasePropertyItem) {
             var id = $el.parent().attr('text-shadow-id');
 
             this.dispatch('/selection/one', id);
-            this.emit('textFillColorId', id, CHANGE_TEXTSHADOW);
+            this.emit(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
             this.refresh();
         }
     }]);
@@ -18031,7 +18101,7 @@ var Text = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('/selection/current/layer', function (item) {
-                _this4.emit('textFillColorId', item.id, CHANGE_LAYER_TEXT);
+                _this4.emit(TEXT_FILL_COLOR, item.id, CHANGE_LAYER_TEXT);
             });
         }
     }, {
@@ -18212,8 +18282,8 @@ var TextFillColorPicker = function (_UIElement) {
             }
         }
     }, {
-        key: '@textFillColorId',
-        value: function textFillColorId(id, eventType) {
+        key: EVENT_TEXT_FILL_COLOR,
+        value: function value(id, eventType) {
             this.changeColorId = id;
             this.itemType = this.read('/item/get', id).itemType;
             this.eventType = eventType;
@@ -18281,7 +18351,7 @@ var Font = function (_BasePropertyItem) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
             }).join('') + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
-            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"px\" \n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"px\" \n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -19138,7 +19208,7 @@ var GradientPosition = function (_UIElement) {
 
             if (e) {
 
-                this.setRadialPosition([Math.floor(left / width * 100) + '%', Math.floor(top / height * 100) + '%']);
+                this.setRadialPosition([percent(Math.floor(left / width * 100)), percent(Math.floor(top / height * 100))]);
             }
         }
     }, {
@@ -19319,7 +19389,7 @@ var LayerListView = function (_UIElement) {
     createClass(LayerListView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layers\'>\n                <div class=\'title\'> \n                    <h1 ref="$pageName"></h1>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
+            return '\n            <div class=\'layers show-mini-view\'>\n                <div class=\'title\'> \n                    <h1 ref="$pageName"></h1>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
         }
     }, {
         key: 'makeItemNode',
@@ -19377,10 +19447,6 @@ var LayerListView = function (_UIElement) {
         key: 'refresh',
         value: function refresh() {
             this.load();
-
-            var image = this.read('/selection/current/image');
-
-            this.$el.toggleClass('show-mini-view', !image);
         }
     }, {
         key: 'refreshSelection',
@@ -19668,7 +19734,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                        <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n\n                <label>\n                    2. Add Gradient \n                </label>\n                <div class=\'gradient-type\' ref="$gradientType">\n                    <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                    <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                    <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                    <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                    <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                    <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                    <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                    <div class="gradient-item image" data-type="image" title="Background Image">\n                        <div class="m1"></div>\n                        <div class="m2"></div>\n                        <div class="m3"></div> \n                    </div>                                                  \n                    <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                    </div>     \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n                                \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                        <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n              \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="button-group group-order" ref="$groupOrdering">\n                    <button type="button" title="front" data-value="front"></button>\n                    <button type="button" title="back" data-value="back"></button>\n                    <button type="button" title="forward" data-value="forward"></button>\n                    <button type="button" title="backward" data-value="backward"></button>\n                </div>                \n                                \n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -19681,21 +19747,9 @@ var LayerToolbar = function (_UIElement) {
             this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'));
         }
     }, {
-        key: 'click $gradientType .gradient-item',
-        value: function click$gradientTypeGradientItem(e) {
-            var _this2 = this;
-
-            this.read('/selection/current/layer', function (item) {
-                var type = e.$delegateTarget.attr('data-type');
-
-                _this2.dispatch('/item/prepend/image', type, true, item.id);
-                _this2.dispatch('/history/push', 'Add ' + type + ' gradient');
-            });
-        }
-    }, {
-        key: 'click $el .gradient-sample-list',
-        value: function click$elGradientSampleList(e) {
-            this.emit('toggleGradientSampleView');
+        key: 'click $groupOrdering button',
+        value: function click$groupOrderingButton(e) {
+            this.dispatch('/ordering/index', e.$delegateTarget.attr('data-value'));
         }
     }, {
         key: 'click $undo',
@@ -20945,6 +20999,13 @@ bezierList.forEach(function (arr) {
     Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
 });
 
+var _ScaleFunctions;
+
+var ScaleFunctions = (_ScaleFunctions = {
+    'color': 'makeScaleFunctionForColor',
+    'number': 'makeScaleFunctionForNumber'
+}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
+
 var GradientSampleList = function (_UIElement) {
     inherits(GradientSampleList, _UIElement);
 
@@ -21986,8 +22047,8 @@ var PredefinedPageResizer = function (_UIElement) {
             var canvasScrollLeft = this.$board.scrollLeft();
             var canvasScrollTop = this.$board.scrollTop();
 
-            var x = pageOffset.left - boardOffset.left + canvasScrollLeft + 'px';
-            var y = pageOffset.top - boardOffset.top + canvasScrollTop + 'px';
+            var x = px$1(pageOffset.left - boardOffset.left + canvasScrollLeft);
+            var y = px$1(pageOffset.top - boardOffset.top + canvasScrollTop);
 
             this.$el.css({
                 width: width, height: height,
@@ -22014,7 +22075,7 @@ var PredefinedPageResizer = function (_UIElement) {
             var style = Object.assign({}, style1, style2);
 
             Object.keys(style).forEach(function (key) {
-                style[key] = style[key] + 'px';
+                style[key] = px$1(style[key]);
             });
 
             var page = this.read('/selection/current/page');
@@ -22027,14 +22088,14 @@ var PredefinedPageResizer = function (_UIElement) {
         value: function changeX(dx) {
             var width = this.width + dx;
 
-            this.change({ width: width + 'px' });
+            this.change({ width: px$1(width) });
         }
     }, {
         key: 'changeY',
         value: function changeY(dy) {
             var height = this.height + dy;
 
-            this.change({ height: height + 'px' });
+            this.change({ height: px$1(height) });
         }
     }, {
         key: 'changeXY',
@@ -22042,7 +22103,7 @@ var PredefinedPageResizer = function (_UIElement) {
             var width = this.width + dx;
             var height = this.height + dy;
 
-            this.change({ width: width + 'px', height: height + 'px' });
+            this.change({ width: px$1(width), height: px$1(height) });
         }
     }, {
         key: 'toTop',
@@ -22141,6 +22202,19 @@ var PredefinedPageResizer = function (_UIElement) {
     return PredefinedPageResizer;
 }(UIElement);
 
+var SNAP_GRID = 20;
+
+var SEGMENT_TYPE_ROTATE = 'rotate';
+var SEGMENT_TYPE_MOVE = 'move';
+var SEGMENT_TYPE_TOP = 'to top';
+var SEGMENT_TYPE_LEFT = 'to left';
+var SEGMENT_TYPE_RIGHT = 'to right';
+var SEGMENT_TYPE_BOTTOM = 'to bottom';
+var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+var SEGMENT_TYPE_TOP_LEFT = 'to top left';
+var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
 var PredefinedGroupLayerResizer = function (_UIElement) {
     inherits(PredefinedGroupLayerResizer, _UIElement);
 
@@ -22180,7 +22254,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return layers.map(function (item) {
                 var css = _this2.setRectangle(item);
                 var image = isImage ? 'image' : '';
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('/css/toString', css) + '" >\n                    <div class="event-panel" data-value="move"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="to right"></button>\n                        <button type="button" data-value="to left"></button>\n                        <button type="button" data-value="to top"></button>\n                        <button type="button" data-value="to bottom"></button>\n                        <button type="button" data-value="to top right"></button>\n                        <button type="button" data-value="to bottom right"></button>\n                        <button type="button" data-value="to bottom left"></button>\n                        <button type="button" data-value="to top left"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'rotate\'></button>         \n                    \n                    \n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('/css/toString', css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
             });
         }
     }, {
@@ -22197,12 +22271,12 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
             var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-            x = parseParamNumber$1(x, function (x) {
+            x = px$1(parseParamNumber$1(x, function (x) {
                 return x + pageOffset.left - boardOffset.left + canvasScrollLeft;
-            }) + 'px';
-            y = parseParamNumber$1(y, function (y) {
+            }));
+            y = px$1(parseParamNumber$1(y, function (y) {
                 return y + pageOffset.top - boardOffset.top + canvasScrollTop;
-            }) + 'px';
+            }));
 
             var transform = "none";
 
@@ -22247,7 +22321,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.read('/selection/is/not/empty');
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_PAGE_SIZE),
         value: function value() {
             this.refresh();
         }
@@ -22360,7 +22434,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('/item/set', {
                 id: item.id,
-                width: item.width + dx + 'px'
+                width: px$1(item.width + dx)
             });
         }
     }, {
@@ -22371,8 +22445,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('/item/set', {
                 id: item.id,
-                width: item.width - dx + 'px',
-                x: item.x + dx + 'px'
+                width: px$1(item.width - dx),
+                x: px$1(item.x + dx)
             });
         }
     }, {
@@ -22383,7 +22457,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('/item/set', {
                 id: item.id,
-                height: item.height + dy + 'px'
+                height: px$1(item.height + dy)
             });
         }
     }, {
@@ -22394,8 +22468,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('/item/set', {
                 id: item.id,
-                height: item.height - dy + 'px',
-                y: item.y + dy + 'px'
+                height: px$1(item.height - dy),
+                y: px$1(item.y + dy)
             });
         }
     }, {
@@ -22407,8 +22481,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('/item/set', {
                 id: item.id,
-                x: item.x + dx + 'px',
-                y: item.y + dy + 'px'
+                x: px$1(item.x + dx),
+                y: px$1(item.y + dy)
             });
         }
     }, {
@@ -22433,55 +22507,55 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var items = this.rectItems;
             var event = CHANGE_LAYER_SIZE;
 
-            if (this.currentType == 'to top') {
+            if (this.currentType == SEGMENT_TYPE_TOP) {
                 items.forEach(function (item) {
                     _this4.toTop(item);
                 });
-            } else if (this.currentType == 'to bottom') {
+            } else if (this.currentType == SEGMENT_TYPE_BOTTOM) {
                 items.forEach(function (item) {
                     _this4.toBottom(item);
                 });
-            } else if (this.currentType == 'to right') {
+            } else if (this.currentType == SEGMENT_TYPE_RIGHT) {
                 items.forEach(function (item) {
                     _this4.toRight(item);
                 });
-            } else if (this.currentType == 'to left') {
+            } else if (this.currentType == SEGMENT_TYPE_LEFT) {
                 items.forEach(function (item) {
                     _this4.toLeft(item);
                 });
-            } else if (this.currentType == 'to bottom left') {
-                items.forEach(function (item) {
-                    _this4.toBottom(item);
-                });
-                items.forEach(function (item) {
-                    _this4.toLeft(item);
-                });
-            } else if (this.currentType == 'to bottom right') {
+            } else if (this.currentType == SEGMENT_TYPE_BOTTOM_LEFT) {
                 items.forEach(function (item) {
                     _this4.toBottom(item);
                 });
                 items.forEach(function (item) {
+                    _this4.toLeft(item);
+                });
+            } else if (this.currentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
+                items.forEach(function (item) {
+                    _this4.toBottom(item);
+                });
+                items.forEach(function (item) {
                     _this4.toRight(item);
                 });
-            } else if (this.currentType == 'to top right') {
+            } else if (this.currentType == SEGMENT_TYPE_TOP_RIGHT) {
                 items.forEach(function (item) {
                     _this4.toTop(item);
                 });
                 items.forEach(function (item) {
                     _this4.toRight(item);
                 });
-            } else if (this.currentType == 'to top left') {
+            } else if (this.currentType == SEGMENT_TYPE_TOP_LEFT) {
                 items.forEach(function (item) {
                     _this4.toTop(item);
                 });
                 items.forEach(function (item) {
                     _this4.toLeft(item);
                 });
-            } else if (this.currentType == 'move') {
+            } else if (this.currentType == SEGMENT_TYPE_MOVE) {
                 items.forEach(function (item) {
                     _this4.moveXY(item);
                 });
-            } else if (this.currentType == 'rotate') {
+            } else if (this.currentType == SEGMENT_TYPE_ROTATE) {
                 items.forEach(function (item) {
                     _this4.rotate(item);
                 });
@@ -22514,9 +22588,12 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.currentType = type;
             var layerId = e.$delegateTarget.parent().attr('predefined-layer-id');
             this.$dom = this.read('/item/dom', layerId);
+            this.$selectLayer = this.read('/item/get', layerId);
 
             if (this.$dom) {
                 var rect = this.$dom.rect();
+                this.layerX = parseParamNumber$1(this.$selectLayer.x);
+                this.layerY = parseParamNumber$1(this.$selectLayer.y);
                 this.layerCenterX = rect.left + rect.width / 2;
                 this.layerCenterY = rect.top + rect.height / 2;
             }
@@ -22538,8 +22615,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.canvasScrollTop = this.$board.scrollTop();
         }
     }, {
-        key: 'pointermove document | isDownCheck',
-        value: function pointermoveDocumentIsDownCheck(e) {
+        key: 'pointermove document | debounce(10) | isDownCheck',
+        value: function pointermoveDocumentDebounce10IsDownCheck(e) {
             this.targetXY = e.xy;
 
             this.dx = e.xy.x - this.xy.x;
@@ -22547,6 +22624,24 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             if (this.currentType == 'rotate') {
                 this.angle = caculateAngle(e.xy.x - this.layerCenterX, e.xy.y - this.layerCenterY);
+            }
+
+            if (this.read('/tool/get', 'snap.grid')) {
+
+                if (this.currentType == 'move') {
+                    var moveX = this.layerX + this.dx;
+                    var moveY = this.layerY + this.dy;
+
+                    var tempX = moveX - moveX % SNAP_GRID;
+                    var tempY = moveY - moveY % SNAP_GRID;
+
+                    // console.log({tempX, tempY})
+
+                    this.dx = Math.floor(tempX / SNAP_GRID) * SNAP_GRID - this.layerX;
+                    this.dy = Math.floor(tempY / SNAP_GRID) * SNAP_GRID - this.layerY;
+
+                    // console.log('dy', this.dx, 'dx', this.dy)                
+                }
             }
 
             this.resizeComponent();
@@ -22768,8 +22863,8 @@ var GradientView = function (_UIElement) {
             var pageCSS = this.makePageCSS(page || { clip: false });
 
             var canvasCSS = {
-                width: 2000 + 'px',
-                height: 2000 + 'px'
+                width: px$1(2000),
+                height: px$1(2000)
             };
             this.refs.$canvas.css(canvasCSS);
             this.refs.$page.css(pageCSS);
@@ -23057,7 +23152,7 @@ var ToolMenu = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    1. Add Layer \n                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n                    &nbsp;\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'click $check',
@@ -23065,7 +23160,8 @@ var ToolMenu = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/page', function (item) {
-                _this2.dispatch('/tool/set', 'show.grid', _this2.refs.$check.checked());
+                _this2.run('/tool/set', 'show.grid', _this2.refs.$check.checked());
+                _this2.dispatch('/tool/set', 'snap.grid', _this2.refs.$check.checked());
             });
         }
     }, {
@@ -23102,6 +23198,23 @@ var ToolMenu = function (_UIElement) {
                 _this4.dispatch('/item/add', ITEM_TYPE_CIRCLE, true, page.id);
                 _this4.dispatch('/history/push', 'Add a layer');
             });
+        }
+    }, {
+        key: 'click $gradientType .gradient-item',
+        value: function click$gradientTypeGradientItem(e) {
+            var _this5 = this;
+
+            this.read('/selection/current/layer', function (item) {
+                var type = e.$delegateTarget.attr('data-type');
+
+                _this5.dispatch('/item/prepend/image', type, true, item.id);
+                _this5.dispatch('/history/push', 'Add ' + type + ' gradient');
+            });
+        }
+    }, {
+        key: 'click $el .gradient-sample-list',
+        value: function click$elGradientSampleList(e) {
+            this.emit('toggleGradientSampleView');
         }
     }]);
     return ToolMenu;

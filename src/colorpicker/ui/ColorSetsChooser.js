@@ -76,9 +76,7 @@ export default class ColorSetsChooser extends UIElement {
 
     'click $colorsetsList .colorsets-item' (e) {
         const $item = e.$delegateTarget;
-
-        console.log($item);
-
+        
         if ($item) {
 
             const index = parseInt($item.attr(DATA_COLORSETS_INDEX));

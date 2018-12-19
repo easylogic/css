@@ -9,6 +9,7 @@ import {
     EVENT_CHANGE_EDITOR,
     EVENT_CHANGE_SELECTION
 } from '../../../types/event';
+import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT } from '../../../../util/css/types';
 
 export default class GradientSteps extends UIElement {
 
@@ -32,7 +33,7 @@ export default class GradientSteps extends UIElement {
         min -= left;
         max -= left;
 
-        if (step.unit == 'px') {
+        if (isPX(step.unit)) {
             return step.px;
         } 
 
@@ -40,28 +41,28 @@ export default class GradientSteps extends UIElement {
     }
 
     getUnitName (step) {
-        var unit = step.unit || 'percent'
+        var unit = step.unit || UNIT_PERCENT
 
-        if (['px', 'em'].includes(unit)) {
+        if ([UNIT_PX, UNIT_EM].includes(unit)) {
             return unit; 
         }
 
-        return 'percent'
+        return UNIT_PERCENT
     }
 
     getUnitSelect (step) {
 
-        var unit = step.unit || '%'
+        var unit = step.unit || UNIT_PERCENT
 
-        if (['px', 'em'].includes(unit) == false) {
-            unit = '%';
+        if ([UNIT_PX, UNIT_EM].includes(unit) == false) {
+            unit = UNIT_PERCENT;
         }
 
         return `
         <select class='unit' data-colorstep-id="${step.id}">
-            <option value='%' ${unit == '%' ? 'selected' : ''}>%</option>
-            <option value='px' ${unit == 'px' ? 'selected' : ''}>px</option>
-            <option value='em' ${unit == 'em' ? 'selected' : ''}>em</option>
+            <option value='${UNIT_PERCENT}' ${isPercent(unit) ? 'selected' : ''}>%</option>
+            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : ''}>px</option>
+            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : ''}>em</option>
         </select>
         `
     }
@@ -91,9 +92,9 @@ export default class GradientSteps extends UIElement {
                         style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ${step.color} 10%) ;"></div>
                     <div class="guide-change ${cut}" data-colorstep-id="${step.id}"></div>
                     <div class="guide-unit ${this.getUnitName(step)}">
-                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="${unitValue.percent}" data-colorstep-id="${step.id}"  />
-                        <input type="number" class="px" min="-100" max="1000" step="1"  value="${unitValue.px}" data-colorstep-id="${step.id}"  />
-                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="${unitValue.em}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="${UNIT_PERCENT}" min="-100" max="100" step="0.1"  value="${unitValue.percent}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="${UNIT_PX}" min="-100" max="1000" step="1"  value="${unitValue.px}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="${UNIT_EM}" min="-100" max="500" step="0.1"  value="${unitValue.em}" data-colorstep-id="${step.id}"  />
                         ${this.getUnitSelect(step)}
                     </div>       
                 </div>
@@ -351,7 +352,7 @@ export default class GradientSteps extends UIElement {
             this.commit(CHANGE_COLOR_STEP, newValue);
 
             var $parent = e.$delegateTarget.parent();
-            $parent.removeClass('percent', 'px', 'em').addClass(this.getUnitName(step));
+            $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(this.getUnitName(step));
         }        
     }
 

@@ -3,14 +3,15 @@ import { parseParamNumber } from "../../util/filter/functions";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
+import { UNIT_PX, UNIT_PERCENT, percent } from "../../util/css/types";
 const filterInfo = {
 
-    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: 'px', defaultValue: 0 },
-    'grayscale' : { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
+    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'grayscale' : { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'hue-rotate' : { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'invert' : { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 0 },    
-    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: '%', defaultValue: 100 },
-    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: '%', defaultValue: 100 },
+    'invert' : { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },    
+    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'drop-shadow': { 
         title: 'Drop Shadow', 
         type: 'multi',
@@ -22,9 +23,9 @@ const filterInfo = {
             { title: 'Color', type: 'color', defaultValue: 'black' }
         ]  
     },
-    'opacity' : { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
-    'saturate' : { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 100 },
-    'sepia' : { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: '%', defaultValue: 0 },
+    'opacity' : { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'saturate' : { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'sepia' : { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
 }
 
 export default class LayerManager extends BaseModule {
@@ -89,8 +90,8 @@ export default class LayerManager extends BaseModule {
 
 
             var placeCenter = [
-                Math.floor(layer.clipPathCenter[0]/width*100) + '%', // centerX 
-                Math.floor(layer.clipPathCenter[1]/height*100) + '%' // centerY
+                percent(Math.floor(layer.clipPathCenter[0]/width*100)), // centerX 
+                percent( Math.floor(layer.clipPathCenter[1]/height*100)) // centerY
             ]
     
             var radiusSize = Math.sqrt(
@@ -100,7 +101,7 @@ export default class LayerManager extends BaseModule {
             )/Math.sqrt(2);
     
             var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))/Math.sqrt(2)
-            var radiusPercent = Math.floor(radiusSize / dist * 100) + '%';  
+            var radiusPercent = percent( Math.floor(radiusSize / dist * 100) );  
     
             return `circle(${radiusPercent} at ${placeCenter.join(' ')})`;
         } else if (layer.clipPathType == 'none') {
@@ -407,6 +408,7 @@ s
             css.top = layer.y
             css.width = layer.width
             css.height = layer.height
+            css['z-index'] = layer.index;
         }
 
         if (layer.backgroundColor) {

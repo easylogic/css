@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { parseParamNumber } from "../../util/gl/filter/util";
 import { CHANGE_LAYER, CHANGE_LAYER_POSITION } from "../types/event";
+import { px } from "../../util/css/types";
 
 
 export default class MatrixManager extends BaseModule {
@@ -13,7 +14,7 @@ export default class MatrixManager extends BaseModule {
         var item = $store.read('/item/get', newValue.id)        
 
         Object.keys(newValue).filter(key => key != 'id').forEach(key => {
-            item[key] = (parseParamNumber(item[key]) + newValue[key])  + 'px'
+            item[key] = px(parseParamNumber(item[key]) + newValue[key])
         })
 
         $store.run('/item/set', item);

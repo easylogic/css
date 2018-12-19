@@ -10,6 +10,7 @@ import {
     ITEM_TYPE_BACKDROP_FILTER, 
     ITEM_TYPE_PAGE 
 } from "./ItemTypes";
+import { px } from "../../util/css/types";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -382,10 +383,10 @@ export default class SelectionManager extends BaseModule {
         var width = x2 - x;
         var height = y2 - y; 
 
-        x = x + 'px'
-        y = y + 'px'
-        width = width + 'px'
-        height = height + 'px'
+        x = px(x)
+        y = px(y)
+        width = px(width)
+        height = px(height)
 
         if (items.length == 1) {
             return { x, y, width, height, id: items[0].id}

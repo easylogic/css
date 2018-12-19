@@ -9,6 +9,7 @@ import {
     EVENT_CHANGE_SELECTION
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { px } from "../../../../../util/css/types";
 
 export default class Size extends BasePropertyItem {
     template () {
@@ -83,7 +84,7 @@ export default class Size extends BasePropertyItem {
     'click $rect' (e) {
 
         this.read('/selection/current/layer/id', (id) => {
-            var width = this.refs.$width.int() + 'px'
+            var width = px(this.refs.$width.int())
             var height = width;
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
             this.refs.$height.val(this.refs.$width.val());            
@@ -93,14 +94,14 @@ export default class Size extends BasePropertyItem {
 
     'input $width' () {
         this.read('/selection/current/layer/id', (id) => {
-            var width = this.refs.$width.int() + 'px'
+            var width = px (this.refs.$width.int())
             this.commit(CHANGE_LAYER_SIZE, {id, width});
         })        
     }
 
     'input $height' () {
         this.read('/selection/current/layer/id', (id) => {
-            var height = this.refs.$height.int() + 'px'
+            var height = px(this.refs.$height.int())
             this.commit(CHANGE_LAYER_SIZE, {id, height});
         })        
     }    
@@ -108,14 +109,14 @@ export default class Size extends BasePropertyItem {
 
     'input $x' () {
         this.read('/selection/current/layer/id', (id) => {
-            var x = this.refs.$x.int() + 'px'
+            var x = px (this.refs.$x.int())
             this.commit(CHANGE_LAYER_POSITION, {id, x});
         })
     }
 
     'input $y' () {
         this.read('/selection/current/layer/id', (id) => {
-            var y = this.refs.$y.int() + 'px'
+            var y = px (this.refs.$y.int())
             this.commit(CHANGE_LAYER_POSITION, {id, y});
         })
     }        

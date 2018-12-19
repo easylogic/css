@@ -1,3 +1,4 @@
+/* event trigger */
 export const CHANGE_EDITOR = `CHANGE_EDITOR`
 export const CHANGE_SELECTION = `CHANGE_SELECTION`
 export const CHANGE_PAGE = `CHANGE_PAGE`
@@ -35,6 +36,10 @@ export const CHANGE_COLOR_STEP = `CHANGE_COLOR_STEP`
 export const ADD_COLOR_STEP = `ADD_COLOR_STEP`
 export const REMOVE_COLOR_STEP = `REMOVE_COLOR_STEP`
 
+export const TEXT_FILL_COLOR = `TEXT_FILL_COLOR`
+
+
+/* defiend event */ 
 export const EVENT_CHANGE_EDITOR = `@${CHANGE_EDITOR}`
 export const EVENT_CHANGE_SELECTION = `@${CHANGE_SELECTION}`
 export const EVENT_CHANGE_PAGE = `@${CHANGE_PAGE}`
@@ -72,3 +77,5 @@ export const EVENT_CHANGE_TEXTSHADOW = `@${CHANGE_TEXTSHADOW}`
 export const EVENT_CHANGE_COLOR_STEP = `@${CHANGE_COLOR_STEP}`
 export const EVENT_ADD_COLOR_STEP = `@${ADD_COLOR_STEP}`
 export const EVENT_REMOVE_COLOR_STEP = `@${REMOVE_COLOR_STEP}`
+
+export const EVENT_TEXT_FILL_COLOR = `@${TEXT_FILL_COLOR}`

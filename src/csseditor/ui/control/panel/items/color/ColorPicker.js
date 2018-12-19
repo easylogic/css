@@ -16,6 +16,7 @@ export default class ColorPickerLayer extends UIElement {
         var defaultColor = this.read('/getSelectedColor')
         this.colorPicker = ColorPicker.create({
             type: 'ring-tab',
+            tabTitle: 'Color Step',
             position: 'inline',
             container: this.$el.el,
             color: defaultColor,

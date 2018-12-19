@@ -26,7 +26,7 @@ export default class LayerListView extends UIElement {
 
     template () { 
         return `
-            <div class='layers'>
+            <div class='layers show-mini-view'>
                 <div class='title'> 
                     <h1 ref="$pageName"></h1>
                 </div>             
@@ -114,10 +114,6 @@ export default class LayerListView extends UIElement {
 
     refresh () {
         this.load()
-
-        var image = this.read('/selection/current/image');
-
-        this.$el.toggleClass('show-mini-view', !image);
     }
 
     refreshSelection (id) {

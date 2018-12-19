@@ -12,6 +12,7 @@ import {
     IMAGE_ITEM_TYPE_IMAGE, 
     IMAGE_ITEM_TYPE_STATIC 
 } from './ItemTypes';
+import { px, isPX, isEM, em, percent } from '../../util/css/types';
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -265,13 +266,9 @@ export default class ImageManager extends BaseModule {
 
         var x = image.backgroundPositionX != null ? image.backgroundPositionX : 'center';
         var y = image.backgroundPositionY != null ? image.backgroundPositionY : 'center';
-        if (typeof x == 'number') {
-            x = x + 'px';
-        }
 
-        if (typeof y == 'number') {
-            y = y + 'px';
-        }
+        if (typeof x == 'number') { x = px (x); }
+        if (typeof y == 'number') { y = px(y); }
 
         return [x, y].join(' ')
     }      
@@ -289,19 +286,19 @@ export default class ImageManager extends BaseModule {
     }           
 
     '*/image/get/unitValue' ($store, step) {
-        if (step.unit == 'px') {
-            return step.px + 'px';
-        } else if (step.unit == 'em') {
-            return step.em + 'em';
+        if (isPX(step.unit)) {
+            return px(step.px);
+        } else if (isEM(step.unit)) {
+            return em(step.em);
         }
 
-        return step.percent + '%'
+        return percent(step.percent)
     }
 
     '*/image/get/stepValue' ($store, step) {
-        if (step.unit == 'px') {
+        if (isPX(step.unit)) {
             return step.px;
-        } else if (step.unit == 'em') {
+        } else if (isEM(step.unit)) {
             return step.em;
         }
 

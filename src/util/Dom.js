@@ -1,3 +1,5 @@
+import { px } from "./css/types";
+
 let counter = 0;
 let cached = [];
 
@@ -255,7 +257,7 @@ export default class Dom {
     }
 
     px (key, value) {
-        return this.css(key, value + 'px')
+        return this.css(key, px (value) )
     }
 
     rect () {

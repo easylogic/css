@@ -3,6 +3,7 @@ import Color from "../../util/Color";
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
 import { CHANGE_EDITOR } from "../types/event";
 import { ITEM_TYPE_COLORSTEP } from "./ItemTypes";
+import { isPX, isEM } from "../../util/css/types";
 
 const isUndefined = (value) => {
     return typeof value == 'undefined' || value == null;
@@ -182,7 +183,7 @@ export default class ColorStepManager extends BaseModule {
 
     getUnitValue (step, maxValue) {
 
-        if (step.unit == 'px') {
+        if (isPX(step.unit)) {
             if (typeof step.px == 'undefined') {
                 step.px = percent2px(step.percent, maxValue)
             }
@@ -192,7 +193,7 @@ export default class ColorStepManager extends BaseModule {
                 percent: px2percent(step.px, maxValue),
                 em: px2em(step.px, maxValue)
             }
-        } else if (step.unit == 'em') {
+        } else if (isEM (step.unit)) {
             if (typeof step.em == 'undefined') {
                 step.em = percent2em(step.percent, maxValue)
             }            

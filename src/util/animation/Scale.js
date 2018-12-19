@@ -1,12 +1,13 @@
 import { interpolateRGBObject } from "../functions/mixin";
 import { rgb } from "../functions/formatter";
+import { UNIT_PERCENT, UNIT_PX, UNIT_EM } from "../css/types";
 
 const ScaleFunctions = {
     'color': 'makeScaleFunctionForColor',
     'number': 'makeScaleFunctionForNumber',
-    '%': 'makeScaleFunctionForPercent',
-    'px': 'makeScaleFunctionForPx',
-    'em': 'makeScaleFunctionForEm'
+    [UNIT_PERCENT]: 'makeScaleFunctionForPercent',
+    [UNIT_PX]: 'makeScaleFunctionForPx',
+    [UNIT_EM]: 'makeScaleFunctionForEm'
 }
 
 const Scale = {

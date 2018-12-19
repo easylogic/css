@@ -3,7 +3,8 @@ import ColorPicker from '../../../../../../colorpicker/index'
 import UIElement, { MULTI_EVENT } from '../../../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION
+    EVENT_CHANGE_SELECTION,
+    EVENT_TEXT_FILL_COLOR
 } from '../../../../../types/event';
 
 export default class TextFillColorPicker extends UIElement {
@@ -38,7 +39,7 @@ export default class TextFillColorPicker extends UIElement {
         }
     }
 
-    '@textFillColorId' (id, eventType) {
+    [EVENT_TEXT_FILL_COLOR] (id, eventType) {
         this.changeColorId = id;
         this.itemType = this.read('/item/get', id).itemType;
         this.eventType = eventType;

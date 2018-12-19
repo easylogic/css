@@ -989,7 +989,7 @@
     .codemirror-colorpicker.ring-tab .colorpicker-body .colorsets .color-list {
       margin-right: 0px;
       padding-top: 5px;
-      padding-left: 0px; }
+      padding-left: 13px; }
   .codemirror-colorpicker.ring-tab .control {
     padding-top: 0px; }
     .codemirror-colorpicker.ring-tab .control .value {
@@ -1129,6 +1129,27 @@
       left: 50%;
       -webkit-transform: translateX(-50%) translateY(-50%);
               transform: translateX(-50%) translateY(-50%); }
+  .codemirror-colorpicker.xd-tab .color-chooser {
+    opacity: 1;
+    pointer-events: all; }
+    .codemirror-colorpicker.xd-tab .color-chooser .color-chooser-container {
+      top: 0px;
+      opacity: 1; }
+      .codemirror-colorpicker.xd-tab .color-chooser .color-chooser-container .colorsets-item-header {
+        display: none; }
+      .codemirror-colorpicker.xd-tab .color-chooser .color-chooser-container .colorsets-list {
+        top: 4px; }
+        .codemirror-colorpicker.xd-tab .color-chooser .color-chooser-container .colorsets-list .color-item {
+          -webkit-transform: scale(1.2);
+                  transform: scale(1.2); }
+  .codemirror-colorpicker.xd-tab .colorsets {
+    border-top: 0px; }
+    .codemirror-colorpicker.xd-tab .colorsets .menu {
+      display: none; }
+    .codemirror-colorpicker.xd-tab .colorsets .color-list {
+      margin-right: 0px;
+      padding-top: 5px;
+      padding-left: 13px; }
   .codemirror-colorpicker.xd-tab .information {
     margin-top: 5px; }
 
@@ -1686,7 +1707,14 @@ html, body {
       padding: 5px 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      height: 100%; }
+      height: 100%;
+      vertical-align: middle; }
+      .csseditor .tool-menu .add-items label {
+        vertical-align: middle;
+        display: inline-block;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        padding: 5px; }
       .csseditor .tool-menu .add-items button {
         background-color: transparent;
         -webkit-appearance: none;
@@ -1721,6 +1749,23 @@ html, body {
             background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
             background-size: 5px 5px;
             background-repeat: round; }
+    .csseditor .tool-menu .gradient-type {
+      padding-top: 1px; }
+    .csseditor .tool-menu .gradient-sample-list {
+      display: inline-block;
+      height: 30px;
+      width: 30px;
+      vertical-align: middle;
+      position: relative;
+      text-align: center;
+      border: 1px solid #f1f1f1;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      margin-bottom: 2px; }
+      .csseditor .tool-menu .gradient-sample-list.arrow {
+        background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
+        background-size: 5px 5px;
+        background-repeat: round; }
   .csseditor .pages {
     display: none;
     position: absolute;
@@ -1920,12 +1965,11 @@ html, body {
       .csseditor .layers .layer-list .tree-item {
         display: block;
         height: 40px;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        border-left: 5px solid rgba(199, 199, 199, 0.5); }
+        border-left: 5px solid rgba(199, 199, 199, 0.5);
+        margin-top: 10px; }
         .csseditor .layers .layer-list .tree-item.selected {
           border-left-color: #333;
           background-color: #ececec; }
@@ -1982,13 +2026,22 @@ html, body {
           background-repeat: repeat-x; }
         .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children {
           overflow: hidden;
-          height: 40px;
+          height: 32px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
           display: block; }
           .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item {
+            width: 30px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
             display: inline-block;
-            vertical-align: middle; }
+            vertical-align: middle;
+            border-bottom: 0px;
+            border-left: 0px;
+            border: 2px solid rgba(199, 199, 199, 0.5);
+            margin-top: 1px; }
+            .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item.selected {
+              border-color: #333; }
             .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-title, .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item .item-tools {
               display: none; }
         .csseditor .layers .layer-list .gradient-list-group .gradient-collapse-button {
@@ -1998,7 +2051,7 @@ html, body {
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
           left: 25px;
-          top: 20px;
+          top: 15px;
           cursor: pointer;
           -webkit-transform: translateY(-50%) translateX(-50%);
                   transform: translateY(-50%) translateX(-50%);
@@ -2010,12 +2063,12 @@ html, body {
         .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item {
           border: 0px;
           background-color: white;
-          border-bottom: 1px solid #c7c7c7;
           border-left: 5px solid rgba(199, 199, 199, 0.5);
           -webkit-transition: all 0.3s linear;
-          transition: all 0.3s linear; }
-          .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item:first-child {
-            border-top: 1px solid #c7c7c7; }
+          transition: all 0.3s linear;
+          height: 30px; }
+          .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item .item-view-container {
+            width: 30px; }
           .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item.selected {
             border-left-color: #333; }
     .csseditor .layers .mini-layer-view {
@@ -2045,7 +2098,7 @@ html, body {
     .csseditor .layer-toolbar .panel-toolbar {
       display: inline-block;
       vertical-align: middle;
-      width: 280px;
+      width: 290px;
       height: 100%; }
     .csseditor .layer-toolbar label {
       display: inline-block;
@@ -2087,23 +2140,6 @@ html, body {
           .csseditor .layer-toolbar .button-group button.cut.on {
             background-position: center 6px;
             background-repeat: repeat-x; }
-    .csseditor .layer-toolbar .gradient-type {
-      padding-top: 1px; }
-    .csseditor .layer-toolbar .gradient-sample-list {
-      display: inline-block;
-      height: 30px;
-      width: 30px;
-      vertical-align: middle;
-      position: relative;
-      text-align: center;
-      border: 1px solid #f1f1f1;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      margin-bottom: 2px; }
-      .csseditor .layer-toolbar .gradient-sample-list.arrow {
-        background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
-        background-size: 5px 5px;
-        background-repeat: round; }
     .csseditor .layer-toolbar .step-align {
       float: right;
       display: inline-block;
@@ -2172,6 +2208,47 @@ html, body {
           background-repeat: no-repeat;
           background-size: 2px 24px, 10px 18px, 2px 24px;
           background-position: 6px 3px, 11px 6px, 24px 3px; }
+    .csseditor .layer-toolbar .group-order {
+      float: right;
+      margin-right: 20px; }
+      .csseditor .layer-toolbar .group-order button {
+        margin-right: 10px;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        width: 30px;
+        height: 30px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        display: inline-block;
+        border: 0px;
+        outline: none;
+        cursor: pointer;
+        background-color: white; }
+        .csseditor .layer-toolbar .group-order button[data-value="forward"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+          background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+          background-repeat: no-repeat;
+          background-size: 18px 18px,20px 20px,16px 16px,18px 18px;
+          background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+        .csseditor .layer-toolbar .group-order button[data-value="backward"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 16px 16px,18px 18px,18px 18px,20px 20px;
+          background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+        .csseditor .layer-toolbar .group-order button[data-value="front"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+          background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+          background-repeat: no-repeat;
+          background-size: 16px 16px,18px 18px,16px 16px,18px 18px,16px 16px,18px 18px;
+          background-position: 6px 6px, 5px 5px, 1px 1px, 0px 0px, 11px 11px, 10px 10px; }
+        .csseditor .layer-toolbar .group-order button[data-value="back"] {
+          background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+          background-repeat: no-repeat;
+          background-size: 12px 12px,14px 14px,12px 12px,14px 14px,18px 18px,20px 20px;
+          background-position: 1px 1px, 0px 0px, 15px 15px, 14px 14px,5px 5px, 4px 4px; }
   .csseditor .image-toolbar {
     position: absolute;
     top: 0px;
@@ -2228,7 +2305,6 @@ html, body {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     text-align: center;
-    margin-left: 20px;
     border-left: 1px solid #ececec; }
     .csseditor .image-list .tree-item {
       display: inline-block;
@@ -5014,6 +5090,47 @@ html, body {
             background-repeat: no-repeat;
             background-size: 2px 24px, 10px 18px, 2px 24px;
             background-position: 6px 3px, 11px 6px, 24px 3px; }
+      .csseditor .property-view .property-item .group-order {
+        float: right;
+        margin-right: 20px; }
+        .csseditor .property-view .property-item .group-order button {
+          margin-right: 10px;
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          width: 30px;
+          height: 30px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          display: inline-block;
+          border: 0px;
+          outline: none;
+          cursor: pointer;
+          background-color: white; }
+          .csseditor .property-view .property-item .group-order button[data-value="forward"] {
+            background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+            background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+            background-repeat: no-repeat;
+            background-size: 18px 18px,20px 20px,16px 16px,18px 18px;
+            background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+          .csseditor .property-view .property-item .group-order button[data-value="backward"] {
+            background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+            background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+            background-repeat: no-repeat;
+            background-size: 16px 16px,18px 18px,18px 18px,20px 20px;
+            background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+          .csseditor .property-view .property-item .group-order button[data-value="front"] {
+            background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+            background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+            background-repeat: no-repeat;
+            background-size: 16px 16px,18px 18px,16px 16px,18px 18px,16px 16px,18px 18px;
+            background-position: 6px 6px, 5px 5px, 1px 1px, 0px 0px, 11px 11px, 10px 10px; }
+          .csseditor .property-view .property-item .group-order button[data-value="back"] {
+            background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+            background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+            background-repeat: no-repeat;
+            background-size: 12px 12px,14px 14px,12px 12px,14px 14px,18px 18px,20px 20px;
+            background-position: 1px 1px, 0px 0px, 15px 15px, 14px 14px,5px 5px, 4px 4px; }
       .csseditor .property-view .property-item.fixed-radius {
         border-bottom: 0px; }
       .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd {

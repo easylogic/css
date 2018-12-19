@@ -1,6 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../../types/event";
+import { px } from "../../../../../util/css/types";
 
 
 export default class Radius extends BasePropertyItem {
@@ -86,10 +87,10 @@ export default class Radius extends BasePropertyItem {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_RADIUS, { 
                 id, 
-                borderTopLeftRadius:  this.refs.$topLeftRadius.val() + 'px', 
-                borderTopRightRadius:  this.refs.$topRightRadius.val() + 'px', 
-                borderBottomLeftRadius:  this.refs.$bottomLeftRadius.val() + 'px', 
-                borderBottomRightRadius:  this.refs.$bottomRightRadius.val() + 'px', 
+                borderTopLeftRadius: px( this.refs.$topLeftRadius.val()), 
+                borderTopRightRadius: px( this.refs.$topRightRadius.val()), 
+                borderBottomLeftRadius: px( this.refs.$bottomLeftRadius.val()), 
+                borderBottomRightRadius: px( this.refs.$bottomRightRadius.val()), 
                 fixedRadius: false 
             })
         })

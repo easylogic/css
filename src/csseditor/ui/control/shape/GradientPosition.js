@@ -1,5 +1,6 @@
 import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import { percent } from '../../../../util/css/types';
 
 const DEFINE_POSITIONS = { 
     'center': ['center', 'center'],
@@ -128,7 +129,10 @@ export default class GradientPosition extends UIElement {
 
         if (e) {
 
-            this.setRadialPosition([Math.floor(left/width * 100) + '%', Math.floor(top/height * 100) + '%']);
+            this.setRadialPosition([
+                percent( Math.floor(left/width * 100) ), 
+                percent( Math.floor(top/height * 100) )
+            ]);
         }
 
     }

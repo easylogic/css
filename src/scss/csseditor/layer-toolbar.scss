@@ -6,7 +6,7 @@
     .panel-toolbar {
         display:inline-block;
         vertical-align: middle;
-        width: 280px;
+        width: 290px;
         height: 100%;
 
     }
@@ -52,27 +52,6 @@
                 }      
             }
       
-        }
-    }
-
-    .gradient-type {
-        padding-top: 1px;
-    }
-    .gradient-sample-list {
-        display: inline-block;
-        height: 30px;
-        width: 30px;
-        vertical-align: middle;
-        position: relative;
-        text-align: center;
-        border: 1px solid #f1f1f1;
-        box-sizing: border-box;
-        margin-bottom: 2px;
-
-        &.arrow {
-            background-image: radial-gradient(ellipse at center, rgba(216,216,216, 0) 0%,rgba(119,119,119,0.45) 0%,rgba(119,119,119,0.45) 33.33%,rgba(67,67,67,0.69) 33.33%,rgba(67,67,67,0.69) 66.67%,rgb(0,0,0) 66.67%,rgb(0,0,0) 100%);
-            background-size: 5px 5px;
-            background-repeat: round;
         }
     }
 

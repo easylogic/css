@@ -1,6 +1,7 @@
 import UIElement from '../../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../../util/filter/functions';
 import { CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../../types/event';
+import { px } from '../../../../../util/css/types';
 
 export default class TopLeftRadius extends UIElement {
 
@@ -64,7 +65,7 @@ export default class TopLeftRadius extends UIElement {
         var dx = this.targetXY.x - this.xy.x
         var radius = this.getRealRadius(this.layerRadius, dx);
 
-        var newValue = {id: this.layer.id, [this.radiusKey]: radius + 'px' }
+        var newValue = {id: this.layer.id, [this.radiusKey]: px( radius) }
 
         this.commit(CHANGE_LAYER_RADIUS, newValue)
         this.refresh();

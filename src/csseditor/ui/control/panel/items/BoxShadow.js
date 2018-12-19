@@ -10,6 +10,7 @@ import {
 import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
 import { parseParamNumber } from '../../../../../util/filter/functions';
+import { px } from '../../../../../util/css/types';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -151,7 +152,7 @@ export default class BoxShadow extends BasePropertyItem {
         var field = $el.attr('data-type');
         var id = $el.parent().parent().attr('box-shadow-id')
 
-        this.commit(CHANGE_BOXSHADOW, {id, [field]: $el.val() + 'px' })
+        this.commit(CHANGE_BOXSHADOW, {id, [field]: px($el.val()) })
     }
 
     'click $boxShadowList input[type=checkbox]' (e) {
