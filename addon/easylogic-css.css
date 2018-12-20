@@ -1264,7 +1264,7 @@ html, body {
       top: 40px;
       height: 40px;
       z-index: 1;
-      border-bottom: 1px solid #c7c7c7;
+      border-bottom: 1px solid #cccccc;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
     .csseditor .layout-main .layout-right {
@@ -1275,9 +1275,9 @@ html, body {
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      border-left: 1px solid #c7c7c7;
+      border-left: 1px solid #cccccc;
       background-color: white;
-      border-left: 1px solid #c7c7c7;
+      border-left: 1px solid #cccccc;
       z-index: 100; }
     .csseditor .layout-main .layout-left {
       position: absolute;
@@ -1287,7 +1287,7 @@ html, body {
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      border-right: 1px solid #c7c7c7;
+      border-right: 1px solid #cccccc;
       z-index: 100; }
     .csseditor .layout-main .layout-body {
       position: absolute;
@@ -1310,7 +1310,7 @@ html, body {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
-      border-bottom: 1px solid #c7c7c7; }
+      border-bottom: 1px solid #cccccc; }
       .csseditor .layout-main .layout-header .header-title {
         width: 300px;
         padding: 0px 4px;
@@ -1349,7 +1349,7 @@ html, body {
       z-index: 0;
       display: none;
       overflow: hidden;
-      border-top: 1px solid #c7c7c7;
+      border-top: 1px solid #cccccc;
       -webkit-transition: all 0.15s linear;
       transition: all 0.15s linear; }
   .csseditor [type='range'] {
@@ -1488,13 +1488,13 @@ html, body {
         padding: 6px 4px;
         cursor: pointer;
         color: black;
-        border: 1px solid #dedede;
+        border: 1px solid #cccccc;
         min-width: 50px; }
         .csseditor .tab .tab-header .tab-item:not(.selected) {
           background-color: white;
           color: black; }
         .csseditor .tab .tab-header .tab-item.selected {
-          background-color: #dedede; }
+          background-color: #cccccc; }
     .csseditor .tab .tab-body {
       position: absolute;
       left: 0px;
@@ -1503,7 +1503,7 @@ html, body {
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      border: 1px solid #dedede; }
+      border: 1px solid #cccccc; }
       .csseditor .tab .tab-body .tab-content {
         position: absolute;
         left: 0px;
@@ -1519,7 +1519,7 @@ html, body {
       bottom: 1px; }
       .csseditor .tab.bottom > .tab-header .tab-item.selected {
         border-top: 1px solid #ffffff;
-        border-bottom: 1px solid #dedede; }
+        border-bottom: 1px solid #cccccc; }
     .csseditor .tab.bottom > .tab-body {
       top: 0px;
       bottom: 30px; }
@@ -1534,7 +1534,7 @@ html, body {
               flex-direction: column; }
       .csseditor .tab.horizontal .tab-header .tab-item {
         border: 0px;
-        border-bottom: 1px solid #c7c7c7;
+        border-bottom: 1px solid #cccccc;
         text-align: center;
         min-height: 40px;
         line-height: 2; }
@@ -1542,7 +1542,7 @@ html, body {
       top: 0px;
       right: 50px;
       border: 0px;
-      border-right: 1px solid #c7c7c7; }
+      border-right: 1px solid #cccccc; }
   .csseditor .layer-menu-tab > .tab-header,
   .csseditor .page-menu-tab > .tab-header,
   .csseditor .image-menu-tab > .tab-header {
@@ -1551,7 +1551,7 @@ html, body {
     .csseditor .page-menu-tab > .tab-header > .tab-item,
     .csseditor .image-menu-tab > .tab-header > .tab-item {
       border: 0px;
-      border-right: 1px solid #c7c7c7;
+      border-right: 1px solid #cccccc;
       text-align: center;
       vertical-align: middle;
       line-height: 1.2;
@@ -1566,7 +1566,7 @@ html, body {
   .csseditor .image-menu-tab > .tab-body {
     top: 32px;
     border: 0px;
-    border-top: 1px solid #c7c7c7; }
+    border-top: 1px solid #cccccc; }
   .csseditor .unit-range {
     pointer-events: all;
     display: block !important; }
@@ -1615,7 +1615,7 @@ html, body {
         margin: 2px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         background-color: transparent;
         cursor: pointer;
         padding: 3px;
@@ -1650,7 +1650,7 @@ html, body {
         -webkit-box-flex: 0;
             -ms-flex: none;
                 flex: none;
-        border-bottom: 1px solid #c7c7c7; }
+        border-bottom: 1px solid #cccccc; }
   .csseditor .colorpicker-layer .codemirror-colorpicker {
     background-color: transparent;
     width: 100%;
@@ -1691,7 +1691,7 @@ html, body {
                 appearance: none;
         border: 0px;
         vertical-align: middle;
-        border-left: 1px solid #c7c7c7;
+        border-left: 1px solid #cccccc;
         height: 100%;
         display: inline-block;
         padding: 10px 20px;
@@ -1789,7 +1789,7 @@ html, body {
                 flex: none;
         display: inline-block;
         padding: 5px 5px;
-        border-left: 1px solid #c7c7c7; }
+        border-left: 1px solid #cccccc; }
       .csseditor .pages .project-tools a.button {
         -webkit-box-flex: 1;
             -ms-flex: 1;
@@ -1797,14 +1797,14 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 0px solid #c7c7c7;
+        border: 0px solid #cccccc;
         padding: 0px 20px;
         height: 100%;
         display: inline-block;
         vertical-align: middle;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        border-left: 1px solid #c7c7c7;
+        border-left: 1px solid #cccccc;
         outline: none;
         line-height: 34px;
         text-decoration: none;
@@ -1968,7 +1968,7 @@ html, body {
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        border-left: 5px solid rgba(199, 199, 199, 0.5);
+        border-left: 5px solid rgba(204, 204, 204, 0.5);
         margin-top: 10px; }
         .csseditor .layers .layer-list .tree-item.selected {
           border-left-color: #333;
@@ -2038,7 +2038,7 @@ html, body {
             vertical-align: middle;
             border-bottom: 0px;
             border-left: 0px;
-            border: 2px solid rgba(199, 199, 199, 0.5);
+            border: 2px solid rgba(204, 204, 204, 0.5);
             margin-top: 1px; }
             .csseditor .layers .layer-list .gradient-list-group.collapsed .tree-item-children .tree-item.selected {
               border-color: #333; }
@@ -2063,7 +2063,7 @@ html, body {
         .csseditor .layers .layer-list .gradient-list-group .tree-item-children .tree-item {
           border: 0px;
           background-color: white;
-          border-left: 5px solid rgba(199, 199, 199, 0.5);
+          border-left: 5px solid rgba(204, 204, 204, 0.5);
           -webkit-transition: all 0.3s linear;
           transition: all 0.3s linear;
           height: 30px; }
@@ -2120,7 +2120,7 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         outline: none;
         vertical-align: middle; }
         .csseditor .layer-toolbar .button-group button:not(:first-child) {
@@ -2130,7 +2130,7 @@ html, body {
           height: 18px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
-          border: 1px solid #c7c7c7;
+          border: 1px solid #cccccc;
           cursor: pointer;
           background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
           background-image: linear-gradient(to top, black 0%, black 100%);
@@ -2277,7 +2277,7 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         outline: none;
         vertical-align: middle; }
         .csseditor .image-toolbar .button-group button:not(:first-child) {
@@ -2287,7 +2287,7 @@ html, body {
           height: 18px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
-          border: 1px solid #c7c7c7;
+          border: 1px solid #cccccc;
           cursor: pointer;
           background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
           background-image: linear-gradient(to top, black 0%, black 100%);
@@ -2863,7 +2863,7 @@ html, body {
           -ms-flex: none;
               flex: none;
       height: 30px;
-      border-bottom: 1px solid #c7c7c7; }
+      border-bottom: 1px solid #cccccc; }
   .csseditor .gradient-type {
     display: inline-block;
     vertical-align: top; }
@@ -3149,7 +3149,7 @@ html, body {
             opacity: 0;
             -webkit-transition: all 0.3s ease-out;
             transition: all 0.3s ease-out;
-            border: 1px solid #c7c7c7;
+            border: 1px solid #cccccc;
             pointer-events: none;
             background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
             background-image: linear-gradient(to top, black 0%, black 100%);
@@ -3206,7 +3206,7 @@ html, body {
               -webkit-appearance: none;
                  -moz-appearance: none;
                       appearance: none;
-              border: 1px solid #c7c7c7;
+              border: 1px solid #cccccc;
               background-color: white; }
             .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar .guide-unit.percent > .percent {
               display: inline-block; }
@@ -3273,7 +3273,7 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         vertical-align: top;
         background-color: white;
         font-size: 50px;
@@ -3290,7 +3290,7 @@ html, body {
         margin-bottom: 5px;
         position: relative; }
         .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item:not(.empty), .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item:not(.empty), .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image:not(.empty), .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid #c7c7c7; }
+          border: 1px solid #cccccc; }
         .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty .item-tools {
           position: absolute;
           left: 0px;
@@ -3369,7 +3369,7 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         vertical-align: top;
         background-color: white;
         font-size: 50px;
@@ -3387,7 +3387,7 @@ html, body {
         margin-bottom: 5px;
         position: relative; }
         .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item:not(.empty), .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item:not(.empty), .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer:not(.empty), .csseditor .layer-sample-view .layer-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid #c7c7c7, 0.5; }
+          border: 1px solid #cccccc, 0.5; }
         .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty .item-tools {
           position: absolute;
           left: 0px;
@@ -3466,7 +3466,7 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         vertical-align: top;
         background-color: white;
         font-size: 50px;
@@ -3482,7 +3482,7 @@ html, body {
         margin-bottom: 5px;
         position: relative; }
         .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item:not(.empty), .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item:not(.empty), .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page:not(.empty), .csseditor .page-sample-view .page-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid #c7c7c7;
+          border: 1px solid #cccccc;
           background-color: white; }
         .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .empty .item-tools {
           position: absolute;
@@ -3628,8 +3628,8 @@ html, body {
       width: 100%;
       height: 100%;
       z-index: 10;
-      -webkit-box-shadow: 0 0 0 1px #c7c7c7;
-              box-shadow: 0 0 0 1px #c7c7c7;
+      -webkit-box-shadow: 0 0 0 1px #cccccc;
+              box-shadow: 0 0 0 1px #cccccc;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
       .csseditor .page-view .predefined-page-resizer button {
@@ -4460,7 +4460,7 @@ html, body {
                -moz-appearance: none;
                     appearance: none;
             background-color: transparent;
-            border: 1px solid #c7c7c7;
+            border: 1px solid #cccccc;
             vertical-align: middle;
             display: inline-block;
             height: auto; }
@@ -4474,7 +4474,7 @@ html, body {
                -moz-appearance: none;
                     appearance: none;
             background-color: transparent;
-            border: 1px solid #c7c7c7;
+            border: 1px solid #cccccc;
             vertical-align: middle;
             display: inline-block; }
     .csseditor .property-view.accordian {
@@ -4590,8 +4590,8 @@ html, body {
               width: 160px;
               height: 20px; }
             .csseditor .property-view .property-item > .items > div > div input[type=number]:disabled, .csseditor .property-view .property-item > .items > div > div input[type=text]:disabled {
-              background-color: #c7c7c7;
-              border: 1px solid #c7c7c7;
+              background-color: #cccccc;
+              border: 1px solid #cccccc;
               cursor: not-allowed; }
           .csseditor .property-view .property-item > .items > div > div .input {
             display: -webkit-box;
@@ -4619,7 +4619,7 @@ html, body {
               height: 100%;
               width: 40px;
               margin-right: 0px;
-              border: 1px solid #c7c7c7; }
+              border: 1px solid #cccccc; }
             .csseditor .property-view .property-item > .items > div > div > span.color-text {
               display: inline-block;
               height: 100%;
@@ -4797,7 +4797,7 @@ html, body {
             -webkit-appearance: none;
                -moz-appearance: none;
                     appearance: none;
-            border: 1px solid #c7c7c7;
+            border: 1px solid #cccccc;
             background-color: #ffffff;
             display: inline-block;
             vertical-align: middle;
@@ -4902,7 +4902,7 @@ html, body {
                 left: 0px;
                 -webkit-transform: translateY(-50%);
                         transform: translateY(-50%);
-                border: 1px solid #c7c7c7;
+                border: 1px solid #cccccc;
                 cursor: pointer;
                 background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
                 background-image: linear-gradient(to top, black 0%, black 100%);
@@ -4978,7 +4978,7 @@ html, body {
             vertical-align: middle;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
-            border: 1px solid #c7c7c7;
+            border: 1px solid #cccccc;
             cursor: pointer;
             margin: 2px; }
             .csseditor .property-view .property-item.image-resource .items .svg-item svg {
@@ -5024,7 +5024,7 @@ html, body {
         height: 50px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        border: 1px solid #c7c7c7; }
+        border: 1px solid #cccccc; }
         .csseditor .property-view .property-item.clip-path .clip-path-container svg {
           width: 100%; }
       .csseditor .property-view .property-item .group-align {
@@ -5332,7 +5332,7 @@ html, body {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         font-size: 20px; }
     .csseditor .property-view .gradient-view {
       height: 230px;
@@ -5600,7 +5600,7 @@ html, body {
               border: 0px;
               display: inline-block;
               vertical-align: middle;
-              border-right: 1px solid #c7c7c7;
+              border-right: 1px solid #cccccc;
               height: 100%;
               padding-right: 10px;
               margin-right: 10px; }
@@ -5614,7 +5614,7 @@ html, body {
                   border: 0px;
                   width: 20px;
                   height: 20px;
-                  border: 1px solid #c7c7c7; }
+                  border: 1px solid #cccccc; }
             .csseditor .property-view .sub-feature .image-list .images .image-tools .image-list {
               position: relative;
               border: 0px;
@@ -5636,57 +5636,93 @@ html, body {
     .csseditor .layout-main.expertor-mode .layout-top .property-view .property-item .items {
       padding: 2px 5px; }
   .csseditor .filter-list {
-    display: block !important; }
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column; }
     .csseditor .filter-list .filter-item {
-      display: block;
-      padding: 5px;
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none;
+      padding: 5px 0px;
       -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      border-bottom: 1px solid #c7c7c7; }
-      .csseditor .filter-list .filter-item .filter-item-view-container .filter-item-view {
+              box-sizing: border-box; }
+      .csseditor .filter-list .filter-item .filter-item-input {
         display: block;
-        height: 100px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid #dedede;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        margin: 2px; }
-      .csseditor .filter-list .filter-item .filter-item-view-container .filter-item-text {
-        font-size: 12px; }
-    .csseditor .filter-list .filter-item-input {
-      font-size: 12px; }
-      .csseditor .filter-list .filter-item-input > div {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex; }
-        .csseditor .filter-list .filter-item-input > div > * {
-          -webkit-box-flex: 1;
-              -ms-flex: 1;
-                  flex: 1;
-          display: inline-block;
-          vertical-align: middle;
-          text-align: middle;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box; }
-        .csseditor .filter-list .filter-item-input > div > .title {
-          -webkit-box-flex: 0;
-              -ms-flex: none;
-                  flex: none;
-          width: 80px;
-          text-align: left; }
-        .csseditor .filter-list .filter-item-input > div > .input {
-          width: 50px;
-          -webkit-box-flex: 0;
-              -ms-flex: none;
-                  flex: none; }
-        .csseditor .filter-list .filter-item-input > div > .unit {
-          width: 30px;
-          -webkit-box-flex: 0;
-              -ms-flex: none;
-                  flex: none;
-          padding: 2px; }
+        font-size: 12px;
+        -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+                flex: 1 1 auto; }
+        .csseditor .filter-list .filter-item .filter-item-input > .filter {
+          display: block; }
+          .csseditor .filter-list .filter-item .filter-item-input > .filter > * {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: middle;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box; }
+          .csseditor .filter-list .filter-item .filter-item-input > .filter .area {
+            width: 10px;
+            height: 20px;
+            vertical-align: middle;
+            display: inline-block;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            background-color: black; }
+          .csseditor .filter-list .filter-item .filter-item-input > .filter .title {
+            width: 60px;
+            text-align: left; }
+            .csseditor .filter-list .filter-item .filter-item-input > .filter .title.long {
+              width: 120px; }
+          .csseditor .filter-list .filter-item .filter-item-input > .filter .input-value {
+            width: 40px; }
+            .csseditor .filter-list .filter-item .filter-item-input > .filter .input-value input[type=number] {
+              width: 100%; }
+          .csseditor .filter-list .filter-item .filter-item-input > .filter .range {
+            width: 70px; }
+            .csseditor .filter-list .filter-item .filter-item-input > .filter .range input[type=range] {
+              width: 100%; }
+          .csseditor .filter-list .filter-item .filter-item-input > .filter .unit {
+            width: 24px;
+            padding: 2px; }
+        .csseditor .filter-list .filter-item .filter-item-input > .items {
+          padding-left: 20px; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items > div {
+            padding-bottom: 3px; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items > div > * {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: middle;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items .title {
+            width: 60px;
+            text-align: left; }
+            .csseditor .filter-list .filter-item .filter-item-input > .items .title.long {
+              width: 120px; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items .input-value {
+            width: 40px; }
+            .csseditor .filter-list .filter-item .filter-item-input > .items .input-value input[type=number] {
+              width: 100%; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items .range {
+            width: 70px; }
+            .csseditor .filter-list .filter-item .filter-item-input > .items .range input[type=range] {
+              width: 100%; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items .unit {
+            width: 24px;
+            padding: 2px; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items .color .color-view {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            pointer-events: all;
+            cursor: pointer; }
+          .csseditor .filter-list .filter-item .filter-item-input > .items .color .color-text {
+            vertical-align: middle; }
   .csseditor .export-view {
     position: absolute;
     left: 0px;
@@ -5818,7 +5854,7 @@ html, body {
         vertical-align: middle;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        border: 1px solid #c7c7c7;
+        border: 1px solid #cccccc;
         cursor: pointer;
         margin: 2px; }
         .csseditor .image-resource .items .svg-item svg {

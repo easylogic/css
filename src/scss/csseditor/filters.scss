@@ -1,59 +1,135 @@
 .filter-list {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column;
+
     .filter-item {
-        display: block;
-        padding:5px;
+        flex: none; 
+        padding:5px 0px;
         box-sizing: border-box;
-        border-bottom: 1px solid $border-color;
-        .filter-item-view-container {
-            .filter-item-view {
-                display: block;
-                height: 100px;       
-                cursor: pointer;
-                position: relative;
-                overflow: hidden;
-                border: 1px solid #dedede;
-                box-sizing: border-box;
-                margin:2px;
+
+        .filter-item-input {
+            display: block; 
+            font-size: 12px;
+            flex: 1 1 auto;
+
+            > .filter {
+                display: block; 
+
+                > * {
+                    display: inline-block;
+                    vertical-align: middle;
+                    text-align: middle;
+                    box-sizing: border-box;
+                }
+
+                .area {
+                    width: 10px;
+                    height: 20px;
+                    vertical-align: middle;
+                    display: inline-block;
+                    box-sizing: border-box;
+                    background-color: black;
+                }
+
+                .title {
+                    width: 60px;
+                    text-align: left;
+
+                    &.long {
+                        width: 120px;
+                    }
+                }
+
+
+                .input-value {
+                    width: 40px;
+
+                    input[type=number] {
+                        width: 100%;
+                    }
+                }
+
+                .range {
+                    width: 70px;
+
+                    input[type=range] {
+                        width: 100%;
+                    }
+                }
+
+                .unit {
+                    width: 24px;
+                    padding: 2px;
+                }
+
             }
 
-            .filter-item-text {
-                font-size: 12px;
+
+            > .items {
+                padding-left: 20px;
+
+                > div {
+                    padding-bottom: 3px;
+                }
+
+                > div > * {
+                    display: inline-block;
+                    vertical-align: middle;
+                    text-align: middle;
+                    box-sizing: border-box;
+
+                    
+                }
+
+
+
+                .title {
+                    width: 60px;
+                    text-align: left;
+
+                    &.long {
+                        width: 120px;
+                    }
+                }
+
+
+                .input-value {
+                    width: 40px;
+
+                    input[type=number] {
+                        width: 100%;
+                    }
+                }
+
+                .range {
+                    width: 70px;
+
+                    input[type=range] {
+                        width: 100%;
+                    }
+                }
+
+                .unit {
+                    width: 24px;
+                    padding: 2px;
+                }
+
+                .color {
+                    .color-view {
+                        display: inline-block;
+                        width: 20px;
+                        height: 20px;
+                        vertical-align: middle;
+                        pointer-events: all;
+                        cursor: pointer;
+                    }
+
+                    .color-text {
+                        vertical-align: middle;
+                    }
+                }
             }
         }
     }
 
-    .filter-item-input {
-         font-size: 12px;
-
-         > div {
-             display: flex; 
-
-             > * {
-                 flex: 1;
-                 display: inline-block;
-                 vertical-align: middle;
-                 text-align: middle;
-                 box-sizing: border-box;
-             }
-
-             > .title {
-                 flex: none;
-                 width: 80px;
-                 text-align: left;
-             }
-
-
-             > .input {
-                width: 50px;
-                flex: none;
-             }
-
-             > .unit {
-                 width: 30px;
-                 flex: none;
-                 padding: 2px;
-             }
-         }
-    }
 }

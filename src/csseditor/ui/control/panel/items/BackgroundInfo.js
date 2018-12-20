@@ -8,6 +8,7 @@ export default class BackgroundInfo extends BasePropertyItem {
     template () { 
         return `
         <div class='property-item background-info show'>
+            <div class='title' ref="$title">Background Image</div>        
             <div class='items max-height'>         
                 <div>
                     <label>Gradient</label>

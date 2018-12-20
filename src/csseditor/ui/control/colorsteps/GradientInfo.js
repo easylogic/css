@@ -263,7 +263,6 @@ export default class GradientInfo extends UIElement {
         var item = this.read('/item/get', id);
 
         if (item.id) {
-            item.cut = !item.cut;
             this.commit(CHANGE_COLOR_STEP, {id: item.id, cut: !item.cut})
             this.refresh();
         }

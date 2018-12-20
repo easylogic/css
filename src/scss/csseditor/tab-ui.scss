@@ -1,7 +1,7 @@
 $tab-header-height: 30px;
 $tab-background-color: rgb(255, 255, 255);
-$tab-border-color: #dedede;
-$tab-selected-color: #dedede;
+$tab-border-color: $border-color;
+$tab-selected-color: $selected-color;
 
 $tab-horizontal-header-width: 50px;
 .tab {

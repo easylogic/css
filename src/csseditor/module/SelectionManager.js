@@ -195,6 +195,7 @@ export default class SelectionManager extends BaseModule {
         } else if (
                 $store.selection.itemType == ITEM_TYPE_IMAGE 
                 || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
+                || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
         ) {
             var layers = $store.read('/selection/current').map(item => $store.items[item.parentId]) 
         }

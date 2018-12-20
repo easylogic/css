@@ -103,7 +103,12 @@ export const BOXSHADOW_DEFAULT_OBJECT = {
 export const FILTER_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_FILTER,
     type: 'blur',
-    value: 0
+    checked: false, 
+    value: 0,
+    color: 'rgba(0, 0, 0, 0)',
+    offsetX: 0,
+    offsetY: 0,
+    blurRadius: 0
 }
 
 

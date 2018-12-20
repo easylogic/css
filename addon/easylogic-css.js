@@ -3342,15 +3342,19 @@ var FilterList = _extends({}, image$1, pixel$1, matrix$1, multi$2);
 
 var _UNIT_STRINGS;
 
-var UNIT_PX_STRING = 'px';
-var UNIT_EM_STRING = 'em';
-var UNIT_PERCENT_STRING = '%';
-
 var UNIT_PX = 'px';
 var UNIT_EM = 'em';
 var UNIT_PERCENT = 'percent';
+var UNIT_DEG = 'deg';
+var UNIT_COLOR = 'color';
 
-var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), _UNIT_STRINGS);
+var UNIT_PX_STRING = 'px';
+var UNIT_EM_STRING = 'em';
+var UNIT_PERCENT_STRING = '%';
+var UNIT_DEG_STRING = '°';
+var UNIT_COLOR_STRING = '';
+
+var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG_STRING), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
 
 function px$1(value) {
     return value + UNIT_PX_STRING;
@@ -3362,6 +3366,8 @@ function percent(value) {
     return value + UNIT_PERCENT_STRING;
 }
 
+
+
 function isPX(unit) {
     return unit === UNIT_PX;
 }
@@ -3372,8 +3378,16 @@ function isPercent(unit) {
     return unit === UNIT_PERCENT;
 }
 
+
+
 function unitString(unit) {
-    return UNIT_STRINGS[unit];
+    var defaultString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+    return UNIT_STRINGS[unit] || defaultString;
+}
+
+function unit(value, unit) {
+    return value + unitString(unit);
 }
 
 var _functions;
@@ -9600,7 +9614,7 @@ var CHANGE_LAYER = 'CHANGE_LAYER';
 var CHANGE_LAYER_NAME = 'CHANGE_LAYER_NAME';
 
 
-var CHANGE_LAYER_FILTER$1 = 'CHANGE_LAYER_FILTER';
+var CHANGE_LAYER_FILTER = 'CHANGE_LAYER_FILTER';
 var CHANGE_LAYER_SIZE = 'CHANGE_LAYER_SIZE';
 var CHANGE_LAYER_ROTATE = 'CHANGE_LAYER_ROTATE';
 var CHANGE_LAYER_OPACITY = 'CHANGE_LAYER_OPACITY';
@@ -9640,7 +9654,7 @@ var EVENT_CHANGE_LAYER = '@' + CHANGE_LAYER;
 
 
 
-var EVENT_CHANGE_LAYER_FILTER = '@' + CHANGE_LAYER_FILTER$1;
+var EVENT_CHANGE_LAYER_FILTER = '@' + CHANGE_LAYER_FILTER;
 var EVENT_CHANGE_LAYER_SIZE = '@' + CHANGE_LAYER_SIZE;
 var EVENT_CHANGE_LAYER_ROTATE = '@' + CHANGE_LAYER_ROTATE;
 var EVENT_CHANGE_LAYER_OPACITY = '@' + CHANGE_LAYER_OPACITY;
@@ -9773,7 +9787,12 @@ var BOXSHADOW_DEFAULT_OBJECT = {
 var FILTER_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_FILTER,
     type: 'blur',
-    value: 0
+    checked: false,
+    value: 0,
+    color: 'rgba(0, 0, 0, 0)',
+    offsetX: 0,
+    offsetY: 0,
+    blurRadius: 0
 };
 
 var BACKDROPFILTER_DEFAULT_OBJECT = {
@@ -9852,9 +9871,9 @@ var ColorStepManager = function (_BaseModule) {
         }
     }, {
         key: '/colorstep/initColor',
-        value: function colorstepInitColor($store, color) {
+        value: function colorstepInitColor($store, color$$1) {
             $store.run('/tool/setColorSource', INIT_COLOR_SOURCE);
-            $store.run('/tool/changeColor', color);
+            $store.run('/tool/changeColor', color$$1);
         }
     }, {
         key: '/colorstep/add',
@@ -9886,10 +9905,10 @@ var ColorStepManager = function (_BaseModule) {
             }
 
             if (colorsteps[colorsteps.length - 1].percent < percent$$1) {
-                var color = colorsteps[colorsteps.length - 1].color;
+                var color$$1 = colorsteps[colorsteps.length - 1].color;
                 var index = colorsteps[colorsteps.length - 1].index;
 
-                $store.read('/item/create/colorstep', { parentId: item.id, index: index + 1, color: color, percent: percent$$1 });
+                $store.read('/item/create/colorstep', { parentId: item.id, index: index + 1, color: color$$1, percent: percent$$1 });
                 $store.run('/item/set', item);
                 return;
             }
@@ -9899,9 +9918,9 @@ var ColorStepManager = function (_BaseModule) {
                 var nextStep = colorsteps[i + 1];
 
                 if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
-                    var color = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
+                    var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
 
-                    $store.read('/item/create/colorstep', { parentId: item.id, index: step.index + 1, color: color, percent: percent$$1 });
+                    $store.read('/item/create/colorstep', { parentId: item.id, index: step.index + 1, color: color$$1, percent: percent$$1 });
                     $store.run('/item/set', item);
                     return;
                 }
@@ -10496,8 +10515,8 @@ var ImageManager = function (_BaseModule) {
             });
 
             colors = newColors.map(function (f) {
-                var deg = Math.floor(f.percent * 3.6);
-                return f.color + ' ' + deg + 'deg';
+                var deg$$1 = Math.floor(f.percent * 3.6);
+                return f.color + ' ' + deg$$1 + 'deg';
             }).join(',');
 
             return colors;
@@ -10619,7 +10638,6 @@ var layerList = [
 ];
 
 var filterInfo = {
-
     'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
     'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'hue-rotate': { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
@@ -10635,6 +10653,8 @@ var filterInfo = {
     'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
 };
+
+var filterKeys$1 = Object.keys(filterInfo);
 
 var LayerManager = function (_BaseModule) {
     inherits(LayerManager, _BaseModule);
@@ -10654,6 +10674,11 @@ var LayerManager = function (_BaseModule) {
             });
 
             return results;
+        }
+    }, {
+        key: '*/layer/filter/keys',
+        value: function layerFilterKeys($store) {
+            return filterKeys$1;
         }
     }, {
         key: '*/layer/filter/list',
@@ -13686,7 +13711,7 @@ var SelectionManager = function (_BaseModule) {
 
             if ($store.selection.itemType == ITEM_TYPE_LAYER) {
                 var layers = $store.read('/selection/current');
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW) {
+            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
                 var layers = $store.read('/selection/current').map(function (item) {
                     return $store.items[item.parentId];
                 });
@@ -14394,7 +14419,140 @@ var TextShadowManager = function (_BaseModule) {
     return TextShadowManager;
 }(BaseModule);
 
-var ModuleList = [TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var filterInfo$1 = {
+    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'hue-rotate': { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'invert': { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'drop-shadow': {
+        type: 'multi',
+        title: 'Drop Shadow',
+        offsetX: 0,
+        offsetY: 0,
+        blurRadius: 0,
+        color: 'rgba(0, 0, 0, 0)',
+        items: [{ title: 'Offset X', type: 'range', key: 'offsetX', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX }, { title: 'Offset Y', type: 'range', key: 'offsetY', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX }, { title: 'Blur Radius', type: 'range', key: 'blurRadius', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX }, { title: 'Color', type: 'color', key: 'color', defaultValue: 'black', unit: UNIT_COLOR }]
+    },
+    'opacity': { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
+};
+
+var defaultFilterList = Object.keys(filterInfo$1).map(function (type, index) {
+    return {
+        itemType: ITEM_TYPE_FILTER,
+        index: index * 100,
+        type: type,
+        id: uuid(),
+        value: filterInfo$1[type].defaultValue
+    };
+});
+
+var FilterManager = function (_BaseModule) {
+    inherits(FilterManager, _BaseModule);
+
+    function FilterManager() {
+        classCallCheck(this, FilterManager);
+        return possibleConstructorReturn(this, (FilterManager.__proto__ || Object.getPrototypeOf(FilterManager)).apply(this, arguments));
+    }
+
+    createClass(FilterManager, [{
+        key: '*/filter/keys',
+        value: function (_filterKeys) {
+            function filterKeys(_x) {
+                return _filterKeys.apply(this, arguments);
+            }
+
+            filterKeys.toString = function () {
+                return _filterKeys.toString();
+            };
+
+            return filterKeys;
+        }(function ($store) {
+            return filterKeys;
+        })
+    }, {
+        key: '*/filter/get',
+        value: function filterGet($store, id) {
+            return filterInfo$1[id];
+        }
+    }, {
+        key: '*/filter/list',
+        value: function filterList($store, layerId) {
+            var list = $store.read('/item/map/filter/children', layerId);
+
+            if (list.length == 0) {
+                return defaultFilterList;
+            }
+
+            return list;
+        }
+    }, {
+        key: '*/filter/toCSS',
+        value: function filterToCSS($store, filters) {
+            var defaultDataObject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+
+            if (!filters) return null;
+            if (!Object.keys(filters).length) return null;
+
+            return Object.keys(filters).map(function (id) {
+                var dataObject = filters[id] || defaultDataObject;
+
+                // 적용하는 필터가 아니면 제외 한다. 
+                if (!dataObject.checked) return '';
+
+                var viewObject = $store.read('/layer/get/filter', id);
+
+                var value = dataObject.value;
+
+                if (typeof value == 'undefined') {
+                    value = viewObject.defaultValue;
+                }
+
+                return id + "(" + value + viewObject.unit + ")";
+            }).join(' ');
+        }
+    }, {
+        key: '*/filter/toString',
+        value: function filterToString($store, layer) {
+            var filterId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+            var onlyFilter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+            if (!layer) return '';
+            if (!filterId && !layer.filters) return '';
+
+            var obj = $store.read('/layer/toCSS', layer, true) || { filters: [] };
+            var filters = {};
+
+            if (!filterId) {
+                filters = layer.filters || {};
+            } else {
+                filters[filterId] = Object.assign({}, layer.filters[filterId] || {});
+                filters[filterId].checked = true;
+            }
+
+            if (onlyFilter) {
+                delete obj.width;
+                delete obj.height;
+                delete obj.left;
+                delete obj.top;
+            }
+
+            obj.filter = $store.read('/layer/make/filter', filters);
+
+            return Object.keys(obj).map(function (key) {
+                return key + ": " + obj[key] + ";";
+            }).join(' ');
+        }
+    }]);
+    return FilterManager;
+}(BaseModule);
+
+var ModuleList = [FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -14906,10 +15064,10 @@ var GradientSteps = function (_UIElement) {
     }, {
         key: 'getUnitName',
         value: function getUnitName(step) {
-            var unit = step.unit || UNIT_PERCENT;
+            var unit$$1 = step.unit || UNIT_PERCENT;
 
-            if ([UNIT_PX, UNIT_EM].includes(unit)) {
-                return unit;
+            if ([UNIT_PX, UNIT_EM].includes(unit$$1)) {
+                return unit$$1;
             }
 
             return UNIT_PERCENT;
@@ -14918,13 +15076,13 @@ var GradientSteps = function (_UIElement) {
         key: 'getUnitSelect',
         value: function getUnitSelect(step) {
 
-            var unit = step.unit || UNIT_PERCENT;
+            var unit$$1 = step.unit || UNIT_PERCENT;
 
-            if ([UNIT_PX, UNIT_EM].includes(unit) == false) {
-                unit = UNIT_PERCENT;
+            if ([UNIT_PX, UNIT_EM].includes(unit$$1) == false) {
+                unit$$1 = UNIT_PERCENT;
             }
 
-            return '\n        <select class=\'unit\' data-colorstep-id="' + step.id + '">\n            <option value=\'' + UNIT_PERCENT + '\' ' + (isPercent(unit) ? 'selected' : '') + '>%</option>\n            <option value=\'' + UNIT_PX + '\' ' + (isPX(unit) ? 'selected' : '') + '>px</option>\n            <option value=\'' + UNIT_EM + '\' ' + (isEM(unit) ? 'selected' : '') + '>em</option>\n        </select>\n        ';
+            return '\n        <select class=\'unit\' data-colorstep-id="' + step.id + '">\n            <option value=\'' + UNIT_PERCENT + '\' ' + (isPercent(unit$$1) ? 'selected' : '') + '>%</option>\n            <option value=\'' + UNIT_PX + '\' ' + (isPX(unit$$1) ? 'selected' : '') + '>px</option>\n            <option value=\'' + UNIT_EM + '\' ' + (isEM(unit$$1) ? 'selected' : '') + '>em</option>\n        </select>\n        ';
         }
     }, {
         key: 'getMaxValue',
@@ -15084,8 +15242,8 @@ var GradientSteps = function (_UIElement) {
                 var item = this.read('/item/get', this.currentStep.attr('id'));
 
                 if (item) {
-                    var color = this.read('/tool/get', 'color');
-                    var newValue = { id: item.id, color: color };
+                    var color$$1 = this.read('/tool/get', 'color');
+                    var newValue = { id: item.id, color: color$$1 };
 
                     this.commit(CHANGE_COLOR_STEP, newValue);
                     this.refresh();
@@ -15154,8 +15312,8 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: 'initColor',
-        value: function initColor(color) {
-            this.dispatch('/colorstep/initColor', color);
+        value: function initColor(color$$1) {
+            this.dispatch('/colorstep/initColor', color$$1);
         }
     }, {
         key: 'getSortedStepList',
@@ -15227,16 +15385,16 @@ var GradientSteps = function (_UIElement) {
         key: 'change $steps .guide-unit select.unit',
         value: function change$stepsGuideUnitSelectUnit(e) {
 
-            var unit = e.$delegateTarget.val();
+            var unit$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
             var step = this.read('/item/get', id);
 
             if (step) {
-                step.unit = unit;
+                step.unit = unit$$1;
 
                 var unitValue = this.read('/colorstep/unit/value', step, this.getMaxValue());
-                var newValue = _extends({ id: step.id, unit: unit }, unitValue);
+                var newValue = _extends({ id: step.id, unit: unit$$1 }, unitValue);
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
 
@@ -15437,8 +15595,8 @@ var ColorSteps = function (_BasePropertyItem) {
     return ColorSteps;
 }(BasePropertyItem);
 
-function checkPxEm(unit) {
-    return [UNIT_PX, UNIT_EM].includes(unit);
+function checkPxEm(unit$$1) {
+    return [UNIT_PX, UNIT_EM].includes(unit$$1);
 }
 
 var GradientInfo = function (_UIElement) {
@@ -15457,10 +15615,10 @@ var GradientInfo = function (_UIElement) {
     }, {
         key: "getUnitName",
         value: function getUnitName(step) {
-            var unit = step.unit || UNIT_PERCENT;
+            var unit$$1 = step.unit || UNIT_PERCENT;
 
-            if (checkPxEm(unit)) {
-                return unit;
+            if (checkPxEm(unit$$1)) {
+                return unit$$1;
             }
 
             return 'percent';
@@ -15469,13 +15627,13 @@ var GradientInfo = function (_UIElement) {
         key: "getUnitSelect",
         value: function getUnitSelect(step) {
 
-            var unit = step.unit || UNIT_PERCENT;
+            var unit$$1 = step.unit || UNIT_PERCENT;
 
-            if (checkPxEm(unit) == false) {
-                unit = UNIT_PERCENT;
+            if (checkPxEm(unit$$1) == false) {
+                unit$$1 = UNIT_PERCENT;
             }
 
-            return "\n        <select class='unit' colorstep-id=\"" + step.id + "\">\n            <option value='" + UNIT_PERCENT + "' " + (isPercent(unit) ? 'selected' : '') + ">%</option>\n            <option value='" + UNIT_PX + "' " + (isPX(unit) ? 'selected' : '') + ">px</option>\n            <option value='" + UNIT_EM + "' " + (isEM(unit) ? 'selected' : '') + ">em</option>\n        </select>\n        ";
+            return "\n        <select class='unit' colorstep-id=\"" + step.id + "\">\n            <option value='" + UNIT_PERCENT + "' " + (isPercent(unit$$1) ? 'selected' : '') + ">%</option>\n            <option value='" + UNIT_PX + "' " + (isPX(unit$$1) ? 'selected' : '') + ">px</option>\n            <option value='" + UNIT_EM + "' " + (isEM(unit$$1) ? 'selected' : '') + ">em</option>\n        </select>\n        ";
         }
     }, {
         key: "getUnitValue",
@@ -15540,8 +15698,8 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: "initColor",
-        value: function initColor(color) {
-            this.dispatch('/colorstep/initColor', color);
+        value: function initColor(color$$1) {
+            this.dispatch('/colorstep/initColor', color$$1);
         }
     }, {
         key: "selectStep",
@@ -15575,17 +15733,17 @@ var GradientInfo = function (_UIElement) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
-            var color = e.$delegateTarget.val();
+            var color$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.read('/item/get', id);
 
             if (step) {
-                var newValue = { id: step.id, color: color };
+                var newValue = { id: step.id, color: color$$1 };
                 this.commit(CHANGE_COLOR_STEP, newValue);
 
                 this.refs.$stepList.$(".color-view-item[colorstep-id=\"" + step.id + "\"]").css({
-                    'background-color': color
+                    'background-color': color$$1
                 });
             }
         }
@@ -15598,17 +15756,17 @@ var GradientInfo = function (_UIElement) {
         key: 'change $colorsteps select.unit',
         value: function change$colorstepsSelectUnit(e) {
 
-            var unit = e.$delegateTarget.val();
+            var unit$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.read('/item/get', id);
 
             if (step) {
-                var newValue = { id: step.id, unit: unit };
+                var newValue = { id: step.id, unit: unit$$1 };
                 this.commit(CHANGE_COLOR_STEP, newValue);
 
                 var $parent = e.$delegateTarget.parent();
-                $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(unit);
+                $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(unit$$1);
             }
         }
     }, {
@@ -15695,7 +15853,6 @@ var GradientInfo = function (_UIElement) {
             var item = this.read('/item/get', id);
 
             if (item.id) {
-                item.cut = !item.cut;
                 this.commit(CHANGE_COLOR_STEP, { id: item.id, cut: !item.cut });
                 this.refresh();
             }
@@ -16100,10 +16257,10 @@ var UnitRange = function (_UIElement) {
     }, {
         key: 'click $multiValue div',
         value: function click$multiValueDiv(e) {
-            var unit = e.$delegateTarget.attr('unit');
+            var unit$$1 = e.$delegateTarget.attr('unit');
             var value = e.$delegateTarget.attr('value');
 
-            this.selectUnit(unit, value);
+            this.selectUnit(unit$$1, value);
         }
     }, {
         key: "refresh",
@@ -16111,35 +16268,35 @@ var UnitRange = function (_UIElement) {
             var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
             value = (value || '') + '';
-            var unit = UNIT_PX;
+            var unit$$1 = UNIT_PX;
             if (value.includes(UNIT_PERCENT)) {
-                unit = UNIT_PERCENT;
+                unit$$1 = UNIT_PERCENT;
             } else if (value.includes(UNIT_EM)) {
-                unit = UNIT_EM;
+                unit$$1 = UNIT_EM;
             }
 
             value = position_list.includes(value) ? "" : parseParamNumber$2(value);
 
-            this.selectUnit(unit, value);
+            this.selectUnit(unit$$1, value);
         }
     }, {
         key: "initializeRangeMax",
-        value: function initializeRangeMax(unit) {
+        value: function initializeRangeMax(unit$$1) {
 
-            if (isPercent(unit)) {
+            if (isPercent(unit$$1)) {
                 var max = isPercent(this.props.unit) ? this.props.max : 300;
                 this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 0.01);
                 this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 0.01);
-            } else if (isPX(unit)) {
+            } else if (isPX(unit$$1)) {
                 var max = isPX(this.props.unit) ? this.props.max : 1000;
 
                 this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 1);
                 this.refs.$number.attr('max', max);
                 this.refs.$number.attr('step', 1);
-            } else if (isEM(unit)) {
+            } else if (isEM(unit$$1)) {
                 var max = isEM(this.props.unit) ? this.props.max : 300;
                 this.refs.$range.attr('max', max);
                 this.refs.$range.attr('step', 0.01);
@@ -16149,8 +16306,8 @@ var UnitRange = function (_UIElement) {
         }
     }, {
         key: "selectUnit",
-        value: function selectUnit(unit, value) {
-            this.unit = unit;
+        value: function selectUnit(unit$$1, value) {
+            this.unit = unit$$1;
             this.value = position_list.includes(value) ? "" : value;
 
             this.refs.$range.val(this.value);
@@ -16168,10 +16325,10 @@ var UnitRange = function (_UIElement) {
     }, {
         key: "updateRange",
         value: function updateRange() {
-            var unit = this.unit;
-            var px = isPX(unit) ? this.refs.$range.val() : undefined;
-            var percent$$1 = isPercent(unit) ? this.refs.$range.val() : undefined;
-            var em$$1 = isEM(unit) ? this.refs.$range.val() : undefined;
+            var unit$$1 = this.unit;
+            var px = isPX(unit$$1) ? this.refs.$range.val() : undefined;
+            var percent$$1 = isPercent(unit$$1) ? this.refs.$range.val() : undefined;
+            var em$$1 = isEM(unit$$1) ? this.refs.$range.val() : undefined;
             var maxValue = this.maxValueFunction();
 
             if (px) {
@@ -16699,7 +16856,7 @@ var FilterList$1 = function (_BasePropertyItem) {
         }
     }, {
         key: "makeInputItem",
-        value: function makeInputItem(id, viewObject, dataObject) {
+        value: function makeInputItem(viewObject, dataObject) {
 
             var value = dataObject.value;
 
@@ -16708,10 +16865,21 @@ var FilterList$1 = function (_BasePropertyItem) {
             }
 
             if (viewObject.type == 'range') {
-                return "\n                <div>\n                    <span class='title'>\n                        <label><input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-filter-id=\"" + id + "\" /> " + viewObject.title + " </label>\n                    </span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" data-filter-id=\"" + id + "\" /></span>\n                    <span class='input'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" data-filter-id=\"" + id + "\"/></span>\n                    <span class='unit'>" + viewObject.unit + "</span>\n                </div>\n            ";
+                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-filter-id=\"" + dataObject.id + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + dataObject.type + "Range\" data-filter-type=\"" + dataObject.type + "\" data-filter-id=\"" + dataObject.id + "\" /></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + dataObject.type + "Number\" data-filter-type=\"" + dataObject.type + "\" data-filter-id=\"" + dataObject.id + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
+            } else if (viewObject.type == 'multi') {
+                return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-filter-id=\"" + dataObject.id + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + viewObject.items.map(function (it) {
+                    var value = dataObject[it.key] || it.defaultValue;
+
+                    if (it.unit == UNIT_COLOR) {
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
+                    } else {
+
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + it.key + "Range\" data-filter-type=\"" + it.key + "\" data-filter-id=\"" + dataObject.id + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\"  ref=\"" + it.key + "Number\" data-filter-type=\"" + it.key + "\" data-filter-id=\"" + dataObject.id + "\"/></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
+                    }
+                }).join('') + "\n            </div>\n            ";
             }
 
-            return "<div>\n\n        </div>";
+            return "<div></div>";
         }
     }, {
         key: 'load $filterList',
@@ -16722,14 +16890,13 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             if (!layer) return '';
 
-            var defaultFilterList = this.read('/layer/filter/list');
-            var filters = this.getFilterList();
+            var filters = this.read('/filter/list', layer.id);
 
             return filters.map(function (f) {
-                var viewObject = filters[f.type];
+                var viewObject = _this2.read('/filter/get', f.type);
                 var dataObject = f || {};
 
-                return "\n                <div class='filter-item'>\n                    <div class=\"filter-item-input\">\n                        " + _this2.makeInputItem(id, viewObject, dataObject) + "\n                    </div>\n                </div>";
+                return "\n                <div class='filter-item'>\n                    <div class=\"filter-item-input\">\n                        " + _this2.makeInputItem(viewObject, dataObject) + "\n                    </div>\n                </div>";
             });
         }
     }, {
@@ -16755,71 +16922,38 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             if (!layer) return [];
 
-            var filters = layer.filters || [];
-
-            if (Array.isArray(filters) == false) {
-                return [];
-            }
-
-            return filters;
+            return this.read('/item/map/filter/children', layer.id);
         }
     }, {
         key: 'click $filterList input[type=checkbox]',
-        value: function click$filterListInputTypeCheckbox(e) {
-            var _this3 = this;
-
-            var filterId = e.$delegateTarget.attr('data-filter-id');
-
-            this.read('/selection/current/layer', function (layer) {
-                var newValue = { id: layer.id, filters: layer.filters || [] };
-                if (!newValue.filters[filterId]) {
-                    newValue.filters[filterId] = { checked: false };
-                }
-
-                newValue.filters[filterId].checked = e.$delegateTarget.checked();
-
-                _this3.commit(CHANGE_LAYER_FILTER, newValue);
-                _this3.refreshFilterList();
-            });
-        }
+        value: function click$filterListInputTypeCheckbox(e) {}
     }, {
         key: 'change:input $filterList input[type=range]',
         value: function changeInput$filterListInputTypeRange(e) {
-            var _this4 = this;
+            var $range = e.$delegateTarget;
+            var type = $range.attr('data-filter-type');
 
-            var filterId = e.$delegateTarget.attr('data-filter-id');
-
-            this.read('/selection/current/layer', function (layer) {
-                var newValue = { id: layer.id, filters: layer.filters || [] };
-
-                if (!newValue.filters[filterId]) {
-                    newValue.filters[filterId] = {};
-                }
-
-                newValue.filters[filterId].value = e.$delegateTarget.val();
-
-                _this4.commit(CHANGE_LAYER_FILTER, newValue);
-                _this4.refreshFilter(newValue);
-            });
+            this.refs[type + "Number"].val($range.val());
         }
     }, {
         key: 'input $filterList input[type=number]',
         value: function input$filterListInputTypeNumber(e) {
-            var _this5 = this;
+            var $range = e.$delegateTarget;
+            var type = $range.attr('data-filter-type');
 
-            var filterId = e.$delegateTarget.attr('data-filter-id');
-
-            this.read('/selection/current/layer', function (layer) {
-
-                var newValue = { id: layer.id, filters: layer.filters || [] };
-                newValue.filters[filterId].value = e.$delegateTarget.val();
-
-                if (!newValue.filters[filterId]) {
-                    newValue.filters[filterId] = {};
-                }
-
-                _this5.commit(CHANGE_LAYER_FILTER, newValue);
-            });
+            this.refs[type + "Range"].val($range.val());
+        }
+    }, {
+        key: 'click $el .drop-shadow',
+        value: function click$elDropShadow(e) {
+            var color$$1 = e.$delegateTarget.css('background-color');
+            this.emit('selectFillColor', color$$1, this.updateDropShadowColor.bind(this));
+        }
+    }, {
+        key: "updateDropShadowColor",
+        value: function updateDropShadowColor(color$$1) {
+            this.refs.$dropShadowColor.css('background-color', color$$1);
+            this.refs.$dropShadowColorText.text(color$$1);
         }
     }]);
     return FilterList;
@@ -17966,6 +18100,8 @@ var FillColorPicker = function (_UIElement) {
         value: function changeColor(color) {
             if (this.changeColorId) {
                 this.commit(this.eventType, { id: this.changeColorId, color: color });
+            } else {
+                this.callback(color);
             }
         }
     }, {
@@ -17974,6 +18110,20 @@ var FillColorPicker = function (_UIElement) {
             this.changeColorId = id;
             this.itemType = this.read('/item/get', id).itemType;
             this.eventType = eventType;
+
+            this.color = null;
+            this.callback = null;
+
+            this.refresh();
+        }
+    }, {
+        key: '@selectFillColor',
+        value: function selectFillColor(color, callback) {
+            this.changeColorId = null;
+            this.itemType = null;
+            this.eventType = null;
+            this.color = color;
+            this.callback = callback;
 
             this.refresh();
         }
@@ -17988,6 +18138,8 @@ var FillColorPicker = function (_UIElement) {
             if (this.changeColorId) {
                 var item = this.read('/item/get', this.changeColorId);
                 this.colorPicker.initColorWithoutChangeEvent(item.color);
+            } else if (this.callback) {
+                this.colorPicker.initColorWithoutChangeEvent(this.color);
             }
         }
     }]);
@@ -18027,7 +18179,7 @@ var BackgroundInfo = function (_BasePropertyItem) {
     createClass(BackgroundInfo, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item background-info show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Gradient</label>\n                    <div>\n                        <div class="gradient" ref="$typeView"></div>\n                        <label ref="$type"></label>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item background-info show\'>\n            <div class=\'title\' ref="$title">Background Image</div>        \n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Gradient</label>\n                    <div>\n                        <div class="gradient" ref="$typeView"></div>\n                        <label ref="$type"></label>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'isShow',
@@ -22618,6 +22770,10 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         key: 'pointermove document | debounce(10) | isDownCheck',
         value: function pointermoveDocumentDebounce10IsDownCheck(e) {
             this.targetXY = e.xy;
+
+            if (!this.xy) {
+                return;
+            }
 
             this.dx = e.xy.x - this.xy.x;
             this.dy = e.xy.y - this.xy.y;

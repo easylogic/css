@@ -5,7 +5,6 @@ import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
 import { UNIT_PX, UNIT_PERCENT, percent } from "../../util/css/types";
 const filterInfo = {
-
     'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
     'grayscale' : { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
     'hue-rotate' : { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
@@ -28,6 +27,8 @@ const filterInfo = {
     'sepia' : { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
 }
 
+const filterKeys = Object.keys(filterInfo);
+
 export default class LayerManager extends BaseModule {
    
 
@@ -38,6 +39,10 @@ export default class LayerManager extends BaseModule {
         results = layerList.map(it => Object.assign({}, it))
 
         return results;
+    }
+
+    '*/layer/filter/keys' ($store) {
+        return filterKeys;
     }
 
     '*/layer/filter/list' ($store) {

@@ -1,6 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { unitString, UNIT_COLOR } from "../../../../../util/css/types";
 
 export default class FilterList extends BasePropertyItem {
 
@@ -19,7 +20,7 @@ export default class FilterList extends BasePropertyItem {
         `
     }
 
-    makeInputItem (id, viewObject, dataObject) {
+    makeInputItem (viewObject, dataObject) {
 
         var value = dataObject.value; 
 
@@ -29,20 +30,58 @@ export default class FilterList extends BasePropertyItem {
 
         if (viewObject.type == 'range') {
             return `
-                <div>
-                    <span class='title'>
-                        <label><input type="checkbox" ${dataObject.checked ? `checked="checked"` : ''} data-filter-id="${id}" /> ${viewObject.title} </label>
+                <div class='filter'>
+                    <span class="area"></span>                
+                    <span class="checkbox">
+                        <input type="checkbox" ${dataObject.checked ? `checked="checked"` : ''} data-filter-id="${dataObject.id}" />
                     </span>
-                    <span class='range'><input type="range" min="${viewObject.min}" max="${viewObject.max}" step="${viewObject.step}" value="${value}" data-filter-id="${id}" /></span>
-                    <span class='input'><input type="number" min="${viewObject.min}" max="${viewObject.max}" step="${viewObject.step}" value="${value}" data-filter-id="${id}"/></span>
-                    <span class='unit'>${viewObject.unit}</span>
+                    <span class='title' draggable="true">${viewObject.title}</span>
+                    <span class='range'><input type="range" min="${viewObject.min}" max="${viewObject.max}" step="${viewObject.step}" value="${value}" ref="${dataObject.type}Range" data-filter-type="${dataObject.type}" data-filter-id="${dataObject.id}" /></span>
+                    <span class='input-value'><input type="number" min="${viewObject.min}" max="${viewObject.max}" step="${viewObject.step}" value="${value}" ref="${dataObject.type}Number" data-filter-type="${dataObject.type}" data-filter-id="${dataObject.id}"/></span>
+                    <span class='unit'>${unitString(viewObject.unit)}</span>
                 </div>
+            `
+        } else if (viewObject.type == 'multi') {
+            return `
+            <div class='filter'>
+                <span class="area"></span>
+                <span class="checkbox">
+                    <input type="checkbox" ${dataObject.checked ? `checked="checked"` : ''} data-filter-id="${dataObject.id}" />
+                </span>
+                <span class='title long' draggable="true">${viewObject.title}</span>
+            </div>
+            <div class='items'>
+                ${viewObject.items.map(it => {
+                    var value = dataObject[it.key] || it.defaultValue;
+
+                    if (it.unit == UNIT_COLOR) {
+                        return `
+                        <div>
+                            <span class='title'>${it.title}</span>
+                            <span class='color'>
+                                <span class="color-view drop-shadow" ref="$dropShadowColor" style="background-color: ${value}" ></span>
+                                <span class="color-text" ref="$dropShadowColorText">${value}</span>
+                            </span>
+                        </div>
+                        `
+                    } else {
+
+                        return `
+                        <div>
+                            <span class='title'>${it.title}</span>
+                            <span class='range'><input type="range" min="${it.min}" max="${it.max}" step="${it.step}" value="${value}" ref="${it.key}Range" data-filter-type="${it.key}" data-filter-id="${dataObject.id}" /></span>
+                            <span class='input-value'><input type="number" min="${it.min}" max="${it.max}" step="${it.step}" value="${value}"  ref="${it.key}Number" data-filter-type="${it.key}" data-filter-id="${dataObject.id}"/></span>
+                            <span class='unit'>${unitString(it.unit)}</span>
+                        </div>
+                        `
+                    }
+
+                }).join('')}
+            </div>
             `
         }
 
-        return `<div>
-
-        </div>`
+        return `<div></div>`
     }
 
     'load $filterList' () {
@@ -51,18 +90,16 @@ export default class FilterList extends BasePropertyItem {
 
         if (!layer) return '' 
 
-        var defaultFilterList = this.read('/layer/filter/list') 
-        var filters = this.getFilterList();
-
+        var filters = this.read('/filter/list', layer.id) 
 
         return filters.map(f => {
-            var viewObject = filters[f.type];
+            var viewObject = this.read('/filter/get', f.type);
             var dataObject = f || {};
  
             return `
                 <div class='filter-item'>
                     <div class="filter-item-input">
-                        ${this.makeInputItem(id, viewObject, dataObject)}
+                        ${this.makeInputItem(viewObject, dataObject)}
                     </div>
                 </div>`
         })
@@ -90,64 +127,36 @@ export default class FilterList extends BasePropertyItem {
 
         if (!layer) return []
 
-        var filters = layer.filters || []
-
-        if (Array.isArray(filters) == false) {
-            return [];
-        }
-
-        return filters;
+        return this.read('/item/map/filter/children', layer.id);
     }
 
     'click $filterList input[type=checkbox]' (e) {
-        var filterId = e.$delegateTarget.attr('data-filter-id');
 
-        this.read('/selection/current/layer', (layer) => {
-            var newValue = {id: layer.id, filters: layer.filters || []}
-            if (!newValue.filters[filterId]) {
-                newValue.filters[filterId] = { checked: false}
-            }
-
-            newValue.filters[filterId].checked = e.$delegateTarget.checked();
-
-            this.commit(CHANGE_LAYER_FILTER, newValue);
-            this.refreshFilterList()
-        })
     }
 
     'change:input $filterList input[type=range]' (e) {
-        var filterId = e.$delegateTarget.attr('data-filter-id');
+        var $range = e.$delegateTarget;
+        var type = $range.attr('data-filter-type');
 
-        this.read('/selection/current/layer', (layer) => {
-            var newValue = {id: layer.id, filters: layer.filters || []}
+        this.refs[`${type}Number`].val($range.val());
 
-
-            if (!newValue.filters[filterId]) {
-                newValue.filters[filterId] = {}
-            }
-
-            newValue.filters[filterId].value = e.$delegateTarget.val();
-
-            this.commit(CHANGE_LAYER_FILTER, newValue);
-            this.refreshFilter(newValue);
-        })
     }
 
     'input $filterList input[type=number]' (e) {
-        var filterId = e.$delegateTarget.attr('data-filter-id');
+        var $range = e.$delegateTarget;
+        var type = $range.attr('data-filter-type');
 
-        this.read('/selection/current/layer', (layer) => {
-
-            var newValue = {id: layer.id, filters: layer.filters || []}
-            newValue.filters[filterId].value = e.$delegateTarget.val();
-
-
-            if (!newValue.filters[filterId]) {
-                newValue.filters[filterId] = {}
-            }
-
-            this.commit(CHANGE_LAYER_FILTER, newValue);
-        })
+        this.refs[`${type}Range`].val($range.val());
     }    
+
+    'click $el .drop-shadow' (e) {
+        var color = e.$delegateTarget.css('background-color');
+        this.emit('selectFillColor', color, this.updateDropShadowColor.bind(this));
+    } 
+
+    updateDropShadowColor (color) {
+        this.refs.$dropShadowColor.css('background-color', color);
+        this.refs.$dropShadowColorText.text(color);
+    }
 
 }

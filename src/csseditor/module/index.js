@@ -18,8 +18,10 @@ import OrderingManager from "./OrderingManager";
 import MatrixManager from "./MatrixManager";
 import BoxShadowManager from "./BoxShadowManager";
 import TextShadowManager from "./TextShadowManager";
+import FilterManager from "./FilterManager";
 
 export default [  
+    FilterManager,
     TextShadowManager,
     BoxShadowManager,
     MatrixManager,

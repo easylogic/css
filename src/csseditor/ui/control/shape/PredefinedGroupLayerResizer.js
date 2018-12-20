@@ -369,6 +369,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     'pointermove document | debounce(10) | isDownCheck' (e) {
         this.targetXY = e.xy; 
 
+        if (!this.xy) {
+            return; 
+        }
+
         this.dx = e.xy.x - this.xy.x;
         this.dy = e.xy.y - this.xy.y;
 
