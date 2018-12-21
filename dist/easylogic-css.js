@@ -3429,10 +3429,10 @@ var UNIT_COLOR = 'color';
 var UNIT_PX_STRING = 'px';
 var UNIT_EM_STRING = 'em';
 var UNIT_PERCENT_STRING = '%';
-var UNIT_DEG_STRING = '°';
+
 var UNIT_COLOR_STRING = '';
 
-var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG_STRING), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
+var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
 
 function px$1(value) {
     return value + UNIT_PX_STRING;
@@ -9821,8 +9821,6 @@ var ITEM_TYPE_LAYER = 'layer';
 var ITEM_TYPE_CIRCLE = 'circle';
 var ITEM_TYPE_GROUP = 'group';
 var ITEM_TYPE_IMAGE = 'image';
-var ITEM_TYPE_FILTER = 'filter';
-var ITEM_TYPE_BACKDROP_FILTER = 'backdrop-filter';
 var ITEM_TYPE_BOXSHADOW = 'boxshadow';
 var ITEM_TYPE_TEXTSHADOW$1 = 'textshadow';
 var ITEM_TYPE_COLORSTEP = 'colorstep';
@@ -9836,7 +9834,49 @@ var PAGE_DEFAULT_OBJECT = {
     height: '300px'
 };
 
-var LAYER_DEFAULT_OBJECT = {
+var FILTER_DEFAULT_OBJECT = {
+    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'filterDropshadow': { index: 60 },
+    'filterDropshadowOffsetX': { value: 10, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { value: 20, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
+    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
+    return typeof FILTER_DEFAULT_OBJECT[key].index != 'undefined';
+});
+
+var BACKDROP_DEFAULT_OBJECT = {
+    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'backdropDropshadow': { index: 60 },
+    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
+    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
+    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
+    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
+    return typeof BACKDROP_DEFAULT_OBJECT[key].index != 'undefined';
+});
+
+var LAYER_DEFAULT_OBJECT = _extends({
     itemType: ITEM_TYPE_LAYER,
     name: '',
     index: 0,
@@ -9862,9 +9902,8 @@ var LAYER_DEFAULT_OBJECT = {
     wordWrap: 'break-word',
     lineHeight: 1.6,
     clipText: false,
-    content: '',
-    filters: []
-};
+    content: ''
+}, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
 
 var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
     borderRadius: '100px',
@@ -9915,23 +9954,6 @@ var BOXSHADOW_DEFAULT_OBJECT = {
     blurRadius: 0,
     spreadRadius: 0,
     color: 'gray'
-};
-
-var FILTER_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_FILTER,
-    type: 'blur',
-    checked: false,
-    value: 0,
-    color: 'rgba(0, 0, 0, 0)',
-    offsetX: 0,
-    offsetY: 0,
-    blurRadius: 0
-};
-
-var BACKDROPFILTER_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_BACKDROP_FILTER,
-    type: 'blur',
-    value: 0
 };
 
 var TEXTSHADOW_DEFAULT_OBJECT = {
@@ -10770,25 +10792,6 @@ var layerList = [
     // sample
 ];
 
-var filterInfo = {
-    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
-    'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'hue-rotate': { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'invert': { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'drop-shadow': {
-        title: 'Drop Shadow',
-        type: 'multi',
-        items: [{ title: 'Offset X', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Offset Y', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Spread Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0 }, { title: 'Color', type: 'color', defaultValue: 'black' }]
-    },
-    'opacity': { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
-};
-
-var filterKeys$1 = Object.keys(filterInfo);
-
 var LayerManager = function (_BaseModule) {
     inherits(LayerManager, _BaseModule);
 
@@ -10807,21 +10810,6 @@ var LayerManager = function (_BaseModule) {
             });
 
             return results;
-        }
-    }, {
-        key: '*/layer/filter/keys',
-        value: function layerFilterKeys($store) {
-            return filterKeys$1;
-        }
-    }, {
-        key: '*/layer/filter/list',
-        value: function layerFilterList($store) {
-            return filterInfo;
-        }
-    }, {
-        key: '*/layer/get/filter',
-        value: function layerGetFilter($store, id) {
-            return filterInfo[id];
         }
     }, {
         key: '*/layer/toString',
@@ -10864,7 +10852,7 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: '*/layer/make/clip-path',
         value: function layerMakeClipPath($store, layer) {
-
+            var clipPath = null;
             if (layer.clipPathType == 'circle') {
 
                 if (!layer.clipPathCenter) return;
@@ -10882,73 +10870,28 @@ var LayerManager = function (_BaseModule) {
                 var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
                 var radiusPercent = percent(Math.floor(radiusSize / dist * 100));
 
-                return "circle(" + radiusPercent + " at " + placeCenter.join(' ') + ")";
+                clipPath = "circle(" + radiusPercent + " at " + placeCenter.join(' ') + ")";
             } else if (layer.clipPathType == 'none') {
-                return 'none';
+                clipPath = 'none';
             } else {
                 if (layer.clipPathSvg) {
-                    return "url(#clippath-" + layer.id + ")";
+                    clipPath = "url(#clippath-" + layer.id + ")";
                 }
             }
+
+            return {
+                'clip-path': clipPath
+            };
         }
     }, {
         key: '*/layer/make/filter',
-        value: function layerMakeFilter($store, filters) {
-            var defaultDataObject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-
-            if (!filters) return null;
-            if (!Object.keys(filters).length) return null;
-
-            return Object.keys(filters).map(function (id) {
-                var dataObject = filters[id] || defaultDataObject;
-
-                // 적용하는 필터가 아니면 제외 한다. 
-                if (!dataObject.checked) return '';
-
-                var viewObject = $store.read('/layer/get/filter', id);
-
-                var value = dataObject.value;
-
-                if (typeof value == 'undefined') {
-                    value = viewObject.defaultValue;
-                }
-
-                return id + "(" + value + viewObject.unit + ")";
-            }).join(' ');
+        value: function layerMakeFilter($store, layer) {
+            return $store.read('/filter/toCSS', layer);
         }
     }, {
-        key: '*/layer/filter/toString',
-        value: function layerFilterToString($store, layer) {
-            var filterId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-            var onlyFilter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-
-            if (!layer) return '';
-            if (!filterId && !layer.filters) return '';
-
-            var obj = $store.read('/layer/toCSS', layer, true) || { filters: [] };
-            var filters = {};
-
-            if (!filterId) {
-                filters = layer.filters || {};
-            } else {
-                filters[filterId] = Object.assign({}, layer.filters[filterId] || {});
-                filters[filterId].checked = true;
-            }
-
-            if (onlyFilter) {
-                delete obj.width;
-                delete obj.height;
-                delete obj.left;
-                delete obj.top;
-            }
-
-            obj.filter = $store.read('/layer/make/filter', filters);
-
-            return Object.keys(obj).map(function (key) {
-                return key + ": " + obj[key] + ";";
-            }).join(' ');
+        key: '*/layer/make/backdrop',
+        value: function layerMakeBackdrop($store, layer) {
+            return $store.read('/backdrop/toCSS', layer);
         }
     }, {
         key: '*/layer/toImageCSS',
@@ -11127,7 +11070,9 @@ var LayerManager = function (_BaseModule) {
             if (layer.translate3dX || layer.translate3dY || layer.translate3dZ) {
                 results.push("translate3d( " + (layer.translate3dX || 0) + "px, " + (layer.translate3dY || 0) + "px, " + (layer.translate3dZ || 0) + "px)");
             }
-            return results.length ? results.join(' ') : 'none';
+            return {
+                transform: results.length ? results.join(' ') : 'none'
+            };
         }
     }, {
         key: '*/layer/toStringClipPath',
@@ -11178,8 +11123,8 @@ var LayerManager = function (_BaseModule) {
             return [];
         }
     }, {
-        key: '*/layer/get/border-radius',
-        value: function layerGetBorderRadius($store, layer) {
+        key: '*/layer/make/border-radius',
+        value: function layerMakeBorderRadius($store, layer) {
             var css = {};
             var isFixedRadius = this.isFixedRadius(layer);
             if (isFixedRadius.length) {
@@ -11228,13 +11173,7 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            Object.assign(css, $store.read('/layer/get/border-radius', layer));
-
-            css['transform'] = $store.read('/layer/make/transform', layer);
-            css['filter'] = $store.read('/layer/make/filter', layer.filters);
-            css['clip-path'] = $store.read('/layer/make/clip-path', layer);
-
-            var results = Object.assign(css, $store.read('/layer/make/font', layer), $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport));
+            var results = Object.assign(css, $store.read('/layer/make/border-radius', layer), $store.read('/layer/make/transform', layer), $store.read('/layer/make/clip-path', layer), $store.read('/layer/make/filter', layer), $store.read('/layer/make/backdrop', layer), $store.read('/layer/make/font', layer), $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), image ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport));
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -11271,13 +11210,11 @@ var LayerManager = function (_BaseModule) {
                 css['-webkit-background-clip'] = layer.backgroundClip || "";
             }
 
-            Object.assign(css, $store.read('/layer/get/border-radius', layer));
+            if (layer.opacity) {
+                css['opacity'] = layer.opacity;
+            }
 
-            css['transform'] = $store.read('/layer/make/transform', layer);
-            css['filter'] = $store.read('/layer/make/filter', layer.filters);
-            css['clip-path'] = $store.read('/layer/make/clip-path', layer);
-
-            var results = Object.assign(css, $store.read('/layer/make/font', layer), $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), $store.read('/layer/cache/toImageCSS', layer.images));
+            var results = Object.assign(css, $store.read('/layer/make/border-radius', layer), $store.read('/layer/make/transform', layer), $store.read('/layer/make/clip-path', layer), $store.read('/layer/make/filter', layer), $store.read('/layer/make/backdrop', layer), $store.read('/layer/make/font', layer), $store.read('/layer/make/box-shadow', layer), $store.read('/layer/make/text-shadow', layer), $store.read('/layer/cache/toImageCSS', layer.images));
 
             var realCSS = {};
             Object.keys(results).filter(function (key) {
@@ -11873,13 +11810,6 @@ var ItemManager = function (_BaseModule) {
             return $store.read('/item/create/object', obj, TEXTSHADOW_DEFAULT_OBJECT);
         }
     }, {
-        key: '*/item/create/filter',
-        value: function itemCreateFilter($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('/item/create/object', obj, FILTER_DEFAULT_OBJECT);
-        }
-    }, {
         key: '*/item/create/backdrop-filter',
         value: function itemCreateBackdropFilter($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -12073,20 +12003,6 @@ var ItemManager = function (_BaseModule) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read('/item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
-        }
-    }, {
-        key: '*/item/map/filter/children',
-        value: function itemMapFilterChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_FILTER, callback);
-        }
-    }, {
-        key: '*/item/map/backdrop-filter/children',
-        value: function itemMapBackdropFilterChildren($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTIONs;
-
-            return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BACKDROP_FILTER, callback);
         }
     }, {
         key: '*/item/filter/children',
@@ -13951,7 +13867,7 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: '*/selection/is/backdrop-filter',
         value: function selectionIsBackdropFilter($store, type) {
-            return $store.read('/selection/is/item', ITEM_TYPE_BACKDROP_FILTER);
+            return $store.read('/selection/is/item', ITEM_TYPE_BACKDROP);
         }
     }, {
         key: '*/selection/is/one',
@@ -14552,36 +14468,24 @@ var TextShadowManager = function (_BaseModule) {
     return TextShadowManager;
 }(BaseModule);
 
-var filterInfo$1 = {
-    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
-    'grayscale': { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'hue-rotate': { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'invert': { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'drop-shadow': {
-        type: 'multi',
-        title: 'Drop Shadow',
-        offsetX: 0,
-        offsetY: 0,
-        blurRadius: 0,
-        color: 'rgba(0, 0, 0, 0)',
-        items: [{ title: 'Offset X', type: 'range', key: 'offsetX', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX }, { title: 'Offset Y', type: 'range', key: 'offsetY', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX }, { title: 'Blur Radius', type: 'range', key: 'blurRadius', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX }, { title: 'Color', type: 'color', key: 'color', defaultValue: 'black', unit: UNIT_COLOR }]
-    },
-    'opacity': { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'saturate': { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'sepia': { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
+var filterInfo = {
+    'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'filterGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'filterHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'filterInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'filterBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
+    'filterDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
+    'filterOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
 };
 
-var defaultFilterList = Object.keys(filterInfo$1).map(function (type, index) {
-    return {
-        itemType: ITEM_TYPE_FILTER,
-        index: index * 100,
-        type: type,
-        id: uuid(),
-        value: filterInfo$1[type].defaultValue
-    };
-});
+var DROP_SHADOW_LIST = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
 
 var FilterManager = function (_BaseModule) {
     inherits(FilterManager, _BaseModule);
@@ -14592,100 +14496,192 @@ var FilterManager = function (_BaseModule) {
     }
 
     createClass(FilterManager, [{
-        key: '*/filter/keys',
-        value: function (_filterKeys) {
-            function filterKeys(_x) {
-                return _filterKeys.apply(this, arguments);
-            }
-
-            filterKeys.toString = function () {
-                return _filterKeys.toString();
-            };
-
-            return filterKeys;
-        }(function ($store) {
-            return filterKeys;
-        })
-    }, {
         key: '*/filter/get',
         value: function filterGet($store, id) {
-            return filterInfo$1[id];
+            return filterInfo[id];
         }
     }, {
         key: '*/filter/list',
         value: function filterList($store, layerId) {
-            var list = $store.read('/item/map/filter/children', layerId);
+            var layer = $store.read('/item/get', layerId);
+            var realFilters = {};
 
-            if (list.length == 0) {
-                return defaultFilterList;
-            }
+            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
 
-            return list;
+            realFilters = Object.assign({}, $store.read('/clone', FILTER_DEFAULT_OBJECT), realFilters);
+
+            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            return filterList.map(function (it) {
+                return it.key;
+            });
         }
     }, {
         key: '*/filter/toCSS',
-        value: function filterToCSS($store, filters) {
-            var defaultDataObject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        value: function filterToCSS($store, layer) {
+            var realFilters = {};
 
+            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
 
-            if (!filters) return null;
-            if (!Object.keys(filters).length) return null;
+            realFilters = Object.assign({}, $store.read('/clone', FILTER_DEFAULT_OBJECT), realFilters);
 
-            return Object.keys(filters).map(function (id) {
-                var dataObject = filters[id] || defaultDataObject;
+            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
 
-                // 적용하는 필터가 아니면 제외 한다. 
-                if (!dataObject.checked) return '';
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
 
-                var viewObject = $store.read('/layer/get/filter', id);
+            var filterString = filterList.filter(function (it) {
+                return it.checked;
+            }).map(function (it) {
+                var viewObject = filterInfo[it.key];
+                if (it.key == 'filterDropshadow') {
 
-                var value = dataObject.value;
+                    var values = DROP_SHADOW_LIST.map(function (key) {
+                        var value = layer[key] || FILTER_DEFAULT_OBJECT[key];
 
-                if (typeof value == 'undefined') {
-                    value = viewObject.defaultValue;
+                        return unit(value.value, value.unit, true);
+                    }).join(' ');
+
+                    return viewObject.func + "(" + values + ")";
+                } else {
+                    var values = unit(it.value, it.unit, true);
+                    return viewObject.func + "(" + values + ")";
                 }
-
-                return id + "(" + value + viewObject.unit + ")";
             }).join(' ');
-        }
-    }, {
-        key: '*/filter/toString',
-        value: function filterToString($store, layer) {
-            var filterId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-            var onlyFilter = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-
-            if (!layer) return '';
-            if (!filterId && !layer.filters) return '';
-
-            var obj = $store.read('/layer/toCSS', layer, true) || { filters: [] };
-            var filters = {};
-
-            if (!filterId) {
-                filters = layer.filters || {};
-            } else {
-                filters[filterId] = Object.assign({}, layer.filters[filterId] || {});
-                filters[filterId].checked = true;
-            }
-
-            if (onlyFilter) {
-                delete obj.width;
-                delete obj.height;
-                delete obj.left;
-                delete obj.top;
-            }
-
-            obj.filter = $store.read('/layer/make/filter', filters);
-
-            return Object.keys(obj).map(function (key) {
-                return key + ": " + obj[key] + ";";
-            }).join(' ');
+            return {
+                filter: filterString
+            };
         }
     }]);
     return FilterManager;
 }(BaseModule);
 
-var ModuleList = [FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var backdropInfo = {
+    'backdropBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'backdropGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'backdropHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'backdropInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'backdropBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
+    'backdropDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'backdropDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'backdropDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'backdropDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
+    'backdropOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
+};
+
+var DROP_SHADOW_LIST$1 = ['backdropDropshadowOffsetX', 'backdropDropshadowOffsetY', 'backdropDropshadowBlurRadius', 'backdropDropshadowColor'];
+
+var BackdropManager = function (_BaseModule) {
+    inherits(BackdropManager, _BaseModule);
+
+    function BackdropManager() {
+        classCallCheck(this, BackdropManager);
+        return possibleConstructorReturn(this, (BackdropManager.__proto__ || Object.getPrototypeOf(BackdropManager)).apply(this, arguments));
+    }
+
+    createClass(BackdropManager, [{
+        key: '*/backdrop/get',
+        value: function backdropGet($store, id) {
+            return backdropInfo[id];
+        }
+    }, {
+        key: '*/backdrop/list',
+        value: function backdropList($store, layerId) {
+            var layer = $store.read('/item/get', layerId);
+            var realFilters = {};
+
+            BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
+
+            realFilters = Object.assign({}, $store.read('/clone', BACKDROP_DEFAULT_OBJECT), realFilters);
+
+            var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            return filterList.map(function (it) {
+                return it.key;
+            });
+        }
+    }, {
+        key: '*/backdrop/toCSS',
+        value: function backdropToCSS($store, layer) {
+            var realFilters = {};
+
+            BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
+
+            realFilters = Object.assign({}, $store.read('/clone', BACKDROP_DEFAULT_OBJECT), realFilters);
+
+            var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            var filterString = filterList.filter(function (it) {
+                return it.checked;
+            }).map(function (it) {
+                var viewObject = backdropInfo[it.key];
+                if (it.key == 'backdropDropshadow') {
+
+                    var values = DROP_SHADOW_LIST$1.map(function (key) {
+                        var value = layer[key] || BACKDROP_DEFAULT_OBJECT[key];
+
+                        return unit(value.value, value.unit, true);
+                    }).join(' ');
+
+                    return viewObject.func + "(" + values + ")";
+                } else {
+                    var values = unit(it.value, it.unit, true);
+                    return viewObject.func + "(" + values + ")";
+                }
+            }).join(' ');
+
+            return {
+                'backdrop-filter': filterString,
+                '-webkit-backdrop-filter': filterString
+            };
+        }
+    }]);
+    return BackdropManager;
+}(BaseModule);
+
+var ModuleList = [BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -16514,7 +16510,7 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "updateWidth",
@@ -16974,6 +16970,8 @@ var MixBlendList = function (_BasePropertyItem) {
     return MixBlendList;
 }(BasePropertyItem);
 
+var DROPSHADOW_FILTER_KEYS = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
+
 var FilterList$1 = function (_BasePropertyItem) {
     inherits(FilterList, _BasePropertyItem);
 
@@ -16985,29 +16983,32 @@ var FilterList$1 = function (_BasePropertyItem) {
     createClass(FilterList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item filters show'>\n                <div class='title' ref=\"$title\">\n                    Filter\n                </div>\n                <div class='items no-padding'>                    \n                    <div class=\"filter-list\" ref=\"$filterList\">\n                        \n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item filters'>\n                <div class='title' ref=\"$title\">\n                    Filter\n                </div>\n                <div class='items no-padding'>                    \n                    <div class=\"filter-list\" ref=\"$filterList\">\n                        \n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "makeInputItem",
-        value: function makeInputItem(viewObject, dataObject) {
+        value: function makeInputItem(key, viewObject, dataObject) {
+            var _this2 = this;
 
-            var value = dataObject.value;
-
-            if (typeof value == 'undefined') {
-                value = viewObject.defaultValue;
-            }
+            var value = dataObject[key] ? dataObject[key].value : undefined;
 
             if (viewObject.type == 'range') {
-                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-filter-id=\"" + dataObject.id + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + dataObject.type + "Range\" data-filter-type=\"" + dataObject.type + "\" data-filter-id=\"" + dataObject.id + "\" /></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + dataObject.type + "Number\" data-filter-type=\"" + dataObject.type + "\" data-filter-id=\"" + dataObject.id + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
+                if (typeof value == 'undefined') {
+                    value = viewObject.defaultValue;
+                }
+
+                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
-                return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-filter-id=\"" + dataObject.id + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + viewObject.items.map(function (it) {
-                    var value = dataObject[it.key] || it.defaultValue;
+                return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS.map(function (subkey) {
+
+                    var it = _this2.read('/filter/get', subkey);
+                    var value = dataObject[subkey] || it.defaultValue;
 
                     if (it.unit == UNIT_COLOR) {
-                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
                     } else {
 
-                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + it.key + "Range\" data-filter-type=\"" + it.key + "\" data-filter-id=\"" + dataObject.id + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\"  ref=\"" + it.key + "Number\" data-filter-type=\"" + it.key + "\" data-filter-id=\"" + dataObject.id + "\"/></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
                     }
                 }).join('') + "\n            </div>\n            ";
             }
@@ -17017,23 +17018,23 @@ var FilterList$1 = function (_BasePropertyItem) {
     }, {
         key: 'load $filterList',
         value: function load$filterList() {
-            var _this2 = this;
+            var _this3 = this;
 
             var layer = this.read('/selection/current/layer');
 
             if (!layer) return '';
 
-            var filters = this.read('/filter/list', layer.id);
+            var filterKeys = this.read('/filter/list', layer.id);
 
-            return filters.map(function (f) {
-                var viewObject = _this2.read('/filter/get', f.type);
-                var dataObject = f || {};
-
-                return "\n                <div class='filter-item'>\n                    <div class=\"filter-item-input\">\n                        " + _this2.makeInputItem(viewObject, dataObject) + "\n                    </div>\n                </div>";
+            return filterKeys.map(function (key) {
+                var realKey = key;
+                var viewObject = _this3.read('/filter/get', realKey);
+                var dataObject = layer || {};
+                return "\n                <div class='filter-item'>\n                    <div class=\"filter-item-input\">\n                        " + _this3.makeInputItem(realKey, viewObject, dataObject) + "\n                    </div>\n                </div>";
             });
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER),
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER),
         value: function value() {
             this.refresh();
         }
@@ -17048,33 +17049,53 @@ var FilterList$1 = function (_BasePropertyItem) {
             this.load();
         }
     }, {
-        key: "getFilterList",
-        value: function getFilterList() {
+        key: "updateFilterKeyValue",
+        value: function updateFilterKeyValue(key, lastValue) {
+            var _this4 = this;
 
-            var layer = this.read('/selection/current/layer');
+            this.read('/selection/current/layer', function (layer) {
+                var id = layer.id;
+                var value = layer[key] || _this4.read('/clone', FILTER_DEFAULT_OBJECT[key]);
+                value.value = lastValue;
 
-            if (!layer) return [];
+                _this4.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+            });
+        }
+    }, {
+        key: "updateFilterKeyChecked",
+        value: function updateFilterKeyChecked(key, checked) {
+            var _this5 = this;
 
-            return this.read('/item/map/filter/children', layer.id);
+            this.read('/selection/current/layer', function (layer) {
+                var id = layer.id;
+                var value = layer[key] || _this5.read('/clone', FILTER_DEFAULT_OBJECT[key]);
+                value.checked = checked;
+
+                _this5.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+            });
         }
     }, {
         key: 'click $filterList input[type=checkbox]',
-        value: function click$filterListInputTypeCheckbox(e) {}
+        value: function click$filterListInputTypeCheckbox(e) {
+            var $check = e.$delegateTarget;
+            var key = $check.attr('data-key');
+            this.updateFilterKeyChecked(key, $check.checked());
+        }
     }, {
         key: 'change:input $filterList input[type=range]',
         value: function changeInput$filterListInputTypeRange(e) {
             var $range = e.$delegateTarget;
-            var type = $range.attr('data-filter-type');
-
-            this.refs[type + "Number"].val($range.val());
+            var key = $range.attr('data-key');
+            this.refs[key + "Number"].val($range.val());
+            this.updateFilterKeyValue(key, $range.val());
         }
     }, {
         key: 'input $filterList input[type=number]',
         value: function input$filterListInputTypeNumber(e) {
-            var $range = e.$delegateTarget;
-            var type = $range.attr('data-filter-type');
-
-            this.refs[type + "Range"].val($range.val());
+            var $number = e.$delegateTarget;
+            var key = $number.attr('data-key');
+            this.refs[key + "Range"].val($number.val());
+            this.updateFilterKeyValue(key, $number.val());
         }
     }, {
         key: 'click $el .drop-shadow',
@@ -17087,6 +17108,10 @@ var FilterList$1 = function (_BasePropertyItem) {
         value: function updateDropShadowColor(color$$1) {
             this.refs.$dropShadowColor.css('background-color', color$$1);
             this.refs.$dropShadowColorText.text(color$$1);
+
+            var key = this.refs.$dropShadowColor.attr('data-key');
+
+            this.updateFilterKeyValue(key, color$$1);
         }
     }]);
     return FilterList;
@@ -18636,7 +18661,7 @@ var Font = function (_BasePropertyItem) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
             }).join('') + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
-            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -18854,7 +18879,155 @@ var LayerInfoColorPickerPanel = function (_UIElement) {
     return LayerInfoColorPickerPanel;
 }(UIElement);
 
+var DROPSHADOW_FILTER_KEYS$1 = ['backdropDropshadowOffsetX', 'backdropDropshadowOffsetY', 'backdropDropshadowBlurRadius', 'backdropDropshadowColor'];
+
+var BackdropList = function (_BasePropertyItem) {
+    inherits(BackdropList, _BasePropertyItem);
+
+    function BackdropList() {
+        classCallCheck(this, BackdropList);
+        return possibleConstructorReturn(this, (BackdropList.__proto__ || Object.getPrototypeOf(BackdropList)).apply(this, arguments));
+    }
+
+    createClass(BackdropList, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item filters'>\n                <div class='title' ref=\"$title\">\n                    Backdrop Filter\n                </div>\n                <div class='items no-padding'>                    \n                    <div class=\"filter-list\" ref=\"$filterList\">\n                        \n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "makeInputItem",
+        value: function makeInputItem(key, viewObject, dataObject) {
+            var _this2 = this;
+
+            var value = dataObject[key] ? dataObject[key].value : undefined;
+
+            if (viewObject.type == 'range') {
+                if (typeof value == 'undefined') {
+                    value = viewObject.defaultValue;
+                }
+
+                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
+            } else if (viewObject.type == 'multi') {
+                return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
+
+                    var it = _this2.read('/backdrop/get', subkey);
+                    var value = dataObject[subkey] || it.defaultValue;
+
+                    if (it.unit == UNIT_COLOR) {
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
+                    } else {
+
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
+                    }
+                }).join('') + "\n            </div>\n            ";
+            }
+
+            return "<div></div>";
+        }
+    }, {
+        key: 'load $filterList',
+        value: function load$filterList() {
+            var _this3 = this;
+
+            var layer = this.read('/selection/current/layer');
+
+            if (!layer) return '';
+
+            var filterKeys = this.read('/backdrop/list', layer.id);
+
+            return filterKeys.map(function (key) {
+                var realKey = key;
+                var viewObject = _this3.read('/backdrop/get', realKey);
+                var dataObject = layer || {};
+                return "\n                <div class='filter-item'>\n                    <div class=\"filter-item-input\">\n                        " + _this3.makeInputItem(realKey, viewObject, dataObject) + "\n                    </div>\n                </div>";
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            return true;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: "updateFilterKeyValue",
+        value: function updateFilterKeyValue(key, lastValue) {
+            var _this4 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                var id = layer.id;
+                var value = layer[key] || _this4.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
+                value.value = lastValue;
+
+                _this4.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+            });
+        }
+    }, {
+        key: "updateFilterKeyChecked",
+        value: function updateFilterKeyChecked(key, checked) {
+            var _this5 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                var id = layer.id;
+                var value = layer[key] || _this5.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
+                value.checked = checked;
+
+                _this5.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+            });
+        }
+    }, {
+        key: 'click $filterList input[type=checkbox]',
+        value: function click$filterListInputTypeCheckbox(e) {
+            var $check = e.$delegateTarget;
+            var key = $check.attr('data-key');
+            this.updateFilterKeyChecked(key, $check.checked());
+        }
+    }, {
+        key: 'change:input $filterList input[type=range]',
+        value: function changeInput$filterListInputTypeRange(e) {
+            var $range = e.$delegateTarget;
+            var key = $range.attr('data-key');
+            this.refs[key + "Number"].val($range.val());
+            this.updateFilterKeyValue(key, $range.val());
+        }
+    }, {
+        key: 'input $filterList input[type=number]',
+        value: function input$filterListInputTypeNumber(e) {
+            var $number = e.$delegateTarget;
+            var key = $number.attr('data-key');
+            this.refs[key + "Range"].val($number.val());
+            this.updateFilterKeyValue(key, $number.val());
+        }
+    }, {
+        key: 'click $el .drop-shadow',
+        value: function click$elDropShadow(e) {
+            var color$$1 = e.$delegateTarget.css('background-color');
+            this.emit('selectFillColor', color$$1, this.updateDropShadowColor.bind(this));
+        }
+    }, {
+        key: "updateDropShadowColor",
+        value: function updateDropShadowColor(color$$1) {
+            this.refs.$dropShadowColor.css('background-color', color$$1);
+            this.refs.$dropShadowColorText.text(color$$1);
+
+            var key = this.refs.$dropShadowColor.attr('data-key');
+
+            this.updateFilterKeyValue(key, color$$1);
+        }
+    }]);
+    return BackdropList;
+}(BasePropertyItem);
+
 var items = {
+    BackdropList: BackdropList,
     LayerInfoColorPickerPanel: LayerInfoColorPickerPanel,
     BackgroundClip: BackgroundClip,
     Font: Font,
@@ -18956,7 +19129,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n\n                    <FilterList></FilterList>                    \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <FilterList></FilterList>    \n                    <BackdropList></BackdropList>                \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: 'onTabShow',
@@ -20088,7 +20261,7 @@ var BackgroundResizer = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (this.read('/selection/is/image')) return true;
+            return this.read('/selection/is/image');
         }
     }, {
         key: 'getCurrentXY',
@@ -20133,6 +20306,8 @@ var BackgroundResizer = function (_UIElement) {
     }, {
         key: 'refreshUI',
         value: function refreshUI(e) {
+            var _this2 = this;
+
             var _getRectangle = this.getRectangle(),
                 minX = _getRectangle.minX,
                 minY = _getRectangle.minY,
@@ -20174,16 +20349,20 @@ var BackgroundResizer = function (_UIElement) {
 
             if (e) {
 
-                this.setBackgroundPosition(left, top);
+                this.read('/selection/current/layer', function (layer) {
+                    var newLeft = left / (maxX - minX) * parseParamNumber$1(layer.width);
+                    var newTop = top / (maxY - minY) * parseParamNumber$1(layer.height);
+                    _this2.setBackgroundPosition(Math.floor(newLeft), Math.floor(newTop));
+                });
             }
         }
     }, {
         key: 'setBackgroundPosition',
         value: function setBackgroundPosition(backgroundPositionX, backgroundPositionY) {
-            var _this2 = this;
+            var _this3 = this;
 
             this.read('/selection/current/image/id', function (id) {
-                _this2.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
+                _this3.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
             });
         }
     }, {

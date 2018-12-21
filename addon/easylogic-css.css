@@ -4170,7 +4170,8 @@ html, body {
     width: 100%;
     height: 100%;
     right: 0px;
-    background-color: rgba(0, 0, 0, 0.2); }
+    background-color: rgba(0, 0, 0, 0.2);
+    overflow: hidden; }
     .csseditor .predefined-background-position.radial-position {
       top: 30px;
       height: auto; }

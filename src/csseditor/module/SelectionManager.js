@@ -5,9 +5,7 @@ import {
     ITEM_TYPE_IMAGE, 
     ITEM_TYPE_LAYER, 
     ITEM_TYPE_BOXSHADOW, 
-    ITEM_TYPE_FILTER, 
     ITEM_TYPE_TEXTSHADOW, 
-    ITEM_TYPE_BACKDROP_FILTER, 
     ITEM_TYPE_PAGE 
 } from "./ItemTypes";
 import { px } from "../../util/css/types";
@@ -287,7 +285,7 @@ export default class SelectionManager extends BaseModule {
     }                    
     
     '*/selection/is/backdrop-filter' ($store, type) {
-        return $store.read('/selection/is/item', ITEM_TYPE_BACKDROP_FILTER);
+        return $store.read('/selection/is/item', ITEM_TYPE_BACKDROP);
     }                        
 
     '*/selection/is/one' ($store) {

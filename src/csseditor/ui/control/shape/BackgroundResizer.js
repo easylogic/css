@@ -30,7 +30,7 @@ export default class BackgroundResizer extends UIElement {
     }
 
     isShow () {
-        if (this.read('/selection/is/image')) return true; 
+        return this.read('/selection/is/image');
     }
 
     getCurrentXY(e, position) {
@@ -102,7 +102,13 @@ export default class BackgroundResizer extends UIElement {
 
         if (e) {
 
-            this.setBackgroundPosition(left, top);
+            this.read('/selection/current/layer', layer => {
+                var newLeft = (left / (maxX - minX)) * parseParamNumber(layer.width)
+                var newTop = (top / (maxY- minY)) * parseParamNumber(layer.height)
+                this.setBackgroundPosition( Math.floor(newLeft), Math.floor(newTop));
+            }) 
+
+            
         }
 
     }

@@ -10,15 +10,11 @@ import {
     BOXSHADOW_DEFAULT_OBJECT, 
     IMAGE_DEFAULT_OBJECT, 
     COLORSTEP_DEFAULT_OBJECT,
-    FILTER_DEFAULT_OBJECT,
-    BACKDROPFILTER_DEFAULT_OBJECT,
     TEXTSHADOW_DEFAULT_OBJECT,
     ITEM_TYPE_IMAGE,
     ITEM_TYPE_COLORSTEP,
     ITEM_TYPE_BOXSHADOW,
     ITEM_TYPE_TEXTSHADOW,
-    ITEM_TYPE_FILTER,
-    ITEM_TYPE_BACKDROP_FILTER,
     ITEM_TYPE_PAGE,
     ITEM_TYPE_LAYER,
     IMAGE_ITEM_TYPE_LINEAR,
@@ -161,10 +157,6 @@ export default class ItemManager extends BaseModule {
 
     '*/item/create/textshadow' ($store, obj = {}) {
         return $store.read('/item/create/object', obj, TEXTSHADOW_DEFAULT_OBJECT);
-    }    
-
-    '*/item/create/filter' ($store, obj = {}) {
-        return $store.read('/item/create/object', obj, FILTER_DEFAULT_OBJECT);
     }    
 
     '*/item/create/backdrop-filter' ($store, obj = {}) {
@@ -320,14 +312,6 @@ export default class ItemManager extends BaseModule {
 
     '*/item/map/textshadow/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read('/item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW, callback);
-    }        
-
-    '*/item/map/filter/children' ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_FILTER, callback);
-    }        
-    
-    '*/item/map/backdrop-filter/children' ($store, parentId, callback = DEFAULT_FUNCTIONs) {
-        return $store.read('/item/map/type/children', parentId, ITEM_TYPE_BACKDROP_FILTER, callback);
     }            
 
     '*/item/filter/children' ($store, parentId, callback) {

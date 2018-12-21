@@ -64,7 +64,7 @@ export default class Font extends BasePropertyItem {
                         <label>Size</label>
                         <UnitRange 
                             ref="$fontSize" 
-                            min="1" max="300" step="1" value="13" unit=${UNIT_PX}"
+                            min="1" max="300" step="1" value="13" unit="${UNIT_PX}"
                             maxValueFunction="getMaxFontSize"
                             updateFunction="updateFontSize"
                         ></UnitRange>
@@ -73,7 +73,7 @@ export default class Font extends BasePropertyItem {
                         <label>Line Height</label>
                         <UnitRange 
                             ref="$lineHeight" 
-                            min="1" max="100" step="0.01" value="1" unit=${UNIT_PX}"
+                            min="1" max="100" step="0.01" value="1" unit="${UNIT_PX}"
                             maxValueFunction="getMaxLineHeight"
                             updateFunction="updateLineHeight"
                         ></UnitRange>

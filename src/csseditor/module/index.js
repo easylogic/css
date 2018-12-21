@@ -19,8 +19,10 @@ import MatrixManager from "./MatrixManager";
 import BoxShadowManager from "./BoxShadowManager";
 import TextShadowManager from "./TextShadowManager";
 import FilterManager from "./FilterManager";
+import BackdropManager from "./BackdropManager";
 
 export default [  
+    BackdropManager,
     FilterManager,
     TextShadowManager,
     BoxShadowManager,

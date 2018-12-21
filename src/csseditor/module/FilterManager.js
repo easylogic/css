@@ -1,117 +1,95 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR } from "../../util/css/types";
-import { uuid } from "../../util/functions/math";
-import { ITEM_TYPE_FILTER } from "./ItemTypes";
+import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit } from "../../util/css/types";
+import { FILTER_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT_KEYS } from "./ItemTypes";
 const filterInfo = {
-    'blur': { title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
-    'grayscale' : { title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'hue-rotate' : { title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'invert' : { title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },    
-    'brightness': { title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'contrast': { title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'drop-shadow': { 
-        type: 'multi',
-        title: 'Drop Shadow', 
-        offsetX: 0,
-        offsetY: 0,
-        blurRadius: 0,
-        color: 'rgba(0, 0, 0, 0)',
-        items: [
-            { title: 'Offset X', type: 'range', key: 'offsetX', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-            { title: 'Offset Y', type: 'range', key: 'offsetY', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-            { title: 'Blur Radius', type: 'range',key: 'blurRadius', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-            { title: 'Color', type: 'color', key: 'color', defaultValue: 'black', unit: UNIT_COLOR }
-        ]  
-    },
-    'opacity' : { title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'saturate' : { title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'sepia' : { title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'filterGrayscale' : { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'filterHueRotate' : { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'filterInvert' : { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },    
+    'filterBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow'},
+    'filterDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
+    'filterOpacity' : { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterSaturate' : { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterSepia' : { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
 }
 
-const defaultFilterList = Object.keys(filterInfo).map( (type, index) => {
-    return { 
-        itemType: ITEM_TYPE_FILTER, 
-        index: index * 100,
-        type, 
-        id: uuid(),
-        value: filterInfo[type].defaultValue 
-    }
-});
+const DROP_SHADOW_LIST = [
+    'filterDropshadowOffsetX',
+    'filterDropshadowOffsetY',
+    'filterDropshadowBlurRadius',
+    'filterDropshadowColor',
+]
 
 export default class FilterManager extends BaseModule {
-   
-
-    '*/filter/keys' ($store) {
-        return filterKeys;
-    }
 
     '*/filter/get' ($store, id) {
         return filterInfo[id];
     }    
 
     '*/filter/list' ($store, layerId) {
-        var list = $store.read('/item/map/filter/children', layerId);
-
-        if (list.length == 0) {
-            return defaultFilterList;
-        }
-
-        return list; 
-
-    }
-
-
-    '*/filter/toCSS' ($store, filters, defaultDataObject = {}) {       
+        var layer = $store.read('/item/get', layerId);
+        var realFilters = {}
         
-        if (!filters) return null;
-        if (!Object.keys(filters).length) return null;
+        FILTER_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
+            realFilters[key] = layer[key]
+        })
 
-        return Object.keys(filters).map(id => {
-            var dataObject = filters[id] || defaultDataObject;
-            
-            // 적용하는 필터가 아니면 제외 한다. 
-            if (!dataObject.checked) return '';
+        realFilters = Object.assign({}, $store.read('/clone', FILTER_DEFAULT_OBJECT), realFilters)
 
-            var viewObject = $store.read('/layer/get/filter', id);
+        var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
+            return {key, ...realFilters[key]}
+        })
 
-            var value = dataObject.value; 
+        filterList.sort( (a, b) => {
+            return a.index > b.index ? 1 : -1; 
+        })
 
-            if (typeof value == 'undefined') {
-                value = viewObject.defaultValue;
-            }
-
-            return `${id}(${value}${viewObject.unit})`
-        }).join(' ')
+        return filterList.map(it => it.key); 
     }
 
-    '*/filter/toString' ($store, layer, filterId = '', onlyFilter = false) {
 
-        if (!layer) return '';
-        if (!filterId && !layer.filters) return ''
+    '*/filter/toCSS' ($store, layer) {       
+        var realFilters = {}
+        
+        FILTER_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
+            realFilters[key] = layer[key]
+        })
 
-        var obj = $store.read('/layer/toCSS', layer, true) || { filters: []};
-        var filters = {}
+        realFilters = Object.assign({}, $store.read('/clone', FILTER_DEFAULT_OBJECT), realFilters)
 
-        if (!filterId) {
-            filters = layer.filters || {}
-        } else {
-            filters[filterId] = Object.assign({}, layer.filters[filterId] || {})
-            filters[filterId].checked = true; 
-        } 
+        var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
+            return {key, ...realFilters[key]}
+        })
 
-        if (onlyFilter) {
-            delete obj.width;
-            delete obj.height;
-            delete obj.left;
-            delete obj.top;
+        filterList.sort( (a, b) => {
+            return a.index > b.index ? 1 : -1; 
+        })
+
+        var filterString = filterList.filter(it => it.checked).map(it => {
+            var viewObject = filterInfo[it.key];
+            if (it.key == 'filterDropshadow') {
+
+                var values = DROP_SHADOW_LIST.map(key => {
+                    var value = layer[key] || FILTER_DEFAULT_OBJECT[key]
+
+                    return unit(value.value, value.unit, true)
+                }).join(' ')
+
+                return `${viewObject.func}(${values})`
+            } else {
+                var values = unit(it.value, it.unit, true)
+                return `${viewObject.func}(${values})`
+            }
+        }).join(' '); 
+       
+        return {
+            filter: filterString
         }
-
-        obj.filter = $store.read('/layer/make/filter', filters )
-
-        return Object.keys(obj).map(key => {
-            return `${key}: ${obj[key]};`
-        }).join(' ')
-    }    
-
+    }
 
 }

@@ -39,9 +39,11 @@ import LayerTextColorPickerPanel from "./LayerTextColorPickerPanel";
 import Font from "./Font";
 import BackgroundClip from "./BackgroundClip";
 import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
+import BackdropList from "./BackdropList";
 
 
 export default {
+    BackdropList,
     LayerInfoColorPickerPanel,
     BackgroundClip,
     Font,
