@@ -1,9 +1,4 @@
 import items  from './items/index'
-import PredefinedLinearGradientAngle from "../shape/PredefinedLinearGradientAngle";
-import GradientAngle from "../shape/GradientAngle";
-import PredefinedRadialGradientAngle from "../shape/PredefinedRadialGradientAngle";
-import PredefinedRadialGradientPosition from "../shape/PredefinedRadialGradientPosition";
-import GradientPosition from "../shape/GradientPosition";
 import BaseTab from "../../BaseTab";
 import { SELECT_TAB_IMAGE } from '../../../types/event';
 
@@ -36,16 +31,11 @@ export default class ImageTabView extends BaseTab {
     }
 
     onTabShow () {
-        this.emit(SELECT_TAB_IMAGE)
+        this.emit(SELECT_TAB_IMAGE, this.selectedTabId)
     }
 
     components () {
         return {            
-            PredefinedLinearGradientAngle,
-            GradientAngle,
-            PredefinedRadialGradientAngle,
-            PredefinedRadialGradientPosition,
-            GradientPosition,
             ...items
         }
     }
