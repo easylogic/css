@@ -15,7 +15,8 @@ import {
     EVENT_CHANGE_TEXTSHADOW,
     EVENT_CHANGE_LAYER_SIZE,
     EVENT_CHANGE_LAYER_POSITION,
-    EVENT_CHANGE_LAYER_MOVE
+    EVENT_CHANGE_LAYER_MOVE,
+    EVENT_SELECT_TAB_LAYER
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
@@ -79,7 +80,7 @@ export default class LayerCode extends BasePropertyItem {
         EVENT_CHANGE_TEXTSHADOW,
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION,
-        '@LayerTabSelect'
+        EVENT_SELECT_TAB_LAYER
     )] () { this.refresh() }    
 
     refresh() {

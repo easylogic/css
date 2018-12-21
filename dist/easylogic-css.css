@@ -1537,7 +1537,9 @@ html, body {
         border-bottom: 1px solid #cccccc;
         text-align: center;
         min-height: 40px;
-        line-height: 2; }
+        line-height: 2;
+        overflow: hidden;
+        text-overflow: ellipsis; }
     .csseditor .tab.horizontal .tab-body {
       top: 0px;
       right: 50px;

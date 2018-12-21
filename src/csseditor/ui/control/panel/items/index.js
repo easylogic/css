@@ -40,9 +40,10 @@ import Font from "./Font";
 import BackgroundClip from "./BackgroundClip";
 import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
 import BackdropList from "./BackdropList";
-
+import EmptyArea from "./EmptyArea";
 
 export default {
+    EmptyArea,
     BackdropList,
     LayerInfoColorPickerPanel,
     BackgroundClip,

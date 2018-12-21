@@ -8,7 +8,8 @@ import {
     EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
     EVENT_CHANGE_IMAGE_RADIAL_POSITION,
     EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-    EVENT_CHANGE_COLOR_STEP
+    EVENT_CHANGE_COLOR_STEP,
+    EVENT_SELECT_TAB_IMAGE
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
@@ -66,7 +67,8 @@ export default class BackgroundCode extends BasePropertyItem {
         EVENT_CHANGE_IMAGE_RADIAL_TYPE,
         EVENT_CHANGE_COLOR_STEP,
         EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+        EVENT_CHANGE_SELECTION,
+        EVENT_SELECT_TAB_IMAGE
     )] () { this.refresh() }    
 
     refresh() {

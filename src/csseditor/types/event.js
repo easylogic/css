@@ -37,6 +37,8 @@ export const ADD_COLOR_STEP = `ADD_COLOR_STEP`
 export const REMOVE_COLOR_STEP = `REMOVE_COLOR_STEP`
 
 export const TEXT_FILL_COLOR = `TEXT_FILL_COLOR`
+export const SELECT_TAB_LAYER = `SELECT_TAB_LAYER`
+export const SELECT_TAB_IMAGE = `SELECT_TAB_IMAGE`
 
 
 /* defiend event */ 
@@ -79,3 +81,5 @@ export const EVENT_ADD_COLOR_STEP = `@${ADD_COLOR_STEP}`
 export const EVENT_REMOVE_COLOR_STEP = `@${REMOVE_COLOR_STEP}`
 
 export const EVENT_TEXT_FILL_COLOR = `@${TEXT_FILL_COLOR}`
+export const EVENT_SELECT_TAB_LAYER = `@${SELECT_TAB_LAYER}`
+export const EVENT_SELECT_TAB_IMAGE = `@${SELECT_TAB_IMAGE}`

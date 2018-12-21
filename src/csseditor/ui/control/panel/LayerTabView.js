@@ -1,5 +1,6 @@
 import items  from './items/index'
 import BaseTab from "../../BaseTab";
+import { SELECT_TAB_LAYER } from '../../../types/event';
 
 export default class LayerTabView extends BaseTab {
 
@@ -36,7 +37,8 @@ export default class LayerTabView extends BaseTab {
                     <FillColorPickerPanel></FillColorPickerPanel>
                     <BoxShadow></BoxShadow>
                     <FilterList></FilterList>    
-                    <BackdropList></BackdropList>                
+                    <BackdropList></BackdropList>   
+                    <EmptyArea height="100px"></EmptyArea>             
                 </div>                
                 <div class="tab-content" data-id="shape">
                     <ClipPath></ClipPath>   
@@ -57,7 +59,7 @@ export default class LayerTabView extends BaseTab {
 
 
     onTabShow () {
-        this.emit('LayerTabSelect')
+        this.emit(SELECT_TAB_LAYER)
     }
 
     components () {

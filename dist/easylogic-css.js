@@ -9775,6 +9775,8 @@ var ADD_COLOR_STEP = 'ADD_COLOR_STEP';
 var REMOVE_COLOR_STEP = 'REMOVE_COLOR_STEP';
 
 var TEXT_FILL_COLOR = 'TEXT_FILL_COLOR';
+var SELECT_TAB_LAYER = 'SELECT_TAB_LAYER';
+var SELECT_TAB_IMAGE = 'SELECT_TAB_IMAGE';
 
 /* defiend event */
 var EVENT_CHANGE_EDITOR = '@' + CHANGE_EDITOR;
@@ -9815,6 +9817,8 @@ var EVENT_CHANGE_COLOR_STEP = '@' + CHANGE_COLOR_STEP;
 
 
 var EVENT_TEXT_FILL_COLOR = '@' + TEXT_FILL_COLOR;
+var EVENT_SELECT_TAB_LAYER = '@' + SELECT_TAB_LAYER;
+var EVENT_SELECT_TAB_IMAGE = '@' + SELECT_TAB_IMAGE;
 
 var ITEM_TYPE_PAGE = 'page';
 var ITEM_TYPE_LAYER = 'layer';
@@ -18477,7 +18481,7 @@ var LayerCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, '@LayerTabSelect'),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_SELECT_TAB_LAYER),
         value: function value() {
             this.refresh();
         }
@@ -18533,7 +18537,7 @@ var BackgroundCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_SELECT_TAB_IMAGE),
         value: function value() {
             this.refresh();
         }
@@ -19026,7 +19030,25 @@ var BackdropList = function (_BasePropertyItem) {
     return BackdropList;
 }(BasePropertyItem);
 
+var EmptyArea = function (_BasePropertyItem) {
+    inherits(EmptyArea, _BasePropertyItem);
+
+    function EmptyArea() {
+        classCallCheck(this, EmptyArea);
+        return possibleConstructorReturn(this, (EmptyArea.__proto__ || Object.getPrototypeOf(EmptyArea)).apply(this, arguments));
+    }
+
+    createClass(EmptyArea, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item empty-area show' style=\"height: " + this.props.height + ";\"></div>\n        ";
+        }
+    }]);
+    return EmptyArea;
+}(BasePropertyItem);
+
 var items = {
+    EmptyArea: EmptyArea,
     BackdropList: BackdropList,
     LayerInfoColorPickerPanel: LayerInfoColorPickerPanel,
     BackgroundClip: BackgroundClip,
@@ -19129,12 +19151,12 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <FilterList></FilterList>    \n                    <BackdropList></BackdropList>                \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <FilterList></FilterList>    \n                    <BackdropList></BackdropList>   \n                    <EmptyArea height="100px"></EmptyArea>             \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: 'onTabShow',
         value: function onTabShow() {
-            this.emit('LayerTabSelect');
+            this.emit(SELECT_TAB_LAYER);
         }
     }, {
         key: 'components',
@@ -19743,7 +19765,7 @@ var ImageTabView = function (_BaseTab) {
     }, {
         key: "onTabShow",
         value: function onTabShow() {
-            this.emit('ImageTabSelect');
+            this.emit(SELECT_TAB_IMAGE);
         }
     }, {
         key: "components",

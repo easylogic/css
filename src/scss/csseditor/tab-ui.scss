@@ -122,6 +122,8 @@ $tab-horizontal-header-width: 50px;
                 text-align: center;
                 min-height: 40px;
                 line-height: 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 

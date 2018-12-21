@@ -1537,7 +1537,9 @@ html, body {
         border-bottom: 1px solid #cccccc;
         text-align: center;
         min-height: 40px;
-        line-height: 2; }
+        line-height: 2;
+        overflow: hidden;
+        text-overflow: ellipsis; }
     .csseditor .tab.horizontal .tab-body {
       top: 0px;
       right: 50px;
@@ -5666,13 +5668,14 @@ html, body {
             -webkit-box-sizing: border-box;
                     box-sizing: border-box; }
           .csseditor .filter-list .filter-item .filter-item-input > .filter .area {
-            width: 10px;
+            width: 5px;
+            margin-left: 5px;
             height: 20px;
             vertical-align: middle;
             display: inline-block;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
-            background-color: black; }
+            background-color: #c4c4c4; }
           .csseditor .filter-list .filter-item .filter-item-input > .filter .title {
             width: 60px;
             text-align: left; }
