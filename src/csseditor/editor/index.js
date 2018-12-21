@@ -37,7 +37,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
             <div class="layout-main expertor-mode" ref="$layoutMain">
                 <div class="layout-header">
-                    <h1 class="header-title">EASYLOGIC</h1>
+                    <h1 class="header-title">${this.i18n('app.title')}</h1>
                     <div class="page-tab-menu">
                         <ToolMenu></ToolMenu>
                     </div>

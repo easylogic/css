@@ -86,6 +86,10 @@ class UIElement extends EventMachin {
         return this.$store.read(...args)
     }
 
+    i18n (...args) {
+        return this.read('/i18n/get', ...args);
+    }
+
     run (...args) {
         return this.$store.run(...args);
     }

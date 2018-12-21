@@ -7176,6 +7176,15 @@ var UIElement = function (_EventMachin) {
             return (_$store = this.$store).read.apply(_$store, arguments);
         }
     }, {
+        key: 'i18n',
+        value: function i18n() {
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            return this.read.apply(this, ['/i18n/get'].concat(args));
+        }
+    }, {
         key: 'run',
         value: function run() {
             var _$store2;
@@ -7201,8 +7210,8 @@ var UIElement = function (_EventMachin) {
     }, {
         key: 'commit',
         value: function commit(eventType) {
-            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                args[_key2 - 1] = arguments[_key2];
+            for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+                args[_key3 - 1] = arguments[_key3];
             }
 
             this.run.apply(this, ['/item/set'].concat(args));
@@ -14552,7 +14561,68 @@ var BackdropManager = function (_BaseModule) {
     return BackdropManager;
 }(BaseModule);
 
-var ModuleList = [BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var en_US = {
+    'app.title': 'EASYLOGIC'
+};
+
+var ko_KR = {
+    'app.title': '이지로직'
+};
+
+var langs = {
+    en_US: en_US,
+    ko_KR: ko_KR
+};
+
+var LANG_EN = 'en_US';
+
+var FALLBACK_LANG = LANG_EN;
+
+var i18n = {
+    get: function get(key) {
+        var lang = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : FALLBACK_LANG;
+
+        return langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
+    }
+};
+
+var I18nManager = function (_BaseModule) {
+    inherits(I18nManager, _BaseModule);
+
+    function I18nManager() {
+        classCallCheck(this, I18nManager);
+        return possibleConstructorReturn(this, (I18nManager.__proto__ || Object.getPrototypeOf(I18nManager)).apply(this, arguments));
+    }
+
+    createClass(I18nManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get(I18nManager.prototype.__proto__ || Object.getPrototypeOf(I18nManager.prototype), "initialize", this).call(this);
+
+            this.$store.lang = LANG_EN;
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.emit('changeEditor');
+        }
+    }, {
+        key: '/i18n/change/language',
+        value: function i18nChangeLanguage($store) {
+            var lang = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : LANG_EN;
+
+            $store.lang = lang;
+        }
+    }, {
+        key: '*/i18n/get',
+        value: function i18nGet($store, key, lang) {
+            return i18n.get(key, lang || $store.lang);
+        }
+    }]);
+    return I18nManager;
+}(BaseModule);
+
+var ModuleList = [I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -23799,7 +23869,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">EASYLOGIC</h1>\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <LayerToolbar></LayerToolbar>\n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <ImageToolbar></ImageToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <ExportCanvasWindow></ExportCanvasWindow>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">' + this.i18n('app.title') + '</h1>\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <LayerToolbar></LayerToolbar>\n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <ImageToolbar></ImageToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <ExportCanvasWindow></ExportCanvasWindow>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',

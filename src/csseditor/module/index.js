@@ -20,8 +20,11 @@ import BoxShadowManager from "./BoxShadowManager";
 import TextShadowManager from "./TextShadowManager";
 import FilterManager from "./FilterManager";
 import BackdropManager from "./BackdropManager";
+import I18nManager from "./I18nManager";
+
 
 export default [  
+    I18nManager,
     BackdropManager,
     FilterManager,
     TextShadowManager,
