@@ -17,8 +17,8 @@ export default class I18nManager extends BaseModule {
         $store.lang = lang; 
     }
 
-    '*/i18n/get' ($store, key, lang) {
-        return i18n.get(key, lang || $store.lang);
+    '*/i18n/get' ($store, key, params = {}, lang) {
+        return i18n.get(key,  params, lang || $store.lang);
     }
 
 }

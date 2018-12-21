@@ -12,8 +12,14 @@ export const LANG_KO = 'ko_KR';
 export const FALLBACK_LANG = LANG_EN;
 
 const i18n = {
-    get (key, lang = FALLBACK_LANG) {
-        return langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
+    get (key, params = {}, lang = FALLBACK_LANG) {
+        var str = langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
+
+        Object.keys(params).forEach(key => {
+            str = str.replace(new RegExp(`\{${key}\}`, 'ig'), params[key]);
+        })
+
+        return str; 
     }
 }
 

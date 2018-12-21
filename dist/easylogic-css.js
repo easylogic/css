@@ -14695,7 +14695,8 @@ var BackdropManager = function (_BaseModule) {
 }(BaseModule);
 
 var en_US = {
-    'app.title': 'EASYLOGIC'
+    'app.title': 'EASYLOGIC',
+    'app.counting': '{index}'
 };
 
 var ko_KR = {
@@ -14713,9 +14714,16 @@ var FALLBACK_LANG = LANG_EN;
 
 var i18n = {
     get: function get(key) {
-        var lang = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : FALLBACK_LANG;
+        var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var lang = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : FALLBACK_LANG;
 
-        return langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
+        var str = langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
+
+        Object.keys(params).forEach(function (key) {
+            str = str.replace(new RegExp('{' + key + '}', 'ig'), params[key]);
+        });
+
+        return str;
     }
 };
 
@@ -14748,8 +14756,11 @@ var I18nManager = function (_BaseModule) {
         }
     }, {
         key: '*/i18n/get',
-        value: function i18nGet($store, key, lang) {
-            return i18n.get(key, lang || $store.lang);
+        value: function i18nGet($store, key) {
+            var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+            var lang = arguments[3];
+
+            return i18n.get(key, params, lang || $store.lang);
         }
     }]);
     return I18nManager;
@@ -16249,7 +16260,7 @@ var Transform = function (_BasePropertyItem) {
     createClass(Transform, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform</div>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='number' ref=\"$rotate\"> <span>deg</span>\n                        </div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\"> <span></span>\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='number' ref=\"$skewX\"> <span>deg</span>\n                        </div>\n                        <label>SkewY</label>\n                        <div>\n                            <input type='number' ref=\"$skewY\"> <span>deg</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='number' ref=\"$translateX\"> <span>px</span>\n                        </div>\n                        <label>translateY</label>\n                        <div>\n                            <input type='number' ref=\"$translateY\"> <span>px</span>\n                        </div>\n                        <label>translateZ</label>\n                        <div>\n                            <input type='number' ref=\"$translateZ\"> <span>px</span>\n                        </div>                        \n                    </div>                                                         \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform</div>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateZ</label>\n                        <div>\n                            <input type='range' ref=\"$translateZRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateZ\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>                        \n                    </div>                                                         \n                </div>\n            </div>\n        ";
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER_ROTATE),
@@ -16267,6 +16278,7 @@ var Transform = function (_BasePropertyItem) {
 
                 attr.forEach(function (key) {
                     if (item[key]) {
+                        _this2.refs["$" + key + "Range"].val(item[key]);
                         _this2.refs["$" + key].val(item[key]);
                     }
                 });
@@ -16277,9 +16289,52 @@ var Transform = function (_BasePropertyItem) {
         value: function updateTransform(key) {
             var _this3 = this;
 
+            var postfix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
             this.read('/selection/current/layer/id', function (id) {
-                _this3.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, _this3.refs['$' + key].val()));
+                var value = _this3.refs['$' + key + postfix].val();
+                if (postfix == '') {
+                    _this3.refs['$' + key + 'Range'].val(value);
+                } else {
+                    _this3.refs['$' + key].val(value);
+                }
+                _this3.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, value));
             });
+        }
+    }, {
+        key: 'change:input $rotateRange',
+        value: function changeInput$rotateRange() {
+            this.updateTransform('rotate', 'Range');
+        }
+    }, {
+        key: 'change:input $skewXRange',
+        value: function changeInput$skewXRange() {
+            this.updateTransform('skewX', 'Range');
+        }
+    }, {
+        key: 'change:input $skewYRange',
+        value: function changeInput$skewYRange() {
+            this.updateTransform('skewY', 'Range');
+        }
+    }, {
+        key: 'change:input $scaleRange',
+        value: function changeInput$scaleRange() {
+            this.updateTransform('scale', 'Range');
+        }
+    }, {
+        key: 'change:input $translateXRange',
+        value: function changeInput$translateXRange() {
+            this.updateTransform('translateX', 'Range');
+        }
+    }, {
+        key: 'change:input $translateYRange',
+        value: function changeInput$translateYRange() {
+            this.updateTransform('translateY', 'Range');
+        }
+    }, {
+        key: 'change:input $translateZRange',
+        value: function changeInput$translateZRange() {
+            this.updateTransform('translateZ', 'Range');
         }
     }, {
         key: 'input $rotate',
@@ -16331,15 +16386,10 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Rotate 3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$rotate3dX\"> \n                                <input type='number' ref=\"$rotate3dY\"> \n                                <input type='number' ref=\"$rotate3dZ\"> \n                                <input type='number' ref=\"$rotate3dA\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            \n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                                <span>Angle</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale 3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$scale3dX\"> \n                                <input type='number' ref=\"$scale3dY\"> \n                                <input type='number' ref=\"$scale3dZ\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>\n                        <div>\n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate3D</label>\n                        <div>\n                            <div class='input'> \n                                <input type='number' ref=\"$translate3dX\"> \n                                <input type='number' ref=\"$translate3dY\"> \n                                <input type='number' ref=\"$translate3dZ\"> \n                            </div>\n                        </div>\n                    </div>\n                    <div>\n                        <label></label>                            \n                        <div>\n                            <div class='input-text'>\n                                <span>X</span>\n                                <span>Y</span>\n                                <span>Z</span>\n                            </div>\n                        </div>\n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>3D Angle</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dARange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dA\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>       \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' ref=\"$scale3dXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' ref=\"$scale3dX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' ref=\"$scale3dYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' ref=\"$scale3dY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' ref=\"$scale3dZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' ref=\"$scale3dZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range' ref=\"$translate3dXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' ref=\"$translate3dX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range' ref=\"$translate3dYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' ref=\"$translate3dY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' ref=\"$translate3dZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' ref=\"$translate3dZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT_CHANGE_LAYER_TRANSFORM_3D,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16354,6 +16404,7 @@ var Transform3d = function (_BasePropertyItem) {
 
                 attr.forEach(function (key) {
                     if (item[key]) {
+                        _this2.refs["$" + key + "Range"].val(item[key]);
                         _this2.refs["$" + key].val(item[key]);
                     }
                 });
@@ -16364,9 +16415,67 @@ var Transform3d = function (_BasePropertyItem) {
         value: function updateTransform(key) {
             var _this3 = this;
 
+            var postfix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
             this.read('/selection/current/layer/id', function (id) {
-                _this3.commit(CHANGE_LAYER_TRANSFORM_3D, defineProperty({ id: id }, key, _this3.refs['$' + key].val()));
+                var value = _this3.refs['$' + key + postfix].val();
+                if (postfix == '') {
+                    _this3.refs['$' + key + 'Range'].val(value);
+                } else {
+                    _this3.refs['$' + key].val(value);
+                }
+                _this3.commit(CHANGE_LAYER_TRANSFORM_3D, defineProperty({ id: id }, key, value));
             });
+        }
+    }, {
+        key: 'change:input $rotate3dXRange',
+        value: function changeInput$rotate3dXRange() {
+            this.updateTransform('rotate3dX', 'Range');
+        }
+    }, {
+        key: 'change:input $rotate3dYRange',
+        value: function changeInput$rotate3dYRange() {
+            this.updateTransform('rotate3dY', 'Range');
+        }
+    }, {
+        key: 'change:input $rotate3dZRange',
+        value: function changeInput$rotate3dZRange() {
+            this.updateTransform('rotate3dZ', 'Range');
+        }
+    }, {
+        key: 'change:input $rotate3dARange',
+        value: function changeInput$rotate3dARange() {
+            this.updateTransform('rotate3dA', 'Range');
+        }
+    }, {
+        key: 'change:input $scale3dXRange',
+        value: function changeInput$scale3dXRange() {
+            this.updateTransform('scale3dX', 'Range');
+        }
+    }, {
+        key: 'change:input $scale3dYRange',
+        value: function changeInput$scale3dYRange() {
+            this.updateTransform('scale3dY', 'Range');
+        }
+    }, {
+        key: 'change:input $scale3dZRange',
+        value: function changeInput$scale3dZRange() {
+            this.updateTransform('scale3dZ', 'Range');
+        }
+    }, {
+        key: 'change:input $translate3dXRange',
+        value: function changeInput$translate3dXRange() {
+            this.updateTransform('translate3dX', 'Range');
+        }
+    }, {
+        key: 'change:input $translate3dYRange',
+        value: function changeInput$translate3dYRange() {
+            this.updateTransform('translate3dY', 'Range');
+        }
+    }, {
+        key: 'change:input $translate3dZRange',
+        value: function changeInput$translate3dZRange() {
+            this.updateTransform('translate3dZ', 'Range');
         }
     }, {
         key: 'input $rotate3dX',

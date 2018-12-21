@@ -1,3 +1,4 @@
 export default {
-    'app.title': 'EASYLOGIC'
+    'app.title': 'EASYLOGIC',
+    'app.counting': `{index}`
 }
