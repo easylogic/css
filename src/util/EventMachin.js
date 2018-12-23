@@ -3,7 +3,7 @@ import Dom from './Dom'
 import State from './State'
 import { debounce } from './functions/func';
 
-const CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize)/ig;
+const CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll)/ig;
 const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 const CHECK_FUNCTION_PATTERN = /^([^ \t]*)(\((.*)\))?$/ig;
 const EVENT_SAPARATOR = ' '
@@ -282,6 +282,8 @@ export default class EventMachin {
     return e.delegateTarget == e.target; 
   }
 
+
+
   getDefaultEventObject (eventName, checkMethodFilters) {
     const isControl = checkMethodFilters.includes('Control');
     const isShift =  checkMethodFilters.includes('Shift');
@@ -308,10 +310,24 @@ export default class EventMachin {
     if (delay.length) {
       debounceTime = delay[0].replace('debounce(', '').replace(')', '');
     }
+
+    // capture 
+    const capturing = arr.filter(code => {
+      if (code.indexOf('capture')  > -1) {
+        return true; 
+      } 
+      return false; 
+    })
+
+    let useCapture = false; 
+    if (capturing.length) {
+      useCapture = true; 
+    }
     
     arr = arr.filter(code => {
       return checkMethodList.includes(code) === false 
-            && delay.includes(code) === false; 
+            && delay.includes(code) === false 
+            && capturing.includes(code) === false; 
     }).map(code => {
       return code.toLowerCase() 
     });
@@ -325,6 +341,7 @@ export default class EventMachin {
       isAlt,
       isMeta,
       codes : arr,
+      useCapture,
       debounce: debounceTime,
       checkMethodList: checkMethodList
     }
@@ -332,7 +349,7 @@ export default class EventMachin {
 
   bindingEvent ([ eventName, dom, ...delegate], checkMethodFilters, callback) {
     let eventObject = this.getDefaultEventObject(eventName, checkMethodFilters);
-
+s
     eventObject.dom = this.getDefaultDomElement(dom);
     eventObject.delegate = delegate.join(EVENT_SAPARATOR);
 
@@ -423,7 +440,7 @@ export default class EventMachin {
   addEvent(eventObject, callback) {
     eventObject.callback = this.makeCallback(eventObject, callback)
     this.addBinding(eventObject);
-    Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback)
+    Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, eventObject.useCapture)
   }
 
   removeEventAll () {

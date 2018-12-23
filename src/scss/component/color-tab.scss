@@ -2,6 +2,8 @@
     display: flex;
     flex-direction: column;
     height: 350px;
+    box-sizing: border-box;
+    border: 1px solid #ececec;
 
     &.xd {
         height: 260px;
@@ -21,7 +23,7 @@
             height:100%;
             padding: 5px 10px;
             box-sizing: border-box;
-            border: 1px solid #ececec;
+            // border: 1px solid #ececec;
 
             &.active {
                 background-color: white;
@@ -33,7 +35,7 @@
     .color-tab-body {
         flex: 1 1 auto; 
         position: relative;
-        border: 1px solid #ececec;
+        // border: 1px solid #ececec;
 
         .color-tab-content {
             display: none;

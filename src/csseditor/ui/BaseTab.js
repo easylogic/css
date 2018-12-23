@@ -1,4 +1,5 @@
 import UIElement from "../../colorpicker/UIElement";
+import Dom from "../../util/Dom";
 
 export default class BaseTab extends UIElement {
 
@@ -42,4 +43,48 @@ export default class BaseTab extends UIElement {
 
     onTabShow() {}
 
+
+    setScrollTabTitle ($scrollPanel) {
+        var offset = $scrollPanel.offset();
+        var $tabElementTitle = $scrollPanel.$(".tab-element-title") ;
+
+        if (!$tabElementTitle) {
+            $scrollPanel.append(new Dom('div', 'tab-element-title'))
+            $tabElementTitle = $scrollPanel.$(".tab-element-title") ;
+        }
+
+        var elementsInViewport = $scrollPanel.children().filter((_, index) => index > 0).map($dom => {
+            var rect = $dom.rect();
+            if (offset.top < rect.bottom ) {
+                return { $dom, isElementInViewport: true}
+            }
+            return { $dom, isElementInViewport: false}
+        })
+
+        var title = '';
+        if (elementsInViewport.length) {
+
+            var viewElement = elementsInViewport.filter(it => {
+                return it.isElementInViewport
+            })
+
+            if (viewElement.length) {                                
+                var $dom = viewElement[0].$dom;
+                var $title = $dom.$(".title");
+
+                if ($title && offset.top > $title.rect().bottom) {
+                    title = $title.text();
+                }
+            }
+        }
+
+        if (title) {
+            if($tabElementTitle.css('display') == 'none') {
+                $tabElementTitle.show()
+            }            
+            $tabElementTitle.px('top', $scrollPanel.scrollTop()).text(title);            
+        } else {
+            $tabElementTitle.hide();
+        }
+    }
 } 

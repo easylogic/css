@@ -6461,8 +6461,10 @@ var ColorSetsList = function (_BaseModule) {
 
 var Event = {
     addEvent: function addEvent(dom, eventName, callback) {
+        var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
         if (dom) {
-            dom.addEventListener(eventName, callback);
+            dom.addEventListener(eventName, callback, useCapture);
         }
     },
     removeEvent: function removeEvent(dom, eventName, callback) {
@@ -6557,7 +6559,7 @@ var State = function () {
   return State;
 }();
 
-var CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize)/ig;
+var CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll)/ig;
 var CHECK_LOAD_PATTERN = /^load (.*)/ig;
 var EVENT_SAPARATOR = ' ';
 var EVENT_NAME_SAPARATOR = ':';
@@ -6914,8 +6916,21 @@ var EventMachin = function () {
         debounceTime = delay[0].replace('debounce(', '').replace(')', '');
       }
 
+      // capture 
+      var capturing = arr.filter(function (code) {
+        if (code.indexOf('capture') > -1) {
+          return true;
+        }
+        return false;
+      });
+
+      var useCapture = false;
+      if (capturing.length) {
+        useCapture = true;
+      }
+
       arr = arr.filter(function (code) {
-        return checkMethodList.includes(code) === false && delay.includes(code) === false;
+        return checkMethodList.includes(code) === false && delay.includes(code) === false && capturing.includes(code) === false;
       }).map(function (code) {
         return code.toLowerCase();
       });
@@ -6929,6 +6944,7 @@ var EventMachin = function () {
         isAlt: isAlt,
         isMeta: isMeta,
         codes: arr,
+        useCapture: useCapture,
         debounce: debounceTime,
         checkMethodList: checkMethodList
       };
@@ -6942,7 +6958,6 @@ var EventMachin = function () {
           delegate = _ref2.slice(2);
 
       var eventObject = this.getDefaultEventObject(eventName, checkMethodFilters);
-
       eventObject.dom = this.getDefaultDomElement(dom);
       eventObject.delegate = delegate.join(EVENT_SAPARATOR);
 
@@ -7044,7 +7059,7 @@ var EventMachin = function () {
     value: function addEvent(eventObject, callback) {
       eventObject.callback = this.makeCallback(eventObject, callback);
       this.addBinding(eventObject);
-      Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback);
+      Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, eventObject.useCapture);
     }
   }, {
     key: 'removeEventAll',
@@ -19149,12 +19164,12 @@ var BaseTab = function (_UIElement) {
     }
 
     createClass(BaseTab, [{
-        key: 'template',
+        key: "template",
         value: function template() {
-            return '\n        <div class="tab">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="1">1</div>\n                <div class="tab-item" data-id="2">2</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="1"></div>\n                <div class="tab-content" data-id="2"></div>\n            </div>\n        </div>\n        ';
+            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"1\">1</div>\n                <div class=\"tab-item\" data-id=\"2\">2</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"1\"></div>\n                <div class=\"tab-content\" data-id=\"2\"></div>\n            </div>\n        </div>\n        ";
         }
     }, {
-        key: 'isNotSelectedTab',
+        key: "isNotSelectedTab",
         value: function isNotSelectedTab(e) {
             return !e.$delegateTarget.hasClass('selected');
         }
@@ -19164,7 +19179,7 @@ var BaseTab = function (_UIElement) {
             this.selectTab(e.$delegateTarget.attr('data-id'));
         }
     }, {
-        key: 'selectTab',
+        key: "selectTab",
         value: function selectTab(id) {
 
             this.selectedTabId = id;
@@ -19180,8 +19195,55 @@ var BaseTab = function (_UIElement) {
             this.onTabShow();
         }
     }, {
-        key: 'onTabShow',
+        key: "onTabShow",
         value: function onTabShow() {}
+    }, {
+        key: "setScrollTabTitle",
+        value: function setScrollTabTitle($scrollPanel) {
+            var offset = $scrollPanel.offset();
+            var $tabElementTitle = $scrollPanel.$(".tab-element-title");
+
+            if (!$tabElementTitle) {
+                $scrollPanel.append(new Dom('div', 'tab-element-title'));
+                $tabElementTitle = $scrollPanel.$(".tab-element-title");
+            }
+
+            var elementsInViewport = $scrollPanel.children().filter(function (_, index) {
+                return index > 0;
+            }).map(function ($dom) {
+                var rect = $dom.rect();
+                if (offset.top < rect.bottom) {
+                    return { $dom: $dom, isElementInViewport: true };
+                }
+                return { $dom: $dom, isElementInViewport: false };
+            });
+
+            var title = '';
+            if (elementsInViewport.length) {
+
+                var viewElement = elementsInViewport.filter(function (it) {
+                    return it.isElementInViewport;
+                });
+
+                if (viewElement.length) {
+                    var $dom = viewElement[0].$dom;
+                    var $title = $dom.$(".title");
+
+                    if ($title && offset.top > $title.rect().bottom) {
+                        title = $title.text();
+                    }
+                }
+            }
+
+            if (title) {
+                if ($tabElementTitle.css('display') == 'none') {
+                    $tabElementTitle.show();
+                }
+                $tabElementTitle.px('top', $scrollPanel.scrollTop()).text(title);
+            } else {
+                $tabElementTitle.hide();
+            }
+        }
     }]);
     return BaseTab;
 }(UIElement);
@@ -19197,7 +19259,22 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected" data-id="info">\n                    <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    <Name></Name>            \n                    <size></size>                \n                    <Rotate></Rotate>        \n                    <RadiusFixed></RadiusFixed>\n                    <radius></radius>        \n                    <opacity></opacity>              \n                    <LayerBlend></LayerBlend>        \n                    <BackgroundClip></BackgroundClip>                    \n                </div>\n                <div class="tab-content" data-id="text">\n                    <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    <Font></Font>                    \n                    <Text></Text>                    \n                    <TextShadow></TextShadow>                    \n                </div>\n                <div class="tab-content" data-id="fill">\n                    <FillColorPickerPanel></FillColorPickerPanel>\n                    <BoxShadow></BoxShadow>\n                    <FilterList></FilterList>    \n                    <BackdropList></BackdropList>   \n                    <EmptyArea height="100px"></EmptyArea>             \n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>        \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+        }
+    }, {
+        key: 'scroll $layerInfoScroll',
+        value: function scroll$layerInfoScroll(e) {
+            this.setScrollTabTitle(this.refs.$layerInfoScroll);
+        }
+    }, {
+        key: 'scroll $layerTextScroll',
+        value: function scroll$layerTextScroll(e) {
+            this.setScrollTabTitle(this.refs.$layerTextScroll);
+        }
+    }, {
+        key: 'scroll $layerFillScroll',
+        value: function scroll$layerFillScroll(e) {
+            this.setScrollTabTitle(this.refs.$layerFillScroll);
         }
     }, {
         key: 'onTabShow',
@@ -19246,7 +19323,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content selected" data-id="gradient">\n                        <BackgroundInfo></BackgroundInfo>\n                        <BackgroundBlend></BackgroundBlend>\n                        <div class=\'sub-feature\'>\n                            <BackgroundSize></BackgroundSize>\n                        </div>\n                        <ColorPickerPanel></ColorPickerPanel>\n                        <ColorStepsInfo></ColorStepsInfo>   \n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',

@@ -13,14 +13,19 @@ export default class ImageTabView extends BaseTab {
                     <div class="tab-item" data-id="css">CSS</div>
                 </div>
                 <div class="tab-body" ref="$body">
-                    <div class="tab-content selected" data-id="gradient">
-                        <BackgroundInfo></BackgroundInfo>
-                        <BackgroundBlend></BackgroundBlend>
-                        <div class='sub-feature'>
-                            <BackgroundSize></BackgroundSize>
+                    <div class="tab-content flex selected" data-id="gradient">
+                        <div class='fixed'>
+                            <ColorPickerPanel></ColorPickerPanel>
+                            <ColorStepsInfo></ColorStepsInfo>                            
                         </div>
-                        <ColorPickerPanel></ColorPickerPanel>
-                        <ColorStepsInfo></ColorStepsInfo>   
+                        <div class='scroll'>
+                            <BackgroundInfo></BackgroundInfo>
+                            <BackgroundBlend></BackgroundBlend>
+                            <div class='sub-feature'>
+                                <BackgroundSize></BackgroundSize>
+                            </div>
+                        </div>    
+
                     </div>
                     <div class="tab-content" data-id="css">
                         <BackgroundCode></BackgroundCode>

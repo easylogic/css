@@ -101,7 +101,10 @@
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    height: 350px; }
+    height: 350px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    border: 1px solid #ececec; }
     .codemirror-colorpicker .colorpicker-body .color-tab.xd {
       height: 260px; }
     .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header {
@@ -126,8 +129,7 @@
         height: 100%;
         padding: 5px 10px;
         -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        border: 1px solid #ececec; }
+                box-sizing: border-box; }
         .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header .color-tab-item.active {
           background-color: white;
           border-bottom-color: white; }
@@ -135,8 +137,7 @@
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
               flex: 1 1 auto;
-      position: relative;
-      border: 1px solid #ececec; }
+      position: relative; }
       .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-body .color-tab-content {
         display: none;
         position: absolute;
@@ -947,6 +948,7 @@
   .codemirror-colorpicker.ring-tab .colorpicker-body .wheel {
     width: 224px;
     height: 224px;
+    margin: 0 auto;
     position: relative;
     -webkit-box-sizing: border-box;
             box-sizing: border-box; }
@@ -1514,6 +1516,40 @@ html, body {
         overflow: auto; }
         .csseditor .tab .tab-body .tab-content.selected {
           display: block; }
+          .csseditor .tab .tab-body .tab-content.selected.flex {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column; }
+        .csseditor .tab .tab-body .tab-content .fixed {
+          -webkit-box-flex: 0;
+              -ms-flex: none;
+                  flex: none; }
+        .csseditor .tab .tab-body .tab-content .scroll {
+          -webkit-box-flex: 1;
+              -ms-flex: 1 1 auto;
+                  flex: 1 1 auto;
+          overflow: auto;
+          position: relative; }
+          .csseditor .tab .tab-body .tab-content .scroll .tab-element-title {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            height: 30px;
+            display: none;
+            background-color: #f3f3f3;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 8px 5px !important;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            height: 30px;
+            background-color: #f3f3f3;
+            color: #333; }
     .csseditor .tab.bottom > .tab-header {
       top: auto;
       bottom: 1px; }
@@ -2608,9 +2644,6 @@ html, body {
     .csseditor .feature-control .image-feature .color-tab {
       bottom: auto;
       height: 325px; }
-      .csseditor .feature-control .image-feature .color-tab .color-tab-body {
-        border: 1px solid #ececec;
-        border-top: 0px; }
     .csseditor .feature-control .image-feature .color-steps-tab {
       top: 620px; }
   .csseditor .sub-feature-control {
@@ -5261,6 +5294,8 @@ html, body {
         padding: 0px; }
         .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body {
           width: 100%; }
+          .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-tab {
+            border: 0px; }
           .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-panel {
             margin-left: 12px; }
           .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-tab-body {
@@ -5269,9 +5304,21 @@ html, body {
         padding: 0px; }
         .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body {
           width: 100%; }
+          .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-tab {
+            border: 0px; }
           .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-panel {
             margin-left: 12px; }
           .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-tab-body {
+            border: 0px; }
+      .csseditor .property-view .property-item.colorpicker .items {
+        padding: 0px; }
+        .csseditor .property-view .property-item.colorpicker .items .colorpicker-body {
+          width: 100%; }
+          .csseditor .property-view .property-item.colorpicker .items .colorpicker-body .color-tab {
+            border: 0px; }
+          .csseditor .property-view .property-item.colorpicker .items .colorpicker-body .color-panel {
+            margin-left: 12px; }
+          .csseditor .property-view .property-item.colorpicker .items .colorpicker-body .color-tab-body {
             border: 0px; }
       .csseditor .property-view .property-item.layer-code .key-value-view {
         display: block;
