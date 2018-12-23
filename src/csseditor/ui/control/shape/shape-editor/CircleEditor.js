@@ -1,5 +1,5 @@
-import UIElement from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE } from "../../../../types/event";
 
 export default class CircleEditor extends UIElement {
 
@@ -18,6 +18,7 @@ export default class CircleEditor extends UIElement {
         this.$el.toggle(isShow);
 
         if (isShow) {
+            this.cachedRectangle = false;            
             this.refreshPointer()
         }
 
@@ -49,15 +50,20 @@ export default class CircleEditor extends UIElement {
     }
 
     getRectangle () {
-        var width = this.$el.width();  
-        var height = this.$el.height();  
-        var minX = this.$el.offsetLeft();
-        var minY = this.$el.offsetTop();
 
-        var maxX = minX + width; 
-        var maxY = minY + height;
+        if (!this.cachedRectangle) {
+            var width = this.$el.width();  
+            var height = this.$el.height();  
+            var minX = this.$el.offsetLeft();
+            var minY = this.$el.offsetTop();
+    
+            var maxX = minX + width; 
+            var maxY = minY + height;            
+            this.cachedRectangle = { minX, minY, maxX, maxY, width, height }
+        }
+        
 
-        return { minX, minY, maxX, maxY, width, height }
+        return this.cachedRectangle;
     }    
 
     refreshUI (e) {
@@ -91,11 +97,18 @@ export default class CircleEditor extends UIElement {
         item.clipPathCenter = center;
         item.clipPathRadius = radius;
 
-        this.dispatch('/item/set', item);
+        this.commit(CHANGE_LAYER_CLIPPATH, item);
 
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_POSITION,        
+        EVENT_CHANGE_LAYER_CLIPPATH,
+        EVENT_CHANGE_LAYER
+    )] () {
         this.refresh()
     }
 

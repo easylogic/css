@@ -47,42 +47,7 @@ export default class LayerManager extends BaseModule {
     }    
 
     '*/layer/make/clip-path' ($store, layer) {
-        var clipPath = null;
-        if (layer.clipPathType == 'circle') {
-
-            if (!layer.clipPathCenter) return ;
-            if (!layer.clipPathRadius) return ;
-
-            var width = parseParamNumber(layer.width);
-            var height = parseParamNumber(layer.height);
-
-
-            var placeCenter = [
-                percent(Math.floor(layer.clipPathCenter[0]/width*100)), // centerX 
-                percent( Math.floor(layer.clipPathCenter[1]/height*100)) // centerY
-            ]
-    
-            var radiusSize = Math.sqrt(
-                Math.pow(layer.clipPathRadius[0] - layer.clipPathCenter[0], 2)  
-                + 
-                Math.pow(layer.clipPathRadius[1] - layer.clipPathCenter[1], 2)
-            )/Math.sqrt(2);
-    
-            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))/Math.sqrt(2)
-            var radiusPercent = percent( Math.floor(radiusSize / dist * 100) );  
-    
-            clipPath = `circle(${radiusPercent} at ${placeCenter.join(' ')})`;
-        } else if (layer.clipPathType == 'none') {
-            clipPath = 'none';
-        } else {
-            if (layer.clipPathSvg) {
-                clipPath = `url(#clippath-${layer.id})`
-            }
-        }
-
-        return {
-            'clip-path': clipPath
-        }
+        return $store.read('/clip-path/toCSS', layer);
     }
 
     '*/layer/make/filter' ($store, layer) {       

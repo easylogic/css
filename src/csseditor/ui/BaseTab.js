@@ -53,9 +53,9 @@ export default class BaseTab extends UIElement {
             $tabElementTitle = $scrollPanel.$(".tab-element-title") ;
         }
 
-        var elementsInViewport = $scrollPanel.children().filter((_, index) => index > 0).map($dom => {
+        var elementsInViewport = $scrollPanel.children().map($dom => {
             var rect = $dom.rect();
-            if (offset.top < rect.bottom ) {
+            if (offset.top <= rect.bottom ) {
                 return { $dom, isElementInViewport: true}
             }
             return { $dom, isElementInViewport: false}

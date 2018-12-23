@@ -60,6 +60,15 @@ export const BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT)
     return typeof BACKDROP_DEFAULT_OBJECT[key].index != 'undefined'
 });
 
+export const CLIP_PATH_DEFAULT_OBJECT = {
+    clipPathType: 'none',
+    clipPathSvg: '',
+    clipPathWidth: '',
+    clipPathHeight: '',
+    fitClipPathSize: false,   
+    clipText: false
+}
+
 export const LAYER_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_LAYER,
     name: '',
@@ -69,10 +78,6 @@ export const LAYER_DEFAULT_OBJECT = {
     mixBlendMode: 'normal',
     selected: true,
     visible: true,
-    clipPathSvg: '',
-    clipPathWidth: '',
-    clipPathHeight: '',
-    fitClipPathSize: false,
     x: '0px',
     y: '0px',
     width: '200px',
@@ -85,8 +90,8 @@ export const LAYER_DEFAULT_OBJECT = {
     wordBreak: 'break-word',
     wordWrap: 'break-word',
     lineHeight: 1.6,
-    clipText: false,
     content: '',
+    ...CLIP_PATH_DEFAULT_OBJECT,
     ...FILTER_DEFAULT_OBJECT,
     ...BACKDROP_DEFAULT_OBJECT
 }

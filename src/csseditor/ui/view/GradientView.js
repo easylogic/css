@@ -1,6 +1,7 @@
 import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
 import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
+import LayerShapeEditor from '../control/shape/LayerShapeEditor';
 import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
 import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
@@ -36,6 +37,7 @@ import {
 import { px } from '../../../util/css/types';
 
 
+
 export default class GradientView extends UIElement {
 
     initialize () {
@@ -54,7 +56,8 @@ export default class GradientView extends UIElement {
                         </div>       
                         <PredefinedPageResizer></PredefinedPageResizer>
                         <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>
-                        <MoveGuide></MoveGuide>     
+                        <LayerShapeEditor></LayerShapeEditor>
+                        <MoveGuide></MoveGuide>
                         <div ref="$dragArea"></div>                     
                     </div>          
                 </div>
@@ -67,6 +70,7 @@ export default class GradientView extends UIElement {
         return {  
             ColorPickerLayer, 
             SubFeatureControl,
+            LayerShapeEditor,
             MoveGuide,
             PredefinedPageResizer,
             PredefinedGroupLayerResizer

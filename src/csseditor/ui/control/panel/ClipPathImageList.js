@@ -1,7 +1,7 @@
 import BasePropertyItem from "./items/BasePropertyItem";
 import Dom from "../../../../util/Dom";
 import { parseParamNumber } from "../../../../util/filter/functions";
-import { CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_CLIPPATH } from "../../../types/event";
+import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -27,10 +27,6 @@ export default class ClipPathImageList extends BasePropertyItem {
 
     refresh () {
         this.load();
-    }
-
-    [EVENT_CHANGE_LAYER_CLIPPATH] () {
-        this.refresh();
     }
 
     '@changeSvgList' () {

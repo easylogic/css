@@ -1,7 +1,7 @@
 import { parseParamNumber } from '../../../../util/filter/functions';
 import shapeEditor from './shape-editor/index';
-import UIElement from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION } from '../../../types/event';
 import { px } from '../../../../util/css/types';
 
 
@@ -12,6 +12,7 @@ export default class LayerShapeEditor extends UIElement {
         super.initialize()
 
         this.$board = this.parent.refs.$board;
+        this.$canvas = this.parent.refs.$canvas;
         this.$page = this.parent.refs.$page; 
     }
 
@@ -39,31 +40,47 @@ export default class LayerShapeEditor extends UIElement {
         }
     }
 
-    setPosition () {
-        var layer = this.read('/selection/current/layer')
+    setRectangle ({x, y, width, height, id}) {
+        var boardOffset = this.boardOffset || this.$board.offset()
+        var pageOffset = this.pageOffset || this.$page.offset()
+        var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
+        var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-        if (!layer) return; 
+        x = px( parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) ); 
+        y = px( parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) ); 
 
-        var {width, height, x, y} = layer; 
+        var transform = "none"; 
+        
+        if (id) {
+            transform = this.read('/layer/make/transform', this.read('/item/get', id));
+        }
 
-        var boardOffset = this.$board.offset()
-        var pageOffset = this.$page.offset()
-
-        x = px( parseParamNumber(x, x => x + pageOffset.left - boardOffset.left) ); 
-        y = px( parseParamNumber(y, y => y + pageOffset.top - boardOffset.top) ); 
-
-        this.$el.css({ 
+        return { 
             width, height, 
             left: x, top: y, 
-            transform: this.read('/layer/make/transform', layer)
-        })
+            transform
+        }
+    }    
+
+    setPosition () {
+        var item = this.read('/selection/current/layer')
+
+        if (!item) return; 
+
+        this.$el.css(this.setRectangle(item))
     }
 
     isShow () {
-        return !this.read('/selection/is/page');
+        return this.read('/selection/is/layer');
     }
 
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_LAYER_CLIPPATH,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }
 
 }

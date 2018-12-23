@@ -21,9 +21,11 @@ import TextShadowManager from "./TextShadowManager";
 import FilterManager from "./FilterManager";
 import BackdropManager from "./BackdropManager";
 import I18nManager from "./I18nManager";
+import ClipPathManager from "./ClipPathManager";
 
 
 export default [  
+    ClipPathManager,
     I18nManager,
     BackdropManager,
     FilterManager,

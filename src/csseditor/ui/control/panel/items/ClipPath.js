@@ -6,16 +6,16 @@ export default class ClipPath extends BasePropertyItem {
     template () {
         return `
             <div class='property-item clip-path show'>
-                <div class='title' ref="$title">Clip Image</div>
+                <div class='title' ref="$title">Clip Path</div>
                 <div class='items'>            
                     <div>
                         <label>Type</label>
                         <div >
                             <select ref="$clipType">
                                 <option value="none">none</option>
-                                <!-- <option value="circle">circle</option>-->
-                                <!-- <option value="inset">inset</option> -->
-                                <!-- <option value="polygon">polygon</option> -->
+                                <option value="circle">circle</option>
+                                <option value="inset">inset</option>
+                                <option value="polygon">polygon</option>
                                 <option value="svg">svg</option>
                             </select>
                         </div>
