@@ -1,7 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, CHANGE_LAYER } from "../../../../types/event";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_BACKDROP_FILTER } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, UNIT_COLOR } from "../../../../../util/css/types";
+import { unitString, isColorUnit } from "../../../../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 
 const DROPSHADOW_FILTER_KEYS = [
@@ -63,7 +63,7 @@ export default class BackdropList extends BasePropertyItem {
                     var it = this.read('/backdrop/get', subkey);
                     var value = dataObject[subkey] || it.defaultValue;
 
-                    if (it.unit == UNIT_COLOR) {
+                    if (isColorUnit(it)) {
                         return `
                         <div>
                             <span class='title'>${it.title}</span>
@@ -114,10 +114,19 @@ export default class BackdropList extends BasePropertyItem {
         })
     }
 
+    refreshFilter (obj) {
+        Object.keys(obj).filter(key => key.includes('backdrop')).forEach(key => {
+            console.log(key);
+        })
+    }
+
+    [EVENT_CHANGE_LAYER_BACKDROP_FILTER] (obj) {
+        this.refreshFilter(obj);
+    }
+
     [MULTI_EVENT(
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_FILTER,
         EVENT_CHANGE_LAYER
     )] () {
         this.refresh()
@@ -139,7 +148,7 @@ export default class BackdropList extends BasePropertyItem {
             var value = layer[key] || this.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
             value.value = lastValue 
 
-            this.commit(CHANGE_LAYER, {id, [key]: value })
+            this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })
         });
     }
 
@@ -150,7 +159,7 @@ export default class BackdropList extends BasePropertyItem {
             var value = layer[key] || this.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
             value.checked = checked 
 
-            this.commit(CHANGE_LAYER, {id, [key]: value })
+            this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })
         });
     }
 

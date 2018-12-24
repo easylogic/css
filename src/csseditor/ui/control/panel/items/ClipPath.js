@@ -1,6 +1,40 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_LAYER, CHANGE_LAYER , EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH} from "../../../../types/event";
+import { 
+    EVENT_CHANGE_LAYER, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_CLIPPATH, 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_SELECTION, 
+    EVENT_CHANGE_LAYER_CLIPPATH
+} from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { 
+    CLIP_PATH_TYPE_NONE, 
+    CLIP_PATH_TYPE_CIRCLE, 
+    CLIP_PATH_TYPE_ELLIPSE, 
+    CLIP_PATH_TYPE_INSET, 
+    CLIP_PATH_TYPE_POLYGON, 
+    CLIP_PATH_TYPE_SVG, 
+    CLIP_PATH_SIDE_TYPE_NONE,
+    CLIP_PATH_SIDE_TYPE_CLOSEST,
+    CLIP_PATH_SIDE_TYPE_FARTHEST
+} from "../../../../module/ItemTypes";
+
+const CLIP_PATH_TYPES = [
+    CLIP_PATH_TYPE_NONE,
+    CLIP_PATH_TYPE_CIRCLE,
+    CLIP_PATH_TYPE_ELLIPSE,
+    CLIP_PATH_TYPE_INSET,
+    CLIP_PATH_TYPE_POLYGON,
+    CLIP_PATH_TYPE_SVG
+]
+
+
+const CLIP_PATH_SIDE_TYPES = [
+    CLIP_PATH_SIDE_TYPE_NONE,
+    CLIP_PATH_SIDE_TYPE_CLOSEST,
+    CLIP_PATH_SIDE_TYPE_FARTHEST
+]
 
 export default class ClipPath extends BasePropertyItem {
     template () {
@@ -12,14 +46,22 @@ export default class ClipPath extends BasePropertyItem {
                         <label>Type</label>
                         <div >
                             <select ref="$clipType">
-                                <option value="none">none</option>
-                                <option value="circle">circle</option>
-                                <option value="inset">inset</option>
-                                <option value="polygon">polygon</option>
-                                <option value="svg">svg</option>
+                                ${CLIP_PATH_TYPES.map(type => {
+                                    return `<option value="${type}">${type}</option>`
+                                }).join('')}
                             </select>
                         </div>
-                    </div>                                
+                    </div>   
+                    <div>
+                        <label>Side</label>
+                        <div >
+                            <select ref="$clipSideType">
+                                ${CLIP_PATH_SIDE_TYPES.map(type => {
+                                    return `<option value="${type}">${type}</option>`
+                                }).join('')}
+                            </select>
+                        </div>
+                    </div>                                                    
                     <div>
                         <label>Fit Size</label>
                         <div >
@@ -54,7 +96,8 @@ export default class ClipPath extends BasePropertyItem {
             }
 
             this.refs.$fit.checked(layer.fitClipPathSize)
-            this.refs.$clipType.val(layer.clipPathType);
+            this.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
+            this.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
         });
     }
 
@@ -65,21 +108,33 @@ export default class ClipPath extends BasePropertyItem {
     'click $fit' () {
         this.read('/selection/current/layer', (layer) => {
 
-            this.commit(CHANGE_LAYER, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
+            this.commit(CHANGE_LAYER_CLIPPATH, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
             this.refresh();            
         })
     }
 
     'change $clipType' () {
         this.read('/selection/current/layer', (layer) => {
-            if (layer.clipPathType == 'none') {
+            if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
                 this.refs.$fit.checked(false)
                 this.refs.$clipPath.empty();
                 layer.clipPathSvg = '';
             }
 
-            this.commit(CHANGE_LAYER, {id: layer.id, clipPathSvg: layer.clipPathSvg,  clipPathType: this.refs.$clipType.val()})
-            this.refresh();
+            this.commit(CHANGE_LAYER_CLIPPATH, {
+                id: layer.id, 
+                clipPathSvg: layer.clipPathSvg,  
+                clipPathType: this.refs.$clipType.val()
+            })
+        })
+    }
+
+    'change $clipSideType' () {
+        this.read('/selection/current/layer/id', (id) => {
+            this.commit(CHANGE_LAYER_CLIPPATH, {
+                id, 
+                clipPathSideType: this.refs.$clipSideType.val()
+            })
         })
     }
 

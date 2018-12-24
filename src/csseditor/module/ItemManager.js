@@ -26,6 +26,7 @@ import {
     IMAGE_ITEM_TYPE_STATIC,
     IMAGE_ITEM_TYPE_IMAGE
 } from "./ItemTypes";
+import { string2unit } from "../../util/css/types";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -79,6 +80,10 @@ const itemField = {
     'translate3dZ':'translate3dZ',
 }
 
+const updateUnitField = {
+    borderRadius: true 
+}
+
 const convertStyle = (item) => {
     var style = item.style || {};
 
@@ -87,6 +92,12 @@ const convertStyle = (item) => {
     })
 
     delete item.style;
+
+    Object.keys(item).forEach(key => {
+        if (updateUnitField[key]) {
+            item[key] = string2unit (item[key])
+        }
+    })
 
     return item; 
 }

@@ -1,15 +1,18 @@
 import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE } from "../../../../types/event";
-import { CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_SIDE_TYPE_NONE } from "../../../../module/ItemTypes";
+import { 
+    CLIP_PATH_TYPE_ELLIPSE, 
+    CLIP_PATH_SIDE_TYPE_NONE
+} from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
-import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, value2px } from "../../../../../util/css/types";
+import { px2percent } from "../../../../../util/filter/functions";
 
-export default class CircleEditor extends UIElement {
+export default class EllipseEditor extends UIElement {
 
     template () {
         return `
-            <div class='layer-shape-circle-editor'>
+            <div class='layer-shape-ellipse-editor'>
                 <div class="drag-item center" data-type="center" ref="$center"></div>
                 <div class="drag-item radius" data-type="radius" ref="$radius"></div>
             </div>
@@ -22,13 +25,12 @@ export default class CircleEditor extends UIElement {
         this.$el.toggle(isShow);
 
         if (isShow) {
-            this.cachedRectangle = false;       
+            this.cachedRectangle = false;         
             
             this.read('/selection/current/layer', layer => {
                 var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE)
                 this.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE)
-            })
-            
+            })   
             this.refreshPointer()
         }
 
@@ -37,8 +39,7 @@ export default class CircleEditor extends UIElement {
     refreshPointer () {
         this.read('/selection/current/layer', (layer) => {
 
-            if (layer.clipPathType !== CLIP_PATH_TYPE_CIRCLE) return;
-
+            if (layer.clipPathType != CLIP_PATH_TYPE_ELLIPSE) return;
             var { width, height } = this.getRectangle()
 
             var centerX =  defaultValue(layer.clipPathCenterX, percentUnit(50))
@@ -47,11 +48,11 @@ export default class CircleEditor extends UIElement {
             var radiusX =  defaultValue(layer.clipPathRadiusX, percentUnit(100))
             var radiusY =  defaultValue(layer.clipPathRadiusY, percentUnit(100))            
 
-            this.refs.$center.px('left', value2px (centerX, width))
-            this.refs.$center.px('top', value2px (centerY, height));
+            this.refs.$center.px('left', value2px(centerX, width))
+            this.refs.$center.px('top', value2px(centerY, height));
 
             this.refs.$radius.px('left', value2px(radiusX, width));
-            this.refs.$radius.px('top', value2px(radiusY, height));            
+            this.refs.$radius.px('top', value2px(radiusY, height));                  
         })
     }
 
@@ -60,7 +61,7 @@ export default class CircleEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_CIRCLE; 
+        return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE; 
     }
 
     getRectangle () {
@@ -108,7 +109,7 @@ export default class CircleEditor extends UIElement {
         var center = this.centerpos || [width/2, height/2];
 
         var item = this.layer;
-        item.clipPathType = CLIP_PATH_TYPE_CIRCLE
+        item.clipPathType = CLIP_PATH_TYPE_ELLIPSE
         item.clipPathCenterX = percentUnit( px2percent( center[0], width) );
         item.clipPathCenterY = percentUnit( px2percent( center[1], height) );
         item.clipPathRadiusX = percentUnit( px2percent( radius[0], width) );

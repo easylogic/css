@@ -3,7 +3,7 @@ import { parseParamNumber } from "../../util/filter/functions";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
-import { percent } from "../../util/css/types";
+import { percent, stringUnit } from "../../util/css/types";
 
 export default class LayerManager extends BaseModule {
    
@@ -146,7 +146,7 @@ export default class LayerManager extends BaseModule {
         }
 
         if (layer.fontSize) {
-            results['font-size'] = layer.fontSize;
+            results['font-size'] = stringUnit(layer.fontSize);
         }
 
         if (layer.fontFamily) {
@@ -158,7 +158,7 @@ export default class LayerManager extends BaseModule {
         }        
 
         if (typeof layer.lineHeight != 'undefined') {
-            results['line-height']  = layer.lineHeight
+            results['line-height']  = stringUnit(layer.lineHeight)
         }
 
         results['word-wrap'] = layer.wordWrap || 'break-word';
@@ -262,17 +262,19 @@ s
     }
 
     isFixedRadius (layer) {
-        if (layer.fixedRadius) return [layer.borderRadius]; 
+        if (layer.fixedRadius) return [ stringUnit(layer.borderRadius)]; 
+
+        if (!layer.borderTopLeftRadius) return []
 
         var count = [
-            layer.borderTopLeftRadius == layer.borderTopRightRadius,
-            layer.borderTopRightRadius == layer.borderBottomRightRadius,
-            layer.borderBottomRightRadius == layer.borderBottomLeftRadius,
-            layer.borderTopLeftRadius == layer.borderBottomLeftRadius,
+            layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value,
+            layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value,
+            layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value,
+            layer.borderTopLeftRadius.value == layer.borderBottomLeftRadius.value
         ].filter(it => !it).length
 
         if (count == 0) {
-            return [layer.borderTopLeftRadius]
+            return [ stringUnit(layer.borderTopLeftRadius) ]
         }
 
         return []
@@ -284,10 +286,11 @@ s
         if (isFixedRadius.length) {
             css['border-radius'] = isFixedRadius[0]
         } else {
-            css['border-top-left-radius'] = layer.borderTopLeftRadius;
-            css['border-top-right-radius'] = layer.borderTopRightRadius;
-            css['border-bottom-left-radius'] = layer.borderBottomLeftRadius;
-            css['border-bottom-right-radius'] = layer.borderBottomRightRadius;
+
+            if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
+            if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
+            if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
+            if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
         }
 
         return css;

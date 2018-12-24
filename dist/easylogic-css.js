@@ -3468,6 +3468,83 @@ function unit(value, unit) {
     return value + unitString(unit);
 }
 
+function stringUnit(obj) {
+    return unit(obj.value, obj.unit);
+}
+
+
+
+function isUnit(obj, unit) {
+    return obj.unit == unit;
+}
+
+function isPxUnit(obj) {
+    return isUnit(obj, UNIT_PX);
+}
+
+function isPercentUnit(obj) {
+    return isUnit(obj, UNIT_PERCENT);
+}
+
+function isEmUnit(obj) {
+    return isUnit(obj, UNIT_EM);
+}
+
+function isColorUnit(obj) {
+    return isUnit(obj, UNIT_COLOR);
+}
+
+
+
+function unitObject(value, unit) {
+    return { unit: unit, value: value };
+}
+
+function percentUnit(value) {
+    return { unit: UNIT_PERCENT, value: value };
+}
+
+function pxUnit(value) {
+    return { unit: UNIT_PX, value: value };
+}
+
+function degUnit(value) {
+    return { unit: UNIT_DEG, value: value };
+}
+
+function emUnit(value) {
+    return { unit: UNIT_EM, value: value };
+}
+
+
+
+function string2unit(str) {
+    if (typeof str != 'string') return str;
+    if (str.includes(UNIT_PX)) {
+        return pxUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_PERCENT_STRING)) {
+        return percentUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_EM)) {
+        return emUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_DEG)) {
+        return degUnit(parseParamNumber$1(str));
+    }
+
+    return pxUnit(parseParamNumber$1(str));
+}
+
+function value2px(obj, maxValue) {
+    var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
+
+    if (isPxUnit(obj)) {
+        return obj.value;
+    } else if (isPercentUnit(obj)) {
+        return percent2px(obj.value, maxValue);
+    } else if (isEmUnit(obj)) {
+        return em2px(obj.value, maxValue, fontSize);
+    }
+}
+
 var _functions;
 
 var makeId = 0;
@@ -3775,15 +3852,15 @@ function parseParamNumber$1(param, callback) {
     return +param;
 }
 
-function unit2px(unitValue, maxValue) {
+function unit2px(unitValue$$1, maxValue) {
 
-    var value = parseParamNumber$1(unitValue);
+    var value = parseParamNumber$1(unitValue$$1);
 
-    if (unitValue.includes(UNIT_PERCENT_STRING)) {
+    if (unitValue$$1.includes(UNIT_PERCENT_STRING)) {
         return percent2px(value, maxValue);
-    } else if (unitValue.includes(UNIT_PX_STRING)) {
+    } else if (unitValue$$1.includes(UNIT_PX_STRING)) {
         return value;
-    } else if (unitValue.includes(UNIT_EM_STRING)) {
+    } else if (unitValue$$1.includes(UNIT_EM_STRING)) {
         return em2px(value, maxValue);
     }
 }
@@ -5802,13 +5879,17 @@ function debounce(callback, delay) {
 
 function get$1(obj, key, callback) {
 
-    var returnValue = typeof obj[key] == 'undefined' ? key : obj[key];
+    var returnValue = defaultValue(obj[key], key);
 
     if (typeof callback == 'function') {
         return callback(returnValue);
     }
 
     return returnValue;
+}
+
+function defaultValue(value, defaultValue) {
+    return typeof value == 'undefined' ? defaultValue : value;
 }
 
 var func = {
@@ -6647,9 +6728,9 @@ var State = function () {
   }, {
     key: 'set',
     value: function set$$1(key, value) {
-      var defaultValue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+      var defaultValue$$1 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
 
-      this.settingObj[key] = value || defaultValue;
+      this.settingObj[key] = value || defaultValue$$1;
     }
   }, {
     key: 'init',
@@ -6676,12 +6757,12 @@ var State = function () {
   }, {
     key: 'get',
     value: function get$$1(key) {
-      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+      var defaultValue$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
 
-      this.init(key, defaultValue);
+      this.init(key, defaultValue$$1);
 
-      return this.settingObj[key] || defaultValue;
+      return this.settingObj[key] || defaultValue$$1;
     }
   }, {
     key: 'has',
@@ -9772,6 +9853,7 @@ var CHANGE_LAYER_NAME = 'CHANGE_LAYER_NAME';
 
 
 var CHANGE_LAYER_FILTER = 'CHANGE_LAYER_FILTER';
+var CHANGE_LAYER_BACKDROP_FILTER = 'CHANGE_LAYER_BACKDROP_FILTER';
 var CHANGE_LAYER_SIZE = 'CHANGE_LAYER_SIZE';
 var CHANGE_LAYER_ROTATE = 'CHANGE_LAYER_ROTATE';
 var CHANGE_LAYER_OPACITY = 'CHANGE_LAYER_OPACITY';
@@ -9814,6 +9896,7 @@ var EVENT_CHANGE_LAYER = '@' + CHANGE_LAYER;
 
 
 var EVENT_CHANGE_LAYER_FILTER = '@' + CHANGE_LAYER_FILTER;
+var EVENT_CHANGE_LAYER_BACKDROP_FILTER = '@' + CHANGE_LAYER_BACKDROP_FILTER;
 var EVENT_CHANGE_LAYER_SIZE = '@' + CHANGE_LAYER_SIZE;
 var EVENT_CHANGE_LAYER_ROTATE = '@' + CHANGE_LAYER_ROTATE;
 var EVENT_CHANGE_LAYER_OPACITY = '@' + CHANGE_LAYER_OPACITY;
@@ -9906,11 +9989,14 @@ var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(f
 
 var CLIP_PATH_DEFAULT_OBJECT = {
     clipPathType: 'none',
+    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
     clipPathSvg: '',
-    clipPathWidth: '',
-    clipPathHeight: '',
     fitClipPathSize: false,
-    clipText: false
+    clipText: false,
+    clipPathRadiusX: undefined,
+    clipPathRadiusY: undefined,
+    clipPathCenterX: undefined,
+    clipPathCenterY: undefined
 };
 
 var LAYER_DEFAULT_OBJECT = _extends({
@@ -9938,7 +10024,7 @@ var LAYER_DEFAULT_OBJECT = _extends({
 }, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
 
 var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    borderRadius: '100px',
+    borderRadius: pxUnit(100),
     fixedRadius: true
 });
 
@@ -10011,6 +10097,17 @@ var IMAGE_ITEM_TYPE_CONIC = 'conic';
 var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
 var IMAGE_ITEM_TYPE_STATIC = 'static';
 var IMAGE_ITEM_TYPE_IMAGE = 'image';
+
+var CLIP_PATH_TYPE_NONE = 'none';
+var CLIP_PATH_TYPE_CIRCLE = 'circle';
+var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
+var CLIP_PATH_TYPE_INSET = 'inset';
+var CLIP_PATH_TYPE_POLYGON = 'polygon';
+var CLIP_PATH_TYPE_SVG = 'svg';
+
+var CLIP_PATH_SIDE_TYPE_NONE = 'none';
+var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
+var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
 
 var isUndefined$1 = function isUndefined(value) {
     return typeof value == 'undefined' || value == null;
@@ -10992,7 +11089,7 @@ var LayerManager = function (_BaseModule) {
             }
 
             if (layer.fontSize) {
-                results['font-size'] = layer.fontSize;
+                results['font-size'] = stringUnit(layer.fontSize);
             }
 
             if (layer.fontFamily) {
@@ -11004,7 +11101,7 @@ var LayerManager = function (_BaseModule) {
             }
 
             if (typeof layer.lineHeight != 'undefined') {
-                results['line-height'] = layer.lineHeight;
+                results['line-height'] = stringUnit(layer.lineHeight);
             }
 
             results['word-wrap'] = layer.wordWrap || 'break-word';
@@ -11113,14 +11210,16 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: "isFixedRadius",
         value: function isFixedRadius(layer) {
-            if (layer.fixedRadius) return [layer.borderRadius];
+            if (layer.fixedRadius) return [stringUnit(layer.borderRadius)];
 
-            var count = [layer.borderTopLeftRadius == layer.borderTopRightRadius, layer.borderTopRightRadius == layer.borderBottomRightRadius, layer.borderBottomRightRadius == layer.borderBottomLeftRadius, layer.borderTopLeftRadius == layer.borderBottomLeftRadius].filter(function (it) {
+            if (!layer.borderTopLeftRadius) return [];
+
+            var count = [layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value, layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value, layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value, layer.borderTopLeftRadius.value == layer.borderBottomLeftRadius.value].filter(function (it) {
                 return !it;
             }).length;
 
             if (count == 0) {
-                return [layer.borderTopLeftRadius];
+                return [stringUnit(layer.borderTopLeftRadius)];
             }
 
             return [];
@@ -11133,10 +11232,11 @@ var LayerManager = function (_BaseModule) {
             if (isFixedRadius.length) {
                 css['border-radius'] = isFixedRadius[0];
             } else {
-                css['border-top-left-radius'] = layer.borderTopLeftRadius;
-                css['border-top-right-radius'] = layer.borderTopRightRadius;
-                css['border-bottom-left-radius'] = layer.borderBottomLeftRadius;
-                css['border-bottom-right-radius'] = layer.borderBottomRightRadius;
+
+                if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
+                if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
+                if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
+                if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
             }
 
             return css;
@@ -11697,6 +11797,10 @@ var itemField = {
     'translate3dZ': 'translate3dZ'
 };
 
+var updateUnitField = {
+    borderRadius: true
+};
+
 var convertStyle = function convertStyle(item) {
     var style = item.style || {};
 
@@ -11705,6 +11809,12 @@ var convertStyle = function convertStyle(item) {
     });
 
     delete item.style;
+
+    Object.keys(item).forEach(function (key) {
+        if (updateUnitField[key]) {
+            item[key] = string2unit(item[key]);
+        }
+    });
 
     return item;
 };
@@ -14557,14 +14667,12 @@ var FilterManager = function (_BaseModule) {
                 if (it.key == 'filterDropshadow') {
 
                     var values = DROP_SHADOW_LIST.map(function (key) {
-                        var value = layer[key] || FILTER_DEFAULT_OBJECT[key];
-
-                        return unit(value.value, value.unit, true);
+                        return stringUnit(layer[key] || FILTER_DEFAULT_OBJECT[key]);
                     }).join(' ');
 
                     return viewObject.func + "(" + values + ")";
                 } else {
-                    var values = unit(it.value, it.unit, true);
+                    var values = stringUnit(it);
                     return viewObject.func + "(" + values + ")";
                 }
             }).join(' ');
@@ -14756,6 +14864,8 @@ var I18nManager = function (_BaseModule) {
     return I18nManager;
 }(BaseModule);
 
+var SQRT_2 = Math.sqrt(2);
+
 var ClipPathManager = function (_BaseModule) {
     inherits(ClipPathManager, _BaseModule);
 
@@ -14765,25 +14875,106 @@ var ClipPathManager = function (_BaseModule) {
     }
 
     createClass(ClipPathManager, [{
+        key: "caculateClosestFromCenter",
+        value: function caculateClosestFromCenter(centerX, centerY, width, height) {
+            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
+
+            return Math.min.apply(Math, toConsumableArray(list.map(function (it) {
+                var x = Math.pow(Math.abs(centerX - it[0]), 2);
+                var y = Math.pow(Math.abs(centerY - it[1]), 2);
+                return Math.sqrt(x + y) / SQRT_2;
+            })));
+        }
+    }, {
+        key: "caculateFarthestFromCenter",
+        value: function caculateFarthestFromCenter(centerX, centerY, width, height) {
+            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
+
+            return Math.max.apply(Math, toConsumableArray(list.map(function (it) {
+                var x = Math.pow(Math.abs(centerX - it[0]), 2);
+                var y = Math.pow(Math.abs(centerY - it[1]), 2);
+                return Math.sqrt(x + y) / SQRT_2;
+            })));
+        }
+    }, {
         key: '*/clip-path/make/circle',
         value: function clipPathMakeCircle($store, layer) {
-
-            if (!layer.clipPathCenter) return;
-            if (!layer.clipPathRadius) return;
 
             var width = parseParamNumber$1(layer.width);
             var height = parseParamNumber$1(layer.height);
 
-            var placeCenter = [percent(Math.floor(layer.clipPathCenter[0] / width * 100)), // centerX 
-            percent(Math.floor(layer.clipPathCenter[1] / height * 100)) // centerY
-            ];
+            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
 
-            var radiusSize = Math.sqrt(Math.pow(Math.abs(layer.clipPathRadius[0] - layer.clipPathCenter[0]), 2) + Math.pow(Math.abs(layer.clipPathRadius[1] - layer.clipPathCenter[1]), 2)) / Math.sqrt(2);
+            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
+            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
+            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
+            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
+            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
+
+            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
+            var placeCenterY = stringUnit(clipPathCenterY); // centerY
+
+            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
+                var radiusSize = Math.sqrt(Math.pow(Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width)), 2) + Math.pow(Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height)), 2));
+                var radiusString = percent(Math.floor(radiusSize / dist * 100));
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
+            }
+            return "circle(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
+        }
+    }, {
+        key: '*/clip-path/make/ellipse',
+        value: function clipPathMakeEllipse($store, layer) {
+            var width = parseParamNumber$1(layer.width);
+            var height = parseParamNumber$1(layer.height);
+
+            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
+            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
+            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
+            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
+            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
+
+            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
+            var placeCenterY = stringUnit(clipPathCenterY); // centerY
 
             var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
-            var radiusPercent = percent(Math.floor(radiusSize / dist * 100));
 
-            return "circle(" + radiusPercent + " at " + placeCenter.join(' ') + ")";
+            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
+                var radiusSizeX = Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width));
+
+                var radiusPercentX = stringUnit(percentUnit(Math.floor(radiusSizeX / dist * 100)));
+
+                var radiusSizeY = Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height));
+                var radiusPercentY = stringUnit(percentUnit(Math.floor(radiusSizeY / dist * 100)));
+
+                var radiusString = radiusPercentX + " " + radiusPercentY;
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
+            }
+
+            return "ellipse(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
+        }
+    }, {
+        key: '*/clip-path/make/inset',
+        value: function clipPathMakeInset($store, layer) {
+
+            var clipPathInsetTop = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+            var clipPathInsetLeft = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
+            var clipPathInsetRight = defaultValue(layer.clipPathInsetRight, percentUnit(0));
+            var clipPathInsetBottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
+
+            var top = stringUnit(clipPathInsetTop);
+            var left = stringUnit(clipPathInsetLeft);
+            var right = stringUnit(clipPathInsetRight);
+            var bottom = stringUnit(clipPathInsetBottom);
+
+            var insetString = top + " " + right + " " + bottom + " " + left;
+
+            return "inset(" + insetString + ")";
         }
     }, {
         key: '*/clip-path/make/svg',
@@ -14796,13 +14987,19 @@ var ClipPathManager = function (_BaseModule) {
         key: '*/clip-path/toCSS',
         value: function clipPathToCSS($store, layer) {
             var clipPath = null;
-            if (layer.clipPathType == 'none') {
-                clipPath = 'none';
-            } else if (layer.clipPathType == 'circle') {
+            if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
+                clipPath = CLIP_PATH_TYPE_NONE;
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_CIRCLE) {
                 clipPath = $store.read('/clip-path/make/circle', layer);
-            } else {
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_ELLIPSE) {
+                clipPath = $store.read('/clip-path/make/ellipse', layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
+                clipPath = $store.read('/clip-path/make/inset', layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
                 clipPath = $store.read('/clip-path/make/svg', layer);
             }
+
+            // console.log(layer.clipPathType, clipPath);
 
             return {
                 'clip-path': clipPath
@@ -15050,17 +15247,7 @@ var Radius = function (_BasePropertyItem) {
             return "\n            <div class='property-item radius'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT_CHANGE_LAYER_RADIUS,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15070,9 +15257,12 @@ var Radius = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('/selection/current/layer', function (item) {
+                var maxWidth = parseParamNumber$1(item.width);
+                var maxHeight = parseParamNumber$1(item.height);
 
                 if (item.fixedRadius) {
-                    var radius = parseParamNumber$1(item.borderRadius || '0px');
+                    var borderRadius = defaultValue(item.borderRadius, pxUnit(0));
+                    var radius = value2px(borderRadius, maxWidth);
                     _this2.refs.$topLeftRadiusRange.val(radius);
                     _this2.refs.$topRightRadiusRange.val(radius);
                     _this2.refs.$bottomLeftRadiusRange.val(radius);
@@ -15083,20 +15273,20 @@ var Radius = function (_BasePropertyItem) {
                     _this2.refs.$bottomRightRadius.val(radius);
                 } else {
                     if (item.borderTopLeftRadius) {
-                        _this2.refs.$topLeftRadius.val(parseParamNumber$1(item.borderTopLeftRadius));
-                        _this2.refs.$topLeftRadiusRange.val(parseParamNumber$1(item.borderTopLeftRadius));
+                        _this2.refs.$topLeftRadius.val(value2px(item.borderTopLeftRadius, maxWidth));
+                        _this2.refs.$topLeftRadiusRange.val(value2px(item.borderTopLeftRadius, maxWidth));
                     }
                     if (item.borderTopRightRadius) {
-                        _this2.refs.$topRightRadius.val(parseParamNumber$1(item.borderTopRightRadius));
-                        _this2.refs.$topRightRadiusRange.val(parseParamNumber$1(item.borderTopRightRadius));
+                        _this2.refs.$topRightRadius.val(value2px(item.borderTopRightRadius, maxWidth));
+                        _this2.refs.$topRightRadiusRange.val(value2px(item.borderTopRightRadius, maxWidth));
                     }
                     if (item.borderBottomLeftRadius) {
-                        _this2.refs.$bottomLeftRadius.val(parseParamNumber$1(item.borderBottomLeftRadius));
-                        _this2.refs.$bottomLeftRadiusRange.val(parseParamNumber$1(item.borderBottomLeftRadius));
+                        _this2.refs.$bottomLeftRadius.val(value2px(item.borderBottomLeftRadius, maxWidth));
+                        _this2.refs.$bottomLeftRadiusRange.val(value2px(item.borderBottomLeftRadius, maxWidth));
                     }
                     if (item.borderBottomRightRadius) {
-                        _this2.refs.$bottomRightRadius.val(parseParamNumber$1(item.borderBottomRightRadius));
-                        _this2.refs.$bottomRightRadiusRange.val(parseParamNumber$1(item.borderBottomRightRadius));
+                        _this2.refs.$bottomRightRadius.val(value2px(item.borderBottomRightRadius, maxWidth));
+                        _this2.refs.$bottomRightRadiusRange.val(value2px(item.borderBottomRightRadius, maxWidth));
                     }
                 }
             });
@@ -15109,10 +15299,10 @@ var Radius = function (_BasePropertyItem) {
             this.read('/selection/current/layer/id', function (id) {
                 _this3.commit(CHANGE_LAYER_RADIUS, {
                     id: id,
-                    borderTopLeftRadius: px$1(_this3.refs.$topLeftRadius.val()),
-                    borderTopRightRadius: px$1(_this3.refs.$topRightRadius.val()),
-                    borderBottomLeftRadius: px$1(_this3.refs.$bottomLeftRadius.val()),
-                    borderBottomRightRadius: px$1(_this3.refs.$bottomRightRadius.val()),
+                    borderTopLeftRadius: pxUnit(_this3.refs.$topLeftRadius.val()),
+                    borderTopRightRadius: pxUnit(_this3.refs.$topRightRadius.val()),
+                    borderBottomLeftRadius: pxUnit(_this3.refs.$bottomLeftRadius.val()),
+                    borderBottomRightRadius: pxUnit(_this3.refs.$bottomRightRadius.val()),
                     fixedRadius: false
                 });
             });
@@ -15364,8 +15554,8 @@ var GradientSteps = function (_UIElement) {
             return this.read('/item/map/children', item.id, function (step) {
 
                 var cut = step.cut ? 'cut' : '';
-                var unitValue = _this2.read('/colorstep/unit/value', step, _this2.getMaxValue());
-                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="' + UNIT_PERCENT + '" min="-100" max="100" step="0.1"  value="' + unitValue.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_PX + '" min="-100" max="1000" step="1"  value="' + unitValue.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_EM + '" min="-100" max="500" step="0.1"  value="' + unitValue.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
+                var unitValue$$1 = _this2.read('/colorstep/unit/value', step, _this2.getMaxValue());
+                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : '') + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="' + UNIT_PERCENT + '" min="-100" max="100" step="0.1"  value="' + unitValue$$1.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_PX + '" min="-100" max="1000" step="1"  value="' + unitValue$$1.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_EM + '" min="-100" max="500" step="0.1"  value="' + unitValue$$1.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
             });
         }
     }, {
@@ -15653,8 +15843,8 @@ var GradientSteps = function (_UIElement) {
             if (step) {
                 step.unit = unit$$1;
 
-                var unitValue = this.read('/colorstep/unit/value', step, this.getMaxValue());
-                var newValue = _extends({ id: step.id, unit: unit$$1 }, unitValue);
+                var unitValue$$1 = this.read('/colorstep/unit/value', step, this.getMaxValue());
+                var newValue = _extends({ id: step.id, unit: unit$$1 }, unitValue$$1);
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
 
@@ -15932,8 +16122,8 @@ var GradientInfo = function (_UIElement) {
 
             return "<div class='step-list' ref=\"$stepList\">\n                    " + colorsteps.map(function (step) {
                 var cut = step.cut ? 'cut' : '';
-                var unitValue = _this2.getUnitValue(step);
-                return "\n                            <div class='color-step " + (step.selected ? 'selected' : '') + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + _this2.getUnitName(step) + "\">\n                                    <input type=\"number\" class=\"" + UNIT_PERCENT + "\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_PX + "\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_EM + "\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
+                var unitValue$$1 = _this2.getUnitValue(step);
+                return "\n                            <div class='color-step " + (step.selected ? 'selected' : '') + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + _this2.getUnitName(step) + "\">\n                                    <input type=\"number\" class=\"" + UNIT_PERCENT + "\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue$$1.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_PX + "\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue$$1.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_EM + "\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue$$1.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
             }).join('') + "\n                </div>";
         }
     }, {
@@ -16708,14 +16898,14 @@ var UnitRange = function (_UIElement) {
         value: function input$range(e) {
             this.refs.$number.val(this.refs.$range.val());
             this.updateRange();
-            this.updateFunction(unit(this.refs.$range.val(), this.unit));
+            this.updateFunction(unitObject(this.refs.$range.val(), this.unit));
         }
     }, {
         key: 'input $number',
         value: function input$number(e) {
             this.refs.$range.val(this.refs.$number.val());
             this.updateRange();
-            this.updateFunction(unit(this.refs.$range.val(), this.unit));
+            this.updateFunction(unitObject(this.refs.$range.val(), this.unit));
         }
     }]);
     return UnitRange;
@@ -17233,7 +17423,7 @@ var FilterList$1 = function (_BasePropertyItem) {
                     var it = _this2.read('/filter/get', subkey);
                     var value = dataObject[subkey] || it.defaultValue;
 
-                    if (it.unit == UNIT_COLOR) {
+                    if (isColorUnit(it)) {
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
                     } else {
 
@@ -17287,7 +17477,7 @@ var FilterList$1 = function (_BasePropertyItem) {
                 var value = layer[key] || _this4.read('/clone', FILTER_DEFAULT_OBJECT[key]);
                 value.value = lastValue;
 
-                _this4.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+                _this4.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value));
             });
         }
     }, {
@@ -17300,7 +17490,7 @@ var FilterList$1 = function (_BasePropertyItem) {
                 var value = layer[key] || _this5.read('/clone', FILTER_DEFAULT_OBJECT[key]);
                 value.checked = checked;
 
-                _this5.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+                _this5.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value));
             });
         }
     }, {
@@ -17612,6 +17802,10 @@ var PageLayout = function (_UIElement) {
     return PageLayout;
 }(UIElement);
 
+var CLIP_PATH_TYPES = [CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_SVG];
+
+var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
+
 var ClipPath = function (_BasePropertyItem) {
     inherits(ClipPath, _BasePropertyItem);
 
@@ -17623,7 +17817,11 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                <option value=\"none\">none</option>\n                                <option value=\"circle\">circle</option>\n                                <option value=\"inset\">inset</option>\n                                <option value=\"polygon\">polygon</option>\n                                <option value=\"svg\">svg</option>\n                            </select>\n                        </div>\n                    </div>                                \n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
+                return "<option value=\"" + type + "\">" + type + "</option>";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Side</label>\n                        <div >\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES.map(function (type) {
+                return "<option value=\"" + type + "\">" + type + "</option>";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                                                    \n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        ";
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH),
@@ -17643,7 +17841,8 @@ var ClipPath = function (_BasePropertyItem) {
                 }
 
                 _this2.refs.$fit.checked(layer.fitClipPathSize);
-                _this2.refs.$clipType.val(layer.clipPathType);
+                _this2.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
+                _this2.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
             });
         }
     }, {
@@ -17658,7 +17857,7 @@ var ClipPath = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
 
-                _this3.commit(CHANGE_LAYER, { id: layer.id, fitClipPathSize: _this3.refs.$fit.checked() });
+                _this3.commit(CHANGE_LAYER_CLIPPATH, { id: layer.id, fitClipPathSize: _this3.refs.$fit.checked() });
                 _this3.refresh();
             });
         }
@@ -17668,14 +17867,29 @@ var ClipPath = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('/selection/current/layer', function (layer) {
-                if (layer.clipPathType == 'none') {
+                if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
                     _this4.refs.$fit.checked(false);
                     _this4.refs.$clipPath.empty();
                     layer.clipPathSvg = '';
                 }
 
-                _this4.commit(CHANGE_LAYER, { id: layer.id, clipPathSvg: layer.clipPathSvg, clipPathType: _this4.refs.$clipType.val() });
-                _this4.refresh();
+                _this4.commit(CHANGE_LAYER_CLIPPATH, {
+                    id: layer.id,
+                    clipPathSvg: layer.clipPathSvg,
+                    clipPathType: _this4.refs.$clipType.val()
+                });
+            });
+        }
+    }, {
+        key: 'change $clipSideType',
+        value: function change$clipSideType() {
+            var _this5 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this5.commit(CHANGE_LAYER_CLIPPATH, {
+                    id: id,
+                    clipPathSideType: _this5.refs.$clipSideType.val()
+                });
             });
         }
     }]);
@@ -17936,22 +18150,7 @@ var RadiusFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-radius show'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT_CHANGE_LAYER,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_LAYER_RADIUS,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT_CHANGE_SELECTION,
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -17961,9 +18160,9 @@ var RadiusFixed = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('/selection/current/layer', function (item) {
-                var radius = parseParamNumber$2(item.borderRadius || "0px");
-                _this2.refs.$radiusRange.val(radius);
-                _this2.refs.$radius.val(radius);
+                var radius = defaultValue(item.borderRadius, pxUnit(0));
+                _this2.refs.$radiusRange.val(radius.value);
+                _this2.refs.$radius.val(radius.value);
             });
         }
     }, {
@@ -17977,14 +18176,14 @@ var RadiusFixed = function (_BasePropertyItem) {
                     _this3.commit(CHANGE_LAYER_RADIUS, {
                         id: id,
                         fixedRadius: true,
-                        borderRadius: px$1(_this3.refs.$radius.val())
+                        borderRadius: pxUnit(_this3.refs.$radius.val())
                     });
                     _this3.refs.$radiusRange.val(_this3.refs.$radius.val());
                 } else if (type == 'range') {
                     _this3.commit(CHANGE_LAYER_RADIUS, {
                         id: id,
                         fixedRadius: true,
-                        borderRadius: px$1(_this3.refs.$radiusRange.val())
+                        borderRadius: pxUnit(_this3.refs.$radiusRange.val())
                     });
                     _this3.refs.$radius.val(_this3.refs.$radiusRange.val());
                 }
@@ -19142,7 +19341,7 @@ var BackdropList = function (_BasePropertyItem) {
                     var it = _this2.read('/backdrop/get', subkey);
                     var value = dataObject[subkey] || it.defaultValue;
 
-                    if (it.unit == UNIT_COLOR) {
+                    if (isColorUnit(it)) {
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
                     } else {
 
@@ -19172,7 +19371,21 @@ var BackdropList = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER),
+        key: "refreshFilter",
+        value: function refreshFilter(obj) {
+            Object.keys(obj).filter(function (key) {
+                return key.includes('backdrop');
+            }).forEach(function (key) {
+                console.log(key);
+            });
+        }
+    }, {
+        key: EVENT_CHANGE_LAYER_BACKDROP_FILTER,
+        value: function value(obj) {
+            this.refreshFilter(obj);
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER),
         value: function value() {
             this.refresh();
         }
@@ -19196,7 +19409,7 @@ var BackdropList = function (_BasePropertyItem) {
                 var value = layer[key] || _this4.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
                 value.value = lastValue;
 
-                _this4.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+                _this4.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value));
             });
         }
     }, {
@@ -19209,7 +19422,7 @@ var BackdropList = function (_BasePropertyItem) {
                 var value = layer[key] || _this5.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
                 value.checked = checked;
 
-                _this5.commit(CHANGE_LAYER, defineProperty({ id: id }, key, value));
+                _this5.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value));
             });
         }
     }, {
@@ -23043,11 +23256,10 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 transform = this.read('/layer/make/transform', this.read('/item/get', id));
             }
 
-            return {
+            return _extends({
                 width: width, height: height,
-                left: x, top: y,
-                transform: transform
-            };
+                left: x, top: y
+            }, transform);
         }
     }, {
         key: 'refresh',
@@ -23452,39 +23664,47 @@ var CircleEditor = function (_UIElement) {
     }, {
         key: "refresh",
         value: function refresh() {
+            var _this2 = this;
+
             var isShow = this.isShow();
 
             this.$el.toggle(isShow);
 
             if (isShow) {
                 this.cachedRectangle = false;
+
+                this.read('/selection/current/layer', function (layer) {
+                    var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
+                    _this2.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE);
+                });
+
                 this.refreshPointer();
             }
         }
     }, {
         key: "refreshPointer",
         value: function refreshPointer() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.read('/selection/current/layer', function (layer) {
 
-                if (!layer.clipPathType) return;
-                if (!layer.clipPathCenter) return;
-                if (!layer.clipPathRadius) return;
+                if (layer.clipPathType !== CLIP_PATH_TYPE_CIRCLE) return;
 
-                var _layer$clipPathCenter = slicedToArray(layer.clipPathCenter, 2),
-                    x = _layer$clipPathCenter[0],
-                    y = _layer$clipPathCenter[1];
+                var _getRectangle = _this3.getRectangle(),
+                    width = _getRectangle.width,
+                    height = _getRectangle.height;
 
-                _this2.refs.$center.px('left', x);
-                _this2.refs.$center.px('top', y);
+                var centerX = defaultValue(layer.clipPathCenterX, percentUnit(50));
+                var centerY = defaultValue(layer.clipPathCenterY, percentUnit(50));
 
-                var _layer$clipPathRadius = slicedToArray(layer.clipPathRadius, 2),
-                    x = _layer$clipPathRadius[0],
-                    y = _layer$clipPathRadius[1];
+                var radiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
+                var radiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
 
-                _this2.refs.$radius.px('left', x);
-                _this2.refs.$radius.px('top', y);
+                _this3.refs.$center.px('left', value2px(centerX, width));
+                _this3.refs.$center.px('top', value2px(centerY, height));
+
+                _this3.refs.$radius.px('left', value2px(radiusX, width));
+                _this3.refs.$radius.px('top', value2px(radiusY, height));
             });
         }
     }, {
@@ -23494,7 +23714,7 @@ var CircleEditor = function (_UIElement) {
 
             if (!item) return false;
 
-            return item.clipPathType == 'circle';
+            return item.clipPathType == CLIP_PATH_TYPE_CIRCLE;
         }
     }, {
         key: "getRectangle",
@@ -23516,13 +23736,13 @@ var CircleEditor = function (_UIElement) {
     }, {
         key: "refreshUI",
         value: function refreshUI(e) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY,
-                width = _getRectangle.width,
-                height = _getRectangle.height;
+            var _getRectangle2 = this.getRectangle(),
+                minX = _getRectangle2.minX,
+                minY = _getRectangle2.minY,
+                maxX = _getRectangle2.maxX,
+                maxY = _getRectangle2.maxY,
+                width = _getRectangle2.width,
+                height = _getRectangle2.height;
 
             var _e$xy = e.xy,
                 x = _e$xy.x,
@@ -23548,13 +23768,19 @@ var CircleEditor = function (_UIElement) {
     }, {
         key: "updateClipPath",
         value: function updateClipPath() {
-            var radius = this.radiuspos || [0, 0];
-            var center = this.centerpos || [0, 0];
+            var _getRectangle3 = this.getRectangle(),
+                width = _getRectangle3.width,
+                height = _getRectangle3.height;
+
+            var radius = this.radiuspos || [width, height];
+            var center = this.centerpos || [width / 2, height / 2];
 
             var item = this.layer;
-            item.clipPathType = 'circle';
-            item.clipPathCenter = center;
-            item.clipPathRadius = radius;
+            item.clipPathType = CLIP_PATH_TYPE_CIRCLE;
+            item.clipPathCenterX = percentUnit(px2percent(center[0], width));
+            item.clipPathCenterY = percentUnit(px2percent(center[1], height));
+            item.clipPathRadiusX = percentUnit(px2percent(radius[0], width));
+            item.clipPathRadiusY = percentUnit(px2percent(radius[1], height));
 
             this.commit(CHANGE_LAYER_CLIPPATH, item);
         }
@@ -23596,8 +23822,355 @@ var CircleEditor = function (_UIElement) {
     return CircleEditor;
 }(UIElement);
 
+var EllipseEditor = function (_UIElement) {
+    inherits(EllipseEditor, _UIElement);
+
+    function EllipseEditor() {
+        classCallCheck(this, EllipseEditor);
+        return possibleConstructorReturn(this, (EllipseEditor.__proto__ || Object.getPrototypeOf(EllipseEditor)).apply(this, arguments));
+    }
+
+    createClass(EllipseEditor, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='layer-shape-ellipse-editor'>\n                <div class=\"drag-item center\" data-type=\"center\" ref=\"$center\"></div>\n                <div class=\"drag-item radius\" data-type=\"radius\" ref=\"$radius\"></div>\n            </div>\n        ";
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.cachedRectangle = false;
+
+                this.read('/selection/current/layer', function (layer) {
+                    var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
+                    _this2.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE);
+                });
+                this.refreshPointer();
+            }
+        }
+    }, {
+        key: "refreshPointer",
+        value: function refreshPointer() {
+            var _this3 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+
+                if (layer.clipPathType != CLIP_PATH_TYPE_ELLIPSE) return;
+
+                var _getRectangle = _this3.getRectangle(),
+                    width = _getRectangle.width,
+                    height = _getRectangle.height;
+
+                var centerX = defaultValue(layer.clipPathCenterX, percentUnit(50));
+                var centerY = defaultValue(layer.clipPathCenterY, percentUnit(50));
+
+                var radiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
+                var radiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
+
+                _this3.refs.$center.px('left', value2px(centerX, width));
+                _this3.refs.$center.px('top', value2px(centerY, height));
+
+                _this3.refs.$radius.px('left', value2px(radiusX, width));
+                _this3.refs.$radius.px('top', value2px(radiusY, height));
+            });
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var item = this.read('/selection/current/layer');
+
+            if (!item) return false;
+
+            return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE;
+        }
+    }, {
+        key: "getRectangle",
+        value: function getRectangle() {
+
+            if (!this.cachedRectangle) {
+                var width = this.$el.width();
+                var height = this.$el.height();
+                var minX = this.$el.offsetLeft();
+                var minY = this.$el.offsetTop();
+
+                var maxX = minX + width;
+                var maxY = minY + height;
+                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+            }
+
+            return this.cachedRectangle;
+        }
+    }, {
+        key: "refreshUI",
+        value: function refreshUI(e) {
+            var _getRectangle2 = this.getRectangle(),
+                minX = _getRectangle2.minX,
+                minY = _getRectangle2.minY,
+                maxX = _getRectangle2.maxX,
+                maxY = _getRectangle2.maxY,
+                width = _getRectangle2.width,
+                height = _getRectangle2.height;
+
+            var _e$xy = e.xy,
+                x = _e$xy.x,
+                y = _e$xy.y;
+
+
+            x = Math.max(Math.min(maxX, x), minX);
+            y = Math.max(Math.min(maxY, y), minY);
+
+            var left = x - minX;
+            var top = y - minY;
+
+            this.refs['$' + this.currentType].px('left', left);
+            this.refs['$' + this.currentType].px('top', top);
+
+            if (e) {
+
+                this[this.currentType + "pos"] = [left, top];
+
+                this.updateClipPath();
+            }
+        }
+    }, {
+        key: "updateClipPath",
+        value: function updateClipPath() {
+            var _getRectangle3 = this.getRectangle(),
+                width = _getRectangle3.width,
+                height = _getRectangle3.height;
+
+            var radius = this.radiuspos || [width, height];
+            var center = this.centerpos || [width / 2, height / 2];
+
+            var item = this.layer;
+            item.clipPathType = CLIP_PATH_TYPE_ELLIPSE;
+            item.clipPathCenterX = percentUnit(px2percent(center[0], width));
+            item.clipPathCenterY = percentUnit(px2percent(center[1], height));
+            item.clipPathRadiusX = percentUnit(px2percent(radius[0], width));
+            item.clipPathRadiusY = percentUnit(px2percent(radius[1], height));
+
+            this.commit(CHANGE_LAYER_CLIPPATH, item);
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER),
+        value: function value() {
+            this.refresh();
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'pointerend document',
+        value: function pointerendDocument(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: 'pointermove document',
+        value: function pointermoveDocument(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: 'pointerstart $el .drag-item',
+        value: function pointerstart$elDragItem(e) {
+            e.preventDefault();
+            this.currentType = e.$delegateTarget.attr('data-type');
+            this.isDown = true;
+        }
+    }, {
+        key: 'pointerstart $el',
+        value: function pointerstart$el(e) {
+            this.isDown = true;
+            this.layer = this.read('/selection/current/layer');
+            // this.refreshUI(e);        
+        }
+    }]);
+    return EllipseEditor;
+}(UIElement);
+
+var InsetEditor = function (_UIElement) {
+    inherits(InsetEditor, _UIElement);
+
+    function InsetEditor() {
+        classCallCheck(this, InsetEditor);
+        return possibleConstructorReturn(this, (InsetEditor.__proto__ || Object.getPrototypeOf(InsetEditor)).apply(this, arguments));
+    }
+
+    createClass(InsetEditor, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='layer-shape-inset-editor'>\n                <div class=\"drag-item top\" data-type=\"top\" ref=\"$top\"></div>\n                <div class=\"drag-item left\" data-type=\"left\" ref=\"$left\"></div>\n                <div class=\"drag-item right\" data-type=\"right\" ref=\"$right\"></div>\n                <div class=\"drag-item bottom\" data-type=\"bottom\" ref=\"$bottom\"></div>\n            </div>\n        ";
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.cachedRectangle = false;
+
+                this.refreshPointer();
+            }
+        }
+    }, {
+        key: "refreshPointer",
+        value: function refreshPointer() {
+            var _this2 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+
+                if (layer.clipPathType !== CLIP_PATH_TYPE_INSET) return;
+
+                var _getRectangle = _this2.getRectangle(),
+                    width = _getRectangle.width,
+                    height = _getRectangle.height;
+
+                var top = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+                var left = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
+                var right = defaultValue(layer.clipPathInsetRight, percentUnit(0));
+                var bottom = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+
+                _this2.refs.$top.px('top', value2px(top, height));
+                _this2.refs.$left.px('left', value2px(left, width));
+                _this2.refs.$right.px('left', value2px(percentUnit(100 - right.value), width));
+                _this2.refs.$bottom.px('bottom', value2px(percentUnit(100 - bottom.value), width));
+            });
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var item = this.read('/selection/current/layer');
+
+            if (!item) return false;
+
+            return item.clipPathType == CLIP_PATH_TYPE_INSET;
+        }
+    }, {
+        key: "getRectangle",
+        value: function getRectangle() {
+
+            if (!this.cachedRectangle) {
+                var width = this.$el.width();
+                var height = this.$el.height();
+                var minX = this.$el.offsetLeft();
+                var minY = this.$el.offsetTop();
+
+                var maxX = minX + width;
+                var maxY = minY + height;
+                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+            }
+
+            return this.cachedRectangle;
+        }
+    }, {
+        key: "refreshUI",
+        value: function refreshUI(e) {
+            var _getRectangle2 = this.getRectangle(),
+                minX = _getRectangle2.minX,
+                minY = _getRectangle2.minY,
+                maxX = _getRectangle2.maxX,
+                maxY = _getRectangle2.maxY,
+                width = _getRectangle2.width,
+                height = _getRectangle2.height;
+
+            var _e$xy = e.xy,
+                x = _e$xy.x,
+                y = _e$xy.y;
+
+
+            x = Math.max(Math.min(maxX, x), minX);
+            y = Math.max(Math.min(maxY, y), minY);
+
+            if (this.currentType == 'top' || this.currentType == 'bottom') {
+                var top = y - minY;
+                this.refs['$' + this.currentType].px('top', top);
+            } else {
+                var left = x - minX;
+                this.refs['$' + this.currentType].px('left', left);
+            }
+
+            if (e) {
+
+                if (this.currentType == 'top' || this.currentType == 'bottom') {
+                    this[this.currentType + "pos"] = top;
+                } else {
+                    this[this.currentType + "pos"] = left;
+                }
+
+                this.updateClipPath();
+            }
+        }
+    }, {
+        key: "updateClipPath",
+        value: function updateClipPath() {
+            var _getRectangle3 = this.getRectangle(),
+                width = _getRectangle3.width,
+                height = _getRectangle3.height;
+
+            // TODO:  value must be with a unit. 
+
+
+            var item = this.layer;
+            item.clipPathType = CLIP_PATH_TYPE_INSET;
+            item.clipPathInsetTop = percentUnit(px2percent(defaultValue(this.toppos, 0), height));
+            item.clipPathInsetLeft = percentUnit(px2percent(defaultValue(this.leftpos, 0), width));
+            item.clipPathInsetRight = percentUnit(px2percent(width - defaultValue(this.rightpos, width), width));
+            item.clipPathInsetBottom = percentUnit(px2percent(height - defaultValue(this.bottompos, height), height));
+
+            this.commit(CHANGE_LAYER_CLIPPATH, item);
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER),
+        value: function value() {
+            this.refresh();
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'pointerend document',
+        value: function pointerendDocument(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: 'pointermove document',
+        value: function pointermoveDocument(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: 'pointerstart $el .drag-item',
+        value: function pointerstart$elDragItem(e) {
+            e.preventDefault();
+            this.currentType = e.$delegateTarget.attr('data-type');
+            this.isDown = true;
+        }
+    }, {
+        key: 'pointerstart $el',
+        value: function pointerstart$el(e) {
+            this.isDown = true;
+            this.layer = this.read('/selection/current/layer');
+            // this.refreshUI(e);        
+        }
+    }]);
+    return InsetEditor;
+}(UIElement);
+
 var shapeEditor = {
+    InsetEditor: InsetEditor,
+    EllipseEditor: EllipseEditor,
     CircleEditor: CircleEditor
+
 };
 
 var LayerShapeEditor = function (_UIElement) {
@@ -23625,7 +24198,7 @@ var LayerShapeEditor = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layer-shape-editor">\n                <CircleEditor></CircleEditor>\n                <RectEditor></RectEditor>\n                <PolygonEditor></PolygonEditor>\n                <PathEditor></PathEditor>\n            </div>\n        ';
+            return '\n            <div class="layer-shape-editor">\n                <CircleEditor></CircleEditor>\n                <EllipseEditor></EllipseEditor>\n                <InsetEditor></InsetEditor>\n                <PolygonEditor></PolygonEditor>\n                <PathEditor></PathEditor>\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -23664,11 +24237,12 @@ var LayerShapeEditor = function (_UIElement) {
                 transform = this.read('/layer/make/transform', this.read('/item/get', id));
             }
 
-            return {
-                width: width, height: height,
-                left: x, top: y,
-                transform: transform
-            };
+            return _extends({
+                width: width,
+                height: height,
+                left: x,
+                top: y
+            }, transform);
         }
     }, {
         key: 'setPosition',
@@ -23685,7 +24259,7 @@ var LayerShapeEditor = function (_UIElement) {
             return this.read('/selection/is/layer');
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -23940,7 +24514,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
         value: function value() {
             this.refreshLayer();
         }

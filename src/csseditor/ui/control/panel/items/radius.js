@@ -1,7 +1,9 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../../types/event";
-import { px } from "../../../../../util/css/types";
+import { px, value2px, pxUnit } from "../../../../../util/css/types";
+import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { defaultValue } from "../../../../../util/functions/func";
 
 
 export default class Radius extends BasePropertyItem {
@@ -42,15 +44,20 @@ export default class Radius extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_LAYER_RADIUS] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [ MULTI_EVENT(
+        EVENT_CHANGE_LAYER_RADIUS,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }
 
     refresh() {
         this.read('/selection/current/layer', (item) => {
+            var maxWidth = parseParamNumber(item.width);
+            var maxHeight = parseParamNumber(item.height);
 
             if (item.fixedRadius) {
-                var radius = parseParamNumber(item.borderRadius || '0px')
+                var borderRadius = defaultValue (item.borderRadius, pxUnit(0));
+                var radius = value2px(borderRadius, maxWidth)
                 this.refs.$topLeftRadiusRange.val(radius)
                 this.refs.$topRightRadiusRange.val(radius)
                 this.refs.$bottomLeftRadiusRange.val(radius)
@@ -62,20 +69,20 @@ export default class Radius extends BasePropertyItem {
 
             } else {
                 if (item.borderTopLeftRadius) {
-                    this.refs.$topLeftRadius.val(parseParamNumber(item.borderTopLeftRadius))
-                    this.refs.$topLeftRadiusRange.val(parseParamNumber(item.borderTopLeftRadius))
+                    this.refs.$topLeftRadius.val(value2px(item.borderTopLeftRadius, maxWidth))
+                    this.refs.$topLeftRadiusRange.val(value2px(item.borderTopLeftRadius, maxWidth))
                 }
                 if (item.borderTopRightRadius) {
-                    this.refs.$topRightRadius.val(parseParamNumber(item.borderTopRightRadius))
-                    this.refs.$topRightRadiusRange.val(parseParamNumber(item.borderTopRightRadius))
+                    this.refs.$topRightRadius.val(value2px(item.borderTopRightRadius, maxWidth))
+                    this.refs.$topRightRadiusRange.val(value2px(item.borderTopRightRadius, maxWidth))
                 }
                 if (item.borderBottomLeftRadius) {
-                    this.refs.$bottomLeftRadius.val(parseParamNumber(item.borderBottomLeftRadius))
-                    this.refs.$bottomLeftRadiusRange.val(parseParamNumber(item.borderBottomLeftRadius))
+                    this.refs.$bottomLeftRadius.val(value2px(item.borderBottomLeftRadius, maxWidth))
+                    this.refs.$bottomLeftRadiusRange.val(value2px(item.borderBottomLeftRadius, maxWidth))
                 }
                 if (item.borderBottomRightRadius) {
-                    this.refs.$bottomRightRadius.val(parseParamNumber(item.borderBottomRightRadius))
-                    this.refs.$bottomRightRadiusRange.val(parseParamNumber(item.borderBottomRightRadius))
+                    this.refs.$bottomRightRadius.val(value2px(item.borderBottomRightRadius, maxWidth))
+                    this.refs.$bottomRightRadiusRange.val(value2px(item.borderBottomRightRadius, maxWidth))
                 }
             }
 
@@ -87,10 +94,10 @@ export default class Radius extends BasePropertyItem {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_RADIUS, { 
                 id, 
-                borderTopLeftRadius: px( this.refs.$topLeftRadius.val()), 
-                borderTopRightRadius: px( this.refs.$topRightRadius.val()), 
-                borderBottomLeftRadius: px( this.refs.$bottomLeftRadius.val()), 
-                borderBottomRightRadius: px( this.refs.$bottomRightRadius.val()), 
+                borderTopLeftRadius: pxUnit( this.refs.$topLeftRadius.val()), 
+                borderTopRightRadius: pxUnit( this.refs.$topRightRadius.val()), 
+                borderBottomLeftRadius: pxUnit( this.refs.$bottomLeftRadius.val()), 
+                borderBottomRightRadius: pxUnit( this.refs.$bottomRightRadius.val()), 
                 fixedRadius: false 
             })
         })

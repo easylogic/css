@@ -1,7 +1,7 @@
 import { parseParamNumber } from '../../../../util/filter/functions';
 import shapeEditor from './shape-editor/index';
 import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION } from '../../../types/event';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_ROTATE } from '../../../types/event';
 import { px } from '../../../../util/css/types';
 
 
@@ -24,7 +24,8 @@ export default class LayerShapeEditor extends UIElement {
         return `
             <div class="layer-shape-editor">
                 <CircleEditor></CircleEditor>
-                <RectEditor></RectEditor>
+                <EllipseEditor></EllipseEditor>
+                <InsetEditor></InsetEditor>
                 <PolygonEditor></PolygonEditor>
                 <PathEditor></PathEditor>
             </div>
@@ -56,9 +57,11 @@ export default class LayerShapeEditor extends UIElement {
         }
 
         return { 
-            width, height, 
-            left: x, top: y, 
-            transform
+            width, 
+            height, 
+            left: x, 
+            top: y, 
+            ...transform
         }
     }    
 
@@ -79,6 +82,7 @@ export default class LayerShapeEditor extends UIElement {
         EVENT_CHANGE_LAYER_SIZE,
         EVENT_CHANGE_LAYER_POSITION,
         EVENT_CHANGE_LAYER_CLIPPATH,
+        EVENT_CHANGE_LAYER_ROTATE,
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION
     )] () { this.refresh() }

@@ -1,5 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit } from "../../util/css/types";
+import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit, stringUnit } from "../../util/css/types";
 import { FILTER_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT_KEYS } from "./ItemTypes";
 const filterInfo = {
     'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
@@ -75,14 +75,12 @@ export default class FilterManager extends BaseModule {
             if (it.key == 'filterDropshadow') {
 
                 var values = DROP_SHADOW_LIST.map(key => {
-                    var value = layer[key] || FILTER_DEFAULT_OBJECT[key]
-
-                    return unit(value.value, value.unit, true)
+                    return stringUnit(layer[key] || FILTER_DEFAULT_OBJECT[key])
                 }).join(' ')
 
                 return `${viewObject.func}(${values})`
             } else {
-                var values = unit(it.value, it.unit, true)
+                var values = stringUnit(it)
                 return `${viewObject.func}(${values})`
             }
         }).join(' '); 

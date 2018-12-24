@@ -1,7 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, CHANGE_LAYER } from "../../../../types/event";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, CHANGE_LAYER_FILTER } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, UNIT_COLOR } from "../../../../../util/css/types";
+import { unitString, UNIT_COLOR, isColorUnit } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 
 const DROPSHADOW_FILTER_KEYS = [
@@ -63,7 +63,7 @@ export default class FilterList extends BasePropertyItem {
                     var it = this.read('/filter/get', subkey);
                     var value = dataObject[subkey] || it.defaultValue;
 
-                    if (it.unit == UNIT_COLOR) {
+                    if (isColorUnit(it)) {
                         return `
                         <div>
                             <span class='title'>${it.title}</span>
@@ -139,7 +139,7 @@ export default class FilterList extends BasePropertyItem {
             var value = layer[key] || this.read('/clone', FILTER_DEFAULT_OBJECT[key]);
             value.value = lastValue 
 
-            this.commit(CHANGE_LAYER, {id, [key]: value })
+            this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
         });
     }
 
@@ -150,7 +150,7 @@ export default class FilterList extends BasePropertyItem {
             var value = layer[key] || this.read('/clone', FILTER_DEFAULT_OBJECT[key]);
             value.checked = checked 
 
-            this.commit(CHANGE_LAYER, {id, [key]: value })
+            this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
         });
     }
 

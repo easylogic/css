@@ -4052,13 +4052,24 @@ html, body {
       z-index: 10000;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
-      .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor {
+      .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor,
+      .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor {
         position: absolute;
         left: 0px;
         right: 0px;
         top: 0px;
         bottom: 0px; }
-        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .center {
+        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor > .center,
+        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor > .radius,
+        .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor > .center,
+        .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor > .radius {
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 1px;
+          background-position: center 0px, 0px center;
+          background-repeat: repeat-y, repeat-x; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .center,
+        .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor .center {
           position: absolute;
           width: 20px;
           height: 20px;
@@ -4071,7 +4082,8 @@ html, body {
           pointer-events: all;
           cursor: pointer;
           border: 2px solid white; }
-        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .radius {
+        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .radius,
+        .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor .radius {
           position: absolute;
           width: 20px;
           height: 20px;
@@ -4081,6 +4093,76 @@ html, body {
           -webkit-transform: translateX(-50%) translateY(-50%);
                   transform: translateX(-50%) translateY(-50%);
           background-color: rgba(0, 128, 0, 0.8);
+          pointer-events: all;
+          cursor: pointer;
+          border: 2px solid white; }
+      .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor > .drag-item {
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 1px;
+          background-position: center 0px, 0px center;
+          background-repeat: repeat-y, repeat-x; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .top {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          left: 50%;
+          -webkit-transform: translateX(-50%) translateY(-50%);
+                  transform: translateX(-50%) translateY(-50%);
+          background-color: rgba(255, 0, 0, 0.8);
+          pointer-events: all;
+          cursor: pointer;
+          border: 2px solid white; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .bottom {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          left: 50%;
+          top: 100%;
+          -webkit-transform: translateX(-50%) translateY(-50%);
+                  transform: translateX(-50%) translateY(-50%);
+          background-color: rgba(255, 102, 0, 0.8);
+          pointer-events: all;
+          cursor: pointer;
+          border: 2px solid white; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .left {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          top: 50%;
+          -webkit-transform: translateY(-50%) translateX(-50%);
+                  transform: translateY(-50%) translateX(-50%);
+          background-color: rgba(0, 146, 12, 0.8);
+          pointer-events: all;
+          cursor: pointer;
+          border: 2px solid white; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .right {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          top: 50%;
+          left: 100%;
+          -webkit-transform: translateY(-50%) translateX(-50%);
+                  transform: translateY(-50%) translateX(-50%);
+          background-color: rgba(1, 120, 124, 0.8);
           pointer-events: all;
           cursor: pointer;
           border: 2px solid white; }

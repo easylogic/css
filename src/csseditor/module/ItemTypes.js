@@ -1,4 +1,4 @@
-import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR } from "../../util/css/types";
+import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit } from "../../util/css/types";
 
 export const ITEM_TYPE_PAGE = 'page';
 export const ITEM_TYPE_LAYER = 'layer';
@@ -62,11 +62,14 @@ export const BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT)
 
 export const CLIP_PATH_DEFAULT_OBJECT = {
     clipPathType: 'none',
+    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
     clipPathSvg: '',
-    clipPathWidth: '',
-    clipPathHeight: '',
     fitClipPathSize: false,   
-    clipText: false
+    clipText: false,
+    clipPathRadiusX: undefined,
+    clipPathRadiusY: undefined,
+    clipPathCenterX: undefined,
+    clipPathCenterY: undefined
 }
 
 export const LAYER_DEFAULT_OBJECT = {
@@ -98,7 +101,7 @@ export const LAYER_DEFAULT_OBJECT = {
 
 
 export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    borderRadius: '100px',
+    borderRadius: pxUnit(100),
     fixedRadius: true
 })
 
@@ -173,3 +176,14 @@ export const IMAGE_ITEM_TYPE_CONIC = 'conic';
 export const IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
 export const IMAGE_ITEM_TYPE_STATIC = 'static';
 export const IMAGE_ITEM_TYPE_IMAGE = 'image';
+
+export const CLIP_PATH_TYPE_NONE = 'none';
+export const CLIP_PATH_TYPE_CIRCLE = 'circle';
+export const CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
+export const CLIP_PATH_TYPE_INSET = 'inset';
+export const CLIP_PATH_TYPE_POLYGON = 'polygon';
+export const CLIP_PATH_TYPE_SVG = 'svg';
+
+export const CLIP_PATH_SIDE_TYPE_NONE = 'none';
+export const CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
+export const CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';

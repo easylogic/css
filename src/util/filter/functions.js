@@ -3,7 +3,7 @@ import Matrix from '../Matrix'
 import ImageFilter from './index' 
 import Color from '../Color'
 import { round } from '../functions/math';
-import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, UNIT_PX } from '../css/types';
+import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, UNIT_PX, isPX } from '../css/types';
 
 let makeId = 0 
 

@@ -97,7 +97,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return { 
             width, height, 
             left: x, top: y, 
-            transform
+            ...transform
         }
     }
 

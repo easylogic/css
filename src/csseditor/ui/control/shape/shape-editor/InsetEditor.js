@@ -1,17 +1,19 @@
 import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE } from "../../../../types/event";
-import { CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_SIDE_TYPE_NONE } from "../../../../module/ItemTypes";
+import { CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_INSET } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
-import { px2percent } from "../../../../../util/filter/functions";
-import { percentUnit, value2px } from "../../../../../util/css/types";
+import { UNIT_PERCENT, percentUnit, value2px } from "../../../../../util/css/types";
+import { percent2px, px2percent } from "../../../../../util/filter/functions";
 
-export default class CircleEditor extends UIElement {
+export default class InsetEditor extends UIElement {
 
     template () {
         return `
-            <div class='layer-shape-circle-editor'>
-                <div class="drag-item center" data-type="center" ref="$center"></div>
-                <div class="drag-item radius" data-type="radius" ref="$radius"></div>
+            <div class='layer-shape-inset-editor'>
+                <div class="drag-item top" data-type="top" ref="$top"></div>
+                <div class="drag-item left" data-type="left" ref="$left"></div>
+                <div class="drag-item right" data-type="right" ref="$right"></div>
+                <div class="drag-item bottom" data-type="bottom" ref="$bottom"></div>
             </div>
         `
     }
@@ -23,12 +25,7 @@ export default class CircleEditor extends UIElement {
 
         if (isShow) {
             this.cachedRectangle = false;       
-            
-            this.read('/selection/current/layer', layer => {
-                var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE)
-                this.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE)
-            })
-            
+
             this.refreshPointer()
         }
 
@@ -37,21 +34,19 @@ export default class CircleEditor extends UIElement {
     refreshPointer () {
         this.read('/selection/current/layer', (layer) => {
 
-            if (layer.clipPathType !== CLIP_PATH_TYPE_CIRCLE) return;
+            if (layer.clipPathType !== CLIP_PATH_TYPE_INSET) return;
 
             var { width, height } = this.getRectangle()
 
-            var centerX =  defaultValue(layer.clipPathCenterX, percentUnit(50))
-            var centerY =  defaultValue(layer.clipPathCenterY, percentUnit(50))
+            var top = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+            var left = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
+            var right = defaultValue(layer.clipPathInsetRight, percentUnit(0));
+            var bottom = defaultValue(layer.clipPathInsetTop, percentUnit(0));
 
-            var radiusX =  defaultValue(layer.clipPathRadiusX, percentUnit(100))
-            var radiusY =  defaultValue(layer.clipPathRadiusY, percentUnit(100))            
-
-            this.refs.$center.px('left', value2px (centerX, width))
-            this.refs.$center.px('top', value2px (centerY, height));
-
-            this.refs.$radius.px('left', value2px(radiusX, width));
-            this.refs.$radius.px('top', value2px(radiusY, height));            
+            this.refs.$top.px('top', value2px(top, height));
+            this.refs.$left.px('left', value2px(left, width));
+            this.refs.$right.px('left', value2px(percentUnit(100 - right.value) , width));
+            this.refs.$bottom.px('bottom', value2px(percentUnit( 100 - bottom.value), width));
         })
     }
 
@@ -60,7 +55,7 @@ export default class CircleEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_CIRCLE; 
+        return item.clipPathType == CLIP_PATH_TYPE_INSET; 
     }
 
     getRectangle () {
@@ -87,15 +82,21 @@ export default class CircleEditor extends UIElement {
         x = Math.max(Math.min(maxX, x), minX)
         y = Math.max(Math.min(maxY, y), minY)
 
-        var left = x - minX
-        var top = y - minY  
-
-        this.refs['$' + this.currentType].px('left', left);
-        this.refs['$' + this.currentType].px('top', top);
+        if (this.currentType == 'top' || this.currentType == 'bottom') {
+            var top = y - minY  
+            this.refs['$' + this.currentType].px('top', top);            
+        } else {
+            var left = x - minX
+            this.refs['$' + this.currentType].px('left', left);
+        }
 
         if (e) {
             
-            this[this.currentType + "pos"] = [left, top]
+            if (this.currentType == 'top' || this.currentType == 'bottom') {
+                this[this.currentType + "pos"] = top
+            } else {
+                this[this.currentType + "pos"] = left
+            }
 
             this.updateClipPath();
         }
@@ -104,18 +105,16 @@ export default class CircleEditor extends UIElement {
 
     updateClipPath () {
         var { width, height } = this.getRectangle()        
-        var radius = this.radiuspos || [width, height];
-        var center = this.centerpos || [width/2, height/2];
 
+        // TODO:  value must be with a unit. 
         var item = this.layer;
-        item.clipPathType = CLIP_PATH_TYPE_CIRCLE
-        item.clipPathCenterX = percentUnit( px2percent( center[0], width) );
-        item.clipPathCenterY = percentUnit( px2percent( center[1], height) );
-        item.clipPathRadiusX = percentUnit( px2percent( radius[0], width) );
-        item.clipPathRadiusY = percentUnit( px2percent( radius[1], height) );
+        item.clipPathType = CLIP_PATH_TYPE_INSET
+        item.clipPathInsetTop = percentUnit( px2percent(defaultValue(this.toppos, 0), height))
+        item.clipPathInsetLeft = percentUnit( px2percent(defaultValue(this.leftpos, 0), width))
+        item.clipPathInsetRight = percentUnit( px2percent(width - defaultValue(this.rightpos, width), width) )
+        item.clipPathInsetBottom = percentUnit( px2percent(height - defaultValue(this.bottompos, height), height) )
 
         this.commit(CHANGE_LAYER_CLIPPATH, item);
-
     }
 
     [MULTI_EVENT(

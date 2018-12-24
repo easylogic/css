@@ -10,12 +10,21 @@
     // border: 1px solid black; 
     
 
-    .layer-shape-circle-editor {
+    .layer-shape-circle-editor,
+    .layer-shape-ellipse-editor {
         position: absolute;
         left: 0px;
         right: 0px;
         top: 0px;
         bottom: 0px;
+
+        > .center, 
+        > .radius {
+            background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+            background-size: 1px 1px;
+            background-position: center 0px, 0px center;
+            background-repeat: repeat-y, repeat-x;
+        }
 
         .center {
             position: absolute;
@@ -28,6 +37,7 @@
             pointer-events: all;
             cursor: pointer;       
             border: 2px solid white;     
+
         }
 
         .radius {
@@ -42,5 +52,81 @@
             cursor: pointer;
             border: 2px solid white;            
         }        
+    }
+
+
+    .layer-shape-inset-editor {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+
+        > .drag-item {
+            background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+            background-size: 1px 1px;
+            background-position: center 0px, 0px center;
+            background-repeat: repeat-y, repeat-x;
+        }
+
+        .top {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            background-color: rgba(red, 0.8); 
+            pointer-events: all;
+            cursor: pointer;       
+            border: 2px solid white;   
+
+        }
+
+        .bottom {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%) translateY(-50%);
+            background-color: rgba(rgb(255, 102, 0), 0.8); 
+            pointer-events: all;
+            cursor: pointer;       
+            border: 2px solid white;     
+        }        
+
+        .left {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            top: 50%;
+            transform: translateY(-50%) translateX(-50%);
+            background-color: rgba(rgb(0, 146, 12), 0.8); 
+            pointer-events: all;
+            cursor: pointer;       
+            border: 2px solid white;     
+        }                
+
+        .right {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%) translateX(-50%);
+            background-color: rgba(rgb(1, 120, 124), 0.8); 
+            pointer-events: all;
+            cursor: pointer;       
+            border: 2px solid white;     
+        }                        
+
     }
 }      

@@ -5,7 +5,7 @@ import {
     em2percent, em2px 
 } from "../../../../../../util/filter/functions";
 import { parseParamNumber } from "../../../../../../util/gl/filter/util";
-import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit } from "../../../../../../util/css/types";
+import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject } from "../../../../../../util/css/types";
 
 const position_list = [
     'left', 'top', 'right', 'bottom', 'center'
@@ -134,12 +134,12 @@ export default class UnitRange extends UIElement {
     'input $range' (e) {
         this.refs.$number.val(this.refs.$range.val())
         this.updateRange();    
-        this.updateFunction(unit(this.refs.$range.val(), this.unit));    
+        this.updateFunction(unitObject(this.refs.$range.val(), this.unit));    
     }
 
     'input $number' (e) {
         this.refs.$range.val(this.refs.$number.val())
         this.updateRange();        
-        this.updateFunction(unit(this.refs.$range.val(), this.unit));
+        this.updateFunction(unitObject (this.refs.$range.val(), this.unit));
     }    
 }
