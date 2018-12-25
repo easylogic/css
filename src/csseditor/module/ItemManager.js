@@ -81,7 +81,11 @@ const itemField = {
 }
 
 const updateUnitField = {
-    borderRadius: true 
+    borderRadius: true,
+    borderTopLeftRadius: true,
+    borderBottomLeftRadius: true,
+    borderTopRightRadius: true,
+    borderBottomRightRadius: true
 }
 
 const convertStyle = (item) => {

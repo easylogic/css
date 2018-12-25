@@ -54,7 +54,9 @@ export default class LayerTabView extends BaseTab {
                 </div>                
                 <div class="tab-content" data-id="shape">
                     <ClipPath></ClipPath>   
-                    <ClipPathImageResource></ClipPathImageResource>
+                    <ClipPathSide></ClipPathSide>
+                    <ClipPathPolygon></ClipPathPolygon>
+                    <ClipPathSVG></ClipPathSVG>
                 </div>
                 <div class="tab-content" data-id="transform">
                     <transform></transform>

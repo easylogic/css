@@ -1,12 +1,29 @@
-&.image-resource {
-    position: absolute;
-    left: auto;
-    bottom: auto;
-    top: auto;
-    width: auto;
-    .items {
+&.clip-path-svg {
+    .clip-path-container {
+        cursor:pointer;
+        width: 50px;
+        height:50px;
+        box-sizing: border-box;
+        border:1px solid $border-color;
+        svg {
+            width: 100%;
+        }
+    }
+
+    .image-resource {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        top: auto;
+        width: 100%;
+        margin-top: 10px;
         max-height: 300px;
-        overflow: auto;
+        flex-wrap: wrap;   
+        overflow: auto;     
+    }
+    .items {
+        position: relative;
+
         .svg-item {
             display: inline-block;
             width: 50px;
@@ -28,4 +45,5 @@
             }
         }
     }
+
 }

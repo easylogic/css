@@ -9731,6 +9731,7 @@ var CHANGE_LAYER_TRANSFORM_3D = 'CHANGE_LAYER_TRANSFORM_3D';
 var CHANGE_LAYER_RADIUS = 'CHANGE_LAYER_RADIUS';
 var CHANGE_LAYER_BACKGROUND_COLOR = 'CHANGE_LAYER_BACKGROUND_COLOR';
 var CHANGE_LAYER_CLIPPATH = 'CHANGE_LAYER_CLIPPATH';
+var CHANGE_LAYER_CLIPPATH_POLYGON = 'CHANGE_LAYER_CLIPPATH_POLYGON';
 var CHANGE_LAYER_TEXT = 'CHANGE_LAYER_TEXT';
 
 var CHANGE_IMAGE = 'CHANGE_IMAGE';
@@ -9774,6 +9775,7 @@ var EVENT_CHANGE_LAYER_TRANSFORM_3D = '@' + CHANGE_LAYER_TRANSFORM_3D;
 var EVENT_CHANGE_LAYER_RADIUS = '@' + CHANGE_LAYER_RADIUS;
 var EVENT_CHANGE_LAYER_BACKGROUND_COLOR = '@' + CHANGE_LAYER_BACKGROUND_COLOR;
 var EVENT_CHANGE_LAYER_CLIPPATH = '@' + CHANGE_LAYER_CLIPPATH;
+var EVENT_CHANGE_LAYER_CLIPPATH_POLYGON = '@' + CHANGE_LAYER_CLIPPATH_POLYGON;
 var EVENT_CHANGE_LAYER_TEXT = '@' + CHANGE_LAYER_TEXT;
 
 var EVENT_CHANGE_IMAGE = '@' + CHANGE_IMAGE;
@@ -11077,7 +11079,9 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: "isFixedRadius",
         value: function isFixedRadius(layer) {
-            if (layer.fixedRadius) return [stringUnit(layer.borderRadius)];
+            if (layer.fixedRadius && layer.borderRadius) {
+                return [stringUnit(layer.borderRadius)];
+            }
 
             if (!layer.borderTopLeftRadius) return [];
 
@@ -11085,7 +11089,7 @@ var LayerManager = function (_BaseModule) {
                 return !it;
             }).length;
 
-            if (count == 0) {
+            if (count == 0 && layer.borderTopLeftRadius) {
                 return [stringUnit(layer.borderTopLeftRadius)];
             }
 
@@ -11665,7 +11669,11 @@ var itemField = {
 };
 
 var updateUnitField = {
-    borderRadius: true
+    borderRadius: true,
+    borderTopLeftRadius: true,
+    borderBottomLeftRadius: true,
+    borderTopRightRadius: true,
+    borderBottomRightRadius: true
 };
 
 var convertStyle = function convertStyle(item) {
@@ -14844,6 +14852,25 @@ var ClipPathManager = function (_BaseModule) {
             return "inset(" + insetString + ")";
         }
     }, {
+        key: '*/clip-path/make/polygon',
+        value: function clipPathMakePolygon($store, layer) {
+
+            var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || '';
+
+            var fillRule = '';
+            if (clipPathPolygonFillRule != '') {
+                fillRule = clipPathPolygonFillRule + ',';
+            }
+
+            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+
+            var polygonString = clipPathPolygonPoints.map(function (it) {
+                return stringUnit(it.x) + " " + stringUnit(it.y);
+            }).join(', ');
+
+            return "polygon(" + fillRule + " " + polygonString + ")";
+        }
+    }, {
         key: '*/clip-path/make/svg',
         value: function clipPathMakeSvg($store, layer) {
             if (layer.clipPathSvg) {
@@ -14862,6 +14889,8 @@ var ClipPathManager = function (_BaseModule) {
                 clipPath = $store.read('/clip-path/make/ellipse', layer);
             } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
                 clipPath = $store.read('/clip-path/make/inset', layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_POLYGON) {
+                clipPath = $store.read('/clip-path/make/polygon', layer);
             } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
                 clipPath = $store.read('/clip-path/make/svg', layer);
             }
@@ -17671,8 +17700,6 @@ var PageLayout = function (_UIElement) {
 
 var CLIP_PATH_TYPES = [CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_SVG];
 
-var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
-
 var ClipPath = function (_BasePropertyItem) {
     inherits(ClipPath, _BasePropertyItem);
 
@@ -17684,14 +17711,14 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
+            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div class='type'>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
-            }).join('') + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Side</label>\n                        <div >\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES.map(function (type) {
-                return "<option value=\"" + type + "\">" + type + "</option>";
-            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                                                    \n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>\n                    \n                </div>\n            </div>\n        ";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION
+        // EVENT_CHANGE_LAYER_CLIPPATH
+        ),
         value: function value() {
             this.refresh();
         }
@@ -17701,61 +17728,30 @@ var ClipPath = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('/selection/current/layer', function (layer) {
-                if (layer.clipPathSvg) {
-                    _this2.refs.$clipPath.html(layer.clipPathSvg);
-                } else {
-                    _this2.refs.$clipPath.empty();
-                }
-
-                _this2.refs.$fit.checked(layer.fitClipPathSize);
                 _this2.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
-                _this2.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
-            });
-        }
-    }, {
-        key: 'click $clipPath',
-        value: function click$clipPath() {
-            this.emit('toggleClipPathImageList');
-        }
-    }, {
-        key: 'click $fit',
-        value: function click$fit() {
-            var _this3 = this;
-
-            this.read('/selection/current/layer', function (layer) {
-
-                _this3.commit(CHANGE_LAYER_CLIPPATH, { id: layer.id, fitClipPathSize: _this3.refs.$fit.checked() });
-                _this3.refresh();
             });
         }
     }, {
         key: 'change $clipType',
         value: function change$clipType() {
-            var _this4 = this;
+            var _this3 = this;
 
             this.read('/selection/current/layer', function (layer) {
-                if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
-                    _this4.refs.$fit.checked(false);
-                    _this4.refs.$clipPath.empty();
-                    layer.clipPathSvg = '';
-                }
-
-                _this4.commit(CHANGE_LAYER_CLIPPATH, {
+                _this3.commit(CHANGE_LAYER_CLIPPATH, {
                     id: layer.id,
-                    clipPathSvg: layer.clipPathSvg,
-                    clipPathType: _this4.refs.$clipType.val()
+                    clipPathType: _this3.refs.$clipType.val()
                 });
             });
         }
     }, {
         key: 'change $clipSideType',
         value: function change$clipSideType() {
-            var _this5 = this;
+            var _this4 = this;
 
             this.read('/selection/current/layer/id', function (id) {
-                _this5.commit(CHANGE_LAYER_CLIPPATH, {
+                _this4.commit(CHANGE_LAYER_CLIPPATH, {
                     id: id,
-                    clipPathSideType: _this5.refs.$clipSideType.val()
+                    clipPathSideType: _this4.refs.$clipSideType.val()
                 });
             });
         }
@@ -18133,18 +18129,18 @@ var Opacity$3 = function (_BasePropertyItem) {
     return Opacity;
 }(BasePropertyItem);
 
-var ClipPathImageResource = function (_BasePropertyItem) {
-    inherits(ClipPathImageResource, _BasePropertyItem);
+var ClipPathSVG = function (_BasePropertyItem) {
+    inherits(ClipPathSVG, _BasePropertyItem);
 
-    function ClipPathImageResource() {
-        classCallCheck(this, ClipPathImageResource);
-        return possibleConstructorReturn(this, (ClipPathImageResource.__proto__ || Object.getPrototypeOf(ClipPathImageResource)).apply(this, arguments));
+    function ClipPathSVG() {
+        classCallCheck(this, ClipPathSVG);
+        return possibleConstructorReturn(this, (ClipPathSVG.__proto__ || Object.getPrototypeOf(ClipPathSVG)).apply(this, arguments));
     }
 
-    createClass(ClipPathImageResource, [{
+    createClass(ClipPathSVG, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item image-resource show'>\n                <div class='items' ref=\"$imageList\">\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item clip-path-svg show'>\n\n                <div class='items'>\n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>                            \n                    <div class='image-resource' ref=\"$imageList\"></div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: 'load $imageList',
@@ -18160,7 +18156,58 @@ var ClipPathImageResource = function (_BasePropertyItem) {
     }, {
         key: "refresh",
         value: function refresh() {
-            this.load();
+
+            var isShow = this.isShow();
+
+            this.$el.toggleClass('show', isShow);
+
+            if (isShow) {
+
+                this.load();
+                this.updateView();
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var item = this.read('/selection/current/layer');
+
+            if (!item) return false;
+
+            if (item.clipPathType == CLIP_PATH_TYPE_SVG) return true;
+        }
+    }, {
+        key: 'click $clipPath',
+        value: function click$clipPath() {
+            this.emit('toggleClipPathImageList');
+        }
+    }, {
+        key: 'click $fit',
+        value: function click$fit() {
+            var _this2 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+
+                _this2.commit(CHANGE_LAYER_CLIPPATH, { id: layer.id, fitClipPathSize: _this2.refs.$fit.checked() });
+                _this2.refresh();
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH),
+        value: function value(_value) {
+            if (typeof _value.clipPathType != 'undefined') {
+                this.refresh();
+            }
+        }
+    }, {
+        key: "updateView",
+        value: function updateView() {
+            var _this3 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                _this3.refs.$clipPath.html(defaultValue(layer.clipPathSvg, ''));
+                _this3.refs.$fit.checked(defaultValue(layer.fitClipPathSize, false));
+            });
         }
     }, {
         key: '@changeSvgList',
@@ -18168,12 +18215,16 @@ var ClipPathImageResource = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
-        key: '@toggleClipPathImageResource',
-        value: function toggleClipPathImageResource(isShow) {
+        key: '@toggleClipPathSVG',
+        value: function toggleClipPathSVG(isShow) {
             if (typeof isShow == 'undefined') {
                 this.$el.toggleClass('show');
             } else {
                 this.$el.toggleClass('show', isShow);
+            }
+
+            if (this.$el.hasClass('show')) {
+                this.refresh();
             }
         }
     }, {
@@ -18217,32 +18268,176 @@ var ClipPathImageResource = function (_BasePropertyItem) {
     }, {
         key: 'click $imageList .svg-item',
         value: function click$imageListSvgItem(e) {
-            var _this2 = this;
+            var _this4 = this;
 
             var index = e.$delegateTarget.attr('data-index');
             var key = e.$delegateTarget.attr('data-key');
 
             if (index) {
                 this.read('/selection/current/layer/id', function (id) {
-                    var svg = _this2.read('/svg/get', +index);
+                    var svg = _this4.read('/svg/get', +index);
 
-                    _this2.setClipPathSvg(id, svg, function (newValue) {
-                        _this2.commit(CHANGE_LAYER, newValue);
+                    _this4.setClipPathSvg(id, svg, function (newValue) {
+                        _this4.commit(CHANGE_LAYER, newValue);
+                        _this4.updateView();
                     });
                 });
             } else if (key) {
 
                 this.read('/selection/current/layer/id', function (id) {
-                    var svg = _this2.read('/svg/get', Number.MAX_SAFE_INTEGER, key);
+                    var svg = _this4.read('/svg/get', Number.MAX_SAFE_INTEGER, key);
 
-                    _this2.setClipPathSvg(id, svg, function (newValue) {
-                        _this2.commit(CHANGE_LAYER, newValue);
+                    _this4.setClipPathSvg(id, svg, function (newValue) {
+                        _this4.commit(CHANGE_LAYER, newValue);
+                        _this4.updateView();
                     });
                 });
             }
         }
     }]);
-    return ClipPathImageResource;
+    return ClipPathSVG;
+}(BasePropertyItem);
+
+var CLIP_PATH_SIDE_TYPES$1 = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
+
+var ClipPathSide = function (_BasePropertyItem) {
+    inherits(ClipPathSide, _BasePropertyItem);
+
+    function ClipPathSide() {
+        classCallCheck(this, ClipPathSide);
+        return possibleConstructorReturn(this, (ClipPathSide.__proto__ || Object.getPrototypeOf(ClipPathSide)).apply(this, arguments));
+    }
+
+    createClass(ClipPathSide, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div >\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES$1.map(function (type) {
+                return "<option value=\"" + type + "\">" + type + "</option>";
+            }).join('') + "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            var isShow = this.isShow();
+
+            this.$el.toggleClass('show', isShow);
+
+            if (isShow) {
+
+                this.read('/selection/current/layer', function (layer) {
+                    _this2.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
+                });
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var item = this.read('/selection/current/layer');
+
+            if (!item) return false;
+
+            if (item.clipPathType == CLIP_PATH_TYPE_CIRCLE) return true;
+            if (item.clipPathType == CLIP_PATH_TYPE_ELLIPSE) return true;
+        }
+    }, {
+        key: '@toggleClipPathSideType',
+        value: function toggleClipPathSideType() {
+            this.$el.toggleClass('show');
+        }
+    }, {
+        key: 'change $clipSideType',
+        value: function change$clipSideType() {
+            var _this3 = this;
+
+            this.read('/selection/current/layer/id', function (id) {
+                _this3.commit(CHANGE_LAYER_CLIPPATH, {
+                    id: id,
+                    clipPathSideType: _this3.refs.$clipSideType.val()
+                });
+            });
+        }
+    }]);
+    return ClipPathSide;
+}(BasePropertyItem);
+
+var ClipPathPolygon = function (_BasePropertyItem) {
+    inherits(ClipPathPolygon, _BasePropertyItem);
+
+    function ClipPathPolygon() {
+        classCallCheck(this, ClipPathPolygon);
+        return possibleConstructorReturn(this, (ClipPathPolygon.__proto__ || Object.getPrototypeOf(ClipPathPolygon)).apply(this, arguments));
+    }
+
+    createClass(ClipPathPolygon, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click it with alt if you want to add point\n                    </div>\n                </div>\n                <div class='items' ref='$polygonList'>            \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: 'load $polygonList',
+        value: function load$polygonList() {
+            var layer = this.read('/selection/current/layer');
+            if (!layer) return '';
+            var points = defaultValue(layer.clipPathPolygonPoints, []);
+            if (!points.length) return '';
+
+            var startIndex = 0;
+            var lastIndex = points.length - 1;
+
+            return points.map(function (p, index) {
+
+                var start = index == startIndex ? 'start' : '';
+                var end = index == lastIndex ? 'end' : '';
+
+                return "\n                <div class=\"polygon-item " + start + " " + end + "\" data-index=\"" + index + "\" >\n                    <div class='area'></div>\n                    <label>X</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-type='x' value=\"" + p.x.value + "\" />\n                        " + unitString(p.x.unit) + "\n                    </div>\n                    <label>Y</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-type='x' value=\"" + p.y.value + "\" />\n                        " + unitString(p.y.unit) + "\n                    </div>\n                    <div class='tools'>\n                        <button type=\"button\" data-type='delete' data-index=\"" + index + "\">&times;</button>\n                        <button type=\"button\" data-type='copy' data-index=\"" + index + "\">+</button>\n                    </div>\n                </div>\n            ";
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+
+            var isShow = this.isShow();
+
+            this.$el.toggleClass('show', isShow);
+
+            if (isShow) {
+
+                this.load();
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var item = this.read('/selection/current/layer');
+
+            if (!item) return false;
+
+            return item.clipPathType == CLIP_PATH_TYPE_POLYGON;
+        }
+    }, {
+        key: '@toggleClipPathPolygon',
+        value: function toggleClipPathPolygon(isShow) {
+
+            if (typeof isShow == 'undefined') {
+                this.$el.toggleClass('show');
+            } else {
+                this.$el.toggleClass('show', isShow);
+            }
+        }
+    }]);
+    return ClipPathPolygon;
 }(BasePropertyItem);
 
 var BoxShadow = function (_BasePropertyItem) {
@@ -19352,7 +19547,12 @@ var EmptyArea = function (_BasePropertyItem) {
     return EmptyArea;
 }(BasePropertyItem);
 
-var items = {
+var _ClipPathSide$ClipPat;
+
+var items = (_ClipPathSide$ClipPat = {
+    ClipPathSide: ClipPathSide,
+    ClipPathPolygon: ClipPathPolygon,
+    ClipPathSVG: ClipPathSVG,
     EmptyArea: EmptyArea,
     BackdropList: BackdropList,
     LayerInfoColorPickerPanel: LayerInfoColorPickerPanel,
@@ -19365,39 +19565,8 @@ var items = {
     BackgroundInfo: BackgroundInfo,
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
-    BoxShadow: BoxShadow,
-    ClipPathImageResource: ClipPathImageResource,
-    Opacity: Opacity$3,
-    RadiusFixed: RadiusFixed,
-    Rotate: Rotate,
-    LayerBlend: LayerBlend,
-    GroupAlign: GroupAlign,
-    PageShowGrid: PageShowGrid,
-    ClipPath: ClipPath,
-    PageLayout: PageLayout,
-    ImageResource: ImageResource,
-    BackgroundColor: BackgroundColor,
-    BackgroundBlend: BackgroundBlend,
-    BlendList: BlendList,
-    MixBlendList: MixBlendList,
-    FilterList: FilterList$1,
-    PageExport: PageExport,
-    PageSize: PageSize,
-    PageName: PageName,
-    BackgroundSize: BackgroundSize,
-    Transform3d: Transform3d,
-    Transform: Transform,
-    LayerColorPickerPanel: LayerColorPickerPanel,
-    ColorPickerPanel: ColorPickerPanel,
-    ColorStepsInfo: ColorStepsInfo,
-    ColorSteps: ColorSteps,
-    Name: Name,
-    Size: Size,
-    Position: Position,
-    Radius: Radius,
-    Clip: Clip
-
-};
+    BoxShadow: BoxShadow
+}, defineProperty(_ClipPathSide$ClipPat, "ClipPathSVG", ClipPathSVG), defineProperty(_ClipPathSide$ClipPat, "Opacity", Opacity$3), defineProperty(_ClipPathSide$ClipPat, "RadiusFixed", RadiusFixed), defineProperty(_ClipPathSide$ClipPat, "Rotate", Rotate), defineProperty(_ClipPathSide$ClipPat, "LayerBlend", LayerBlend), defineProperty(_ClipPathSide$ClipPat, "GroupAlign", GroupAlign), defineProperty(_ClipPathSide$ClipPat, "PageShowGrid", PageShowGrid), defineProperty(_ClipPathSide$ClipPat, "ClipPath", ClipPath), defineProperty(_ClipPathSide$ClipPat, "PageLayout", PageLayout), defineProperty(_ClipPathSide$ClipPat, "ImageResource", ImageResource), defineProperty(_ClipPathSide$ClipPat, "BackgroundColor", BackgroundColor), defineProperty(_ClipPathSide$ClipPat, "BackgroundBlend", BackgroundBlend), defineProperty(_ClipPathSide$ClipPat, "BlendList", BlendList), defineProperty(_ClipPathSide$ClipPat, "MixBlendList", MixBlendList), defineProperty(_ClipPathSide$ClipPat, "FilterList", FilterList$1), defineProperty(_ClipPathSide$ClipPat, "PageExport", PageExport), defineProperty(_ClipPathSide$ClipPat, "PageSize", PageSize), defineProperty(_ClipPathSide$ClipPat, "PageName", PageName), defineProperty(_ClipPathSide$ClipPat, "BackgroundSize", BackgroundSize), defineProperty(_ClipPathSide$ClipPat, "Transform3d", Transform3d), defineProperty(_ClipPathSide$ClipPat, "Transform", Transform), defineProperty(_ClipPathSide$ClipPat, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_ClipPathSide$ClipPat, "ColorPickerPanel", ColorPickerPanel), defineProperty(_ClipPathSide$ClipPat, "ColorStepsInfo", ColorStepsInfo), defineProperty(_ClipPathSide$ClipPat, "ColorSteps", ColorSteps), defineProperty(_ClipPathSide$ClipPat, "Name", Name), defineProperty(_ClipPathSide$ClipPat, "Size", Size), defineProperty(_ClipPathSide$ClipPat, "Position", Position), defineProperty(_ClipPathSide$ClipPat, "Radius", Radius), defineProperty(_ClipPathSide$ClipPat, "Clip", Clip), _ClipPathSide$ClipPat);
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -19501,7 +19670,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>        \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathImageResource></ClipPathImageResource>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>        \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: 'scroll $layerInfoScroll',
@@ -23905,12 +24074,27 @@ var InsetEditor = function (_UIElement) {
                 var top = defaultValue(layer.clipPathInsetTop, percentUnit(0));
                 var left = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
                 var right = defaultValue(layer.clipPathInsetRight, percentUnit(0));
-                var bottom = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+                var bottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
 
-                _this2.refs.$top.px('top', value2px(top, height));
-                _this2.refs.$left.px('left', value2px(left, width));
-                _this2.refs.$right.px('left', value2px(percentUnit(100 - right.value), width));
-                _this2.refs.$bottom.px('bottom', value2px(percentUnit(100 - bottom.value), width));
+                var topValue = value2px(top, height);
+                var leftValue = value2px(left, width);
+                var rightValue = value2px(percentUnit(100 - right.value), width);
+                var bottomValue = value2px(percentUnit(100 - bottom.value), height);
+
+                var centerX = leftValue + (rightValue - leftValue) / 2;
+                var centerY = topValue + (bottomValue - topValue) / 2;
+
+                _this2.refs.$top.px('top', topValue);
+                _this2.refs.$top.px('left', centerX);
+
+                _this2.refs.$left.px('top', centerY);
+                _this2.refs.$left.px('left', leftValue);
+
+                _this2.refs.$right.px('top', centerY);
+                _this2.refs.$right.px('left', rightValue);
+
+                _this2.refs.$bottom.px('left', centerX);
+                _this2.refs.$bottom.px('top', bottomValue);
             });
         }
     }, {
@@ -23995,6 +24179,8 @@ var InsetEditor = function (_UIElement) {
             item.clipPathInsetBottom = percentUnit(px2percent(height - defaultValue(this.bottompos, height), height));
 
             this.commit(CHANGE_LAYER_CLIPPATH, item);
+
+            this.refreshPointer();
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER),
@@ -24034,7 +24220,203 @@ var InsetEditor = function (_UIElement) {
     return InsetEditor;
 }(UIElement);
 
+var PolygonEditor = function (_UIElement) {
+    inherits(PolygonEditor, _UIElement);
+
+    function PolygonEditor() {
+        classCallCheck(this, PolygonEditor);
+        return possibleConstructorReturn(this, (PolygonEditor.__proto__ || Object.getPrototypeOf(PolygonEditor)).apply(this, arguments));
+    }
+
+    createClass(PolygonEditor, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='layer-shape-polygon-editor'>\n\n            </div>\n        ";
+        }
+    }, {
+        key: 'load $el',
+        value: function load$el() {
+            var layer = this.read('/selection/current/layer');
+            if (!layer) return '';
+            var points = defaultValue(layer.clipPathPolygonPoints, []);
+            if (!points.length) return '';
+
+            var startIndex = 0;
+            var lastIndex = points.length - 1;
+
+            return points.map(function (p, index) {
+
+                var start = index == startIndex ? 'start' : '';
+                var end = index == lastIndex ? 'end' : '';
+
+                return "<div class=\"drag-item " + start + " " + end + "\" data-point-index=\"" + index + "\" style='left: " + stringUnit(p.x) + ";top: " + stringUnit(p.y) + "'></div>";
+            });
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.cachedRectangle = false;
+                this.load();
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var item = this.read('/selection/current/layer');
+
+            if (!item) return false;
+
+            return item.clipPathType == CLIP_PATH_TYPE_POLYGON;
+        }
+    }, {
+        key: "getRectangle",
+        value: function getRectangle() {
+
+            if (!this.cachedRectangle) {
+                var width = this.$el.width();
+                var height = this.$el.height();
+                var minX = this.$el.offsetLeft();
+                var minY = this.$el.offsetTop();
+
+                var maxX = minX + width;
+                var maxY = minY + height;
+                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+            }
+
+            return this.cachedRectangle;
+        }
+    }, {
+        key: "refreshUI",
+        value: function refreshUI(e) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                maxX = _getRectangle.maxX,
+                maxY = _getRectangle.maxY,
+                width = _getRectangle.width,
+                height = _getRectangle.height;
+
+            var _e$xy = e.xy,
+                x = _e$xy.x,
+                y = _e$xy.y;
+
+
+            x = Math.max(Math.min(maxX, x), minX);
+            y = Math.max(Math.min(maxY, y), minY);
+
+            var left = x - minX;
+            var top = y - minY;
+
+            this.$dragItem.px('left', left);
+            this.$dragItem.px('top', top);
+
+            if (e) {
+
+                this.$dragPoint = {
+                    x: percentUnit(px2percent(left, width)),
+                    y: percentUnit(px2percent(top, height))
+                };
+
+                this.updateClipPath();
+            }
+        }
+    }, {
+        key: "updateClipPath",
+        value: function updateClipPath() {
+            var _this2 = this;
+
+            this.read('/selection/current/layer', function (layer) {
+                var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                clipPathPolygonPoints[+_this2.$dragItem.attr('data-point-index')] = _this2.$dragPoint;
+
+                _this2.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+                    id: layer.id,
+                    clipPathPolygonPoints: clipPathPolygonPoints
+                });
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON),
+        value: function value() {
+            this.refresh();
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'pointerend document',
+        value: function pointerendDocument(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: 'pointermove document',
+        value: function pointermoveDocument(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: 'pointerstart $el .drag-item',
+        value: function pointerstart$elDragItem(e) {
+            e.preventDefault();
+            this.$dragItem = e.$delegateTarget;
+            this.isDown = true;
+        }
+    }, {
+        key: "addPoint",
+        value: function addPoint(e) {
+            var _this3 = this;
+
+            var _getRectangle2 = this.getRectangle(),
+                minX = _getRectangle2.minX,
+                minY = _getRectangle2.minY,
+                maxX = _getRectangle2.maxX,
+                maxY = _getRectangle2.maxY,
+                width = _getRectangle2.width,
+                height = _getRectangle2.height;
+
+            var _e$xy2 = e.xy,
+                x = _e$xy2.x,
+                y = _e$xy2.y;
+
+
+            x = Math.max(Math.min(maxX, x), minX);
+            y = Math.max(Math.min(maxY, y), minY);
+
+            var left = x - minX;
+            var top = y - minY;
+
+            var point = {
+                x: percentUnit(px2percent(left, width)),
+                y: percentUnit(px2percent(top, height))
+            };
+
+            this.read('/selection/current/layer', function (layer) {
+                var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                clipPathPolygonPoints.push(point);
+
+                _this3.commit(CHANGE_LAYER_CLIPPATH_POLYGON, { id: layer.id, clipPathPolygonPoints: clipPathPolygonPoints });
+                _this3.refresh();
+            });
+        }
+    }, {
+        key: 'click $el | Alt',
+        value: function click$elAlt(e) {
+            e.stopPropagation();
+
+            this.addPoint(e);
+        }
+    }]);
+    return PolygonEditor;
+}(UIElement);
+
 var shapeEditor = {
+    PolygonEditor: PolygonEditor,
     InsetEditor: InsetEditor,
     EllipseEditor: EllipseEditor,
     CircleEditor: CircleEditor
@@ -24373,16 +24755,19 @@ var GradientView = function (_UIElement) {
         value: function value() {
             this.setBackgroundColor();
         }
-    }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_MOVE),
-        value: function value() {
-            this.refreshLayerPosition();
-        }
+
+        // [MULTI_EVENT(
+        //     EVENT_CHANGE_LAYER_POSITION,
+        //     EVENT_CHANGE_LAYER_SIZE,
+        //     EVENT_CHANGE_LAYER_MOVE,        
+        // )] () {
+        //     // this.refreshLayerPosition();
+        // }
 
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
         value: function value() {
             this.refreshLayer();
         }

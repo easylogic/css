@@ -8,7 +8,7 @@
     z-index: 10000;
     box-sizing: border-box;      
     // border: 1px solid black; 
-    
+
 
     .layer-shape-circle-editor,
     .layer-shape-ellipse-editor {
@@ -128,5 +128,42 @@
             border: 2px solid white;     
         }                        
 
+    }
+
+    .layer-shape-polygon-editor {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        pointer-events: all;
+        // background-color: yellow;
+
+        > .drag-item {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%) translateX(-50%);
+            background-color: rgba(rgb(1, 120, 124), 0.8); 
+            pointer-events: all;
+            cursor: pointer;       
+            border: 2px solid white;                 
+            background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+            background-size: 1px 1px;
+            background-position: center 0px, 0px center;
+            background-repeat: repeat-y, repeat-x;
+
+            &.start {
+                background-color: rgba(255, 0, 0, 0.8);
+            }
+
+            &.end {
+                background-color: rgba(0, 0, 255, 0.8);
+            }            
+        }
     }
 }      

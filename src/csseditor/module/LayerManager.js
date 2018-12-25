@@ -262,7 +262,9 @@ s
     }
 
     isFixedRadius (layer) {
-        if (layer.fixedRadius) return [ stringUnit(layer.borderRadius)]; 
+        if (layer.fixedRadius && layer.borderRadius) {
+            return [ stringUnit(layer.borderRadius)]; 
+        }
 
         if (!layer.borderTopLeftRadius) return []
 
@@ -273,7 +275,7 @@ s
             layer.borderTopLeftRadius.value == layer.borderBottomLeftRadius.value
         ].filter(it => !it).length
 
-        if (count == 0) {
+        if (count == 0 && layer.borderTopLeftRadius) {
             return [ stringUnit(layer.borderTopLeftRadius) ]
         }
 

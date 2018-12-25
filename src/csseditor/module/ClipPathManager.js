@@ -4,13 +4,14 @@ import {
     CLIP_PATH_TYPE_NONE, 
     CLIP_PATH_TYPE_CIRCLE, 
     CLIP_PATH_TYPE_ELLIPSE, 
+    CLIP_PATH_TYPE_POLYGON,
     CLIP_PATH_TYPE_SVG, 
     CLIP_PATH_SIDE_TYPE_CLOSEST,
     CLIP_PATH_SIDE_TYPE_FARTHEST,
     CLIP_PATH_SIDE_TYPE_NONE,
     CLIP_PATH_TYPE_INSET
 } from "./ItemTypes";
-import { percent, UNIT_PERCENT, stringUnit, percentUnit, value2px } from "../../util/css/types";
+import { percent, UNIT_PERCENT, stringUnit, percentUnit, value2px, string2unit } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
 
 const SQRT_2 = Math.sqrt(2);
@@ -138,7 +139,25 @@ export default class ClipPathManager extends BaseModule {
         var insetString = `${top} ${right} ${bottom} ${left}`
 
         return `inset(${insetString})`;
-    }      
+    } 
+    
+    '*/clip-path/make/polygon' ($store, layer) {
+
+        var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || ''; 
+
+        var fillRule = ''; 
+        if (clipPathPolygonFillRule != '') {
+            fillRule = clipPathPolygonFillRule + ',';
+        }
+
+        var clipPathPolygonPoints = defaultValue (layer.clipPathPolygonPoints, []); 
+    
+        var polygonString = clipPathPolygonPoints.map(it => {
+            return `${stringUnit(it.x)} ${stringUnit(it.y)}`
+        }).join(', ');
+
+        return `polygon(${fillRule} ${polygonString})`;
+    }     
 
     '*/clip-path/make/svg' ($store, layer) {
         if (layer.clipPathSvg) {
@@ -156,6 +175,8 @@ export default class ClipPathManager extends BaseModule {
             clipPath = $store.read('/clip-path/make/ellipse', layer);             
         } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
             clipPath = $store.read('/clip-path/make/inset', layer);
+        } else if (layer.clipPathType == CLIP_PATH_TYPE_POLYGON) {
+            clipPath = $store.read('/clip-path/make/polygon', layer);
         } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
             clipPath = $store.read('/clip-path/make/svg', layer);
         }

@@ -36,22 +36,21 @@ const CLIP_PATH_SIDE_TYPES = [
     CLIP_PATH_SIDE_TYPE_FARTHEST
 ]
 
-export default class ClipPath extends BasePropertyItem {
+export default class ClipPathSide extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item clip-path show'>
-                <div class='title' ref="$title">Clip Path</div>
+            <div class='property-item clip-path-side'>
                 <div class='items'>            
-                    <div class='type'>
-                        <label>Type</label>
+                    <div>
+                        <label>Side</label>
                         <div >
-                            <select ref="$clipType">
-                                ${CLIP_PATH_TYPES.map(type => {
+                            <select ref="$clipSideType">
+                                ${CLIP_PATH_SIDE_TYPES.map(type => {
                                     return `<option value="${type}">${type}</option>`
                                 }).join('')}
                             </select>
                         </div>
-                    </div>                       
+                    </div>                                                    
                 </div>
             </div>
         `
@@ -61,22 +60,36 @@ export default class ClipPath extends BasePropertyItem {
         EVENT_CHANGE_LAYER,
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION,
-        // EVENT_CHANGE_LAYER_CLIPPATH
+        EVENT_CHANGE_LAYER_CLIPPATH
     )] () { this.refresh() }
 
+
     refresh() {
-        this.read('/selection/current/layer', (layer) => {
-            this.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
-        });
+
+        var isShow = this.isShow();
+
+        this.$el.toggleClass('show', isShow);
+
+        if (isShow) {
+
+            this.read('/selection/current/layer', (layer) => {
+                this.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
+            });
+        }
+
     }
 
-    'change $clipType' () {
-        this.read('/selection/current/layer', (layer) => {
-            this.commit(CHANGE_LAYER_CLIPPATH, {
-                id: layer.id, 
-                clipPathType: this.refs.$clipType.val()
-            })
-        })
+    isShow () {
+        var item = this.read('/selection/current/layer');
+
+        if (!item) return false;
+        
+        if (item.clipPathType == CLIP_PATH_TYPE_CIRCLE) return true; 
+        if (item.clipPathType == CLIP_PATH_TYPE_ELLIPSE) return true; 
+    }    
+
+    '@toggleClipPathSideType' () {
+        this.$el.toggleClass('show');
     }
 
     'change $clipSideType' () {

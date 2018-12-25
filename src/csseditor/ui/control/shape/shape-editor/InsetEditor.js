@@ -41,12 +41,27 @@ export default class InsetEditor extends UIElement {
             var top = defaultValue(layer.clipPathInsetTop, percentUnit(0));
             var left = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
             var right = defaultValue(layer.clipPathInsetRight, percentUnit(0));
-            var bottom = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+            var bottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
 
-            this.refs.$top.px('top', value2px(top, height));
-            this.refs.$left.px('left', value2px(left, width));
-            this.refs.$right.px('left', value2px(percentUnit(100 - right.value) , width));
-            this.refs.$bottom.px('bottom', value2px(percentUnit( 100 - bottom.value), width));
+            var topValue = value2px(top, height)
+            var leftValue = value2px(left, width)
+            var rightValue = value2px(percentUnit(100 - right.value) , width)
+            var bottomValue = value2px(percentUnit( 100 - bottom.value), height)
+
+            var centerX = leftValue + (rightValue - leftValue)/2; 
+            var centerY = topValue + (bottomValue - topValue)/2; 
+
+            this.refs.$top.px('top', topValue);
+            this.refs.$top.px('left', centerX);
+
+            this.refs.$left.px('top', centerY);
+            this.refs.$left.px('left', leftValue);
+
+            this.refs.$right.px('top', centerY);
+            this.refs.$right.px('left', rightValue);
+
+            this.refs.$bottom.px('left', centerX);            
+            this.refs.$bottom.px('top', bottomValue);
         })
     }
 
@@ -115,6 +130,8 @@ export default class InsetEditor extends UIElement {
         item.clipPathInsetBottom = percentUnit( px2percent(height - defaultValue(this.bottompos, height), height) )
 
         this.commit(CHANGE_LAYER_CLIPPATH, item);
+
+        this.refreshPointer();
     }
 
     [MULTI_EVENT(

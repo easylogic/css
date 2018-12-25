@@ -33,7 +33,8 @@ import {
     EVENT_CHANGE_BOXSHADOW,
     EVENT_CHANGE_TEXTSHADOW,
     EVENT_CHANGE_LAYER_TEXT,
-    EVENT_CHANGE_LAYER_BACKDROP_FILTER
+    EVENT_CHANGE_LAYER_BACKDROP_FILTER,
+    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON
 } from '../../types/event';
 import { px } from '../../../util/css/types';
 
@@ -208,13 +209,13 @@ export default class GradientView extends UIElement {
         EVENT_CHANGE_PAGE
     )] () { this.setBackgroundColor(); }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_MOVE,        
-    )] () {
-        this.refreshLayerPosition();
-    }
+    // [MULTI_EVENT(
+    //     EVENT_CHANGE_LAYER_POSITION,
+    //     EVENT_CHANGE_LAYER_SIZE,
+    //     EVENT_CHANGE_LAYER_MOVE,        
+    // )] () {
+    //     // this.refreshLayerPosition();
+    // }
 
     // indivisual layer effect 
     [MULTI_EVENT(
@@ -229,6 +230,10 @@ export default class GradientView extends UIElement {
         EVENT_CHANGE_LAYER_TRANSFORM,
         EVENT_CHANGE_LAYER_TRANSFORM_3D,
         EVENT_CHANGE_LAYER_TEXT,
+        EVENT_CHANGE_LAYER_POSITION,
+        EVENT_CHANGE_LAYER_SIZE,
+        EVENT_CHANGE_LAYER_MOVE,    
+        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
         EVENT_CHANGE_BOXSHADOW,
         EVENT_CHANGE_TEXTSHADOW,
         EVENT_CHANGE_IMAGE,

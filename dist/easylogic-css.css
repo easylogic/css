@@ -4166,6 +4166,37 @@ html, body {
           pointer-events: all;
           cursor: pointer;
           border: 2px solid white; }
+      .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        pointer-events: all; }
+        .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item {
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          top: 50%;
+          left: 100%;
+          -webkit-transform: translateY(-50%) translateX(-50%);
+                  transform: translateY(-50%) translateX(-50%);
+          background-color: rgba(1, 120, 124, 0.8);
+          pointer-events: all;
+          cursor: pointer;
+          border: 2px solid white;
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 1px;
+          background-position: center 0px, 0px center;
+          background-repeat: repeat-y, repeat-x; }
+          .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item.start {
+            background-color: rgba(255, 0, 0, 0.8); }
+          .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item.end {
+            background-color: rgba(0, 0, 255, 0.8); }
     .csseditor .page-view .move-guide {
       position: absolute;
       left: 0px;
@@ -5080,31 +5111,44 @@ html, body {
           font-size: 12px; }
       .csseditor .property-view .property-item .gradient-type .gradient-item {
         margin-right: 3px; }
-      .csseditor .property-view .property-item.image-resource {
-        position: absolute;
+      .csseditor .property-view .property-item.clip-path-svg .clip-path-container {
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border: 1px solid #cccccc; }
+        .csseditor .property-view .property-item.clip-path-svg .clip-path-container svg {
+          width: 100%; }
+      .csseditor .property-view .property-item.clip-path-svg .image-resource {
+        position: relative;
         left: auto;
         bottom: auto;
         top: auto;
-        width: auto; }
-        .csseditor .property-view .property-item.image-resource .items {
-          max-height: 300px;
-          overflow: auto; }
-          .csseditor .property-view .property-item.image-resource .items .svg-item {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            vertical-align: middle;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            border: 1px solid #cccccc;
-            cursor: pointer;
-            margin: 2px; }
-            .csseditor .property-view .property-item.image-resource .items .svg-item svg {
-              width: 100%;
-              height: 100%; }
-            .csseditor .property-view .property-item.image-resource .items .svg-item img {
-              max-width: 100%;
-              max-height: 100%; }
+        width: 100%;
+        margin-top: 10px;
+        max-height: 300px;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+        overflow: auto; }
+      .csseditor .property-view .property-item.clip-path-svg .items {
+        position: relative; }
+        .csseditor .property-view .property-item.clip-path-svg .items .svg-item {
+          display: inline-block;
+          width: 50px;
+          height: 50px;
+          vertical-align: middle;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          border: 1px solid #cccccc;
+          cursor: pointer;
+          margin: 2px; }
+          .csseditor .property-view .property-item.clip-path-svg .items .svg-item svg {
+            width: 100%;
+            height: 100%; }
+          .csseditor .property-view .property-item.clip-path-svg .items .svg-item img {
+            max-width: 100%;
+            max-height: 100%; }
       .csseditor .property-view .property-item.image-list-view .items {
         height: 200px;
         overflow: auto;
@@ -5145,6 +5189,12 @@ html, body {
         border: 1px solid #cccccc; }
         .csseditor .property-view .property-item.clip-path .clip-path-container svg {
           width: 100%; }
+      .csseditor .property-view .property-item.clip-path-polygon .items label {
+        width: 20px;
+        text-align: center; }
+      .csseditor .property-view .property-item.clip-path-polygon .items > div > div input[type=number] {
+        width: 50px;
+        margin-right: 2px; }
       .csseditor .property-view .property-item .group-align {
         float: right; }
         .csseditor .property-view .property-item .group-align button {

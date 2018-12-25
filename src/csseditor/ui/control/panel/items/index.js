@@ -27,7 +27,9 @@ import LayerBlend from "./LayerBlend";
 import Rotate from "./rotate";
 import RadiusFixed from "./radius-fixed";
 import Opacity from "./opacity";
-import ClipPathImageResource from "./ClipPathImageResource";
+import ClipPathSVG from "./ClipPathSVG";
+import ClipPathSide from "./ClipPathSide";
+import ClipPathPolygon from "./ClipPathPolygon";
 import BoxShadow from "./BoxShadow";
 import TextShadow from "./TextShadow";
 import FillColorPickerPanel from "./FillColorPickerPanel";
@@ -42,7 +44,12 @@ import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
 import BackdropList from "./BackdropList";
 import EmptyArea from "./EmptyArea";
 
+
+
 export default {
+    ClipPathSide,
+    ClipPathPolygon,
+    ClipPathSVG,
     EmptyArea,
     BackdropList,
     LayerInfoColorPickerPanel,
@@ -56,7 +63,7 @@ export default {
     FillColorPickerPanel,
     TextShadow,
     BoxShadow,
-    ClipPathImageResource,
+    ClipPathSVG,
     Opacity,
     RadiusFixed,
     Rotate,

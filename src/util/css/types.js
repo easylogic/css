@@ -109,7 +109,7 @@ export function string2unit (str) {
         return degUnit(parseParamNumber(str))
     }
 
-    return pxUnit(parseParamNumber(str));
+    return pxUnit(parseParamNumber(str))
 }
 
 export function value2px (obj, maxValue, fontSize = 16) {
