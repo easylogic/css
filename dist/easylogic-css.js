@@ -18555,9 +18555,6 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             var $item = e.$delegateTarget;
             var polygonIndex = +$item.attr('data-index');
             var key = $item.attr('data-key');
-
-            console.log(key);
-
             if (key == 'delete') {
                 this.read('/selection/current/layer', function (layer) {
                     var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
