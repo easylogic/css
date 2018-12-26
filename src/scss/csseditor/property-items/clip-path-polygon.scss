@@ -11,6 +11,18 @@
                     width: 50px;
                     margin-right: 2px;
                 }
+
+            }
+
+            .tools {
+                display: flex;
+                margin-left: 10px;
+                button {
+                    flex:1 1 auto;
+                    appearance: none;
+                    background-color: transparent;
+                    border:1px solid $border-color;
+                }
             }
         }
     }

@@ -5193,6 +5193,20 @@ html, body {
       .csseditor .property-view .property-item.clip-path-polygon .items > div > div input[type=number] {
         width: 50px;
         margin-right: 2px; }
+      .csseditor .property-view .property-item.clip-path-polygon .items > div .tools {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        margin-left: 10px; }
+        .csseditor .property-view .property-item.clip-path-polygon .items > div .tools button {
+          -webkit-box-flex: 1;
+              -ms-flex: 1 1 auto;
+                  flex: 1 1 auto;
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          background-color: transparent;
+          border: 1px solid #cccccc; }
       .csseditor .property-view .property-item .group-align {
         float: right; }
         .csseditor .property-view .property-item .group-align button {

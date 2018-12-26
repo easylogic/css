@@ -9807,6 +9807,7 @@ var CHANGE_LAYER_RADIUS = 'CHANGE_LAYER_RADIUS';
 var CHANGE_LAYER_BACKGROUND_COLOR = 'CHANGE_LAYER_BACKGROUND_COLOR';
 var CHANGE_LAYER_CLIPPATH = 'CHANGE_LAYER_CLIPPATH';
 var CHANGE_LAYER_CLIPPATH_POLYGON = 'CHANGE_LAYER_CLIPPATH_POLYGON';
+var CHANGE_LAYER_CLIPPATH_POLYGON_POSITION = 'CHANGE_LAYER_CLIPPATH_POLYGON_POSITION';
 var CHANGE_LAYER_TEXT = 'CHANGE_LAYER_TEXT';
 
 var CHANGE_IMAGE = 'CHANGE_IMAGE';
@@ -9851,6 +9852,7 @@ var EVENT_CHANGE_LAYER_RADIUS = '@' + CHANGE_LAYER_RADIUS;
 var EVENT_CHANGE_LAYER_BACKGROUND_COLOR = '@' + CHANGE_LAYER_BACKGROUND_COLOR;
 var EVENT_CHANGE_LAYER_CLIPPATH = '@' + CHANGE_LAYER_CLIPPATH;
 var EVENT_CHANGE_LAYER_CLIPPATH_POLYGON = '@' + CHANGE_LAYER_CLIPPATH_POLYGON;
+var EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION = '@' + CHANGE_LAYER_CLIPPATH_POLYGON_POSITION;
 var EVENT_CHANGE_LAYER_TEXT = '@' + CHANGE_LAYER_TEXT;
 
 var EVENT_CHANGE_IMAGE = '@' + CHANGE_IMAGE;
@@ -11074,6 +11076,10 @@ var LayerManager = function (_BaseModule) {
         value: function layerMakeTransform($store, layer) {
 
             var results = [];
+
+            if (layer.perspective) {
+                results.push("perspective(" + layer.perspective + "px)");
+            }
 
             if (layer.rotate) {
                 results.push("rotate(" + layer.rotate + "deg)");
@@ -16573,7 +16579,7 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>3D Angle</label>\n                        <div>\n                            <input type='range' ref=\"$rotate3dARange\" min=\"-360\" max=\"360\">\n                            <input type='number' ref=\"$rotate3dA\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>       \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' ref=\"$scale3dXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' ref=\"$scale3dX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' ref=\"$scale3dYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' ref=\"$scale3dY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' ref=\"$scale3dZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' ref=\"$scale3dZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range' ref=\"$translate3dXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' ref=\"$translate3dX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range' ref=\"$translate3dYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' ref=\"$translate3dY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' ref=\"$translate3dZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' ref=\"$translate3dZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dX\" ref=\"$rotate3dXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dX\" ref=\"$rotate3dX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dY\" ref=\"$rotate3dYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dY\" ref=\"$rotate3dY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dZ\" ref=\"$rotate3dZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dZ\" ref=\"$rotate3dZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>3D Angle</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dA\" ref=\"$rotate3dARange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dA\" ref=\"$rotate3dA\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>       \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scale3dX\" ref=\"$scale3dXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scale3dX\" ref=\"$scale3dX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scale3dY\" ref=\"$scale3dYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scale3dY\" ref=\"$scale3dY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scale3dZ\" ref=\"$scale3dZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scale3dZ\" ref=\"$scale3dZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translate3dX\" ref=\"$translate3dXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translate3dX\" ref=\"$translate3dX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translate3dY\" ref=\"$translate3dYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translate3dY\" ref=\"$translate3dY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translate3dZ\" ref=\"$translate3dZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translate3dZ\" ref=\"$translate3dZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
@@ -16587,7 +16593,7 @@ var Transform3d = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (item) {
 
-                var attr = ['rotate3dX', 'rotate3dY', 'rotate3dZ', 'rotate3dA', 'scale3dX', 'scale3dY', 'scale3dZ', 'translate3dX', 'translate3dY', 'translate3dZ'];
+                var attr = ['perspective', 'rotate3dX', 'rotate3dY', 'rotate3dZ', 'rotate3dA', 'scale3dX', 'scale3dY', 'scale3dZ', 'translate3dX', 'translate3dY', 'translate3dZ'];
 
                 attr.forEach(function (key) {
                     if (item[key]) {
@@ -16615,104 +16621,16 @@ var Transform3d = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CHANGEINPUT('$rotate3dXRange'),
-        value: function value() {
-            this.updateTransform('rotate3dX', 'Range');
+        key: CHANGEINPUT('$el input[type=range]'),
+        value: function value(e) {
+            var $item = e.$delegateTarget;
+            this.updateTransform($item.attr('data-type'), 'Range');
         }
     }, {
-        key: CHANGEINPUT('$rotate3dYRange'),
-        value: function value() {
-            this.updateTransform('rotate3dY', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$rotate3dZRange'),
-        value: function value() {
-            this.updateTransform('rotate3dZ', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$rotate3dARange'),
-        value: function value() {
-            this.updateTransform('rotate3dA', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$scale3dXRange'),
-        value: function value() {
-            this.updateTransform('scale3dX', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$scale3dYRange'),
-        value: function value() {
-            this.updateTransform('scale3dY', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$scale3dZRange'),
-        value: function value() {
-            this.updateTransform('scale3dZ', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$translate3dXRange'),
-        value: function value() {
-            this.updateTransform('translate3dX', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$translate3dYRange'),
-        value: function value() {
-            this.updateTransform('translate3dY', 'Range');
-        }
-    }, {
-        key: CHANGEINPUT('$translate3dZRange'),
-        value: function value() {
-            this.updateTransform('translate3dZ', 'Range');
-        }
-    }, {
-        key: INPUT('$rotate3dX'),
-        value: function value() {
-            this.updateTransform('rotate3dX');
-        }
-    }, {
-        key: INPUT('$rotate3dY'),
-        value: function value() {
-            this.updateTransform('rotate3dY');
-        }
-    }, {
-        key: INPUT('$rotate3dZ'),
-        value: function value() {
-            this.updateTransform('rotate3dZ');
-        }
-    }, {
-        key: INPUT('$rotate3dA'),
-        value: function value() {
-            this.updateTransform('rotate3dA');
-        }
-    }, {
-        key: INPUT('$scale3dX'),
-        value: function value() {
-            this.updateTransform('scale3dX');
-        }
-    }, {
-        key: INPUT('$scale3dY'),
-        value: function value() {
-            this.updateTransform('scale3dY');
-        }
-    }, {
-        key: INPUT('$scale3dZ'),
-        value: function value() {
-            this.updateTransform('scale3dZ');
-        }
-    }, {
-        key: INPUT('$translate3dX'),
-        value: function value() {
-            this.updateTransform('translate3dX');
-        }
-    }, {
-        key: INPUT('$translate3dY'),
-        value: function value() {
-            this.updateTransform('translate3dY');
-        }
-    }, {
-        key: INPUT('$translate3dZ'),
-        value: function value() {
-            this.updateTransform('translate3dZ');
+        key: INPUT('$el input[type=number]'),
+        value: function value(e) {
+            var $item = e.$delegateTarget;
+            this.updateTransform($item.attr('data-type'));
         }
     }]);
     return Transform3d;
@@ -18181,6 +18099,13 @@ var ClipPathSVG = function (_BasePropertyItem) {
     }
 
     createClass(ClipPathSVG, [{
+        key: "initialize",
+        value: function initialize() {
+            get(ClipPathSVG.prototype.__proto__ || Object.getPrototypeOf(ClipPathSVG.prototype), "initialize", this).call(this);
+
+            this.count = 0;
+        }
+    }, {
         key: "template",
         value: function template() {
             return "\n            <div class='property-item clip-path-svg show'>\n\n                <div class='items'>\n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>                            \n                    <div class='image-resource' ref=\"$imageList\"></div>\n                </div>\n            </div>\n        ";
@@ -18206,7 +18131,11 @@ var ClipPathSVG = function (_BasePropertyItem) {
 
             if (isShow) {
 
-                this.load();
+                if (this.count < 4) {
+                    this.load();
+                    this.count++;
+                }
+
                 this.updateView();
             }
         }
@@ -18236,11 +18165,9 @@ var ClipPathSVG = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH),
         value: function value(_value) {
-            if (typeof _value.clipPathType != 'undefined') {
-                this.refresh();
-            }
+            this.refresh();
         }
     }, {
         key: "updateView",
@@ -18341,7 +18268,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     return ClipPathSVG;
 }(BasePropertyItem);
 
-var CLIP_PATH_SIDE_TYPES$1 = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
+var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
 
 var ClipPathSide = function (_BasePropertyItem) {
     inherits(ClipPathSide, _BasePropertyItem);
@@ -18354,7 +18281,7 @@ var ClipPathSide = function (_BasePropertyItem) {
     createClass(ClipPathSide, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div >\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES$1.map(function (type) {
+            return "\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div >\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }).join('') + "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        ";
         }
@@ -18439,7 +18366,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
                 var start = index == startIndex ? 'start' : '';
                 var end = index == lastIndex ? 'end' : '';
 
-                return "\n                <div class=\"polygon-item " + start + " " + end + "\" data-index=\"" + index + "\" >\n                    <div class='area'></div>\n                    <label>X</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-type='x' value=\"" + p.x.value + "\" />\n                        " + unitString(p.x.unit) + "\n                    </div>\n                    <label>Y</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-type='x' value=\"" + p.y.value + "\" />\n                        " + unitString(p.y.unit) + "\n                    </div>\n                    <div class='tools'>\n                        <button type=\"button\" data-type='delete' data-index=\"" + index + "\">&times;</button>\n                        <button type=\"button\" data-type='copy' data-index=\"" + index + "\">+</button>\n                    </div>\n                </div>\n            ";
+                return "\n                <div class=\"polygon-item " + start + " " + end + "\" data-index=\"" + index + "\" >\n                    <div class='area'></div>\n                    <label>X</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-key='x' value=\"" + p.x.value + "\" />\n                        " + unitString(p.x.unit) + "\n                    </div>\n                    <label>Y</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-key='y' value=\"" + p.y.value + "\" />\n                        " + unitString(p.y.unit) + "\n                    </div>\n                    <div class='tools'>\n                        <button type=\"button\" data-key='delete' data-index=\"" + index + "\">&times;</button>\n                        <button type=\"button\" data-key='copy' data-index=\"" + index + "\">+</button>\n                    </div>\n                </div>\n            ";
             });
         }
     }, {
@@ -18447,6 +18374,14 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         value: function value() {
             this.refresh();
         }
+    }, {
+        key: EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+        value: function value(newValue) {
+            this.refreshPolygonPosition(newValue);
+        }
+    }, {
+        key: "refreshPolygonPosition",
+        value: function refreshPolygonPosition(item) {}
     }, {
         key: "refresh",
         value: function refresh() {
@@ -18478,6 +18413,66 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             } else {
                 this.$el.toggleClass('show', isShow);
             }
+        }
+    }, {
+        key: CLICK('$polygonList button[data-key]'),
+        value: function value(e) {
+            var _this2 = this;
+
+            var $item = e.$delegateTarget;
+            var polygonIndex = +$item.attr('data-index');
+            var key = $item.attr('data-key');
+
+            console.log(key);
+
+            if (key == 'delete') {
+                this.read('/selection/current/layer', function (layer) {
+                    var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                    clipPathPolygonPoints.splice(polygonIndex, 1);
+
+                    _this2.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+                        id: layer.id,
+                        clipPathPolygonPoints: clipPathPolygonPoints
+                    });
+
+                    _this2.refresh();
+                });
+            } else if (key == 'copy') {
+                this.read('/selection/current/layer', function (layer) {
+                    var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                    var copyItem = clipPathPolygonPoints[polygonIndex];
+
+                    clipPathPolygonPoints.splice(polygonIndex, 0, copyItem);
+
+                    _this2.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+                        id: layer.id,
+                        clipPathPolygonPoints: clipPathPolygonPoints
+                    });
+                    _this2.refresh();
+                });
+            }
+        }
+    }, {
+        key: CHANGEINPUT('$polygonList input[type=number]'),
+        value: function value(e) {
+            var _this3 = this;
+
+            var $item = e.$delegateTarget;
+
+            var polygonIndex = +$item.attr('data-index');
+            var key = $item.attr('data-key');
+            var value = +$item.val();
+
+            this.read('/selection/current/layer', function (layer) {
+                var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                clipPathPolygonPoints[polygonIndex][key] = percentUnit(value);
+
+                _this3.commit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, {
+                    id: layer.id,
+                    polygonIndex: polygonIndex,
+                    clipPathPolygonPoints: clipPathPolygonPoints
+                });
+            });
         }
     }]);
     return ClipPathPolygon;
@@ -19979,7 +19974,7 @@ var LayerListView = function (_UIElement) {
         // indivisual effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE),
         value: function value() {
             this.refreshLayer();
         }
@@ -24354,11 +24349,13 @@ var PolygonEditor = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/layer', function (layer) {
+                var polygonIndex = +_this2.$dragItem.attr('data-point-index');
                 var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
-                clipPathPolygonPoints[+_this2.$dragItem.attr('data-point-index')] = _this2.$dragPoint;
+                clipPathPolygonPoints[polygonIndex] = _this2.$dragPoint;
 
-                _this2.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+                _this2.commit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, {
                     id: layer.id,
+                    polygonIndex: polygonIndex,
                     clipPathPolygonPoints: clipPathPolygonPoints
                 });
             });
@@ -24818,7 +24815,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
+        key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
         value: function value() {
             this.refreshLayer();
         }

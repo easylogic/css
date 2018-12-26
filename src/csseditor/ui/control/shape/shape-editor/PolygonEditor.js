@@ -1,5 +1,5 @@
 import UIElement, { MULTI_EVENT, PIPE } from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON } from "../../../../types/event";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION } from "../../../../types/event";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
@@ -102,11 +102,13 @@ export default class PolygonEditor extends UIElement {
 
     updateClipPath () {
         this.read('/selection/current/layer', (layer) => {
+            var polygonIndex = +this.$dragItem.attr('data-point-index');
             var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
-            clipPathPolygonPoints[+this.$dragItem.attr('data-point-index')] = this.$dragPoint;
+            clipPathPolygonPoints[polygonIndex] = this.$dragPoint;
 
-            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, {
                 id: layer.id, 
+                polygonIndex,
                 clipPathPolygonPoints
             });
         }) 

@@ -2,12 +2,16 @@ import BasePropertyItem from "./BasePropertyItem";
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON
+    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
+    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    CHANGE_LAYER_CLIPPATH_POLYGON
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString } from "../../../../../util/css/types";
+import { unitString, percentUnit } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
+import { CHANGEINPUT, CLICK } from "../../../../../util/Event";
 
 export default class ClipPathPolygon extends BasePropertyItem {
     template () {
@@ -46,17 +50,17 @@ export default class ClipPathPolygon extends BasePropertyItem {
                     <div class='area'></div>
                     <label>X</label>
                     <div>
-                        <input type="number" data-index="${index}" data-type='x' value="${p.x.value}" />
+                        <input type="number" data-index="${index}" data-key='x' value="${p.x.value}" />
                         ${unitString(p.x.unit)}
                     </div>
                     <label>Y</label>
                     <div>
-                        <input type="number" data-index="${index}" data-type='x' value="${p.y.value}" />
+                        <input type="number" data-index="${index}" data-key='y' value="${p.y.value}" />
                         ${unitString(p.y.unit)}
                     </div>
                     <div class='tools'>
-                        <button type="button" data-type='delete' data-index="${index}">&times;</button>
-                        <button type="button" data-type='copy' data-index="${index}">+</button>
+                        <button type="button" data-key='delete' data-index="${index}">&times;</button>
+                        <button type="button" data-key='copy' data-index="${index}">+</button>
                     </div>
                 </div>
             `
@@ -66,8 +70,16 @@ export default class ClipPathPolygon extends BasePropertyItem {
     [MULTI_EVENT(
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON
+        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
     )] () { this.refresh() }
+
+    [EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION] (newValue) {
+        this.refreshPolygonPosition(newValue)
+    }
+
+    refreshPolygonPosition (item) {
+
+    }
 
     refresh() {
 
@@ -98,6 +110,58 @@ export default class ClipPathPolygon extends BasePropertyItem {
             this.$el.toggleClass('show', isShow);
         }
         
+    }
+
+    [CLICK('$polygonList button[data-key]')] (e) {
+        var $item = e.$delegateTarget;
+        var polygonIndex = +$item.attr('data-index')
+        var key = $item.attr('data-key');
+        if (key == 'delete') {
+            this.read('/selection/current/layer', (layer) => {
+                var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                clipPathPolygonPoints.splice(polygonIndex, 1);
+    
+                this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+                    id: layer.id,
+                    clipPathPolygonPoints
+                })
+
+                this.refresh();
+            })
+
+        } else if (key == 'copy') {
+            this.read('/selection/current/layer', (layer) => {
+                var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+                var copyItem = clipPathPolygonPoints[polygonIndex]
+
+                clipPathPolygonPoints.splice(polygonIndex, 0, copyItem);
+    
+                this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {
+                    id: layer.id,
+                    clipPathPolygonPoints
+                })
+                this.refresh();
+            })
+        }
+    }
+
+    [CHANGEINPUT('$polygonList input[type=number]')] (e) {
+        var $item = e.$delegateTarget;
+
+        var polygonIndex = +$item.attr('data-index')
+        var key = $item.attr('data-key');
+        var value = +$item.val();
+
+        this.read('/selection/current/layer', (layer) => {
+            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+            clipPathPolygonPoints[polygonIndex][key] = percentUnit(value); 
+
+            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, {
+                id: layer.id,
+                polygonIndex,
+                clipPathPolygonPoints
+            })
+        })
     }
 
 }

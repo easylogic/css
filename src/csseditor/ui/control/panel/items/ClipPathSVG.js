@@ -1,13 +1,19 @@
 import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH } from "../../../../types/event";
+import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_SELECTION } from "../../../../types/event";
 import { CLIP_PATH_TYPE_SVG } from "../../../../module/ItemTypes";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK } from "../../../../../util/Event";
 
 export default class ClipPathSVG extends BasePropertyItem {
+
+    initialize() {
+        super.initialize();
+
+        this.count = 0;
+    }
     template () {
         return `
             <div class='property-item clip-path-svg show'>
@@ -50,7 +56,11 @@ export default class ClipPathSVG extends BasePropertyItem {
 
         if (isShow) {
 
-            this.load();
+            if (this.count < 4) {
+                this.load();
+                this.count++;
+            }
+
             this.updateView();
                 
         }
@@ -81,11 +91,10 @@ export default class ClipPathSVG extends BasePropertyItem {
 
     [MULTI_EVENT(
         EVENT_CHANGE_LAYER,
+        EVENT_CHANGE_SELECTION,
         EVENT_CHANGE_LAYER_CLIPPATH
     )] (value) {
-        if (typeof value.clipPathType != 'undefined') {
-            this.refresh();
-        }
+        this.refresh();
     }
 
     updateView () {

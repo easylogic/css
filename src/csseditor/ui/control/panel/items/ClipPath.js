@@ -30,13 +30,6 @@ const CLIP_PATH_TYPES = [
     CLIP_PATH_TYPE_SVG
 ]
 
-
-const CLIP_PATH_SIDE_TYPES = [
-    CLIP_PATH_SIDE_TYPE_NONE,
-    CLIP_PATH_SIDE_TYPE_CLOSEST,
-    CLIP_PATH_SIDE_TYPE_FARTHEST
-]
-
 export default class ClipPath extends BasePropertyItem {
     template () {
         return `

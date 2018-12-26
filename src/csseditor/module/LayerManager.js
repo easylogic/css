@@ -185,6 +185,10 @@ export default class LayerManager extends BaseModule {
 
         var results = [] 
 
+        if (layer.perspective) {
+            results.push(`perspective(${layer.perspective}px)`)
+        }
+
         if (layer.rotate) {
             results.push(`rotate(${layer.rotate}deg)`)
         }
