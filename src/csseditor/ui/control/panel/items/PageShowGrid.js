@@ -1,5 +1,6 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CLICK } from "../../../../../util/Event";
 
 export default class PageShowGrid extends UIElement {
     template () {
@@ -31,7 +32,7 @@ export default class PageShowGrid extends UIElement {
         })        
     }
 
-    'click $check' () {
+    [CLICK('$check')] () {
         this.read('/selection/current/page', (item) => {
             this.run('/tool/set', 'show.grid', this.refs.$check.checked())
             this.dispatch('/tool/set', 'snap.grid', this.refs.$check.checked())

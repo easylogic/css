@@ -1,4 +1,5 @@
 import UIElement from "../../../../colorpicker/UIElement";
+import { CLICK } from "../../../../util/Event";
 
 export default class GradientSampleList extends UIElement  {
  
@@ -69,19 +70,19 @@ export default class GradientSampleList extends UIElement  {
         this.refresh()
     }
 
-    'click $el .gradient-sample-item .change-item' (e) {
+    [CLICK('$el .gradient-sample-item .change-item')] (e) {
         var index = +e.$delegateTarget.attr('data-index')
 
         this.dispatch('/gradient/select', this.props.type,  index );
     }
 
-    'click $el .gradient-sample-item .add-item' (e) {
+    [CLICK('$el .gradient-sample-item .add-item')] (e) {
         var index = +e.$delegateTarget.attr('data-index')
 
         this.dispatch('/gradient/add', this.props.type,  index );
     }    
 
-    'click $el .gradient-cached-item .add-item' (e) {
+    [CLICK('$el .gradient-cached-item .add-item')] (e) {
         var index = +e.$delegateTarget.attr('data-index')
         var image = this.read('/storage/images', index);
         var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps })        
@@ -89,7 +90,7 @@ export default class GradientSampleList extends UIElement  {
         this.dispatch('/gradient/image/add', newImage );
     }
 
-    'click $el .gradient-cached-item .change-item' (e) {
+    [CLICK('$el .gradient-cached-item .change-item')] (e) {
         var index = +e.$delegateTarget.attr('data-index')
         var image = this.read('/storage/images', index);
         var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps })        
@@ -97,7 +98,7 @@ export default class GradientSampleList extends UIElement  {
         this.dispatch('/gradient/image/select', newImage );
     }
 
-    'click $el .add-current-image' (e) {
+    [CLICK('$el .add-current-image')] (e) {
         this.read('/selection/current/image', (image) => {
             var newImage = this.read('/collect/image/one', image.id)
 

@@ -4,8 +4,8 @@ export function round (n, k) {
 }
 
 
-export function degreeToRadian (angle) {
-    return angle * Math.PI / 180;
+export function degreeToRadian (degrees) {
+    return degrees * Math.PI / 180;
 }
 
 /**
@@ -40,6 +40,14 @@ export function getXYInCircle (angle, radius, centerX = 0, centerY = 0) {
         x : getXInCircle(angle, radius, centerX),
         y : getYInCircle(angle, radius, centerY)
     }
+}
+
+export function getDist (x, y, centerX = 0, centerY = 0) {
+    return Math.sqrt( 
+        Math.pow(Math.abs(centerX - x), 2) 
+        + 
+        Math.pow(Math.abs(centerY - y), 2) 
+    )
 }
 
 export function caculateAngle (rx, ry) {

@@ -7,6 +7,7 @@ import {
 } from "../../../../types/event";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
 
 export default class Transform3d extends BasePropertyItem {
     template () {
@@ -128,26 +129,26 @@ export default class Transform3d extends BasePropertyItem {
         })
     } 
 
-    'change:input $rotate3dXRange' () { this.updateTransform('rotate3dX', 'Range'); }
-    'change:input $rotate3dYRange' () { this.updateTransform('rotate3dY', 'Range'); }
-    'change:input $rotate3dZRange' () { this.updateTransform('rotate3dZ', 'Range'); }
-    'change:input $rotate3dARange' () { this.updateTransform('rotate3dA', 'Range'); }
-    'change:input $scale3dXRange' () { this.updateTransform('scale3dX', 'Range'); }
-    'change:input $scale3dYRange' () { this.updateTransform('scale3dY', 'Range'); }
-    'change:input $scale3dZRange' () { this.updateTransform('scale3dZ', 'Range'); }
-    'change:input $translate3dXRange' () { this.updateTransform('translate3dX', 'Range'); }
-    'change:input $translate3dYRange' () { this.updateTransform('translate3dY', 'Range'); }
-    'change:input $translate3dZRange' () { this.updateTransform('translate3dZ', 'Range'); }
+    [CHANGEINPUT('$rotate3dXRange')] () { this.updateTransform('rotate3dX', 'Range'); }
+    [CHANGEINPUT('$rotate3dYRange')] () { this.updateTransform('rotate3dY', 'Range'); }
+    [CHANGEINPUT('$rotate3dZRange')] () { this.updateTransform('rotate3dZ', 'Range'); }
+    [CHANGEINPUT('$rotate3dARange')] () { this.updateTransform('rotate3dA', 'Range'); }
+    [CHANGEINPUT('$scale3dXRange')] () { this.updateTransform('scale3dX', 'Range'); }
+    [CHANGEINPUT('$scale3dYRange')] () { this.updateTransform('scale3dY', 'Range'); }
+    [CHANGEINPUT('$scale3dZRange')] () { this.updateTransform('scale3dZ', 'Range'); }
+    [CHANGEINPUT('$translate3dXRange')] () { this.updateTransform('translate3dX', 'Range'); }
+    [CHANGEINPUT('$translate3dYRange')] () { this.updateTransform('translate3dY', 'Range'); }
+    [CHANGEINPUT('$translate3dZRange')] () { this.updateTransform('translate3dZ', 'Range'); }
 
-    'input $rotate3dX' () { this.updateTransform('rotate3dX'); }
-    'input $rotate3dY' () { this.updateTransform('rotate3dY'); }
-    'input $rotate3dZ' () { this.updateTransform('rotate3dZ'); }
-    'input $rotate3dA' () { this.updateTransform('rotate3dA'); }
-    'input $scale3dX' () { this.updateTransform('scale3dX'); }
-    'input $scale3dY' () { this.updateTransform('scale3dY'); }
-    'input $scale3dZ' () { this.updateTransform('scale3dZ'); }
-    'input $translate3dX' () { this.updateTransform('translate3dX'); }
-    'input $translate3dY' () { this.updateTransform('translate3dY'); }
-    'input $translate3dZ' () { this.updateTransform('translate3dZ'); }    
+    [INPUT('$rotate3dX')] () { this.updateTransform('rotate3dX'); }
+    [INPUT('$rotate3dY')] () { this.updateTransform('rotate3dY'); }
+    [INPUT('$rotate3dZ')] () { this.updateTransform('rotate3dZ'); }
+    [INPUT('$rotate3dA')] () { this.updateTransform('rotate3dA'); }
+    [INPUT('$scale3dX')] () { this.updateTransform('scale3dX'); }
+    [INPUT('$scale3dY')] () { this.updateTransform('scale3dY'); }
+    [INPUT('$scale3dZ')] () { this.updateTransform('scale3dZ'); }
+    [INPUT('$translate3dX')] () { this.updateTransform('translate3dX'); }
+    [INPUT('$translate3dY')] () { this.updateTransform('translate3dY'); }
+    [INPUT('$translate3dZ')] () { this.updateTransform('translate3dZ'); }    
     
 }

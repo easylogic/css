@@ -1,5 +1,7 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_SELECTION} from '../../../types/event';
+import { CLICK } from '../../../../util/Event';
+import { SELF } from '../../../../util/EventMachin';
 
 
 export default class PredefinedLinearGradientAngle extends UIElement {
@@ -36,7 +38,11 @@ export default class PredefinedLinearGradientAngle extends UIElement {
         return this.read('/tool/get', 'guide.angle') && (isLinear || isConic);
     }
 
-    'click $el button | self' (e) {
+    
+    [PIPE(
+        CLICK('$el button'),
+        SELF()
+     )] (e) {
         this.read('/selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE_LINEAR_ANGLE, {id, angle: e.$delegateTarget.attr('data-value')})
         })

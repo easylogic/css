@@ -11,6 +11,7 @@ import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
 import { parseParamNumber } from '../../../../../util/filter/functions';
 import { px } from '../../../../../util/css/types';
+import { CLICK, INPUT } from '../../../../../util/Event';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -139,7 +140,7 @@ export default class BoxShadow extends BasePropertyItem {
         }
     }
 
-    'click $add' (e) {
+    [CLICK('$add')] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.dispatch('/item/add', ITEM_TYPE_BOXSHADOW, false, id)
             this.dispatch('/history/push', `Add Box Shadow` );        
@@ -147,7 +148,7 @@ export default class BoxShadow extends BasePropertyItem {
         }); 
     }
 
-    'input $boxShadowList input[type=number]' (e) {
+    [INPUT('$boxShadowList input[type=number]')] (e) {
         var $el = e.$delegateTarget;
         var field = $el.attr('data-type');
         var id = $el.parent().parent().attr('box-shadow-id')
@@ -155,14 +156,14 @@ export default class BoxShadow extends BasePropertyItem {
         this.commit(CHANGE_BOXSHADOW, {id, [field]: px($el.val()) })
     }
 
-    'click $boxShadowList input[type=checkbox]' (e) {
+    [CLICK('$boxShadowList input[type=checkbox]')] (e) {
         var $el = e.$delegateTarget;
         var id = $el.parent().parent().parent().attr('box-shadow-id')
 
         this.commit(CHANGE_BOXSHADOW, {id, inset: $el.checked() })
     }
 
-    'click $boxShadowList .delete-boxshadow' (e) {
+    [CLICK('$boxShadowList .delete-boxshadow')] (e) {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('box-shadow-id')
 
@@ -171,7 +172,7 @@ export default class BoxShadow extends BasePropertyItem {
         this.refresh();
     }
 
-    'click $boxShadowList .color' (e) {
+    [CLICK('$boxShadowList .color')] (e) {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('box-shadow-id')
 

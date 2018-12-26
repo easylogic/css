@@ -1,7 +1,9 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { EVENT_CHANGE_IMAGE, CHANGE_IMAGE,  EVENT_CHANGE_SELECTION } from '../../../../types/event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { MULTI_EVENT, PIPE } from '../../../../../colorpicker/UIElement';
+import { CLICK } from '../../../../../util/Event';
+import { SELF } from '../../../../../util/EventMachin';
 
 export default class BlendList extends BasePropertyItem {
 
@@ -70,7 +72,10 @@ export default class BlendList extends BasePropertyItem {
     }
 
 
-    'click $blendList .blend-item | self' (e) {
+    [PIPE(
+        CLICK('$blendList .blend-item'),
+        SELF()
+    )] (e) {
         this.read('/selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: e.$delegateTarget.attr('data-mode')}, true)
             this.refresh();

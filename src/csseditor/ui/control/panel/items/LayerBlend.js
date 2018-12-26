@@ -1,6 +1,8 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { EVENT_CHANGE_SELECTION, CHANGE_LAYER, EVENT_CHANGE_LAYER } from '../../../../types/event';
+import { CHANGE } from '../../../../../util/Event';
+import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 
 export default class LayerBlend extends BasePropertyItem {
 
@@ -35,15 +37,14 @@ export default class LayerBlend extends BasePropertyItem {
 
     }
 
-    [EVENT_CHANGE_LAYER] () {
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER,
+        EVENT_CHANGE_SELECTION
+    )] () {
         this.refresh()
     }
 
-    [EVENT_CHANGE_SELECTION] () {
-        this.refresh()
-    }
-
-    'change $blend' (e) {
+    [CHANGE('$blend')] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER, {id, mixBlendMode: this.refs.$blend.val() })
         });

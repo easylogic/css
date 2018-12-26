@@ -1,4 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
+import { CLICK } from "../../../../../util/Event";
 
 export default class GroupAlign extends BasePropertyItem {
     template () {
@@ -23,7 +24,7 @@ export default class GroupAlign extends BasePropertyItem {
         `
     }
 
-    'click $el button' (e) {
+    [CLICK('$el button')] (e) {
         this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))
     }
 

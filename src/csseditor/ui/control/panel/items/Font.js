@@ -8,6 +8,7 @@ import {
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import UnitRange from "./element/UnitRange";
 import { UNIT_PX } from "../../../../../util/css/types";
+import { CHANGE } from "../../../../../util/Event";
 
 
 
@@ -136,11 +137,11 @@ export default class Font extends BasePropertyItem {
         })
     }    
 
-    'change $fontFamily' (e) {
+    [CHANGE('$fontFamily')] (e) {
         this.updateFontFamily(this.refs.$fontFamily.val());
     }
 
-    'change $fontWeight' (e) {
+    [CHANGE('$fontWeight')] (e) {
         this.updateFontWeight(this.refs.$fontWeight.val());
     }    
 }

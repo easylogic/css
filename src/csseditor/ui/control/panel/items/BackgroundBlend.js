@@ -2,6 +2,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { EVENT_CHANGE_IMAGE, CHANGE_IMAGE,  EVENT_CHANGE_SELECTION } from '../../../../types/event';
 import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { CHANGE } from '../../../../../util/Event';
 
 export default class BackgroundBlend extends BasePropertyItem {
 
@@ -43,7 +44,7 @@ export default class BackgroundBlend extends BasePropertyItem {
         this.refresh()
     }
 
-    'change $blend' (e) {
+    [CHANGE('$blend')] (e) {
         this.read('/selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: this.refs.$blend.val() }, true)
         });

@@ -7,6 +7,7 @@ import CurrentColorSets from '../ui/CurrentColorSets'
 import ContextMenu from '../ui/CurrentColorSetsContextMenu'
 import Hue from '../ui/control/VerticalHue'
 import Opacity from '../ui/control/VerticalOpacity'
+import { CLICK } from '../../util/Event';
 
 export default class XDTabColorPicker extends BaseColorPicker {
 
@@ -42,15 +43,15 @@ export default class XDTabColorPicker extends BaseColorPicker {
     }
 
 
-    'click $tabHeader .color-tab-item' (e) {
-        if (!e.$delegateTarget.hasClass('active')) {
+    [CLICK('$tabHeader .color-tab-item')] (e, $dt) {
+        if (!$dt.hasClass('active')) {
             var selectedItem = this.refs.$tabHeader.$('.active');
             if (selectedItem) selectedItem.removeClass('active');
-            e.$delegateTarget.addClass('active')
+            $dt.addClass('active')
 
             var selectedItem = this.refs.$tabBody.$('.active');
             if (selectedItem) selectedItem.removeClass('active');
-            var activeItem = this.refs.$tabBody.$(`[item-id='${e.$delegateTarget.attr('item-id')}']`);
+            var activeItem = this.refs.$tabBody.$(`[item-id='${$dt.attr('item-id')}']`);
             if (activeItem) activeItem.addClass('active');
         }
 

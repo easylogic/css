@@ -1,4 +1,5 @@
 import UIElement from "../../../colorpicker/UIElement";
+import { CLICK } from "../../../util/Event";
 
 export default class Timeline extends UIElement {
 
@@ -14,7 +15,7 @@ export default class Timeline extends UIElement {
     }
 
 
-    'click $header' () {
+    [CLICK('$header')] () {
         this.parent.toggleTimeline();
     }
 }

@@ -16,7 +16,9 @@ import {
     EVENT_CHANGE_LAYER_SIZE,
     EVENT_CHANGE_LAYER_POSITION,
     EVENT_CHANGE_LAYER_MOVE,
-    EVENT_SELECT_TAB_LAYER
+    EVENT_SELECT_TAB_LAYER,
+    EVENT_CHANGE_LAYER_BACKDROP_FILTER,
+    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
@@ -70,7 +72,9 @@ export default class LayerCode extends BasePropertyItem {
         EVENT_CHANGE_LAYER_MOVE,
         EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
         EVENT_CHANGE_LAYER_CLIPPATH,
+        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
         EVENT_CHANGE_LAYER_FILTER,
+        EVENT_CHANGE_LAYER_BACKDROP_FILTER,
         EVENT_CHANGE_LAYER_RADIUS,
         EVENT_CHANGE_LAYER_ROTATE,
         EVENT_CHANGE_LAYER_OPACITY,

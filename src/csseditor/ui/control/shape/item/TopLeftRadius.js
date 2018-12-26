@@ -1,7 +1,8 @@
-import UIElement from '../../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../../util/filter/functions';
 import { CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../../types/event';
 import { px } from '../../../../../util/css/types';
+import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../../util/Event';
 
 export default class TopLeftRadius extends UIElement {
 
@@ -71,12 +72,14 @@ export default class TopLeftRadius extends UIElement {
         this.refresh();
     }
 
-    [EVENT_CHANGE_LAYER_RADIUS] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }
+    [MULTI_EVENT(
+        EVENT_CHANGE_LAYER_RADIUS,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh() }
 
 
-    'pointerstart' (e) {
+    [POINTERSTART()] (e) {
 
         var layer = this.read('/selection/current/layer')
 
@@ -93,7 +96,7 @@ export default class TopLeftRadius extends UIElement {
         this.emit('startRadius')                    
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.xy) {
             this.targetXY = e.xy; 
 
@@ -102,7 +105,7 @@ export default class TopLeftRadius extends UIElement {
 
     }
 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.xy = null 
         this.moveX = null;
         this.moveY = null; 

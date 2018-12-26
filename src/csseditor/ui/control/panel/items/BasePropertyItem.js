@@ -1,11 +1,12 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import Dom from "../../../../../util/Dom";
+import { CLICK } from "../../../../../util/Event";
 
 export default class BasePropertyItem extends UIElement {
 
     onToggleShow() {}
     
-    'click $title' (e) {
+    [CLICK('$title')] (e) {
         var $dom  = new Dom (e.target);
 
         if ($dom.hasClass('title')) {

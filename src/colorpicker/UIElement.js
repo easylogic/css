@@ -9,7 +9,11 @@ const MULTI_EVENT_PREFIX = 'ME@'
 const EVENT_SPLITTER = '|'
 
 export const MULTI_EVENT = (...args) => {
-    return MULTI_EVENT_PREFIX + args.join(EVENT_SPLITTER)
+    return MULTI_EVENT_PREFIX + PIPE(...args);
+}
+
+export const PIPE = (...args) => {
+    return args.join(EVENT_SPLITTER)
 }
 
 class UIElement extends EventMachin {

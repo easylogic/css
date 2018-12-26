@@ -2,6 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 import { px } from "../../../../../util/css/types";
+import { INPUT } from "../../../../../util/Event";
 
 export default class Position extends BasePropertyItem {
     template () {
@@ -36,14 +37,14 @@ export default class Position extends BasePropertyItem {
         
     }
 
-    'input $x' () {
+    [INPUT('$x')] () {
         this.read('/selection/current/layer', (item) => {
             item.x = px(this.refs.$x.int())
             this.dispatch('/item/set', item)
         })
     }
 
-    'input $y' () {
+    [INPUT('$y')] () {
         this.read('/selection/current/layer', (item) => {
             item.y = px(this.refs.$y.int())
             this.dispatch('/item/set', item)

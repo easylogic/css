@@ -2,6 +2,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { EVENT_CHANGE_SELECTION, CHANGE_LAYER, EVENT_CHANGE_LAYER } from '../../../../types/event';
 import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { CHANGE } from '../../../../../util/Event';
 
 export default class BackgroundClip extends BasePropertyItem {
 
@@ -43,7 +44,7 @@ export default class BackgroundClip extends BasePropertyItem {
         this.refresh()
     }
 
-    'change $clip' (e) {
+    [CHANGE('$clip')] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER, {id, backgroundClip: this.refs.$clip.val() }, true)
         });

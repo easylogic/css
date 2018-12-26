@@ -2,6 +2,7 @@ import BasePropertyItem from "./items/BasePropertyItem";
 import Dom from "../../../../util/Dom";
 import { parseParamNumber } from "../../../../util/filter/functions";
 import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
+import { CLICK } from "../../../../util/Event";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -83,7 +84,7 @@ export default class ClipPathImageList extends BasePropertyItem {
         callback && callback (newValue);
     }
 
-    'click $imageList .svg-item' (e) {
+    [CLICK('$imageList .svg-item')] (e) {
         var index = e.$delegateTarget.attr('data-index')
         var key = e.$delegateTarget.attr('data-key')
 

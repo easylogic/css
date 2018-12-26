@@ -1,5 +1,6 @@
 import UIElement from "../../../colorpicker/UIElement";
 import PageSampleList from "../control/panel/PageSampleList";
+import { CLICK } from "../../../util/Event";
 
 
 export default class PageSampleWindow extends UIElement {
@@ -19,7 +20,7 @@ export default class PageSampleWindow extends UIElement {
         `
     }
     
-    'click $el .close' (e) {
+    [CLICK('$el .close')] (e) {
         this.$el.toggle();
     }
 

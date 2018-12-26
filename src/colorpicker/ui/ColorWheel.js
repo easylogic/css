@@ -1,7 +1,7 @@
 
 import Color from '../../util/Color'
 import Dom from '../../util/Dom'
-import Event from '../../util/Event'
+import Event, { POINTERSTART, POINTERMOVE, POINTEREND } from '../../util/Event'
 import UIElement from '../UIElement';
 import { getXYInCircle, caculateAngle } from '../../util/functions/math';
 
@@ -198,22 +198,22 @@ export default class ColorWheel extends UIElement {
     '@initColor' () { this.refresh(true) }    
 
     // Event Bindings 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.isDown = false ;
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.isDown) {
             this.setHueColor(e);
         }
     }
 
-    'pointerstart $drag_pointer' (e) {
+    [POINTERSTART('$drag_pointer')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    'pointerstart $el' (e) {
+    [POINTERSTART()] (e) {
         this.isDown = true; 
         this.setHueColor(e);        
     }     

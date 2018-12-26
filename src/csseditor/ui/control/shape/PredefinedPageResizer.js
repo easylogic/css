@@ -1,7 +1,8 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/gl/filter/util';
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_PAGE_SIZE, CHANGE_PAGE_SIZE, EVENT_CHANGE_SELECTION } from '../../../types/event';
 import { px } from '../../../../util/css/types';
+import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE } from '../../../../util/Event';
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -162,7 +163,10 @@ export default class PredefinedPageResizer extends UIElement {
         return this.xy; 
     }    
 
-    'pointerstart $el [data-value] | isNotDownCheck' (e) {
+    [PIPE(
+        POINTERSTART('$el [data-value]'),
+        'isNotDownCheck'
+    )] (e) {
         e.stopPropagation();
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
@@ -172,19 +176,29 @@ export default class PredefinedPageResizer extends UIElement {
         this.height = parseParamNumber(this.page.height)
     }
 
-    'pointermove document | debounce(10) | isDownCheck' (e) {
+    [PIPE(
+        POINTERMOVE('document'),
+        DEBOUNCE(10),
+        'isDownCheck'
+    )] (e) {
         this.targetXY = e.xy; 
         this.resize();
 
     }
 
-    'pointerend document | isDownCheck' (e) {
+    [PIPE(
+        POINTEREND('document'),
+        'isDownCheck'
+    )] (e) {
         this.currentType = null; 
         this.xy = null 
         this.dispatch('/history/push', 'Resize a layer');        
     }
 
-    'resize window | debounce(300)' (e) {
+    [PIPE(
+        RESIZE('window'),
+        DEBOUNCE(300)
+    )] (e) {
         this.refresh();
     }
         

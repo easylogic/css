@@ -1,5 +1,6 @@
 import UIElement from '../../../colorpicker/UIElement';
 import ImageListView from './ImageListView';
+import { CLICK } from '../../../util/Event';
 
 export default class LayerToolbar extends UIElement {
 
@@ -48,27 +49,27 @@ export default class LayerToolbar extends UIElement {
         return { ImageListView }
     }
 
-    'click $groupAlign button' (e) {
+    [CLICK('$groupAlign button')] (e) {
         this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))
     }
 
-    'click $groupOrdering button' (e) {
+    [CLICK('$groupOrdering button')] (e) {
         this.dispatch('/ordering/index', e.$delegateTarget.attr('data-value'))
     }    
 
-    'click $undo' (e) {
+    [CLICK('$undo')] (e) {
         this.dispatch('/history/undo')
     }
 
-    'click $redo' (e) {
+    [CLICK('$redo')] (e) {
         this.dispatch('/history/redo')
     }    
 
-    'click $togglePagePanel' () {
+    [CLICK('$togglePagePanel')] () {
         this.emit('togglePagePanel');
     }
 
-    'click $toggleLayerPanel' () {
+    [CLICK('$toggleLayerPanel')] () {
         this.emit('toggleLayerPanel');
     }    
 }

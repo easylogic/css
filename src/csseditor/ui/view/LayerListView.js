@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER, 
@@ -22,6 +22,8 @@ import {
     EVENT_CHANGE_LAYER_ROTATE,
     EVENT_CHANGE_LAYER_OPACITY,
 } from '../../types/event';
+import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP } from '../../../util/Event';
+import { SELF } from '../../../util/EventMachin';
 
 export default class LayerListView extends UIElement {
 
@@ -174,34 +176,42 @@ export default class LayerListView extends UIElement {
 
 
     // all effect 
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh(); }
 
-    'click $layerList .tree-item | self' (e) { 
+    [PIPE(
+        CLICK('$layerList .tree-item'),
+        SELF()
+    )] (e) { 
         var id = e.$delegateTarget.attr('id');
         this.dispatch('/selection/one', id);        
         this.run('/item/focus', id);
         this.refreshSelection(id);
     }
 
-    'dragstart $layerList .tree-item' (e) {
+    [DRAGSTART('$layerList .tree-item')] (e) {
         this.draggedLayer = e.$delegateTarget;
         this.draggedLayer.css('opacity', 0.5);
         // e.preventDefault();
     }
 
-    'dragend $layerList .tree-item' (e) {
+    [DRAGEND('$layerList .tree-item')] (e) {
 
         if (this.draggedLayer) {
             this.draggedLayer.css('opacity', 1);        
         }
     }    
 
-    'dragover $layerList .tree-item' (e) {
+    [DRAGOVER('$layerList .tree-item')] (e) {
         e.preventDefault();        
     }        
 
-    'drop $layerList .tree-item | self' (e) {
+    [PIPE(
+        DROP('$layerList .tree-item'),
+        SELF()
+    )] (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('id')
@@ -232,7 +242,7 @@ export default class LayerListView extends UIElement {
 
     }       
     
-    'drop $layerList' (e) {
+    [DROP('$layerList')] (e) {
         e.preventDefault();        
 
         if (this.draggedLayer) {
@@ -246,29 +256,32 @@ export default class LayerListView extends UIElement {
 
     }           
 
-    'click $layerList .copy-image-item' (e) {
+    [CLICK('$layerList .copy-image-item')] (e) {
         this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
         this.dispatch('/history/push', `Add a gradient`);                 
         this.refresh()
     }
 
-    'click $layerList .copy-item' (e) {
+    [CLICK('$layerList .copy-item')] (e) {
         this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
         this.dispatch('/history/push', `Copy a layer`);                         
         this.refresh()
     }
 
-    'click $layerList .delete-item' (e) {
+    [CLICK('$layerList .delete-item')] (e) {
         this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'))
         this.dispatch('/history/push', `Remove item`);                         
         this.refresh()
     } 
 
-    'click $viewSample' (e) {
+    [CLICK('$viewSample')] (e) {
         this.emit('toggleLayerSampleView');
     }
 
-    'click $layerList .gradient-collapse-button | self' (e) {
+    [PIPE(
+        CLICK('$layerList .gradient-collapse-button'),
+        SELF()
+    )] (e) {
         e.$delegateTarget.parent().toggleClass('collapsed')
         var item = this.read('/item/get', e.$delegateTarget.attr('item-id'))
 

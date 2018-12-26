@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_IMAGE, 
@@ -10,6 +10,8 @@ import {
     EVENT_CHANGE_COLOR_STEP, 
     EVENT_CHANGE_SELECTION 
 } from '../../types/event';
+import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP } from '../../../util/Event';
+import { SELF } from '../../../util/EventMachin';
 
 export default class ImageListView extends UIElement {
 
@@ -57,7 +59,10 @@ export default class ImageListView extends UIElement {
         EVENT_CHANGE_SELECTION
     )] (newValue) { this.refresh() }
 
-    'click $el .tree-item | self' (e) { 
+    [PIPE(
+        CLICK('$el .tree-item'),
+        SELF()
+    )] (e) { 
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
@@ -68,24 +73,27 @@ export default class ImageListView extends UIElement {
     }
  
 
-    'dragstart $el .tree-item' (e) {
+    [DRAGSTART('$el .tree-item')] (e) {
         this.draggedImage = e.$delegateTarget;
         this.draggedImage.css('opacity', 0.5);
         // e.preventDefault();
     }
 
-    'dragend $el .tree-item' (e) {
+    [DRAGEND('$el .tree-item')] (e) {
 
         if (this.draggedImage) {
             this.draggedImage.css('opacity', 1);        
         }
     }    
 
-    'dragover $el .tree-item' (e) {
+    [DRAGOVER('$el .tree-item')] (e) {
         e.preventDefault();        
     }        
 
-    'drop $el .tree-item | self' (e) {
+    [PIPE(
+        DROP('$el .tree-item'),
+        SELF()
+    )] (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('data-id')
@@ -96,7 +104,7 @@ export default class ImageListView extends UIElement {
         this.refresh()
     }       
     
-    'drop $el' (e) {
+    [DROP()] (e) {
         e.preventDefault();        
 
         if (this.draggedImage) {

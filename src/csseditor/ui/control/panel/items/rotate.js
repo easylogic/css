@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { EVENT_CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_ROTATE } from "../../../../types/event";
+import { INPUT } from "../../../../../util/Event";
 
 export default class Rotate extends BasePropertyItem {
     template () {
@@ -45,7 +46,7 @@ export default class Rotate extends BasePropertyItem {
         })
     }
 
-    'input $rotateRange' () { this.updateTransform('range'); }
-    'input $rotate' () { this.updateTransform('rotate'); }
+    [INPUT('$rotateRange')] () { this.updateTransform('range'); }
+    [INPUT('$rotate')] () { this.updateTransform('rotate'); }
     
 }

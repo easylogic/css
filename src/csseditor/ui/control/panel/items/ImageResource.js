@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CLICK } from "../../../../../util/Event";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -49,7 +50,7 @@ export default class ImageResource extends BasePropertyItem {
         return this.read('/image/type/isImage', item.type); 
     }
 
-    'click $imageList .svg-item' (e) {
+    [CLICK('$imageList .svg-item')] (e) {
         var index = e.$delegateTarget.attr('data-index')
         var key = e.$delegateTarget.attr('data-key')
 

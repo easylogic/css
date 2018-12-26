@@ -7,6 +7,7 @@ import {
 import { defaultValue } from "../../../../../util/functions/func";
 import { percentUnit, value2px } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
+import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
 
 export default class EllipseEditor extends UIElement {
 
@@ -131,23 +132,23 @@ export default class EllipseEditor extends UIElement {
     }
 
     // Event Bindings 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.isDown = false ;
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.isDown) {
             this.refreshUI(e);
         }
     }
 
-    'pointerstart $el .drag-item' (e) {
+    [POINTERSTART('$el .drag-item')] (e) {
         e.preventDefault();
         this.currentType = e.$delegateTarget.attr('data-type');
         this.isDown = true; 
     }
 
-    'pointerstart $el' (e) {
+    [POINTERSTART()] (e) {
         this.isDown = true; 
         this.layer = this.read('/selection/current/layer');
         // this.refreshUI(e);        

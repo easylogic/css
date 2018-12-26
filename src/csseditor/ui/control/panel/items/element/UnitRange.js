@@ -6,6 +6,7 @@ import {
 } from "../../../../../../util/filter/functions";
 import { parseParamNumber } from "../../../../../../util/gl/filter/util";
 import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject } from "../../../../../../util/css/types";
+import { INPUT, CLICK } from "../../../../../../util/Event";
 
 const position_list = [
     'left', 'top', 'right', 'bottom', 'center'
@@ -49,7 +50,7 @@ export default class UnitRange extends UIElement {
         `
     } 
 
-    'click $multiValue div' (e) {
+    [CLICK('$multiValue div')] (e) {
         var unit = e.$delegateTarget.attr('unit');
         var value = e.$delegateTarget.attr('value');
 
@@ -104,7 +105,7 @@ export default class UnitRange extends UIElement {
 
         this.initializeRangeMax(this.unit);
     }
-    'click $unit' (e) {
+    [CLICK('$unit')] (e) {
         this.$el.toggleClass(this.showClass);
         this.updateRange();
     }
@@ -131,13 +132,13 @@ export default class UnitRange extends UIElement {
         }
     }
 
-    'input $range' (e) {
+    [INPUT('$range')] (e) {
         this.refs.$number.val(this.refs.$range.val())
         this.updateRange();    
         this.updateFunction(unitObject(this.refs.$range.val(), this.unit));    
     }
 
-    'input $number' (e) {
+    [INPUT('$number')] (e) {
         this.refs.$range.val(this.refs.$number.val())
         this.updateRange();        
         this.updateFunction(unitObject (this.refs.$range.val(), this.unit));

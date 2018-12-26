@@ -1,6 +1,7 @@
 import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
 import { ITEM_TYPE_LAYER, ITEM_TYPE_CIRCLE } from '../../module/ItemTypes';
+import { CLICK } from '../../../util/Event';
 
 export default class ToolMenu extends UIElement {
 
@@ -48,35 +49,34 @@ export default class ToolMenu extends UIElement {
     }
 
 
-
-    'click $check' () {
+    [CLICK('$check')] () {
         this.read('/selection/current/page', (item) => {
             this.run('/tool/set', 'show.grid', this.refs.$check.checked())
             this.dispatch('/tool/set', 'snap.grid', this.refs.$check.checked())
         })
     }
 
-    'click $saveButton' (e) {
+    [CLICK('$saveButton')] (e) {
         this.run('/storage/save');
     }
 
-    'click $viewSample' (e) {
+    [CLICK('$viewSample')] (e) {
         this.emit('togglePageSampleView');
     }    
 
-    'click $exportButton' (e) { 
+    [CLICK('$exportButton')] (e) { 
         this.emit('showExport')
     }
 
 
-    'click $addLayer' (e) {
+    [CLICK('$addLayer')] (e) {
         this.read('/selection/current/page', (page) => {
             this.dispatch('/item/add', ITEM_TYPE_LAYER, true, page.id)
             this.dispatch('/history/push', 'Add a layer');
         });
     }
 
-    'click $addLayerCircle' (e) {
+    [CLICK('$addLayerCircle')] (e) {
         this.read('/selection/current/page', (page) => {
             this.dispatch('/item/add', ITEM_TYPE_CIRCLE, true, page.id)
             this.dispatch('/history/push', 'Add a layer');
@@ -84,7 +84,7 @@ export default class ToolMenu extends UIElement {
     }
 
 
-    'click $gradientType .gradient-item' (e) {
+    [CLICK('$gradientType .gradient-item')] (e) {
         this.read('/selection/current/layer', (item) => {
             var type = e.$delegateTarget.attr('data-type')
 
@@ -93,7 +93,7 @@ export default class ToolMenu extends UIElement {
         }); 
     }       
 
-    'click $el .gradient-sample-list' (e) {
+    [CLICK('$el .gradient-sample-list')] (e) {
         this.emit('toggleGradientSampleView');
     } 
     

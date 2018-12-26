@@ -12,6 +12,7 @@ import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
 import { parseParamNumber } from '../../../../../util/filter/functions';
 import { px } from '../../../../../util/css/types';
+import { CLICK, INPUT } from '../../../../../util/Event';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -126,7 +127,7 @@ export default class TextShadow extends BasePropertyItem {
         }
     }
 
-    'click $add' (e) {
+    [CLICK('$add')] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.dispatch('/item/add', ITEM_TYPE_TEXTSHADOW, false, id)
             this.dispatch('/history/push', `Add text Shadow` );        
@@ -134,7 +135,7 @@ export default class TextShadow extends BasePropertyItem {
         }); 
     }
 
-    'input $textShadowList input[type=number]' (e) {
+    [INPUT('$textShadowList input[type=number]')] (e) {
         var $el = e.$delegateTarget;
         var field = $el.attr('data-type');
         var id = $el.parent().parent().attr('text-shadow-id')
@@ -142,7 +143,7 @@ export default class TextShadow extends BasePropertyItem {
         this.commit(CHANGE_TEXTSHADOW, {id, [field]: px($el.val()) })
     }
 
-    'click $textShadowList .delete-textshadow' (e) {
+    [CLICK('$textShadowList .delete-textshadow')] (e) {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('text-shadow-id')
 
@@ -151,7 +152,7 @@ export default class TextShadow extends BasePropertyItem {
         this.refresh();
     }
 
-    'click $textShadowList .color' (e) {
+    [CLICK('$textShadowList .color')] (e) {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('text-shadow-id')
 

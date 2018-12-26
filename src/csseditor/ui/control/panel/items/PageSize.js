@@ -2,6 +2,7 @@ import UIElement from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/gl/filter/util";
 import { CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 import { px } from "../../../../../util/css/types";
+import { CLICK, INPUT } from "../../../../../util/Event";
 
 export default class PageSize extends UIElement {
     template () {
@@ -40,7 +41,7 @@ export default class PageSize extends UIElement {
         
     }
 
-    'click $rect' (e) {
+    [CLICK('$rect')] (e) {
 
         this.read('/selection/current/page', (item) => {
             var newValue = {
@@ -54,14 +55,14 @@ export default class PageSize extends UIElement {
         })
     }
 
-    'input $width' () {
+    [INPUT('$width')] () {
 
         this.read('/selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_SIZE, { id, width: px(this.refs.$width.int() ) });
         })
     }
 
-    'input $height' () {
+    [INPUT('$height')] () {
 
         this.read('/selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_SIZE, { id, height: px(this.refs.$height.int()) });            

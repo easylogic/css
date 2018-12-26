@@ -1,4 +1,5 @@
 import UIElement from './UIElement';
+import { POINTERSTART, POINTERMOVE, POINTEREND } from '../util/Event';
 
 export default class BaseBox extends UIElement {
 
@@ -16,20 +17,20 @@ export default class BaseBox extends UIElement {
     }
 
     // Event Bindings 
-    'pointerend document' (e) { 
+    [POINTEREND('document')] (e) { 
         this.onDragEnd(e);
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         this.onDragMove(e);
     }
 
-    'pointerstart $bar' (e) {
+    [POINTERSTART('$bar')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
     
-    'pointerstart $container' (e) {
+    [POINTERSTART('$container')] (e) {
         this.isDown = true 
         this.onDragStart(e);
     }

@@ -5,6 +5,7 @@ import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, CHANGE_L
 import { CLIP_PATH_TYPE_SVG } from "../../../../module/ItemTypes";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
+import { CLICK } from "../../../../../util/Event";
 
 export default class ClipPathSVG extends BasePropertyItem {
     template () {
@@ -66,11 +67,11 @@ export default class ClipPathSVG extends BasePropertyItem {
     } 
 
 
-    'click $clipPath' () {
+    [CLICK('$clipPath')] () {
         this.emit('toggleClipPathImageList')
     }
 
-    'click $fit' () {
+    [CLICK('$fit')] () {
         this.read('/selection/current/layer', (layer) => {
 
             this.commit(CHANGE_LAYER_CLIPPATH, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
@@ -150,7 +151,7 @@ export default class ClipPathSVG extends BasePropertyItem {
         callback && callback (newValue);
     }
 
-    'click $imageList .svg-item' (e) {
+    [CLICK('$imageList .svg-item')] (e) {
         var index = e.$delegateTarget.attr('data-index')
         var key = e.$delegateTarget.attr('data-key')
 

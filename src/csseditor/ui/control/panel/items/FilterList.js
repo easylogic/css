@@ -3,6 +3,7 @@ import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, UNIT_COLOR, isColorUnit } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
+import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
 
 const DROPSHADOW_FILTER_KEYS = [
     'filterDropshadowOffsetX',
@@ -154,27 +155,27 @@ export default class FilterList extends BasePropertyItem {
         });
     }
 
-    'click $filterList input[type=checkbox]' (e) {
-        var $check = e.$delegateTarget;
+    [CLICK('$filterList input[type=checkbox]')] (e) {
+        var $check = e.$delegateTargt;
         var key = $check.attr('data-key');
         this.updateFilterKeyChecked(key, $check.checked())
     }
 
-    'change:input $filterList input[type=range]' (e) {
+    [CHANGEINPUT('$filterList input[type=range]')] (e) {
         var $range = e.$delegateTarget;
         var key = $range.attr('data-key');
         this.refs[`${key}Number`].val($range.val());      
         this.updateFilterKeyValue(key, $range.val());
     }
 
-    'input $filterList input[type=number]' (e) {
+    [INPUT('$filterList input[type=number]')] (e) {
         var $number = e.$delegateTarget;
         var key = $number.attr('data-key');
         this.refs[`${key}Range`].val($number.val());            
         this.updateFilterKeyValue(key, $number.val());
     }    
 
-    'click $el .drop-shadow' (e) {
+    [CLICK('$el .drop-shadow')] (e) {
         var color = e.$delegateTarget.css('background-color');
         this.emit('selectFillColor', color, this.updateDropShadowColor.bind(this));
     } 

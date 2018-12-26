@@ -7,6 +7,7 @@ import {
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
+import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
 
 export default class Transform extends BasePropertyItem {
     template () {
@@ -104,20 +105,20 @@ export default class Transform extends BasePropertyItem {
         })
     }
 
-    'change:input $rotateRange' () { this.updateTransform('rotate','Range'); }
-    'change:input $skewXRange' () { this.updateTransform('skewX','Range'); }
-    'change:input $skewYRange' () { this.updateTransform('skewY','Range'); }
-    'change:input $scaleRange' () { this.updateTransform('scale','Range'); }
-    'change:input $translateXRange' () { this.updateTransform('translateX','Range'); }
-    'change:input $translateYRange' () { this.updateTransform('translateY','Range'); }
-    'change:input $translateZRange' () { this.updateTransform('translateZ','Range'); }
+    [CHANGEINPUT('$rotateRange')] () { this.updateTransform('rotate','Range'); }
+    [CHANGEINPUT('$skewXRange')] () { this.updateTransform('skewX','Range'); }
+    [CHANGEINPUT('$skewYRange')] () { this.updateTransform('skewY','Range'); }
+    [CHANGEINPUT('$scaleRange')] () { this.updateTransform('scale','Range'); }
+    [CHANGEINPUT('$translateXRange')] () { this.updateTransform('translateX','Range'); }
+    [CHANGEINPUT('$translateYRange')] () { this.updateTransform('translateY','Range'); }
+    [CHANGEINPUT('$translateZRange')] () { this.updateTransform('translateZ','Range'); }
 
-    'input $rotate' () { this.updateTransform('rotate'); }
-    'input $skewX' () { this.updateTransform('skewX'); }
-    'input $skewY' () { this.updateTransform('skewY'); }
-    'input $scale' () { this.updateTransform('scale'); }
-    'input $translateX' () { this.updateTransform('translateX'); }
-    'input $translateY' () { this.updateTransform('translateY'); }
-    'input $translateZ' () { this.updateTransform('translateZ'); }    
+    [INPUT('$rotate')] () { this.updateTransform('rotate'); }
+    [INPUT('$skewX')] () { this.updateTransform('skewX'); }
+    [INPUT('$skewY')] () { this.updateTransform('skewY'); }
+    [INPUT('$scale')] () { this.updateTransform('scale'); }
+    [INPUT('$translateX')] () { this.updateTransform('translateX'); }
+    [INPUT('$translateY')] () { this.updateTransform('translateY'); }
+    [INPUT('$translateZ')] () { this.updateTransform('translateZ'); }    
     
 }

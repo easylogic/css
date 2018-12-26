@@ -6,6 +6,7 @@ import {
     EVENT_CHANGE_IMAGE
 } from '../../../types/event';
 import { parseParamNumber } from '../../../../util/filter/functions';
+import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
 
 export default class BackgroundResizer extends UIElement {
 
@@ -128,22 +129,22 @@ export default class BackgroundResizer extends UIElement {
     }
 
     // Event Bindings 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.isDown = false ;
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.isDown) {
             this.refreshUI(e);
         }
     }
 
-    'pointerstart $dragPointer' (e) {
+    [POINTERSTART('$dragPointer')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    'pointerstart $el' (e) {
+    [POINTERSTART()] (e) {
         this.isDown = true; 
         // this.refreshUI(e);        
     }    

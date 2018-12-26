@@ -1,10 +1,12 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_IMAGE, 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_SELECTION, 
     CHANGE_IMAGE
 } from '../../../types/event';
+import { CLICK } from '../../../../util/Event';
+import { SELF } from '../../../../util/EventMachin';
 
 const defined_position = {
     'to right': { 
@@ -74,7 +76,10 @@ export default class PredefinedBackgroundPosition extends UIElement {
         }
     }
 
-    'click $el button | self' (e) {
+    [PIPE(
+        CLICK('$el button'),
+        SELF()
+    )] (e) {
         this.read('/selection/current/image/id', (id) => {
             var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
             this.commit(CHANGE_IMAGE, {id, ...pos})

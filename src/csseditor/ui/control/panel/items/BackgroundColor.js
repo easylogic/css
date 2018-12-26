@@ -1,5 +1,6 @@
 import { EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 import BasePropertyItem from "./BasePropertyItem";
+import { CLICK } from "../../../../../util/Event";
 
 export default class BackgroundColor extends BasePropertyItem {
     template () {
@@ -34,7 +35,7 @@ export default class BackgroundColor extends BasePropertyItem {
         });
     }
 
-    'click $colorview' () {
+    [CLICK('$colorview')] () {
         this.emit('toggleLayerColorPicker')
     }
 

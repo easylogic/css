@@ -4,6 +4,7 @@ import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EV
 import { px, value2px, pxUnit } from "../../../../../util/css/types";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
+import { CHANGEINPUT } from "../../../../../util/Event";
 
 
 export default class Radius extends BasePropertyItem {
@@ -103,42 +104,42 @@ export default class Radius extends BasePropertyItem {
         })
     }
 
-    'input:change $topLeftRadiusRange' () {
+    [CHANGEINPUT('$topLeftRadiusRange')] () {
         this.refs.$topLeftRadius.val(this.refs.$topLeftRadiusRange.val());
         this.refreshValue();        
     }
 
-    'input:change $topRightRadiusRange' () {
+    [CHANGEINPUT('$topRightRadiusRange')] () {
         this.refs.$topRightRadius.val(this.refs.$topRightRadiusRange.val());
         this.refreshValue();        
     }
 
-    'input:change $bottomLeftRadiusRange' () {
+    [CHANGEINPUT('$bottomLeftRadiusRange')] () {
         this.refs.$bottomLeftRadius.val(this.refs.$bottomLeftRadiusRange.val());
         this.refreshValue();        
     }
 
-    'input:change $bottomRightRadiusRange' () {
+    [CHANGEINPUT('$bottomRightRadiusRange')] () {
         this.refs.$bottomRightRadius.val(this.refs.$bottomRightRadiusRange.val());
         this.refreshValue();        
     }
 
-    'input:change $topLeftRadius' () {
+    [CHANGEINPUT('$topLeftRadius')] () {
         this.refs.$topLeftRadiusRange.val(this.refs.$topLeftRadius.val());
         this.refreshValue();
     }
 
-    'input:change $topRightRadius' () {
+    [CHANGEINPUT('$topRightRadius')] () {
         this.refs.$topRightRadiusRange.val(this.refs.$topRightRadius.val());        
         this.refreshValue();
     }
 
-    'input:change $bottomLeftRadius' () {
+    [CHANGEINPUT('$bottomLeftRadius')] () {
         this.refs.$bottomLeftRadiusRange.val(this.refs.$bottomLeftRadius.val());        
         this.refreshValue();
     }
 
-    'input:change $bottomRightRadius' () {
+    [CHANGEINPUT('$bottomRightRadius')] () {
         this.refs.$bottomRightRadiusRange.val(this.refs.$bottomRightRadius.val());        
         this.refreshValue();
     }

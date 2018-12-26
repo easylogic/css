@@ -7,6 +7,7 @@ import {
     TEXT_FILL_COLOR
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
 
 export default class Text extends BasePropertyItem {
     template () {
@@ -67,26 +68,26 @@ export default class Text extends BasePropertyItem {
         })
     }
 
-    'input $content' (e) {
+    [INPUT('$content')] (e) {
         this.read('/selection/current/layer/id', id => {
             this.commit(CHANGE_LAYER_TEXT, {id, content: this.refs.$content.val()})
         })
     }
 
-    'click $color' (e) {
+    [CLICK('$color')] (e) {
         this.read('/selection/current/layer', item => {
             this.emit(TEXT_FILL_COLOR, item.id, CHANGE_LAYER_TEXT);
         })
     }
 
 
-    'change $clip' (e) {
+    [CHANGE('$clip')] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, backgroundClip: this.refs.$clip.val() }, true)
         });
     }
 
-    'click $clipText' (e) {
+    [CLICK('$clipText')] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, clipText: this.refs.$clipText.checked() }, true)
         });

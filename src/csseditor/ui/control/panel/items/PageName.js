@@ -1,5 +1,6 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import { CHANGE_PAGE_NAME, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { INPUT } from "../../../../../util/Event";
 
 export default class PageName extends UIElement {
     template () {
@@ -35,7 +36,7 @@ export default class PageName extends UIElement {
 
     }
 
-    'input $name' () {
+    [INPUT('$name')] () {
         this.read('/selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_NAME, {id, name: this.refs.$name.val()});
         });

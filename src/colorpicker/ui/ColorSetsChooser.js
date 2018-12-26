@@ -1,4 +1,5 @@
 import UIElement from '../UIElement';
+import { CLICK } from '../../util/Event';
 
 const DATA_COLORSETS_INDEX = 'data-colorsets-index';
 
@@ -70,14 +71,12 @@ export default class ColorSetsChooser extends UIElement {
     }
 
 
-    'click $toggleButton' (e) {
+    [CLICK('$toggleButton')] (e) {
         this.toggle();
     }
 
-    'click $colorsetsList .colorsets-item' (e) {
-        const $item = e.$delegateTarget;
-        
-        if ($item) {
+    [CLICK('$colorsetsList .colorsets-item')] (e, $dt) {
+        if ($dt) {
 
             const index = parseInt($item.attr(DATA_COLORSETS_INDEX));
 

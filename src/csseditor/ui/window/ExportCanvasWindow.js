@@ -2,6 +2,7 @@ import UIElement from "../../../colorpicker/UIElement";
 import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { uuid, degreeToRadian, getGradientLine } from "../../../util/functions/math";
 import { parseParamNumber, unit2px, pixel } from "../../../util/filter/functions";
+import { CLICK } from "../../../util/Event";
 
 export default class ExportCanvasWindow extends UIElement {
 
@@ -383,11 +384,12 @@ export default class ExportCanvasWindow extends UIElement {
         this.loadCode();
     }
 
-    'click $close' (e) {
+
+    [CLICK('$close')] (e) {
         this.$el.hide();
     }
 
-    'click $title .tool-item' (e) {
+    [CLICK('$title', '.tool-item')] (e) {
         var type = e.$delegateTarget.attr('data-type');
 
         Object.keys(this.refs).filter(it => it.includes('Title')).forEach(key => {

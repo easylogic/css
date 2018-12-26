@@ -1,4 +1,4 @@
-import UIElement from '../../../../colorpicker/UIElement';
+import UIElement, { PIPE, MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import Dom from '../../../../util/Dom';
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from '../../../../util/filter/functions';
 import { 
@@ -10,6 +10,8 @@ import {
     EVENT_CHANGE_SELECTION
 } from '../../../types/event';
 import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT } from '../../../../util/css/types';
+import { SHIFT } from '../../../../util/Key';
+import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK } from '../../../../util/Event';
 
 export default class GradientSteps extends UIElement {
 
@@ -231,9 +233,11 @@ export default class GradientSteps extends UIElement {
 
     }    
 
-    [EVENT_CHANGE_COLOR_STEP] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_COLOR_STEP,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh(); }
 
     'checkTarget' (e) {
         return this.refs.$back.is(e.target)
@@ -241,7 +245,7 @@ export default class GradientSteps extends UIElement {
 
     // 이미 선언된 메소드를 사용하여 메타 데이타로 쓴다. 
     // checkTarget 이라는 메소드가 true 를 리턴해줘야 아래 이벤트는 실행된다. 
-    'click $back' (e) {
+    [CLICK('$back')] (e) {
         this.addStep(e);
     }
 
@@ -313,15 +317,18 @@ export default class GradientSteps extends UIElement {
         this.setBackgroundColor();
     }
 
-    'click $steps .step | Shift' (e) {
+    [PIPE(
+        CLICK('$steps .step'),
+        SHIFT
+    )] (e) {
         this.removeStep(e);
     }
 
-    'click $steps .step' (e) {
+    [CLICK('$steps .step')] (e) {
         this.selectStep(e)
     }
 
-    'click $steps .guide-change' (e) {
+    [CLICK('$steps .guide-change')] (e) {
         var id = e.$delegateTarget.attr('data-colorstep-id');
         var item = this.read('/item/get', id);
 
@@ -336,7 +343,7 @@ export default class GradientSteps extends UIElement {
 
     }
 
-    'change $steps .guide-unit select.unit' (e) {
+    [CHANGE('$steps .guide-unit select.unit')] (e) {
 
         var unit = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
@@ -357,7 +364,7 @@ export default class GradientSteps extends UIElement {
     }
 
 
-    'input $steps input.percent' (e) {
+    [INPUT('$steps input.percent')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -387,7 +394,7 @@ export default class GradientSteps extends UIElement {
         }
     }
 
-    'input $steps input.px' (e) {
+    [INPUT('$steps input.px')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -416,7 +423,7 @@ export default class GradientSteps extends UIElement {
         }
     }
     
-    'input $steps input.em' (e) {
+    [INPUT('$steps input.em')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -458,7 +465,10 @@ export default class GradientSteps extends UIElement {
     } 
 
     // Event Bindings 
-    'pointerend document | isDownCheck' (e) { 
+    [PIPE(
+        POINTEREND('document'),
+        'isDownCheck'
+    )] (e) { 
         this.isDown = false       
         if (this.refs.$stepList) {
             this.refs.$stepList.removeClass('mode-drag')       
@@ -466,7 +476,11 @@ export default class GradientSteps extends UIElement {
         }
     }
 
-    'pointermove document | debounce(10) | isDownCheck' (e) {
+    [PIPE(
+        POINTERMOVE('document'),
+        'debounce(10)',
+        'isDownCheck'
+    )] (e) {
         this.refreshColorUI(e);
         this.refs.$stepList.addClass('mode-drag')
     }
@@ -475,7 +489,11 @@ export default class GradientSteps extends UIElement {
         return new Dom(e.target).hasClass('step');
     }
 
-    'pointerstart $steps .step | isNotDownCheck | isStepElement' (e) {
+    [PIPE(
+        POINTERSTART('$steps .step'),
+        'isNotDownCheck',
+        'isStepElement'
+     )] (e) {
 
         e.preventDefault();
 

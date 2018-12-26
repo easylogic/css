@@ -1,5 +1,6 @@
 import UIElement from "../../../colorpicker/UIElement";
 import LayerSampleList from "../control/panel/LayerSampleList";
+import { CLICK } from "../../../util/Event";
 
 
 export default class LayerSampleWindow extends UIElement {
@@ -19,7 +20,7 @@ export default class LayerSampleWindow extends UIElement {
         `
     }
     
-    'click $el .close' (e) {
+    [CLICK('$el .close')] (e) {
         this.$el.toggle();
     }
 

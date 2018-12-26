@@ -2,6 +2,10 @@ import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
 import { CHANGE_SELECTION } from '../../types/event';
 import { ITEM_TYPE_PAGE } from '../../module/ItemTypes';
+import { PIPE } from '../../../colorpicker/UIElement';
+import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, KEYDOWN } from '../../../util/Event';
+import { ARROW_DOWN, ARROW_UP, ARROW_LEFT, ARROW_RIGHT } from '../../../util/Key';
+import { SELF } from '../../../util/EventMachin';
 
 
 export default class HandleView extends GradientView {
@@ -11,7 +15,10 @@ export default class HandleView extends GradientView {
         return e.target == this.refs.$colorview.el;
     }
 
-    'click $page .layer | self' (e) {
+    [PIPE(
+        CLICK('$page .layer'),
+        SELF()
+    )] (e) {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
             this.dispatch('/selection/one', id);
@@ -22,25 +29,37 @@ export default class HandleView extends GradientView {
     }
 
 
-    'keydown $colorview .layer | ArrowDown ' (e) {
+    [PIPE(
+        KEYDOWN('$colorview .layer'),
+        ARROW_DOWN
+    )] (e) {
         e.preventDefault()
         var y = e.altKey ? 1 : 5;
         this.refreshPosition({y})
     }    
 
-    'keydown $colorview .layer | ArrowUp ' (e) {
+    [PIPE(
+        KEYDOWN('$colorview .layer'),
+        ARROW_UP
+    )] (e) {
         e.preventDefault()
         var y = e.altKey ? -1 : -5;
         this.refreshPosition({y})
     }     
     
-    'keydown $colorview .layer | ArrowLeft ' (e) {
+    [PIPE(
+        KEYDOWN('$colorview .layer'),
+        ARROW_LEFT
+    )] (e) {
         e.preventDefault()
         var x = e.altKey ? -1 : -5;
         this.refreshPosition({x})
     }         
 
-    'keydown $colorview .layer | ArrowRight ' (e) {
+    [PIPE(
+        KEYDOWN('$colorview .layer'),
+        ARROW_RIGHT
+    )] (e) {
         e.preventDefault()
         var x = e.altKey ? 1 : 5;
         this.refreshPosition({x})
@@ -95,7 +114,12 @@ export default class HandleView extends GradientView {
         return !this.dragArea
     }
 
-    'pointerstart $canvas | hasNotDragArea | isPageMode | isNotDownCheck' (e) {
+    [PIPE(
+        POINTERSTART('$canvas'),
+        'hasNotDragArea',
+        'isPageMode',
+        'isNotDownCheck'
+     )] (e) {
         this.isDown = true; 
         this.xy = e.xy;
         this.targetXY = e.xy;        
@@ -107,7 +131,11 @@ export default class HandleView extends GradientView {
         // console.log('b');        
     }     
     
-    'pointermove document | hasDragArea | isDownCheck' (e) {
+    [PIPE(
+        POINTERMOVE('document'),
+        'hasDragArea',
+        'isDownCheck'
+    )] (e) {
         // if (!this.xy) return;         
         // this.refs.$page.addClass('moving');
         this.targetXY = e.xy;
@@ -124,7 +152,11 @@ export default class HandleView extends GradientView {
         // console.log('c');
     }    
 
-    'pointerend document | hasDragArea | isDownCheck' (e) {
+    [PIPE(
+        POINTEREND('document'),
+        'hasDragArea',
+        'isDownCheck'
+    )] (e) {
         this.isDown = false; 
         
         var width = Math.abs(this.targetXY.x - this.xy.x)

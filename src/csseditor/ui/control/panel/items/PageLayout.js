@@ -1,5 +1,6 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CLICK } from "../../../../../util/Event";
 
 export default class PageLayout extends UIElement {
     template () {
@@ -32,7 +33,7 @@ export default class PageLayout extends UIElement {
         this.refresh();
     }
 
-    'click $beginner' (e) {
+    [CLICK('$beginner')] (e) {
         this.emit('updateLayout', 'beginner')
         this.dispatch('/storage/set', 'layout', 'beginner')        
         this.refresh();        
@@ -40,7 +41,7 @@ export default class PageLayout extends UIElement {
         this.emit('changeEditor')        
     }
 
-    'click $expertor' (e) {
+    [CLICK('$expertor')] (e) {
         this.emit('updateLayout', 'expertor')
         this.dispatch('/storage/set', 'layout', 'expertor')
         this.refresh();

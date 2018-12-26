@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER_SIZE, 
@@ -7,6 +7,7 @@ import {
     EVENT_CHANGE_SELECTION,
     EVENT_CHANGE_LAYER_ROTATE
 } from '../../../types/event';
+import { RESIZE, DEBOUNCE } from '../../../../util/Event';
 
 export default class MoveGuide extends UIElement {
 
@@ -70,7 +71,10 @@ export default class MoveGuide extends UIElement {
     )] () { this.refresh() }
 
 
-    'resize window | debounce(300)' (e) {
+    [PIPE(
+        RESIZE('window'),
+        DEBOUNCE(300)
+    )] (e) {
         this.refresh();
     }    
 

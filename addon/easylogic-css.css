@@ -4071,8 +4071,8 @@ html, body {
         .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .center,
         .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor .center {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4085,8 +4085,8 @@ html, body {
         .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .radius,
         .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor .radius {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4110,8 +4110,8 @@ html, body {
           background-repeat: repeat-y, repeat-x; }
         .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .top {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4124,8 +4124,8 @@ html, body {
           border: 2px solid white; }
         .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .bottom {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4139,8 +4139,8 @@ html, body {
           border: 2px solid white; }
         .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .left {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4153,8 +4153,8 @@ html, body {
           border: 2px solid white; }
         .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .right {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4172,11 +4172,14 @@ html, body {
         right: 0px;
         top: 0px;
         bottom: 0px;
-        pointer-events: all; }
+        pointer-events: all;
+        border: 1px solid rgba(0, 146, 12, 0.9);
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
         .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item {
           position: absolute;
-          width: 20px;
-          height: 20px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4187,12 +4190,7 @@ html, body {
           background-color: rgba(1, 120, 124, 0.8);
           pointer-events: all;
           cursor: pointer;
-          border: 2px solid white;
-          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-          background-size: 1px 1px;
-          background-position: center 0px, 0px center;
-          background-repeat: repeat-y, repeat-x; }
+          border: 2px solid white; }
           .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item.start {
             background-color: rgba(255, 0, 0, 0.8); }
           .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item.end {

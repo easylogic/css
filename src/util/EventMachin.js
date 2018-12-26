@@ -1,22 +1,14 @@
-import Event from './Event'
+import Event, { CHECK_EVENT_PATTERN, EVENT_NAME_SAPARATOR, EVENT_CHECK_SAPARATOR, EVENT_SAPARATOR, PREDEFINED_EVENT_NAMES, CUSTOM } from './Event'
 import Dom from './Dom'
 import State from './State'
 import { debounce } from './functions/func';
+import { CONTROL, ALT, SHIFT, META } from './Key';
 
-const CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll)/ig;
 const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 const CHECK_FUNCTION_PATTERN = /^([^ \t]*)(\((.*)\))?$/ig;
-const EVENT_SAPARATOR = ' '
-const EVENT_NAME_SAPARATOR = ':'
-const EVENT_CHECK_SAPARATOR = '|'
-const META_KEYS = ['Control', 'Shift', 'Alt', 'Meta'];
-const PREDEFINED_EVENT_NAMES = {
-  'pointerstart': 'mousedown:touchstart',
-  'pointermove': 'mousemove:touchmove',
-  'pointerend': 'mouseup:touchend',
-  'ttingttong': 'click',
-  'tt': 'click'
-}
+const META_KEYS = [ CONTROL, SHIFT, ALT, META];
+
+export const SELF = CUSTOM('self');
 
 export default class EventMachin {
 
@@ -279,19 +271,19 @@ export default class EventMachin {
 
   /* magic check method  */ 
   self (e) {  // e.target 이 delegate 대상인지 체크 
-    return e.delegateTarget == e.target; 
+    return e.$delegateTarget.el == e.target; 
   }
 
 
 
   getDefaultEventObject (eventName, checkMethodFilters) {
-    const isControl = checkMethodFilters.includes('Control');
-    const isShift =  checkMethodFilters.includes('Shift');
-    const isAlt = checkMethodFilters.includes('Alt');
-    const isMeta =  checkMethodFilters.includes('Meta');
+    const isControl = checkMethodFilters.includes(CONTROL);
+    const isShift =  checkMethodFilters.includes(SHIFT);
+    const isAlt = checkMethodFilters.includes(ALT);
+    const isMeta =  checkMethodFilters.includes(META);
 
     var arr = checkMethodFilters.filter((code) => {
-      return META_KEYS.includes(code) === false;
+      return META_KEYS.includes(code.toUpperCase()) === false;
     });
     
     const checkMethodList = arr.filter(code => {
@@ -391,7 +383,13 @@ s
     // keyup.pagedown  이라고 정의하면 pagedown 키를 눌렀을때만 동작 함 
     var hasKeyCode = true; 
     if (eventObject.codes.length) {
-      hasKeyCode = eventObject.codes.includes(e.code.toLowerCase()) || eventObject.codes.includes(e.key.toLowerCase());
+
+      hasKeyCode =  (
+        e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false
+      ) || (
+        e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false
+      )        
+      
     }
 
     // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
@@ -416,12 +414,11 @@ s
         const delegateTarget = this.matchPath(e.target || e.srcElement, eventObject.delegate);
 
         if (delegateTarget) { // delegate target 이 있는 경우만 callback 실행 
-          e.delegateTarget = delegateTarget;
           e.$delegateTarget = new Dom(delegateTarget);
           e.xy = Event.posXY(e)
 
           if (this.checkEventType(e, eventObject)) {
-            return callback(e);
+            return callback(e, e.$delegateTarget, e.xy);
           } 
 
         } 

@@ -9,6 +9,7 @@ import CurrentColorSets from '../ui/CurrentColorSets'
 import ContextMenu from '../ui/CurrentColorSetsContextMenu'
 import ColorRing from '../ui/ColorRing';
 import Palette from '../ui/ColorPalette';
+import { CLICK } from '../../util/Event';
 
 export default class RingTabColorPicker extends BaseColorPicker {
     template () {
@@ -45,15 +46,15 @@ export default class RingTabColorPicker extends BaseColorPicker {
         `
     }
 
-    'click $tabHeader .color-tab-item' (e) {
-        if (!e.$delegateTarget.hasClass('active')) {
+    [CLICK('$tabHeader .color-tab-item')] (e, $dt) {
+        if (!$dt.hasClass('active')) {
             var selectedItem = this.refs.$tabHeader.$('.active');
             if (selectedItem) selectedItem.removeClass('active');
-            e.$delegateTarget.addClass('active')
+            $dt.addClass('active')
 
             var selectedItem = this.refs.$tabBody.$('.active');
             if (selectedItem) selectedItem.removeClass('active');
-            var activeItem = this.refs.$tabBody.$(`[item-id='${e.$delegateTarget.attr('item-id')}']`);
+            var activeItem = this.refs.$tabBody.$(`[item-id='${$dt.attr('item-id')}']`);
             if (activeItem) activeItem.addClass('active');
         }
 

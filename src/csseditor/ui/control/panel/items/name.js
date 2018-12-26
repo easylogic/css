@@ -1,5 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_NAME, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { INPUT } from "../../../../../util/Event";
 
 export default class Name extends BasePropertyItem {
     template () {
@@ -55,19 +56,19 @@ export default class Name extends BasePropertyItem {
         this.refs.$class.val(className)
     }
 
-    'input $name' () {
+    [INPUT('$name')] () {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, name: this.refs.$name.val()});
         });
     }
 
-    'input $class' () {
+    [INPUT('$class')] () {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, className: this.refs.$class.val()});
         });        
     }    
 
-    'input $id' () {
+    [INPUT('$id')] () {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, idString: this.refs.$id.val()});
         });          

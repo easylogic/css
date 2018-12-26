@@ -1,4 +1,5 @@
 import UIElement from "../../../../../colorpicker/UIElement";
+import { CLICK } from "../../../../../util/Event";
 
 export default class PageExport extends UIElement {
     template () {
@@ -15,7 +16,7 @@ export default class PageExport extends UIElement {
         ` 
     } 
 
-    'click $exportCSS' (e) {
+    [CLICK('$exportCSS')] (e) {
         this.emit('showExport')
     }
 }

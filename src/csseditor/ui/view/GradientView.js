@@ -249,8 +249,13 @@ export default class GradientView extends UIElement {
 
 
     // all effect 
-    [EVENT_CHANGE_EDITOR] () { this.refresh(); }
-    updateSelection () { this.refresh(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR
+    )] () { this.refresh(); }
+
+    updateSelection () {
+        this.refresh();
+    }
 
     '@changeTool' () {
         // this.refresh()

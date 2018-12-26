@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import { 
     EVENT_CHANGE_EDITOR, 
@@ -14,6 +14,8 @@ import {
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { px, UNIT_PX } from '../../../../util/css/types';
+import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE } from '../../../../util/Event';
+import { defaultValue } from '../../../../util/functions/func';
 
 const SNAP_GRID = 20; 
 
@@ -277,7 +279,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         var {rotate} =item;
 
-        if (typeof rotate == 'undefined') rotate = 0; 
+        rotate = defaultValue(rotate, 0);
 
         this.run('/item/set', {
             id: item.id, 
@@ -331,7 +333,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy; 
     }
 
-    'pointerstart $el [data-value] | isNotDownCheck' (e) {
+    [PIPE(
+        POINTERSTART('$el [data-value]'),
+        'isNotDownCheck'
+    )] (e) {
         e.stopPropagation();
         this.activeButton = e.$delegateTarget;
         this.activeButton.addClass('active');
@@ -366,7 +371,11 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.canvasScrollTop = this.$board.scrollTop();        
     }
 
-    'pointermove document | debounce(10) | isDownCheck' (e) {
+    [PIPE(
+        POINTERMOVE('document'),
+        'debounce(10)',
+        'isDownCheck'
+     )] (e) {
         this.targetXY = e.xy; 
 
         if (!this.xy) {
@@ -407,7 +416,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy.x != e.xy.x || this.xy.y != e.xy.y; 
     }
 
-    'pointerend document | isDownCheck' (e) {
+    [PIPE(
+        POINTEREND('document'),
+        'isDownCheck'
+    )] (e) {
         this.currentType = null; 
         this.xy = null 
         this.moveX = null;
@@ -418,7 +430,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.dispatch('/history/push', 'Resize a layer');
     }
 
-    'resize window | debounce(300)' (e) {
+    [PIPE(
+        RESIZE('window'),
+        DEBOUNCE(300)
+     )] (e) {
         this.refresh();
     }
 }

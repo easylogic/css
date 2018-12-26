@@ -1,4 +1,5 @@
 import UIElement from "../../../colorpicker/UIElement";
+import { DROP, DRAGOUT, DRAGOVER, PASTE } from "../../../util/Event";
 
 export default class DropView extends UIElement {
 
@@ -10,17 +11,17 @@ export default class DropView extends UIElement {
         `
     }
 
-    'dragover document' (e) {
+    [DRAGOVER('document')] (e) {
         e.preventDefault() 
         this.$el.show();
     }
 
-    'dragout document' (e) {
+    [DRAGOUT('document')] (e) {
         e.preventDefault();
         this.$el.hide();
     }
 
-    'drop document' (e) {
+    [DROP('document')] (e) {
         e.preventDefault(); 
 
         var dataTransfer = e.dataTransfer;
@@ -52,7 +53,7 @@ export default class DropView extends UIElement {
     }
 
 
-    'paste document' (e) {
+    [PASTE('document')] (e) {
 
         var dataTransfer = e.clipboardData;
 

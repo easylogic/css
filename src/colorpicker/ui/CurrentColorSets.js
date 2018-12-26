@@ -1,5 +1,6 @@
 import Dom from '../../util/Dom'
 import UIElement from '../UIElement';
+import { CLICK, CONTEXTMENU } from '../../util/Event';
 
 export default class CurrentColorSets extends UIElement {
 
@@ -45,11 +46,11 @@ export default class CurrentColorSets extends UIElement {
         this.refresh()
     }
 
-    'click $colorSetsChooseButton' (e) {
+    [CLICK('$colorSetsChooseButton')] (e) {
         this.emit('toggleColorChooser');
     }
 
-    'contextmenu $colorSetsColorList' (e) {
+    [CONTEXTMENU('$colorSetsColorList')] (e) {
         e.preventDefault();
         const currentColorSets  = this.read('/getCurrentColorSets')
 
@@ -70,12 +71,12 @@ export default class CurrentColorSets extends UIElement {
         }
     }
 
-    'click $colorSetsColorList .add-color-item' (e) {
+    [CLICK('$colorSetsColorList .add-color-item')] (e) {
         this.addColor(this.read('/toColor'));
     }
 
-    'click $colorSetsColorList .color-item'  (e) {
-        this.dispatch('/changeColor', e.$delegateTarget.attr('data-color'));
+    [CLICK('$colorSetsColorList .color-item')] (e, $dt) {
+        this.dispatch('/changeColor', $dt.attr('data-color'));
     }
 
 }

@@ -1,7 +1,8 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT } from "../../../../colorpicker/UIElement";
 import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
 import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../types/event";
 import { UNIT_PX, UNIT_EM, UNIT_PERCENT, isPercent, isPX, isEM } from "../../../../util/css/types";
+import { CLICK, INPUT, CHANGE } from "../../../../util/Event";
 
 function checkPxEm(unit) {
     return [UNIT_PX, UNIT_EM].includes(unit);
@@ -112,9 +113,11 @@ export default class GradientInfo extends UIElement {
         this.load()
     }
 
-    [EVENT_CHANGE_COLOR_STEP] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh(); }
+    [MULTI_EVENT(
+        EVENT_CHANGE_COLOR_STEP,
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION
+    )] () { this.refresh(); }
 
     initColor (color) {
         this.dispatch('/colorstep/initColor', color)        
@@ -138,11 +141,11 @@ export default class GradientInfo extends UIElement {
         this.refresh();        
     }    
 
-    'click $colorsteps .color-view-item' (e) {
+    [CLICK('$colorsteps .color-view-item')] (e) {
         this.selectStep(e)
     }
 
-    'input $colorsteps input.code' (e) {
+    [INPUT('$colorsteps input.code')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -166,7 +169,7 @@ export default class GradientInfo extends UIElement {
         return this.$store.step.width;
     }
 
-    'change $colorsteps select.unit' (e) {
+    [CHANGE('$colorsteps select.unit')] (e) {
 
         var unit = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('colorstep-id')
@@ -182,7 +185,7 @@ export default class GradientInfo extends UIElement {
         }        
     }
 
-    'input $colorsteps input.percent' (e) {
+    [INPUT('$colorsteps input.percent')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -204,7 +207,7 @@ export default class GradientInfo extends UIElement {
         }
     }
 
-    'input $colorsteps input.px' (e) {
+    [INPUT('$colorsteps input.px')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -224,7 +227,7 @@ export default class GradientInfo extends UIElement {
         }
     }
     
-    'input $colorsteps input.em' (e) {
+    [INPUT('$colorsteps input.em')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -245,7 +248,7 @@ export default class GradientInfo extends UIElement {
         }
     }    
 
-    'click $colorsteps .remove-step' (e) {
+    [CLICK('$colorsteps .remove-step')] (e) {
         var item = this.read('/selection/current/image')
         if (!item) return; 
 
@@ -258,7 +261,7 @@ export default class GradientInfo extends UIElement {
     }
 
 
-    'click $colorsteps .guide-change' (e) {
+    [CLICK('$colorsteps .guide-change')] (e) {
         var id = e.$delegateTarget.attr('colorstep-id');
         var item = this.read('/item/get', id);
 

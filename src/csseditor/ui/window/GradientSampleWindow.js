@@ -1,5 +1,6 @@
 import UIElement from "../../../colorpicker/UIElement";
 import GradientSampleList from "../control/colorsteps/GradientSampleList";
+import { CLICK } from "../../../util/Event";
 
 
 
@@ -20,7 +21,7 @@ export default class GradientSampleWindow extends UIElement {
         `
     }
 
-    'click $el .close' (e) {
+    [CLICK('$el .close')] (e) {
         this.$el.toggle();
     }
 

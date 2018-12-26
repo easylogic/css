@@ -1,6 +1,8 @@
-import UIElement from '../../../colorpicker/UIElement';
+import UIElement, { PIPE } from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
 import { EVENT_CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
+import { CLICK } from '../../../util/Event';
+import { SELF } from '../../../util/EventMachin';
 
 export default class PageListView extends UIElement {
 
@@ -68,26 +70,29 @@ export default class PageListView extends UIElement {
         this.emit(CHANGE_EDITOR)
     }
 
-    'click $pageList .add-page' (e) {
+    [CLICK('$pageList .add-page')] (e) {
         this.dispatch('/item/add/page', true);
         this.refresh();
     }
 
-    'click $pageList .tree-item | self' (e) { 
+    [PIPE(
+        CLICK('$pageList .tree-item'),
+        SELF()
+    )] (e) { 
 
         this.dispatch('/selection/one', e.$delegateTarget.attr('id'));       
         this.refresh();
     }
 
-    'click $saveButton' (e) {
+    [CLICK('$saveButton')] (e) {
         this.run('/storage/save');
     }
 
-    'click $viewSample' (e) {
+    [CLICK('$viewSample')] (e) {
         this.emit('togglePageSampleView');
     }    
 
-    'click $exportButton' (e) {
+    [CLICK('$exportButton')] (e) {
         this.emit('showExport')
     }
 

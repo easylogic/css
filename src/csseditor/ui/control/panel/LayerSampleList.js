@@ -1,5 +1,6 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../util/filter/functions";
+import { CLICK } from "../../../../util/Event";
 
 
 export default class LayerSampleList extends UIElement {
@@ -90,7 +91,7 @@ export default class LayerSampleList extends UIElement {
         this.refresh()
     }
 
-    'click $el .layer-sample-item .add-item' (e) {
+    [CLICK('$el .layer-sample-item .add-item')] (e) {
         var index = +e.$delegateTarget.attr('data-index')
 
         var newLayer = this.list[index];
@@ -102,7 +103,7 @@ export default class LayerSampleList extends UIElement {
         }
     }    
 
-    'click $el .layer-cached-item .add-item' (e) {
+    [CLICK('$el .layer-cached-item .add-item')] (e) {
         var newLayer = this.read('/storage/layers', e.$delegateTarget.attr('data-sample-id'));
         
         if (newLayer) {
@@ -112,12 +113,12 @@ export default class LayerSampleList extends UIElement {
         }
     }
 
-    'click $el .layer-cached-item .delete-item' (e) {
+    [CLICK('$el .layer-cached-item .delete-item')] (e) {
         this.dispatch('/storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
         this.refresh();
     }    
 
-    'click $el .add-current-layer' (e) {
+    [CLICK('$el .add-current-layer')] (e) {
         this.read('/selection/current/layer', (layer) => {
             var newLayer = this.read('/collect/layer/one', layer.id)
 

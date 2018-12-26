@@ -1,5 +1,6 @@
 import UIElement from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_PAGE, CHANGE_PAGE, EVENT_CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
+import { CLICK } from "../../../../../util/Event";
 
 export default class Clip extends UIElement {
     template () {
@@ -31,7 +32,7 @@ export default class Clip extends UIElement {
         })        
     }
 
-    'click $check' () {
+    [CLICK('$check')] () {
         this.read('/selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_SIZE, {id, clip: this.refs.$check.checked() } )
         })

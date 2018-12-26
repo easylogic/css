@@ -3,6 +3,7 @@ import ColorSetsList from './module/ColorSetsList'
 import UIElement from './UIElement'
 import ColorManager from './module/ColorManager';
 import BaseStore from './BaseStore';
+import { MOUSEUP } from '../util/Event';
 
 export default class BaseColorPicker extends UIElement {
 
@@ -332,7 +333,7 @@ export default class BaseColorPicker extends UIElement {
 
 
      // Event Bindings 
-     'mouseup document' (e) {
+     [MOUSEUP('document')] (e) {
 
         // when color picker clicked in outside
         if (this.checkInHtml(e.target)) {

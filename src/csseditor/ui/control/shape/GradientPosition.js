@@ -1,6 +1,7 @@
 import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
 import { percent } from '../../../../util/css/types';
+import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 
 const DEFINE_POSITIONS = { 
     'center': ['center', 'center'],
@@ -157,27 +158,27 @@ export default class GradientPosition extends UIElement {
     }
 
     // Event Bindings 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.isDown = false ;
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.isDown) {
             this.refreshUI(e);
         }
     }
 
-    'pointerstart $dragPointer' (e) {
+    [POINTERSTART('$dragPointer')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    'pointerstart $el' (e) {
+    [POINTERSTART()] (e) {
         this.isDown = true; 
         // this.refreshUI(e);        
     }    
     
-    'dblclick $dragPointer' (e) {
+    [DOUBLECLICK('$dragPointer')] (e) {
         e.preventDefault()
         this.setRadialPosition('center')
         this.refreshUI()

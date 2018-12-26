@@ -1,4 +1,4 @@
-import Event from '../../util/Event'
+import Event, { CLICK } from '../../util/Event'
 import UIElement from '../UIElement';
 
 export default class CurrentColorSetsContextMenu extends UIElement {
@@ -51,10 +51,10 @@ export default class CurrentColorSetsContextMenu extends UIElement {
         this.show(e, index)
     }
 
-    'click $el .menu-item' (e) {
+    [CLICK('$el .menu-item')] (e, $dt) {
         e.preventDefault();
 
-        this.runCommand(e.$delegateTarget.attr('data-type'));
+        this.runCommand($dt.attr('data-type'));
         this.hide();        
     }
 

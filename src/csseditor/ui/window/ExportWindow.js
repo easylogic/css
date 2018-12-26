@@ -1,5 +1,6 @@
 import UIElement from "../../../colorpicker/UIElement";
 import ColorPickerCodeMirror from '../../../extension/codemirror/index'
+import { CLICK } from "../../../util/Event";
 
 export default class ExportWindow extends UIElement {
 
@@ -202,11 +203,11 @@ ${layerStyle}
         this.loadCode();
     }
 
-    'click $close' (e) {
+    [CLICK('$close')] (e) {
         this.$el.hide();
     }
 
-    'click $title .tool-item' (e) {
+    [CLICK('$title .tool-item')] (e) {
         var type = e.$delegateTarget.attr('data-type');
 
         Object.keys(this.refs).filter(it => it.includes('Title')).forEach(key => {

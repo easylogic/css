@@ -15,8 +15,11 @@ export default class ClipPathPolygon extends BasePropertyItem {
             <div class='property-item clip-path-polygon'>
                 <div class="items">
                     <div>
-                        Click it with alt if you want to add point
+                        Click panel with alt if you want to add point
                     </div>
+                    <div>
+                        Click drag item with alt if you want to delete point
+                    </div>                    
                 </div>
                 <div class='items' ref='$polygonList'>            
                 </div>

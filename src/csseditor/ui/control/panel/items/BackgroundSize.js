@@ -3,6 +3,7 @@ import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_IMAGE, EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX } from "../../../../../util/css/types";
+import { CLICK } from "../../../../../util/Event";
 
 export default class BackgroundSize extends UIElement {
     components () {
@@ -165,7 +166,7 @@ export default class BackgroundSize extends UIElement {
         return parseParamNumber(layer.width) * 2; 
     }    
 
-    'click $size button' (e) {
+    [CLICK('$size button')] (e) {
         
         this.read('/selection/current/image/id', (id) => {
             var newValue = { id, backgroundSize: e.$delegateTarget.val()}
@@ -200,7 +201,7 @@ export default class BackgroundSize extends UIElement {
         }
     }
 
-    'click $repeat button' (e) {
+    [CLICK('$repeat button')] (e) {
         this.read('/selection/current/image/id', (id) => {
             var newValue = {id, backgroundRepeat: e.$delegateTarget.val()}
             this.selectBackgroundRepeat(newValue.backgroundRepeat);

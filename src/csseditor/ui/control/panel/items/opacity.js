@@ -7,6 +7,7 @@ import {
     EVENT_CHANGE_LAYER_OPACITY
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { INPUT } from "../../../../../util/Event";
 
 export default class Opacity extends BasePropertyItem {
     template () {
@@ -54,7 +55,7 @@ export default class Opacity extends BasePropertyItem {
         })
     }
 
-    'input $opacityRange' () { this.updateTransform('range'); }
-    'input $opacity' () { this.updateTransform('opacity'); }
+    [INPUT('$opacityRange')] () { this.updateTransform('range'); }
+    [INPUT('$opacity')] () { this.updateTransform('opacity'); }
     
 }

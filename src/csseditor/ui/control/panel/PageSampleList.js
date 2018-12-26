@@ -1,5 +1,6 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../util/filter/functions";
+import { CLICK } from "../../../../util/Event";
 
 
 export default class PageSampleList extends UIElement {
@@ -103,7 +104,7 @@ export default class PageSampleList extends UIElement {
         this.refresh()
     }
 
-    'click $el .page-sample-item .add-item' (e) {
+    [CLICK('$el .page-sample-item .add-item')] (e) {
         var index = +e.$delegateTarget.attr('data-index')
 
         var newPage = this.list[index];
@@ -116,7 +117,7 @@ export default class PageSampleList extends UIElement {
         }
     }    
 
-    'click $el .page-cached-item .add-item' (e) {
+    [CLICK('$el .page-cached-item .add-item')] (e) {
         var newPage = this.read('/storage/pages', e.$delegateTarget.attr('data-sample-id'));
         if (newPage) {
             this.read('/selection/current/page', page => {
@@ -127,12 +128,12 @@ export default class PageSampleList extends UIElement {
         }
     }
 
-    'click $el .page-cached-item .delete-item' (e) {
+    [CLICK('$el .page-cached-item .delete-item')] (e) {
         this.dispatch('/storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
         this.refresh();
     }    
 
-    'click $el .add-current-page' (e) {
+    [CLICK('$el .add-current-page')] (e) {
         this.read('/selection/current/page', (page) => {
             var newPage = this.read('/collect/page/one', page.id)
 

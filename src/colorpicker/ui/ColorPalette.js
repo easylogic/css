@@ -1,5 +1,5 @@
 import UIElement from '../UIElement';
-import Event from '../../util/Event'
+import Event, { POINTERSTART, POINTEREND, POINTERMOVE } from '../../util/Event'
 
 export default class ColorPalette extends UIElement {
 
@@ -81,22 +81,22 @@ export default class ColorPalette extends UIElement {
 
     '@initColor' () { this.refresh() }    
 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.isDown = false; 
     }    
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.isDown) {
             this.setMainColor(e);
         }
     }
 
-    'pointerstart' (e) {
+    [POINTERSTART()] (e) {
         this.isDown = true; 
         this.setMainColor(e);
     }
     
-    'pointerend' (e) {
+    [POINTEREND()] (e) {
         this.isDown = false; 
     }
 

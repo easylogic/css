@@ -19,6 +19,7 @@ import {
     CLIP_PATH_SIDE_TYPE_CLOSEST,
     CLIP_PATH_SIDE_TYPE_FARTHEST
 } from "../../../../module/ItemTypes";
+import { CHANGE } from "../../../../../util/Event";
 
 const CLIP_PATH_TYPES = [
     CLIP_PATH_TYPE_NONE,
@@ -92,7 +93,7 @@ export default class ClipPathSide extends BasePropertyItem {
         this.$el.toggleClass('show');
     }
 
-    'change $clipSideType' () {
+    [CHANGE('$clipSideType')] () {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 

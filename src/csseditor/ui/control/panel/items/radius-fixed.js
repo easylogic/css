@@ -6,10 +6,10 @@ import {
     EVENT_CHANGE_LAYER_RADIUS, 
     CHANGE_LAYER_RADIUS 
 } from "../../../../types/event";
-import { parseParamNumber } from "../../../../../util/gl/filter/util";
-import { px, pxUnit } from "../../../../../util/css/types";
+import { pxUnit } from "../../../../../util/css/types";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
+import { CLICK, INPUT } from "../../../../../util/Event";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {
@@ -66,9 +66,9 @@ export default class RadiusFixed extends BasePropertyItem {
         })
     }
 
-    'input $radiusRange' () { this.updateTransform('range'); }
-    'input $radius' () { this.updateTransform('radius'); }
-    'click $radiusLabel' () {
+    [INPUT('$radiusRange')] () { this.updateTransform('range'); }
+    [INPUT('$radius')] () { this.updateTransform('radius'); }
+    [CLICK('$radiusLabel')] () {
         this.emit('toggleRadius');
     }
 }

@@ -24,7 +24,8 @@ import {
     EVENT_CHANGE_LAYER_ROTATE,
     EVENT_CHANGE_LAYER_OPACITY,
     EVENT_CHANGE_SELECTION
-} from '../../types/event';s
+} from '../../types/event';import { CLICK } from '../../../util/Event';
+s
 
 export default class ImageToolbar extends UIElement {
 
@@ -67,27 +68,27 @@ export default class ImageToolbar extends UIElement {
     }
 
 
-    'click $ordering' (e) {
+    [CLICK('$ordering')] (e) {
         this.dispatch('/colorstep/ordering/equals')
         this.dispatch('/history/push', `Ordering gradient` );        
     } 
 
-    'click $orderingLeft' (e) {
+    [CLICK('$orderingLeft')] (e) {
         this.dispatch('/colorstep/ordering/equals/left')
         this.dispatch('/history/push', `Ordering gradient` );        
     }    
 
-    'click $orderingRight' (e) {
+    [CLICK('$orderingRight')] (e) {
         this.dispatch('/colorstep/ordering/equals/right')
         this.dispatch('/history/push', `Ordering gradient` );        
     }        
 
-    'click $cutOff' (e) {
+    [CLICK('$cutOff')] (e) {
         this.dispatch('/colorstep/cut/off')
         this.dispatch('/history/push', `Cut off static gradient pattern` );
     }
 
-    'click $cutOn' (e) {
+    [CLICK('$cutOn')] (e) {
         this.dispatch('/colorstep/cut/on')
         this.dispatch('/history/push', `Cut on static gradient pattern` );
     }    

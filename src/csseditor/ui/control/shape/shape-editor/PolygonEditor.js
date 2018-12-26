@@ -1,9 +1,12 @@
-import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT, PIPE } from "../../../../../colorpicker/UIElement";
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON } from "../../../../types/event";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, stringUnit } from "../../../../../util/css/types";
+import { ALT } from "../../../../../util/Key";
+import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
+import Dom from "../../../../../util/Dom";
 
 export default class PolygonEditor extends UIElement {
 
@@ -122,17 +125,17 @@ export default class PolygonEditor extends UIElement {
     }
 
     // Event Bindings 
-    'pointerend document' (e) {
+    [POINTEREND('document')] (e) {
         this.isDown = false ;
     }
 
-    'pointermove document' (e) {
+    [POINTERMOVE('document')] (e) {
         if (this.isDown) {
             this.refreshUI(e);
         }
     }
 
-    'pointerstart $el .drag-item' (e) {
+    [POINTERSTART('$el .drag-item')] (e) {
         e.preventDefault();
         this.$dragItem = e.$delegateTarget
         this.isDown = true; 
@@ -164,10 +167,40 @@ export default class PolygonEditor extends UIElement {
         })
     }
 
-    'click $el | Alt' (e) {
-        e.stopPropagation();
+    deletePoint (e) {
+        var index = +e.$delegateTarget.attr('data-point-index')
+
+        this.read('/selection/current/layer', (layer) => {
+            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
+            clipPathPolygonPoints.splice(index, 1);
+
+            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {id: layer.id, clipPathPolygonPoints});
+            this.refresh();
+        })
+    } 
+
+    isNotDragItem (e) {
+        return new Dom(e.target).hasClass('drag-item') == false;
+    }
+
+    [PIPE( 
+        CLICK(), 
+        ALT
+    )] (e) {
+        e.preventDefault();
 
         this.addPoint(e);
+    }
+
+    [PIPE( 
+        CLICK('$el .drag-item'), 
+        ALT,
+        'capture'
+    )] (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        this.deletePoint(e);
     }
     
 }

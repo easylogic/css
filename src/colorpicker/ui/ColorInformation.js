@@ -1,4 +1,4 @@
-import Event from '../../util/Event'
+import Event, { CLICK, KEYUP, INPUT, KEYDOWN } from '../../util/Event'
 import UIElement from '../UIElement';
 
 export default class ColorInformation extends UIElement {
@@ -133,23 +133,23 @@ export default class ColorInformation extends UIElement {
 
     '@initColor' () { this.refresh() }    
 
-    'input $rgb_r' (e) {  this.changeRgbColor(); }
-    'input $rgb_g' (e) {  this.changeRgbColor(); }
-    'input $rgb_b' (e) {  this.changeRgbColor(); }
-    'input $rgb_a' (e) {  this.changeRgbColor(); }  
+    [INPUT('$rgb_r')] (e) {  this.changeRgbColor(); }
+    [INPUT('$rgb_g')] (e) {  this.changeRgbColor(); }
+    [INPUT('$rgb_b')] (e) {  this.changeRgbColor(); }
+    [INPUT('$rgb_a')] (e) {  this.changeRgbColor(); }  
     
-    'input $hsl_h' (e) {  this.changeHslColor(); }
-    'input $hsl_s' (e) {  this.changeHslColor(); }
-    'input $hsl_l' (e) {  this.changeHslColor(); }
-    'input $hsl_a' (e) {  this.changeHslColor(); }      
+    [INPUT('$hsl_h')] (e) {  this.changeHslColor(); }
+    [INPUT('$hsl_s')] (e) {  this.changeHslColor(); }
+    [INPUT('$hsl_l')] (e) {  this.changeHslColor(); }
+    [INPUT('$hsl_a')] (e) {  this.changeHslColor(); }      
 
-    'keydown $hexCode' (e) {
+    [KEYDOWN('$hexCode')] (e) {
         if(e.which < 65 || e.which > 70) {
             return this.checkNumberKey(e);
         }
     }
     
-    'keyup $hexCode' (e) {
+    [KEYUP('$hexCode')] (e) {
         var code = this.refs.$hexCode.val();
     
         if(code.charAt(0) == '#' && code.length == 7) {
@@ -157,7 +157,7 @@ export default class ColorInformation extends UIElement {
         }
     }
     
-    'click $formatChangeButton' (e) {
+    [CLICK('$formatChangeButton')] (e) {
         this.nextFormat();
     }
 
