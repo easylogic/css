@@ -21847,7 +21847,7 @@ var ExportWindow = function (_UIElement) {
                 obj.toggleClass('selected', "$" + type + "Content" == key);
 
                 if (_this4.cmHtml) _this4.cmHtml.refresh();
-                if (_this4.cmHtml) _this4.cmCss.refresh();
+                if (_this4.cmCss) _this4.cmCss.refresh();
             });
         }
     }, {

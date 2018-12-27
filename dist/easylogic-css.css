@@ -4059,15 +4059,6 @@ html, body {
         right: 0px;
         top: 0px;
         bottom: 0px; }
-        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor > .center,
-        .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor > .radius,
-        .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor > .center,
-        .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor > .radius {
-          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-          background-size: 1px 1px;
-          background-position: center 0px, 0px center;
-          background-repeat: repeat-y, repeat-x; }
         .csseditor .page-view .layer-shape-editor .layer-shape-circle-editor .center,
         .csseditor .page-view .layer-shape-editor .layer-shape-ellipse-editor .center {
           position: absolute;

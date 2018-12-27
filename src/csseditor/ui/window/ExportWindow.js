@@ -219,7 +219,7 @@ ${layerStyle}
             obj.toggleClass('selected', `$${type}Content` == key);
 
             if (this.cmHtml) this.cmHtml.refresh();
-            if (this.cmHtml) this.cmCss.refresh();
+            if (this.cmCss) this.cmCss.refresh();
         })        
 
     }
