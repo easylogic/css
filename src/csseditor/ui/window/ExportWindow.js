@@ -67,15 +67,14 @@ export default class ExportWindow extends UIElement {
  
 
     makePageCSS (page) {
-        var obj = {
-            position: 'relative',
-            overflow: page.clip ? 'hidden' : '',
-            width: page.width,
-            height: page.height
-        }; 
 
+        var css = Object.assign({ 
+                position: 'relative' 
+            },
+            this.read('/page/toCSS', page) 
+        )
 
-        return this.read('/css/toString', obj);
+        return this.read('/css/toString', css);
     }
 
     getClassName (className) {

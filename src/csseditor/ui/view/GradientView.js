@@ -143,20 +143,12 @@ export default class GradientView extends UIElement {
             })
         })
     }    
-
-    makePageCSS (page) {
-        return {
-            overflow: page.clip ? 'hidden' : '',
-            width: page.width, 
-            height: page.height
-        }; 
-    }
  
     setBackgroundColor() {
 
         var page = this.read('/selection/current/page');
 
-        var pageCSS = this.makePageCSS(page || {clip: false});
+        var pageCSS = this.read('/page/toCSS', page || {clip: false});
 
         var canvasCSS = {
             width: px( 2000 ),

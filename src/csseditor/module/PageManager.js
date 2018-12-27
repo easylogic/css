@@ -16,6 +16,8 @@ export default class PageManager extends BaseModule {
         var sample = $store.read('/item/convert/style', page || {}) 
 
         var css ={
+            overflow: sample.clip ? 'hidden' : '',
+            'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
             width: sample.width,
             height: sample.height
         } 
@@ -28,6 +30,8 @@ export default class PageManager extends BaseModule {
         var sample = $store.read('/item/convert/style', page || {}) 
 
         var css ={
+            overflow: sample.clip ? 'hidden' : '',
+            'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
             width: sample.width,
             height: sample.height
         } 

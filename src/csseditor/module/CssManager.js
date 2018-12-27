@@ -64,6 +64,10 @@ export default class CssManager extends BaseModule {
             delete newStyle.transform;
         }
 
+        if (newStyle['transform-style'] == 'float') {
+            delete newStyle['transform-style'];
+        }
+
         return newStyle; 
     }
 

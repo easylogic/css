@@ -1,6 +1,7 @@
 import items  from './items/index'
 import BaseTab from "../../BaseTab";
 import { SELECT_TAB_LAYER } from '../../../types/event';
+import { SCROLL } from '../../../../util/Event';
 
 export default class LayerTabView extends BaseTab {
 
@@ -8,6 +9,7 @@ export default class LayerTabView extends BaseTab {
         return `
         <div class="tab horizontal">
             <div class="tab-header" ref="$header">
+                <div class="tab-item" data-id="page">Page</div>
                 <div class="tab-item selected" data-id="info">Info</div>
                 <div class="tab-item" data-id="fill">Fill</div>       
                 <div class="tab-item" data-id="text">Text</div>
@@ -16,6 +18,13 @@ export default class LayerTabView extends BaseTab {
                 <div class="tab-item" data-id="css">CSS</div>
             </div>
             <div class="tab-body" ref="$body">
+                <div class="tab-content" data-id="page">
+                    <PageName></PageName>
+                    <PageSize></PageSize>
+                    <clip></clip>           
+                    <Page3D></Page3D>       
+                </div>
+
                 <div class="tab-content selected flex" data-id="info">
                     <div class='fixed'>
                         <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    
@@ -71,15 +80,15 @@ export default class LayerTabView extends BaseTab {
         `
     }
 
-    'scroll $layerInfoScroll' (e) {
+    [SCROLL('$layerInfoScroll')] (e) {
         this.setScrollTabTitle(this.refs.$layerInfoScroll)
     }
 
-    'scroll $layerTextScroll' (e) {
+    [SCROLL('$layerTextScroll')] (e) {
         this.setScrollTabTitle(this.refs.$layerTextScroll)
     }
     
-    'scroll $layerFillScroll' (e) {
+    [SCROLL('$layerFillScroll')] (e) {
         this.setScrollTabTitle(this.refs.$layerFillScroll)
     }    
 

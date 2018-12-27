@@ -62,7 +62,7 @@ export default class EllipseEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE; 
+        return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE && !!item.showClipPathEditor; 
     }
 
     getRectangle () {

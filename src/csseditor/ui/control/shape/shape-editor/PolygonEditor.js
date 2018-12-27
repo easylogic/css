@@ -53,7 +53,7 @@ export default class PolygonEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_POLYGON; 
+        return item.clipPathType == CLIP_PATH_TYPE_POLYGON && !!item.showClipPathEditor; 
     }
 
     getRectangle () {

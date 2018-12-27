@@ -61,7 +61,7 @@ export default class CircleEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_CIRCLE; 
+        return item.clipPathType == CLIP_PATH_TYPE_CIRCLE && !!item.showClipPathEditor; 
     }
 
     getRectangle () {

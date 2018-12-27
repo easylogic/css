@@ -19,7 +19,7 @@ import {
     CLIP_PATH_SIDE_TYPE_CLOSEST,
     CLIP_PATH_SIDE_TYPE_FARTHEST
 } from "../../../../module/ItemTypes";
-import { CHANGE } from "../../../../../util/Event";
+import { CHANGE, CLICK } from "../../../../../util/Event";
 
 const CLIP_PATH_TYPES = [
     CLIP_PATH_TYPE_NONE,
@@ -36,7 +36,14 @@ export default class ClipPath extends BasePropertyItem {
             <div class='property-item clip-path show'>
                 <div class='title' ref="$title">Clip Path</div>
                 <div class='items'>            
-                    <div class='type'>
+                    <div>
+                        <label>View editor</label>
+                        <div >
+                            <label><input type="checkbox" ref="$showClipPathEditor" /> show clip path editor</label>
+                        </div>
+                    </div>                       
+
+                    <div>
                         <label>Type</label>
                         <div >
                             <select ref="$clipType">
@@ -60,6 +67,7 @@ export default class ClipPath extends BasePropertyItem {
 
     refresh() {
         this.read('/selection/current/layer', (layer) => {
+            this.refs.$showClipPathEditor.checked(layer.showClipPathEditor);
             this.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
         });
     }
@@ -73,13 +81,15 @@ export default class ClipPath extends BasePropertyItem {
         })
     }
 
-    [CHANGE('$clipSideType')] () {
-        this.read('/selection/current/layer/id', (id) => {
+    [CLICK('$showClipPathEditor')] () {
+        this.read('/selection/current/layer', (layer) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
-                id, 
-                clipPathSideType: this.refs.$clipSideType.val()
+                id: layer.id, 
+                showClipPathEditor: this.refs.$showClipPathEditor.checked()
             })
         })
     }
+
+
 
 }

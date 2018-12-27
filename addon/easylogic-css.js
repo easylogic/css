@@ -13219,6 +13219,10 @@ var CssManager = function (_BaseModule) {
                 delete newStyle.transform;
             }
 
+            if (newStyle['transform-style'] == 'float') {
+                delete newStyle['transform-style'];
+            }
+
             return newStyle;
         }
     }, {
@@ -13582,6 +13586,8 @@ var PageManager = function (_BaseModule) {
             var sample = $store.read('/item/convert/style', page || {});
 
             var css = {
+                overflow: sample.clip ? 'hidden' : '',
+                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
                 width: sample.width,
                 height: sample.height
             };
@@ -13596,6 +13602,8 @@ var PageManager = function (_BaseModule) {
             var sample = $store.read('/item/convert/style', page || {});
 
             var css = {
+                overflow: sample.clip ? 'hidden' : '',
+                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
                 width: sample.width,
                 height: sample.height
             };
@@ -17677,7 +17685,7 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div class='type'>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
+            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n\n                    <div>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }).join('') + "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        ";
         }
@@ -17694,6 +17702,7 @@ var ClipPath = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('/selection/current/layer', function (layer) {
+                _this2.refs.$showClipPathEditor.checked(layer.showClipPathEditor);
                 _this2.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
             });
         }
@@ -17710,14 +17719,14 @@ var ClipPath = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CHANGE('$clipSideType'),
+        key: CLICK('$showClipPathEditor'),
         value: function value() {
             var _this4 = this;
 
-            this.read('/selection/current/layer/id', function (id) {
+            this.read('/selection/current/layer', function (layer) {
                 _this4.commit(CHANGE_LAYER_CLIPPATH, {
-                    id: id,
-                    clipPathSideType: _this4.refs.$clipSideType.val()
+                    id: layer.id,
+                    showClipPathEditor: _this4.refs.$showClipPathEditor.checked()
                 });
             });
         }
@@ -18422,9 +18431,6 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             var $item = e.$delegateTarget;
             var polygonIndex = +$item.attr('data-index');
             var key = $item.attr('data-key');
-
-            console.log(key);
-
             if (key == 'delete') {
                 this.read('/selection/current/layer', function (layer) {
                     var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
@@ -19585,9 +19591,52 @@ var EmptyArea = function (_BasePropertyItem) {
     return EmptyArea;
 }(BasePropertyItem);
 
-var _ClipPathSide$ClipPat;
+var Page3D = function (_UIElement) {
+    inherits(Page3D, _UIElement);
 
-var items = (_ClipPathSide$ClipPat = {
+    function Page3D() {
+        classCallCheck(this, Page3D);
+        return possibleConstructorReturn(this, (Page3D.__proto__ || Object.getPrototypeOf(Page3D)).apply(this, arguments));
+    }
+
+    createClass(Page3D, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>                                 \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: EVENT_CHANGE_EDITOR,
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read('/selection/current/page', function (item) {
+                _this2.refs.$preserve.checked(!!item.preserve);
+            });
+        }
+    }, {
+        key: CLICK('$preserve'),
+        value: function value(e) {
+            var _this3 = this;
+
+            this.read('/selection/current/page/id', function (id) {
+                var preserve = _this3.refs.$preserve.checked();
+
+                _this3.commit(CHANGE_PAGE, { id: id, preserve: preserve });
+            });
+        }
+    }]);
+    return Page3D;
+}(UIElement);
+
+var _Page3D$ClipPathSide$;
+
+var items = (_Page3D$ClipPathSide$ = {
+    Page3D: Page3D,
     ClipPathSide: ClipPathSide,
     ClipPathPolygon: ClipPathPolygon,
     ClipPathSVG: ClipPathSVG,
@@ -19604,7 +19653,7 @@ var items = (_ClipPathSide$ClipPat = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_ClipPathSide$ClipPat, "ClipPathSVG", ClipPathSVG), defineProperty(_ClipPathSide$ClipPat, "Opacity", Opacity$3), defineProperty(_ClipPathSide$ClipPat, "RadiusFixed", RadiusFixed), defineProperty(_ClipPathSide$ClipPat, "Rotate", Rotate), defineProperty(_ClipPathSide$ClipPat, "LayerBlend", LayerBlend), defineProperty(_ClipPathSide$ClipPat, "GroupAlign", GroupAlign), defineProperty(_ClipPathSide$ClipPat, "PageShowGrid", PageShowGrid), defineProperty(_ClipPathSide$ClipPat, "ClipPath", ClipPath), defineProperty(_ClipPathSide$ClipPat, "PageLayout", PageLayout), defineProperty(_ClipPathSide$ClipPat, "ImageResource", ImageResource), defineProperty(_ClipPathSide$ClipPat, "BackgroundColor", BackgroundColor), defineProperty(_ClipPathSide$ClipPat, "BackgroundBlend", BackgroundBlend), defineProperty(_ClipPathSide$ClipPat, "BlendList", BlendList), defineProperty(_ClipPathSide$ClipPat, "MixBlendList", MixBlendList), defineProperty(_ClipPathSide$ClipPat, "FilterList", FilterList$1), defineProperty(_ClipPathSide$ClipPat, "PageExport", PageExport), defineProperty(_ClipPathSide$ClipPat, "PageSize", PageSize), defineProperty(_ClipPathSide$ClipPat, "PageName", PageName), defineProperty(_ClipPathSide$ClipPat, "BackgroundSize", BackgroundSize), defineProperty(_ClipPathSide$ClipPat, "Transform3d", Transform3d), defineProperty(_ClipPathSide$ClipPat, "Transform", Transform), defineProperty(_ClipPathSide$ClipPat, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_ClipPathSide$ClipPat, "ColorPickerPanel", ColorPickerPanel), defineProperty(_ClipPathSide$ClipPat, "ColorStepsInfo", ColorStepsInfo), defineProperty(_ClipPathSide$ClipPat, "ColorSteps", ColorSteps), defineProperty(_ClipPathSide$ClipPat, "Name", Name), defineProperty(_ClipPathSide$ClipPat, "Size", Size), defineProperty(_ClipPathSide$ClipPat, "Position", Position), defineProperty(_ClipPathSide$ClipPat, "Radius", Radius), defineProperty(_ClipPathSide$ClipPat, "Clip", Clip), _ClipPathSide$ClipPat);
+}, defineProperty(_Page3D$ClipPathSide$, "ClipPathSVG", ClipPathSVG), defineProperty(_Page3D$ClipPathSide$, "Opacity", Opacity$3), defineProperty(_Page3D$ClipPathSide$, "RadiusFixed", RadiusFixed), defineProperty(_Page3D$ClipPathSide$, "Rotate", Rotate), defineProperty(_Page3D$ClipPathSide$, "LayerBlend", LayerBlend), defineProperty(_Page3D$ClipPathSide$, "GroupAlign", GroupAlign), defineProperty(_Page3D$ClipPathSide$, "PageShowGrid", PageShowGrid), defineProperty(_Page3D$ClipPathSide$, "ClipPath", ClipPath), defineProperty(_Page3D$ClipPathSide$, "PageLayout", PageLayout), defineProperty(_Page3D$ClipPathSide$, "ImageResource", ImageResource), defineProperty(_Page3D$ClipPathSide$, "BackgroundColor", BackgroundColor), defineProperty(_Page3D$ClipPathSide$, "BackgroundBlend", BackgroundBlend), defineProperty(_Page3D$ClipPathSide$, "BlendList", BlendList), defineProperty(_Page3D$ClipPathSide$, "MixBlendList", MixBlendList), defineProperty(_Page3D$ClipPathSide$, "FilterList", FilterList$1), defineProperty(_Page3D$ClipPathSide$, "PageExport", PageExport), defineProperty(_Page3D$ClipPathSide$, "PageSize", PageSize), defineProperty(_Page3D$ClipPathSide$, "PageName", PageName), defineProperty(_Page3D$ClipPathSide$, "BackgroundSize", BackgroundSize), defineProperty(_Page3D$ClipPathSide$, "Transform3d", Transform3d), defineProperty(_Page3D$ClipPathSide$, "Transform", Transform), defineProperty(_Page3D$ClipPathSide$, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_Page3D$ClipPathSide$, "ColorPickerPanel", ColorPickerPanel), defineProperty(_Page3D$ClipPathSide$, "ColorStepsInfo", ColorStepsInfo), defineProperty(_Page3D$ClipPathSide$, "ColorSteps", ColorSteps), defineProperty(_Page3D$ClipPathSide$, "Name", Name), defineProperty(_Page3D$ClipPathSide$, "Size", Size), defineProperty(_Page3D$ClipPathSide$, "Position", Position), defineProperty(_Page3D$ClipPathSide$, "Radius", Radius), defineProperty(_Page3D$ClipPathSide$, "Clip", Clip), _Page3D$ClipPathSide$);
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -19708,21 +19757,21 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>        \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Trans</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>        \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
-        key: 'scroll $layerInfoScroll',
-        value: function scroll$layerInfoScroll(e) {
+        key: SCROLL('$layerInfoScroll'),
+        value: function value(e) {
             this.setScrollTabTitle(this.refs.$layerInfoScroll);
         }
     }, {
-        key: 'scroll $layerTextScroll',
-        value: function scroll$layerTextScroll(e) {
+        key: SCROLL('$layerTextScroll'),
+        value: function value(e) {
             this.setScrollTabTitle(this.refs.$layerTextScroll);
         }
     }, {
-        key: 'scroll $layerFillScroll',
-        value: function scroll$layerFillScroll(e) {
+        key: SCROLL('$layerFillScroll'),
+        value: function value(e) {
             this.setScrollTabTitle(this.refs.$layerFillScroll);
         }
     }, {
@@ -21637,14 +21686,12 @@ var ExportWindow = function (_UIElement) {
     }, {
         key: "makePageCSS",
         value: function makePageCSS(page) {
-            var obj = {
-                position: 'relative',
-                overflow: page.clip ? 'hidden' : '',
-                width: page.width,
-                height: page.height
-            };
 
-            return this.read('/css/toString', obj);
+            var css = Object.assign({
+                position: 'relative'
+            }, this.read('/page/toCSS', page));
+
+            return this.read('/css/toString', css);
         }
     }, {
         key: "getClassName",
@@ -23769,7 +23816,7 @@ var CircleEditor = function (_UIElement) {
 
             if (!item) return false;
 
-            return item.clipPathType == CLIP_PATH_TYPE_CIRCLE;
+            return item.clipPathType == CLIP_PATH_TYPE_CIRCLE && !!item.showClipPathEditor;
         }
     }, {
         key: "getRectangle",
@@ -23942,7 +23989,7 @@ var EllipseEditor = function (_UIElement) {
 
             if (!item) return false;
 
-            return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE;
+            return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE && !!item.showClipPathEditor;
         }
     }, {
         key: "getRectangle",
@@ -24122,7 +24169,7 @@ var InsetEditor = function (_UIElement) {
 
             if (!item) return false;
 
-            return item.clipPathType == CLIP_PATH_TYPE_INSET;
+            return item.clipPathType == CLIP_PATH_TYPE_INSET && !!item.showClipPathEditor;
         }
     }, {
         key: "getRectangle",
@@ -24289,7 +24336,7 @@ var PolygonEditor = function (_UIElement) {
 
             if (!item) return false;
 
-            return item.clipPathType == CLIP_PATH_TYPE_POLYGON;
+            return item.clipPathType == CLIP_PATH_TYPE_POLYGON && !!item.showClipPathEditor;
         }
     }, {
         key: "getRectangle",
@@ -24739,21 +24786,12 @@ var GradientView = function (_UIElement) {
             });
         }
     }, {
-        key: 'makePageCSS',
-        value: function makePageCSS(page) {
-            return {
-                overflow: page.clip ? 'hidden' : '',
-                width: page.width,
-                height: page.height
-            };
-        }
-    }, {
         key: 'setBackgroundColor',
         value: function setBackgroundColor() {
 
             var page = this.read('/selection/current/page');
 
-            var pageCSS = this.makePageCSS(page || { clip: false });
+            var pageCSS = this.read('/page/toCSS', page || { clip: false });
 
             var canvasCSS = {
                 width: px$1(2000),
@@ -25211,28 +25249,6 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var PageInfoView = function (_UIElement) {
-    inherits(PageInfoView, _UIElement);
-
-    function PageInfoView() {
-        classCallCheck(this, PageInfoView);
-        return possibleConstructorReturn(this, (PageInfoView.__proto__ || Object.getPrototypeOf(PageInfoView)).apply(this, arguments));
-    }
-
-    createClass(PageInfoView, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='page-info property-view'> \n                <PageName></PageName>\n                <PageSize></PageSize>\n                <clip></clip>\n            </div>\n        ";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return items;
-        }
-    }]);
-    return PageInfoView;
-}(UIElement);
-
 var SelectLayerView = function (_UIElement) {
     inherits(SelectLayerView, _UIElement);
 
@@ -25244,14 +25260,13 @@ var SelectLayerView = function (_UIElement) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"select-layer-view\">\n\n                <div class=\"item-info\">\n                    <PageInfoView></PageInfoView>\n                    <LayerListView></LayerListView>\n                </div>\n                <PageListView></PageListView>                            \n            </div>\n        ";
+            return "    \n            <div class=\"select-layer-view\">\n\n                <div class=\"item-info\">\n                    <LayerListView></LayerListView>\n                </div>\n                <PageListView></PageListView>                            \n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
             return {
                 PageListView: PageListView,
-                PageInfoView: PageInfoView,
                 LayerListView: LayerListView
             };
         }

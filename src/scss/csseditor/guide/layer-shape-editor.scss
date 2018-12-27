@@ -18,14 +18,6 @@
         top: 0px;
         bottom: 0px;
 
-        > .center, 
-        > .radius {
-            background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-            background-size: 1px 1px;
-            background-position: center 0px, 0px center;
-            background-repeat: repeat-y, repeat-x;
-        }
-
         .center {
             position: absolute;
             width: 16px;

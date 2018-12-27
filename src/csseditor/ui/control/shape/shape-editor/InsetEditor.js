@@ -71,7 +71,7 @@ export default class InsetEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_INSET; 
+        return item.clipPathType == CLIP_PATH_TYPE_INSET && !!item.showClipPathEditor; ; 
     }
 
     getRectangle () {

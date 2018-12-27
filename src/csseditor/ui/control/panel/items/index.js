@@ -43,10 +43,10 @@ import BackgroundClip from "./BackgroundClip";
 import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
 import BackdropList from "./BackdropList";
 import EmptyArea from "./EmptyArea";
-
-
+import Page3D from "./Page3D";
 
 export default {
+    Page3D,
     ClipPathSide,
     ClipPathPolygon,
     ClipPathSVG,
