@@ -1,6 +1,6 @@
 import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM, EVENT_CHANGE_PAGE_TRANSFORM } from '../../../types/event';
-import { percent, percentUnit, unitValue } from '../../../../util/css/types';
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM, EVENT_CHANGE_PAGE_TRANSFORM } from '../../../types/event';
+import { percent, percentUnit, unitValue, valueUnit } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
 
@@ -138,7 +138,6 @@ export default class PerspectiveOriginPosition extends UIElement {
 
     setPerspectiveOriginPosition (perspectiveOriginPositionX, perspectiveOriginPositionY) {
         this.read('/selection/current/page/id', (id) => {
-
             this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionX, perspectiveOriginPositionY});
         });
     }
@@ -174,7 +173,7 @@ export default class PerspectiveOriginPosition extends UIElement {
     
     [DOUBLECLICK('$dragPointer')] (e) {
         e.preventDefault()
-        this.setPerspectiveOriginPosition('center')
+        this.setPerspectiveOriginPosition(valueUnit('center'), valueUnit('center'))
         this.refreshUI()
     }
 }

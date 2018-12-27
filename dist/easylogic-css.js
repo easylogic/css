@@ -19782,7 +19782,7 @@ var Page3D = function (_UIElement) {
     createClass(Page3D, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"number\" min=\"0\" max=\"100\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        \n                        <div>\n                            <input type=\"number\" min=\"0\" max=\"100\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        \n                        <div>\n                            <input type=\"number\" min=\"0\" max=\"100\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        \n                        <div>\n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        \n                        <div>\n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_PAGE_TRANSFORM),
@@ -19814,6 +19814,39 @@ var Page3D = function (_UIElement) {
                 var preserve = _this3.refs.$preserve.checked();
 
                 _this3.commit(CHANGE_PAGE, { id: id, preserve: preserve });
+            });
+        }
+    }, {
+        key: INPUT('$perspective'),
+        value: function value$$1(e) {
+            var _this4 = this;
+
+            this.read('/selection/current/page/id', function (id) {
+                var perspective = pxUnit(+_this4.refs.$perspective.val());
+
+                _this4.commit(CHANGE_PAGE_TRANSFORM, { id: id, perspective: perspective });
+            });
+        }
+    }, {
+        key: INPUT('$x'),
+        value: function value$$1(e) {
+            var _this5 = this;
+
+            this.read('/selection/current/page/id', function (id) {
+                var perspectiveOriginPositionX = percentUnit(+_this5.refs.$x.val());
+
+                _this5.commit(CHANGE_PAGE_TRANSFORM, { id: id, perspectiveOriginPositionX: perspectiveOriginPositionX });
+            });
+        }
+    }, {
+        key: INPUT('$y'),
+        value: function value$$1(e) {
+            var _this6 = this;
+
+            this.read('/selection/current/page/id', function (id) {
+                var perspectiveOriginPositionY = percentUnit(+_this6.refs.$y.val());
+
+                _this6.commit(CHANGE_PAGE_TRANSFORM, { id: id, perspectiveOriginPositionY: perspectiveOriginPositionY });
             });
         }
     }]);
@@ -21539,7 +21572,6 @@ var PerspectiveOriginPosition = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/page/id', function (id) {
-
                 _this2.commit(CHANGE_PAGE_TRANSFORM, { id: id, perspectiveOriginPositionX: perspectiveOriginPositionX, perspectiveOriginPositionY: perspectiveOriginPositionY });
             });
         }
@@ -21579,7 +21611,7 @@ var PerspectiveOriginPosition = function (_UIElement) {
         key: DOUBLECLICK('$dragPointer'),
         value: function value$$1(e) {
             e.preventDefault();
-            this.setPerspectiveOriginPosition('center');
+            this.setPerspectiveOriginPosition(valueUnit('center'), valueUnit('center'));
             this.refreshUI();
         }
     }]);
@@ -25327,7 +25359,7 @@ var GradientView = function (_UIElement) {
             }
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE),
+        key: MULTI_EVENT(EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE, EVENT_CHANGE_PAGE_TRANSFORM),
         value: function value$$1() {
             this.setBackgroundColor();
         }

@@ -54,7 +54,7 @@ export default class PageManager extends BaseModule {
             css['perspective-origin'] = `${stringUnit(sample.perspectiveOriginPositionX)} ${stringUnit(sample.perspectiveOriginPositionY)}`;
         }        
 
- 
+
         return $store.read('/css/sorting', css); 
     }    
 

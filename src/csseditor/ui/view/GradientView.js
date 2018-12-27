@@ -35,7 +35,8 @@ import {
     EVENT_CHANGE_LAYER_TEXT,
     EVENT_CHANGE_LAYER_BACKDROP_FILTER,
     EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
+    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    EVENT_CHANGE_PAGE_TRANSFORM
 } from '../../types/event';
 import { px } from '../../../util/css/types';
 
@@ -199,7 +200,8 @@ export default class GradientView extends UIElement {
 
     [MULTI_EVENT(
         EVENT_CHANGE_PAGE_SIZE,
-        EVENT_CHANGE_PAGE
+        EVENT_CHANGE_PAGE,
+        EVENT_CHANGE_PAGE_TRANSFORM
     )] () { this.setBackgroundColor(); }
 
     // [MULTI_EVENT(
