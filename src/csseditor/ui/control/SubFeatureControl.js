@@ -8,6 +8,8 @@ import PredefinedRadialGradientAngle from "./shape/PredefinedRadialGradientAngle
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
 import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
+import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
+import PerspectiveOriginPosition from "./shape/PerspectiveOriginPosition";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -16,6 +18,10 @@ export default class SubFeatureControl extends UIElement {
         return `
             <div class='sub-feature-control'>         
                 <div class='feature'>
+                    <div class="property-view" ref="$perspective">
+                        <PredefinedPerspectiveOriginPosition></PredefinedPerspectiveOriginPosition>
+                        <PerspectiveOriginPosition></PerspectiveOriginPosition>
+                    </div>
                     <div class="property-view" ref="$backgroundSize">
                         <PredefinedBackgroundPosition></PredefinedBackgroundPosition>
                         <BackgroundResizer></BackgroundResizer>
@@ -36,6 +42,8 @@ export default class SubFeatureControl extends UIElement {
 
     components () {
         return { 
+            PerspectiveOriginPosition,
+            PredefinedPerspectiveOriginPosition,
             PredefinedRadialGradientAngle,
             GradientAngle, 
             GradientPosition, 
@@ -50,6 +58,7 @@ export default class SubFeatureControl extends UIElement {
 
     refresh () {
         this.$el.toggle(this.isShow())
+        this.refs.$perspective.toggleClass('hide', this.isNotPage());
         this.refs.$backgroundSize.toggleClass('hide', this.isNotImage() )
         this.refs.$linear.toggleClass('hide', !this.isLinearShow())
         this.refs.$radial.toggleClass('hide', !this.isRadialShow())
@@ -63,6 +72,10 @@ export default class SubFeatureControl extends UIElement {
 
     isNotImage () {
         return this.read('/selection/is/image') == false;
+    }
+
+    isNotPage () {
+        return this.read('/selection/is/page') == false; 
     }
 
     isLinearShow () {

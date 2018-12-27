@@ -156,7 +156,7 @@ export default class FilterList extends BasePropertyItem {
     }
 
     [CLICK('$filterList input[type=checkbox]')] (e) {
-        var $check = e.$delegateTargt;
+        var $check = e.$delegateTarget;
         var key = $check.attr('data-key');
         this.updateFilterKeyChecked(key, $check.checked())
     }

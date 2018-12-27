@@ -1,8 +1,8 @@
-import UIElement from "../../../../../colorpicker/UIElement";
-import { parseParamNumber } from "../../../../../util/gl/filter/util";
-import { CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR, CHANGE_PAGE } from "../../../../types/event";
-import { px } from "../../../../../util/css/types";
-import { CLICK, INPUT } from "../../../../../util/Event";
+import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT_CHANGE_EDITOR, CHANGE_PAGE, EVENT_CHANGE_SELECTION, EVENT_CHANGE_PAGE_TRANSFORM } from "../../../../types/event";
+import { UNIT_PERCENT, unitString, unitValue, percentUnit, pxUnit, UNIT_PX } from "../../../../../util/css/types";
+import { CLICK } from "../../../../../util/Event";
+import { defaultValue } from "../../../../../util/functions/func";
 
 export default class Page3D extends UIElement {
     template () {
@@ -15,19 +15,50 @@ export default class Page3D extends UIElement {
                         <div>
                             <label><input type='checkbox' ref="$preserve"> preserve-3d </label>
                         </div>
+                    </div>    
+                    <div>
+                        <label> Perspective </label>
+                        <div>
+                            <input type="number" min="0" max="100" ref="$perspective" /> <span class='unit'>${unitString(UNIT_PX)}</span>
+                        </div>                        
                     </div>                                 
+                    <div>
+                        <label>Origin  X </label>
+                        
+                        <div>
+                            <input type="number" min="0" max="100" ref="$x" /> <span class='unit'>${unitString(UNIT_PERCENT)}</span>
+                        </div>
+                    </div>                                            
+                    <div>
+                        <label>Origin Y </label>
+                        
+                        <div>
+                            <input type="number" min="0" max="100" ref="$y" /> <span class='unit'>${unitString(UNIT_PERCENT)}</span>
+                        </div>
+                    </div>                                                                
                 </div>
             </div>
         `
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [MULTI_EVENT(
+        EVENT_CHANGE_EDITOR,
+        EVENT_CHANGE_SELECTION,
+        EVENT_CHANGE_PAGE_TRANSFORM
+    )] () {
         this.refresh()
     }
 
     refresh() {
         this.read('/selection/current/page', (item) => {
-            this.refs.$preserve.checked(!!item.preserve)
+            var perspective = unitValue( defaultValue(item.perspective, pxUnit (0)) );
+            var perspectiveOriginPositionX = unitValue( defaultValue(item.perspectiveOriginPositionX, percentUnit(0)) );
+            var perspectiveOriginPositionY = unitValue( defaultValue(item.perspectiveOriginPositionY, percentUnit(0)) );
+
+            this.refs.$perspective.val(perspective);
+            this.refs.$x.val(perspectiveOriginPositionX);
+            this.refs.$y.val(perspectiveOriginPositionY);
+            this.refs.$preserve.checked(!!item.preserve);
         })
         
     }

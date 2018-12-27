@@ -26,7 +26,7 @@ import {
     IMAGE_ITEM_TYPE_STATIC,
     IMAGE_ITEM_TYPE_IMAGE
 } from "./ItemTypes";
-import { string2unit } from "../../util/css/types";
+import { string2unit, percentUnit, UNIT_PX, unitObject } from "../../util/css/types";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -85,7 +85,16 @@ const updateUnitField = {
     borderTopLeftRadius: true,
     borderBottomLeftRadius: true,
     borderTopRightRadius: true,
-    borderBottomRightRadius: true
+    borderBottomRightRadius: true,
+    backgroundSizeWidth: true,
+    backgroundSizeHeight: true
+}
+
+const updateNumberUnitField = {
+    backgroundPositionX: UNIT_PX,
+    backgroundPositionY: UNIT_PX,
+    backgroundSizeHeight: UNIT_PX,
+    backgroundSizeWidth: UNIT_PX,
 }
 
 const convertStyle = (item) => {
@@ -100,6 +109,8 @@ const convertStyle = (item) => {
     Object.keys(item).forEach(key => {
         if (updateUnitField[key]) {
             item[key] = string2unit (item[key])
+        } else if (updateNumberUnitField[key]) {
+            item[key] = unitObject (item[key], updateNumberUnitField[key])
         }
     })
 
@@ -575,7 +586,7 @@ export default class ItemManager extends BaseModule {
         item.fileType = img.fileType;
         item.backgroundImage = img.url;
         item.backgroundImageDataURI = img.datauri;
-        item.backgroundSizeWidth = '100%';
+        item.backgroundSizeWidth =  percentUnit(100);
 
         $store.run('/item/set', item, isSelected);
         $store.run('/item/sort', id); 
@@ -590,7 +601,7 @@ export default class ItemManager extends BaseModule {
         if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId; 
         item.backgroundImage = img.url;
         item.backgroundImageDataURI = img.datauri;
-        item.backgroundSizeWidth = '100%';
+        item.backgroundSizeWidth = percentUnit(100);
 
         $store.run('/item/set', item);
     }         
@@ -608,7 +619,7 @@ export default class ItemManager extends BaseModule {
         item.colors = img.colors;         
         item.fileType = img.fileType;
         item.backgroundImage = img.url;
-        item.backgroundSizeWidth = '100%';
+        item.backgroundSizeWidth = percentUnit(100);
 
         $store.run('/item/set', item, isSelected);
         $store.run('/item/sort', id); 
@@ -671,7 +682,7 @@ export default class ItemManager extends BaseModule {
     }
 
     '*/item/recover/image' ($store, image, parentId) {
-        var newImageId = $store.read('/item/create/object', Object.assign({parentId}, image.image));
+        var newImageId = $store.read('/item/create/object', Object.assign({parentId}, convertStyle(image.image)));
         image.colorsteps.forEach(step => {
             $store.read('/item/create/object', Object.assign({}, step, {parentId: newImageId}))
         })

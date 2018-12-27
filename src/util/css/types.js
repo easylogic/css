@@ -1,11 +1,13 @@
 import { percent2px, em2px, px2percent, em2percent, percent2em, px2em, parseParamNumber } from "../filter/functions";
 
+export const UNIT_VALUE = 'value';
 export const UNIT_PX = 'px';
 export const UNIT_EM = 'em';
 export const UNIT_PERCENT = 'percent';
 export const UNIT_DEG = 'deg';
 export const UNIT_COLOR = 'color'
 
+export const UNIT_VALUE_STRING = '';
 export const UNIT_PX_STRING = 'px';
 export const UNIT_EM_STRING = 'em';
 export const UNIT_PERCENT_STRING = '%';
@@ -13,6 +15,7 @@ export const UNIT_DEG_STRING = '°';
 export const UNIT_COLOR_STRING = '';
 
 export const UNIT_STRINGS = {
+    [UNIT_VALUE]: UNIT_VALUE_STRING,
     [UNIT_PX]: UNIT_PX_STRING,
     [UNIT_EM]: UNIT_EM_STRING,
     [UNIT_PERCENT]: UNIT_PERCENT_STRING,
@@ -20,6 +23,7 @@ export const UNIT_STRINGS = {
     [UNIT_COLOR]: UNIT_COLOR_STRING
 }
 
+export function value(value) { return value }
 export function px(value) { return value + UNIT_PX_STRING; }
 export function em(value) { return value + UNIT_EM_STRING; }
 export function percent(value) { return value + UNIT_PERCENT_STRING; }
@@ -49,7 +53,7 @@ export function unitValue(obj) {
 }
 
 export function isUnit (obj, unit) {
-    return obj.unit == unit; 
+    return obj && obj.unit == unit; 
 }
 
 export function isPxUnit(obj) {
@@ -72,9 +76,17 @@ export function isDegUnit(obj) {
     return isUnit(obj, UNIT_DEG);
 }
 
+export function isValueUnit(obj) {
+    return isUnit(obj, UNIT_VALUE);
+}
+
 export function unitObject(value, unit) {
     return {unit, value}
 } 
+
+export function valueUnit (value) {
+    return { unit: UNIT_VALUE, value }
+}
 
 export function percentUnit (value) {
     return { unit: UNIT_PERCENT, value }
@@ -83,7 +95,6 @@ export function percentUnit (value) {
 export function pxUnit (value) {
     return { unit: UNIT_PX, value }
 }
-
 
 export function degUnit (value) {
     return { unit: UNIT_DEG, value }

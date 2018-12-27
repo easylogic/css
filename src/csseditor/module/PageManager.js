@@ -1,4 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
+import { stringUnit, isPercentUnit } from "../../util/css/types";
 
 export default class PageManager extends BaseModule {
 
@@ -21,6 +22,14 @@ export default class PageManager extends BaseModule {
             width: sample.width,
             height: sample.height
         } 
+
+        if (sample.perspective) {
+            css.perspective = stringUnit(sample.perspective);
+        }
+
+        if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY) ) {
+            css['perspective-origin'] = `${stringUnit(sample.perspectiveOriginPositionX)} ${stringUnit(sample.perspectiveOriginPositionY)}`;
+        }        
  
         return $store.read('/css/sorting', css); 
 
@@ -35,6 +44,16 @@ export default class PageManager extends BaseModule {
             width: sample.width,
             height: sample.height
         } 
+
+
+        if (sample.perspective) {
+            css.perspective = stringUnit(sample.perspective);
+        }
+
+        if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY) ) {
+            css['perspective-origin'] = `${stringUnit(sample.perspectiveOriginPositionX)} ${stringUnit(sample.perspectiveOriginPositionY)}`;
+        }        
+
  
         return $store.read('/css/sorting', css); 
     }    

@@ -3,52 +3,54 @@ import {
     EVENT_CHANGE_IMAGE, 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_SELECTION, 
-    CHANGE_IMAGE
+    CHANGE_IMAGE,
+    CHANGE_PAGE_TRANSFORM,
+    EVENT_CHANGE_PAGE_TRANSFORM
 } from '../../../types/event';
 import { CLICK } from '../../../../util/Event';
 import { SELF } from '../../../../util/EventMachin';
-import { valueUnit, pxUnit } from '../../../../util/css/types';
+import { percentUnit, unit, valueUnit } from '../../../../util/css/types';
 
 const defined_position = {
     'to right': { 
-        backgroundPositionX: valueUnit('right'), 
-        backgroundPositionY: valueUnit('center')
+        perspectiveOriginPositionX: valueUnit('right'), 
+        perspectiveOriginPositionY: valueUnit('center')
     },
     'to left': { 
-        backgroundPositionX: valueUnit('left'), 
-        backgroundPositionY: valueUnit('center')
+        perspectiveOriginPositionX: valueUnit('left'), 
+        perspectiveOriginPositionY: valueUnit('center')
     },
     'to top': { 
-        backgroundPositionX: valueUnit('center'), 
-        backgroundPositionY: valueUnit('top')
+        perspectiveOriginPositionX: valueUnit('center'), 
+        perspectiveOriginPositionY: valueUnit('top')
     },
     'to bottom': { 
-        backgroundPositionX: valueUnit('center'), 
-        backgroundPositionY: valueUnit('bottom')
+        perspectiveOriginPositionX: valueUnit('center'), 
+        perspectiveOriginPositionY: valueUnit('bottom')
     },
     'to top right': { 
-        backgroundPositionX: valueUnit('right'), 
-        backgroundPositionY: valueUnit('top')
+        perspectiveOriginPositionX: valueUnit('right'), 
+        perspectiveOriginPositionY: valueUnit('top')
     },
     'to bottom right': { 
-        backgroundPositionX: valueUnit('right'), 
-        backgroundPositionY: valueUnit('bottom')
+        perspectiveOriginPositionX: valueUnit('right'), 
+        perspectiveOriginPositionY: valueUnit('bottom')
     },
     'to bottom left': { 
-        backgroundPositionX: valueUnit('left'), 
-        backgroundPositionY: valueUnit('bottom')
+        perspectiveOriginPositionX: valueUnit('left'), 
+        perspectiveOriginPositionY: valueUnit('bottom')
     },
     'to top left': { 
-        backgroundPositionX: valueUnit('left'), 
-        backgroundPositionY: valueUnit('top')
+        perspectiveOriginPositionX: valueUnit('left'), 
+        perspectiveOriginPositionY: valueUnit('top')
     }
 }
 
-export default class PredefinedBackgroundPosition extends UIElement {
+export default class PredefinedPerspectiveOriginPosition extends UIElement {
 
     template () { 
         return `
-            <div class="predefined-background-position">
+            <div class="predefined-perspective-origin-position">
                 <button type="button" data-value="to right"></button>                          
                 <button type="button" data-value="to left"></button>                                                  
                 <button type="button" data-value="to top"></button>                            
@@ -61,19 +63,25 @@ export default class PredefinedBackgroundPosition extends UIElement {
         `
     }
 
-    refresh () {
+    refresh () { 
         this.$el.toggle(this.isShow())
     }
 
 
     isShow () {
-        return this.read('/selection/is/image')
+        if (!this.read('/selection/is/page')) return false; 
+
+        var page = this.read('/selection/current/page')
+
+        if (!page) return false; 
+
+        return !!page.preserve
     }
 
     getPosition (type) {
         return defined_position[type] || {
-            backgroundPositionX: valueUnit('center'),
-            backgroundPositionY: valueUnit('center')
+            perspectiveOriginPositionX: percentUnit(0),
+            perspectiveOriginPositionY: percentUnit(0)
         }
     }
 
@@ -81,14 +89,14 @@ export default class PredefinedBackgroundPosition extends UIElement {
         CLICK('$el button'),
         SELF()
     )] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('/selection/current/page/id', (id) => {
             var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
-            this.commit(CHANGE_IMAGE, {id, ...pos})
+            this.commit(CHANGE_PAGE_TRANSFORM, {id, ...pos})
         })
     }
 
     [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE,
+        EVENT_CHANGE_PAGE_TRANSFORM,
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION
     )] () { this.refresh() }

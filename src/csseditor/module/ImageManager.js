@@ -1,7 +1,7 @@
 import ImageLoader from '../../util/ImageLoader'
 import BaseModule from "../../colorpicker/BaseModule";
 import { ImageToRGB, palette } from '../../util/functions/image';
-import { get } from '../../util/functions/func';
+import { get, defaultValue } from '../../util/functions/func';
 import { 
     IMAGE_ITEM_TYPE_LINEAR, 
     IMAGE_ITEM_TYPE_REPEATING_LINEAR, 
@@ -12,7 +12,7 @@ import {
     IMAGE_ITEM_TYPE_IMAGE, 
     IMAGE_ITEM_TYPE_STATIC 
 } from './ItemTypes';
-import { px, isPX, isEM, em, percent } from '../../util/css/types';
+import { px, isPX, isEM, em, percent, stringUnit, valueUnit, unitObject, percentUnit } from '../../util/css/types';
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -251,11 +251,11 @@ export default class ImageManager extends BaseModule {
             return image.backgroundSize; 
         } else if (image.backgroundSizeWidth && image.backgroundSizeHeight) {
             return [
-                image.backgroundSizeWidth, 
-                image.backgroundSizeHeight
+                stringUnit(image.backgroundSizeWidth), 
+                stringUnit(image.backgroundSizeHeight)
             ].join(' ')
         } else if (image.backgroundSizeWidth) {
-            return image.backgroundSizeWidth;
+            return stringUnit(image.backgroundSizeWidth);
         }
 
         return 'auto'
@@ -264,13 +264,10 @@ export default class ImageManager extends BaseModule {
 
     '*/image/toBackgroundPositionString' ($store, image) {
 
-        var x = image.backgroundPositionX != null ? image.backgroundPositionX : 'center';
-        var y = image.backgroundPositionY != null ? image.backgroundPositionY : 'center';
+        var x = defaultValue(image.backgroundPositionX, valueUnit('center'))
+        var y = defaultValue(image.backgroundPositionY, valueUnit('center'))
 
-        if (typeof x == 'number') { x = px (x); }
-        if (typeof y == 'number') { y = px(y); }
-
-        return [x, y].join(' ')
+        return `${stringUnit(x)} ${stringUnit(y)}`;
     }      
     
     '*/image/toBackgroundRepeatString' ($store, image) {
@@ -322,6 +319,8 @@ export default class ImageManager extends BaseModule {
             return a.index > b.index ? 1 : -1;
         })*/
 
+        // console.log(colors);
+
         var newColors = []
         colors.forEach( (c, index) => {
             if (c.cut && index > 0) {
@@ -339,7 +338,9 @@ export default class ImageManager extends BaseModule {
         
         colors = newColors.map(f => {
 
-            var value = $store.read('/image/get/unitValue', f);
+            var value = stringUnit( percentUnit(f.percent) )
+
+            // console.log(value,f, f[f.unit], f.unit);
 
             return `${f.color} ${value}`
         }).join(',')

@@ -5,7 +5,7 @@ import {
     em2percent, em2px 
 } from "../../../../../../util/filter/functions";
 import { parseParamNumber } from "../../../../../../util/gl/filter/util";
-import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject } from "../../../../../../util/css/types";
+import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject, isPxUnit, isPercentUnit, isEmUnit } from "../../../../../../util/css/types";
 import { INPUT, CLICK } from "../../../../../../util/Event";
 
 const position_list = [
@@ -58,6 +58,13 @@ export default class UnitRange extends UIElement {
     }
 
     refresh (value = '') {
+
+        if (isPxUnit(value) || isPercentUnit(value) || isEmUnit(value)) {
+            this.selectUnit(value.unit, value.value);
+            return; 
+        }
+
+        //TODO: remove legacy code 
         value = (value || '') + '' 
         var unit = UNIT_PX
         if (value.includes(UNIT_PERCENT)) {
@@ -69,6 +76,8 @@ export default class UnitRange extends UIElement {
         value = position_list.includes(value) ? "" : parseParamNumber(value);
 
         this.selectUnit(unit, value);
+        //TODO: remove legacy code 
+
     }
     
     initializeRangeMax (unit) {
@@ -133,14 +142,16 @@ export default class UnitRange extends UIElement {
     }
 
     [INPUT('$range')] (e) {
-        this.refs.$number.val(this.refs.$range.val())
+        var value = +this.refs.$range.val();
+        this.refs.$number.val(value)
         this.updateRange();    
-        this.updateFunction(unitObject(this.refs.$range.val(), this.unit));    
+        this.updateFunction(unitObject(value, this.unit));    
     }
 
     [INPUT('$number')] (e) {
-        this.refs.$range.val(this.refs.$number.val())
+        var value = +this.refs.$number.val();
+        this.refs.$range.val(value)
         this.updateRange();        
-        this.updateFunction(unitObject (this.refs.$range.val(), this.unit));
+        this.updateFunction(unitObject (value, this.unit));
     }    
 }

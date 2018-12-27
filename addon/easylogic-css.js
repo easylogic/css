@@ -3344,19 +3344,22 @@ var FilterList = _extends({}, image$1, pixel$1, matrix$1, multi$2);
 
 var _UNIT_STRINGS;
 
+var UNIT_VALUE = 'value';
 var UNIT_PX = 'px';
 var UNIT_EM = 'em';
 var UNIT_PERCENT = 'percent';
 var UNIT_DEG = 'deg';
 var UNIT_COLOR = 'color';
 
+var UNIT_VALUE_STRING = '';
 var UNIT_PX_STRING = 'px';
 var UNIT_EM_STRING = 'em';
 var UNIT_PERCENT_STRING = '%';
 
 var UNIT_COLOR_STRING = '';
 
-var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
+var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_VALUE, UNIT_VALUE_STRING), defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
+
 
 function px$1(value) {
     return value + UNIT_PX_STRING;
@@ -3396,10 +3399,12 @@ function stringUnit(obj) {
     return unit(obj.value, obj.unit);
 }
 
-
+function unitValue(obj) {
+    return obj.value;
+}
 
 function isUnit(obj, unit) {
-    return obj.unit == unit;
+    return obj && obj.unit == unit;
 }
 
 function isPxUnit(obj) {
@@ -3420,8 +3425,14 @@ function isColorUnit(obj) {
 
 
 
+
+
 function unitObject(value, unit) {
     return { unit: unit, value: value };
+}
+
+function valueUnit(value) {
+    return { unit: UNIT_VALUE, value: value };
 }
 
 function percentUnit(value) {
@@ -3516,10 +3527,10 @@ function weight(arr) {
     });
 }
 
-function repeat(value, num) {
+function repeat(value$$1, num) {
     var arr = new Array(num);
     for (var i = 0; i < num; i++) {
-        arr[i] = value;
+        arr[i] = value$$1;
     }
     return arr;
 }
@@ -3778,14 +3789,14 @@ function parseParamNumber$1(param, callback) {
 
 function unit2px(unitValue$$1, maxValue) {
 
-    var value = parseParamNumber$1(unitValue$$1);
+    var value$$1 = parseParamNumber$1(unitValue$$1);
 
     if (unitValue$$1.includes(UNIT_PERCENT_STRING)) {
-        return percent2px(value, maxValue);
+        return percent2px(value$$1, maxValue);
     } else if (unitValue$$1.includes(UNIT_PX_STRING)) {
-        return value;
+        return value$$1;
     } else if (unitValue$$1.includes(UNIT_EM_STRING)) {
-        return em2px(value, maxValue);
+        return em2px(value$$1, maxValue);
     }
 }
 
@@ -3984,8 +3995,8 @@ function createBlurMatrix() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3;
 
     var count = Math.pow(amount, 2);
-    var value = 1 / count;
-    return repeat(value, count);
+    var value$$1 = 1 / count;
+    return repeat(value$$1, count);
 }
 
 function fillColor(pixels, i, r, g, b, a) {
@@ -5079,8 +5090,8 @@ var GLCanvas = function () {
         }
     }, {
         key: 'isPowerOf2',
-        value: function isPowerOf2(value) {
-            return (value & value - 1) == 0;
+        value: function isPowerOf2(value$$1) {
+            return (value$$1 & value$$1 - 1) == 0;
         }
     }, {
         key: 'bindTexture',
@@ -5175,18 +5186,18 @@ var GLCanvas = function () {
         }
     }, {
         key: 'enumToString',
-        value: function enumToString(value) {
+        value: function enumToString(value$$1) {
             var gl = this.gl;
 
-            if (value === 0) {
+            if (value$$1 === 0) {
                 return "NONE";
             }
             for (var key in gl) {
-                if (gl[key] === value) {
+                if (gl[key] === value$$1) {
                     return key;
                 }
             }
-            return "0x" + value.toString(16);
+            return "0x" + value$$1.toString(16);
         }
     }, {
         key: 'bindFrameBuffer',
@@ -5850,12 +5861,12 @@ var Dom = function () {
 
     createClass(Dom, [{
         key: 'attr',
-        value: function attr(key, value) {
+        value: function attr(key, value$$1) {
             if (arguments.length == 1) {
                 return this.el.getAttribute(key);
             }
 
-            this.el.setAttribute(key, value);
+            this.el.setAttribute(key, value$$1);
 
             return this;
         }
@@ -6032,11 +6043,11 @@ var Dom = function () {
         }
     }, {
         key: 'text',
-        value: function text(value) {
+        value: function text(value$$1) {
             if (arguments.length == 0) {
                 return this.el.textContent;
             } else {
-                this.el.textContent = value;
+                this.el.textContent = value$$1;
                 return this;
             }
         }
@@ -6053,11 +6064,11 @@ var Dom = function () {
 
     }, {
         key: 'css',
-        value: function css(key, value) {
+        value: function css(key, value$$1) {
             var _this = this;
 
             if (arguments.length == 2) {
-                this.el.style[key] = value;
+                this.el.style[key] = value$$1;
             } else if (arguments.length == 1) {
 
                 if (typeof key == 'string') {
@@ -6074,12 +6085,12 @@ var Dom = function () {
         }
     }, {
         key: 'cssText',
-        value: function cssText(value) {
-            if (typeof value == 'undefined') {
+        value: function cssText(value$$1) {
+            if (typeof value$$1 == 'undefined') {
                 return this.el.style.cssText;
             }
 
-            this.el.style.cssText = value;
+            this.el.style.cssText = value$$1;
 
             return this;
         }
@@ -6095,8 +6106,8 @@ var Dom = function () {
         }
     }, {
         key: 'px',
-        value: function px$$1(key, value) {
-            return this.css(key, px$1(value));
+        value: function px$$1(key, value$$1) {
+            return this.css(key, px$1(value$$1));
         }
     }, {
         key: 'rect',
@@ -6171,9 +6182,9 @@ var Dom = function () {
         }
     }, {
         key: 'data',
-        value: function data(key, value) {
+        value: function data(key, value$$1) {
             if (arguments.length == 2) {
-                cached[this.dataKey(key)] = value;
+                cached[this.dataKey(key)] = value$$1;
             } else if (arguments.length == 1) {
                 return cached[this.dataKey(key)];
             } else {
@@ -6186,8 +6197,8 @@ var Dom = function () {
                     }
 
                     return false;
-                }).map(function (value) {
-                    return cached[value];
+                }).map(function (value$$1) {
+                    return cached[value$$1];
                 });
             }
 
@@ -6195,11 +6206,11 @@ var Dom = function () {
         }
     }, {
         key: 'val',
-        value: function val(value) {
+        value: function val(value$$1) {
             if (arguments.length == 0) {
                 return this.el.value;
             } else if (arguments.length == 1) {
-                this.el.value = value;
+                this.el.value = value$$1;
             }
 
             return this;
@@ -8163,8 +8174,8 @@ var BaseSlider = function (_BaseBox) {
 
     }, {
         key: 'getCurrent',
-        value: function getCurrent(value) {
-            return min + this.getMaxDist() * value;
+        value: function getCurrent(value$$1) {
+            return min + this.getMaxDist() * value$$1;
         }
 
         /** get min position on slider container  */
@@ -9789,6 +9800,7 @@ var CHANGE_SELECTION = 'CHANGE_SELECTION';
 var CHANGE_PAGE = 'CHANGE_PAGE';
 var CHANGE_PAGE_NAME = 'CHANGE_PAGE_NAME';
 var CHANGE_PAGE_SIZE = 'CHANGE_PAGE_SIZE';
+var CHANGE_PAGE_TRANSFORM = 'CHANGE_PAGE_TRANSFORM';
 
 var CHANGE_LAYER = 'CHANGE_LAYER';
 var CHANGE_LAYER_NAME = 'CHANGE_LAYER_NAME';
@@ -9834,6 +9846,7 @@ var EVENT_CHANGE_SELECTION = '@' + CHANGE_SELECTION;
 var EVENT_CHANGE_PAGE = '@' + CHANGE_PAGE;
 
 var EVENT_CHANGE_PAGE_SIZE = '@' + CHANGE_PAGE_SIZE;
+var EVENT_CHANGE_PAGE_TRANSFORM = '@' + CHANGE_PAGE_TRANSFORM;
 
 var EVENT_CHANGE_LAYER = '@' + CHANGE_LAYER;
 
@@ -10055,8 +10068,8 @@ var CLIP_PATH_SIDE_TYPE_NONE = 'none';
 var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
 var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
 
-var isUndefined$1 = function isUndefined(value) {
-    return typeof value == 'undefined' || value == null;
+var isUndefined$1 = function isUndefined(value$$1) {
+    return typeof value$$1 == 'undefined' || value$$1 == null;
 };
 
 var INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP;
@@ -10602,9 +10615,9 @@ var ImageManager = function (_BaseModule) {
             if (image$$1.backgroundSize == 'contain' || image$$1.backgroundSize == 'cover') {
                 return image$$1.backgroundSize;
             } else if (image$$1.backgroundSizeWidth && image$$1.backgroundSizeHeight) {
-                return [image$$1.backgroundSizeWidth, image$$1.backgroundSizeHeight].join(' ');
+                return [stringUnit(image$$1.backgroundSizeWidth), stringUnit(image$$1.backgroundSizeHeight)].join(' ');
             } else if (image$$1.backgroundSizeWidth) {
-                return image$$1.backgroundSizeWidth;
+                return stringUnit(image$$1.backgroundSizeWidth);
             }
 
             return 'auto';
@@ -10613,17 +10626,10 @@ var ImageManager = function (_BaseModule) {
         key: '*/image/toBackgroundPositionString',
         value: function imageToBackgroundPositionString($store, image$$1) {
 
-            var x = image$$1.backgroundPositionX != null ? image$$1.backgroundPositionX : 'center';
-            var y = image$$1.backgroundPositionY != null ? image$$1.backgroundPositionY : 'center';
+            var x = defaultValue(image$$1.backgroundPositionX, valueUnit('center'));
+            var y = defaultValue(image$$1.backgroundPositionY, valueUnit('center'));
 
-            if (typeof x == 'number') {
-                x = px$1(x);
-            }
-            if (typeof y == 'number') {
-                y = px$1(y);
-            }
-
-            return [x, y].join(' ');
+            return stringUnit(x) + ' ' + stringUnit(y);
         }
     }, {
         key: '*/image/toBackgroundRepeatString',
@@ -10682,6 +10688,8 @@ var ImageManager = function (_BaseModule) {
                 return a.index > b.index ? 1 : -1;
             })*/
 
+            // console.log(colors);
+
             var newColors = [];
             colors.forEach(function (c, index) {
                 if (c.cut && index > 0) {
@@ -10699,9 +10707,11 @@ var ImageManager = function (_BaseModule) {
 
             colors = newColors.map(function (f) {
 
-                var value = $store.read('/image/get/unitValue', f);
+                var value$$1 = stringUnit(percentUnit(f.percent));
 
-                return f.color + ' ' + value;
+                // console.log(value,f, f[f.unit], f.unit);
+
+                return f.color + ' ' + value$$1;
             }).join(',');
 
             return colors;
@@ -11754,7 +11764,16 @@ var updateUnitField = {
     borderTopLeftRadius: true,
     borderBottomLeftRadius: true,
     borderTopRightRadius: true,
-    borderBottomRightRadius: true
+    borderBottomRightRadius: true,
+    backgroundSizeWidth: true,
+    backgroundSizeHeight: true
+};
+
+var updateNumberUnitField = {
+    backgroundPositionX: UNIT_PX,
+    backgroundPositionY: UNIT_PX,
+    backgroundSizeHeight: UNIT_PX,
+    backgroundSizeWidth: UNIT_PX
 };
 
 var convertStyle = function convertStyle(item) {
@@ -11769,6 +11788,8 @@ var convertStyle = function convertStyle(item) {
     Object.keys(item).forEach(function (key) {
         if (updateUnitField[key]) {
             item[key] = string2unit(item[key]);
+        } else if (updateNumberUnitField[key]) {
+            item[key] = unitObject(item[key], updateNumberUnitField[key]);
         }
     });
 
@@ -12367,7 +12388,7 @@ var ItemManager = function (_BaseModule) {
             item.fileType = img.fileType;
             item.backgroundImage = img.url;
             item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = '100%';
+            item.backgroundSizeWidth = percentUnit(100);
 
             $store.run('/item/set', item, isSelected);
             $store.run('/item/sort', id);
@@ -12383,7 +12404,7 @@ var ItemManager = function (_BaseModule) {
             if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
             item.backgroundImage = img.url;
             item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = '100%';
+            item.backgroundSizeWidth = percentUnit(100);
 
             $store.run('/item/set', item);
         }
@@ -12410,7 +12431,7 @@ var ItemManager = function (_BaseModule) {
             item.colors = img.colors;
             item.fileType = img.fileType;
             item.backgroundImage = img.url;
-            item.backgroundSizeWidth = '100%';
+            item.backgroundSizeWidth = percentUnit(100);
 
             $store.run('/item/set', item, isSelected);
             $store.run('/item/sort', id);
@@ -12475,7 +12496,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: '*/item/recover/image',
         value: function itemRecoverImage($store, image, parentId) {
-            var newImageId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, image.image));
+            var newImageId = $store.read('/item/create/object', Object.assign({ parentId: parentId }, convertStyle(image.image)));
             image.colorsteps.forEach(function (step) {
                 $store.read('/item/create/object', Object.assign({}, step, { parentId: newImageId }));
             });
@@ -13575,7 +13596,7 @@ var PageManager = function (_BaseModule) {
             var obj = $store.read('/page/toCSS', page) || {};
 
             return Object.keys(obj).map(function (key) {
-                return key + ': ' + obj[key] + ';';
+                return key + ": " + obj[key] + ";";
             }).join(' ');
         }
     }, {
@@ -13592,6 +13613,14 @@ var PageManager = function (_BaseModule) {
                 height: sample.height
             };
 
+            if (sample.perspective) {
+                css.perspective = stringUnit(sample.perspective);
+            }
+
+            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
+                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
+            }
+
             return $store.read('/css/sorting', css);
         }
     }, {
@@ -13607,6 +13636,14 @@ var PageManager = function (_BaseModule) {
                 width: sample.width,
                 height: sample.height
             };
+
+            if (sample.perspective) {
+                css.perspective = stringUnit(sample.perspective);
+            }
+
+            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
+                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
+            }
 
             return $store.read('/css/sorting', css);
         }
@@ -14735,9 +14772,9 @@ var BackdropManager = function (_BaseModule) {
                 if (it.key == 'backdropDropshadow') {
 
                     var values = DROP_SHADOW_LIST$1.map(function (key) {
-                        var value = layer[key] || BACKDROP_DEFAULT_OBJECT[key];
+                        var value$$1 = layer[key] || BACKDROP_DEFAULT_OBJECT[key];
 
-                        return unit(value.value, value.unit, true);
+                        return unit(value$$1.value, value$$1.unit, true);
                     }).join(' ');
 
                     return viewObject.func + "(" + values + ")";
@@ -15082,7 +15119,7 @@ var Size = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -15112,7 +15149,7 @@ var Size = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$rect'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -15124,7 +15161,7 @@ var Size = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$width'),
-        value: function value() {
+        value: function value$$1() {
             var _this3 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -15134,7 +15171,7 @@ var Size = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$height'),
-        value: function value() {
+        value: function value$$1() {
             var _this4 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -15144,7 +15181,7 @@ var Size = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$x'),
-        value: function value() {
+        value: function value$$1() {
             var _this5 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -15154,7 +15191,7 @@ var Size = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$y'),
-        value: function value() {
+        value: function value$$1() {
             var _this6 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -15181,7 +15218,7 @@ var Position = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT_CHANGE_EDITOR,
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -15196,7 +15233,7 @@ var Position = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$x'),
-        value: function value() {
+        value: function value$$1() {
             var _this3 = this;
 
             this.read('/selection/current/layer', function (item) {
@@ -15206,7 +15243,7 @@ var Position = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$y'),
-        value: function value() {
+        value: function value$$1() {
             var _this4 = this;
 
             this.read('/selection/current/layer', function (item) {
@@ -15233,7 +15270,7 @@ var Radius = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -15294,49 +15331,49 @@ var Radius = function (_BasePropertyItem) {
         }
     }, {
         key: CHANGEINPUT('$topLeftRadiusRange'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$topLeftRadius.val(this.refs.$topLeftRadiusRange.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topRightRadiusRange'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$topRightRadius.val(this.refs.$topRightRadiusRange.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomLeftRadiusRange'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$bottomLeftRadius.val(this.refs.$bottomLeftRadiusRange.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomRightRadiusRange'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$bottomRightRadius.val(this.refs.$bottomRightRadiusRange.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topLeftRadius'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$topLeftRadiusRange.val(this.refs.$topLeftRadius.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topRightRadius'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$topRightRadiusRange.val(this.refs.$topRightRadius.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomLeftRadius'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$bottomLeftRadiusRange.val(this.refs.$bottomLeftRadius.val());
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomRightRadius'),
-        value: function value() {
+        value: function value$$1() {
             this.refs.$bottomRightRadiusRange.val(this.refs.$bottomRightRadius.val());
             this.refreshValue();
         }
@@ -15687,7 +15724,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -15701,7 +15738,7 @@ var GradientSteps = function (_UIElement) {
 
     }, {
         key: CLICK('$back'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.addStep(e);
         }
     }, {
@@ -15783,17 +15820,17 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: PIPE(CLICK('$steps .step'), SHIFT),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.removeStep(e);
         }
     }, {
         key: CLICK('$steps .step'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.selectStep(e);
         }
     }, {
         key: CLICK('$steps .guide-change'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var id = e.$delegateTarget.attr('data-colorstep-id');
             var item = this.read('/item/get', id);
 
@@ -15808,7 +15845,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: CHANGE('$steps .guide-unit select.unit'),
-        value: function value(e) {
+        value: function value$$1(e) {
 
             var unit$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
@@ -15829,7 +15866,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: INPUT('$steps input.percent'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -15860,7 +15897,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: INPUT('$steps input.px'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -15890,7 +15927,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: INPUT('$steps input.em'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -15938,7 +15975,7 @@ var GradientSteps = function (_UIElement) {
 
     }, {
         key: PIPE(POINTEREND('document'), 'isDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
             if (this.refs.$stepList) {
                 this.refs.$stepList.removeClass('mode-drag');
@@ -15947,7 +15984,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTERMOVE('document'), 'debounce(10)', 'isDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.refreshColorUI(e);
             this.refs.$stepList.addClass('mode-drag');
         }
@@ -15958,7 +15995,7 @@ var GradientSteps = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTERSTART('$steps .step'), 'isNotDownCheck', 'isStepElement'),
-        value: function value(e) {
+        value: function value$$1(e) {
 
             e.preventDefault();
 
@@ -16108,7 +16145,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -16139,12 +16176,12 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: CLICK('$colorsteps .color-view-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.selectStep(e);
         }
     }, {
         key: INPUT('$colorsteps input.code'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -16169,7 +16206,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: CHANGE('$colorsteps select.unit'),
-        value: function value(e) {
+        value: function value$$1(e) {
 
             var unit$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
@@ -16186,7 +16223,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: INPUT('$colorsteps input.percent'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -16208,7 +16245,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: INPUT('$colorsteps input.px'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -16229,7 +16266,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: INPUT('$colorsteps input.em'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -16251,7 +16288,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: CLICK('$colorsteps .remove-step'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var item = this.read('/selection/current/image');
             if (!item) return;
 
@@ -16263,7 +16300,7 @@ var GradientInfo = function (_UIElement) {
         }
     }, {
         key: CLICK('$colorsteps .guide-change'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var id = e.$delegateTarget.attr('colorstep-id');
             var item = this.read('/item/get', id);
 
@@ -16465,7 +16502,7 @@ var Transform = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER_ROTATE),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -16493,83 +16530,83 @@ var Transform = function (_BasePropertyItem) {
             var postfix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
             this.read('/selection/current/layer/id', function (id) {
-                var value = _this3.refs['$' + key + postfix].val();
+                var value$$1 = _this3.refs['$' + key + postfix].val();
                 if (postfix == '') {
-                    _this3.refs['$' + key + 'Range'].val(value);
+                    _this3.refs['$' + key + 'Range'].val(value$$1);
                 } else {
-                    _this3.refs['$' + key].val(value);
+                    _this3.refs['$' + key].val(value$$1);
                 }
-                _this3.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, value));
+                _this3.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
         key: CHANGEINPUT('$rotateRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('rotate', 'Range');
         }
     }, {
         key: CHANGEINPUT('$skewXRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('skewX', 'Range');
         }
     }, {
         key: CHANGEINPUT('$skewYRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('skewY', 'Range');
         }
     }, {
         key: CHANGEINPUT('$scaleRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('scale', 'Range');
         }
     }, {
         key: CHANGEINPUT('$translateXRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('translateX', 'Range');
         }
     }, {
         key: CHANGEINPUT('$translateYRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('translateY', 'Range');
         }
     }, {
         key: CHANGEINPUT('$translateZRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('translateZ', 'Range');
         }
     }, {
         key: INPUT('$rotate'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('rotate');
         }
     }, {
         key: INPUT('$skewX'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('skewX');
         }
     }, {
         key: INPUT('$skewY'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('skewY');
         }
     }, {
         key: INPUT('$scale'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('scale');
         }
     }, {
         key: INPUT('$translateX'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('translateX');
         }
     }, {
         key: INPUT('$translateY'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('translateY');
         }
     }, {
         key: INPUT('$translateZ'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('translateZ');
         }
     }]);
@@ -16591,7 +16628,7 @@ var Transform3d = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -16619,24 +16656,24 @@ var Transform3d = function (_BasePropertyItem) {
             var postfix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
             this.read('/selection/current/layer/id', function (id) {
-                var value = _this3.refs['$' + key + postfix].val();
+                var value$$1 = _this3.refs['$' + key + postfix].val();
                 if (postfix == '') {
-                    _this3.refs['$' + key + 'Range'].val(value);
+                    _this3.refs['$' + key + 'Range'].val(value$$1);
                 } else {
-                    _this3.refs['$' + key].val(value);
+                    _this3.refs['$' + key].val(value$$1);
                 }
-                _this3.commit(CHANGE_LAYER_TRANSFORM_3D, defineProperty({ id: id }, key, value));
+                _this3.commit(CHANGE_LAYER_TRANSFORM_3D, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
         key: CHANGEINPUT('$el input[type=range]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $item = e.$delegateTarget;
             this.updateTransform($item.attr('data-type'), 'Range');
         }
     }, {
         key: INPUT('$el input[type=number]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $item = e.$delegateTarget;
             this.updateTransform($item.attr('data-type'));
         }
@@ -16675,34 +16712,42 @@ var UnitRange = function (_UIElement) {
         key: "template",
         value: function template() {
 
-            var value = position_list.includes(this.value) ? "" : this.value;
+            var value$$1 = position_list.includes(this.value) ? "" : this.value;
 
-            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"" + UNIT_PX + "\" unit='" + UNIT_PX + "'></div>\n                    <div ref=\"$percent\" class=\"" + UNIT_PERCENT + "\" unit='" + UNIT_PERCENT + "'></div>\n                    <div ref=\"$em\" class=\"" + UNIT_EM + "\" unit='" + UNIT_EM + "'></div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value$$1 + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value$$1 + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"" + UNIT_PX + "\" unit='" + UNIT_PX + "'></div>\n                    <div ref=\"$percent\" class=\"" + UNIT_PERCENT + "\" unit='" + UNIT_PERCENT + "'></div>\n                    <div ref=\"$em\" class=\"" + UNIT_EM + "\" unit='" + UNIT_EM + "'></div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: CLICK('$multiValue div'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var unit$$1 = e.$delegateTarget.attr('unit');
-            var value = e.$delegateTarget.attr('value');
+            var value$$1 = e.$delegateTarget.attr('value');
 
-            this.selectUnit(unit$$1, value);
+            this.selectUnit(unit$$1, value$$1);
         }
     }, {
         key: "refresh",
         value: function refresh() {
-            var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var value$$1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-            value = (value || '') + '';
+
+            if (isPxUnit(value$$1) || isPercentUnit(value$$1) || isEmUnit(value$$1)) {
+                this.selectUnit(value$$1.unit, value$$1.value);
+                return;
+            }
+
+            //TODO: remove legacy code 
+            value$$1 = (value$$1 || '') + '';
             var unit$$1 = UNIT_PX;
-            if (value.includes(UNIT_PERCENT)) {
+            if (value$$1.includes(UNIT_PERCENT)) {
                 unit$$1 = UNIT_PERCENT;
-            } else if (value.includes(UNIT_EM)) {
+            } else if (value$$1.includes(UNIT_EM)) {
                 unit$$1 = UNIT_EM;
             }
 
-            value = position_list.includes(value) ? "" : parseParamNumber$2(value);
+            value$$1 = position_list.includes(value$$1) ? "" : parseParamNumber$2(value$$1);
 
-            this.selectUnit(unit$$1, value);
+            this.selectUnit(unit$$1, value$$1);
+            //TODO: remove legacy code 
         }
     }, {
         key: "initializeRangeMax",
@@ -16731,9 +16776,9 @@ var UnitRange = function (_UIElement) {
         }
     }, {
         key: "selectUnit",
-        value: function selectUnit(unit$$1, value) {
+        value: function selectUnit(unit$$1, value$$1) {
             this.unit = unit$$1;
-            this.value = position_list.includes(value) ? "" : value;
+            this.value = position_list.includes(value$$1) ? "" : value$$1;
 
             this.refs.$range.val(this.value);
             this.refs.$number.val(this.value);
@@ -16743,7 +16788,7 @@ var UnitRange = function (_UIElement) {
         }
     }, {
         key: CLICK('$unit'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.$el.toggleClass(this.showClass);
             this.updateRange();
         }
@@ -16772,17 +16817,19 @@ var UnitRange = function (_UIElement) {
         }
     }, {
         key: INPUT('$range'),
-        value: function value(e) {
-            this.refs.$number.val(this.refs.$range.val());
+        value: function value$$1(e) {
+            var value$$1 = +this.refs.$range.val();
+            this.refs.$number.val(value$$1);
             this.updateRange();
-            this.updateFunction(unitObject(this.refs.$range.val(), this.unit));
+            this.updateFunction(unitObject(value$$1, this.unit));
         }
     }, {
         key: INPUT('$number'),
-        value: function value(e) {
-            this.refs.$range.val(this.refs.$number.val());
+        value: function value$$1(e) {
+            var value$$1 = +this.refs.$number.val();
+            this.refs.$range.val(value$$1);
             this.updateRange();
-            this.updateFunction(unitObject(this.refs.$range.val(), this.unit));
+            this.updateFunction(unitObject(value$$1, this.unit));
         }
     }]);
     return UnitRange;
@@ -16882,7 +16929,7 @@ var BackgroundSize = function (_UIElement) {
         }
     }, {
         key: CLICK('$size button'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this6 = this;
 
             this.read('/selection/current/image/id', function (id) {
@@ -16894,16 +16941,16 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "selectBackgroundSize",
         value: function selectBackgroundSize() {
-            var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'auto';
+            var value$$1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'auto';
 
             var selectedItem = this.refs.$size.$('.selected');
             if (selectedItem) selectedItem.removeClass('selected');
 
-            if (!['contain', 'cover', 'auto'].includes(value)) {
-                value = 'auto';
+            if (!['contain', 'cover', 'auto'].includes(value$$1)) {
+                value$$1 = 'auto';
             }
 
-            var item = this.refs.$size.$("[value=" + value + "]");
+            var item = this.refs.$size.$("[value=" + value$$1 + "]");
 
             if (item) {
                 item.addClass('selected');
@@ -16911,11 +16958,11 @@ var BackgroundSize = function (_UIElement) {
         }
     }, {
         key: "selectBackgroundRepeat",
-        value: function selectBackgroundRepeat(value) {
+        value: function selectBackgroundRepeat(value$$1) {
             var selectedItem = this.refs.$repeat.$('.selected');
             if (selectedItem) selectedItem.removeClass('selected');
 
-            var item = this.refs.$repeat.$("[value=" + value + "]");
+            var item = this.refs.$repeat.$("[value=" + value$$1 + "]");
 
             if (item) {
                 item.addClass('selected');
@@ -16923,7 +16970,7 @@ var BackgroundSize = function (_UIElement) {
         }
     }, {
         key: CLICK('$repeat button'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this7 = this;
 
             this.read('/selection/current/image/id', function (id) {
@@ -16934,7 +16981,7 @@ var BackgroundSize = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -16982,7 +17029,7 @@ var PageSize = function (_UIElement) {
         }
     }, {
         key: EVENT_CHANGE_EDITOR,
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -16997,7 +17044,7 @@ var PageSize = function (_UIElement) {
         }
     }, {
         key: CLICK('$rect'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             this.read('/selection/current/page', function (item) {
@@ -17013,7 +17060,7 @@ var PageSize = function (_UIElement) {
         }
     }, {
         key: INPUT('$width'),
-        value: function value() {
+        value: function value$$1() {
             var _this4 = this;
 
             this.read('/selection/current/page/id', function (id) {
@@ -17022,7 +17069,7 @@ var PageSize = function (_UIElement) {
         }
     }, {
         key: INPUT('$height'),
-        value: function value() {
+        value: function value$$1() {
             var _this5 = this;
 
             this.read('/selection/current/page/id', function (id) {
@@ -17279,25 +17326,25 @@ var FilterList$1 = function (_BasePropertyItem) {
         value: function makeInputItem(key, viewObject, dataObject) {
             var _this2 = this;
 
-            var value = dataObject[key] ? dataObject[key].value : undefined;
+            var value$$1 = dataObject[key] ? dataObject[key].value : undefined;
 
             if (viewObject.type == 'range') {
-                if (typeof value == 'undefined') {
-                    value = viewObject.defaultValue;
+                if (typeof value$$1 == 'undefined') {
+                    value$$1 = viewObject.defaultValue;
                 }
 
-                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
+                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
                 return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS.map(function (subkey) {
 
                     var it = _this2.read('/filter/get', subkey);
-                    var value = dataObject[subkey] || it.defaultValue;
+                    var value$$1 = dataObject[subkey] || it.defaultValue;
 
                     if (isColorUnit(it)) {
-                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value$$1 + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value$$1 + "</span>\n                            </span>\n                        </div>\n                        ";
                     } else {
 
-                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
                     }
                 }).join('') + "\n            </div>\n            ";
             }
@@ -17324,7 +17371,7 @@ var FilterList$1 = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -17344,10 +17391,10 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
                 var id = layer.id;
-                var value = layer[key] || _this4.read('/clone', FILTER_DEFAULT_OBJECT[key]);
-                value.value = lastValue;
+                var value$$1 = layer[key] || _this4.read('/clone', FILTER_DEFAULT_OBJECT[key]);
+                value$$1.value = lastValue;
 
-                _this4.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value));
+                _this4.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
@@ -17357,22 +17404,22 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
                 var id = layer.id;
-                var value = layer[key] || _this5.read('/clone', FILTER_DEFAULT_OBJECT[key]);
-                value.checked = checked;
+                var value$$1 = layer[key] || _this5.read('/clone', FILTER_DEFAULT_OBJECT[key]);
+                value$$1.checked = checked;
 
-                _this5.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value));
+                _this5.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
         key: CLICK('$filterList input[type=checkbox]'),
-        value: function value(e) {
-            var $check = e.$delegateTargt;
+        value: function value$$1(e) {
+            var $check = e.$delegateTarget;
             var key = $check.attr('data-key');
             this.updateFilterKeyChecked(key, $check.checked());
         }
     }, {
         key: CHANGEINPUT('$filterList input[type=range]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $range = e.$delegateTarget;
             var key = $range.attr('data-key');
             this.refs[key + "Number"].val($range.val());
@@ -17380,7 +17427,7 @@ var FilterList$1 = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$filterList input[type=number]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $number = e.$delegateTarget;
             var key = $number.attr('data-key');
             this.refs[key + "Range"].val($number.val());
@@ -17388,7 +17435,7 @@ var FilterList$1 = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$el .drop-shadow'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var color$$1 = e.$delegateTarget.css('background-color');
             this.emit('selectFillColor', color$$1, this.updateDropShadowColor.bind(this));
         }
@@ -17984,7 +18031,7 @@ var RadiusFixed = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -18024,17 +18071,17 @@ var RadiusFixed = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$radiusRange'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('range');
         }
     }, {
         key: INPUT('$radius'),
-        value: function value() {
+        value: function value$$1() {
             this.updateTransform('radius');
         }
     }, {
         key: CLICK('$radiusLabel'),
-        value: function value() {
+        value: function value$$1() {
             this.emit('toggleRadius');
         }
     }]);
@@ -18380,12 +18427,12 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
         key: EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-        value: function value(newValue) {
+        value: function value$$1(newValue) {
             this.refreshPolygonPosition(newValue);
         }
     }, {
@@ -18425,7 +18472,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$polygonList button[data-key]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             var $item = e.$delegateTarget;
@@ -18460,18 +18507,18 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         }
     }, {
         key: CHANGEINPUT('$polygonList input[type=number]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             var $item = e.$delegateTarget;
 
             var polygonIndex = +$item.attr('data-index');
             var key = $item.attr('data-key');
-            var value = +$item.val();
+            var value$$1 = +$item.val();
 
             this.read('/selection/current/layer', function (layer) {
                 var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
-                clipPathPolygonPoints[polygonIndex][key] = percentUnit(value);
+                clipPathPolygonPoints[polygonIndex][key] = percentUnit(value$$1);
 
                 _this3.commit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, {
                     id: layer.id,
@@ -18553,7 +18600,7 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT_CHANGE_BOXSHADOW,
-        value: function value(newValue) {
+        value: function value$$1(newValue) {
             this.refreshBoxShadow(newValue);
         }
     }, {
@@ -18566,14 +18613,14 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_EDITOR),
-        value: function value() {
+        value: function value$$1() {
             if (this.isPropertyShow()) {
                 this.refresh();
             }
         }
     }, {
         key: CLICK('$add'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -18584,7 +18631,7 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$boxShadowList input[type=number]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var field = $el.attr('data-type');
             var id = $el.parent().parent().attr('box-shadow-id');
@@ -18593,7 +18640,7 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$boxShadowList input[type=checkbox]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().parent().parent().attr('box-shadow-id');
 
@@ -18601,7 +18648,7 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$boxShadowList .delete-boxshadow'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('box-shadow-id');
 
@@ -18611,7 +18658,7 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$boxShadowList .color'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('box-shadow-id');
 
@@ -18690,7 +18737,7 @@ var TextShadow = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT_CHANGE_TEXTSHADOW,
-        value: function value(newValue) {
+        value: function value$$1(newValue) {
             this.refreshTextShadow(newValue);
         }
     }, {
@@ -18703,14 +18750,14 @@ var TextShadow = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_EDITOR),
-        value: function value() {
+        value: function value$$1() {
             if (this.isPropertyShow()) {
                 this.refresh();
             }
         }
     }, {
         key: CLICK('$add'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             this.read('/selection/current/layer/id', function (id) {
@@ -18721,7 +18768,7 @@ var TextShadow = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$textShadowList input[type=number]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var field = $el.attr('data-type');
             var id = $el.parent().parent().attr('text-shadow-id');
@@ -18730,7 +18777,7 @@ var TextShadow = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$textShadowList .delete-textshadow'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('text-shadow-id');
 
@@ -18740,7 +18787,7 @@ var TextShadow = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$textShadowList .color'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('text-shadow-id');
 
@@ -19226,7 +19273,7 @@ var Font = function (_BasePropertyItem) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -19267,12 +19314,12 @@ var Font = function (_BasePropertyItem) {
         }
     }, {
         key: CHANGE('$fontFamily'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.updateFontFamily(this.refs.$fontFamily.val());
         }
     }, {
         key: CHANGE('$fontWeight'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.updateFontWeight(this.refs.$fontWeight.val());
         }
     }]);
@@ -19433,25 +19480,25 @@ var BackdropList = function (_BasePropertyItem) {
         value: function makeInputItem(key, viewObject, dataObject) {
             var _this2 = this;
 
-            var value = dataObject[key] ? dataObject[key].value : undefined;
+            var value$$1 = dataObject[key] ? dataObject[key].value : undefined;
 
             if (viewObject.type == 'range') {
-                if (typeof value == 'undefined') {
-                    value = viewObject.defaultValue;
+                if (typeof value$$1 == 'undefined') {
+                    value$$1 = viewObject.defaultValue;
                 }
 
-                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
+                return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
                 return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
 
                     var it = _this2.read('/backdrop/get', subkey);
-                    var value = dataObject[subkey] || it.defaultValue;
+                    var value$$1 = dataObject[subkey] || it.defaultValue;
 
                     if (isColorUnit(it)) {
-                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value + "</span>\n                            </span>\n                        </div>\n                        ";
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value$$1 + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value$$1 + "</span>\n                            </span>\n                        </div>\n                        ";
                     } else {
 
-                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
+                        return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
                     }
                 }).join('') + "\n            </div>\n            ";
             }
@@ -19487,12 +19534,12 @@ var BackdropList = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT_CHANGE_LAYER_BACKDROP_FILTER,
-        value: function value(obj) {
+        value: function value$$1(obj) {
             this.refreshFilter(obj);
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -19512,10 +19559,10 @@ var BackdropList = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
                 var id = layer.id;
-                var value = layer[key] || _this4.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
-                value.value = lastValue;
+                var value$$1 = layer[key] || _this4.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
+                value$$1.value = lastValue;
 
-                _this4.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value));
+                _this4.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
@@ -19525,22 +19572,22 @@ var BackdropList = function (_BasePropertyItem) {
 
             this.read('/selection/current/layer', function (layer) {
                 var id = layer.id;
-                var value = layer[key] || _this5.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
-                value.checked = checked;
+                var value$$1 = layer[key] || _this5.read('/clone', BACKDROP_DEFAULT_OBJECT[key]);
+                value$$1.checked = checked;
 
-                _this5.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value));
+                _this5.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
         key: CLICK('$filterList input[type=checkbox]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $check = e.$delegateTarget;
             var key = $check.attr('data-key');
             this.updateFilterKeyChecked(key, $check.checked());
         }
     }, {
         key: CHANGEINPUT('$filterList input[type=range]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $range = e.$delegateTarget;
             var key = $range.attr('data-key');
             this.refs[key + "Number"].val($range.val());
@@ -19548,7 +19595,7 @@ var BackdropList = function (_BasePropertyItem) {
         }
     }, {
         key: INPUT('$filterList input[type=number]'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $number = e.$delegateTarget;
             var key = $number.attr('data-key');
             this.refs[key + "Range"].val($number.val());
@@ -19556,7 +19603,7 @@ var BackdropList = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$el .drop-shadow'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var color$$1 = e.$delegateTarget.css('background-color');
             this.emit('selectFillColor', color$$1, this.updateDropShadowColor.bind(this));
         }
@@ -19602,11 +19649,11 @@ var Page3D = function (_UIElement) {
     createClass(Page3D, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>                                 \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"number\" min=\"0\" max=\"100\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        \n                        <div>\n                            <input type=\"number\" min=\"0\" max=\"100\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        \n                        <div>\n                            <input type=\"number\" min=\"0\" max=\"100\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT_CHANGE_EDITOR,
-        value: function value() {
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_PAGE_TRANSFORM),
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -19615,12 +19662,19 @@ var Page3D = function (_UIElement) {
             var _this2 = this;
 
             this.read('/selection/current/page', function (item) {
+                var perspective = unitValue(defaultValue(item.perspective, pxUnit(0)));
+                var perspectiveOriginPositionX = unitValue(defaultValue(item.perspectiveOriginPositionX, percentUnit(0)));
+                var perspectiveOriginPositionY = unitValue(defaultValue(item.perspectiveOriginPositionY, percentUnit(0)));
+
+                _this2.refs.$perspective.val(perspective);
+                _this2.refs.$x.val(perspectiveOriginPositionX);
+                _this2.refs.$y.val(perspectiveOriginPositionY);
                 _this2.refs.$preserve.checked(!!item.preserve);
             });
         }
     }, {
         key: CLICK('$preserve'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             this.read('/selection/current/page/id', function (id) {
@@ -20647,7 +20701,7 @@ var GradientPosition = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -20660,31 +20714,31 @@ var GradientPosition = function (_UIElement) {
 
     }, {
         key: POINTEREND('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
         }
     }, {
         key: POINTERMOVE('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             if (this.isDown) {
                 this.refreshUI(e);
             }
         }
     }, {
         key: POINTERSTART('$dragPointer'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = true;
             // this.refreshUI(e);        
         }
     }, {
         key: DOUBLECLICK('$dragPointer'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.setRadialPosition('center');
             this.refreshUI();
@@ -21020,36 +21074,36 @@ var BackgroundResizer = function (_UIElement) {
 
 var defined_position = {
     'to right': {
-        backgroundPositionX: 'right',
-        backgroundPositionY: 'center'
+        backgroundPositionX: valueUnit('right'),
+        backgroundPositionY: valueUnit('center')
     },
     'to left': {
-        backgroundPositionX: 'left',
-        backgroundPositionY: 'center'
+        backgroundPositionX: valueUnit('left'),
+        backgroundPositionY: valueUnit('center')
     },
     'to top': {
-        backgroundPositionX: 'center',
-        backgroundPositionY: 'top'
+        backgroundPositionX: valueUnit('center'),
+        backgroundPositionY: valueUnit('top')
     },
     'to bottom': {
-        backgroundPositionX: 'center',
-        backgroundPositionY: 'bottom'
+        backgroundPositionX: valueUnit('center'),
+        backgroundPositionY: valueUnit('bottom')
     },
     'to top right': {
-        backgroundPositionX: 'right',
-        backgroundPositionY: 'top'
+        backgroundPositionX: valueUnit('right'),
+        backgroundPositionY: valueUnit('top')
     },
     'to bottom right': {
-        backgroundPositionX: 'right',
-        backgroundPositionY: 'bottom'
+        backgroundPositionX: valueUnit('right'),
+        backgroundPositionY: valueUnit('bottom')
     },
     'to bottom left': {
-        backgroundPositionX: 'left',
-        backgroundPositionY: 'bottom'
+        backgroundPositionX: valueUnit('left'),
+        backgroundPositionY: valueUnit('bottom')
     },
     'to top left': {
-        backgroundPositionX: 'left',
-        backgroundPositionY: 'top'
+        backgroundPositionX: valueUnit('left'),
+        backgroundPositionY: valueUnit('top')
     }
 };
 
@@ -21080,13 +21134,13 @@ var PredefinedBackgroundPosition = function (_UIElement) {
         key: 'getPosition',
         value: function getPosition(type) {
             return defined_position[type] || {
-                backgroundPositionX: '0px',
-                backgroundPositionY: '0px'
+                backgroundPositionX: valueUnit('center'),
+                backgroundPositionY: valueUnit('center')
             };
         }
     }, {
         key: PIPE(CLICK('$el button'), SELF()),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             this.read('/selection/current/image/id', function (id) {
@@ -21096,11 +21150,307 @@ var PredefinedBackgroundPosition = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }]);
     return PredefinedBackgroundPosition;
+}(UIElement);
+
+var defined_position$1 = {
+    'to right': {
+        perspectiveOriginPositionX: valueUnit('right'),
+        perspectiveOriginPositionY: valueUnit('center')
+    },
+    'to left': {
+        perspectiveOriginPositionX: valueUnit('left'),
+        perspectiveOriginPositionY: valueUnit('center')
+    },
+    'to top': {
+        perspectiveOriginPositionX: valueUnit('center'),
+        perspectiveOriginPositionY: valueUnit('top')
+    },
+    'to bottom': {
+        perspectiveOriginPositionX: valueUnit('center'),
+        perspectiveOriginPositionY: valueUnit('bottom')
+    },
+    'to top right': {
+        perspectiveOriginPositionX: valueUnit('right'),
+        perspectiveOriginPositionY: valueUnit('top')
+    },
+    'to bottom right': {
+        perspectiveOriginPositionX: valueUnit('right'),
+        perspectiveOriginPositionY: valueUnit('bottom')
+    },
+    'to bottom left': {
+        perspectiveOriginPositionX: valueUnit('left'),
+        perspectiveOriginPositionY: valueUnit('bottom')
+    },
+    'to top left': {
+        perspectiveOriginPositionX: valueUnit('left'),
+        perspectiveOriginPositionY: valueUnit('top')
+    }
+};
+
+var PredefinedPerspectiveOriginPosition = function (_UIElement) {
+    inherits(PredefinedPerspectiveOriginPosition, _UIElement);
+
+    function PredefinedPerspectiveOriginPosition() {
+        classCallCheck(this, PredefinedPerspectiveOriginPosition);
+        return possibleConstructorReturn(this, (PredefinedPerspectiveOriginPosition.__proto__ || Object.getPrototypeOf(PredefinedPerspectiveOriginPosition)).apply(this, arguments));
+    }
+
+    createClass(PredefinedPerspectiveOriginPosition, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-perspective-origin-position">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read('/selection/is/page')) return false;
+
+            var page = this.read('/selection/current/page');
+
+            if (!page) return false;
+
+            return !!page.preserve;
+        }
+    }, {
+        key: 'getPosition',
+        value: function getPosition(type) {
+            return defined_position$1[type] || {
+                perspectiveOriginPositionX: percentUnit(0),
+                perspectiveOriginPositionY: percentUnit(0)
+            };
+        }
+    }, {
+        key: PIPE(CLICK('$el button'), SELF()),
+        value: function value$$1(e) {
+            var _this2 = this;
+
+            this.read('/selection/current/page/id', function (id) {
+                var pos = _this2.getPosition(e.$delegateTarget.attr('data-value'));
+                _this2.commit(CHANGE_PAGE_TRANSFORM, _extends({ id: id }, pos));
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_PAGE_TRANSFORM, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedPerspectiveOriginPosition;
+}(UIElement);
+
+var DEFINE_POSITIONS$1 = {
+    'center': ['center', 'center'],
+    'right': ['right', 'center'],
+    'top': ['center', 'top'],
+    'left': ['left', 'center'],
+    'bottom': ['center', 'bottom']
+};
+
+var PerspectiveOriginPosition = function (_UIElement) {
+    inherits(PerspectiveOriginPosition, _UIElement);
+
+    function PerspectiveOriginPosition() {
+        classCallCheck(this, PerspectiveOriginPosition);
+        return possibleConstructorReturn(this, (PerspectiveOriginPosition.__proto__ || Object.getPrototypeOf(PerspectiveOriginPosition)).apply(this, arguments));
+    }
+
+    createClass(PerspectiveOriginPosition, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="perspective-drag-position">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.refreshUI();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read('/selection/is/page')) return false;
+
+            var page = this.read('/selection/current/page');
+            if (!page) return false;
+
+            return !!page.preserve;
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, position) {
+
+            if (e) {
+                var xy = e.xy;
+
+                return [xy.x, xy.y];
+            }
+
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                maxX = _getRectangle.maxX,
+                maxY = _getRectangle.maxY,
+                width = _getRectangle.width,
+                height = _getRectangle.height;
+
+            var p = position;
+            if (typeof p == 'string' && DEFINE_POSITIONS$1[p]) {
+                p = DEFINE_POSITIONS$1[p];
+            } else if (typeof p === 'string') {
+                p = p.split(' ');
+            } else {
+                p = [unitValue(p.perspectiveOriginPositionX), unitValue(p.perspectiveOriginPositionY)];
+            }
+
+            p = p.map(function (item, index) {
+                if (item == 'center') {
+                    if (index == 0) {
+                        return minX + width / 2;
+                    } else if (index == 1) {
+                        return minY + height / 2;
+                    }
+                } else if (item === 'left') {
+                    return minX;
+                } else if (item === 'right') {
+                    return maxX;
+                } else if (item === 'top') {
+                    return minY;
+                } else if (item === 'bottom') {
+                    return maxY;
+                } else {
+                    if (index == 0) {
+                        return minX + width * (+item / 100);
+                    } else if (index == 1) {
+                        return minY + height * (+item / 100);
+                    }
+                }
+            });
+
+            return p;
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var minX = this.$el.offsetLeft();
+            var minY = this.$el.offsetTop();
+
+            var maxX = minX + width;
+            var maxY = minY + height;
+
+            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+
+            var item = this.read('/selection/current/page');
+
+            if (!item) return '';
+
+            return {
+                perspectiveOriginPositionX: defaultValue(item.perspectiveOriginPositionX, percentUnit(0)),
+                perspectiveOriginPositionY: defaultValue(item.perspectiveOriginPositionY, percentUnit(0))
+            } || '';
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle2 = this.getRectangle(),
+                minX = _getRectangle2.minX,
+                minY = _getRectangle2.minY,
+                maxX = _getRectangle2.maxX,
+                maxY = _getRectangle2.maxY,
+                width = _getRectangle2.width,
+                height = _getRectangle2.height;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue()),
+                _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
+                x = _getCurrentXY2[0],
+                y = _getCurrentXY2[1];
+
+            x = Math.max(Math.min(maxX, x), minX);
+            y = Math.max(Math.min(maxY, y), minY);
+
+            var left = x - minX;
+            var top = y - minY;
+
+            this.refs.$dragPointer.px('left', left);
+            this.refs.$dragPointer.px('top', top);
+
+            if (e) {
+
+                this.setPerspectiveOriginPosition(percentUnit(Math.floor(left / width * 100)), percentUnit(Math.floor(top / height * 100)));
+            }
+        }
+    }, {
+        key: 'setPerspectiveOriginPosition',
+        value: function setPerspectiveOriginPosition(perspectiveOriginPositionX, perspectiveOriginPositionY) {
+            var _this2 = this;
+
+            this.read('/selection/current/page/id', function (id) {
+
+                _this2.commit(CHANGE_PAGE_TRANSFORM, { id: id, perspectiveOriginPositionX: perspectiveOriginPositionX, perspectiveOriginPositionY: perspectiveOriginPositionY });
+            });
+        }
+    }, {
+        key: MULTI_EVENT(EVENT_CHANGE_PAGE_TRANSFORM, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document'),
+        value: function value$$1(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value$$1(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: POINTERSTART('$dragPointer'),
+        value: function value$$1(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: POINTERSTART(),
+        value: function value$$1(e) {
+            this.isDown = true;
+            // this.refreshUI(e);        
+        }
+    }, {
+        key: DOUBLECLICK('$dragPointer'),
+        value: function value$$1(e) {
+            e.preventDefault();
+            this.setPerspectiveOriginPosition('center');
+            this.refreshUI();
+        }
+    }]);
+    return PerspectiveOriginPosition;
 }(UIElement);
 
 var SubFeatureControl = function (_UIElement) {
@@ -21114,12 +21464,14 @@ var SubFeatureControl = function (_UIElement) {
     createClass(SubFeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                        <BackgroundResizer></BackgroundResizer>\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$perspective\">\n                        <PredefinedPerspectiveOriginPosition></PredefinedPerspectiveOriginPosition>\n                        <PerspectiveOriginPosition></PerspectiveOriginPosition>\n                    </div>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                        <BackgroundResizer></BackgroundResizer>\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
             return _extends({
+                PerspectiveOriginPosition: PerspectiveOriginPosition,
+                PredefinedPerspectiveOriginPosition: PredefinedPerspectiveOriginPosition,
                 PredefinedRadialGradientAngle: PredefinedRadialGradientAngle,
                 GradientAngle: GradientAngle,
                 GradientPosition: GradientPosition,
@@ -21133,6 +21485,7 @@ var SubFeatureControl = function (_UIElement) {
         key: "refresh",
         value: function refresh() {
             this.$el.toggle(this.isShow());
+            this.refs.$perspective.toggleClass('hide', this.isNotPage());
             this.refs.$backgroundSize.toggleClass('hide', this.isNotImage());
             this.refs.$linear.toggleClass('hide', !this.isLinearShow());
             this.refs.$radial.toggleClass('hide', !this.isRadialShow());
@@ -21147,6 +21500,11 @@ var SubFeatureControl = function (_UIElement) {
         key: "isNotImage",
         value: function isNotImage() {
             return this.read('/selection/is/image') == false;
+        }
+    }, {
+        key: "isNotPage",
+        value: function isNotPage() {
+            return this.read('/selection/is/page') == false;
         }
     }, {
         key: "isLinearShow",
@@ -23136,7 +23494,7 @@ var PredefinedPageResizer = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -23245,7 +23603,7 @@ var PredefinedPageResizer = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTERSTART('$el [data-value]'), 'isNotDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.stopPropagation();
             var type = e.$delegateTarget.attr('data-value');
             this.currentType = type;
@@ -23256,20 +23614,20 @@ var PredefinedPageResizer = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTERMOVE('document'), DEBOUNCE(10), 'isDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.targetXY = e.xy;
             this.resize();
         }
     }, {
         key: PIPE(POINTEREND('document'), 'isDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.currentType = null;
             this.xy = null;
             this.dispatch('/history/push', 'Resize a layer');
         }
     }, {
         key: PIPE(RESIZE('window'), DEBOUNCE(300)),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.refresh();
         }
     }]);
@@ -23395,7 +23753,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_PAGE_SIZE),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -23653,7 +24011,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTERSTART('$el [data-value]'), 'isNotDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.stopPropagation();
             this.activeButton = e.$delegateTarget;
             this.activeButton.addClass('active');
@@ -23689,7 +24047,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTERMOVE('document'), 'debounce(10)', 'isDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.targetXY = e.xy;
 
             if (!this.xy) {
@@ -23731,7 +24089,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: PIPE(POINTEREND('document'), 'isDownCheck'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.currentType = null;
             this.xy = null;
             this.moveX = null;
@@ -23743,7 +24101,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: PIPE(RESIZE('window'), DEBOUNCE(300)),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.refresh();
         }
     }]);
@@ -23888,7 +24246,7 @@ var CircleEditor = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
 
@@ -23896,26 +24254,26 @@ var CircleEditor = function (_UIElement) {
 
     }, {
         key: POINTEREND('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
         }
     }, {
         key: POINTERMOVE('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             if (this.isDown) {
                 this.refreshUI(e);
             }
         }
     }, {
         key: POINTERSTART('$el .drag-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
             this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = true;
             this.layer = this.read('/selection/current/layer');
             // this.refreshUI(e);        
@@ -24061,7 +24419,7 @@ var EllipseEditor = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
 
@@ -24069,26 +24427,26 @@ var EllipseEditor = function (_UIElement) {
 
     }, {
         key: POINTEREND('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
         }
     }, {
         key: POINTERMOVE('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             if (this.isDown) {
                 this.refreshUI(e);
             }
         }
     }, {
         key: POINTERSTART('$el .drag-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
             this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = true;
             this.layer = this.read('/selection/current/layer');
             // this.refreshUI(e);        
@@ -24249,7 +24607,7 @@ var InsetEditor = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
 
@@ -24257,26 +24615,26 @@ var InsetEditor = function (_UIElement) {
 
     }, {
         key: POINTEREND('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
         }
     }, {
         key: POINTERMOVE('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             if (this.isDown) {
                 this.refreshUI(e);
             }
         }
     }, {
         key: POINTERSTART('$el .drag-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
             this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = true;
             this.layer = this.read('/selection/current/layer');
             // this.refreshUI(e);        
@@ -24409,7 +24767,7 @@ var PolygonEditor = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
 
@@ -24417,19 +24775,19 @@ var PolygonEditor = function (_UIElement) {
 
     }, {
         key: POINTEREND('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
         }
     }, {
         key: POINTERMOVE('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             if (this.isDown) {
                 this.refreshUI(e);
             }
         }
     }, {
         key: POINTERSTART('$el .drag-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.$dragItem = e.$delegateTarget;
             this.isDown = true;
@@ -24493,14 +24851,14 @@ var PolygonEditor = function (_UIElement) {
         }
     }, {
         key: PIPE(CLICK(), ALT),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
 
             this.addPoint(e);
         }
     }, {
         key: PIPE(CLICK('$el .drag-item'), ALT, 'capture'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.stopPropagation();
             e.preventDefault();
 
@@ -24605,7 +24963,7 @@ var LayerShapeEditor = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }]);
@@ -24838,7 +25196,7 @@ var GradientView = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_PAGE_SIZE, EVENT_CHANGE_PAGE),
-        value: function value() {
+        value: function value$$1() {
             this.setBackgroundColor();
         }
 
@@ -24854,7 +25212,7 @@ var GradientView = function (_UIElement) {
 
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_ROTATE, EVENT_CHANGE_LAYER_OPACITY, EVENT_CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_LAYER_TRANSFORM_3D, EVENT_CHANGE_LAYER_TEXT, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_MOVE, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, EVENT_CHANGE_BOXSHADOW, EVENT_CHANGE_TEXTSHADOW, EVENT_CHANGE_IMAGE, EVENT_CHANGE_IMAGE_COLOR, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_COLOR_STEP),
-        value: function value() {
+        value: function value$$1() {
             this.refreshLayer();
         }
 
@@ -24862,7 +25220,7 @@ var GradientView = function (_UIElement) {
 
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_EDITOR),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
