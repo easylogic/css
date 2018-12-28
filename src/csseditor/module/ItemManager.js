@@ -27,6 +27,7 @@ import {
     IMAGE_ITEM_TYPE_IMAGE
 } from "./ItemTypes";
 import { string2unit, percentUnit, UNIT_PX, unitObject } from "../../util/css/types";
+import { parseParamNumber } from "../../util/filter/functions";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -110,7 +111,7 @@ const convertStyle = (item) => {
         if (updateUnitField[key]) {
             item[key] = string2unit (item[key])
         } else if (updateNumberUnitField[key]) {
-            item[key] = unitObject (item[key], updateNumberUnitField[key])
+            item[key] = unitObject (parseParamNumber(item[key]), updateNumberUnitField[key])
         }
     })
 

@@ -3438,6 +3438,10 @@ html, body {
         display: none !important; }
       .csseditor .page-view .gradient-color-view-container.moving .move-guide {
         display: block !important; }
+      .csseditor .page-view .gradient-color-view-container.showGrid {
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
+        background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+        background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px; }
     .csseditor .page-view .gradient-color-view {
       width: 100%;
       height: 100%;
@@ -5201,6 +5205,18 @@ html, body {
                   appearance: none;
           background-color: transparent;
           border: 1px solid #cccccc; }
+          .csseditor .property-view .property-item.clip-path-polygon .items > div .tools button:not(:first-child) {
+            margin-left: -1px; }
+      .csseditor .property-view .property-item.clip-path-polygon .items .clip-path-item {
+        display: inline-block;
+        vertical-align: middle;
+        width: 45px;
+        height: 45px;
+        margin: 5px;
+        background-color: red;
+        cursor: pointer;
+        background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.5)), to(rgba(128, 128, 128, 0.5)));
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(128, 128, 128, 0.5)); }
       .csseditor .property-view .property-item .group-align {
         float: right; }
         .csseditor .property-view .property-item .group-align button {
@@ -5516,7 +5532,7 @@ html, body {
         margin-left: 5px; }
       .csseditor .property-view .property-item.text .content {
         width: 100%;
-        height: 100px;
+        height: 70px;
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;

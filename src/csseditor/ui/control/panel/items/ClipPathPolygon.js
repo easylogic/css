@@ -5,16 +5,19 @@ import {
     EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
     EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    CHANGE_LAYER_CLIPPATH_POLYGON
+    CHANGE_LAYER_CLIPPATH_POLYGON,
+    EVENT_CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, percentUnit } from "../../../../../util/css/types";
+import { unitString, percentUnit, stringUnit } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK } from "../../../../../util/Event";
 
 export default class ClipPathPolygon extends BasePropertyItem {
     template () {
+        var list = this.read('/clip-path/sample/list')
+        
         return `
             <div class='property-item clip-path-polygon'>
                 <div class="items">
@@ -25,8 +28,13 @@ export default class ClipPathPolygon extends BasePropertyItem {
                         Click drag item with alt if you want to delete point
                     </div>                    
                 </div>
-                <div class='items' ref='$polygonList'>            
-                </div>
+                <div class='items' ref='$sampleList'>${list.map( (it, index) => {
+                    var values = it.clipPathPolygonPoints.map(point => {
+                        return `${stringUnit(point.x)} ${stringUnit(point.y)}`
+                    }).join(', ');
+                    return `<div class='clip-path-item' data-index='${index}' style='clip-path: polygon(${values})'></div>`
+                }).join('')}</div> 
+                <div class='items' ref='$polygonList'></div>
             </div>
         `
     }
@@ -70,6 +78,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
     [MULTI_EVENT(
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION,
+        EVENT_CHANGE_LAYER_CLIPPATH,
         EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
     )] () { this.refresh() }
 
@@ -78,7 +87,14 @@ export default class ClipPathPolygon extends BasePropertyItem {
     }
 
     refreshPolygonPosition (item) {
+        var index = item.polygonIndex; 
+        var pos = item.clipPathPolygonPoints[index];
 
+        var x = this.refs.$polygonList.$(`[data-key="x"][data-index="${index}"]`);
+        if (x) { x.val(pos.x.value) }
+
+        var y = this.refs.$polygonList.$(`[data-key="y"][data-index="${index}"]`);
+        if (y) { y.val(pos.y.value) }        
     }
 
     refresh() {
@@ -161,6 +177,18 @@ export default class ClipPathPolygon extends BasePropertyItem {
                 polygonIndex,
                 clipPathPolygonPoints
             })
+        })
+    }
+
+    [CLICK('$sampleList .clip-path-item')] (e) {
+        var $item = e.$delegateTarget;
+        var index = +$item.attr('data-index')
+        var points = this.read('/clip-path/sample/get', index);
+
+        this.read('/selection/current/layer/id', (id) => {
+
+            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, { id, ...points})
+            this.refresh();
         })
     }
 

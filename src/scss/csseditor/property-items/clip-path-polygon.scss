@@ -22,8 +22,23 @@
                     appearance: none;
                     background-color: transparent;
                     border:1px solid $border-color;
+
+                    &:not(:first-child) {
+                        margin-left: -1px;
+                    }
                 }
             }
+        }
+
+        .clip-path-item {
+            display: inline-block;
+            vertical-align: middle;
+            width: 45px;
+            height: 45px;
+            margin: 5px;
+            background-color: red; 
+            cursor: pointer;
+            background-image: linear-gradient(to right, rgba(black, 0.5), rgba(gray, 0.5));
         }
     }
 

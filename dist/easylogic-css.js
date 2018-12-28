@@ -11922,7 +11922,7 @@ var convertStyle = function convertStyle(item) {
         if (updateUnitField[key]) {
             item[key] = string2unit(item[key]);
         } else if (updateNumberUnitField[key]) {
-            item[key] = unitObject(item[key], updateNumberUnitField[key]);
+            item[key] = unitObject(parseParamNumber$1(item[key]), updateNumberUnitField[key]);
         }
     });
 
@@ -13896,7 +13896,9 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: '*/selection/current',
         value: function selectionCurrent($store) {
-            return $store.selection.ids.map(function (id) {
+            return $store.selection.ids.filter(function (id) {
+                return !!$store.items[id];
+            }).map(function (id) {
                 return $store.items[id];
             });
         }
@@ -14998,6 +15000,48 @@ var I18nManager = function (_BaseModule) {
     return I18nManager;
 }(BaseModule);
 
+var triangle = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }]
+};
+
+var trapezoid = {
+    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(0) }]
+};
+
+var parallelogram = {
+    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(0) }]
+};
+
+var rhombus = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(50) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(50) }]
+};
+
+var pentagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(38) }, { x: percentUnit(18), y: percentUnit(100) }, { x: percentUnit(82), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(38) }]
+};
+
+var hexagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(25) }, { x: percentUnit(0), y: percentUnit(75) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(75) }, { x: percentUnit(100), y: percentUnit(25) }]
+};
+
+var heptagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(10), y: percentUnit(20) }, { x: percentUnit(0), y: percentUnit(60) }, { x: percentUnit(25), y: percentUnit(100) }, { x: percentUnit(75), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(60) }, { x: percentUnit(90), y: percentUnit(20) }]
+};
+
+var octagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(30), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(30) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(30), y: percentUnit(100) }, { x: percentUnit(70), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(30) }, { x: percentUnit(70), y: percentUnit(0) }]
+};
+
+var nonagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(17), y: percentUnit(12) }, { x: percentUnit(0), y: percentUnit(43) }, { x: percentUnit(6), y: percentUnit(78) }, { x: percentUnit(32), y: percentUnit(100) }, { x: percentUnit(68), y: percentUnit(100) }, { x: percentUnit(94), y: percentUnit(78) }, { x: percentUnit(100), y: percentUnit(43) }, { x: percentUnit(83), y: percentUnit(12) }]
+};
+
+var decagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(20), y: percentUnit(10) }, { x: percentUnit(0), y: percentUnit(35) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(20), y: percentUnit(90) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(90) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(35) }, { x: percentUnit(80), y: percentUnit(10) }]
+};
+
+var clipPathList = [triangle, trapezoid, parallelogram, rhombus, pentagon, hexagon, heptagon, octagon, nonagon, decagon];
+
 var SQRT_2 = Math.sqrt(2);
 
 var ClipPathManager = function (_BaseModule) {
@@ -15009,6 +15053,16 @@ var ClipPathManager = function (_BaseModule) {
     }
 
     createClass(ClipPathManager, [{
+        key: '*/clip-path/sample/list',
+        value: function clipPathSampleList($store) {
+            return clipPathList;
+        }
+    }, {
+        key: '*/clip-path/sample/get',
+        value: function clipPathSampleGet($store, index) {
+            return clipPathList[index];
+        }
+    }, {
         key: "caculateClosestFromCenter",
         value: function caculateClosestFromCenter(centerX, centerY, width, height) {
             var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
@@ -18537,7 +18591,14 @@ var ClipPathPolygon = function (_BasePropertyItem) {
     createClass(ClipPathPolygon, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$polygonList'>            \n                </div>\n            </div>\n        ";
+            var list = this.read('/clip-path/sample/list');
+
+            return "\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>" + list.map(function (it, index) {
+                var values = it.clipPathPolygonPoints.map(function (point) {
+                    return stringUnit(point.x) + " " + stringUnit(point.y);
+                }).join(', ');
+                return "<div class='clip-path-item' data-index='" + index + "' style='clip-path: polygon(" + values + ")'></div>";
+            }).join('') + "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        ";
         }
     }, {
         key: 'load $polygonList',
@@ -18559,7 +18620,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON),
+        key: MULTI_EVENT(EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON),
         value: function value$$1() {
             this.refresh();
         }
@@ -18570,7 +18631,20 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         }
     }, {
         key: "refreshPolygonPosition",
-        value: function refreshPolygonPosition(item) {}
+        value: function refreshPolygonPosition(item) {
+            var index = item.polygonIndex;
+            var pos = item.clipPathPolygonPoints[index];
+
+            var x = this.refs.$polygonList.$("[data-key=\"x\"][data-index=\"" + index + "\"]");
+            if (x) {
+                x.val(pos.x.value);
+            }
+
+            var y = this.refs.$polygonList.$("[data-key=\"y\"][data-index=\"" + index + "\"]");
+            if (y) {
+                y.val(pos.y.value);
+            }
+        }
     }, {
         key: "refresh",
         value: function refresh() {
@@ -18658,6 +18732,21 @@ var ClipPathPolygon = function (_BasePropertyItem) {
                     polygonIndex: polygonIndex,
                     clipPathPolygonPoints: clipPathPolygonPoints
                 });
+            });
+        }
+    }, {
+        key: CLICK('$sampleList .clip-path-item'),
+        value: function value$$1(e) {
+            var _this4 = this;
+
+            var $item = e.$delegateTarget;
+            var index = +$item.attr('data-index');
+            var points = this.read('/clip-path/sample/get', index);
+
+            this.read('/selection/current/layer/id', function (id) {
+
+                _this4.commit(CHANGE_LAYER_CLIPPATH_POLYGON, _extends({ id: id }, points));
+                _this4.refresh();
             });
         }
     }]);
@@ -21133,10 +21222,10 @@ var BackgroundResizer = function (_UIElement) {
 
             if (!item) return '';
 
-            var x = parseParamNumber$1(item.backgroundPositionX);
-            var y = parseParamNumber$1(item.backgroundPositionY);
-            var width = parseParamNumber$1(item.backgroundSizeWidth);
-            var height = parseParamNumber$1(item.backgroundSizeHeight);
+            var x = defaultValue(item.backgroundPositionX, percentUnit(0)).value;
+            var y = defaultValue(item.backgroundPositionY, percentUnit(0)).value;
+            var width = defaultValue(item.backgroundSizeWidth, percentUnit(100)).value;
+            var height = defaultValue(item.backgroundSizeHeight, percentUnit(100)).value;
 
             return { x: x, y: y, width: width, height: height };
         }
@@ -21189,7 +21278,7 @@ var BackgroundResizer = function (_UIElement) {
                 this.read('/selection/current/layer', function (layer) {
                     var newLeft = left / (maxX - minX) * parseParamNumber$1(layer.width);
                     var newTop = top / (maxY - minY) * parseParamNumber$1(layer.height);
-                    _this2.setBackgroundPosition(Math.floor(newLeft), Math.floor(newTop));
+                    _this2.setBackgroundPosition(percentUnit(newLeft), percentUnit(newTop));
                 });
             }
         }
@@ -21204,7 +21293,7 @@ var BackgroundResizer = function (_UIElement) {
         }
     }, {
         key: MULTI_EVENT(EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
 
@@ -21212,25 +21301,25 @@ var BackgroundResizer = function (_UIElement) {
 
     }, {
         key: POINTEREND('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = false;
         }
     }, {
         key: POINTERMOVE('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
             if (this.isDown) {
                 this.refreshUI(e);
             }
         }
     }, {
         key: POINTERSTART('$dragPointer'),
-        value: function value(e) {
+        value: function value$$1(e) {
             e.preventDefault();
             this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.isDown = true;
             // this.refreshUI(e);        
         }

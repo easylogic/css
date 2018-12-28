@@ -92,7 +92,7 @@ export default class SelectionManager extends BaseModule {
     }
 
     '*/selection/current' ($store) {
-        return $store.selection.ids.map(id => $store.items[id])
+        return $store.selection.ids.filter(id => !!$store.items[id]).map(id => $store.items[id])
     }
 
     getCurrentItem ($store, itemType, callback) {

@@ -7,6 +7,8 @@ import {
 } from '../../../types/event';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
+import { defaultValue } from '../../../../util/functions/func';
+import { percentUnit } from '../../../../util/css/types';
 
 export default class BackgroundResizer extends UIElement {
 
@@ -63,10 +65,10 @@ export default class BackgroundResizer extends UIElement {
 
         if (!item) return ''; 
 
-        var x = parseParamNumber(item.backgroundPositionX);
-        var y = parseParamNumber(item.backgroundPositionY);
-        var width = parseParamNumber(item.backgroundSizeWidth);
-        var height = parseParamNumber(item.backgroundSizeHeight);        
+        var x = defaultValue(item.backgroundPositionX, percentUnit(0)).value;
+        var y = defaultValue(item.backgroundPositionY, percentUnit(0)).value;
+        var width = defaultValue(item.backgroundSizeWidth, percentUnit(100)).value;
+        var height = defaultValue(item.backgroundSizeHeight, percentUnit(100)).value;
 
         return { x, y, width, height }
 
@@ -106,7 +108,7 @@ export default class BackgroundResizer extends UIElement {
             this.read('/selection/current/layer', layer => {
                 var newLeft = (left / (maxX - minX)) * parseParamNumber(layer.width)
                 var newTop = (top / (maxY- minY)) * parseParamNumber(layer.height)
-                this.setBackgroundPosition( Math.floor(newLeft), Math.floor(newTop));
+                this.setBackgroundPosition( percentUnit(newLeft), percentUnit(newTop));
             }) 
 
             

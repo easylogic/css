@@ -21,15 +21,6 @@ import {
 } from "../../../../module/ItemTypes";
 import { CHANGE } from "../../../../../util/Event";
 
-const CLIP_PATH_TYPES = [
-    CLIP_PATH_TYPE_NONE,
-    CLIP_PATH_TYPE_CIRCLE,
-    CLIP_PATH_TYPE_ELLIPSE,
-    CLIP_PATH_TYPE_INSET,
-    CLIP_PATH_TYPE_POLYGON,
-    CLIP_PATH_TYPE_SVG
-]
-
 
 const CLIP_PATH_SIDE_TYPES = [
     CLIP_PATH_SIDE_TYPE_NONE,

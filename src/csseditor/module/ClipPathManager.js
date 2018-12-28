@@ -1,5 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { parseParamNumber, percent2px } from "../../util/filter/functions";
+import { parseParamNumber } from "../../util/filter/functions";
 import { 
     CLIP_PATH_TYPE_NONE, 
     CLIP_PATH_TYPE_CIRCLE, 
@@ -11,13 +11,22 @@ import {
     CLIP_PATH_SIDE_TYPE_NONE,
     CLIP_PATH_TYPE_INSET
 } from "./ItemTypes";
-import { percent, UNIT_PERCENT, stringUnit, percentUnit, value2px, string2unit } from "../../util/css/types";
+import { percent, stringUnit, percentUnit, value2px } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
+import clipPathList from './clip-path/index'
 
 const SQRT_2 = Math.sqrt(2);
 
 export default class ClipPathManager extends BaseModule {
    
+    '*/clip-path/sample/list' ($store) {
+        return clipPathList
+    }
+
+    '*/clip-path/sample/get' ($store, index) {
+        return clipPathList[index]
+    }    
+
     caculateClosestFromCenter (centerX, centerY, width, height) {
         var list = [
             [centerX, 0],

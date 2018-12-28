@@ -1,5 +1,15 @@
 import UIElement, { MULTI_EVENT, PIPE } from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE, CHANGE_LAYER_CLIPPATH_POLYGON, EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION } from "../../../../types/event";
+import { 
+    EVENT_CHANGE_EDITOR, 
+    EVENT_CHANGE_SELECTION, 
+    EVENT_CHANGE_LAYER_CLIPPATH, 
+    EVENT_CHANGE_LAYER, 
+    EVENT_CHANGE_LAYER_POSITION, 
+    EVENT_CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_CLIPPATH_POLYGON, 
+    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, 
+    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
+} from "../../../../types/event";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
