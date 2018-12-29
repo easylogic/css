@@ -73,18 +73,18 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     [CHANGE('$clipType')] () {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
-                id: layer.id, 
+                id, 
                 clipPathType: this.refs.$clipType.val()
             })
         })
     }
 
     [CLICK('$showClipPathEditor')] () {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
-                id: layer.id, 
+                id, 
                 showClipPathEditor: this.refs.$showClipPathEditor.checked()
             })
         })

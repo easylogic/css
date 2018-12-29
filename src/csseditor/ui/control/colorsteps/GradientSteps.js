@@ -1,4 +1,4 @@
-import UIElement, { PIPE, MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import Dom from '../../../../util/Dom';
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from '../../../../util/filter/functions';
 import { 
@@ -10,8 +10,7 @@ import {
     EVENT_CHANGE_SELECTION
 } from '../../../types/event';
 import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT } from '../../../../util/css/types';
-import { SHIFT } from '../../../../util/Key';
-import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK } from '../../../../util/Event';
+import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, CHECKER, DEBOUNCE } from '../../../../util/Event';
 
 export default class GradientSteps extends UIElement {
 
@@ -317,10 +316,7 @@ export default class GradientSteps extends UIElement {
         this.setBackgroundColor();
     }
 
-    [PIPE(
-        CLICK('$steps .step'),
-        SHIFT
-    )] (e) {
+    [CLICK('$steps .step') + SHIFT] (e) {
         this.removeStep(e);
     }
 
@@ -465,10 +461,7 @@ export default class GradientSteps extends UIElement {
     } 
 
     // Event Bindings 
-    [PIPE(
-        POINTEREND('document'),
-        'isDownCheck'
-    )] (e) { 
+    [POINTEREND('document') + CHECKER('isDownCheck')] (e) { 
         this.isDown = false       
         if (this.refs.$stepList) {
             this.refs.$stepList.removeClass('mode-drag')       
@@ -476,11 +469,7 @@ export default class GradientSteps extends UIElement {
         }
     }
 
-    [PIPE(
-        POINTERMOVE('document'),
-        'debounce(10)',
-        'isDownCheck'
-    )] (e) {
+    [POINTERMOVE('document') + DEBOUNCE(300) + CHECKER('isDownCheck')] (e) {
         this.refreshColorUI(e);
         this.refs.$stepList.addClass('mode-drag')
     }
@@ -489,12 +478,7 @@ export default class GradientSteps extends UIElement {
         return new Dom(e.target).hasClass('step');
     }
 
-    [PIPE(
-        POINTERSTART('$steps .step'),
-        'isNotDownCheck',
-        'isStepElement'
-     )] (e) {
-
+    [POINTERSTART('$steps .step') + CHECKER('isNotDownCheck') + CHECKER('isStepElement')] (e) {
         e.preventDefault();
 
         this.isDown = true; 

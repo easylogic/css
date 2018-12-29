@@ -155,8 +155,11 @@ export default class GradientView extends UIElement {
             width: px( 2000 ),
             height: px( 2000 )
         }
+
+        var colorviewCSS = this.read('/page/colorview/toCSS', page || {clip: false});
         this.refs.$canvas.css(canvasCSS);
         this.refs.$page.css(pageCSS)
+        this.refs.$colorview.css(colorviewCSS);
 
         if (!this.hasScroll) {
             var canvasWidth = 2000;

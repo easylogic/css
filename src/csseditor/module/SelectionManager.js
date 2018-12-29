@@ -351,7 +351,7 @@ export default class SelectionManager extends BaseModule {
 
         if (selectItems.length) {
             $store.selection = { 
-                type: SELECT_MODE_GROUP, 
+                type: selectItems.length == 1 ?  SELECT_MODE_ONE : SELECT_MODE_GROUP, 
                 ids: selectItems,
                 itemType: ITEM_TYPE_LAYER
             }

@@ -1,8 +1,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR } from '../../../../types/event';
-import { PIPE, MULTI_EVENT } from '../../../../../colorpicker/UIElement';
-import { CLICK } from '../../../../../util/Event';
-import { SELF } from '../../../../../util/EventMachin';
+import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { CLICK, SELF } from '../../../../../util/Event';
 
 export default class MixBlendList extends BasePropertyItem {
 
@@ -73,10 +72,7 @@ export default class MixBlendList extends BasePropertyItem {
         this.refresh()
     }
 
-    [PIPE(
-        CLICK('$mixBlendList .blend-item'),
-        SELF()
-    )] (e) {
+    [CLICK('$mixBlendList .blend-item') + SELF] (e) {
         this.read('/selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER, {id, mixBlendMode: e.$delegateTarget.attr('data-mode')}, true)
             this.refresh();

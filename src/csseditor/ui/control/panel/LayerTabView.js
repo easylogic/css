@@ -14,7 +14,8 @@ export default class LayerTabView extends BaseTab {
                 <div class="tab-item" data-id="fill">Fill</div>       
                 <div class="tab-item" data-id="text">Text</div>
                 <div class="tab-item" data-id="shape">Shape</div>
-                <div class="tab-item" data-id="transform">Trans</div>
+                <div class="tab-item" data-id="transform">Transform</div>
+                <div class="tab-item" data-id="transform3d">3D</div>
                 <div class="tab-item" data-id="css">CSS</div>
             </div>
             <div class="tab-body" ref="$body">
@@ -69,6 +70,8 @@ export default class LayerTabView extends BaseTab {
                 </div>
                 <div class="tab-content" data-id="transform">
                     <transform></transform>
+                </div>
+                <div class="tab-content" data-id="transform3d">
                     <transform3d></transform3d> 
                 </div>               
                 <div class="tab-content" data-id="css">

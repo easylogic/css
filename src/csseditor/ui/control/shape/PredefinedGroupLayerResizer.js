@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import { 
     EVENT_CHANGE_EDITOR, 
@@ -14,7 +14,7 @@ import {
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { px, UNIT_PX } from '../../../../util/css/types';
-import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE } from '../../../../util/Event';
+import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
 
 const SNAP_GRID = 20; 
@@ -333,10 +333,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy; 
     }
 
-    [PIPE(
-        POINTERSTART('$el [data-value]'),
-        'isNotDownCheck'
-    )] (e) {
+    [POINTERSTART('$el [data-value]') + CHECKER('isNotDownCheck')] (e) {
         e.stopPropagation();
         this.activeButton = e.$delegateTarget;
         this.activeButton.addClass('active');
@@ -371,11 +368,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.canvasScrollTop = this.$board.scrollTop();        
     }
 
-    [PIPE(
-        POINTERMOVE('document'),
-        'debounce(10)',
-        'isDownCheck'
-     )] (e) {
+    [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {
         this.targetXY = e.xy; 
 
         if (!this.xy) {
@@ -416,10 +409,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy.x != e.xy.x || this.xy.y != e.xy.y; 
     }
 
-    [PIPE(
-        POINTEREND('document'),
-        'isDownCheck'
-    )] (e) {
+    [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
         this.currentType = null; 
         this.xy = null 
         this.moveX = null;
@@ -430,10 +420,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.dispatch('/history/push', 'Resize a layer');
     }
 
-    [PIPE(
-        RESIZE('window'),
-        DEBOUNCE(300)
-     )] (e) {
+    [RESIZE('window') + DEBOUNCE(300)] (e) {
         this.refresh();
     }
 }

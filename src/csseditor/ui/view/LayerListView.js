@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT, PIPE } from '../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_LAYER, 
@@ -23,8 +23,7 @@ import {
     EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
     EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
 } from '../../types/event';
-import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP } from '../../../util/Event';
-import { SELF } from '../../../util/EventMachin';
+import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF } from '../../../util/Event';
 
 export default class LayerListView extends UIElement {
 
@@ -184,10 +183,7 @@ export default class LayerListView extends UIElement {
         EVENT_CHANGE_SELECTION
     )] () { this.refresh(); }
 
-    [PIPE(
-        CLICK('$layerList .tree-item'),
-        SELF()
-    )] (e) { 
+    [CLICK('$layerList .tree-item') + SELF] (e) { 
         var id = e.$delegateTarget.attr('id');
         this.dispatch('/selection/one', id);        
         this.run('/item/focus', id);
@@ -211,10 +207,7 @@ export default class LayerListView extends UIElement {
         e.preventDefault();        
     }        
 
-    [PIPE(
-        DROP('$layerList .tree-item'),
-        SELF()
-    )] (e) {
+    [DROP('$layerList .tree-item') + SELF] (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('id')
@@ -281,10 +274,7 @@ export default class LayerListView extends UIElement {
         this.emit('toggleLayerSampleView');
     }
 
-    [PIPE(
-        CLICK('$layerList .gradient-collapse-button'),
-        SELF()
-    )] (e) {
+    [CLICK('$layerList .gradient-collapse-button') + SELF] (e) {
         e.$delegateTarget.parent().toggleClass('collapsed')
         var item = this.read('/item/get', e.$delegateTarget.attr('item-id'))
 

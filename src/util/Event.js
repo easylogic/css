@@ -1,3 +1,13 @@
+export class EventChecker {
+    constructor (value, split = EVENT_CHECK_SAPARATOR) {
+        this.value = value; 
+        this.split = split
+    }
+
+    toString () {
+        return ` ${this.split} ` + this.value; 
+    }
+}
 export const EVENT_NAME_SAPARATOR = ':'
 export const EVENT_CHECK_SAPARATOR = '|'
 export const EVENT_SAPARATOR = ' '
@@ -6,6 +16,9 @@ export const EVENT_MAKE = (...keys) => {
     return (...args) => {
         return [key, ...args].join(EVENT_SAPARATOR)
     }
+}
+export const CHECKER = (value, split = EVENT_CHECK_SAPARATOR) => {
+    return new EventChecker(value, split);
 }
 
 export const CUSTOM = EVENT_MAKE;
@@ -43,6 +56,17 @@ export const PASTE = EVENT_MAKE('paste')
 export const RESIZE = EVENT_MAKE('resize')
 export const SCROLL = EVENT_MAKE('scroll')
 
+export const ALT = CHECKER('ALT')
+export const SHIFT = CHECKER('SHIFT')
+export const META = CHECKER('META')
+export const CONTROL = CHECKER('CONTROL')
+
+export const ARROW_UP = CHECKER('ArrowUp')
+export const ARROW_DOWN = CHECKER('ArrowDown')
+export const ARROW_LEFT = CHECKER('ArrowLeft')
+export const ARROW_RIGHT = CHECKER('ArrowRight')
+
+
 // custom event 
 export const CHANGEINPUT = CUSTOM('change', 'input')
 export const PREDEFINED_EVENT_NAMES = {
@@ -52,10 +76,16 @@ export const PREDEFINED_EVENT_NAMES = {
     'ttingttong': 'click',
     'tt': 'click'
 }
-export const DEBOUNCE = (debounce = 100) => {
-    return `debouce(${debounce})`
-}
 
+// Predefined CHECKER 
+export const DEBOUNCE = (debounce = 100) => {
+    return CHECKER(`debounce(${debounce})`)
+}
+export const SELF = CHECKER('self');
+export const CAPTURE = CHECKER('capture');
+
+
+// event name regular expression
 export const CHECK_EVENT_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll)/ig;
 
 export default {    

@@ -13,28 +13,22 @@ import GradientSampleView from '../ui/window/GradientSampleWindow';
 import LayerSampleView from '../ui/window/LayerSampleWindow';
 import PageSampleView from '../ui/window/PageSampleWindow';
 import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
-import ExportCanvasWindow from '../ui/window/ExportCanvasWindow';
 import { EVENT_CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import ImageToolbar from '../ui/view/ImageToolbar';
 
-
-
 export default class CSSEditor extends BaseCSSEditor {
-
 
     afterRender() { 
         setTimeout(() => {
             this.emit('changeEditor');
         }, 100)
-
     }
 
     template () {
         return `
-
             <div class="layout-main expertor-mode" ref="$layoutMain">
                 <div class="layout-header">
                     <h1 class="header-title">${this.i18n('app.title')}</h1>
@@ -61,7 +55,6 @@ export default class CSSEditor extends BaseCSSEditor {
                     <Timeline></Timeline>
                 </div>
                 <ExportView></ExportView>
-                <ExportCanvasWindow></ExportCanvasWindow>
                 <DropView></DropView>
                 <GradientSampleView></GradientSampleView>
                 <LayerSampleView></LayerSampleView>
@@ -75,7 +68,6 @@ export default class CSSEditor extends BaseCSSEditor {
             ImageToolbar,
             SelectLayerView,
             ToolMenu,
-            ExportCanvasWindow,
             LayerToolbar,
             ClipPathImageList,
             GradientSampleView,

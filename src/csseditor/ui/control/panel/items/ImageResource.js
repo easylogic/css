@@ -51,8 +51,7 @@ export default class ImageResource extends BasePropertyItem {
     }
 
     [CLICK('$imageList .svg-item')] (e) {
-        var index = e.$delegateTarget.attr('data-index')
-        var key = e.$delegateTarget.attr('data-key')
+        var [index, key] = e.$delegateTarget.attrs('data-index', 'data-key')
 
         if (index) {
             this.read('/selection/current/image', (image) => {

@@ -5,7 +5,7 @@ import GradientPosition from "./shape/GradientPosition";
 import PredefinedLinearGradientAngle from "./shape/PredefinedLinearGradientAngle";
 import PredefinedRadialGradientPosition from "./shape/PredefinedRadialGradientPosition";
 import PredefinedRadialGradientAngle from "./shape/PredefinedRadialGradientAngle";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
+import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER, EVENT_CHANGE_PAGE } from "../../types/event";
 import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
@@ -75,7 +75,12 @@ export default class SubFeatureControl extends UIElement {
     }
 
     isNotPage () {
-        return this.read('/selection/is/page') == false; 
+        if (!this.read('/selection/is/page')) return true; 
+
+        var item = this.read('/selection/current/page');
+        if (!item) return true; 
+
+        return !item.preserve
     }
 
     isLinearShow () {
@@ -112,6 +117,7 @@ export default class SubFeatureControl extends UIElement {
     }
 
     [MULTI_EVENT(
+        EVENT_CHANGE_PAGE,
         EVENT_CHANGE_EDITOR,
         EVENT_CHANGE_SELECTION
     )] () { this.refresh(); }

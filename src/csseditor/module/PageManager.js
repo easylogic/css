@@ -35,6 +35,25 @@ export default class PageManager extends BaseModule {
 
     }
 
+    '*/page/colorview/toCSS' ($store, page = {}) {
+        var sample = $store.read('/item/convert/style', page || {}) 
+
+        var css ={
+            'transform-style': sample.preserve ? 'preserve-3d' : 'flat'
+        } 
+
+        if (sample.perspective) {
+            css.perspective = stringUnit(sample.perspective);
+        }
+
+        if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY) ) {
+            css['perspective-origin'] = `${stringUnit(sample.perspectiveOriginPositionX)} ${stringUnit(sample.perspectiveOriginPositionY)}`;
+        }        
+ 
+        return $store.read('/css/sorting', css); 
+
+    }    
+
     '*/page/cache/toCSS' ($store, page = {}) {
         var sample = $store.read('/item/convert/style', page || {}) 
 

@@ -1,7 +1,7 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
-import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_SELECTION } from '../../../types/event';
-import { POINTERSTART, POINTEREND, POINTERMOVE } from '../../../../util/Event';
+import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
 
 export default class GradientAngle extends UIElement {
 
@@ -125,33 +125,20 @@ export default class GradientAngle extends UIElement {
     }
 
     // Event Bindings 
-    [PIPE(
-        POINTEREND('document'),
-        'isDownCheck'
-    )] (e) {
+    [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
         this.isDown = false ;
     }
 
-    [PIPE(
-        POINTERMOVE('document'),
-        'debounce(10)',
-        'isDownCheck'
-    )] (e) {
+    [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {
         this.refreshUI(e);
     }
 
-    [PIPE(
-        POINTERSTART('$drag_pointer'),
-        'isNotDownCheck'
-     )] (e) {
+    [POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    [PIPE(
-        POINTERSTART('$dragAngle'),
-        'isNotDownCheck'
-    )] (e) {
+    [POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck')] (e) {
         this.isDown = true; 
         this.refreshUI(e);        
     }     

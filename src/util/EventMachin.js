@@ -1,4 +1,4 @@
-import Event, { CHECK_EVENT_PATTERN, EVENT_NAME_SAPARATOR, EVENT_CHECK_SAPARATOR, EVENT_SAPARATOR, PREDEFINED_EVENT_NAMES, CUSTOM } from './Event'
+import Event, { CHECK_EVENT_PATTERN, EVENT_NAME_SAPARATOR, EVENT_CHECK_SAPARATOR, EVENT_SAPARATOR, PREDEFINED_EVENT_NAMES, CUSTOM, CHECKER } from './Event'
 import Dom from './Dom'
 import State from './State'
 import { debounce } from './functions/func';
@@ -7,8 +7,6 @@ import { CONTROL, ALT, SHIFT, META } from './Key';
 const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 const CHECK_FUNCTION_PATTERN = /^([^ \t]*)(\((.*)\))?$/ig;
 const META_KEYS = [ CONTROL, SHIFT, ALT, META];
-
-export const SELF = CUSTOM('self');
 
 export default class EventMachin {
 
@@ -341,7 +339,7 @@ export default class EventMachin {
 
   bindingEvent ([ eventName, dom, ...delegate], checkMethodFilters, callback) {
     let eventObject = this.getDefaultEventObject(eventName, checkMethodFilters);
-s
+
     eventObject.dom = this.getDefaultDomElement(dom);
     eventObject.delegate = delegate.join(EVENT_SAPARATOR);
 

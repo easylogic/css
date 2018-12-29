@@ -46,6 +46,12 @@ export default class Dom {
         return this; 
     }
 
+    attrs (...args) {
+        return args.map(key => {
+            return this.el.getAttribute(key);
+        })
+    }
+
     removeAttr (key) {
         this.el.removeAttribute(key);
 

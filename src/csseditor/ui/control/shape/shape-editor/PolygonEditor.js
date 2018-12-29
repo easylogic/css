@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT, PIPE } from "../../../../../colorpicker/UIElement";
+import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_SELECTION, 
@@ -14,8 +14,7 @@ import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, stringUnit } from "../../../../../util/css/types";
-import { ALT } from "../../../../../util/Key";
-import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
+import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CHECKER, CAPTURE } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
 
 export default class PolygonEditor extends UIElement {
@@ -195,20 +194,13 @@ export default class PolygonEditor extends UIElement {
         return new Dom(e.target).hasClass('drag-item') == false;
     }
 
-    [PIPE( 
-        CLICK(), 
-        ALT
-    )] (e) {
+    [CLICK() + ALT] (e) {
         e.preventDefault();
 
         this.addPoint(e);
     }
 
-    [PIPE( 
-        CLICK('$el .drag-item'), 
-        ALT,
-        'capture'
-    )] (e) {
+    [CLICK('$el .drag-item') + ALT + CAPTURE] (e) {
         e.stopPropagation();
         e.preventDefault();
 

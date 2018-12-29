@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT, PIPE } from '../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
 import { 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_IMAGE, 
@@ -10,8 +10,7 @@ import {
     EVENT_CHANGE_COLOR_STEP, 
     EVENT_CHANGE_SELECTION 
 } from '../../types/event';
-import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP } from '../../../util/Event';
-import { SELF } from '../../../util/EventMachin';
+import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF } from '../../../util/Event';
 
 export default class ImageListView extends UIElement {
 
@@ -59,10 +58,7 @@ export default class ImageListView extends UIElement {
         EVENT_CHANGE_SELECTION
     )] (newValue) { this.refresh() }
 
-    [PIPE(
-        CLICK('$el .tree-item'),
-        SELF()
-    )] (e) { 
+    [CLICK('$el .tree-item') + SELF] (e) { 
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
@@ -90,10 +86,7 @@ export default class ImageListView extends UIElement {
         e.preventDefault();        
     }        
 
-    [PIPE(
-        DROP('$el .tree-item'),
-        SELF()
-    )] (e) {
+    [DROP('$el .tree-item') + SELF] (e) {
         e.preventDefault();        
 
         var destId = e.$delegateTarget.attr('data-id')

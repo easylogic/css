@@ -1,8 +1,7 @@
-import UIElement, { PIPE } from '../../../colorpicker/UIElement';
+import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
 import { EVENT_CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
-import { CLICK } from '../../../util/Event';
-import { SELF } from '../../../util/EventMachin';
+import { CLICK, SELF } from '../../../util/Event';
 
 export default class PageListView extends UIElement {
 
@@ -75,10 +74,7 @@ export default class PageListView extends UIElement {
         this.refresh();
     }
 
-    [PIPE(
-        CLICK('$pageList .tree-item'),
-        SELF()
-    )] (e) { 
+    [CLICK('$pageList .tree-item') + SELF] (e) { 
 
         this.dispatch('/selection/one', e.$delegateTarget.attr('id'));       
         this.refresh();

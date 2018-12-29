@@ -1,14 +1,11 @@
-import UIElement, { MULTI_EVENT, PIPE } from '../../../../colorpicker/UIElement';
+import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_IMAGE, 
     EVENT_CHANGE_EDITOR, 
     EVENT_CHANGE_SELECTION, 
-    CHANGE_IMAGE,
     CHANGE_PAGE_TRANSFORM,
     EVENT_CHANGE_PAGE_TRANSFORM
 } from '../../../types/event';
-import { CLICK } from '../../../../util/Event';
-import { SELF } from '../../../../util/EventMachin';
+import { CLICK, SELF } from '../../../../util/Event';
 import { percentUnit, unit, valueUnit } from '../../../../util/css/types';
 
 const defined_position = {
@@ -85,10 +82,7 @@ export default class PredefinedPerspectiveOriginPosition extends UIElement {
         }
     }
 
-    [PIPE(
-        CLICK('$el button'),
-        SELF()
-    )] (e) {
+    [CLICK('$el button') + SELF] (e) {
         this.read('/selection/current/page/id', (id) => {
             var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
             this.commit(CHANGE_PAGE_TRANSFORM, {id, ...pos})
