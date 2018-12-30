@@ -8,7 +8,7 @@ import {
 import { parseParamNumber } from '../../../../util/filter/functions';
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
-import { percentUnit } from '../../../../util/css/types';
+import { percentUnit, percent } from '../../../../util/css/types';
 
 export default class BackgroundResizer extends UIElement {
 
@@ -89,8 +89,8 @@ export default class BackgroundResizer extends UIElement {
     
         } else {
 
-            var left = x
-            var top = y; 
+            var left = minX + (maxX - minX) *  (x/100)
+            var top = minY + (maxY - minY) *  (y/100); 
         }
 
         left = Math.floor(left);
@@ -98,20 +98,11 @@ export default class BackgroundResizer extends UIElement {
 
         this.refs.$dragPointer.px('left', left);
         this.refs.$dragPointer.px('top', top);
-        this.refs.$backgroundRect.px('left',left);
-        this.refs.$backgroundRect.px('top',top);
-        this.refs.$backgroundRect.px('width',width);
-        this.refs.$backgroundRect.px('height',height);
 
         if (e) {
-
-            this.read('/selection/current/layer', layer => {
-                var newLeft = (left / (maxX - minX)) * parseParamNumber(layer.width)
-                var newTop = (top / (maxY- minY)) * parseParamNumber(layer.height)
-                this.setBackgroundPosition( percentUnit(newLeft), percentUnit(newTop));
-            }) 
-
-            
+            var newLeft = (left / (maxX - minX)) * 100
+            var newTop = (top / (maxY - minY)) * 100
+            this.setBackgroundPosition( percentUnit(newLeft), percentUnit(newTop));
         }
 
     }

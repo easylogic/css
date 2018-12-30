@@ -5869,14 +5869,14 @@ html, body {
             -webkit-box-sizing: border-box;
                     box-sizing: border-box; }
           .csseditor .filter-list .filter-item .filter-item-input > .filter .area {
-            width: 5px;
-            margin-left: 5px;
+            width: 2px;
+            margin-left: 1px;
             height: 20px;
             vertical-align: middle;
             display: inline-block;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
-            background-color: #c4c4c4; }
+            background-color: transparent; }
           .csseditor .filter-list .filter-item .filter-item-input > .filter .title {
             width: 60px;
             text-align: left; }

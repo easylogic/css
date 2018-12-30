@@ -10082,9 +10082,9 @@ var FILTER_DEFAULT_OBJECT = {
     'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
     'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
     'filterDropshadow': { index: 60 },
-    'filterDropshadowOffsetX': { value: 10, unit: UNIT_PX },
-    'filterDropshadowOffsetY': { value: 20, unit: UNIT_PX },
-    'filterDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
+    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
     'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
     'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
     'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
@@ -17241,8 +17241,8 @@ var BackgroundSize = function (_UIElement) {
                 this.read('/selection/current/image', function (image) {
                     _this8.children.$width.refresh(image.backgroundSizeWidth);
                     _this8.children.$height.refresh(image.backgroundSizeHeight);
-                    _this8.children.$x.refresh(image.backgroundPositionX);
-                    _this8.children.$y.refresh(image.backgroundPositionY);
+                    _this8.children.$x.refresh(defaultValue(image.backgroundPositionX, percentUnit(0)));
+                    _this8.children.$y.refresh(defaultValue(image.backgroundPositionY, percentUnit(0)));
                     _this8.selectBackgroundSize(image.backgroundSize);
                     _this8.selectBackgroundRepeat(image.backgroundRepeat);
                 });
@@ -21340,8 +21340,6 @@ var BackgroundResizer = function (_UIElement) {
     }, {
         key: 'refreshUI',
         value: function refreshUI(e) {
-            var _this2 = this;
-
             var _getRectangle = this.getRectangle(),
                 minX = _getRectangle.minX,
                 minY = _getRectangle.minY,
@@ -21367,8 +21365,8 @@ var BackgroundResizer = function (_UIElement) {
                 var top = y - minY;
             } else {
 
-                var left = x;
-                var top = y;
+                var left = minX + (maxX - minX) * (x / 100);
+                var top = minY + (maxY - minY) * (y / 100);
             }
 
             left = Math.floor(left);
@@ -21376,27 +21374,20 @@ var BackgroundResizer = function (_UIElement) {
 
             this.refs.$dragPointer.px('left', left);
             this.refs.$dragPointer.px('top', top);
-            this.refs.$backgroundRect.px('left', left);
-            this.refs.$backgroundRect.px('top', top);
-            this.refs.$backgroundRect.px('width', width);
-            this.refs.$backgroundRect.px('height', height);
 
             if (e) {
-
-                this.read('/selection/current/layer', function (layer) {
-                    var newLeft = left / (maxX - minX) * parseParamNumber$1(layer.width);
-                    var newTop = top / (maxY - minY) * parseParamNumber$1(layer.height);
-                    _this2.setBackgroundPosition(percentUnit(newLeft), percentUnit(newTop));
-                });
+                var newLeft = left / (maxX - minX) * 100;
+                var newTop = top / (maxY - minY) * 100;
+                this.setBackgroundPosition(percentUnit(newLeft), percentUnit(newTop));
             }
         }
     }, {
         key: 'setBackgroundPosition',
         value: function setBackgroundPosition(backgroundPositionX, backgroundPositionY) {
-            var _this3 = this;
+            var _this2 = this;
 
             this.read('/selection/current/image/id', function (id) {
-                _this3.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
+                _this2.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
             });
         }
     }, {

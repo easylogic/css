@@ -2,8 +2,9 @@ import UnitRange from "./element/UnitRange";
 import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_IMAGE, EVENT_CHANGE_IMAGE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
-import { UNIT_PX } from "../../../../../util/css/types";
+import { UNIT_PX, percentUnit } from "../../../../../util/css/types";
 import { CLICK } from "../../../../../util/Event";
+import { defaultValue } from "../../../../../util/functions/func";
 
 export default class BackgroundSize extends UIElement {
     components () {
@@ -226,8 +227,8 @@ export default class BackgroundSize extends UIElement {
             this.read('/selection/current/image', (image) => {
                 this.children.$width.refresh(image.backgroundSizeWidth);
                 this.children.$height.refresh(image.backgroundSizeHeight);
-                this.children.$x.refresh(image.backgroundPositionX);
-                this.children.$y.refresh(image.backgroundPositionY);
+                this.children.$x.refresh(defaultValue(image.backgroundPositionX, percentUnit(0)));
+                this.children.$y.refresh(defaultValue(image.backgroundPositionY, percentUnit(0)));
                 this.selectBackgroundSize(image.backgroundSize);
                 this.selectBackgroundRepeat(image.backgroundRepeat);
             })   
