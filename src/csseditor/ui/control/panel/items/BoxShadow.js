@@ -62,7 +62,7 @@ export default class BoxShadow extends BasePropertyItem {
         var blurRadius = parseParamNumber(item.blurRadius);
         var spreadRadius = parseParamNumber(item.spreadRadius);
 
-        var checked = this.read('/selection/check', item.id) ? 'checked': '';
+        var checked = this.read('selection/check', item.id) ? 'checked': '';
 
         return `
             <div class='box-shadow-item ${checked}' box-shadow-id="${item.id}">  
@@ -89,10 +89,10 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
     'load $boxShadowList' () {
-        var item = this.read('/selection/current/layer')
+        var item = this.read('selection/current/layer')
         if (!item) { return ''; }
 
-        var results =  this.read('/item/map/boxshadow/children', item.id, (item) => {
+        var results =  this.read('item/map/boxshadow/children', item.id, (item) => {
             return this.makeItemNodeBoxShadow(item)
         })
 
@@ -105,7 +105,7 @@ export default class BoxShadow extends BasePropertyItem {
 
     isShow () {
         return true; 
-        // return this.read('/selection/is/layer'); 
+        // return this.read('selection/is/layer'); 
     }    
 
     refresh () {
@@ -141,9 +141,9 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
     [CLICK('$add')] (e) {
-        this.read('/selection/current/layer/id', (id) => {
-            this.dispatch('/item/add', ITEM_TYPE_BOXSHADOW, false, id)
-            this.dispatch('/history/push', `Add Box Shadow` );        
+        this.read('selection/current/layer/id', (id) => {
+            this.dispatch('item/add', ITEM_TYPE_BOXSHADOW, false, id)
+            this.dispatch('history/push', `Add Box Shadow` );        
             this.refresh();
         }); 
     }
@@ -167,7 +167,7 @@ export default class BoxShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('box-shadow-id')
 
-        this.run('/item/initialize', id);
+        this.run('item/initialize', id);
         this.emit(CHANGE_BOXSHADOW)
         this.refresh();
     }
@@ -176,7 +176,7 @@ export default class BoxShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('box-shadow-id')
 
-        this.dispatch('/selection/one', id);
+        this.dispatch('selection/one', id);
         this.emit('fillColorId', id, CHANGE_BOXSHADOW);
         this.refresh();
     }

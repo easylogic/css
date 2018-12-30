@@ -29,7 +29,7 @@ export default class BackgroundColor extends BasePropertyItem {
     }
 
     refresh() {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             this.refs.$color.css('background-color', layer.backgroundColor)
             this.refs.$colortext.text(layer.backgroundColor)
         });

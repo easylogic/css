@@ -66,54 +66,54 @@ export default class SubFeatureControl extends UIElement {
 
 
     isShow () {
-        //if (!this.read('/selection/is/image')) return false;         
+        //if (!this.read('selection/is/image')) return false;         
         return true;
     }
 
     isNotImage () {
-        return this.read('/selection/is/image') == false;
+        return this.read('selection/is/image') == false;
     }
 
     isNotPage () {
-        if (!this.read('/selection/is/page')) return true; 
+        if (!this.read('selection/is/page')) return true; 
 
-        var item = this.read('/selection/current/page');
+        var item = this.read('selection/current/page');
         if (!item) return true; 
 
         return !item.preserve
     }
 
     isLinearShow () {
-        if (!this.read('/selection/is/image')) return false; 
+        if (!this.read('selection/is/image')) return false; 
 
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
 
         if (!item) return false; 
 
-        var isLinear = this.read('/image/type/isLinear', item.type)
-        var isConic = this.read('/image/type/isConic', item.type)
+        var isLinear = this.read('image/type/isLinear', item.type)
+        var isConic = this.read('image/type/isConic', item.type)
 
         if (isLinear == false && isConic == false) {
             return false; 
         }
 
-        return this.read('/tool/get', 'guide.angle')
+        return this.read('tool/get', 'guide.angle')
     }
 
     isRadialShow () {
-        if (!this.read('/selection/is/image')) return false; 
+        if (!this.read('selection/is/image')) return false; 
 
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
         if (!item) return false; 
 
-        var isRadial = this.read('/image/type/isRadial', item.type)
-        var isConic = this.read('/image/type/isConic', item.type)
+        var isRadial = this.read('image/type/isRadial', item.type)
+        var isConic = this.read('image/type/isConic', item.type)
 
         if (isRadial == false && isConic == false) {
             return false; 
         }
 
-        return this.read('/tool/get', 'guide.angle')
+        return this.read('tool/get', 'guide.angle')
     }
 
     [MULTI_EVENT(

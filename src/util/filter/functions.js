@@ -4,6 +4,7 @@ import ImageFilter from './index'
 import Color from '../Color'
 import { round } from '../functions/math';
 import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, UNIT_PX, isPX } from '../css/types';
+import { isFunction, isString, isNumber, isArray } from '../functions/func';
 
 let makeId = 0 
 
@@ -78,17 +79,17 @@ export function colorMatrix(pixels, i, matrix) {
 
 export function makeFilter(filter) {
 
-    if (typeof filter == 'function') {
+    if (isFunction( filter )) {
         return filter;
     }
 
-    if (typeof filter == 'string') {
+    if (isString( filter )) {
         filter = [filter];
     }
 
     const filterName = filter.shift();
 
-    if (typeof filterName == 'function') {
+    if (isFunction( filterName )) {
         return filterName;
     }
 
@@ -291,10 +292,10 @@ export function putBitmap(bitmap, subBitmap, area) {
 }
 
 export function parseParamNumber (param, callback) {
-    if (typeof param === 'string') {
+    if (isString( param )) {
         param = param.replace(/deg|px|\%|em/g, '')
     }
-    if (typeof callback  == 'function') {
+    if (isFunction( callback )) {
         return callback(+param);
     }
     return +param 
@@ -433,10 +434,10 @@ export function makeUserFilterFunctionList (arr) {
         })
 
         let preContext = Object.keys(it.context).filter(key => {
-            if (typeof it.context[key] === 'number' || typeof it.context[key] === 'string') {
+            if (isNumber( it.context[key] ) || isString( it.context[key] )) {
                 return false 
             } else if (Array.isArray(it.context[key])) {
-                if (typeof it.context[key][0] == 'number' || typeof it.context[key][0] == 'string') {
+                if (isNumber( it.context[key][0] ) || isString( it.context[key][0]) ) {
                     return false 
                 }
             }
@@ -457,10 +458,10 @@ export function makeUserFilterFunctionList (arr) {
         Object.keys(newKeys).forEach(key => {
             var newKey = newKeys[key]
 
-            if (typeof it.context[key] === 'number' || typeof it.context[key] === 'string') {
+            if (isNumber(it.context[key]) || isString( it.context[key] )) {
                 preCallbackString = preCallbackString.replace(new RegExp("\\"+key, "g"), it.context[key])
-            } else if (Array.isArray(it.context[key])) {
-                if (typeof it.context[key][0] == 'number' || typeof it.context[key][0] == 'string') {
+            } else if (isArray(it.context[key])) {
+                if (isNumber( it.context[key][0] ) || isString( it.context[key][0] )) {
                     it.context[key].forEach((item, index) => {
                         preCallbackString = preCallbackString.replace(new RegExp("\\"+key+'\\[' + index + '\\]', "g"), item)
                     })
@@ -558,10 +559,10 @@ export function fillColor(pixels, i, r, g, b, a) {
         var {r, g, b, a} = arguments[2]
     }
 
-    if (typeof r == 'number') {pixels[i] = r; }
-    if (typeof g == 'number') {pixels[i + 1] = g; }
-    if (typeof b == 'number') {pixels[i + 2] = b; }
-    if (typeof a == 'number') {pixels[i + 3] = a; }
+    if (isNumber( r )) {pixels[i] = r; }
+    if (isNumber( g )) {pixels[i + 1] = g; }
+    if (isNumber( b )) {pixels[i + 2] = b; }
+    if (isNumber( a )) {pixels[i + 3] = a; }
 }
 
 export function fillPixelColor (targetPixels, targetIndex,  sourcePixels, sourceIndex) {
@@ -883,7 +884,7 @@ export function merge (filters) {
  */
 export function partial (area, ...filters) {
     var allFilter = null 
-    if (filters.length == 1 && typeof filters[0] === 'string') {
+    if (filters.length == 1 && isString(filters[0])) {
         allFilter = filter(filters[0])
     } else {
         allFilter = merge(filters)

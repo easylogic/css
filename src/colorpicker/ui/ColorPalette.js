@@ -32,7 +32,7 @@ export default class ColorPalette extends UIElement {
         var s = (pos.x / width);
         var v = ((height - pos.y) / height);
 
-        this.dispatch('/changeColor', {
+        this.dispatch('changeColor', {
             type: 'hsv',
             s,
             v
@@ -48,7 +48,7 @@ export default class ColorPalette extends UIElement {
     
         this.drag_pointer_pos = { x , y };
 
-        this.setBackgroundColor(this.read('/getHueColor'))
+        this.setBackgroundColor(this.read('getHueColor'))
     }
 
 

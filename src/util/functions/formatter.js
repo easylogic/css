@@ -1,3 +1,4 @@
+import { isUndefined, isArray } from "./func";
 
 /**
  * @method format
@@ -52,15 +53,15 @@ export function hex(obj) {
 }
 
 export function rgb (obj, defaultColor = 'rgba(0, 0, 0, 0)') {
-    if (Array.isArray(obj)) {
+    if (isArray(obj)) {
         obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] }
     }
 
-    if (typeof obj == 'undefined') {
+    if (isUndefined( obj ) ) {
         return undefined;
     }
 
-    if (obj.a == 1 || typeof obj.a == 'undefined') {
+    if (obj.a == 1 || isUndefined( obj.a ) ) {
         if (isNaN(obj.r)) {
             return defaultColor;
         }
@@ -71,11 +72,11 @@ export function rgb (obj, defaultColor = 'rgba(0, 0, 0, 0)') {
 }
 
 export function hsl (obj) {
-    if (Array.isArray(obj)) {
+    if (isArray(obj)) {
         obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] }
     }
 
-    if (obj.a == 1 || typeof obj.a == 'undefined') {
+    if (obj.a == 1 || isUndefined( obj.a )) {
         return `hsl(${obj.h},${obj.s}%,${obj.l}%)`;
     } else {
         return `hsla(${obj.h},${obj.s}%,${obj.l}%,${obj.a})`;

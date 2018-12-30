@@ -23,7 +23,7 @@ export default class PageName extends UIElement {
     }
 
     refresh() {
-        this.read('/selection/current/page', (item) => {
+        this.read('selection/current/page', (item) => {
             var name = '';
             if (item) {
                 name = item.name ; 
@@ -37,7 +37,7 @@ export default class PageName extends UIElement {
     }
 
     [INPUT('$name')] () {
-        this.read('/selection/current/page/id', (id) => {
+        this.read('selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_NAME, {id, name: this.refs.$name.val()});
         });
     }

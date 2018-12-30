@@ -24,7 +24,7 @@ export default class TextFillColorPicker extends UIElement {
         })    
 
         setTimeout(() => {
-            this.colorPicker.dispatch('/initColor', defaultColor)
+            this.colorPicker.dispatch('initColor', defaultColor)
         }, 100)
         
     }    
@@ -41,7 +41,7 @@ export default class TextFillColorPicker extends UIElement {
 
     [EVENT_TEXT_FILL_COLOR] (id, eventType) {
         this.changeColorId = id;
-        this.itemType = this.read('/item/get', id).itemType;
+        this.itemType = this.read('item/get', id).itemType;
         this.eventType = eventType;
 
         this.refresh();
@@ -54,7 +54,7 @@ export default class TextFillColorPicker extends UIElement {
 
     refresh() {
         if (this.changeColorId) {
-            var item = this.read('/item/get', this.changeColorId);
+            var item = this.read('item/get', this.changeColorId);
             this.colorPicker.initColorWithoutChangeEvent(item.color);
         }
 

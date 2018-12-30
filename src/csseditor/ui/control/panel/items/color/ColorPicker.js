@@ -9,11 +9,12 @@ import {
     EVENT_CHANGE_EDITOR,
     EVENT_CHANGE_SELECTION
 } from '../../../../../types/event';
+import { isNotUndefined } from '../../../../../../util/functions/func';
 
 export default class ColorPickerLayer extends UIElement {
 
     afterRender () {
-        var defaultColor = this.read('/getSelectedColor')
+        var defaultColor = 'red'
         this.colorPicker = ColorPicker.create({
             type: 'ring-tab',
             tabTitle: 'Step',
@@ -26,7 +27,7 @@ export default class ColorPickerLayer extends UIElement {
         })    
 
         setTimeout(() => {
-            this.colorPicker.dispatch('/initColor', defaultColor)
+            this.colorPicker.dispatch('initColor', defaultColor)
         }, 100)
         
     }    
@@ -36,19 +37,19 @@ export default class ColorPickerLayer extends UIElement {
     }
 
     changeColor (color) {
-        var item = this.read('/selection/current')
+        var item = this.read('selection/current')
 
         if (!item.length) return; 
 
         item = item[0];
 
-        if (this.read('/selection/is/image')) {
+        if (this.read('selection/is/image')) {
             
-            if (this.read('/image/type/isStatic', item.type)) {
+            if (this.read('image/type/isStatic', item.type)) {
                 this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
-            } else if (this.read('/image/type/isGradient',item.type)) {
+            } else if (this.read('image/type/isGradient',item.type)) {
 
-                this.read('/item/each/children', item.id, (step) => {
+                this.read('item/each/children', item.id, (step) => {
                     if (step.selected) {
                         this.commit(CHANGE_COLOR_STEP, {id: step.id, color})
                     }
@@ -59,13 +60,13 @@ export default class ColorPickerLayer extends UIElement {
     }
 
     [EVENT_CHANGE_COLOR_STEP] (newValue) {
-        if (typeof newValue.color !== `undefined`) {
-            this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
+        if (isNotUndefined(newValue.color)) {
+            this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
         }
     }
 
     '@changeColor' () {
-        this.colorPicker.initColorWithoutChangeEvent(this.read('/tool/get', 'color'));
+        this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
     } 
 
     [MULTI_EVENT(
@@ -75,11 +76,11 @@ export default class ColorPickerLayer extends UIElement {
     )] () { this.refresh() }    
 
     refresh() {
-        if (this.read('/selection/is/image')) {
-            this.read('/selection/current/image', (image) => {
-                if (this.read('/image/type/isStatic', image.type)) {
+        if (this.read('selection/is/image')) {
+            this.read('selection/current/image', (image) => {
+                if (this.read('image/type/isStatic', image.type)) {
                     this.colorPicker.initColorWithoutChangeEvent(image.color);
-                } else if (this.read('/image/type/isGradient', image.type)) {
+                } else if (this.read('image/type/isGradient', image.type)) {
                     
                 }
             })

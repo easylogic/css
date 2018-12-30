@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit, stringUnit } from "../../util/css/types";
 import { FILTER_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT_KEYS } from "./ItemTypes";
+import { GETTER } from "../../util/Store";
 const filterInfo = {
     'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
     'filterGrayscale' : { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
@@ -27,19 +28,19 @@ const DROP_SHADOW_LIST = [
 
 export default class FilterManager extends BaseModule {
 
-    '*/filter/get' ($store, id) {
+    [GETTER('filter/get')] ($store, id) {
         return filterInfo[id];
     }    
 
-    '*/filter/list' ($store, layerId) {
-        var layer = $store.read('/item/get', layerId);
+    [GETTER('filter/list')] ($store, layerId) {
+        var layer = $store.read('item/get', layerId);
         var realFilters = {}
         
         FILTER_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign({}, $store.read('/clone', FILTER_DEFAULT_OBJECT), realFilters)
+        realFilters = Object.assign({}, $store.read('clone', FILTER_DEFAULT_OBJECT), realFilters)
 
         var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}
@@ -53,14 +54,14 @@ export default class FilterManager extends BaseModule {
     }
 
 
-    '*/filter/toCSS' ($store, layer) {       
+    [GETTER('filter/toCSS')] ($store, layer) {       
         var realFilters = {}
         
         FILTER_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign({}, $store.read('/clone', FILTER_DEFAULT_OBJECT), realFilters)
+        realFilters = Object.assign({}, $store.read('clone', FILTER_DEFAULT_OBJECT), realFilters)
 
         var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}

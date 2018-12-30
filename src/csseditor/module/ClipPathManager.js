@@ -14,16 +14,17 @@ import {
 import { percent, stringUnit, percentUnit, value2px } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
 import clipPathList from './clip-path/index'
+import { GETTER } from "../../util/Store";
 
 const SQRT_2 = Math.sqrt(2);
 
 export default class ClipPathManager extends BaseModule {
    
-    '*/clip-path/sample/list' ($store) {
+    [GETTER('clip-path/sample/list')] ($store) {
         return clipPathList
     }
 
-    '*/clip-path/sample/get' ($store, index) {
+    [GETTER('clip-path/sample/get')] ($store, index) {
         return clipPathList[index]
     }    
 
@@ -57,7 +58,7 @@ export default class ClipPathManager extends BaseModule {
         }))
     }
 
-    '*/clip-path/make/circle' ($store, layer) {
+    [GETTER('clip-path/make/circle')] ($store, layer) {
 
         var width = parseParamNumber(layer.width);
         var height = parseParamNumber(layer.height);
@@ -93,7 +94,7 @@ export default class ClipPathManager extends BaseModule {
     }
 
 
-    '*/clip-path/make/ellipse' ($store, layer) {
+    [GETTER('clip-path/make/ellipse')] ($store, layer) {
         var width = parseParamNumber(layer.width);
         var height = parseParamNumber(layer.height);
 
@@ -133,7 +134,7 @@ export default class ClipPathManager extends BaseModule {
     
 
 
-    '*/clip-path/make/inset' ($store, layer) {
+    [GETTER('clip-path/make/inset')] ($store, layer) {
 
         var clipPathInsetTop = defaultValue (layer.clipPathInsetTop, percentUnit(0)); 
         var clipPathInsetLeft = defaultValue(layer.clipPathInsetLeft, percentUnit(0)); 
@@ -150,7 +151,7 @@ export default class ClipPathManager extends BaseModule {
         return `inset(${insetString})`;
     } 
     
-    '*/clip-path/make/polygon' ($store, layer) {
+    [GETTER('clip-path/make/polygon')] ($store, layer) {
 
         var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || ''; 
 
@@ -168,26 +169,26 @@ export default class ClipPathManager extends BaseModule {
         return `polygon(${fillRule} ${polygonString})`;
     }     
 
-    '*/clip-path/make/svg' ($store, layer) {
+    [GETTER('clip-path/make/svg')] ($store, layer) {
         if (layer.clipPathSvg) {
             return `url(#clippath-${layer.id})`
         }
     }
 
-    '*/clip-path/toCSS' ($store, layer) {
+    [GETTER('clip-path/toCSS')] ($store, layer) {
         var clipPath = null;
         if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
             clipPath = CLIP_PATH_TYPE_NONE;
         } else if (layer.clipPathType == CLIP_PATH_TYPE_CIRCLE) {
-            clipPath = $store.read('/clip-path/make/circle', layer); 
+            clipPath = $store.read('clip-path/make/circle', layer); 
         } else if (layer.clipPathType == CLIP_PATH_TYPE_ELLIPSE) {
-            clipPath = $store.read('/clip-path/make/ellipse', layer);             
+            clipPath = $store.read('clip-path/make/ellipse', layer);             
         } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
-            clipPath = $store.read('/clip-path/make/inset', layer);
+            clipPath = $store.read('clip-path/make/inset', layer);
         } else if (layer.clipPathType == CLIP_PATH_TYPE_POLYGON) {
-            clipPath = $store.read('/clip-path/make/polygon', layer);
+            clipPath = $store.read('clip-path/make/polygon', layer);
         } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
-            clipPath = $store.read('/clip-path/make/svg', layer);
+            clipPath = $store.read('clip-path/make/svg', layer);
         }
 
         // console.log(layer.clipPathType, clipPath);

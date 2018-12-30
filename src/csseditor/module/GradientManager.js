@@ -1,6 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import gradientList from './gradients/index';
 import ColorList from "./color-list/index";
+import { isUndefined } from "../../util/functions/func";
+import { GETTER, ACTION } from "../../util/Store";
 
 export default class GradientManager extends BaseModule {
 
@@ -8,7 +10,7 @@ export default class GradientManager extends BaseModule {
         this.$store.emit('changeEditor')
     }
  
-    '*/gradient/list/sample' ($store, type = 'all') {
+    [GETTER('gradient/list/sample')] ($store, type = 'all') {
 
         var results = [] 
 
@@ -31,22 +33,22 @@ export default class GradientManager extends BaseModule {
         return results;
     }
 
-    '/gradient/image/select' ($store, obj) {
-        var image = $store.read('/selection/current/image')
+    [ACTION('gradient/image/select')] ($store, obj) {
+        var image = $store.read('selection/current/image')
 
         if (image) {
 
-            $store.run('/item/remove/children', image.id);
+            $store.run('item/remove/children', image.id);
 
             image = Object.assign({}, image, obj);
 
             if (image.colorsteps) {
 
-                if (typeof image.colorsteps[0].index == 'undefined') {
+                if (isUndefined(image.colorsteps[0].index)) {
                     image.colorsteps.sort((a, b) => {
 
-                        var aValue  = $store.read('/image/get/stepValue', a);
-                        var bValue  = $store.read('/image/get/stepValue', b);
+                        var aValue  = $store.read('image/get/stepValue', a);
+                        var bValue  = $store.read('image/get/stepValue', b);
 
                         if (aValue == bValue) return 0; 
 
@@ -67,40 +69,40 @@ export default class GradientManager extends BaseModule {
                 image.colorsteps.forEach( (step, index) => {
                     step.parentId = image.id; 
                     step.index = index * 100; 
-                    $store.read('/item/create/colorstep', step);
+                    $store.read('item/create/colorstep', step);
                 })
                 // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
                 delete image.colorsteps;
             }
 
-            $store.run('/item/set', image);
+            $store.run('item/set', image);
         } else {
-            $store.read('/selection/current/layer', (layer) => {
+            $store.read('selection/current/layer', (layer) => {
                 layer.backgroundColor = obj.color;
-                $store.run('/item/set', layer);
+                $store.run('item/set', layer);
             })
 
         }
     }
 
-    '/gradient/image/add' ($store, obj) {
-        var image = $store.read('/selection/current/image')
+    [ACTION('gradient/image/add')] ($store, obj) {
+        var image = $store.read('selection/current/image')
 
         if (image) {
 
-            // $store.run('/item/remove/children', image.id);
+            // $store.run('item/remove/children', image.id);
 
-            var newImageId = $store.read('/item/create/object', Object.assign({}, image, obj));            
-            var newImage = $store.read('/item/get', newImageId);
+            var newImageId = $store.read('item/create/object', Object.assign({}, image, obj));            
+            var newImage = $store.read('item/get', newImageId);
             newImage.index -= 1; 
 
             if (newImage.colorsteps) {
 
-                if (typeof newImage.colorsteps[0].index == 'undefined') {
+                if (isUndefined(newImage.colorsteps[0].index)) {
                     newImage.colorsteps.sort((a, b) => {
 
-                        var aValue  = $store.read('/image/get/stepValue', a);
-                        var bValue  = $store.read('/image/get/stepValue', b);
+                        var aValue  = $store.read('image/get/stepValue', a);
+                        var bValue  = $store.read('image/get/stepValue', b);
 
                         if (aValue == bValue) return 0; 
 
@@ -121,36 +123,36 @@ export default class GradientManager extends BaseModule {
                 newImage.colorsteps.forEach( (step, index) => {
                     step.parentId = newImage.id; 
                     step.index = index * 100; 
-                    $store.read('/item/create/colorstep', step);
+                    $store.read('item/create/colorstep', step);
                 })
                 // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
                 delete newImage.colorsteps;
             }
 
-            $store.run('/item/move/in', image.id, newImage.id);
+            $store.run('item/move/in', image.id, newImage.id);
             
         } else {
-            // $store.read('/selection/current/layer', (layer) => {
+            // $store.read('selection/current/layer', (layer) => {
             //     layer.backgroundColor = obj.color;
-            //     $store.run('/item/set', layer);
+            //     $store.run('item/set', layer);
             // })
 
         }
     }    
 
-    '/gradient/select' ($store, type, index) {
-        var obj = $store.read('/gradient/list/sample', type)[index] 
+    [ACTION('gradient/select')] ($store, type, index) {
+        var obj = $store.read('gradient/list/sample', type)[index] 
 
         if (obj) {
-            $store.run('/gradient/image/select', obj);
+            $store.run('gradient/image/select', obj);
         }
     }
 
-    '/gradient/add' ($store, type, index) {
-        var obj = $store.read('/gradient/list/sample', type)[index] 
+    [ACTION('gradient/add')] ($store, type, index) {
+        var obj = $store.read('gradient/list/sample', type)[index] 
 
         if (obj) {
-            $store.run('/gradient/image/add', obj);
+            $store.run('gradient/image/add', obj);
         }
     }
 

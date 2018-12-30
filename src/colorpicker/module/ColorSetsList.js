@@ -1,5 +1,6 @@
 import Color from '../../util/Color'
 import BaseModule from '../BaseModule';
+import { isFunction, isUndefined, isNumber } from '../../util/functions/func';
 
 export default class ColorSetsList extends BaseModule {
     initialize () {
@@ -26,15 +27,15 @@ export default class ColorSetsList extends BaseModule {
     '/setUserPalette' ($store, list) {
         $store.userList = list; 
 
-        $store.dispatch('/resetUserPalette');
-        $store.dispatch('/setCurrentColorSets');
+        $store.dispatch('resetUserPalette');
+        $store.dispatch('setCurrentColorSets');
     }
 
     '/resetUserPalette' ($store) {
         if ($store.userList && $store.userList.length) {
             $store.userList = $store.userList.map( (element, index) => {
 
-                if (typeof element.colors == 'function') {
+                if (isFunction( element.colors )) {
                     const makeCallback = element.colors; 
 
                     element.colors = makeCallback($store);
@@ -53,11 +54,11 @@ export default class ColorSetsList extends BaseModule {
 
     '/setCurrentColorSets' ($store, nameOrIndex) {
 
-        const _list = $store.read('/list');
+        const _list = $store.read('list');
 
-        if (typeof nameOrIndex == 'undefined') {
+        if (isUndefined(nameOrIndex)) {
             $store.currentColorSets = _list[0];
-        } else if (typeof nameOrIndex == 'number') {
+        } else if (isNumber(nameOrIndex)) {
             $store.currentColorSets = _list[nameOrIndex];
         } else {
             $store.currentColorSets = _list.filter(function (obj) {
@@ -111,7 +112,7 @@ export default class ColorSetsList extends BaseModule {
     }    
 
     '*/getCurrentColors' ($store ) {
-        return $store.read('/getColors', $store.currentColorSets);
+        return $store.read('getColors', $store.currentColorSets);
     }
 
     '*/getColors' ($store, element) {
@@ -123,11 +124,11 @@ export default class ColorSetsList extends BaseModule {
     }
 
     '*/getColorSetsList' ($store) {
-        return $store.read('/list').map(element => {
+        return $store.read('list').map(element => {
            return {
                name : element.name,
                edit : element.edit,
-               colors : $store.read('/getColors', element)
+               colors : $store.read('getColors', element)
            } 
         });
     }

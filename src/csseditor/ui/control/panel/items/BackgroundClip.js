@@ -26,12 +26,12 @@ export default class BackgroundClip extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read('/selection/is/layer'); 
+        return this.read('selection/is/layer'); 
     }    
 
     refresh () {
 
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             this.refs.$clip.val(layer.backgroundClip)
         })
 
@@ -45,7 +45,7 @@ export default class BackgroundClip extends BasePropertyItem {
     }
 
     [CHANGE('$clip')] (e) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER, {id, backgroundClip: this.refs.$clip.val() }, true)
         });
     }

@@ -1,5 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { parseParamNumber } from "../../util/filter/functions";
+import { GETTER } from "../../util/Store";
 
 var list = new Array(100);
 var lastIndex = -1;
@@ -13,7 +14,7 @@ var MAX_DIST = 1;
 
 export default class GuideManager extends BaseModule {
 
-    '*/guide/rect' ($store, obj) {
+    [GETTER('guide/rect')] ($store, obj) {
         var x = parseParamNumber(obj.x);
         var y = parseParamNumber(obj.y);
         var width = parseParamNumber(obj.width)
@@ -28,8 +29,8 @@ export default class GuideManager extends BaseModule {
         return {x, y, x2, y2, width, height, centerX, centerY}
     }
 
-    '*/guide/snap/layer' ($store, layer, dist = MAX_DIST) {
-        var list = $store.read('/guide/line/layer', dist);
+    [GETTER('guide/snap/layer')] ($store, layer, dist = MAX_DIST) {
+        var list = $store.read('guide/line/layer', dist);
         var x, y;
         if (list.length) {
             var height = parseParamNumber(layer.height)
@@ -67,26 +68,26 @@ export default class GuideManager extends BaseModule {
 
     } 
 
-    '*/guide/line/layer' ($store , dist = MAX_DIST, selectedRect) {
+    [GETTER('guide/line/layer')] ($store , dist = MAX_DIST, selectedRect) {
 
-        var page = $store.read('/selection/current/page');
+        var page = $store.read('selection/current/page');
 
         if (!page) return []
         if (page.selected) return []
 
         var index = 0; 
-        selectedItem = $store.read('/guide/rect', selectedRect || $store.read('/selection/rect'));
+        selectedItem = $store.read('guide/rect', selectedRect || $store.read('selection/rect'));
 
-        list[index++] = $store.read('/guide/rect', { 
+        list[index++] = $store.read('guide/rect', { 
             x: '0px', 
             y: '0px', 
             width: page.width, 
             height: page.height 
         })
 
-        $store.read('/item/each/children', page.id, (item) => {
-            if ($store.read('/selection/check', item.id) == false) { 
-                var newItem = $store.read('/guide/rect', { 
+        $store.read('item/each/children', page.id, (item) => {
+            if ($store.read('selection/check', item.id) == false) { 
+                var newItem = $store.read('guide/rect', { 
                     x: item.x, 
                     y: item.y,
                     width: item.width,
@@ -112,30 +113,30 @@ export default class GuideManager extends BaseModule {
 
         lastIndex = 3; 
         
-        return $store.read('/guide/paths', dist); 
+        return $store.read('guide/paths', dist); 
     }
 
-    '*/guide/paths' ($store, dist = MAX_DIST) {
+    [GETTER('guide/paths')] ($store, dist = MAX_DIST) {
 
         var results = [] 
         for(var i = 0; i < lastIndex; i++) {
-            results.push(...$store.read('/guide/check', list[i], selectedItem, dist))
+            results.push(...$store.read('guide/check', list[i], selectedItem, dist))
         }
 
         return results; 
     }
 
-    '*/guide/check' ($store, item1, item2, dist = MAX_DIST) {
+    [GETTER('guide/check')] ($store, item1, item2, dist = MAX_DIST) {
         var results = []
 
-        results.push(...$store.read('/guide/check/vertical', item1, item2, dist))
+        results.push(...$store.read('guide/check/vertical', item1, item2, dist))
 
-        results.push(...$store.read('/guide/check/horizontal', item1, item2, dist))
+        results.push(...$store.read('guide/check/horizontal', item1, item2, dist))
 
         return results;
     }
 
-    '*/guide/check/vertical' ($store, item1, item2, dist = MAX_DIST) {
+    [GETTER('guide/check/vertical')] ($store, item1, item2, dist = MAX_DIST) {
         var results = []
 
         verticalKeys.forEach(key => {
@@ -174,7 +175,7 @@ export default class GuideManager extends BaseModule {
         return results; 
     }
 
-    '*/guide/check/horizontal' ($store, item1, item2, dist = MAX_DIST) {
+    [GETTER('guide/check/horizontal')] ($store, item1, item2, dist = MAX_DIST) {
         var results = []
 
         horizontalKeys.forEach(key => {

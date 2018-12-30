@@ -14,7 +14,7 @@ export default class BackgroundBlend extends BasePropertyItem {
                     <label>Blend</label>
                     <div class='size-list' ref="$size">
                         <select ref="$blend">
-                        ${this.read('/blend/list').map(blend => {
+                        ${this.read('blend/list').map(blend => {
                             return `<option value="${blend}">${blend}</option>`
                         }).join('')}
                         </select>
@@ -26,12 +26,12 @@ export default class BackgroundBlend extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read('/selection/is/image'); 
+        return this.read('selection/is/image'); 
     }    
 
     refresh () {
 
-        this.read('/selection/current/image', (image) => {
+        this.read('selection/current/image', (image) => {
             this.refs.$blend.val(image.backgroundBlendMode)
         })
 
@@ -45,7 +45,7 @@ export default class BackgroundBlend extends BasePropertyItem {
     }
 
     [CHANGE('$blend')] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: this.refs.$blend.val() }, true)
         });
     }

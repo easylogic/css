@@ -38,11 +38,11 @@ export default class LayerCode extends BasePropertyItem {
     }
 
     'load $keys' () {
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         if (!layer) return ''; 
 
-        return this.read('/layer/toExport', layer, true).split(';').map(it => {
+        return this.read('layer/toExport', layer, true).split(';').map(it => {
             var [key, value] = it.split(':');
 
             if (key == 'background-image' || key == 'box-shadow' || key == 'text-shadow') {

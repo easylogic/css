@@ -2,6 +2,7 @@ import Color from '../../Color'
 import {
     pixel
 } from '../functions'
+import { isString } from '../../functions/func';
 /**
  * F.gradient('red', 'blue', 'yellow', 'white', 10)
  * F.gradient('red, blue, yellow, white, 10')
@@ -12,7 +13,7 @@ export default function gradient () {
 
     let params = [...arguments];
 
-    if (params.length === 1 && typeof params[0] === 'string') {
+    if (params.length === 1 && isString( params[0] ) ) {
         params = Color.convertMatchesArray(params[0])
     } 
 

@@ -33,7 +33,7 @@ export default class BackgroundResizer extends UIElement {
     }
 
     isShow () {
-        return this.read('/selection/is/image');
+        return this.read('selection/is/image');
     }
 
     getCurrentXY(e, position) {
@@ -61,7 +61,7 @@ export default class BackgroundResizer extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('/selection/current/image');
+        var item = this.read('selection/current/image');
 
         if (!item) return ''; 
 
@@ -108,7 +108,7 @@ export default class BackgroundResizer extends UIElement {
     }
 
     setBackgroundPosition (backgroundPositionX, backgroundPositionY) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundPositionX, backgroundPositionY});
         });
     }

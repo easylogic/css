@@ -29,11 +29,11 @@ export default class VerticalColorStep extends UIElement {
     )] () { this.refresh() }
 
     isShow () {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
 
         if (!item) return false; 
 
-        return this.read('/image/type/isGradient', item.type)
+        return this.read('image/type/isGradient', item.type)
     }    
 
 }

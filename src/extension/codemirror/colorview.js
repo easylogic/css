@@ -1,5 +1,6 @@
 import Color from '../../util/Color'
 import ColorPicker from '../../colorpicker/index';
+import { isBoolean } from '../../util/functions/func';
 
 const colorpicker_class = 'codemirror-colorview'; 
 const colorpicker_background_class = 'codemirror-colorview-background';
@@ -79,8 +80,7 @@ export default class ColorView {
     constructor (cm, opt) {
         var self = this;
 
-        if (typeof opt == 'boolean')
-        {
+        if (isBoolean(opt)){
             opt = { mode : 'edit' };
         } else {
             opt = Object.assign({ mode: 'edit' }, opt || {});

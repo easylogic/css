@@ -1,4 +1,5 @@
 import { px } from "./css/types";
+import { isString, isUndefined, isNotString } from "./functions/func";
 
 let counter = 0;
 let cached = [];
@@ -7,7 +8,7 @@ export default class Dom {
 
     constructor (tag, className, attr) {
     
-        if (typeof tag != 'string') {
+        if (isNotString(tag)) {
             this.el = tag;
         } else {
     
@@ -145,7 +146,7 @@ export default class Dom {
             return this.el.innerHTML;
         }
 
-        if (typeof html == 'string') {
+        if (isString( html )) {
             this.el.innerHTML = html;
         } else {
             this.empty().append(html);
@@ -180,7 +181,7 @@ export default class Dom {
     
     append (el) {
     
-        if (typeof el == 'string') {
+        if (isString( el )) {
             this.el.appendChild(document.createTextNode(el));
         } else {
             this.el.appendChild(el.el || el);
@@ -230,7 +231,7 @@ export default class Dom {
             this.el.style[key] = value;
         } else if (arguments.length == 1) {
     
-            if (typeof key == 'string') {
+            if (isString( key )) {
                 return getComputedStyle(this.el)[key];
             } else {
                 var keys = key || {};
@@ -245,7 +246,7 @@ export default class Dom {
     }
 
     cssText (value) {
-        if (typeof value == 'undefined')  {
+        if (isUndefined( value ))  {
             return this.el.style.cssText;
         }
 

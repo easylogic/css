@@ -1,4 +1,5 @@
 import Canvas from './Canvas'
+import { isString } from './functions/func';
 
 
 class ImageLoader {
@@ -74,7 +75,7 @@ class ImageLoader {
     }
 
     getImageUrl (callback) {
-        if (typeof this.imageUrl == 'string') {
+        if (isString(this.imageUrl)) {
             return callback(this.imageUrl);
         } else if (this.imageUrl instanceof Blob) {
             var reader = new FileReader();

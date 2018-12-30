@@ -53,7 +53,7 @@ export default class LayerShapeEditor extends UIElement {
         var transform = "none"; 
         
         if (id) {
-            transform = this.read('/layer/make/transform', this.read('/item/get', id));
+            transform = this.read('layer/make/transform', this.read('item/get', id));
         }
 
         return { 
@@ -66,7 +66,7 @@ export default class LayerShapeEditor extends UIElement {
     }    
 
     setPosition () {
-        var item = this.read('/selection/current/layer')
+        var item = this.read('selection/current/layer')
 
         if (!item) return; 
 
@@ -74,7 +74,7 @@ export default class LayerShapeEditor extends UIElement {
     }
 
     isShow () {
-        return this.read('/selection/is/layer');
+        return this.read('selection/is/layer');
     }
 
     [MULTI_EVENT(

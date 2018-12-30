@@ -15,7 +15,7 @@ import {
 import { caculateAngle } from '../../../../util/functions/math';
 import { px, UNIT_PX } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER } from '../../../../util/Event';
-import { defaultValue } from '../../../../util/functions/func';
+import { defaultValue, isNotUndefined } from '../../../../util/functions/func';
 
 const SNAP_GRID = 20; 
 
@@ -47,8 +47,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     'load $el' () {
 
-        var layers = this.read('/selection/current/layer');
-        var isImage = this.read('/selection/is/image');
+        var layers = this.read('selection/current/layer');
+        var isImage = this.read('selection/is/image');
 
         if (!layers) return '';
 
@@ -60,7 +60,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             var css = this.setRectangle(item);
             var image = isImage ? 'image' : ''; 
             return ` 
-                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('/css/toString', css)}" >
+                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('css/toString', css)}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
@@ -93,7 +93,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var transform = "none"; 
         
         if (id) {
-            transform = this.read('/layer/make/transform', this.read('/item/get', id));
+            transform = this.read('layer/make/transform', this.read('item/get', id));
         }
 
         return { 
@@ -105,7 +105,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     refresh () {
         var isShow = this.isShow();
-        this.$el.toggle(isShow).attr('line-type', this.read('/selection/type'))
+        this.$el.toggle(isShow).attr('line-type', this.read('selection/type'))
 
         if (isShow) {
             this.load()
@@ -124,7 +124,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }    
 
     isShow () {
-        return this.read('/selection/is/not/empty')
+        return this.read('selection/is/not/empty')
     }
 
     [MULTI_EVENT(
@@ -141,7 +141,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     caculateRightSize (item, list) {
         var x = this.caculatePosition(list, 'x', 'right')
 
-        if (typeof x != 'undefined') {
+        if (isNotUndefined(x)) {
             var newWidth = Math.abs(this.moveX - parseParamNumber(x))
             item.width = newWidth; 
         }
@@ -150,7 +150,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     caculateLeftSize (item, list) {
         var x = this.caculatePosition(list, 'x', 'left')
 
-        if (typeof x != 'undefined') {
+        if (isNotUndefined(x)) {
             var newWidth = this.width + (this.moveX - parseParamNumber(x))
 
             item.x = x 
@@ -161,7 +161,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     caculateBottomSize (item, list) {
         var y = this.caculatePosition(list, 'y', 'bottom')
 
-        if (typeof y != 'undefined') {
+        if (isNotUndefined(y)) {
             var newHeight = Math.abs(this.moveY - parseParamNumber(y));
             item.height = newHeight; 
         }
@@ -170,7 +170,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     caculateTopSize (item, list) {
         var y = this.caculatePosition(list, 'y', 'top')
 
-        if (typeof y != 'undefined') {
+        if (isNotUndefined(y)) {
             var newHeight = this.height + (this.moveY - parseParamNumber(y))
 
             item.y = y 
@@ -204,7 +204,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     caculateSnap () {
 
-        var list = this.read('/guide/line/layer', 3);
+        var list = this.read('guide/line/layer', 3);
 
         if (list.length) {
             this.cacualteSizeItem(item, list);
@@ -215,9 +215,9 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     setPosition() {
         this.$el.children().forEach($el => {
-            var item = this.read('/item/get', $el.attr('predefined-layer-id'));
+            var item = this.read('item/get', $el.attr('predefined-layer-id'));
 
-            $el.cssText(this.read('/css/toString', this.setRectangle(item)));
+            $el.cssText(this.read('css/toString', this.setRectangle(item)));
         })
     }
 
@@ -229,7 +229,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     toRight (item) {
         var {dx} = this;
 
-        this.run('/item/set', {
+        this.run('item/set', {
             id: item.id,
             width: px (item.width + dx)
         });            
@@ -238,7 +238,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     toLeft (item) { 
         var {dx} = this;
 
-        this.run('/item/set', {
+        this.run('item/set', {
             id: item.id,
             width: px (item.width - dx),
             x: px (item.x + dx)
@@ -248,7 +248,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     toBottom (item) {
         var {dy} = this;
 
-        this.run('/item/set', {
+        this.run('item/set', {
             id: item.id,
             height: px (item.height + dy) 
         });            
@@ -257,7 +257,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     toTop (item) {
         var {dy} = this;
         
-        this.run('/item/set', {
+        this.run('item/set', {
             id: item.id,
             height: px (item.height - dy) ,
             y: px (item.y + dy)
@@ -267,7 +267,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     moveXY (item) {
         var {dx, dy} = this;
         
-        this.run('/item/set', {
+        this.run('item/set', {
             id: item.id,
             x: px (item.x + dx) ,
             y: px (item.y + dy)
@@ -281,7 +281,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         rotate = defaultValue(rotate, 0);
 
-        this.run('/item/set', {
+        this.run('item/set', {
             id: item.id, 
             rotate: (rotate + Math.floor(angle) - 270)
         });
@@ -340,8 +340,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         var layerId = e.$delegateTarget.parent().attr('predefined-layer-id')
-        this.$dom = this.read('/item/dom', layerId);
-        this.$selectLayer = this.read('/item/get', layerId);
+        this.$dom = this.read('item/dom', layerId);
+        this.$selectLayer = this.read('item/get', layerId);
 
         if (this.$dom) {
             var rect = this.$dom.rect()
@@ -351,7 +351,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             this.layerCenterY = rect.top + rect.height/2;
         }
         this.xy = e.xy;
-        this.rectItems = this.read('/selection/current').map(it => {
+        this.rectItems = this.read('selection/current').map(it => {
             return {
                 id: it.id,
                 x: parseParamNumber(it.x),
@@ -382,7 +382,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             this.angle = caculateAngle (e.xy.x - this.layerCenterX,  e.xy.y - this.layerCenterY);
         }
 
-        if (this.read('/tool/get', 'snap.grid')) {
+        if (this.read('tool/get', 'snap.grid')) {
 
             if (this.currentType == 'move') {
                 var moveX = this.layerX + this.dx
@@ -417,7 +417,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.rectItems = null
         this.currentId = null; 
 
-        this.dispatch('/history/push', 'Resize a layer');
+        this.dispatch('history/push', 'Resize a layer');
     }
 
     [RESIZE('window') + DEBOUNCE(300)] (e) {

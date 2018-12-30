@@ -66,14 +66,14 @@ export default class ClipPath extends BasePropertyItem {
     )] () { this.refresh() }
 
     refresh() {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             this.refs.$showClipPathEditor.checked(layer.showClipPathEditor);
             this.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
         });
     }
 
     [CHANGE('$clipType')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 
                 clipPathType: this.refs.$clipType.val()
@@ -82,7 +82,7 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     [CLICK('$showClipPathEditor')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 
                 showClipPathEditor: this.refs.$showClipPathEditor.checked()

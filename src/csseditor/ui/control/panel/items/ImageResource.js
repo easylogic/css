@@ -1,6 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
+import { isObject } from "../../../../../util/functions/func";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -15,8 +16,8 @@ export default class ImageResource extends BasePropertyItem {
     }
 
     'load $imageList' () {
-        return this.read('/svg/list').map((svg, index) => {
-            if (typeof svg == 'object') {
+        return this.read('svg/list').map((svg, index) => {
+            if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
             }  else {
                 return `<div class='svg-item' data-index="${index}">${svg}</div>`
@@ -43,29 +44,29 @@ export default class ImageResource extends BasePropertyItem {
     }    
 
     isShow () {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
 
         if (!item) return false; 
 
-        return this.read('/image/type/isImage', item.type); 
+        return this.read('image/type/isImage', item.type); 
     }
 
     [CLICK('$imageList .svg-item')] (e) {
         var [index, key] = e.$delegateTarget.attrs('data-index', 'data-key')
 
         if (index) {
-            this.read('/selection/current/image', (image) => {
-                var file = this.read('/svg/get/blob', +index);
-                this.read('/image/get/blob', [file], (newImage) => {
-                    this.dispatch('/item/set/image/file', image.id, newImage)
+            this.read('selection/current/image', (image) => {
+                var file = this.read('svg/get/blob', +index);
+                this.read('image/get/blob', [file], (newImage) => {
+                    this.dispatch('item/set/image/file', image.id, newImage)
                 });
             })
         } else if (key) {
 
-            this.read('/selection/current/image', (image) => {
-                var file = this.read('/svg/get/blob', Number.MAX_SAFE_INTEGER, key);
-                this.read('/image/get/blob', [file], (newImage) => {
-                    this.dispatch('/item/set/image/file', image.id, newImage)
+            this.read('selection/current/image', (image) => {
+                var file = this.read('svg/get/blob', Number.MAX_SAFE_INTEGER, key);
+                this.read('image/get/blob', [file], (newImage) => {
+                    this.dispatch('item/set/image/file', image.id, newImage)
                 });
             })
         } 

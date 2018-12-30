@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 
 import ColorList from './color-list/index'
+import { ACTION, GETTER } from "../../util/Store";
 
 export default class ColorManager extends BaseModule {
 
@@ -10,21 +11,21 @@ export default class ColorManager extends BaseModule {
         this.$store.selectedColorType = 'material'
     }
 
-    '/color/get/type' ($store) {
+    [ACTION('color/get/type')] ($store) {
         return $store.selectedColorType;
     }
 
-    '/color/change/type' ($store, type) {
+    [ACTION('color/change/type')] ($store, type) {
         $store.selectedColorType = type  
 
         $store.emit('changeColorType')
     }
 
-    '/color/list/type' ($store) {
+    [GETTER('color/list/type')] ($store) {
         return ColorList.types; 
     }
 
-    '/color/list' ($store) {
+    [GETTER('/color/list')] ($store) {
         return ColorList.list[$store.selectedColorType || 'material'];
     }
 }

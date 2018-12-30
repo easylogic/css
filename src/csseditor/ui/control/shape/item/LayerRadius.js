@@ -8,8 +8,8 @@ export default class LayerRadius extends UIElement {
 
     refresh () {
 
-        this.read('/selection/current/layer', (layer) => {
-            var radius = this.read('/layer/get/border-radius', layer);
+        this.read('selection/current/layer', (layer) => {
+            var radius = this.read('layer/get/border-radius', layer);
             this.$el.css(radius); 
         })
     }

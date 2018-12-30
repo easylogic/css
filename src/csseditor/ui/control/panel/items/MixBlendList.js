@@ -19,8 +19,8 @@ export default class MixBlendList extends BasePropertyItem {
     }
 
     'load $mixBlendList' () {
-        var list = this.read('/blend/list')
-        var item = this.read('/selection/current/layer')
+        var list = this.read('blend/list')
+        var item = this.read('selection/current/layer')
         if (!item) { return ''; }
 
         return  `<div>${list.map((blend) => {
@@ -29,7 +29,7 @@ export default class MixBlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container">
-                                <div class="blend-item-blend-view"  style='${this.read('/blend/toStringWithoutDimension', item, blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read('blend/toStringWithoutDimension', item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>`
@@ -39,7 +39,7 @@ export default class MixBlendList extends BasePropertyItem {
 
 
     isShow () {
-        var image = this.read('/selection/current/image')
+        var image = this.read('selection/current/image')
 
         if (image) return false; 
 
@@ -55,7 +55,7 @@ export default class MixBlendList extends BasePropertyItem {
         if(isShow && this.parent.selectedTabId == 'mix') {
             this.load()
 
-            this.read('/selection/current/layer', (layer) => {
+            this.read('selection/current/layer', (layer) => {
                 this.refs.$desc.text(layer.mixBlendMode)
             })        
         }
@@ -73,7 +73,7 @@ export default class MixBlendList extends BasePropertyItem {
     }
 
     [CLICK('$mixBlendList .blend-item') + SELF] (e) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER, {id, mixBlendMode: e.$delegateTarget.attr('data-mode')}, true)
             this.refresh();
         });

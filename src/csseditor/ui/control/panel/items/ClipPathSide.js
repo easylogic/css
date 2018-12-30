@@ -64,7 +64,7 @@ export default class ClipPathSide extends BasePropertyItem {
 
         if (isShow) {
 
-            this.read('/selection/current/layer', (layer) => {
+            this.read('selection/current/layer', (layer) => {
                 this.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
             });
         }
@@ -72,7 +72,7 @@ export default class ClipPathSide extends BasePropertyItem {
     }
 
     isShow () {
-        var item = this.read('/selection/current/layer');
+        var item = this.read('selection/current/layer');
 
         if (!item) return false;
         
@@ -85,7 +85,7 @@ export default class ClipPathSide extends BasePropertyItem {
     }
 
     [CHANGE('$clipSideType')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 
                 clipPathSideType: this.refs.$clipSideType.val()

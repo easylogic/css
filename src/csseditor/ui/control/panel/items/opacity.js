@@ -34,7 +34,7 @@ export default class Opacity extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             this.refs.$opacityRange.val(item.opacity || "1")
             this.refs.$opacity.val(item.opacity || "1")
         })
@@ -42,7 +42,7 @@ export default class Opacity extends BasePropertyItem {
     }
 
     updateTransform (type) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
 
             if (type == 'opacity') {
                 this.commit(CHANGE_LAYER_TRANSFORM, {id, opacity: this.refs.$opacity.val()})

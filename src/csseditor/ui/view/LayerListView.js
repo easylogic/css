@@ -39,7 +39,7 @@ export default class LayerListView extends UIElement {
     }
 
     makeItemNode (node, index) {
-        var item = this.read('/item/get', node.id);
+        var item = this.read('item/get', node.id);
 
         if (item.itemType == 'layer') {
             return this.makeItemNodeLayer(item, index);
@@ -49,11 +49,11 @@ export default class LayerListView extends UIElement {
 
    
     makeItemNodeImage (item) {
-        var selected = this.read('/selection/check', item.id) ? 'selected' : ''; 
+        var selected = this.read('selection/check', item.id) ? 'selected' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" draggable="true" >
                 <div class="item-view-container">
-                    <div class="item-view"  style='${this.read('/image/toString', item)}'></div>
+                    <div class="item-view"  style='${this.read('image/toString', item)}'></div>
                 </div>
                 <div class="item-title"> 
                     &lt;${item.type}&gt;
@@ -68,12 +68,12 @@ export default class LayerListView extends UIElement {
  
     
     makeItemNodeLayer (item, index = 0) {
-        var selected = this.read('/selection/check', item.id) ? 'selected' : ''; 
+        var selected = this.read('selection/check', item.id) ? 'selected' : ''; 
         var collapsed = item.gradientCollapsed ? 'collapsed' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-view-container">
-                    <div class="item-view"  style='${this.read('/layer/toString', item, false)}'></div>
+                    <div class="item-view"  style='${this.read('layer/toString', item, false)}'></div>
                 </div>
                 <div class="item-title"> 
                     ${index+1}. ${item.name || `Layer `} 
@@ -86,7 +86,7 @@ export default class LayerListView extends UIElement {
             <div class="gradient-list-group ${collapsed}" >
                 <div class='gradient-collapse-button' item-id="${item.id}"></div>            
                 <div class="tree-item-children">
-                    ${this.read('/item/map/image/children', item.id, (item) => {
+                    ${this.read('item/map/image/children', item.id, (item) => {
                         return this.makeItemNodeImage(item)
                     }).join('')}
                 </div>
@@ -95,18 +95,18 @@ export default class LayerListView extends UIElement {
     }    
 
     'load $pageName' () {
-        var obj = this.read('/selection/current/page') || { name: 'Untitled Project'};
+        var obj = this.read('selection/current/page') || { name: 'Untitled Project'};
         return obj.name === '' ? '<span>Untitled Project</span>' : `<span>${obj.name}</span>`;
     }
 
     'load $layerList' () {
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
 
         if (!page) {
             return '';
         }
 
-        return this.read('/item/map/children', page.id, (item, index) => {
+        return this.read('item/map/children', page.id, (item, index) => {
             return this.makeItemNode(item, index); 
         }).reverse();
     }
@@ -130,21 +130,21 @@ export default class LayerListView extends UIElement {
     }
 
     refreshLayer () {
-        this.read('/selection/current/layer', (items) => {
+        this.read('selection/current/layer', (items) => {
 
             if (!items.length) {
                 items = [items]
             }
             
             items.forEach(item => {
-                this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('/layer/toString', item, false))
+                this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
             })
         })
     }    
 
     refreshImage() {
-        this.read('/selection/current/image', (item) => {
-            this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('/image/toString', item))
+        this.read('selection/current/image', (item) => {
+            this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
         })
     }
 
@@ -185,8 +185,8 @@ export default class LayerListView extends UIElement {
 
     [CLICK('$layerList .tree-item') + SELF] (e) { 
         var id = e.$delegateTarget.attr('id');
-        this.dispatch('/selection/one', id);        
-        this.run('/item/focus', id);
+        this.dispatch('selection/one', id);        
+        this.run('item/focus', id);
         this.refreshSelection(id);
     }
 
@@ -213,26 +213,26 @@ export default class LayerListView extends UIElement {
         var destId = e.$delegateTarget.attr('id')
         var sourceId = this.draggedLayer.attr('id')
 
-        var sourceItem = this.read('/item/get', sourceId);
-        var destItem = this.read('/item/get', destId);
+        var sourceItem = this.read('item/get', sourceId);
+        var destItem = this.read('item/get', destId);
 
         this.draggedLayer = null;         
         if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
             if (e.ctrlKey) {
-                this.dispatch('/item/copy/in/layer', destId, sourceId)
+                this.dispatch('item/copy/in/layer', destId, sourceId)
             } else {
-                this.dispatch('/item/move/in/layer', destId, sourceId)
+                this.dispatch('item/move/in/layer', destId, sourceId)
             }
 
-            this.dispatch('/history/push', `Change gradient position `);         
+            this.dispatch('history/push', `Change gradient position `);         
             this.refresh()            
         } else if (destItem.itemType == sourceItem.itemType ) {
             if (e.ctrlKey) {
-                this.dispatch('/item/copy/in', destId, sourceId)
+                this.dispatch('item/copy/in', destId, sourceId)
             } else {
-                this.dispatch('/item/move/in', destId, sourceId)
+                this.dispatch('item/move/in', destId, sourceId)
             }
-            this.dispatch('/history/push', `Change item position `);         
+            this.dispatch('history/push', `Change item position `);         
             this.refresh()            
         }
 
@@ -245,28 +245,28 @@ export default class LayerListView extends UIElement {
             var sourceId = this.draggedLayer.attr('id')
 
             this.draggedLayer = null; 
-            this.dispatch('/item/move/last', sourceId)
-            this.dispatch('/history/push', `Change layer position `);                     
+            this.dispatch('item/move/last', sourceId)
+            this.dispatch('history/push', `Change layer position `);                     
             this.refresh()
         }
 
     }           
 
     [CLICK('$layerList .copy-image-item')] (e) {
-        this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.dispatch('/history/push', `Add a gradient`);                 
+        this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.dispatch('history/push', `Add a gradient`);                 
         this.refresh()
     }
 
     [CLICK('$layerList .copy-item')] (e) {
-        this.dispatch('/item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.dispatch('/history/push', `Copy a layer`);                         
+        this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.dispatch('history/push', `Copy a layer`);                         
         this.refresh()
     }
 
     [CLICK('$layerList .delete-item')] (e) {
-        this.dispatch('/item/remove', e.$delegateTarget.attr('item-id'))
-        this.dispatch('/history/push', `Remove item`);                         
+        this.dispatch('item/remove', e.$delegateTarget.attr('item-id'))
+        this.dispatch('history/push', `Remove item`);                         
         this.refresh()
     } 
 
@@ -276,9 +276,9 @@ export default class LayerListView extends UIElement {
 
     [CLICK('$layerList .gradient-collapse-button') + SELF] (e) {
         e.$delegateTarget.parent().toggleClass('collapsed')
-        var item = this.read('/item/get', e.$delegateTarget.attr('item-id'))
+        var item = this.read('item/get', e.$delegateTarget.attr('item-id'))
 
         item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
-        this.run('/item/set', item);
+        this.run('item/set', item);
     }
 }

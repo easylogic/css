@@ -29,11 +29,11 @@ export default class BackgroundCode extends BasePropertyItem {
     }
 
     'load $keys' () {
-        var image = this.read('/selection/current/image');
+        var image = this.read('selection/current/image');
 
         if (!image) return ''; 
 
-        var obj = this.read('/layer/image/toImageCSS', image)
+        var obj = this.read('layer/image/toImageCSS', image)
 
         return Object.keys(obj).map(key => {
             var value = obj[key]

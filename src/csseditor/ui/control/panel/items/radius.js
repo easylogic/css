@@ -52,7 +52,7 @@ export default class Radius extends BasePropertyItem {
     )] () { this.refresh() }
 
     refresh() {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             var maxWidth = parseParamNumber(item.width);
             var maxHeight = parseParamNumber(item.height);
 
@@ -92,7 +92,7 @@ export default class Radius extends BasePropertyItem {
     }
 
     refreshValue () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_RADIUS, { 
                 id, 
                 borderTopLeftRadius: pxUnit( this.refs.$topLeftRadius.val()), 

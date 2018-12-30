@@ -6,7 +6,7 @@ export default class ColorView extends UIElement {
     }
 
     setBackgroundColor () {
-        this.refs.$el.css("background-color", this.read('/toRGB'));
+        this.refs.$el.css("background-color", this.read('toRGB'));
     }
 
     refresh () {

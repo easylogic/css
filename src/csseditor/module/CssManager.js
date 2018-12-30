@@ -1,5 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { parseParamNumber } from "../../util/gl/filter/util";
+import { GETTER } from "../../util/Store";
 
 var ordering = {
     'position': 1,
@@ -37,7 +38,7 @@ const MAX_ORDER = Number.MAX_SAFE_INTEGER;
 
 export default class CssManager extends BaseModule {
 
-    '*/css/filtering' ($store, style) {
+    [GETTER('css/filtering')] ($store, style) {
         var newStyle = style; 
 
         if (newStyle['background-blend-mode'] == 'normal') {
@@ -71,9 +72,9 @@ export default class CssManager extends BaseModule {
         return newStyle; 
     }
 
-    '*/css/sorting' ($store, style) {
+    [GETTER('css/sorting')] ($store, style) {
 
-        style = $store.read('/css/filtering', style);
+        style = $store.read('css/filtering', style);
 
         var keys = Object.keys(style);
 
@@ -94,8 +95,8 @@ export default class CssManager extends BaseModule {
         return newStyle;
     }    
 
-    '*/css/toString' ($store, style) {
-        var newStyle = $store.read('/css/sorting', style);        
+    [GETTER('css/toString')] ($store, style) {
+        var newStyle = $store.read('css/sorting', style);        
 
         return Object.keys(newStyle).filter(key => {
             return !!newStyle[key]
@@ -104,7 +105,7 @@ export default class CssManager extends BaseModule {
         }).join(';'); 
     }
 
-    '*/css/generate' ($store, css) {
+    [GETTER('css/generate')] ($store, css) {
         var results = {};
 
         Object.keys(css).forEach(key => {

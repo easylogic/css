@@ -7,39 +7,40 @@ import {
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
 import { valueUnit, pxUnit } from '../../../../util/css/types';
+import { POSITION_CENTER, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../module/ItemTypes';
 
 const defined_position = {
     'to right': { 
-        backgroundPositionX: valueUnit('right'), 
-        backgroundPositionY: valueUnit('center')
+        backgroundPositionX: valueUnit(POSITION_RIGHT), 
+        backgroundPositionY: valueUnit(POSITION_CENTER)
     },
     'to left': { 
-        backgroundPositionX: valueUnit('left'), 
-        backgroundPositionY: valueUnit('center')
+        backgroundPositionX: valueUnit(POSITION_LEFT), 
+        backgroundPositionY: valueUnit(POSITION_CENTER)
     },
     'to top': { 
-        backgroundPositionX: valueUnit('center'), 
-        backgroundPositionY: valueUnit('top')
+        backgroundPositionX: valueUnit(POSITION_CENTER), 
+        backgroundPositionY: valueUnit(POSITION_TOP)
     },
     'to bottom': { 
-        backgroundPositionX: valueUnit('center'), 
-        backgroundPositionY: valueUnit('bottom')
+        backgroundPositionX: valueUnit(POSITION_CENTER), 
+        backgroundPositionY: valueUnit(POSITION_BOTTOM)
     },
     'to top right': { 
-        backgroundPositionX: valueUnit('right'), 
-        backgroundPositionY: valueUnit('top')
+        backgroundPositionX: valueUnit(POSITION_RIGHT), 
+        backgroundPositionY: valueUnit(POSITION_TOP)
     },
     'to bottom right': { 
-        backgroundPositionX: valueUnit('right'), 
-        backgroundPositionY: valueUnit('bottom')
+        backgroundPositionX: valueUnit(POSITION_RIGHT), 
+        backgroundPositionY: valueUnit(POSITION_BOTTOM)
     },
     'to bottom left': { 
-        backgroundPositionX: valueUnit('left'), 
-        backgroundPositionY: valueUnit('bottom')
+        backgroundPositionX: valueUnit(POSITION_LEFT), 
+        backgroundPositionY: valueUnit(POSITION_BOTTOM)
     },
     'to top left': { 
-        backgroundPositionX: valueUnit('left'), 
-        backgroundPositionY: valueUnit('top')
+        backgroundPositionX: valueUnit(POSITION_LEFT), 
+        backgroundPositionY: valueUnit(POSITION_TOP)
     }
 }
 
@@ -66,18 +67,18 @@ export default class PredefinedBackgroundPosition extends UIElement {
 
 
     isShow () {
-        return this.read('/selection/is/image')
+        return this.read('selection/is/image')
     }
 
     getPosition (type) {
         return defined_position[type] || {
-            backgroundPositionX: valueUnit('center'),
-            backgroundPositionY: valueUnit('center')
+            backgroundPositionX: valueUnit(POSITION_CENTER),
+            backgroundPositionY: valueUnit(POSITION_CENTER)
         }
     }
 
     [CLICK('$el button') + SELF] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
             this.commit(CHANGE_IMAGE, {id, ...pos})
         })

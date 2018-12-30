@@ -2,6 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { parseParamNumber } from "../../util/filter/functions";
 import { px } from "../../util/css/types";
+import { ACTION } from "../../util/Store";
 
 export default class OrderingManager extends BaseModule {
 
@@ -18,18 +19,18 @@ export default class OrderingManager extends BaseModule {
     }
 
     left ($store) {
-        var items = $store.read('/selection/current');
+        var items = $store.read('selection/current');
         var x = Math.min(...items.map(item => {
             return parseParamNumber(item.x)
         }));
 
         items.forEach(item => {
-            $store.run('/item/set', {id: item.id, x: px(newX)})
+            $store.run('item/set', {id: item.id, x: px(newX)})
         })
     }
 
     center ($store) {
-        var items = $store.read('/selection/current');
+        var items = $store.read('selection/current');
         
         var x = Math.min(...items.map(item => {
             return parseParamNumber(item.x)
@@ -43,12 +44,12 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newX = px(Math.floor(centerX - parseParamNumber(item.width)/2));
-            $store.run('/item/set', {id: item.id, x: newX })
+            $store.run('item/set', {id: item.id, x: newX })
         })
     }
 
     right ($store) {
-        var items = $store.read('/selection/current');
+        var items = $store.read('selection/current');
         
         var x2 = Math.max(...items.map(item => {
             return parseParamNumber(item.x) + parseParamNumber(item.width);
@@ -56,23 +57,23 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newX = px(x2 - parseParamNumber(item.width));
-            $store.run('/item/set', {id: item.id, x: newX })
+            $store.run('item/set', {id: item.id, x: newX })
         })
     }
 
     top ($store) {
-        var items = $store.read('/selection/current');
+        var items = $store.read('selection/current');
         var y = Math.min(...items.map(item => {
             return parseParamNumber(item.y)
         }));
 
         items.forEach(item => {
-            $store.run('/item/set', {id: item.id, y: px(y)})
+            $store.run('item/set', {id: item.id, y: px(y)})
         })
     }
 
     middle ($store) {
-        var items = $store.read('/selection/current');
+        var items = $store.read('selection/current');
         
         var y = Math.min(...items.map(item => {
             return parseParamNumber(item.y)
@@ -86,12 +87,12 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newY = px(Math.floor(centerY  - parseParamNumber(item.height)/2));
-            $store.run('/item/set', {id: item.id, y: newY })
+            $store.run('item/set', {id: item.id, y: newY })
         })
     }
 
     bottom ($store) {
-        var items = $store.read('/selection/current');
+        var items = $store.read('selection/current');
         
         var y2 = Math.max(...items.map(item => {
             return parseParamNumber(item.y) + parseParamNumber(item.height);
@@ -99,7 +100,7 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newY = px(y2 - parseParamNumber(item.height));
-            $store.run('/item/set', {id: item.id, y: newY })
+            $store.run('item/set', {id: item.id, y: newY })
         })
     }
 
@@ -110,32 +111,32 @@ export default class OrderingManager extends BaseModule {
     }
 
     forward ($store) {
-        $store.read('/selection/current/layer/id', id => {
-            $store.run('/item/move/next', id) 
+        $store.read('selection/current/layer/id', id => {
+            $store.run('item/move/next', id) 
         })                     
     }
 
     backward ($store) {
-        $store.read('/selection/current/layer/id', id => {
-            $store.run('/item/move/prev', id) 
+        $store.read('selection/current/layer/id', id => {
+            $store.run('item/move/prev', id) 
         })           
     }
     
     front ($store) {
-        $store.read('/selection/current/layer/id', id => {
-            $store.run('/item/move/last', id) 
+        $store.read('selection/current/layer/id', id => {
+            $store.run('item/move/last', id) 
         })
     }
     
     back ($store) {
-        $store.read('/selection/current/layer/id', id => {
-            $store.run('/item/move/first', id) 
+        $store.read('selection/current/layer/id', id => {
+            $store.run('item/move/first', id) 
         })                
 
     }    
 
 
-    '/ordering/index' ($store, type) {
+    [ACTION('ordering/index')] ($store, type) {
         if (this[type]) {
             this[type].call(this, $store);
         }

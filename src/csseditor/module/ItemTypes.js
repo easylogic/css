@@ -1,4 +1,5 @@
 import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit } from "../../util/css/types";
+import { isNotUndefined } from "../../util/functions/func";
 
 export const ITEM_TYPE_PAGE = 'page';
 export const ITEM_TYPE_LAYER = 'layer';
@@ -36,7 +37,7 @@ export const FILTER_DEFAULT_OBJECT = {
 }
 
 export const FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(key => {
-    return typeof FILTER_DEFAULT_OBJECT[key].index != 'undefined'
+    return isNotUndefined( FILTER_DEFAULT_OBJECT[key].index)
 });
 
 export const BACKDROP_DEFAULT_OBJECT = {
@@ -57,7 +58,7 @@ export const BACKDROP_DEFAULT_OBJECT = {
 }
 
 export const BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(key => {
-    return typeof BACKDROP_DEFAULT_OBJECT[key].index != 'undefined'
+    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index)
 });
 
 export const CLIP_PATH_DEFAULT_OBJECT = {
@@ -125,7 +126,7 @@ export const IMAGE_DEFAULT_OBJECT = {
     angle: 90,
     color: 'red',
     radialType: 'ellipse',
-    radialPosition: 'center',
+    radialPosition: POSITION_CENTER,
     visible: true,
     isClipPath: false, 
     backgroundRepeat: null,
@@ -187,3 +188,14 @@ export const CLIP_PATH_TYPE_SVG = 'svg';
 export const CLIP_PATH_SIDE_TYPE_NONE = 'none';
 export const CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
 export const CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
+
+export const POSITION_TOP = 'top'
+export const POSITION_LEFT = 'left'
+export const POSITION_RIGHT = 'right'
+export const POSITION_BOTTOM = 'bottom'
+export const POSITION_CENTER = 'center'
+
+export const IMAGE_FILE_TYPE_JPG = 'jpg'
+export const IMAGE_FILE_TYPE_GIF = 'gif'
+export const IMAGE_FILE_TYPE_PNG = 'png'
+export const IMAGE_FILE_TYPE_SVG = 'svg'

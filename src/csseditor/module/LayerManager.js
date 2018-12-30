@@ -4,10 +4,12 @@ import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
 import { percent, stringUnit } from "../../util/css/types";
+import { isNotUndefined } from "../../util/functions/func";
+import { GETTER } from "../../util/Store";
 
 export default class LayerManager extends BaseModule {
    
-    '*/layer/list/sample' ($store, type = 'all') {
+    [GETTER('layer/list/sample')] ($store, type = 'all') {
  
         var results = [] 
 
@@ -16,9 +18,9 @@ export default class LayerManager extends BaseModule {
         return results;
     }
 
-    '*/layer/toString' ($store, layer, withStyle = true, image = null) {
+    [GETTER('layer/toString')] ($store, layer, withStyle = true, image = null) {
 
-        var obj = $store.read('/layer/toCSS', layer, withStyle, image) || {};
+        var obj = $store.read('layer/toCSS', layer, withStyle, image) || {};
 
         if (image) {
             delete obj['background-color'];
@@ -26,42 +28,42 @@ export default class LayerManager extends BaseModule {
             delete obj['filter'];
         }
 
-        return $store.read('/css/toString', obj);
+        return $store.read('css/toString', obj);
     }
 
-    '*/layer/cache/toString' ($store, layer, opt = {}) {
-        var obj = $store.read('/layer/cache/toCSS', layer) || {};
+    [GETTER('layer/cache/toString')] ($store, layer, opt = {}) {
+        var obj = $store.read('layer/cache/toCSS', layer) || {};
         obj.position = 'absolute';
         return {
-            css: $store.read('/css/toString', obj),
+            css: $store.read('css/toString', obj),
             obj
         }
     }    
 
-    '*/layer/toExport' ($store, layer, withStyle = true) {
+    [GETTER('layer/toExport')] ($store, layer, withStyle = true) {
 
-        var obj = $store.read('/layer/toCSS', layer, withStyle, null, true) || {};
+        var obj = $store.read('layer/toCSS', layer, withStyle, null, true) || {};
         obj.position = obj.position || 'absolute';
 
-        return $store.read('/css/toString', obj);
+        return $store.read('css/toString', obj);
     }    
 
-    '*/layer/make/clip-path' ($store, layer) {
-        return $store.read('/clip-path/toCSS', layer);
+    [GETTER('layer/make/clip-path')] ($store, layer) {
+        return $store.read('clip-path/toCSS', layer);
     }
 
-    '*/layer/make/filter' ($store, layer) {       
-        return $store.read('/filter/toCSS', layer);
+    [GETTER('layer/make/filter')] ($store, layer) {       
+        return $store.read('filter/toCSS', layer);
     }
 
-    '*/layer/make/backdrop' ($store, layer) {       
-        return $store.read('/backdrop/toCSS', layer);
+    [GETTER('layer/make/backdrop')] ($store, layer) {       
+        return $store.read('backdrop/toCSS', layer);
     }    
 
-    '*/layer/toImageCSS' ($store, layer, isExport = false) {    
+    [GETTER('layer/toImageCSS')] ($store, layer, isExport = false) {    
         var results = {}
-        $store.read('/item/each/children', layer.id, (item)  => {
-            var css = $store.read('/image/toCSS', item, isExport);
+        $store.read('item/each/children', layer.id, (item)  => {
+            var css = $store.read('image/toCSS', item, isExport);
 
             Object.keys(css).forEach(key => {
                 if (!results[key]) {
@@ -82,12 +84,12 @@ export default class LayerManager extends BaseModule {
     }
 
 
-    '*/layer/cache/toImageCSS' ($store, images) {    
+    [GETTER('layer/cache/toImageCSS')] ($store, images) {    
         var results = {}
 
         images.forEach(item => {
             var image = Object.assign({}, item.image, {colorsteps: item.colorsteps})
-            var css = $store.read('/image/toCSS', image);
+            var css = $store.read('image/toCSS', image);
 
             Object.keys(css).forEach(key => {
                 if (!results[key]) {
@@ -103,18 +105,18 @@ export default class LayerManager extends BaseModule {
                 results[key] = results[key].join(', ')
             }
         })
-
+  
         return results; 
     }    
 
-    '*/layer/image/toImageCSS' ($store, image) {    
-        return $store.read('/css/generate', $store.read('/image/toCSS', image));
+    [GETTER('layer/image/toImageCSS')] ($store, image) {    
+        return $store.read('css/generate', $store.read('image/toCSS', image));
     }    
 
-    '*/layer/make/map' ($store, layer, itemType, isExport) {
+    [GETTER('layer/make/map')] ($store, layer, itemType, isExport) {
         var results = {}
-        $store.read(`/item/map/${itemType}/children`, layer.id, (item)  => {
-            var css = $store.read(`/${itemType}/toCSS`, item, isExport);
+        $store.read(`item/map/${itemType}/children`, layer.id, (item)  => {
+            var css = $store.read(`${itemType}/toCSS`, item, isExport);
 
             Object.keys(css).forEach(key => {
                 if (!results[key]) {
@@ -134,11 +136,11 @@ export default class LayerManager extends BaseModule {
         return results;
     }
 
-    '*/layer/make/box-shadow' ($store, layer, isExport) {
-        return $store.read('/layer/make/map', layer, ITEM_TYPE_BOXSHADOW, isExport);
+    [GETTER('layer/make/box-shadow')] ($store, layer, isExport) {
+        return $store.read('layer/make/map', layer, ITEM_TYPE_BOXSHADOW, isExport);
     }
 
-    '*/layer/make/font' ($store, layer, isExport) {
+    [GETTER('layer/make/font')] ($store, layer, isExport) {
         var results = {}
 
         if (layer.color) {
@@ -157,7 +159,7 @@ export default class LayerManager extends BaseModule {
             results['font-weight'] = layer.fontWeight;
         }        
 
-        if (typeof layer.lineHeight != 'undefined') {
+        if (isNotUndefined(layer.lineHeight)) {
             results['line-height']  = stringUnit(layer.lineHeight)
         }
 
@@ -173,15 +175,15 @@ export default class LayerManager extends BaseModule {
         return results;
     }
 
-    '*/layer/make/image' ($store, layer, isExport) {
-        return $store.read('/layer/make/map', layer, ITEM_TYPE_IMAGE, isExport);
+    [GETTER('layer/make/image')] ($store, layer, isExport) {
+        return $store.read('layer/make/map', layer, ITEM_TYPE_IMAGE, isExport);
     }    
 
-    '*/layer/make/text-shadow' ($store, layer, isExport) {
-        return $store.read('/layer/make/map', layer, ITEM_TYPE_TEXTSHADOW, isExport);
+    [GETTER('layer/make/text-shadow')] ($store, layer, isExport) {
+        return $store.read('layer/make/map', layer, ITEM_TYPE_TEXTSHADOW, isExport);
     }    
 
-    '*/layer/make/transform' ($store, layer) {
+    [GETTER('layer/make/transform')] ($store, layer) {
 
         var results = [] 
 
@@ -234,7 +236,7 @@ s
         }
     }
 
-    '*/layer/toStringClipPath' ($store, layer) {
+    [GETTER('layer/toStringClipPath')] ($store, layer) {
         
         if (['circle'].includes(layer.clipPathType)) return ''; 
         if (!layer.clipPathSvg) return ''; 
@@ -255,8 +257,8 @@ s
         return svg 
     }
 
-    '*/layer/getClipPath' ($store, layer) {
-        var items = $store.read('/item/filter/children', layer.id, function (image) {
+    [GETTER('layer/getClipPath')] ($store, layer) {
+        var items = $store.read('item/filter/children', layer.id, function (image) {
             return image.isClipPath
         }).map(id => {
             return $store.items[id]
@@ -286,7 +288,7 @@ s
         return []
     }
 
-    '*/layer/make/border-radius' ($store, layer) {
+    [GETTER('layer/make/border-radius')] ($store, layer) {
         var css = {};
         var isFixedRadius = this.isFixedRadius(layer);
         if (isFixedRadius.length) {
@@ -302,7 +304,7 @@ s
         return css;
     }
 
-    '*/layer/toCSS' ($store, layer = null, withStyle = true, image = null, isExport = false) {
+    [GETTER('layer/toCSS')] ($store, layer = null, withStyle = true, image = null, isExport = false) {
         var css = {};
 
         if (withStyle) {
@@ -332,15 +334,15 @@ s
         }
 
         var results = Object.assign(css, 
-            $store.read('/layer/make/border-radius', layer),
-            $store.read('/layer/make/transform', layer),
-            $store.read('/layer/make/clip-path', layer),
-            $store.read('/layer/make/filter', layer),
-            $store.read('/layer/make/backdrop', layer),            
-            $store.read('/layer/make/font', layer),            
-            $store.read('/layer/make/box-shadow', layer),
-            $store.read('/layer/make/text-shadow', layer),
-            (image) ? $store.read('/layer/image/toImageCSS', image) : $store.read('/layer/make/image', layer, isExport)
+            $store.read('layer/make/border-radius', layer),
+            $store.read('layer/make/transform', layer),
+            $store.read('layer/make/clip-path', layer),
+            $store.read('layer/make/filter', layer),
+            $store.read('layer/make/backdrop', layer),            
+            $store.read('layer/make/font', layer),            
+            $store.read('layer/make/box-shadow', layer),
+            $store.read('layer/make/text-shadow', layer),
+            (image) ? $store.read('layer/image/toImageCSS', image) : $store.read('layer/make/image', layer, isExport)
         )
 
         var realCSS = {}
@@ -354,8 +356,8 @@ s
     }
 
 
-    '*/layer/cache/toCSS' ($store, item = null) {
-        var layer = Object.assign({}, $store.read('/item/convert/style', item.layer), { images: item.images });
+    [GETTER('layer/cache/toCSS')] ($store, item = null) {
+        var layer = Object.assign({}, $store.read('item/convert/style', item.layer), { images: item.images });
         var css = {
             left: layer.x,
             top: layer.y,
@@ -381,15 +383,15 @@ s
         }
 
         var results = Object.assign(css, 
-            $store.read('/layer/make/border-radius', layer),
-            $store.read('/layer/make/transform', layer),            
-            $store.read('/layer/make/clip-path', layer),
-            $store.read('/layer/make/filter', layer),
-            $store.read('/layer/make/backdrop', layer),            
-            $store.read('/layer/make/font', layer),
-            $store.read('/layer/make/box-shadow', layer),
-            $store.read('/layer/make/text-shadow', layer),
-            $store.read('/layer/cache/toImageCSS', layer.images)
+            $store.read('layer/make/border-radius', layer),
+            $store.read('layer/make/transform', layer),            
+            $store.read('layer/make/clip-path', layer),
+            $store.read('layer/make/filter', layer),
+            $store.read('layer/make/backdrop', layer),            
+            $store.read('layer/make/font', layer),
+            $store.read('layer/make/box-shadow', layer),
+            $store.read('layer/make/text-shadow', layer),
+            $store.read('layer/cache/toImageCSS', layer.images)
         )
 
         var realCSS = {}

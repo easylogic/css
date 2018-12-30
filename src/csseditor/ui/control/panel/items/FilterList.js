@@ -4,6 +4,7 @@ import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, UNIT_COLOR, isColorUnit } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
+import { isUndefined } from "../../../../../util/functions/func";
 
 const DROPSHADOW_FILTER_KEYS = [
     'filterDropshadowOffsetX',
@@ -33,7 +34,7 @@ export default class FilterList extends BasePropertyItem {
         var value = dataObject[key] ? dataObject[key].value : undefined; 
 
         if (viewObject.type == 'range') { 
-            if (typeof value == 'undefined') {
+            if (isUndefined(value)) { 
                 value = viewObject.defaultValue
             }        
     
@@ -61,7 +62,7 @@ export default class FilterList extends BasePropertyItem {
             <div class='items'>
                 ${DROPSHADOW_FILTER_KEYS.map(subkey => {
                     
-                    var it = this.read('/filter/get', subkey);
+                    var it = this.read('filter/get', subkey);
                     var value = dataObject[subkey] || it.defaultValue;
 
                     if (isColorUnit(it)) {
@@ -96,15 +97,15 @@ export default class FilterList extends BasePropertyItem {
 
     'load $filterList' () {
 
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         if (!layer) return '' 
 
-        var filterKeys = this.read('/filter/list', layer.id) 
+        var filterKeys = this.read('filter/list', layer.id) 
 
         return filterKeys.map(key => {
             var realKey = key
-            var viewObject = this.read('/filter/get', realKey);
+            var viewObject = this.read('filter/get', realKey);
             var dataObject = layer || {}
              return `
                 <div class='filter-item'>
@@ -135,9 +136,9 @@ export default class FilterList extends BasePropertyItem {
 
     updateFilterKeyValue (key, lastValue) {
 
-        this.read('/selection/current/layer', layer => {
+        this.read('selection/current/layer', layer => {
             var id = layer.id; 
-            var value = layer[key] || this.read('/clone', FILTER_DEFAULT_OBJECT[key]);
+            var value = layer[key] || this.read('clone', FILTER_DEFAULT_OBJECT[key]);
             value.value = lastValue 
 
             this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
@@ -146,9 +147,9 @@ export default class FilterList extends BasePropertyItem {
 
     updateFilterKeyChecked (key, checked) {
 
-        this.read('/selection/current/layer', layer => {
+        this.read('selection/current/layer', layer => {
             var id = layer.id;             
-            var value = layer[key] || this.read('/clone', FILTER_DEFAULT_OBJECT[key]);
+            var value = layer[key] || this.read('clone', FILTER_DEFAULT_OBJECT[key]);
             value.checked = checked 
 
             this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })

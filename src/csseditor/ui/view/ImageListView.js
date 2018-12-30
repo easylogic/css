@@ -19,24 +19,24 @@ export default class ImageListView extends UIElement {
     }
 
     makeItemNodeImage (item) {
-        var selected = this.read('/selection/check', item.id) ? 'selected' : '' 
+        var selected = this.read('selection/check', item.id) ? 'selected' : '' 
         return `
             <div class='tree-item ${selected}' data-id="${item.id}" draggable="true" title="${item.type}" >
                 <div class="item-view-container">
-                    <div class="item-view"  style='${this.read('/image/toString', item)}'></div>
+                    <div class="item-view"  style='${this.read('image/toString', item)}'></div>
                 </div>
             </div>
             ` 
     }       
 
     'load $el' () {
-        var id = this.read('/selection/current/layer/id');
+        var id = this.read('selection/current/layer/id');
 
         if (!id) {
             return '';
         }
 
-        return this.read('/item/map/image/children', id, (item) => {
+        return this.read('item/map/image/children', id, (item) => {
             return this.makeItemNodeImage(item)
         })
     }
@@ -62,7 +62,7 @@ export default class ImageListView extends UIElement {
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
-            this.dispatch('/selection/one', id);
+            this.dispatch('selection/one', id);
             this.refresh();
         }
 
@@ -93,7 +93,7 @@ export default class ImageListView extends UIElement {
         var sourceId = this.draggedImage.attr('data-id')
 
         this.draggedImage = null; 
-        this.dispatch('/item/move/in', destId, sourceId)
+        this.dispatch('item/move/in', destId, sourceId)
         this.refresh()
     }       
     
@@ -104,7 +104,7 @@ export default class ImageListView extends UIElement {
             var sourceId = this.draggedImage.attr('data-id')
 
             this.draggedImage = null; 
-            this.dispatch('/item/move/last', sourceId)
+            this.dispatch('item/move/last', sourceId)
             this.refresh()
         }
 

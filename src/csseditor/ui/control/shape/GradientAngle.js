@@ -28,20 +28,20 @@ export default class GradientAngle extends UIElement {
     }
 
     isShow () {
-        if (!this.read('/selection/is/image')) return false; 
+        if (!this.read('selection/is/image')) return false; 
 
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
 
         if (!item) return false; 
 
-        var isLinear = this.read('/image/type/isLinear', item.type)
-        var isConic = this.read('/image/type/isConic', item.type)
+        var isLinear = this.read('image/type/isLinear', item.type)
+        var isConic = this.read('image/type/isConic', item.type)
 
         if (isLinear == false && isConic == false) {
             return false; 
         }
 
-        return this.read('/tool/get', 'guide.angle')
+        return this.read('tool/get', 'guide.angle')
     }
 
     getCurrentXY(e, angle, radius, centerX, centerY) {
@@ -62,10 +62,10 @@ export default class GradientAngle extends UIElement {
     }    
 
     getDefaultValue() {
-        var image = this.read('/selection/current/image');
+        var image = this.read('selection/current/image');
         if (!image) return 0 
 
-        var angle = this.read('/image/angle', image.angle) 
+        var angle = this.read('image/angle', image.angle) 
         return angle - 90
     }
 
@@ -100,7 +100,7 @@ export default class GradientAngle extends UIElement {
 
     setAngle (angle) {
 
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE_ANGLE, {id, angle});
         })
 

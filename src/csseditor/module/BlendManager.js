@@ -1,4 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
+import { GETTER } from "../../util/Store";
 
 const blend_list = [
     'normal', 'multiply', 'screen', 'overlay', 'darken', 
@@ -15,33 +16,33 @@ export default class BlendManager extends BaseModule {
         this.$store.blendMode = '';
     }
 
-    '*/blend/layer/toString' ($store, item, mixBlend = '', withStyle = true) {
+    [GETTER('blend/layer/toString')] ($store, item, mixBlend = '', withStyle = true) {
 
-        item = $store.read('/clone', item);
+        item = $store.read('clone', item);
 
         item.mixBlendMode = mixBlend;
 
-        return $store.read('/layer/toString', item, withStyle)
+        return $store.read('layer/toString', item, withStyle)
     }    
 
-    '*/blend/image/toString' ($store, item, blend = '', withStyle = true) {
+    [GETTER('blend/image/toString')] ($store, item, blend = '', withStyle = true) {
 
-        item = $store.read('/clone', item);
+        item = $store.read('clone', item);
 
         item.backgroundBlendMode = blend;
 
-        // console.log($store.read('/image/toString', item, withStyle))
+        // console.log($store.read('image/toString', item, withStyle))
 
-        return $store.read('/image/toString', item, withStyle)
+        return $store.read('image/toString', item, withStyle)
     }        
 
-    '*/blend/toStringWithoutDimension' ($store, item, mixBlend = '') {
-        return $store.read('/blend/layer/toString', item, mixBlend, false)
+    [GETTER('blend/toStringWithoutDimension')] ($store, item, mixBlend = '') {
+        return $store.read('blend/layer/toString', item, mixBlend, false)
     }        
 
-    '*/blend/toStringWithoutDimensionForImage' ($store, item, blend = 'normal') {
+    [GETTER('blend/toStringWithoutDimensionForImage')] ($store, item, blend = 'normal') {
         // console.log(item, blend);
-        var cssText = $store.read('/blend/image/toString', item, blend, false);
+        var cssText = $store.read('blend/image/toString', item, blend, false);
 
         cssText = cssText.split(';').map(it => {
             return it.split(':').map(it => it.trim())
@@ -64,7 +65,7 @@ export default class BlendManager extends BaseModule {
         return cssText; 
     }        
 
-    '*/blend/list' ($store) {
+    [GETTER('blend/list')] ($store) {
         return blend_list;
     }
 

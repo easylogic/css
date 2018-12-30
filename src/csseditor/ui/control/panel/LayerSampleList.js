@@ -8,8 +8,8 @@ export default class LayerSampleList extends UIElement {
     initialize () {
         super.initialize();
 
-        this.list = this.read('/layer/list/sample', this.props.type); 
-        this.dispatch('/storage/load/layer')
+        this.list = this.read('layer/list/sample', this.props.type); 
+        this.dispatch('storage/load/layer')
 
     }
 
@@ -26,7 +26,7 @@ export default class LayerSampleList extends UIElement {
     'load $cachedList' () {
         
         var list = this.list.map( (item, index) => {
-            var data = this.read('/layer/cache/toString', item)
+            var data = this.read('layer/cache/toString', item)
 
             var rateX = 160 / parseParamNumber(data.obj.width);
             var rateY = 120 / parseParamNumber(data.obj.height);
@@ -43,8 +43,8 @@ export default class LayerSampleList extends UIElement {
             </div>`
         })
 
-        var storageList = this.read('/storage/layers').map( item => {
-            var data = this.read('/layer/cache/toString', item)
+        var storageList = this.read('storage/layers').map( item => {
+            var data = this.read('layer/cache/toString', item)
 
             var rateX = 160 / parseParamNumber(data.obj.width);
             var rateY = 120 / parseParamNumber(data.obj.height);
@@ -97,32 +97,32 @@ export default class LayerSampleList extends UIElement {
         var newLayer = this.list[index];
 
         if (newLayer) {
-            this.read('/selection/current/layer', (layer) => {
-                this.dispatch('/item/addCache', newLayer, layer.id );
+            this.read('selection/current/layer', (layer) => {
+                this.dispatch('item/addCache', newLayer, layer.id );
             })
         }
     }    
 
     [CLICK('$el .layer-cached-item .add-item')] (e) {
-        var newLayer = this.read('/storage/layers', e.$delegateTarget.attr('data-sample-id'));
+        var newLayer = this.read('storage/layers', e.$delegateTarget.attr('data-sample-id'));
         
         if (newLayer) {
-            this.read('/selection/current/layer', (layer) => {
-                this.dispatch('/item/addCache', newLayer, layer.id );
+            this.read('selection/current/layer', (layer) => {
+                this.dispatch('item/addCache', newLayer, layer.id );
             })            
         }
     }
 
     [CLICK('$el .layer-cached-item .delete-item')] (e) {
-        this.dispatch('/storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
+        this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
         this.refresh();
     }    
 
     [CLICK('$el .add-current-layer')] (e) {
-        this.read('/selection/current/layer', (layer) => {
-            var newLayer = this.read('/collect/layer/one', layer.id)
+        this.read('selection/current/layer', (layer) => {
+            var newLayer = this.read('collect/layer/one', layer.id)
 
-            this.dispatch('/storage/add/layer', newLayer);
+            this.dispatch('storage/add/layer', newLayer);
             this.refresh();
         })
         

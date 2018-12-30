@@ -41,7 +41,7 @@ export default class PredefinedPageResizer extends UIElement {
 
 
     setPosition () {
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
 
         if (!page) return; 
 
@@ -63,7 +63,7 @@ export default class PredefinedPageResizer extends UIElement {
     }    
 
     isShow () { 
-        return this.read('/selection/is/page')
+        return this.read('selection/is/page')
     }
 
     [MULTI_EVENT(
@@ -80,7 +80,7 @@ export default class PredefinedPageResizer extends UIElement {
             style[key] = px(style[key]) 
         })
 
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
         page = Object.assign(page, style)
         this.commit(CHANGE_PAGE_SIZE, page)
         this.refresh();
@@ -168,7 +168,7 @@ export default class PredefinedPageResizer extends UIElement {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;
-        this.page = this.read('/selection/current/page')
+        this.page = this.read('selection/current/page')
         this.width = parseParamNumber(this.page.width)
         this.height = parseParamNumber(this.page.height)
     }
@@ -182,7 +182,7 @@ export default class PredefinedPageResizer extends UIElement {
     [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
         this.currentType = null; 
         this.xy = null 
-        this.dispatch('/history/push', 'Resize a layer');        
+        this.dispatch('history/push', 'Resize a layer');        
     }
 
     [RESIZE('window') + DEBOUNCE(300)] (e) {

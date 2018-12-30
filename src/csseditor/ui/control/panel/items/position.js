@@ -30,7 +30,7 @@ export default class Position extends BasePropertyItem {
     }
 
     refresh() {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             this.refs.$x.val(parseParamNumber(item.x))
             this.refs.$y.val(parseParamNumber(item.y))
         })
@@ -38,16 +38,16 @@ export default class Position extends BasePropertyItem {
     }
 
     [INPUT('$x')] () {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             item.x = px(this.refs.$x.int())
-            this.dispatch('/item/set', item)
+            this.dispatch('item/set', item)
         })
     }
 
     [INPUT('$y')] () {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             item.y = px(this.refs.$y.int())
-            this.dispatch('/item/set', item)
+            this.dispatch('item/set', item)
         })
     }    
 }

@@ -106,7 +106,7 @@ export default class Transform3d extends BasePropertyItem {
     }
 
     refresh() {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
 
             var attr = [
                 'perspective',
@@ -126,7 +126,7 @@ export default class Transform3d extends BasePropertyItem {
     }
 
     updateTransform (key, postfix = '') {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             var value = this.refs['$' + key + postfix].val();
             if (postfix == '') {
                 this.refs['$' + key + 'Range'].val(value);

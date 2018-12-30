@@ -15,8 +15,8 @@ export default class HandleView extends GradientView {
     [CLICK('$page .layer') + SELF] (e) {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
-            this.dispatch('/selection/one', id);
-            this.run('/item/focus', id);
+            this.dispatch('selection/one', id);
+            this.run('item/focus', id);
         }
     }
 
@@ -46,8 +46,8 @@ export default class HandleView extends GradientView {
     }       
     
     refreshPosition (obj) {
-        this.read('/selection/current').forEach(item => {
-            this.dispatch('/matrix/move', Object.assign({id: item.id}, obj))
+        this.read('selection/current').forEach(item => {
+            this.dispatch('matrix/move', Object.assign({id: item.id}, obj))
             this.refreshLayer();
         })    
     }
@@ -57,7 +57,7 @@ export default class HandleView extends GradientView {
     selectPageMode () {
         
         if (!this.dragArea) {
-            this.dispatch('/selection/change', ITEM_TYPE_PAGE) ;
+            this.dispatch('selection/change', ITEM_TYPE_PAGE) ;
         }
 
     }
@@ -71,7 +71,7 @@ export default class HandleView extends GradientView {
     }
 
     isPageMode (e) {
-        if (this.read('/selection/is/page')) {
+        if (this.read('selection/is/page')) {
             return true; 
         }
 
@@ -148,13 +148,13 @@ export default class HandleView extends GradientView {
             }
         }
 
-        this.dispatch('/selection/area', area)
+        this.dispatch('selection/area', area)
 
         this.updateSelection();         
         
-        if (this.read('/selection/is/layer')) {
-            var items = this.read('/selection/current');
-            this.run('/item/focus', items[0].id);                 
+        if (this.read('selection/is/layer')) {
+            var items = this.read('selection/current');
+            this.run('item/focus', items[0].id);                 
         }
 
 

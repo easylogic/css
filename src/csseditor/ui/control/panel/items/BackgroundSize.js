@@ -112,31 +112,31 @@ export default class BackgroundSize extends UIElement {
     }
 
     updateWidth (backgroundSizeWidth) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundSizeWidth})
         })
     }
 
     updateHeight (backgroundSizeHeight) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundSizeHeight})
         })
     }
 
     updateX (backgroundPositionX) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundPositionX})
         })
     }    
 
     updateY (backgroundPositionY) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundPositionY})
         })
     }        
 
     getMaxHeight () {
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         if (!layer) return 0;
 
@@ -144,7 +144,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     getMaxY () {
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         if (!layer) return 0;
 
@@ -152,7 +152,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     getMaxWidth () {
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         if (!layer) return 0;
 
@@ -160,7 +160,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     getMaxX () {
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         if (!layer) return 0;
 
@@ -169,7 +169,7 @@ export default class BackgroundSize extends UIElement {
 
     [CLICK('$size button')] (e) {
         
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             var newValue = { id, backgroundSize: e.$delegateTarget.val()}
             this.selectBackgroundSize(newValue.backgroundSize);
             this.commit(CHANGE_IMAGE, newValue);
@@ -203,7 +203,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     [CLICK('$repeat button')] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             var newValue = {id, backgroundRepeat: e.$delegateTarget.val()}
             this.selectBackgroundRepeat(newValue.backgroundRepeat);
             this.commit(CHANGE_IMAGE, newValue);
@@ -224,7 +224,7 @@ export default class BackgroundSize extends UIElement {
         this.$el.toggle(isShow)
 
         if (isShow) {
-            this.read('/selection/current/image', (image) => {
+            this.read('selection/current/image', (image) => {
                 this.children.$width.refresh(image.backgroundSizeWidth);
                 this.children.$height.refresh(image.backgroundSizeHeight);
                 this.children.$x.refresh(defaultValue(image.backgroundPositionX, percentUnit(0)));

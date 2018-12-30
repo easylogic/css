@@ -22,7 +22,7 @@ export default class PageLayout extends UIElement {
 
     refresh () {
         this.refs.$buttons.removeClass('beginner-mode').removeClass('expertor-mode')
-        this.refs.$buttons.addClass(this.read('/storage/get', 'layout') + '-mode')
+        this.refs.$buttons.addClass(this.read('storage/get', 'layout') + '-mode')
     }
 
     [EVENT_CHANGE_EDITOR] () {
@@ -35,7 +35,7 @@ export default class PageLayout extends UIElement {
 
     [CLICK('$beginner')] (e) {
         this.emit('updateLayout', 'beginner')
-        this.dispatch('/storage/set', 'layout', 'beginner')        
+        this.dispatch('storage/set', 'layout', 'beginner')        
         this.refresh();        
 
         this.emit('changeEditor')        
@@ -43,7 +43,7 @@ export default class PageLayout extends UIElement {
 
     [CLICK('$expertor')] (e) {
         this.emit('updateLayout', 'expertor')
-        this.dispatch('/storage/set', 'layout', 'expertor')
+        this.dispatch('storage/set', 'layout', 'expertor')
         this.refresh();
         this.emit('changeEditor')        
     }

@@ -25,7 +25,7 @@ export default class InfoFillColorPicker extends UIElement {
         })    
 
         setTimeout(() => {
-            this.colorPicker.dispatch('/initColor', defaultColor)
+            this.colorPicker.dispatch('initColor', defaultColor)
         }, 100)
         
     }    
@@ -35,7 +35,7 @@ export default class InfoFillColorPicker extends UIElement {
     }
 
     changeColor (color) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_BACKGROUND_COLOR, {id, backgroundColor: color})
         })
     }
@@ -48,8 +48,8 @@ export default class InfoFillColorPicker extends UIElement {
     )] () { this.refresh() }    
 
     refresh() {
-        if (this.read('/selection/is/layer')) {
-            this.read('/selection/current/layer', (layer) => {
+        if (this.read('selection/is/layer')) {
+            this.read('selection/current/layer', (layer) => {
                 if (layer.backgroundColor) {
                     if (layer.backgroundColor.includes('rgb')) return;
                     this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);

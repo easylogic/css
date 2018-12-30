@@ -1,5 +1,7 @@
+import { isString } from "../../functions/func";
+
 export function parseParamNumber (param) {
-    if (typeof param === 'string') {
+    if (isString(param)) {
         param = param.replace(/deg/, '')
         param = param.replace(/px/, '')
         param = param.replace(/em/, '')

@@ -50,14 +50,14 @@ export default class ToolMenu extends UIElement {
 
 
     [CLICK('$check')] () {
-        this.read('/selection/current/page', (item) => {
-            this.run('/tool/set', 'show.grid', this.refs.$check.checked())
-            this.dispatch('/tool/set', 'snap.grid', this.refs.$check.checked())
+        this.read('selection/current/page', (item) => {
+            this.run('tool/set', 'show.grid', this.refs.$check.checked())
+            this.dispatch('tool/set', 'snap.grid', this.refs.$check.checked())
         })
     }
 
     [CLICK('$saveButton')] (e) {
-        this.run('/storage/save');
+        this.run('storage/save');
     }
 
     [CLICK('$viewSample')] (e) {
@@ -70,26 +70,26 @@ export default class ToolMenu extends UIElement {
 
 
     [CLICK('$addLayer')] (e) {
-        this.read('/selection/current/page', (page) => {
-            this.dispatch('/item/add', ITEM_TYPE_LAYER, true, page.id)
-            this.dispatch('/history/push', 'Add a layer');
+        this.read('selection/current/page', (page) => {
+            this.dispatch('item/add', ITEM_TYPE_LAYER, true, page.id)
+            this.dispatch('history/push', 'Add a layer');
         });
     }
 
     [CLICK('$addLayerCircle')] (e) {
-        this.read('/selection/current/page', (page) => {
-            this.dispatch('/item/add', ITEM_TYPE_CIRCLE, true, page.id)
-            this.dispatch('/history/push', 'Add a layer');
+        this.read('selection/current/page', (page) => {
+            this.dispatch('item/add', ITEM_TYPE_CIRCLE, true, page.id)
+            this.dispatch('history/push', 'Add a layer');
         });
     }
 
 
     [CLICK('$gradientType .gradient-item')] (e) {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             var type = e.$delegateTarget.attr('data-type')
 
-            this.dispatch('/item/prepend/image', type, true, item.id)
-            this.dispatch('/history/push', `Add ${type} gradient` );        
+            this.dispatch('item/prepend/image', type, true, item.id)
+            this.dispatch('history/push', `Add ${type} gradient` );        
         }); 
     }       
 

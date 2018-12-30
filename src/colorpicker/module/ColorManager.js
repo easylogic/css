@@ -1,11 +1,7 @@
 import Color from '../../util/Color'
 import HueColor from '../../util/HueColor'
 import BaseModule from '../BaseModule';
-
-
-function isUndefined (v) {
-    return typeof v == 'undefined' || v == null;  
-}
+import { isUndefined, isString } from '../../util/functions/func';
 
 export default class ColorManager extends BaseModule {
 
@@ -18,7 +14,7 @@ export default class ColorManager extends BaseModule {
         this.$store.alpha = 1 
         this.$store.format = 'hex'
 
-        // this.$store.dispatch('/changeColor');
+        // this.$store.dispatch('changeColor');
     }
 
     '/changeFormat' ($store, format) {
@@ -28,7 +24,7 @@ export default class ColorManager extends BaseModule {
     }
 
     '/initColor' ($store, colorObj, source) {
-        $store.dispatch('/changeColor', colorObj, source, true);
+        $store.dispatch('changeColor', colorObj, source, true);
         $store.emit('initColor')
     }
 
@@ -36,7 +32,7 @@ export default class ColorManager extends BaseModule {
 
         colorObj = colorObj || '#FF0000'
 
-        if (typeof colorObj == 'string') {
+        if (isString(colorObj)) {
             colorObj = Color.parse(colorObj);
         }
 
@@ -87,26 +83,26 @@ export default class ColorManager extends BaseModule {
         type = (type || $store.format).toLowerCase(); 
 
         if (type == 'rgb') {
-            return $store.read('/toRGB')
+            return $store.read('toRGB')
         } else if (type == 'hsl') {
-            return $store.read('/toHSL')
+            return $store.read('toHSL')
         } else if (type == 'hex') {
-            return $store.read('/toHEX')            
+            return $store.read('toHEX')            
         }
 
-        return $store.read('/toString', type);
+        return $store.read('toString', type);
     }
 
     '*/toRGB' ($store) {
-        return $store.read('/toString', 'rgb')
+        return $store.read('toString', 'rgb')
     }
 
     '*/toHSL' ($store) {
-        return $store.read('/toString', 'hsl')
+        return $store.read('toString', 'hsl')
     }
 
     '*/toHEX' ($store) {
-        return $store.read('/toString', 'hex').toUpperCase()
+        return $store.read('toString', 'hex').toUpperCase()
     }
 
 }

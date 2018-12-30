@@ -23,12 +23,12 @@ export default class BackgroundInfo extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read('/selection/is/image'); 
+        return this.read('selection/is/image'); 
     }    
 
     refresh () {
 
-        this.read('/selection/current/image', (image) => {
+        this.read('selection/current/image', (image) => {
             this.refs.$type.text(image.type)
             this.refs.$typeView.attr('data-type', image.type)
         })

@@ -4,8 +4,9 @@ import {
     packXY,
     fillPixelColor
 } from '../functions'
+import { POSITION_CENTER } from '../../../csseditor/module/ItemTypes';
 
-export default function rotateDegree(angle, cx = 'center', cy = 'center') {
+export default function rotateDegree(angle, cx = POSITION_CENTER, cy = POSITION_CENTER) {
     // const r = F.radian(angle)
 
     return function (bitmap, done, opt = {}) {
@@ -13,11 +14,11 @@ export default function rotateDegree(angle, cx = 'center', cy = 'center') {
         const width = bitmap.width 
         const height = bitmap.height 
 
-        if (cx == 'center') {
+        if (cx == POSITION_CENTER) {
             cx = Math.floor(width / 2); 
         }
 
-        if (cy == 'center') {
+        if (cy == POSITION_CENTER) {
             cy = Math.floor(height/ 2);
         }
 

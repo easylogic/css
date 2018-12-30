@@ -30,11 +30,11 @@ export default class ColorPickerPanel extends UIElement {
     )] () { this.refresh() }
 
     isShow () {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
 
         if (!item) return false; 
 
-        return this.read('/image/type/isImage', item.type) == false; 
+        return this.read('image/type/isImage', item.type) == false; 
     }
 
 

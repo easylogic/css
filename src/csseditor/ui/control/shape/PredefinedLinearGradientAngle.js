@@ -25,20 +25,20 @@ export default class PredefinedLinearGradientAngle extends UIElement {
 
 
     isShow () {
-        if (!this.read('/selection/is/image')) return false;         
-        var image = this.read('/selection/current/image')
+        if (!this.read('selection/is/image')) return false;         
+        var image = this.read('selection/current/image')
 
         if (!image) { return false; }
 
-        var isLinear = this.read('/image/type/isLinear', image.type);
-        var isConic = this.read('/image/type/isConic', image.type);
+        var isLinear = this.read('image/type/isLinear', image.type);
+        var isConic = this.read('image/type/isConic', image.type);
 
-        return this.read('/tool/get', 'guide.angle') && (isLinear || isConic);
+        return this.read('tool/get', 'guide.angle') && (isLinear || isConic);
     }
 
     
     [CLICK('$el button') + SELF] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE_LINEAR_ANGLE, {id, angle: e.$delegateTarget.attr('data-value')})
         })
     }

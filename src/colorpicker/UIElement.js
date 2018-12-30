@@ -91,7 +91,7 @@ class UIElement extends EventMachin {
     }
 
     i18n (...args) {
-        return this.read('/i18n/get', ...args);
+        return this.read('i18n/get', ...args);
     }
 
     run (...args) {
@@ -109,7 +109,7 @@ class UIElement extends EventMachin {
     }
 
     commit (eventType, ...args) {
-        this.run('/item/set', ...args);
+        this.run('item/set', ...args);
         this.emit(eventType, ...args);
     }
 

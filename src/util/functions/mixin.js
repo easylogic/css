@@ -3,6 +3,7 @@ import { round } from './math'
 import { format } from './formatter' 
 import { RGBtoHSV } from './fromRGB'
 import { HSVtoRGB } from './fromHSV'
+import { isString } from './func';
 
 /**
  * @deprecated 
@@ -32,7 +33,7 @@ export function interpolateRGBObject(startColor, endColor, t = 0.5) {
 export function scale(scale, count = 5) {
     if (!scale) return [];
 
-    if (typeof scale === 'string') {
+    if (isString(scale)) {
         scale = convertMatchesArray(scale);
     }
 

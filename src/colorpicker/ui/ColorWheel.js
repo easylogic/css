@@ -188,7 +188,7 @@ export default class ColorWheel extends UIElement {
     }
 
     changeColor (opt) {
-        this.dispatch('/changeColor',opt || {})
+        this.dispatch('changeColor',opt || {})
     }
 
     '@changeColor' () {

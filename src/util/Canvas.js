@@ -1,4 +1,5 @@
 import Color from './Color'
+import { isFunction } from './functions/func';
 
 function each(len, callback) {
     for (var i = 0; i < len; i += 4) {
@@ -71,7 +72,7 @@ const Canvas = {
         })
 
 
-        if (typeof callback == 'function') callback(canvas)
+        if (isFunction(callback)) callback(canvas)
 
     },
 

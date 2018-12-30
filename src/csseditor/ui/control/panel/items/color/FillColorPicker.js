@@ -23,7 +23,7 @@ export default class FillColorPicker extends UIElement {
         })    
 
         setTimeout(() => {
-            this.colorPicker.dispatch('/initColor', defaultColor)
+            this.colorPicker.dispatch('initColor', defaultColor)
         }, 100)
         
     }    
@@ -42,7 +42,7 @@ export default class FillColorPicker extends UIElement {
 
     '@fillColorId' (id, eventType) {
         this.changeColorId = id;
-        this.itemType = this.read('/item/get', id).itemType;
+        this.itemType = this.read('item/get', id).itemType;
         this.eventType = eventType;
 
         this.color = null;
@@ -68,7 +68,7 @@ export default class FillColorPicker extends UIElement {
 
     refresh() {
         if (this.changeColorId) {
-            var item = this.read('/item/get', this.changeColorId);
+            var item = this.read('item/get', this.changeColorId);
             this.colorPicker.initColorWithoutChangeEvent(item.color);
         } else if (this.callback) {
             this.colorPicker.initColorWithoutChangeEvent(this.color);

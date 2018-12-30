@@ -1,4 +1,5 @@
 import { percent2px, em2px, px2percent, em2percent, percent2em, px2em, parseParamNumber } from "../filter/functions";
+import { isString, isNotString } from "../functions/func";
 
 export const UNIT_VALUE = 'value';
 export const UNIT_PX = 'px';
@@ -109,7 +110,7 @@ export function colorUnit (value) {
 }
 
 export function string2unit (str) {
-    if (typeof str != 'string') return str; 
+    if (isNotString(str)) return str; 
     if (str.includes(UNIT_PX)) {
         return pxUnit(parseParamNumber(str))
     } else if (str.includes(UNIT_PERCENT_STRING)) {

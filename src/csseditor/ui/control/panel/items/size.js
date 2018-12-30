@@ -58,12 +58,12 @@ export default class Size extends BasePropertyItem {
     )] ()  { this.refresh() }
 
     refresh() {
-        var item = this.read('/selection/current')
+        var item = this.read('selection/current')
         if (!item) return; 
         if (!item.length) return; 
 
         item = item[0];
-        if (this.read('/selection/is/image')) return; 
+        if (this.read('selection/is/image')) return; 
         if (item.width) {
             this.refs.$width.val(parseParamNumber(item.width))
         }
@@ -84,7 +84,7 @@ export default class Size extends BasePropertyItem {
 
     [CLICK('$rect')] (e) {
 
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             var width = px(this.refs.$width.int())
             var height = width;
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
@@ -94,14 +94,14 @@ export default class Size extends BasePropertyItem {
     }
 
     [INPUT('$width')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             var width = px (this.refs.$width.int())
             this.commit(CHANGE_LAYER_SIZE, {id, width});
         })        
     }
 
     [INPUT('$height')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             var height = px(this.refs.$height.int())
             this.commit(CHANGE_LAYER_SIZE, {id, height});
         })        
@@ -109,14 +109,14 @@ export default class Size extends BasePropertyItem {
 
 
     [INPUT('$x')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             var x = px (this.refs.$x.int())
             this.commit(CHANGE_LAYER_POSITION, {id, x});
         })
     }
 
     [INPUT('$y')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             var y = px (this.refs.$y.int())
             this.commit(CHANGE_LAYER_POSITION, {id, y});
         })

@@ -1,11 +1,12 @@
 import BaseModule from "../../colorpicker/BaseModule";
+import { GETTER } from "../../util/Store";
 
 export default class BoxShadowManager extends BaseModule { 
 
-    '*/boxshadow/toCSS' ($store, item = null, isExport = false) {
+    [GETTER('boxshadow/toCSS')] ($store, item = null, isExport = false) {
 
         var results = {} 
-        var boxshadow = $store.read('/boxshadow/toBoxShadowString', item, isExport)
+        var boxshadow = $store.read('boxshadow/toBoxShadowString', item, isExport)
 
         if (boxshadow) {
             results['box-shadow'] = boxshadow; 
@@ -14,10 +15,10 @@ export default class BoxShadowManager extends BaseModule {
         return results
     }
 
-    '*/boxshadow/cache/toCSS' ($store, item = {}) {
+    [GETTER('boxshadow/cache/toCSS')] ($store, item = {}) {
        
         var results = {} 
-        var boxshadow = $store.read('/boxshadow/toBoxShadowString', item, isExport)
+        var boxshadow = $store.read('boxshadow/toBoxShadowString', item, isExport)
 
         if (boxshadow) {
             results['box-shadow'] = boxshadow; 
@@ -27,9 +28,9 @@ export default class BoxShadowManager extends BaseModule {
 
     }
 
-    '*/boxshadow/toString' ($store, image = null) {
+    [GETTER('boxshadow/toString')] ($store, image = null) {
 
-        var obj = $store.read('/boxshadow/toCSS', image)
+        var obj = $store.read('boxshadow/toCSS', image)
 
         return Object.keys(obj).map(key => {
             return `${key}: ${obj[key]};`
@@ -37,7 +38,7 @@ export default class BoxShadowManager extends BaseModule {
 
     } 
 
-    '*/boxshadow/toBoxShadowString' ($store, item = undefined ) {
+    [GETTER('boxshadow/toBoxShadowString')] ($store, item = undefined ) {
 
         if (!item) return '';
 

@@ -1,3 +1,5 @@
+import { isString } from "./functions/func";
+
 function array_equals(v1, v2) {
     if (v1.length !== v2.length) return false;
     for (var i = 0, len = v1.length; i < len; ++i) {
@@ -204,7 +206,7 @@ function kmeans(points, k, distanceFunction, period = 10, initialRandom = 'linea
     k = k || Math.max(2, Math.ceil(Math.sqrt(points.length / 2)));
 
     let distance = distanceFunction || 'euclidean';
-    if (typeof distance == 'string') {
+    if (isString( distance )) {
         distance = distances[distance];
     }
 

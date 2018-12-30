@@ -1,5 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { uuid } from "../../util/functions/math";
+import { isNotUndefined, isFunction } from "../../util/functions/func";
+import { GETTER, ACTION } from "../../util/Store";
 
 const SAVE_ID = 'css-imageeditor'
 const CACHED_PAGE_SAVE_ID = 'css-imageeditor-cached-pages'
@@ -20,16 +22,16 @@ export default class StorageManager extends BaseModule {
         this.$store.emit('changeStorage')
     }
 
-    '*/storage/get' ($store, key) {
+    [GETTER('storage/get')] ($store, key) {
         return JSON.parse(localStorage.getItem(`${SAVE_ID}-${key}`))
     }
 
-    '/storage/set' ($store, key, value) {
+    [ACTION('storage/set')] ($store, key, value) {
         localStorage.setItem(`${SAVE_ID}-${key}`, JSON.stringify(value))
     }
 
-    '*/storage/pages' ($store, id = undefined) {
-        if (typeof id !== 'undefined' ) {
+    [GETTER('storage/pages')] ($store, id = undefined) {
+        if (isNotUndefined(id)) {
             var results = $store.cachedPages.filter(item => (item.id == id) );
 
             if (!results.length) {
@@ -41,8 +43,8 @@ export default class StorageManager extends BaseModule {
         return $store.cachedPages;
     }
 
-    '*/storage/layers' ($store, id = undefined) {
-        if (typeof id !== 'undefined' ) {
+    [GETTER('storage/layers')] ($store, id = undefined) {
+        if (isNotUndefined(id) ) {
             var results = $store.cachedLayers.filter(item => (item.id == id) );
 
             if (!results.length) {
@@ -54,109 +56,109 @@ export default class StorageManager extends BaseModule {
         return $store.cachedLayers;
     }    
 
-    '*/storage/images' ($store, index = undefined) {
-        if (typeof index !== 'undefined' ) {
+    [GETTER('storage/images')] ($store, index = undefined) {
+        if (isNotUndefined(index)) {
             return $store.cachedImages[index];
         }
         return $store.cachedImages;
     }
 
-    '/storage/unshift/layer' ($store, layer) {
-        var item = $store.read('/clone', layer);
+    [ACTION('storage/unshift/layer')] ($store, layer) {
+        var item = $store.read('clone', layer);
         item.id = uuid()
         $store.cachedLayers.unshift(item);
 
-        $store.run('/storage/save/layer');
+        $store.run('storage/save/layer');
     }
 
-    '/storage/add/layer' ($store, layer) {
-        var item = $store.read('/clone', layer);
+    [ACTION('storage/add/layer')] ($store, layer) {
+        var item = $store.read('clone', layer);
         item.id = uuid()        
         $store.cachedLayers.push(item);
 
-        $store.run('/storage/save/layer');
+        $store.run('storage/save/layer');
     }    
 
-    '/storage/remove/layer' ($store, id) {
+    [ACTION('storage/remove/layer')] ($store, id) {
 
         $store.cachedLayers = $store.cachedLayers.filter(item => {
             return item.id != id; 
         });
 
-        $store.run('/storage/save/layer');
+        $store.run('storage/save/layer');
     }        
 
-    '/storage/remove/page' ($store, id) {
+    [ACTION('storage/remove/page')] ($store, id) {
 
         $store.cachedLayers = $store.cachedPages.filter(item => {
             return item.id != id; 
         });
 
-        $store.run('/storage/save/page');
+        $store.run('storage/save/page');
     }            
 
-    '/storage/unshift/page' ($store, page) {
-        var item = $store.read('/clone', page);
+    [ACTION('storage/unshift/page')] ($store, page) {
+        var item = $store.read('clone', page);
         item.id = uuid()
         $store.cachedPages.unshift(item);
 
-        $store.run('/storage/save/page');
+        $store.run('storage/save/page');
     }
 
-    '/storage/add/page' ($store, page) {
-        var item = $store.read('/clone', page);
+    [ACTION('storage/add/page')] ($store, page) {
+        var item = $store.read('clone', page);
         item.id = uuid()        
         $store.cachedPages.push(item);
 
-        $store.run('/storage/save/page');
+        $store.run('storage/save/page');
     }    
 
-    '/storage/delete/page' ($store, id) {
+    [ACTION('storage/delete/page')] ($store, id) {
 
         $store.cachedPages = $store.cachedPages.filter(item => {
             return item.id != id; 
         });
 
-        $store.run('/storage/save/page');
+        $store.run('storage/save/page');
     }      
 
-    '/storage/delete/image' ($store, id) {
+    [ACTION('storage/delete/image')] ($store, id) {
 
         $store.cachedImages = $store.cachedImages.filter(item => {
             return item.id != id; 
         });
 
-        $store.run('/storage/save/image');
+        $store.run('storage/save/image');
     }            
 
-    '/storage/add/image' ($store, image) {
-        var item = $store.read('/clone', image);
+    [ACTION('storage/add/image')] ($store, image) {
+        var item = $store.read('clone', image);
         item.id = uuid()        
         $store.cachedImages.push(item);
 
-        $store.run('/storage/save/image');
+        $store.run('storage/save/image');
     }        
 
-    '/storage/save' ($store) {
+    [ACTION('storage/save')] ($store) {
         localStorage.setItem(SAVE_ID, JSON.stringify({
             items: $store.items,
             selection: $store.selection
         }))
     }
 
-    '/storage/save/layer' ($store) {
+    [ACTION('storage/save/layer')] ($store) {
         localStorage.setItem(CACHED_LAYER_SAVE_ID, JSON.stringify($store.cachedLayers))
     }    
 
-    '/storage/save/page' ($store) {
+    [ACTION('storage/save/page')] ($store) {
         localStorage.setItem(CACHED_PAGE_SAVE_ID, JSON.stringify($store.cachedPages))
     }        
 
-    '/storage/save/image' ($store) {
+    [ACTION('storage/save/image')] ($store) {
         localStorage.setItem(CACHED_IMAGE_SAVE_ID, JSON.stringify($store.cachedImages))
     }        
 
-    '/storage/load/layer' ($store) {
+    [ACTION('storage/load/layer')] ($store) {
         $store.cachedLayers = JSON.parse(localStorage.getItem(CACHED_LAYER_SAVE_ID) || "[]");
 
         $store.cachedLayers = $store.cachedLayers.map(item => {
@@ -165,7 +167,7 @@ export default class StorageManager extends BaseModule {
         })
     }        
 
-    '/storage/load/page' ($store) {
+    [ACTION('storage/load/page')] ($store) {
         $store.cachedPages = JSON.parse(localStorage.getItem(CACHED_PAGE_SAVE_ID) || "[]");
 
         $store.cachedPages = $store.cachedPages.map(item => {
@@ -174,7 +176,7 @@ export default class StorageManager extends BaseModule {
         })
     }            
 
-    '/storage/load/image' ($store) {
+    [ACTION('storage/load/image')] ($store) {
         $store.cachedImages = JSON.parse(localStorage.getItem(CACHED_IMAGE_SAVE_ID) || "[]");
 
         $store.cachedLayers = $store.cachedLayers.map(item => {
@@ -184,7 +186,7 @@ export default class StorageManager extends BaseModule {
     }      
     
     
-    '/storage/load' ($store, callback) {
+    [ACTION('storage/load')] ($store, callback) {
         var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
 
         if (obj.items) $store.items = obj.items 
@@ -192,13 +194,13 @@ export default class StorageManager extends BaseModule {
         if (obj.selectedMode) $store.selectedMode = obj.selectedMode
         if (obj.selection) $store.selection = obj.selection
 
-        $store.run('/item/keys/generate');
+        $store.run('item/keys/generate');
 
         if ($store.selectedId) {
-            $store.run('/selection/one', $store.selectedId);
+            $store.run('selection/one', $store.selectedId);
         }
 
-        if (typeof callback == 'function') {
+        if (isFunction(callback)) {
             callback(!!obj.items)
         }
     }

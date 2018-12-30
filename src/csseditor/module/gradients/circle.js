@@ -1,6 +1,8 @@
+import { POSITION_CENTER } from "../ItemTypes";
+
 export default { 
     type: 'radial', 
-    radialPosition: 'center',
+    radialPosition: POSITION_CENTER,
     radialType: 'circle',    
     colorsteps: [
         {color: 'white', percent: 0},

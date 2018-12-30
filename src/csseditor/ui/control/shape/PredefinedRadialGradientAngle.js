@@ -1,6 +1,7 @@
 import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../types/event';
 import { CLICK, CHANGE } from '../../../../util/Event';
+import { POSITION_CENTER } from '../../../module/ItemTypes';
 
 
 export default class PredefinedRadialGradientAngle extends UIElement {
@@ -26,7 +27,7 @@ export default class PredefinedRadialGradientAngle extends UIElement {
     }
 
     refresh () {
-        this.read('/selection/current/image', (image) => {
+        this.read('selection/current/image', (image) => {
             this.refs.$select.val(image.radialType);
         })
     }
@@ -39,15 +40,15 @@ export default class PredefinedRadialGradientAngle extends UIElement {
     )] () { this.refresh() }    
 
     [CHANGE('$select')] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE_RADIAL_TYPE, {id, radialType: this.refs.$select.val()})
         });
 
     }
 
     [CLICK('$center')] (e) {
-        this.read('/selection/current/image/id', (id) => {
-            this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition: 'center'})
+        this.read('selection/current/image/id', (id) => {
+            this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition:  POSITION_CENTER})
         });
     }
 }

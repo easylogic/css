@@ -13,7 +13,7 @@ export default class BaseBox extends UIElement {
 
     /** push change event  */
     changeColor (opt) {
-        this.dispatch('/changeColor', opt || {})
+        this.dispatch('changeColor', opt || {})
     }
 
     // Event Bindings 

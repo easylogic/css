@@ -28,7 +28,7 @@ export default class FeatureControl extends UIElement {
 
     selectFeature () {
 
-        var item = this.read('/selection/current');
+        var item = this.read('selection/current');
 
         if (!item.length) return false; 
         
@@ -38,9 +38,9 @@ export default class FeatureControl extends UIElement {
 
         var selectType = 'layer'; 
 
-        if (this.read('/selection/is/layer') || this.read('/selection/is/group')) {
+        if (this.read('selection/is/layer') || this.read('selection/is/group')) {
             selectType = 'layer';
-        } else if (this.read('/selection/is/image')) {
+        } else if (this.read('selection/is/image')) {
             selectType = 'image';
         }
 

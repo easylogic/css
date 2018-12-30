@@ -11,12 +11,12 @@ import {
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, percentUnit, stringUnit } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
-import { defaultValue } from "../../../../../util/functions/func";
+import { defaultValue, isUndefined } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK } from "../../../../../util/Event";
 
 export default class ClipPathPolygon extends BasePropertyItem {
     template () {
-        var list = this.read('/clip-path/sample/list')
+        var list = this.read('clip-path/sample/list')
         
         return `
             <div class='property-item clip-path-polygon'>
@@ -40,7 +40,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
     }
 
     'load $polygonList' () {
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
         if (!layer) return '';
         var points =  defaultValue ( layer.clipPathPolygonPoints, [])
         if (!points.length) return '';
@@ -111,7 +111,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
     }
 
     isShow () {
-        var item = this.read('/selection/current/layer');
+        var item = this.read('selection/current/layer');
 
         if (!item) return false;
         
@@ -120,7 +120,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
 
     '@toggleClipPathPolygon' (isShow) {
 
-        if (typeof isShow == 'undefined') {
+        if (isUndefined(isShow)) {
             this.$el.toggleClass('show');
         } else {
             this.$el.toggleClass('show', isShow);
@@ -133,7 +133,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
         var polygonIndex = +$item.attr('data-index')
         var key = $item.attr('data-key');
         if (key == 'delete') {
-            this.read('/selection/current/layer', (layer) => {
+            this.read('selection/current/layer', (layer) => {
                 var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
                 clipPathPolygonPoints.splice(polygonIndex, 1);
     
@@ -146,7 +146,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
             })
 
         } else if (key == 'copy') {
-            this.read('/selection/current/layer', (layer) => {
+            this.read('selection/current/layer', (layer) => {
                 var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
                 var copyItem = clipPathPolygonPoints[polygonIndex]
 
@@ -168,7 +168,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
         var key = $item.attr('data-key');
         var value = +$item.val();
 
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
             clipPathPolygonPoints[polygonIndex][key] = percentUnit(value); 
 
@@ -183,9 +183,9 @@ export default class ClipPathPolygon extends BasePropertyItem {
     [CLICK('$sampleList .clip-path-item')] (e) {
         var $item = e.$delegateTarget;
         var index = +$item.attr('data-index')
-        var points = this.read('/clip-path/sample/get', index);
+        var points = this.read('clip-path/sample/get', index);
 
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
 
             this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, { id, ...points})
             this.refresh();

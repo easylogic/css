@@ -1,6 +1,7 @@
 import GLFilter from './filter/index'
 import {makeFragmentShaderSource, makeVertexShaderSource} from './filter/util'
 import { px } from '../css/types';
+import { isString, isFunction } from '../functions/func';
 
 
 
@@ -421,7 +422,7 @@ class GLCanvas {
 
     effectFilter (filterFunction) {
 
-        if (typeof filterFunction == 'string') {
+        if (isString( filterFunction )) {
             filterFunction = (GLFilter[filterFunction] || GLFilter.normal).call(GLFilter)
         }
 
@@ -532,8 +533,7 @@ class GLCanvas {
 
         this.drawFilter()
 
-        if (typeof doneCallback == 'function') {
-
+        if (isFunction( doneCallback)) {
             doneCallback(this)
         }
     }

@@ -14,7 +14,7 @@ export default class LayerBlend extends BasePropertyItem {
                     <label>Blend</label>
                     <div class='size-list' ref="$size">
                         <select ref="$blend">
-                        ${this.read('/blend/list').map(blend => {
+                        ${this.read('blend/list').map(blend => {
                             return `<option value="${blend}">${blend}</option>`
                         }).join('')}
                         </select>
@@ -26,12 +26,12 @@ export default class LayerBlend extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read('/selection/is/layer'); 
+        return this.read('selection/is/layer'); 
     }    
 
     refresh () {
 
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             this.refs.$blend.val(layer.mixBlendMode)
         })
 
@@ -45,7 +45,7 @@ export default class LayerBlend extends BasePropertyItem {
     }
 
     [CHANGE('$blend')] (e) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER, {id, mixBlendMode: this.refs.$blend.val() })
         });
     }

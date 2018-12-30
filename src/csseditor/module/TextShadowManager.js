@@ -1,11 +1,12 @@
 import BaseModule from "../../colorpicker/BaseModule";
+import { GETTER } from "../../util/Store";
 
 export default class TextShadowManager extends BaseModule { 
 
-    '*/textshadow/toCSS' ($store, item = null, isExport = false) {
+    [GETTER('textshadow/toCSS')] ($store, item = null, isExport = false) {
 
         var results = {} 
-        var textshadow = $store.read('/textshadow/toTextShadowString', item, isExport)
+        var textshadow = $store.read('textshadow/toTextShadowString', item, isExport)
 
         if (textshadow) {
             results['text-shadow'] = textshadow; 
@@ -14,10 +15,10 @@ export default class TextShadowManager extends BaseModule {
         return results
     }
 
-    '*/textshadow/cache/toCSS' ($store, item = {}) {
+    [GETTER('textshadow/cache/toCSS')] ($store, item = {}) {
        
         var results = {} 
-        var textshadow = $store.read('/textshadow/toTextShadowString', item, isExport)
+        var textshadow = $store.read('textshadow/toTextShadowString', item, isExport)
 
         if (textshadow) {
             results['text-shadow'] = textshadow; 
@@ -27,9 +28,9 @@ export default class TextShadowManager extends BaseModule {
 
     }
 
-    '*/textshadow/toString' ($store, image = null) {
+    [GETTER('textshadow/toString')] ($store, image = null) {
 
-        var obj = $store.read('/textshadow/toCSS', image)
+        var obj = $store.read('textshadow/toCSS', image)
 
         return Object.keys(obj).map(key => {
             return `${key}: ${obj[key]};`
@@ -37,7 +38,7 @@ export default class TextShadowManager extends BaseModule {
 
     } 
 
-    '*/textshadow/toTextShadowString' ($store, item = undefined ) {
+    [GETTER('textshadow/toTextShadowString')] ($store, item = undefined ) {
 
         if (!item) return '';
 

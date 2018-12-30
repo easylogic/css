@@ -1,5 +1,6 @@
 import Event, { CLICK } from '../../util/Event'
 import UIElement from '../UIElement';
+import { isUndefined } from '../../util/functions/func';
 
 export default class CurrentColorSetsContextMenu extends UIElement {
 
@@ -21,7 +22,7 @@ export default class CurrentColorSetsContextMenu extends UIElement {
         this.$el.addClass('show');
         this.selectedColorIndex = index; 
 
-        if (typeof this.selectedColorIndex == 'undefined') {
+        if (isUndefined(this.selectedColorIndex)) {
             this.$el.addClass('small')
         } else {
             this.$el.removeClass('small')
@@ -36,13 +37,13 @@ export default class CurrentColorSetsContextMenu extends UIElement {
     runCommand (command) {
         switch(command) {
         case 'remove-color': 
-            this.dispatch('/removeCurrentColor', this.selectedColorIndex);        
+            this.dispatch('removeCurrentColor', this.selectedColorIndex);        
             break;
         case 'remove-all-to-the-right': 
-            this.dispatch('/removeCurrentColorToTheRight', this.selectedColorIndex);        
+            this.dispatch('removeCurrentColorToTheRight', this.selectedColorIndex);        
             break;
         case 'clear-palette': 
-            this.dispatch('/clearPalette');
+            this.dispatch('clearPalette');
             break;
         }
     }

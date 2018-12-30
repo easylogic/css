@@ -4,7 +4,7 @@ import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_SELECTION } from "../../../../types/event";
 import { CLIP_PATH_TYPE_SVG } from "../../../../module/ItemTypes";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { defaultValue } from "../../../../../util/functions/func";
+import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
 import { CLICK } from "../../../../../util/Event";
 
 export default class ClipPathSVG extends BasePropertyItem {
@@ -38,8 +38,8 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     'load $imageList' () {
-        return this.read('/svg/list').map((svg, index) => {
-            if (typeof svg == 'object') {
+        return this.read('svg/list').map((svg, index) => {
+            if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
             }  else {
                 return `<div class='svg-item' data-index="${index}">${svg}</div>`
@@ -69,7 +69,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
 
     isShow () {
-        var item = this.read('/selection/current/layer');
+        var item = this.read('selection/current/layer');
 
         if (!item) return false;
         
@@ -82,7 +82,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     [CLICK('$fit')] () {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
 
             this.commit(CHANGE_LAYER_CLIPPATH, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
             this.refresh();            
@@ -98,7 +98,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     updateView () {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             this.refs.$clipPath.html(defaultValue(layer.clipPathSvg, ''))
             this.refs.$fit.checked(defaultValue(layer.fitClipPathSize, false))
         });
@@ -110,7 +110,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     '@toggleClipPathSVG' (isShow) {
-        if (typeof isShow == 'undefined') {
+        if (isUndefined(isShow)) {
             this.$el.toggleClass('show')
         } else {
             this.$el.toggleClass('show', isShow)
@@ -165,8 +165,8 @@ export default class ClipPathSVG extends BasePropertyItem {
         var key = e.$delegateTarget.attr('data-key')
 
         if (index) {
-            this.read('/selection/current/layer/id', (id) => {
-                var svg = this.read('/svg/get', +index);
+            this.read('selection/current/layer/id', (id) => {
+                var svg = this.read('svg/get', +index);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
                     this.commit(CHANGE_LAYER, newValue)
@@ -177,8 +177,8 @@ export default class ClipPathSVG extends BasePropertyItem {
             })
         } else if (key) {
 
-            this.read('/selection/current/layer/id', (id) => {
-                var svg = this.read('/svg/get', Number.MAX_SAFE_INTEGER, key);
+            this.read('selection/current/layer/id', (id) => {
+                var svg = this.read('svg/get', Number.MAX_SAFE_INTEGER, key);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
                     this.commit(CHANGE_LAYER, newValue)

@@ -4,13 +4,14 @@ import UIElement from './UIElement'
 import ColorManager from './module/ColorManager';
 import BaseStore from './BaseStore';
 import { MOUSEUP } from '../util/Event';
+import { defaultValue, isFunction } from '../util/functions/func';
 
 export default class BaseColorPicker extends UIElement {
 
     created () {
         this.isColorPickerShow = false;
         this.isShortCut = false;
-        this.hideDelay = +(typeof this.opt.hideDeplay == 'undefined' ? 2000 : this.opt.hideDelay);
+        this.hideDelay = +defaultValue(this.opt.hideDeplay, 2000);
         this.timerCloseColorPicker;
         this.autoHide = this.opt.autoHide || true;
         this.outputFormat = this.opt.outputFormat
@@ -61,7 +62,7 @@ export default class BaseColorPicker extends UIElement {
         
         this.$root.append(this.$arrow);
 
-        this.dispatch('/setUserPalette', this.opt.colorSets);
+        this.dispatch('setUserPalette', this.opt.colorSets);
 
         this.render(this.$root)
 
@@ -73,7 +74,7 @@ export default class BaseColorPicker extends UIElement {
     }
 
     initColorWithoutChangeEvent (color) {
-        this.dispatch('/initColor', color);
+        this.dispatch('initColor', color);
     }
 
     /** 
@@ -107,7 +108,7 @@ export default class BaseColorPicker extends UIElement {
         this.outputFormat = opt.outputFormat  
 
         // define hide delay
-        this.hideDelay = +(typeof opt.hideDelay == 'undefined' ? 2000 : opt.hideDelay );
+        this.hideDelay = +defaultValue (opt.hideDelay, 2000);
         if (this.hideDelay > 0) {
             this.setHideDelay(this.hideDelay);
         }        
@@ -125,7 +126,7 @@ export default class BaseColorPicker extends UIElement {
      * @param {String} format  hex, rgb, hsl
      */
     initColor(newColor, format) {
-        this.dispatch('/changeColor', newColor, format);
+        this.dispatch('changeColor', newColor, format);
     }
 
 
@@ -149,7 +150,7 @@ export default class BaseColorPicker extends UIElement {
      * @param {Array} colors 
      */
     setColorsInPalette (colors = []) {
-        this.dispatch('/setCurrentColorAll', colors);
+        this.dispatch('setCurrentColorAll', colors);
     }    
 
     /**
@@ -158,7 +159,7 @@ export default class BaseColorPicker extends UIElement {
      * @param {*} list 
      */
     setUserPalette (list = []) {
-        this.dispatch('/setUserPalette', list);
+        this.dispatch('setUserPalette', list);
     }
 
 
@@ -192,7 +193,7 @@ export default class BaseColorPicker extends UIElement {
     }
 
     getColor(type) {
-        return this.read('/toColor', type);
+        return this.read('toColor', type);
     }
 
     definePositionForArrow(opt, elementScreenLeft, elementScreenTop) {
@@ -270,28 +271,28 @@ export default class BaseColorPicker extends UIElement {
     callbackChangeValue(color) {
         color = color || this.getCurrentColor();
 
-        if (typeof this.opt.onChange == 'function') {
+        if (isFunction(this.opt.onChange)) {
             this.opt.onChange.call(this, color);
         }
 
-        if (typeof this.colorpickerShowCallback == 'function') {
+        if (isFunction(this.colorpickerShowCallback)) {
             this.colorpickerShowCallback(color);
         }        
     }
 
     callbackHideValue(color) {
         color = color || this.getCurrentColor();
-        if (typeof this.opt.onHide == 'function') {
+        if (isFunction(this.opt.onHide)) {
             this.opt.onHide.call(this, color);
         }
 
-        if (typeof this.colorpickerHideCallback == 'function') {
+        if (isFunction(this.colorpickerHideCallback)) {
             this.colorpickerHideCallback(color);
         }        
     }    
 
     getCurrentColor() {
-        return this.read('/toColor', this.outputFormat);
+        return this.read('toColor', this.outputFormat);
     }
 
 

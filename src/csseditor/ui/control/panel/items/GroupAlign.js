@@ -25,7 +25,7 @@ export default class GroupAlign extends BasePropertyItem {
     }
 
     [CLICK('$el button')] (e) {
-        this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))
+        this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'))
     }
 
     

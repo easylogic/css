@@ -86,7 +86,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     [EVENT_CHANGE_EDITOR] () {
         /*
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
             var self = this; 
             var obj = layer.style
             var aniObject = Animation.createTimeline([{
@@ -108,7 +108,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
             }], {
                 callback() {
-                    self.run('/item/set', layer);
+                    self.run('item/set', layer);
                     self.emit('animationEditor')
                 }
             });
@@ -121,11 +121,11 @@ export default class CSSEditor extends BaseCSSEditor {
     }
 
     loadStart (isAdd) {
-        this.dispatch('/storage/load', (isLoaded) => {
+        this.dispatch('storage/load', (isLoaded) => {
             if (!isLoaded && isAdd) { 
-                this.dispatch('/item/add/page', true)
+                this.dispatch('item/add/page', true)
             } else {
-                this.dispatch('/item/load');
+                this.dispatch('item/load');
             }
             this.emit(CHANGE_PAGE)
         });

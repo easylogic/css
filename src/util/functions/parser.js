@@ -2,6 +2,7 @@ import ColorNames from '../ColorNames'
 
 import { RGBtoHSL } from './fromRGB'
 import { HSLtoRGB } from './fromHSL'
+import { isString, isNumber } from './func';
 
 const color_regexp = /(#(?:[\da-f]{3}){1,2}|rgb\((?:\s*\d{1,3},\s*){2}\d{1,3}\s*\)|rgba\((?:\s*\d{1,3},\s*){3}\d*\.?\d+\s*\)|hsl\(\s*\d{1,3}(?:,\s*\d{1,3}%){2}\s*\)|hsla\(\s*\d{1,3}(?:,\s*\d{1,3}%){2},\s*\d*\.?\d+\s*\)|([\w_\-]+))/gi;
 const color_split = ','
@@ -93,7 +94,7 @@ export function trim (str) {
  * @returns {Object}  rgb object
  */
 export function parse(str) {
-    if (typeof str == 'string') {
+    if (isString(str)) {
 
         if (ColorNames.isColorName(str)) {
             str = ColorNames.getColorByName(str);
@@ -180,7 +181,7 @@ export function parse(str) {
 
             return obj;
         }
-    } else if (typeof str == 'number') {
+    } else if (isNumber( str )) {
         if (0x000000 <= str && str <= 0xffffff) {
             const r = (str & 0xff0000) >> 16;
             const g = (str & 0x00ff00) >> 8;
@@ -207,12 +208,12 @@ export function parse(str) {
 }
 
 export function parseGradient (colors) {
-    if (typeof colors == 'string') {
+    if (isString( colors )) {
         colors = convertMatchesArray(colors);
     }
 
     colors = colors.map(it => {
-        if (typeof it == 'string') {
+        if (isString( it )) {
             const ret = convertMatches(it)
             let arr = trim(ret.str).split(' ');
 
@@ -234,7 +235,7 @@ export function parseGradient (colors) {
 
             if (!it[1]) {
                 it[1] = '*'
-            } else if (typeof it[1] == 'string') {
+            } else if (isString( it[1] ) ) {
                 if (it[1].includes('%')) {
                     it[1] = parseFloat(it[1].replace(/%/, ''))/100
                 } else {

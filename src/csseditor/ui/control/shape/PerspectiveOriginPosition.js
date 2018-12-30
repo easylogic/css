@@ -1,15 +1,16 @@
 import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM, EVENT_CHANGE_PAGE_TRANSFORM } from '../../../types/event';
-import { percent, percentUnit, unitValue, valueUnit } from '../../../../util/css/types';
+import { percentUnit, unitValue, valueUnit } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
-import { defaultValue } from '../../../../util/functions/func';
+import { defaultValue, isString } from '../../../../util/functions/func';
+import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
 
 const DEFINE_POSITIONS = { 
-    'center': ['center', 'center'],
-    'right': ['right', 'center'],
-    'top': ['center', 'top'],
-    'left': ['left', 'center'],
-    'bottom': ['center', 'bottom']
+    [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
+    [POSITION_RIGHT]: [POSITION_RIGHT, POSITION_CENTER],
+    [POSITION_TOP]: [POSITION_CENTER, POSITION_TOP],
+    [POSITION_LEFT]: [POSITION_LEFT, POSITION_CENTER],
+    [POSITION_BOTTOM]: [POSITION_CENTER, POSITION_BOTTOM]
 }
 
 export default class PerspectiveOriginPosition extends UIElement {
@@ -34,9 +35,9 @@ export default class PerspectiveOriginPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read('/selection/is/page')) return false; 
+        if (!this.read('selection/is/page')) return false; 
 
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
         if (!page) return false; 
 
         return !!page.preserve;  
@@ -53,28 +54,28 @@ export default class PerspectiveOriginPosition extends UIElement {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
 
         let p = position; 
-        if (typeof p == 'string' && DEFINE_POSITIONS[p]) {
+        if (isString(p) && DEFINE_POSITIONS[p]) {
             p = DEFINE_POSITIONS[p]
-        } else if (typeof p === 'string') {
+        } else if (isString(p)) {
             p = p.split(' ');
         } else {
             p = [unitValue(p.perspectiveOriginPositionX), unitValue(p.perspectiveOriginPositionY)]
         }
 
         p = p.map((item, index) => {
-            if (item == 'center') {
+            if (item == POSITION_CENTER) {
                 if (index == 0) {
                     return minX + width/2
                 } else if (index == 1) {
                     return minY + height/2
                 }
-            } else if (item === 'left') {
+            } else if (item === POSITION_LEFT) {
                 return minX;
-            } else if (item === 'right') {
+            } else if (item === POSITION_RIGHT) {
                 return maxX;
-            } else if (item === 'top') {
+            } else if (item === POSITION_TOP) {
                 return minY;
-            } else if (item === 'bottom') { 
+            } else if (item === POSITION_BOTTOM) { 
                 return maxY;
             } else {
                 if (index == 0) {
@@ -102,7 +103,7 @@ export default class PerspectiveOriginPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('/selection/current/page');
+        var item = this.read('selection/current/page');
 
         if (!item) return ''; 
 
@@ -137,7 +138,7 @@ export default class PerspectiveOriginPosition extends UIElement {
     }
 
     setPerspectiveOriginPosition (perspectiveOriginPositionX, perspectiveOriginPositionY) {
-        this.read('/selection/current/page/id', (id) => {
+        this.read('selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionX, perspectiveOriginPositionY});
         });
     }
@@ -173,7 +174,7 @@ export default class PerspectiveOriginPosition extends UIElement {
     
     [DOUBLECLICK('$dragPointer')] (e) {
         e.preventDefault()
-        this.setPerspectiveOriginPosition(valueUnit('center'), valueUnit('center'))
+        this.setPerspectiveOriginPosition(valueUnit(POSITION_CENTER), valueUnit(POSITION_CENTER))
         this.refreshUI()
     }
 }

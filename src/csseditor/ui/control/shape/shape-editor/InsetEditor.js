@@ -33,7 +33,7 @@ export default class InsetEditor extends UIElement {
     }
 
     refreshPointer () {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
 
             if (layer.clipPathType !== CLIP_PATH_TYPE_INSET) return;
 
@@ -67,7 +67,7 @@ export default class InsetEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read('/selection/current/layer')
+        var item = this.read('selection/current/layer')
 
         if (!item) return false; 
 
@@ -165,7 +165,7 @@ export default class InsetEditor extends UIElement {
 
     [POINTERSTART()] (e) {
         this.isDown = true; 
-        this.layer = this.read('/selection/current/layer');
+        this.layer = this.read('selection/current/layer');
         // this.refreshUI(e);        
     }    
     

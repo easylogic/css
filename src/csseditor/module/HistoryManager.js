@@ -1,5 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { SELECT_MODE_ONE } from "./SelectionManager";
+import { ACTION } from "../../util/Store";
 
 const HISTORY_MAX = 200; 
 
@@ -28,13 +29,13 @@ export default class HistoryManager extends BaseModule {
 
         if (command) {
             var {items, selection} = command;
-            $store.selection = selection || $store.read('/selection/initialize/data');
-            $store.dispatch('/item/set/all', page.id, $store.read('/clone', items))
+            $store.selection = selection || $store.read('selection/initialize/data');
+            $store.dispatch('item/set/all', page.id, $store.read('clone', items))
         }
     }        
 
-    '/history/initialize' ($store) {
-        $store.read('/selection/current/page', (page) => {
+    [ACTION('history/initialize')] ($store) {
+        $store.read('selection/current/page', (page) => {
             this.setHistory($store, page);
         })
     }
@@ -42,16 +43,16 @@ export default class HistoryManager extends BaseModule {
     setHistory($store, page) {
         if (page && !$store.historyOriginal[page.id]) {
             $store.historyOriginal[page.id] = { 
-                items: $store.clone('/item/get/all', page.id), 
-                selection: $store.selection || $store.read('/selection/initialize/data')
+                items: $store.clone('item/get/all', page.id), 
+                selection: $store.selection || $store.read('selection/initialize/data')
             }
             $store.histories[page.id] = [] 
             $store.historyIndex[page.id] = 0;
         }
     }
 
-    '/history/push' ($store, title) {
-        $store.read('/selection/current/page', (page) => {
+    [ACTION('history/push')] ($store, title) {
+        $store.read('selection/current/page', (page) => {
 
             this.setHistory($store, page);
 
@@ -61,8 +62,8 @@ export default class HistoryManager extends BaseModule {
 
             histories.push({ 
                 title, 
-                items: $store.clone('/item/get/all', page.id),
-                selection: $store.selection || $store.read('/selection/initialize/data')
+                items: $store.clone('item/get/all', page.id),
+                selection: $store.selection || $store.read('selection/initialize/data')
             });
 
             $store.histories[page.id] = histories;
@@ -75,8 +76,8 @@ export default class HistoryManager extends BaseModule {
         })
     }
 
-    '/history/undo' ($store) {
-        $store.read('/selection/current/page', (page) => {        
+    [ACTION('history/undo')] ($store) {
+        $store.read('selection/current/page', (page) => {        
 
             if ($store.historyIndex[page.id] < 0) {
                 return;
@@ -88,8 +89,8 @@ export default class HistoryManager extends BaseModule {
     }
 
 
-    '/history/redo' ($store) {
-        $store.read('/selection/current/page', (page) => {        
+    [ACTION('history/redo')] ($store) {
+        $store.read('selection/current/page', (page) => {        
             if ($store.historyIndex[page.id] > $store.histories[page.id].length -1) {
                 return; 
             }

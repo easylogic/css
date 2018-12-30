@@ -6,7 +6,7 @@ import {
     EVENT_CHANGE_LAYER_RADIUS, 
     CHANGE_LAYER_RADIUS 
 } from "../../../../types/event";
-import { pxUnit } from "../../../../../util/css/types";
+import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
@@ -36,8 +36,8 @@ export default class RadiusFixed extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.read('/selection/current/layer', (item) => {
-            var radius = defaultValue(item.borderRadius, pxUnit(0) )
+        this.read('selection/current/layer', (item) => {
+            var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0) )
             this.refs.$radiusRange.val(radius.value)
             this.refs.$radius.val(radius.value)
         })
@@ -45,7 +45,7 @@ export default class RadiusFixed extends BasePropertyItem {
     }
 
     updateTransform (type) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
 
             if (type == 'radius') {
                 this.commit(CHANGE_LAYER_RADIUS, {

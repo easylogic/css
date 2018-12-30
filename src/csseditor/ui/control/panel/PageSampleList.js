@@ -9,7 +9,7 @@ export default class PageSampleList extends UIElement {
         super.initialize();
 
         this.list = [] 
-        this.dispatch('/storage/load/page')
+        this.dispatch('storage/load/page')
 
     }
 
@@ -26,7 +26,7 @@ export default class PageSampleList extends UIElement {
     'load $cachedList' () {
         
         var list = this.list.map( (page, index) => {
-            var data = this.read('/page/cache/toString', page)
+            var data = this.read('page/cache/toString', page)
 
             var rateX = 160 / parseParamNumber(data.obj.width);
             var rateY = 120 / parseParamNumber(data.obj.height);
@@ -37,7 +37,7 @@ export default class PageSampleList extends UIElement {
             <div class='page-sample-item'  data-sample-id="${page.id}">
                 <div class="page-view" style="${data.css}; ${transform}">
                 ${page.layers.map(layer => {
-                    var data = this.read('/layer/cache/toString', layer)
+                    var data = this.read('layer/cache/toString', layer)
                     return `
                         <div class="layer-view" style="${data.css}"></div>
                     `
@@ -50,8 +50,8 @@ export default class PageSampleList extends UIElement {
             </div>`
         })
 
-        var storageList = this.read('/storage/pages').map( page => {
-            var data = this.read('/page/cache/toString', this.read('/item/convert/style', page.page))
+        var storageList = this.read('storage/pages').map( page => {
+            var data = this.read('page/cache/toString', this.read('item/convert/style', page.page))
 
             var rateX = 160 / parseParamNumber(data.obj.width || 400);
             var rateY = 160 / parseParamNumber(data.obj.height || 300);
@@ -64,7 +64,7 @@ export default class PageSampleList extends UIElement {
                 <div class='page-cached-item' data-sample-id="${page.id}">
                     <div class="page-view" style="${data.css}; ${transform}">
                     ${page.layers.map(layer => {
-                        var data = this.read('/layer/cache/toString', layer)
+                        var data = this.read('layer/cache/toString', layer)
                         return `
                             <div class="layer-view" style="${data.css}"></div>
                         `
@@ -110,18 +110,18 @@ export default class PageSampleList extends UIElement {
         var newPage = this.list[index];
 
         if (newPage) {
-            this.read('/selection/current/page', page => {
-                this.dispatch('/item/addCache', newPage, page.id );
+            this.read('selection/current/page', page => {
+                this.dispatch('item/addCache', newPage, page.id );
                 this.emit('changePage');                
             })
         }
     }    
 
     [CLICK('$el .page-cached-item .add-item')] (e) {
-        var newPage = this.read('/storage/pages', e.$delegateTarget.attr('data-sample-id'));
+        var newPage = this.read('storage/pages', e.$delegateTarget.attr('data-sample-id'));
         if (newPage) {
-            this.read('/selection/current/page', page => {
-                this.dispatch('/item/addCache', newPage, page.id );
+            this.read('selection/current/page', page => {
+                this.dispatch('item/addCache', newPage, page.id );
                 this.emit('changePage');
             })
             
@@ -129,15 +129,15 @@ export default class PageSampleList extends UIElement {
     }
 
     [CLICK('$el .page-cached-item .delete-item')] (e) {
-        this.dispatch('/storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
+        this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
         this.refresh();
     }    
 
     [CLICK('$el .add-current-page')] (e) {
-        this.read('/selection/current/page', (page) => {
-            var newPage = this.read('/collect/page/one', page.id)
+        this.read('selection/current/page', (page) => {
+            var newPage = this.read('collect/page/one', page.id)
 
-            this.dispatch('/storage/add/page', newPage);
+            this.dispatch('storage/add/page', newPage);
             this.refresh();
         })
         

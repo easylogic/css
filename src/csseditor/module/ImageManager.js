@@ -1,7 +1,7 @@
 import ImageLoader from '../../util/ImageLoader'
 import BaseModule from "../../colorpicker/BaseModule";
 import { ImageToRGB, palette } from '../../util/functions/image';
-import { get, defaultValue } from '../../util/functions/func';
+import { get, defaultValue, isFunction, isUndefined, isNumber, isNotUndefined } from '../../util/functions/func';
 import { 
     IMAGE_ITEM_TYPE_LINEAR, 
     IMAGE_ITEM_TYPE_REPEATING_LINEAR, 
@@ -10,9 +10,19 @@ import {
     IMAGE_ITEM_TYPE_CONIC, 
     IMAGE_ITEM_TYPE_REPEATING_CONIC, 
     IMAGE_ITEM_TYPE_IMAGE, 
-    IMAGE_ITEM_TYPE_STATIC 
+    IMAGE_ITEM_TYPE_STATIC, 
+    POSITION_CENTER,
+    POSITION_TOP,
+    POSITION_LEFT,
+    POSITION_RIGHT,
+    POSITION_BOTTOM,
+    IMAGE_FILE_TYPE_JPG,
+    IMAGE_FILE_TYPE_PNG,
+    IMAGE_FILE_TYPE_GIF,
+    IMAGE_FILE_TYPE_SVG
 } from './ItemTypes';
 import { px, isPX, isEM, em, percent, stringUnit, valueUnit, unitObject, percentUnit } from '../../util/css/types';
+import { GETTER } from '../../util/Store';
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -38,22 +48,28 @@ const DEFINED_DIRECTIONS = {
 }
 
 const DEFINED_POSITIONS = {
-    'center' : true, 
-    'top' : true, 
-    'left' : true, 
-    'right' : true,
-    'bottom' : true 
+    [POSITION_CENTER] : true, 
+    [POSITION_TOP] : true, 
+    [POSITION_LEFT] : true, 
+    [POSITION_RIGHT] : true,
+    [POSITION_BOTTOM] : true 
 }
 
+const IMAGE_LIST = [
+    IMAGE_FILE_TYPE_JPG,
+    IMAGE_FILE_TYPE_PNG,
+    IMAGE_FILE_TYPE_GIF,
+    IMAGE_FILE_TYPE_SVG
+]
 
 export default class ImageManager extends BaseModule { 
  
-    '*/image/get/file' ($store, files, callback, colorCount = 16) {
+    [GETTER('image/get/file')] ($store, files, callback, colorCount = 16) {
         (files || []).forEach(file => {
             var fileType = file.name.split('.').pop();
-            if (['jpg', 'png', 'gif', 'svg'].includes(fileType)) {
+            if (IMAGE_LIST.includes(fileType)) {
 
-                if (typeof callback == 'function') {
+                if (isFunction(callback)) {
                     new ImageLoader(file).getImage(image => {
 
                         ImageToRGB(file, { maxWidth: 100 }, (results) => {
@@ -72,12 +88,12 @@ export default class ImageManager extends BaseModule {
         });
     }
 
-    '*/image/get/url' ($store, urls, callback, colorCount = 16) {
+    [GETTER('image/get/url')] ($store, urls, callback, colorCount = 16) {
         (urls || []).forEach(url => {
             var fileType = url.split('.').pop();
-            if (['jpg', 'png', 'gif', 'svg'].includes(fileType)) {
+            if (IMAGE_LIST.includes(fileType)) {
 
-                if (typeof callback == 'function') {
+                if (isFunction(callback)) {
                     ImageToRGB(url, { maxWidth: 100 }, (results) => {
                         callback ({
                             colors: palette(results, colorCount),    
@@ -91,9 +107,9 @@ export default class ImageManager extends BaseModule {
         });
     }    
 
-    '*/image/get/blob' ($store, blobs, callback) {
+    [GETTER('image/get/blob')] ($store, blobs, callback) {
         (blobs || []).forEach(file => {
-            if (typeof callback == 'function') {
+            if (isFunction(callback)) {
                 new ImageLoader(file, { 
                     forceDataURI: true
                 }).getImage(image => {
@@ -118,50 +134,50 @@ export default class ImageManager extends BaseModule {
         });
     }    
 
-    '*/image/type/isGradient' ($store, type) {
-        return $store.read('/image/type/isLinear', type) || $store.read('/image/type/isRadial', type) || $store.read('/image/type/isConic', type);
+    [GETTER('image/type/isGradient')] ($store, type) {
+        return $store.read('image/type/isLinear', type) || $store.read('image/type/isRadial', type) || $store.read('image/type/isConic', type);
     }
 
-    '*/image/type/isNotGradient' ($store, type) {
-        return $store.read('/image/type/isGradient', type) == false;
+    [GETTER('image/type/isNotGradient')] ($store, type) {
+        return $store.read('image/type/isGradient', type) == false;
     }    
 
-    '*/image/type/isLinear' ($store, type) {
+    [GETTER('image/type/isLinear')] ($store, type) {
         return [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR].includes(type)
     }
 
-    '*/image/type/isRadial' ($store, type) {
+    [GETTER('image/type/isRadial')] ($store, type) {
         return [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL].includes(type)
     }    
 
-    '*/image/type/isConic' ($store, type) {
+    [GETTER('image/type/isConic')] ($store, type) {
         return [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC].includes(type)
     }        
 
-    '*/image/type/isImage' ($store, type) {
+    [GETTER('image/type/isImage')] ($store, type) {
         return [IMAGE_ITEM_TYPE_IMAGE].includes(type)
     }
 
-    '*/image/type/isStatic' ($store, type) {
+    [GETTER('image/type/isStatic')] ($store, type) {
         return [IMAGE_ITEM_TYPE_STATIC].includes(type)
     }    
 
-    '*/image/angle' ($store, angle = '') {
-        return typeof DEFINED_ANGLES[angle] == 'undefined' ? angle : (DEFINED_ANGLES[angle] || 0);
+    [GETTER('image/angle')] ($store, angle = '') {
+        return isUndefined(DEFINED_ANGLES[angle]) ? angle : (DEFINED_ANGLES[angle] || 0);
     }
 
-    '*/image/radialPosition' ($store, position = '') {
-        return position || $store.read('/image/get', 'radialPosition');
+    [GETTER('image/radialPosition')] ($store, position = '') {
+        return position || $store.read('image/get', 'radialPosition');
     }
 
-    '*/image/toCSS' ($store, image = null, isExport = false) {
+    [GETTER('image/toCSS')] ($store, image = null, isExport = false) {
 
         var results = {} 
-        var backgroundImage = $store.read('/image/toImageString', image, isExport)
-        var backgroundPosition = $store.read('/image/toBackgroundPositionString', image, isExport)
-        var backgroundSize = $store.read('/image/toBackgroundSizeString', image, isExport)
-        var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image, isExport)
-        var backgroundBlendMode = $store.read('/image/toBackgroundBlendModeString', image, isExport)
+        var backgroundImage = $store.read('image/toImageString', image, isExport)
+        var backgroundPosition = $store.read('image/toBackgroundPositionString', image, isExport)
+        var backgroundSize = $store.read('image/toBackgroundSizeString', image, isExport)
+        var backgroundRepeat = $store.read('image/toBackgroundRepeatString', image, isExport)
+        var backgroundBlendMode = $store.read('image/toBackgroundBlendModeString', image, isExport)
 
         if (backgroundImage) {
             results['background-image'] = backgroundImage;  // size, position, origin, attachment and etc 
@@ -186,15 +202,15 @@ export default class ImageManager extends BaseModule {
         return results
     }
 
-    '*/image/cache/toCSS' ($store, item = {}) {
+    [GETTER('image/cache/toCSS')] ($store, item = {}) {
         var image = Object.assign({}, item.image, {colorsteps: item.colorsteps}); 
 
         var results = {} 
-        var backgroundImage = $store.read('/image/toImageString', image)
-        var backgroundPosition = $store.read('/image/toBackgroundPositionString', image)
-        var backgroundSize = $store.read('/image/toBackgroundSizeString', image)
-        var backgroundRepeat = $store.read('/image/toBackgroundRepeatString', image)
-        var backgroundBlendMode = $store.read('/image/toBackgroundBlendModeString', image)        
+        var backgroundImage = $store.read('image/toImageString', image)
+        var backgroundPosition = $store.read('image/toBackgroundPositionString', image)
+        var backgroundSize = $store.read('image/toBackgroundSizeString', image)
+        var backgroundRepeat = $store.read('image/toBackgroundRepeatString', image)
+        var backgroundBlendMode = $store.read('image/toBackgroundBlendModeString', image)        
 
         if (backgroundImage) {
             results['background-image'] = backgroundImage;  // size, position, origin, attachment and etc 
@@ -219,9 +235,9 @@ export default class ImageManager extends BaseModule {
         return results
     }
 
-    '*/image/toString' ($store, image = null) {
+    [GETTER('image/toString')] ($store, image = null) {
 
-        var obj = $store.read('/image/toCSS', image)
+        var obj = $store.read('image/toCSS', image)
 
         return Object.keys(obj).map(key => {
             return `${key}: ${obj[key]};`
@@ -229,23 +245,23 @@ export default class ImageManager extends BaseModule {
 
     } 
 
-    '*/image/toImageString' ($store, image, isExport = false) {
+    [GETTER('image/toImageString')] ($store, image, isExport = false) {
         var type = image.type
 
         if (type == IMAGE_ITEM_TYPE_LINEAR || type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
-            return $store.read('/image/toLinear', image, isExport)
+            return $store.read('image/toLinear', image, isExport)
         } else if (type == IMAGE_ITEM_TYPE_RADIAL || type == IMAGE_ITEM_TYPE_REPEATING_RADIAL) {
-            return $store.read('/image/toRadial', image, isExport)
+            return $store.read('image/toRadial', image, isExport)
         } else if (type == IMAGE_ITEM_TYPE_CONIC || type == IMAGE_ITEM_TYPE_REPEATING_CONIC ) {
-            return $store.read('/image/toConic', image, isExport)            
+            return $store.read('image/toConic', image, isExport)            
         } else if (type == IMAGE_ITEM_TYPE_IMAGE ) {
-            return $store.read('/image/toImage', image, isExport)
+            return $store.read('image/toImage', image, isExport)
         } else if (type == IMAGE_ITEM_TYPE_STATIC ) {
-            return $store.read('/image/toStatic', image, isExport)
+            return $store.read('image/toStatic', image, isExport)
         }
     }
 
-    '*/image/toBackgroundSizeString' ($store, image) {
+    [GETTER('image/toBackgroundSizeString')] ($store, image) {
 
         if (image.backgroundSize == 'contain' || image.backgroundSize == 'cover') {
             return image.backgroundSize; 
@@ -262,27 +278,27 @@ export default class ImageManager extends BaseModule {
     }  
     
 
-    '*/image/toBackgroundPositionString' ($store, image) {
+    [GETTER('image/toBackgroundPositionString')] ($store, image) {
 
-        var x = defaultValue(image.backgroundPositionX, valueUnit('center'))
-        var y = defaultValue(image.backgroundPositionY, valueUnit('center'))
+        var x = defaultValue(image.backgroundPositionX, valueUnit(POSITION_CENTER))
+        var y = defaultValue(image.backgroundPositionY, valueUnit(POSITION_CENTER))
 
         return `${stringUnit(x)} ${stringUnit(y)}`;
     }      
     
-    '*/image/toBackgroundRepeatString' ($store, image) {
+    [GETTER('image/toBackgroundRepeatString')] ($store, image) {
         if (image.backgroundRepeat) {
             return image.backgroundRepeat;
         }
     }       
 
-    '*/image/toBackgroundBlendModeString' ($store, image) {
+    [GETTER('image/toBackgroundBlendModeString')] ($store, image) {
         if (image.backgroundBlendMode) {
             return image.backgroundBlendMode || 'normal';
         }
     }           
 
-    '*/image/get/unitValue' ($store, step) {
+    [GETTER('image/get/unitValue')] ($store, step) {
         if (isPX(step.unit)) {
             return px(step.px);
         } else if (isEM(step.unit)) {
@@ -292,7 +308,7 @@ export default class ImageManager extends BaseModule {
         return percent(step.percent)
     }
 
-    '*/image/get/stepValue' ($store, step) {
+    [GETTER('image/get/stepValue')] ($store, step) {
         if (isPX(step.unit)) {
             return step.px;
         } else if (isEM(step.unit)) {
@@ -302,11 +318,11 @@ export default class ImageManager extends BaseModule {
         return step.percent
     }    
 
-    '*/image/toItemString' ($store, image = undefined ) {
+    [GETTER('image/toItemString')] ($store, image = undefined ) {
 
         if (!image) return '';
 
-        var colorsteps =  image.colorsteps || $store.read('/item/map/children', image.id)
+        var colorsteps =  image.colorsteps || $store.read('item/map/children', image.id)
 
         if (!colorsteps) return '';
 
@@ -349,11 +365,11 @@ export default class ImageManager extends BaseModule {
     }
 
 
-    '*/image/toConicItemString' ($store, image = undefined ) {
+    [GETTER('image/toConicItemString')] ($store, image = undefined ) {
 
         if (!image) return '';
 
-        var colorsteps =  image.colorsteps || $store.read('/item/map/children', image.id, (step) => step )
+        var colorsteps =  image.colorsteps || $store.read('item/map/children', image.id, (step) => step )
 
         if (!colorsteps) return '';
 
@@ -390,8 +406,8 @@ export default class ImageManager extends BaseModule {
         return colors; 
     }    
 
-    '*/image/toLinear' ($store, image = {}) {
-        var colors = $store.read('/image/toItemString', image)
+    [GETTER('image/toLinear')] ($store, image = {}) {
+        var colors = $store.read('image/toItemString', image)
 
         if (colors == '') return '' 
 
@@ -401,11 +417,11 @@ export default class ImageManager extends BaseModule {
 
         opt = angle;
 
-        if (typeof opt === 'number') {
+        if (isNumber(opt)) {
             opt = DEFINED_DIRECTIONS[`${opt}`] || opt 
         }
 
-        if (typeof opt === 'number') {
+        if (isNumber(opt)) {
             opt = opt > 360 ? opt % 360 : opt;
             
             opt = `${opt}deg`
@@ -414,8 +430,8 @@ export default class ImageManager extends BaseModule {
         return `${gradientType}-gradient(${opt}, ${colors})`
     }
 
-    '*/image/toStatic' ($store, image = {}) {
-        return $store.read('/image/toLinear', {
+    [GETTER('image/toStatic')] ($store, image = {}) {
+        return $store.read('image/toLinear', {
             type: 'linear',
             angle: 0,
             colorsteps: [ 
@@ -425,12 +441,12 @@ export default class ImageManager extends BaseModule {
         })
     }
 
-    '*/image/toLinearRight' ($store, image) {
-        return $store.read('/image/toLinear', Object.assign({}, image, { type: 'linear', angle : 'to right'}))
+    [GETTER('image/toLinearRight')] ($store, image) {
+        return $store.read('image/toLinear', Object.assign({}, image, { type: 'linear', angle : 'to right'}))
     }
 
-    '*/image/toRadial' ($store, image = {}) {
-        var colors = $store.read('/image/toItemString', image)
+    [GETTER('image/toRadial')] ($store, image = {}) {
+        var colors = $store.read('image/toItemString', image)
 
         if (colors == '') return '' 
         var opt = ''
@@ -445,8 +461,8 @@ export default class ImageManager extends BaseModule {
         return `${gradientType}-gradient(${opt}, ${colors})`
     }
 
-    '*/image/toConic' ($store, image = {}) {
-        var colors = $store.read('/image/toConicItemString', image)
+    [GETTER('image/toConic')] ($store, image = {}) {
+        var colors = $store.read('image/toConicItemString', image)
 
         if (colors == '') return '' 
         var opt = []
@@ -456,7 +472,7 @@ export default class ImageManager extends BaseModule {
 
         conicPosition = (DEFINED_POSITIONS[conicPosition]) ? conicPosition : conicPosition.join(' ')
 
-        if (typeof conicAngle != 'undefined') {
+        if (isNotUndefined(conicAngle)) {
             conicAngle = get(DEFINED_ANGLES, conicAngle, (it) => +it) 
             opt.push(`from ${conicAngle}deg`)
         }
@@ -470,7 +486,7 @@ export default class ImageManager extends BaseModule {
         return `${gradientType}-gradient(${optString} ${colors})`
     }    
 
-    '*/image/toImage' ($store, image = null, isExport = false) {
+    [GETTER('image/toImage')] ($store, image = null, isExport = false) {
         var url = image.backgroundImage
 
         if (!isExport && url) {

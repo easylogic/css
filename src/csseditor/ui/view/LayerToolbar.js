@@ -50,19 +50,19 @@ export default class LayerToolbar extends UIElement {
     }
 
     [CLICK('$groupAlign button')] (e) {
-        this.dispatch('/ordering/type', e.$delegateTarget.attr('data-value'))
+        this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'))
     }
 
     [CLICK('$groupOrdering button')] (e) {
-        this.dispatch('/ordering/index', e.$delegateTarget.attr('data-value'))
+        this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'))
     }    
 
     [CLICK('$undo')] (e) {
-        this.dispatch('/history/undo')
+        this.dispatch('history/undo')
     }
 
     [CLICK('$redo')] (e) {
-        this.dispatch('/history/redo')
+        this.dispatch('history/redo')
     }    
 
     [CLICK('$togglePagePanel')] () {

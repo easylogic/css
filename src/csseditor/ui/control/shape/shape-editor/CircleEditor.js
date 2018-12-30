@@ -25,7 +25,7 @@ export default class CircleEditor extends UIElement {
         if (isShow) {
             this.cachedRectangle = false;       
             
-            this.read('/selection/current/layer', layer => {
+            this.read('selection/current/layer', layer => {
                 var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE)
                 this.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE)
             })
@@ -36,7 +36,7 @@ export default class CircleEditor extends UIElement {
     }
 
     refreshPointer () {
-        this.read('/selection/current/layer', (layer) => {
+        this.read('selection/current/layer', (layer) => {
 
             if (layer.clipPathType !== CLIP_PATH_TYPE_CIRCLE) return;
 
@@ -57,7 +57,7 @@ export default class CircleEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read('/selection/current/layer')
+        var item = this.read('selection/current/layer')
 
         if (!item) return false; 
 
@@ -149,7 +149,7 @@ export default class CircleEditor extends UIElement {
 
     [POINTERSTART()] (e) {
         this.isDown = true; 
-        this.layer = this.read('/selection/current/layer');
+        this.layer = this.read('selection/current/layer');
         // this.refreshUI(e);        
     }    
     

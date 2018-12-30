@@ -27,7 +27,7 @@ export default class TopLeftRadius extends UIElement {
     }
 
     setPosition () {
-        var layer = this.read('/selection/current/layer')
+        var layer = this.read('selection/current/layer')
 
         if (!layer) return; 
 
@@ -44,14 +44,14 @@ export default class TopLeftRadius extends UIElement {
     }
 
     isShow () {
-        var layer = this.read('/selection/current/layer')
+        var layer = this.read('selection/current/layer')
         if (!layer) return false; 
 
-        if (this.read('/selection/is/group')) return false;
-        if (this.read('/selection/ids').length > 1) return false;
+        if (this.read('selection/is/group')) return false;
+        if (this.read('selection/ids').length > 1) return false;
 
         if (layer.fixedRadius) return false;         
-        return this.read('/selection/is/layer');
+        return this.read('selection/is/layer');
     }
 
     getRealRadius (radius, dx) {
@@ -81,7 +81,7 @@ export default class TopLeftRadius extends UIElement {
 
     [POINTERSTART()] (e) {
 
-        var layer = this.read('/selection/current/layer')
+        var layer = this.read('selection/current/layer')
 
         if (!layer) return; 
 

@@ -1,14 +1,14 @@
-import Event, { CHECK_EVENT_PATTERN, EVENT_NAME_SAPARATOR, EVENT_CHECK_SAPARATOR, EVENT_SAPARATOR, PREDEFINED_EVENT_NAMES, CUSTOM, CHECKER } from './Event'
+import Event, { CHECK_EVENT_PATTERN, EVENT_NAME_SAPARATOR, EVENT_CHECK_SAPARATOR, EVENT_SAPARATOR, PREDEFINED_EVENT_NAMES } from './Event'
 import Dom from './Dom'
 import State from './State'
-import { debounce } from './functions/func';
+import { debounce, isFunction } from './functions/func';
 import { CONTROL, ALT, SHIFT, META } from './Key';
 
 const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 const CHECK_FUNCTION_PATTERN = /^([^ \t]*)(\((.*)\))?$/ig;
 const META_KEYS = [ CONTROL, SHIFT, ALT, META];
 
-export default class EventMachin {
+export default class EventMachin { 
 
   constructor() { 
     this.state = new State(this);
@@ -155,9 +155,7 @@ export default class EventMachin {
   }
 
   eachChildren (callback) {
-    var isFunction = typeof callback == 'function';
-
-    if (!isFunction) return; 
+    if (!isFunction(callback)) return; 
 
     Object.keys(this.children).forEach(ChildComponentName => {
       callback(this.children[ChildComponentName])

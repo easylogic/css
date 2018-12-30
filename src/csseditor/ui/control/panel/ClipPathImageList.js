@@ -3,6 +3,7 @@ import Dom from "../../../../util/Dom";
 import { parseParamNumber } from "../../../../util/filter/functions";
 import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
 import { CLICK } from "../../../../util/Event";
+import { isObject, isUndefined } from "../../../../util/functions/func";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -16,8 +17,8 @@ export default class ClipPathImageList extends BasePropertyItem {
     }
 
     'load $imageList' () {
-        return this.read('/svg/list').map((svg, index) => {
-            if (typeof svg == 'object') {
+        return this.read('svg/list').map((svg, index) => {
+            if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
             }  else {
                 return `<div class='svg-item' data-index="${index}">${svg}</div>`
@@ -35,7 +36,7 @@ export default class ClipPathImageList extends BasePropertyItem {
     }
 
     toggle (isShow) {
-        if (typeof isShow == 'undefined') {
+        if (isUndefined(isShow)) {
             this.$el.toggleClass('show')
         } else {
             this.$el.toggleClass('show', isShow)
@@ -89,8 +90,8 @@ export default class ClipPathImageList extends BasePropertyItem {
         var key = e.$delegateTarget.attr('data-key')
 
         if (index) {
-            this.read('/selection/current/layer/id', (id) => {
-                var svg = this.read('/svg/get', +index);
+            this.read('selection/current/layer/id', (id) => {
+                var svg = this.read('svg/get', +index);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
                     this.commit(CHANGE_LAYER_CLIPPATH, newValue)
@@ -100,8 +101,8 @@ export default class ClipPathImageList extends BasePropertyItem {
 
             })
         } else if (key) {
-            this.read('/selection/current/layer/id', (id) => {
-                var svg = this.read('/svg/get', Number.MAX_SAFE_INTEGER, key);
+            this.read('selection/current/layer/id', (id) => {
+                var svg = this.read('svg/get', Number.MAX_SAFE_INTEGER, key);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
                     this.commit(CHANGE_LAYER_CLIPPATH, newValue)

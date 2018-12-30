@@ -71,10 +71,10 @@ export default class ExportWindow extends UIElement {
         var css = Object.assign({ 
                 position: 'relative' 
             },
-            this.read('/page/toCSS', page) 
+            this.read('page/toCSS', page) 
         )
 
-        return this.read('/css/toString', css);
+        return this.read('css/toString', css);
     }
 
     getClassName (className) {
@@ -90,7 +90,7 @@ export default class ExportWindow extends UIElement {
     }
 
     getPageHtml (page) {
-        var html = `<div id="page-1">\n${this.read('/item/map/children', page.id, (item, index) => {
+        var html = `<div id="page-1">\n${this.read('item/map/children', page.id, (item, index) => {
 
             var idString = item.idString || 'layer-' + (index+1)
             var className = item.className
@@ -108,7 +108,7 @@ export default class ExportWindow extends UIElement {
             }
 
 
-            var clipPath = this.read('/layer/toStringClipPath', item);
+            var clipPath = this.read('layer/toStringClipPath', item);
 
             if (clipPath) {
                 clipPath = `\t\t\n${clipPath}`
@@ -124,7 +124,7 @@ export default class ExportWindow extends UIElement {
     }
 
     getLayerStyle (page) {
-        var layerStyle = this.read('/item/map/children', page.id, (item, index) => {
+        var layerStyle = this.read('item/map/children', page.id, (item, index) => {
 
 
             var idString = item.idString || 'layer-' + (index+1)
@@ -138,7 +138,7 @@ export default class ExportWindow extends UIElement {
                 selector = `#${idString}`
             }
 
-            var css = this.read('/layer/toExport', item, true).split(';').map(it => {
+            var css = this.read('layer/toExport', item, true).split(';').map(it => {
                 return '\t' + it + ';';
             }).join('\n');
 
@@ -150,7 +150,7 @@ export default class ExportWindow extends UIElement {
     }
 
     generateCode () {
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
 
         if (!page) {
             return '';  
@@ -177,7 +177,7 @@ ${layerStyle}
     }
 
     loadCode () {
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
 
         if (!page) {
             return '';  

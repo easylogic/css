@@ -16,7 +16,7 @@ export default class PredefinedRadialGradientPosition extends UIElement {
         `
     }
     [CLICK('$el button')] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition: e.$delegateTarget.attr('data-value')})
         })
     }
@@ -26,16 +26,16 @@ export default class PredefinedRadialGradientPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read('/selection/is/image')) return false; 
+        if (!this.read('selection/is/image')) return false; 
 
-        var image = this.read('/selection/current/image')
+        var image = this.read('selection/current/image')
 
         if (!image) { return false; }
 
-        var isRadial = this.read('/image/type/isRadial', image.type);
-        var isConic = this.read('/image/type/isConic', image.type);
+        var isRadial = this.read('image/type/isRadial', image.type);
+        var isConic = this.read('image/type/isConic', image.type);
 
-        return this.read('/tool/get', 'guide.angle') && (isRadial || isConic);
+        return this.read('tool/get', 'guide.angle') && (isRadial || isConic);
     }
 
     [MULTI_EVENT(

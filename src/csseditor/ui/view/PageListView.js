@@ -23,9 +23,9 @@ export default class PageListView extends UIElement {
     }
 
     makeItemNode (node, index) {
-        var item = this.read('/item/get', node.id);
+        var item = this.read('item/get', node.id);
 
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
 
         var selectedId = '' 
 
@@ -50,7 +50,7 @@ export default class PageListView extends UIElement {
     }
 
     'load $pageList' () {
-        var str = this.read('/item/map/page', (item, index) => {
+        var str = this.read('item/map/page', (item, index) => {
             return this.makeItemNode(item, index); 
         }).join('');
 
@@ -70,18 +70,18 @@ export default class PageListView extends UIElement {
     }
 
     [CLICK('$pageList .add-page')] (e) {
-        this.dispatch('/item/add/page', true);
+        this.dispatch('item/add/page', true);
         this.refresh();
     }
 
     [CLICK('$pageList .tree-item') + SELF] (e) { 
 
-        this.dispatch('/selection/one', e.$delegateTarget.attr('id'));       
+        this.dispatch('selection/one', e.$delegateTarget.attr('id'));       
         this.refresh();
     }
 
     [CLICK('$saveButton')] (e) {
-        this.run('/storage/save');
+        this.run('storage/save');
     }
 
     [CLICK('$viewSample')] (e) {

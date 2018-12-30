@@ -82,20 +82,20 @@ export default class GradientView extends UIElement {
     }
 
     'load $colorview' () {
-        var page = this.read('/selection/current/page')
+        var page = this.read('selection/current/page')
 
         if (!page) {
             return ''; 
         }
 
-        var list = this.read('/item/map/children', page.id, (item, index) => {
+        var list = this.read('item/map/children', page.id, (item, index) => {
             var content = item.content || '';
             return `<div 
                     tabindex='${index}'
                     class='layer' 
                     item-layer-id="${item.id}" 
                     title="${index+1}. ${item.name || 'Layer'}" 
-                    style='${this.read('/layer/toString', item, true)}'>${content}${this.read('/layer/toStringClipPath', item)}</div>`
+                    style='${this.read('layer/toString', item, true)}'>${content}${this.read('layer/toStringClipPath', item)}</div>`
         });
 
         return list; 
@@ -115,7 +115,7 @@ export default class GradientView extends UIElement {
     }
     
     refreshLayer () {
-        this.read('/selection/current/layer', (items) => {
+        this.read('selection/current/layer', (items) => {
 
             if (!items.length) {
                 items = [items]
@@ -123,16 +123,16 @@ export default class GradientView extends UIElement {
             
             items.forEach(item => {
                 var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
-                $el.cssText(this.read('/layer/toString', item, true))
+                $el.cssText(this.read('layer/toString', item, true))
 
                 var content = item.content || '';
-                $el.html(content + this.read('/layer/toStringClipPath', item))
+                $el.html(content + this.read('layer/toStringClipPath', item))
             })
         })
     }
 
     refreshLayerPosition () {
-        this.read('/selection/current/layer', (items) => {
+        this.read('selection/current/layer', (items) => {
 
             if (!items.length) {
                 items = [items]
@@ -140,23 +140,23 @@ export default class GradientView extends UIElement {
             
             items.forEach(item => {
                 var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
-                $el.cssText(this.read('/layer/toString', item, true))
+                $el.cssText(this.read('layer/toString', item, true))
             })
         })
     }    
  
     setBackgroundColor() {
 
-        var page = this.read('/selection/current/page');
+        var page = this.read('selection/current/page');
 
-        var pageCSS = this.read('/page/toCSS', page || {clip: false});
+        var pageCSS = this.read('page/toCSS', page || {clip: false});
 
         var canvasCSS = {
             width: px( 2000 ),
             height: px( 2000 )
         }
 
-        var colorviewCSS = this.read('/page/colorview/toCSS', page || {clip: false});
+        var colorviewCSS = this.read('page/colorview/toCSS', page || {clip: false});
         this.refs.$canvas.css(canvasCSS);
         this.refs.$page.css(pageCSS)
         this.refs.$colorview.css(colorviewCSS);
@@ -186,14 +186,14 @@ export default class GradientView extends UIElement {
             this.hasScroll = true; 
         }
 
-        var item = this.read('/selection/current/page')
+        var item = this.read('selection/current/page')
 
         this.refs.$page.toggle(item)
 
 
         if (item) {
             if (item.itemType == 'page') {
-                var list = this.read('/item/list/children', item.id);
+                var list = this.read('item/list/children', item.id);
                 this.refs.$colorview.toggle(list.length)
             }
         }
@@ -258,6 +258,6 @@ export default class GradientView extends UIElement {
 
     '@changeTool' () {
         // this.refresh()
-        this.refs.$colorview.toggleClass('showGrid', this.read('/tool/get', 'show.grid'))
+        this.refs.$colorview.toggleClass('showGrid', this.read('tool/get', 'show.grid'))
     }
 }

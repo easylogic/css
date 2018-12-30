@@ -22,9 +22,9 @@ export default class BlendList extends BasePropertyItem {
     }
 
     'load $blendList' () {
-        var list = this.read('/blend/list')
+        var list = this.read('blend/list')
 
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
         if (!item) { return ''; }
 
         return  `<div>${list.map((blend) => {
@@ -33,7 +33,7 @@ export default class BlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ${blend};">
-                                <div class="blend-item-blend-view"  style='${this.read('/blend/toStringWithoutDimensionForImage', item, blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read('blend/toStringWithoutDimensionForImage', item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>` 
@@ -43,7 +43,7 @@ export default class BlendList extends BasePropertyItem {
 
 
     isShow () {
-        return this.read('/selection/is/image'); 
+        return this.read('selection/is/image'); 
     }    
 
     refresh () {
@@ -52,7 +52,7 @@ export default class BlendList extends BasePropertyItem {
 
         this.$el.toggle(isShow);
 
-        this.read('/selection/current/image', (image) => {
+        this.read('selection/current/image', (image) => {
             this.refs.$desc.text(image.backgroundBlendMode || 'normal')
         })
 
@@ -72,7 +72,7 @@ export default class BlendList extends BasePropertyItem {
 
 
     [CLICK('$blendList .blend-item') + SELF] (e) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: e.$delegateTarget.attr('data-mode')}, true)
             this.refresh();
         });

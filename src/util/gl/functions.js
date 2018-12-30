@@ -1,6 +1,7 @@
 import { matches } from '../filter/functions'
 import filters from './filter/index'
 import GL from './index'
+import { isString, isFunction } from '../functions/func';
 
 const functions = {
     filter
@@ -110,7 +111,7 @@ export function flatFilter (filterString) {
 
     let filter_list = [] 
 
-    if (typeof filterString == 'string') {
+    if (isString( filterString )) {
         filter_list = matches(filterString)
     } else if (Array.isArray(filterString)) {
         filter_list = filterString;
@@ -148,7 +149,7 @@ export function filter (img, filterString, callback, opt) {
     });
 
     canvas.filter(flatFilter(filterString), function done () {
-        if (typeof callback == 'function') {
+        if (isFunction( callback )) {
             callback(canvas)
         }
     })

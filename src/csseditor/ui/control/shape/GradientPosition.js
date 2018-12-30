@@ -2,13 +2,15 @@ import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
 import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
 import { percent } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
+import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
+import { isString } from '../../../../util/functions/func';
 
 const DEFINE_POSITIONS = { 
-    'center': ['center', 'center'],
-    'right': ['right', 'center'],
-    'top': ['center', 'top'],
-    'left': ['left', 'center'],
-    'bottom': ['center', 'bottom']
+    [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
+    [POSITION_RIGHT]: [POSITION_RIGHT, POSITION_CENTER],
+    [POSITION_TOP]: [POSITION_CENTER, POSITION_TOP],
+    [POSITION_LEFT]: [POSITION_LEFT, POSITION_CENTER],
+    [POSITION_BOTTOM]: [POSITION_CENTER, POSITION_BOTTOM]
 }
 
 export default class GradientPosition extends UIElement {
@@ -33,20 +35,20 @@ export default class GradientPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read('/selection/is/image')) return false; 
+        if (!this.read('selection/is/image')) return false; 
 
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
         if (!item) return false; 
 
 
-        var isRadial = this.read('/image/type/isRadial', item.type);
-        var isConic = this.read('/image/type/isConic', item.type);
+        var isRadial = this.read('image/type/isRadial', item.type);
+        var isConic = this.read('image/type/isConic', item.type);
 
         if (isRadial == false && isConic == false) {    // radial , conic 만 보여주기 
             return false; 
         }
 
-        return this.read('/tool/get', 'guide.angle')
+        return this.read('tool/get', 'guide.angle')
     }
 
     getCurrentXY(e, position) {
@@ -60,26 +62,26 @@ export default class GradientPosition extends UIElement {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
 
         let p = position; 
-        if (typeof p == 'string' && DEFINE_POSITIONS[p]) {
+        if (isString( p ) && DEFINE_POSITIONS[p]) {
             p = DEFINE_POSITIONS[p]
-        } else if (typeof p === 'string') {
+        } else if (isString (p)) {
             p = p.split(' ');
         }
 
         p = p.map((item, index) => {
-            if (item == 'center') {
+            if (item == POSITION_CENTER) {
                 if (index == 0) {
                     return minX + width/2
                 } else if (index == 1) {
                     return minY + height/2
                 }
-            } else if (item === 'left') {
+            } else if (item === POSITION_LEFT) {
                 return minX;
-            } else if (item === 'right') {
+            } else if (item === POSITION_RIGHT) {
                 return maxX;
-            } else if (item === 'top') {
+            } else if (item === POSITION_TOP) {
                 return minY;
-            } else if (item === 'bottom') { 
+            } else if (item === POSITION_BOTTOM) { 
                 return maxY;
             } else {
                 if (index == 0) {
@@ -107,7 +109,7 @@ export default class GradientPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('/selection/current/image');
+        var item = this.read('selection/current/image');
 
         if (!item) return ''; 
 
@@ -139,7 +141,7 @@ export default class GradientPosition extends UIElement {
     }
 
     setRadialPosition (radialPosition) {
-        this.read('/selection/current/image/id', (id) => {
+        this.read('selection/current/image/id', (id) => {
 
             this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition});
         });
@@ -180,7 +182,7 @@ export default class GradientPosition extends UIElement {
     
     [DOUBLECLICK('$dragPointer')] (e) {
         e.preventDefault()
-        this.setRadialPosition('center')
+        this.setRadialPosition(POSITION_CENTER)
         this.refreshUI()
     }
 }

@@ -3,6 +3,7 @@ import ImageLoader from '../ImageLoader'
 import Canvas from '../Canvas'
 import GL from '../GL' 
 import { format } from './formatter'
+import { isFunction } from './func';
 
 export function palette(colors, k = 6, exportFormat = 'hex') {
 
@@ -20,7 +21,7 @@ export function ImageToRGB(url, callbackOrOption = {}, callback) {
     if (!callback) {
         var img = new ImageLoader(url);
         img.loadImage(() => {
-            if (typeof callbackOrOption == 'function') {
+            if (isFunction( callbackOrOption )) {
                 callbackOrOption(img.toRGB());
             }
 
@@ -28,7 +29,7 @@ export function ImageToRGB(url, callbackOrOption = {}, callback) {
     } else if (callback) {
         var img = new ImageLoader(url, callbackOrOption);
         img.loadImage(() => {
-            if (typeof callback == 'function') {
+            if (isFunction( callback )) {
                 callback(img.toRGB());
             }
 
@@ -46,7 +47,7 @@ export function ImageToURL(url, filter, callback, opt = { frameTimer : 'full'}) 
     var img = new ImageLoader(url);
     img.loadImage(() => {
         img.toArray(filter, function (datauri) {
-            if (typeof callback == 'function') {
+            if (isFunction( callback  )) {
                 callback(datauri)
             }                
         }, opt);
@@ -57,7 +58,7 @@ export function GLToCanvas (url, filter, callback, opt = {}) {
     var img = new ImageLoader(url);
     img.load(() => {
         GL.filter(img.newImage, filter, function done (datauri) {
-            if (typeof callback == 'function') {
+            if (isFunction(callback)) {
                 callback(datauri)
             }
         }, opt)
@@ -67,7 +68,7 @@ export function GLToCanvas (url, filter, callback, opt = {}) {
 export function histogram (url, callback, opt = {}) {
     var img = new ImageLoader(url);
     img.loadImage(() => {
-        if (typeof callback == 'function') {
+        if (isFunction( callback )) {
             callback(img.toHistogram(opt));
         }
     })
@@ -128,7 +129,7 @@ export function ImageToHistogram(url, callback, opt = { width: 200, height: 100 
     var img = new ImageLoader(url);
     img.loadImage(() => {
         Canvas.createHistogram (opt.width || 200, opt.height || 100, img.toHistogram(opt), function (canvas) {
-            if (typeof callback == 'function') callback(canvas.toDataURL('image/png'));
+            if (isFunction( callback )) callback(canvas.toDataURL('image/png'));
         }, opt)
     })
 }

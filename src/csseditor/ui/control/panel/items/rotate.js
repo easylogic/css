@@ -25,7 +25,7 @@ export default class Rotate extends BasePropertyItem {
     [EVENT_CHANGE_SELECTION] () { this.refresh() }    
 
     refresh() {
-        this.read('/selection/current/layer', (item) => {
+        this.read('selection/current/layer', (item) => {
             this.refs.$rotateRange.val(item.rotate || "0")
             this.refs.$rotate.val(item.rotate || "0")
         })
@@ -33,7 +33,7 @@ export default class Rotate extends BasePropertyItem {
     }
 
     updateTransform (type) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
 
             if (type == 'rotate') {
                 this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate: this.refs.$rotate.val()})

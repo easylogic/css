@@ -1,5 +1,6 @@
 import { matches, parse } from "../functions/parser";
 import { parseParamNumber } from "../filter/functions";
+import { isNumber } from "../functions/func";
 
 const ValueGenerator = {
     make (key, percent, transitionPropertyValue) {
@@ -8,7 +9,7 @@ const ValueGenerator = {
         var arr = matches(transitionPropertyValue);
         if (arr.length) {
             return { key, percent, itemType: 'color', ...parse(arr[0].color) }; // 색상 객체 
-        } else if (typeof transitionPropertyValue == 'number') {
+        } else if (isNumber(transitionPropertyValue)) {
             return { key, percent, itemType : 'number', type : 'number', value: transitionPropertyValue }
         } else {
             if (transitionPropertyValue.includes('%')) {

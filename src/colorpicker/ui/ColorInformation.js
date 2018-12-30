@@ -92,7 +92,7 @@ export default class ColorInformation extends UIElement {
         this.$el.addClass(next_format);
         this.format = next_format;
 
-        this.dispatch('/changeFormat', this.format);
+        this.dispatch('changeFormat', this.format);
     }
     
     getFormat () {
@@ -108,7 +108,7 @@ export default class ColorInformation extends UIElement {
     }        
 
     changeRgbColor () {
-        this.dispatch('/changeColor', {
+        this.dispatch('changeColor', {
             type: 'rgb',
             r : this.refs.$rgb_r.int(),
             g : this.refs.$rgb_g.int(),
@@ -118,7 +118,7 @@ export default class ColorInformation extends UIElement {
     }
 
     changeHslColor () {
-        this.dispatch('/changeColor', {
+        this.dispatch('changeColor', {
             type: 'hsl',
             h : this.refs.$hsl_h.int(),
             s : this.refs.$hsl_s.int(),
@@ -153,7 +153,7 @@ export default class ColorInformation extends UIElement {
         var code = this.refs.$hexCode.val();
     
         if(code.charAt(0) == '#' && code.length == 7) {
-            this.dispatch('/changeColor', code)
+            this.dispatch('changeColor', code)
         }
     }
     
@@ -176,7 +176,7 @@ export default class ColorInformation extends UIElement {
     }    
 
     setHexInput () {
-        this.refs.$hexCode.val(this.read('/toHEX'));
+        this.refs.$hexCode.val(this.read('toHEX'));
     }
 
     refresh () {

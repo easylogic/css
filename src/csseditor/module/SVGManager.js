@@ -1,7 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import SVGList from "./svg/index";
 import Dom from "../../util/Dom";
-import { uuid } from "../../util/functions/math";
+import { GETTER, ACTION } from "../../util/Store";
 
 export default class SVGManager extends BaseModule {
 
@@ -15,15 +15,15 @@ export default class SVGManager extends BaseModule {
         this.$store.emit('changeSvgList')
     }
  
-    '*/svg/list' ($store) {
+    [GETTER('svg/list')] ($store) {
         return [...SVGList, ...$store.svgList];
     } 
 
-    '/svg/list/load' ($store, loadList = []) {
-        $store.svgList = $store.read('/clone', loadList);
+    [ACTION('svg/list/load')] ($store, loadList = []) {
+        $store.svgList = $store.read('clone', loadList);
     }
 
-    '*/svg/get/clipPath' ($store, svg, id, callback, transform = "") {
+    [GETTER('svg/get/clipPath')] ($store, svg, id, callback, transform = "") {
 
         var $div = new Dom('div');
         var paths = $div.html(svg).$('svg').html();
@@ -33,7 +33,7 @@ export default class SVGManager extends BaseModule {
         callback && callback(svg, id);
     }
 
-    '*/svg/get/blob' ($store, index, key) {
+    [GETTER('svg/get/blob')] ($store, index, key) {
         if (SVGList[index]) {
             var svg = `${SVGList[index]}`;
 
@@ -49,7 +49,7 @@ export default class SVGManager extends BaseModule {
         return ''; 
     }
 
-    '*/svg/get' ($store, index, key) {
+    [GETTER('svg/get')] ($store, index, key) {
         if (SVGList[index]) {
             return SVGList[index];
         } else {

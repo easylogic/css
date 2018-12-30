@@ -57,7 +57,7 @@ export default class Text extends BasePropertyItem {
     }
 
     refresh () {
-        this.read('/selection/current/layer', layer => {
+        this.read('selection/current/layer', layer => {
             this.refs.$color.css('background-color', layer.color);
             this.refs.$colorText.val(layer.color || '');
             this.refs.$content.val(layer.content || '');
@@ -69,26 +69,26 @@ export default class Text extends BasePropertyItem {
     }
 
     [INPUT('$content')] (e) {
-        this.read('/selection/current/layer/id', id => {
+        this.read('selection/current/layer/id', id => {
             this.commit(CHANGE_LAYER_TEXT, {id, content: this.refs.$content.val()})
         })
     }
 
     [CLICK('$color')] (e) {
-        this.read('/selection/current/layer', item => {
+        this.read('selection/current/layer', item => {
             this.emit(TEXT_FILL_COLOR, item.id, CHANGE_LAYER_TEXT);
         })
     }
 
 
     [CHANGE('$clip')] (e) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, backgroundClip: this.refs.$clip.val() }, true)
         });
     }
 
     [CLICK('$clipText')] (e) {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, clipText: this.refs.$clipText.checked() }, true)
         });
     }

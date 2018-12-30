@@ -64,33 +64,33 @@ export default class ImageToolbar extends UIElement {
     }
 
     isShow() {
-        return this.read('/selection/is/image');
+        return this.read('selection/is/image');
     }
 
 
     [CLICK('$ordering')] (e) {
-        this.dispatch('/colorstep/ordering/equals')
-        this.dispatch('/history/push', `Ordering gradient` );        
+        this.dispatch('colorstep/ordering/equals')
+        this.dispatch('history/push', `Ordering gradient` );        
     } 
 
     [CLICK('$orderingLeft')] (e) {
-        this.dispatch('/colorstep/ordering/equals/left')
-        this.dispatch('/history/push', `Ordering gradient` );        
+        this.dispatch('colorstep/ordering/equals/left')
+        this.dispatch('history/push', `Ordering gradient` );        
     }    
 
     [CLICK('$orderingRight')] (e) {
-        this.dispatch('/colorstep/ordering/equals/right')
-        this.dispatch('/history/push', `Ordering gradient` );        
+        this.dispatch('colorstep/ordering/equals/right')
+        this.dispatch('history/push', `Ordering gradient` );        
     }        
 
     [CLICK('$cutOff')] (e) {
-        this.dispatch('/colorstep/cut/off')
-        this.dispatch('/history/push', `Cut off static gradient pattern` );
+        this.dispatch('colorstep/cut/off')
+        this.dispatch('history/push', `Cut off static gradient pattern` );
     }
 
     [CLICK('$cutOn')] (e) {
-        this.dispatch('/colorstep/cut/on')
-        this.dispatch('/history/push', `Cut on static gradient pattern` );
+        this.dispatch('colorstep/cut/on')
+        this.dispatch('history/push', `Cut on static gradient pattern` );
     }    
 
 }

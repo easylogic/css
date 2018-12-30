@@ -74,14 +74,14 @@ export default class GradientSteps extends UIElement {
 
     // load 후에 이벤트를 재설정 해야한다. 
     'load $stepList' () {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
 
         if (!item) return '';
 
-        return this.read('/item/map/children', item.id, (step) => {
+        return this.read('item/map/children', item.id, (step) => {
 
             var cut = step.cut ? 'cut' : ''; 
-            var unitValue = this.read('/colorstep/unit/value', step, this.getMaxValue());
+            var unitValue = this.read('colorstep/unit/value', step, this.getMaxValue());
             return `
                 <div 
                     class='drag-bar ${step.selected ? 'selected' : ''}' 
@@ -105,17 +105,17 @@ export default class GradientSteps extends UIElement {
 
     isShow() {
 
-        var item = this.read('/selection/current');
+        var item = this.read('selection/current');
 
         if (!item.length) return false; 
 
         item = item[0];
 
-        if (!this.read('/image/type/isGradient', item.type)) {
+        if (!this.read('image/type/isGradient', item.type)) {
             return false; 
         }
 
-        if (!this.read('/selection/is/image')) {
+        if (!this.read('selection/is/image')) {
             return false; 
         }
 
@@ -127,10 +127,10 @@ export default class GradientSteps extends UIElement {
         this.$el.toggle(this.isShow())
 
 
-        this.read('/selection/current/image', item => {
+        this.read('selection/current/image', item => {
             var type = item ? item.type : '' 
     
-            if (this.read('/image/type/isGradient', type)) {
+            if (this.read('image/type/isGradient', type)) {
                 this.load()
                 this.setColorUI()
             }
@@ -146,7 +146,7 @@ export default class GradientSteps extends UIElement {
 
         this.refs.$stepList.css(
             'background-image', 
-            this.read('/image/toLinearRight', this.read('/selection/current/image'))
+            this.read('image/toLinearRight', this.read('selection/current/image'))
         )
 
     }
@@ -191,7 +191,7 @@ export default class GradientSteps extends UIElement {
             this.currentStepBox.px('left', px)
             // var percent = Math.floor((current - min) / (max - min) * 100)
 
-            var item = this.read('/item/get', this.currentStepBox.attr('id'));
+            var item = this.read('item/get', this.currentStepBox.attr('id'));
 
             if (item) {
 
@@ -204,8 +204,8 @@ export default class GradientSteps extends UIElement {
                 this.currentUnitPx.val(px);
                 this.currentUnitEm.val(em);
 
-                this.run('/item/set', newValue);
-                this.run('/colorstep/sort', newValue.id, this.getSortedStepList());
+                this.run('item/set', newValue);
+                this.run('colorstep/sort', newValue.id, this.getSortedStepList());
                 this.commit(CHANGE_COLOR_STEP, newValue);
                 this.setBackgroundColor();
             }
@@ -214,15 +214,15 @@ export default class GradientSteps extends UIElement {
 
     '@changeColor' () {
 
-        if (this.read('/image/isNotGradientType', this.read('/selection/current/image'))) return;
-        if (this.read('/tool/colorSource') !=  this.read('/colorstep/colorSource')) return; 
+        if (this.read('image/isNotGradientType', this.read('selection/current/image'))) return;
+        if (this.read('tool/colorSource') !=  this.read('colorstep/colorSource')) return; 
 
         if (this.currentStep) {
 
-            var item = this.read('/item/get', this.currentStep.attr('id'))
+            var item = this.read('item/get', this.currentStep.attr('id'))
 
             if (item) {
-                var color = this.read('/tool/get', 'color');
+                var color = this.read('tool/get', 'color');
                 var newValue = {id: item.id, color} ;
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
@@ -252,9 +252,9 @@ export default class GradientSteps extends UIElement {
 
         var id = e.$delegateTarget.attr('id')
 
-        this.run('/colorstep/remove', id);
+        this.run('colorstep/remove', id);
         this.emit(REMOVE_COLOR_STEP, id);
-        this.run('/history/push', 'Remove colorstep');        
+        this.run('history/push', 'Remove colorstep');        
         this.refresh();
     }
 
@@ -265,18 +265,18 @@ export default class GradientSteps extends UIElement {
 
         var percent = Math.floor((current - min) / (max - min) * 100)
 
-        var item = this.read('/selection/current/image');
+        var item = this.read('selection/current/image');
 
         if (!item) return; 
 
-        this.dispatch('/colorstep/add', item, percent);
+        this.dispatch('colorstep/add', item, percent);
         this.emit(ADD_COLOR_STEP, item, percent);
-        this.run('/history/push', 'Add colorstep');
+        this.run('history/push', 'Add colorstep');
         this.refresh()
     }
 
     initColor (color) {
-        this.dispatch('/colorstep/initColor', color)        
+        this.dispatch('colorstep/initColor', color)        
     }
 
     getSortedStepList () {
@@ -294,9 +294,9 @@ export default class GradientSteps extends UIElement {
 
     selectStep (e) {
         var parent = e.$delegateTarget.parent();
-        var item = this.read('/item/get', parent.attr('id'));
+        var item = this.read('item/get', parent.attr('id'));
             
-        this.read('/item/each/children', item.parentId, (step) => {
+        this.read('item/each/children', item.parentId, (step) => {
             if (step.selected) step.selected = false; 
         })
 
@@ -311,8 +311,8 @@ export default class GradientSteps extends UIElement {
         }
 
         this.currentStepBox.addClass('selected')
-        this.run ('/item/set', item); 
-        this.dispatch('/colorstep/sort', item.id, this.getSortedStepList());
+        this.run ('item/set', item); 
+        this.dispatch('colorstep/sort', item.id, this.getSortedStepList());
         this.setBackgroundColor();
     }
 
@@ -326,13 +326,13 @@ export default class GradientSteps extends UIElement {
 
     [CLICK('$steps .guide-change')] (e) {
         var id = e.$delegateTarget.attr('data-colorstep-id');
-        var item = this.read('/item/get', id);
+        var item = this.read('item/get', id);
 
         if (item.id) {
             // var cut = !item.cut;
             var newValue = {id: item.id, cut : !item.cut}
             this.commit(CHANGE_COLOR_STEP, newValue)
-            this.run('/history/push', 'Apply cut option');        
+            this.run('history/push', 'Apply cut option');        
 
             this.refresh();
         }
@@ -344,12 +344,12 @@ export default class GradientSteps extends UIElement {
         var unit = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.read('/item/get', id)
+        var step = this.read('item/get', id)
 
         if (step) {
             step.unit = unit;
 
-            var unitValue = this.read('/colorstep/unit/value',step, this.getMaxValue());
+            var unitValue = this.read('colorstep/unit/value',step, this.getMaxValue());
             var newValue = {id: step.id, unit, ...unitValue}
   
             this.commit(CHANGE_COLOR_STEP, newValue);
@@ -361,15 +361,15 @@ export default class GradientSteps extends UIElement {
 
 
     [INPUT('$steps input.percent')] (e) {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         var percent = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.read('/item/get', id)
+        var step = this.read('item/get', id)
 
         if (step) {
 
@@ -391,15 +391,15 @@ export default class GradientSteps extends UIElement {
     }
 
     [INPUT('$steps input.px')] (e) {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/selection/current/layer');
+        var layer = this.read('selection/current/layer');
 
         var px = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.read('/item/get', id)
+        var step = this.read('item/get', id)
 
         if (step) {
             var newValue = {
@@ -420,15 +420,15 @@ export default class GradientSteps extends UIElement {
     }
     
     [INPUT('$steps input.em')] (e) {
-        var item = this.read('/selection/current/image')
+        var item = this.read('selection/current/image')
         if (!item) return; 
 
-        var layer = this.read('/selection/current/layer');        
+        var layer = this.read('selection/current/layer');        
 
         var em = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.read('/item/get', id)
+        var step = this.read('item/get', id)
 
         if (step) {
             var newValue = {
@@ -465,11 +465,11 @@ export default class GradientSteps extends UIElement {
         this.isDown = false       
         if (this.refs.$stepList) {
             this.refs.$stepList.removeClass('mode-drag')       
-            this.run('/history/push', 'Moved colorstep');
+            this.run('history/push', 'Moved colorstep');
         }
     }
 
-    [POINTERMOVE('document') + DEBOUNCE(300) + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + CHECKER('isDownCheck')] (e) {
         this.refreshColorUI(e);
         this.refs.$stepList.addClass('mode-drag')
     }

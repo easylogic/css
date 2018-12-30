@@ -16,8 +16,8 @@ export default class CurrentColorSets extends UIElement {
     }    
     
     'load $colorSetsColorList' () {
-        const currentColorSets  = this.read('/getCurrentColorSets')
-        const colors  = this.read('/getCurrentColors')
+        const currentColorSets  = this.read('getCurrentColorSets')
+        const colors  = this.read('getCurrentColors')
 
         return `
             <div class="current-color-sets">
@@ -38,7 +38,7 @@ export default class CurrentColorSets extends UIElement {
 
 
     addColor (color) {
-        this.dispatch('/addCurrentColor', color);
+        this.dispatch('addCurrentColor', color);
         this.refresh();
     }
 
@@ -52,7 +52,7 @@ export default class CurrentColorSets extends UIElement {
 
     [CONTEXTMENU('$colorSetsColorList')] (e) {
         e.preventDefault();
-        const currentColorSets  = this.read('/getCurrentColorSets')
+        const currentColorSets  = this.read('getCurrentColorSets')
 
         if (!currentColorSets.edit) {
             return; 
@@ -72,11 +72,11 @@ export default class CurrentColorSets extends UIElement {
     }
 
     [CLICK('$colorSetsColorList .add-color-item')] (e) {
-        this.addColor(this.read('/toColor'));
+        this.addColor(this.read('toColor'));
     }
 
     [CLICK('$colorSetsColorList .color-item')] (e, $dt) {
-        this.dispatch('/changeColor', $dt.attr('data-color'));
+        this.dispatch('changeColor', $dt.attr('data-color'));
     }
 
 }

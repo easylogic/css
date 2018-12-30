@@ -34,7 +34,7 @@ export default class PageSize extends UIElement {
     }
 
     refresh() {
-        this.read('/selection/current/page', (item) => {
+        this.read('selection/current/page', (item) => {
             this.refs.$width.val(parseParamNumber(item.width))
             this.refs.$height.val(parseParamNumber(item.height))
         })
@@ -43,7 +43,7 @@ export default class PageSize extends UIElement {
 
     [CLICK('$rect')] (e) {
 
-        this.read('/selection/current/page', (item) => {
+        this.read('selection/current/page', (item) => {
             var newValue = {
                 id: item.id, 
                 width: px( this.refs.$width.int() )
@@ -57,14 +57,14 @@ export default class PageSize extends UIElement {
 
     [INPUT('$width')] () {
 
-        this.read('/selection/current/page/id', (id) => {
+        this.read('selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_SIZE, { id, width: px(this.refs.$width.int() ) });
         })
     }
 
     [INPUT('$height')] () {
 
-        this.read('/selection/current/page/id', (id) => {
+        this.read('selection/current/page/id', (id) => {
             this.commit(CHANGE_PAGE_SIZE, { id, height: px(this.refs.$height.int()) });            
         })
     }    

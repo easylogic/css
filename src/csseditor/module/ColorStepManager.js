@@ -4,10 +4,8 @@ import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "..
 import { CHANGE_EDITOR } from "../types/event";
 import { ITEM_TYPE_COLORSTEP } from "./ItemTypes";
 import { isPX, isEM } from "../../util/css/types";
-
-const isUndefined = (value) => {
-    return typeof value == 'undefined' || value == null;
-}
+import { isUndefined, defaultValue } from "../../util/functions/func";
+import { GETTER, ACTION } from "../../util/Store";
 
 const INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP
 
@@ -26,33 +24,33 @@ export default class ColorStepManager extends BaseModule {
         this.$store.emit(CHANGE_EDITOR)
     }    
 
-    '*/colorstep/colorSource' ($store) {
+    [GETTER('colorstep/colorSource')] ($store) {
         return INIT_COLOR_SOURCE
     }
 
-    '*/colorstep/current' ($store, index) {
+    [GETTER('colorstep/current')] ($store, index) {
         if (!isUndefined(index)) {
-            return $store.read('/colorstep/list')[index] || $store.read('/colorstep/create')
+            return $store.read('colorstep/list')[index] || $store.read('colorstep/create')
         } else {
-            return $store.read('/colorstep/list').filter(item => !!item.selected)[0]
+            return $store.read('colorstep/list').filter(item => !!item.selected)[0]
         }
     }
 
-    '/colorstep/initColor' ($store, color) {
-        $store.run('/tool/setColorSource',INIT_COLOR_SOURCE);
-        $store.run('/tool/changeColor', color);
+    [ACTION('colorstep/initColor')] ($store, color) {
+        $store.run('tool/setColorSource',INIT_COLOR_SOURCE);
+        $store.run('tool/changeColor', color);
     }    
 
-    '/colorstep/add' ($store, item, percent) {
+    [ACTION('colorstep/add')] ($store, item, percent) {
 
-        var list = $store.read('/item/list/children', item.id)
+        var list = $store.read('item/list/children', item.id)
 
         if (!list.length) {
 
-            $store.read('/item/create/colorstep', {parentId: item.id, color: 'rgba(216,216,216, 0)', percent, index: 0});
-            $store.read('/item/create/colorstep', {parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100});
+            $store.read('item/create/colorstep', {parentId: item.id, color: 'rgba(216,216,216, 0)', percent, index: 0});
+            $store.read('item/create/colorstep', {parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100});
 
-            $store.run('/item/set', item);
+            $store.run('item/set', item);
             return; 
         }
 
@@ -64,9 +62,9 @@ export default class ColorStepManager extends BaseModule {
 
             colorsteps[0].index = 1; 
 
-            $store.read('/item/create/colorstep', {parentId: item.id, index: 0, color: colorsteps[0].color, percent});
-            $store.run('/item/set', colorsteps[0]);
-            $store.run('/item/set', item);
+            $store.read('item/create/colorstep', {parentId: item.id, index: 0, color: colorsteps[0].color, percent});
+            $store.run('item/set', colorsteps[0]);
+            $store.run('item/set', item);
             return;             
         }
 
@@ -74,8 +72,8 @@ export default class ColorStepManager extends BaseModule {
             var color = colorsteps[colorsteps.length -1].color;  
             var index = colorsteps[colorsteps.length -1].index;         
 
-            $store.read('/item/create/colorstep', {parentId: item.id, index: index + 1,  color, percent});
-            $store.run('/item/set', item);
+            $store.read('item/create/colorstep', {parentId: item.id, index: index + 1,  color, percent});
+            $store.run('item/set', item);
             return;             
         }        
        
@@ -86,36 +84,31 @@ export default class ColorStepManager extends BaseModule {
             if (step.percent <= percent && percent <= nextStep.percent) {
                 var color = Color.mix(step.color, nextStep.color, (percent - step.percent)/(nextStep.percent - step.percent), 'rgb');
 
-                $store.read('/item/create/colorstep', {parentId: item.id, index: step.index + 1, color, percent});
-                $store.run('/item/set', item);            
+                $store.read('item/create/colorstep', {parentId: item.id, index: step.index + 1, color, percent});
+                $store.run('item/set', item);            
                 return; 
             }
         }
     }    
 
-    '/colorstep/remove' ($store, id) {
-
-        // var parentId = $store.read('/item/get', id).parentId; 
-        // var image = $store.read('/item/get', parentId);
-
-        $store.run('/item/remove', id);
-        // $store.run('/item/set', image);
+    [ACTION('colorstep/remove')] ($store, id) {
+        $store.run('item/remove', id);
     }
 
-    '/colorstep/sort' ($store, id, sortedList) {
+    [ACTION('colorstep/sort')] ($store, id, sortedList) {
         
         sortedList.forEach( (stepId, index) => {
-            var item = $store.read('/item/get', stepId);
+            var item = $store.read('item/get', stepId);
             item.index = index * 100; 
             
-            $store.run('/item/set', item);
+            $store.run('item/set', item);
         })
 
-        $store.run('/item/sort', id);
+        $store.run('item/sort', id);
     }
 
-    '*/colorstep/sort/list' ($store, parentId) {
-        var colorsteps = $store.read('/item/map/children', parentId);
+    [GETTER('colorstep/sort/list')] ($store, parentId) {
+        var colorsteps = $store.read('item/map/children', parentId);
 
         colorsteps.sort( (a, b) => {
             if (a.index == b.index) return 0; 
@@ -127,20 +120,20 @@ export default class ColorStepManager extends BaseModule {
 
 
     // 이미지 리스트 얻어오기 
-    '*/colorstep/list' ($store) {
-        var image = $store.read('/selection/current/image');
+    [GETTER('colorstep/list')] ($store) {
+        var image = $store.read('selection/current/image');
 
         if (image) {
-            return $store.read('/colorstep/sort/list', image.id); 
+            return $store.read('colorstep/sort/list', image.id); 
         }
 
         return []
     }
 
 
-    '*/colorstep/currentIndex' ($store, index) {
+    [GETTER('colorstep/currentIndex')] ($store, index) {
         if (isUndefined(index)) {
-            return $store.read('/colorstep/list').map((step, index) => { 
+            return $store.read('colorstep/list').map((step, index) => { 
                 return { step, index }
             }).filter(item => {
                 return !!item.step.selected
@@ -150,29 +143,29 @@ export default class ColorStepManager extends BaseModule {
         }
     }        
 
-    '/colorstep/cut/off' ($store, id) {
+    [ACTION('colorstep/cut/off')] ($store, id) {
         var list = []
         if (isUndefined(id)) {
-            list = $store.read('/colorstep/list');
+            list = $store.read('colorstep/list');
         } else {
-            list = [ $store.read('/item/get', id) ]
+            list = [ $store.read('item/get', id) ]
         }
         list.forEach(item => {
             item.cut = false; 
-            $store.run('/item/set', item);                
+            $store.run('item/set', item);                
         })
     }
 
-    '/colorstep/cut/on' ($store, id) {
+    [ACTION('colorstep/cut/on')] ($store, id) {
         var list = []
         if (isUndefined(id)) {
-            list = $store.read('/colorstep/list');
+            list = $store.read('colorstep/list');
         } else {
-            list = [ $store.read('/item/get', id) ]
+            list = [ $store.read('item/get', id) ]
         }
         list.forEach(item => {
             item.cut = true; 
-            $store.run('/item/set', item);                
+            $store.run('item/set', item);                
         })
     }    
 
@@ -184,7 +177,7 @@ export default class ColorStepManager extends BaseModule {
     getUnitValue (step, maxValue) {
 
         if (isPX(step.unit)) {
-            if (typeof step.px == 'undefined') {
+            if (isUndefined(step.px)) {
                 step.px = percent2px(step.percent, maxValue)
             }
 
@@ -194,7 +187,7 @@ export default class ColorStepManager extends BaseModule {
                 em: px2em(step.px, maxValue)
             }
         } else if (isEM (step.unit)) {
-            if (typeof step.em == 'undefined') {
+            if (isUndefined(step.em)) {
                 step.em = percent2em(step.percent, maxValue)
             }            
             return {
@@ -211,14 +204,14 @@ export default class ColorStepManager extends BaseModule {
         }
     }        
 
-    '*/colorstep/unit/value' ($store, step, maxValue) {
-        return this.getUnitValue(step, typeof maxValue == undefined ? this.getMaxValue() : +maxValue);
+    [GETTER('colorstep/unit/value')] ($store, step, maxValue) {
+        return this.getUnitValue(step, +defaultValue(maxValue, this.getMaxValue()));
     }
 
-    '/colorstep/ordering/equals' ($store, firstIndex = 0, lastIndex = Number.MAX_SAFE_INTEGER) {
+    [ACTION('colorstep/ordering/equals')] ($store, firstIndex = 0, lastIndex = Number.MAX_SAFE_INTEGER) {
 
-        var list = $store.read('/colorstep/list').map(step => {
-            return Object.assign({}, step, $store.read('/colorstep/unit/value', step, this.getMaxValue()));
+        var list = $store.read('colorstep/list').map(step => {
+            return Object.assign({}, step, $store.read('colorstep/unit/value', step, this.getMaxValue()));
         });
 
         if (lastIndex > list.length -1 ) {
@@ -234,18 +227,18 @@ export default class ColorStepManager extends BaseModule {
             step.px = firstValue + start * dist; 
             step.percent = px2percent(step.px, this.getMaxValue())
             step.em = px2em(step.px, this.getMaxValue());
-            $store.run('/item/set', step);
+            $store.run('item/set', step);
         }
 
     }
 
 
-    '/colorstep/ordering/equals/left' ($store) {
-        $store.run('/colorstep/ordering/equals', 0, $store.read('/colorstep/currentIndex'));
+    [ACTION('colorstep/ordering/equals/left')] ($store) {
+        $store.run('colorstep/ordering/equals', 0, $store.read('colorstep/currentIndex'));
     }    
 
-    '/colorstep/ordering/equals/right' ($store) {
-        $store.run('/colorstep/ordering/equals', $store.read('/colorstep/currentIndex'));
+    [ACTION('colorstep/ordering/equals/right')] ($store) {
+        $store.run('colorstep/ordering/equals', $store.read('colorstep/currentIndex'));
     }        
 
 

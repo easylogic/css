@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit } from "../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT_KEYS, BACKDROP_DEFAULT_OBJECT } from "./ItemTypes";
+import { GETTER } from "../../util/Store";
 const backdropInfo = {
     'backdropBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
     'backdropGrayscale' : { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
@@ -27,19 +28,19 @@ const DROP_SHADOW_LIST = [
 
 export default class BackdropManager extends BaseModule {
    
-    '*/backdrop/get' ($store, id) {
+    [GETTER('backdrop/get')] ($store, id) {
         return backdropInfo[id];
     }    
 
-    '*/backdrop/list' ($store, layerId) {
-        var layer = $store.read('/item/get', layerId);
+    [GETTER('backdrop/list')] ($store, layerId) {
+        var layer = $store.read('item/get', layerId);
         var realFilters = {}
         
         BACKDROP_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign({}, $store.read('/clone', BACKDROP_DEFAULT_OBJECT), realFilters)
+        realFilters = Object.assign({}, $store.read('clone', BACKDROP_DEFAULT_OBJECT), realFilters)
 
         var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}
@@ -53,14 +54,14 @@ export default class BackdropManager extends BaseModule {
     }
 
 
-    '*/backdrop/toCSS' ($store, layer) {       
+    [GETTER('backdrop/toCSS')] ($store, layer) {       
         var realFilters = {}
         
         BACKDROP_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign({}, $store.read('/clone', BACKDROP_DEFAULT_OBJECT), realFilters)
+        realFilters = Object.assign({}, $store.read('clone', BACKDROP_DEFAULT_OBJECT), realFilters)
 
         var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}

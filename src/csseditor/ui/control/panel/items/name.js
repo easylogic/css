@@ -36,7 +36,7 @@ export default class Name extends BasePropertyItem {
     }
 
     refresh() {
-        var item = this.read('/selection/current');
+        var item = this.read('selection/current');
 
         if (!item.length) return;
 
@@ -57,19 +57,19 @@ export default class Name extends BasePropertyItem {
     }
 
     [INPUT('$name')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, name: this.refs.$name.val()});
         });
     }
 
     [INPUT('$class')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, className: this.refs.$class.val()});
         });        
     }    
 
     [INPUT('$id')] () {
-        this.read('/selection/current/layer/id', (id) => {
+        this.read('selection/current/layer/id', (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, idString: this.refs.$id.val()});
         });          
     }        
