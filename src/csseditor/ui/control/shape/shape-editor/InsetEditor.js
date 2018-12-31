@@ -1,9 +1,16 @@
-import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE } from "../../../../types/event";
-import { CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_INSET } from "../../../../module/ItemTypes";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER_CLIPPATH, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_SIZE 
+} from "../../../../types/event";
+import { CLIP_PATH_TYPE_INSET } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
-import { UNIT_PERCENT, percentUnit, value2px } from "../../../../../util/css/types";
-import { percent2px, px2percent } from "../../../../../util/filter/functions";
+import { percentUnit, value2px } from "../../../../../util/css/types";
+import { px2percent } from "../../../../../util/filter/functions";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
 
 export default class InsetEditor extends UIElement {
@@ -135,13 +142,13 @@ export default class InsetEditor extends UIElement {
         this.refreshPointer();
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_POSITION,        
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_POSITION,        
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER
     )] () {
         this.refresh()
     }

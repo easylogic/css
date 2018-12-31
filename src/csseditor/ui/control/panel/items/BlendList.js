@@ -1,8 +1,8 @@
 
 import BasePropertyItem from './BasePropertyItem';
-import { EVENT_CHANGE_IMAGE, CHANGE_IMAGE,  EVENT_CHANGE_SELECTION } from '../../../../types/event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
-import { CLICK, SELF } from '../../../../../util/Event';
+import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
+import { EVENT } from '../../../../../colorpicker/UIElement';
+import { CLICK, SELF, LOAD } from '../../../../../util/Event';
 
 export default class BlendList extends BasePropertyItem {
 
@@ -21,7 +21,7 @@ export default class BlendList extends BasePropertyItem {
         this.refresh();
     }
 
-    'load $blendList' () {
+    [LOAD('$blendList')] () {
         var list = this.read('blend/list')
 
         var item = this.read('selection/current/image')
@@ -61,9 +61,9 @@ export default class BlendList extends BasePropertyItem {
         }
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE,
+        CHANGE_SELECTION
     )] () {
         if (this.isPropertyShow()) {
             this.refresh()

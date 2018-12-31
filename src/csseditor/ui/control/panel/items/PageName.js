@@ -1,5 +1,5 @@
-import UIElement from "../../../../../colorpicker/UIElement";
-import { CHANGE_PAGE_NAME, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGE_PAGE_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 
 export default class PageName extends UIElement {
@@ -18,7 +18,7 @@ export default class PageName extends UIElement {
         `
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }
 

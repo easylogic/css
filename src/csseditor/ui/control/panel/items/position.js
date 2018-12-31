@@ -1,8 +1,9 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_EDITOR } from "../../../../types/event";
 import { px } from "../../../../../util/css/types";
 import { INPUT } from "../../../../../util/Event";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class Position extends BasePropertyItem {
     template () {
@@ -25,7 +26,7 @@ export default class Position extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }
 

@@ -1,6 +1,6 @@
-import UIElement, { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../../util/filter/functions';
-import { CHANGE_LAYER_RADIUS, EVENT_CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../../types/event';
+import { CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION } from '../../../../types/event';
 import { px } from '../../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../../util/Event';
 
@@ -72,10 +72,10 @@ export default class TopLeftRadius extends UIElement {
         this.refresh();
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER_RADIUS,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
 

@@ -1,6 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_NAME, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_LAYER_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class Name extends BasePropertyItem {
     template () {
@@ -31,7 +32,7 @@ export default class Name extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }
 

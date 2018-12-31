@@ -1,8 +1,8 @@
 
 import BasePropertyItem from './BasePropertyItem';
-import { EVENT_CHANGE_SELECTION, CHANGE_LAYER, EVENT_CHANGE_LAYER } from '../../../../types/event';
+import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
 import { CHANGE } from '../../../../../util/Event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../colorpicker/UIElement';
 
 export default class LayerBlend extends BasePropertyItem {
 
@@ -37,9 +37,9 @@ export default class LayerBlend extends BasePropertyItem {
 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_SELECTION
     )] () {
         this.refresh()
     }

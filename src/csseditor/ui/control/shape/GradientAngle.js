@@ -1,6 +1,6 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, EVENT_CHANGE_IMAGE_ANGLE, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION } from '../../../types/event';
 import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
 
 export default class GradientAngle extends UIElement {
@@ -106,13 +106,13 @@ export default class GradientAngle extends UIElement {
 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE_ANGLE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE_ANGLE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
-    '@changeTool' () {
+    [EVENT('changeTool')] () {
         this.$el.toggle(this.isShow())
     }
 

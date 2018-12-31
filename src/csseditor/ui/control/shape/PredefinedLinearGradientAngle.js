@@ -1,5 +1,9 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_IMAGE_LINEAR_ANGLE, EVENT_CHANGE_SELECTION} from '../../../types/event';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_IMAGE_LINEAR_ANGLE, 
+    CHANGE_SELECTION
+} from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
 
 export default class PredefinedLinearGradientAngle extends UIElement {
@@ -43,13 +47,13 @@ export default class PredefinedLinearGradientAngle extends UIElement {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE_LINEAR_ANGLE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
-    '@changeTool' () {
+    [EVENT('changeTool')] () {
         this.refresh();
     }
 

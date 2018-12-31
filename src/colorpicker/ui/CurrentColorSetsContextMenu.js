@@ -1,5 +1,5 @@
 import Event, { CLICK } from '../../util/Event'
-import UIElement from '../UIElement';
+import UIElement, { EVENT } from '../UIElement';
 import { isUndefined } from '../../util/functions/func';
 
 export default class CurrentColorSetsContextMenu extends UIElement {
@@ -48,7 +48,7 @@ export default class CurrentColorSetsContextMenu extends UIElement {
         }
     }
 
-    '@showContextMenu' (e, index) {
+    [EVENT('showContextMenu')] (e, index) {
         this.show(e, index)
     }
 

@@ -1,6 +1,4 @@
-const ACTION_PREFIX = '/'
-const GETTER_PREFIX = '*/'
-
+import { ACTION_PREFIX, GETTER_PREFIX } from "../util/Store";
 
 export default class BaseModule {
     constructor ($store) {

@@ -1,7 +1,7 @@
-import UIElement from '../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
-import { EVENT_CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
-import { CLICK, SELF } from '../../../util/Event';
+import { CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
+import { CLICK, SELF, LOAD } from '../../../util/Event';
 
 export default class PageListView extends UIElement {
 
@@ -49,7 +49,7 @@ export default class PageListView extends UIElement {
             `
     }
 
-    'load $pageList' () {
+    [LOAD('$pageList')] () {
         var str = this.read('item/map/page', (item, index) => {
             return this.makeItemNode(item, index); 
         }).join('');
@@ -64,7 +64,7 @@ export default class PageListView extends UIElement {
     }
 
 
-    [EVENT_CHANGE_PAGE] () {
+    [EVENT(CHANGE_PAGE)] () {
         this.refresh()
         this.emit(CHANGE_EDITOR)
     }

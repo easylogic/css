@@ -1,4 +1,4 @@
-import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../colorpicker/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
 import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
 import LayerShapeEditor from '../control/shape/LayerShapeEditor';
@@ -8,37 +8,38 @@ import ColorPickerLayer from '../control/panel/items/color/ColorPicker';
 import { parseParamNumber } from '../../../util/filter/functions';
 
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER, 
-    EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
-    EVENT_CHANGE_LAYER_CLIPPATH, 
-    EVENT_CHANGE_LAYER_FILTER, 
-    EVENT_CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_LAYER_RADIUS, 
-    EVENT_CHANGE_LAYER_SIZE, 
-    EVENT_CHANGE_LAYER_TRANSFORM, 
-    EVENT_CHANGE_IMAGE, 
-    EVENT_CHANGE_IMAGE_COLOR, 
-    EVENT_CHANGE_IMAGE_RADIAL_POSITION, 
-    EVENT_CHANGE_IMAGE_RADIAL_TYPE, 
-    EVENT_CHANGE_LAYER_TRANSFORM_3D, 
-    EVENT_CHANGE_IMAGE_ANGLE, 
-    EVENT_CHANGE_IMAGE_LINEAR_ANGLE, 
-    EVENT_CHANGE_COLOR_STEP, 
-    EVENT_CHANGE_PAGE_SIZE, 
-    EVENT_CHANGE_PAGE, 
-    EVENT_CHANGE_LAYER_MOVE, 
-    EVENT_CHANGE_LAYER_ROTATE,
-    EVENT_CHANGE_LAYER_OPACITY,
-    EVENT_CHANGE_BOXSHADOW,
-    EVENT_CHANGE_TEXTSHADOW,
-    EVENT_CHANGE_LAYER_TEXT,
-    EVENT_CHANGE_LAYER_BACKDROP_FILTER,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    EVENT_CHANGE_PAGE_TRANSFORM
+    CHANGE_EDITOR, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_BACKGROUND_COLOR, 
+    CHANGE_LAYER_CLIPPATH, 
+    CHANGE_LAYER_FILTER, 
+    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_RADIUS, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_TRANSFORM, 
+    CHANGE_IMAGE, 
+    CHANGE_IMAGE_COLOR, 
+    CHANGE_IMAGE_RADIAL_POSITION, 
+    CHANGE_IMAGE_RADIAL_TYPE, 
+    CHANGE_LAYER_TRANSFORM_3D, 
+    CHANGE_IMAGE_ANGLE, 
+    CHANGE_IMAGE_LINEAR_ANGLE, 
+    CHANGE_COLOR_STEP, 
+    CHANGE_PAGE_SIZE, 
+    CHANGE_PAGE, 
+    CHANGE_LAYER_MOVE, 
+    CHANGE_LAYER_ROTATE,
+    CHANGE_LAYER_OPACITY,
+    CHANGE_BOXSHADOW,
+    CHANGE_TEXTSHADOW,
+    CHANGE_LAYER_TEXT,
+    CHANGE_LAYER_BACKDROP_FILTER,
+    CHANGE_LAYER_CLIPPATH_POLYGON,
+    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    CHANGE_PAGE_TRANSFORM
 } from '../../types/event';
 import { px } from '../../../util/css/types';
+import { LOAD } from '../../../util/Event';
 
 
 
@@ -81,7 +82,7 @@ export default class GradientView extends UIElement {
         }
     }
 
-    'load $colorview' () {
+    [LOAD('$colorview')] () {
         var page = this.read('selection/current/page')
 
         if (!page) {
@@ -101,7 +102,7 @@ export default class GradientView extends UIElement {
         return list; 
     }
 
-    '@animationEditor' () {
+    [EVENT('animationEditor')] () {
         this.load();
     }
 
@@ -140,7 +141,7 @@ export default class GradientView extends UIElement {
             
             items.forEach(item => {
                 var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
-                $el.cssText(this.read('layer/toString', item, true))
+                $el.css(this.read('layer/bound/toCSS', item))
             })
         })
     }    
@@ -201,62 +202,62 @@ export default class GradientView extends UIElement {
 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_PAGE_SIZE,
-        EVENT_CHANGE_PAGE,
-        EVENT_CHANGE_PAGE_TRANSFORM
+    [EVENT(
+        CHANGE_PAGE_SIZE,
+        CHANGE_PAGE,
+        CHANGE_PAGE_TRANSFORM
     )] () { this.setBackgroundColor(); }
 
-    // [MULTI_EVENT(
-    //     EVENT_CHANGE_LAYER_POSITION,
-    //     EVENT_CHANGE_LAYER_SIZE,
-    //     EVENT_CHANGE_LAYER_MOVE,        
+    // [EVENT(
+    //     CHANGE_LAYER_POSITION,
+    //     CHANGE_LAYER_SIZE,
+    //     CHANGE_LAYER_MOVE,        
     // )] () {
-    //     // this.refreshLayerPosition();
+    //     this.refreshLayerPosition();
     // }
 
     // indivisual layer effect 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER_FILTER,
-        EVENT_CHANGE_LAYER_BACKDROP_FILTER,
-        EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_LAYER_ROTATE,
-        EVENT_CHANGE_LAYER_OPACITY,
-        EVENT_CHANGE_LAYER_TRANSFORM,
-        EVENT_CHANGE_LAYER_TRANSFORM_3D,
-        EVENT_CHANGE_LAYER_TEXT,
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_MOVE,    
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-        EVENT_CHANGE_BOXSHADOW,
-        EVENT_CHANGE_TEXTSHADOW,
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_IMAGE_COLOR,
-        EVENT_CHANGE_IMAGE_ANGLE,
-        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        EVENT_CHANGE_COLOR_STEP
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_BACKGROUND_COLOR,
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER_FILTER,
+        CHANGE_LAYER_BACKDROP_FILTER,
+        CHANGE_LAYER_RADIUS,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER_OPACITY,
+        CHANGE_LAYER_TRANSFORM,
+        CHANGE_LAYER_TRANSFORM_3D,
+        CHANGE_LAYER_TEXT,
+        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_MOVE,    
+        CHANGE_LAYER_CLIPPATH_POLYGON,
+        CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+        CHANGE_BOXSHADOW,
+        CHANGE_TEXTSHADOW,
+        CHANGE_IMAGE,
+        CHANGE_IMAGE_COLOR,
+        CHANGE_IMAGE_ANGLE,
+        CHANGE_IMAGE_LINEAR_ANGLE,
+        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE_RADIAL_TYPE,
+        CHANGE_COLOR_STEP
     )]() { 
         this.refreshLayer(); 
     }
 
 
     // all effect 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR
+    [EVENT(
+        CHANGE_EDITOR
     )] () { this.refresh(); }
 
     updateSelection () {
         this.refresh();
     }
 
-    '@changeTool' () {
+    [EVENT('changeTool')] () {
         // this.refresh()
         this.refs.$colorview.toggleClass('showGrid', this.read('tool/get', 'show.grid'))
     }

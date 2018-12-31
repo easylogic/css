@@ -1,19 +1,19 @@
 import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
 
-const CHECK_STORE_EVENT_PATTERN = /^@/
-const CHECK_STORE_MULTI_EVENT_PATTERN = /^ME@/
+// const CHECK_STORE_PATTERN = /^@/
+const CHECK_STORE_MULTI_PATTERN = /^ME@/
 
-const EVENT_PREFIX = '@'
-const MULTI_EVENT_PREFIX = 'ME@'
-const EVENT_SPLITTER = '|'
-
-export const MULTI_EVENT = (...args) => {
-    return MULTI_EVENT_PREFIX + PIPE(...args);
-}
+const PREFIX = '@'
+const MULTI_PREFIX = 'ME@'
+const SPLITTER = '|'
 
 export const PIPE = (...args) => {
-    return args.join(EVENT_SPLITTER)
+    return args.join(SPLITTER)
+}
+
+export const EVENT = (...args) => {
+    return MULTI_PREFIX + PIPE(...args);
 }
 
 class UIElement extends EventMachin {
@@ -42,10 +42,9 @@ class UIElement extends EventMachin {
 
     }
 
-    getRealEventName(e, s = EVENT_PREFIX) {
-        const arr = e.split(s)
-            arr.shift();
-        return arr.join(s);
+    getRealEventName(e, s = PREFIX) {
+        var startIndex = e.indexOf(s);
+        return e.substr(startIndex == 0 ? 0 : startIndex + s.length);
     }
 
     /**
@@ -58,19 +57,20 @@ class UIElement extends EventMachin {
     initializeStoreEvent () {
         this.storeEvents = {}
 
-        this.filterProps(CHECK_STORE_EVENT_PATTERN).forEach((key) => {
+        /*
+        this.filterProps(CHECK_STORE_PATTERN).forEach((key) => {
             const event = this.getRealEventName(key);
 
             this.storeEvents[event] = this[key].bind(this)
             this.$store.on(event, this.storeEvents[event], this);
-        });
+        }); */
 
-        this.filterProps(CHECK_STORE_MULTI_EVENT_PATTERN).forEach((key) => {
-            const events = this.getRealEventName(key, MULTI_EVENT_PREFIX);
+        this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach((key) => {
+            const events = this.getRealEventName(key, MULTI_PREFIX);
 
             var callback = this[key].bind(this)
 
-            events.split(EVENT_SPLITTER).forEach(e => {
+            events.split(SPLITTER).forEach(e => {
                 e = this.getRealEventName(e);
 
                 this.storeEvents[e] = callback                

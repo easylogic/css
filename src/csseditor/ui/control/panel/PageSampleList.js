@@ -1,6 +1,6 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../util/filter/functions";
-import { CLICK } from "../../../../util/Event";
+import { CLICK, LOAD } from "../../../../util/Event";
 
 
 export default class PageSampleList extends UIElement {
@@ -23,7 +23,7 @@ export default class PageSampleList extends UIElement {
         `  
     }
 
-    'load $cachedList' () {
+    [LOAD('$cachedList')] () {
         
         var list = this.list.map( (page, index) => {
             var data = this.read('page/cache/toString', page)
@@ -100,7 +100,7 @@ export default class PageSampleList extends UIElement {
         this.load();
     }
 
-    '@changeStorage' () {
+    [EVENT('changeStorage')] () {
         this.refresh()
     }
 

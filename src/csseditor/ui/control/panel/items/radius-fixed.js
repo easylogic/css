@@ -1,13 +1,12 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_RADIUS, 
+    CHANGE_EDITOR, 
+    CHANGE_LAYER, 
+    CHANGE_SELECTION, 
     CHANGE_LAYER_RADIUS 
 } from "../../../../types/event";
 import { pxUnit, string2unit } from "../../../../../util/css/types";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
 
@@ -28,11 +27,11 @@ export default class RadiusFixed extends BasePropertyItem {
         `
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_RADIUS,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }    
 
     refresh() {

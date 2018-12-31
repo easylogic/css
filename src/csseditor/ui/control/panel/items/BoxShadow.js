@@ -1,17 +1,16 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { 
-    EVENT_CHANGE_BOXSHADOW, 
-    CHANGE_BOXSHADOW,  
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER 
+    CHANGE_BOXSHADOW, 
+    CHANGE_SELECTION, 
+    CHANGE_EDITOR, 
+    CHANGE_LAYER 
 } from '../../../../types/event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
 import { parseParamNumber } from '../../../../../util/filter/functions';
 import { px } from '../../../../../util/css/types';
-import { CLICK, INPUT } from '../../../../../util/Event';
+import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -88,7 +87,7 @@ export default class BoxShadow extends BasePropertyItem {
         `
     }
 
-    'load $boxShadowList' () {
+    [LOAD('$boxShadowList')] () {
         var item = this.read('selection/current/layer')
         if (!item) { return ''; }
 
@@ -119,7 +118,7 @@ export default class BoxShadow extends BasePropertyItem {
         }
     }
 
-    [EVENT_CHANGE_BOXSHADOW] (newValue) {
+    [EVENT(CHANGE_BOXSHADOW)] (newValue) {
         this.refreshBoxShadow(newValue);
     }
 
@@ -130,10 +129,10 @@ export default class BoxShadow extends BasePropertyItem {
         }
     }
   
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_EDITOR
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_SELECTION,
+        CHANGE_EDITOR
     )] () {
         if (this.isPropertyShow()) {
             this.refresh()

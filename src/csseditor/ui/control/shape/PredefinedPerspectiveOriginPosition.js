@@ -1,12 +1,11 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION, 
-    CHANGE_PAGE_TRANSFORM,
-    EVENT_CHANGE_PAGE_TRANSFORM
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_PAGE_TRANSFORM
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { percentUnit, unit, valueUnit } from '../../../../util/css/types';
+import { percentUnit, valueUnit } from '../../../../util/css/types';
 import { POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../module/ItemTypes';
 
 const defined_position = {
@@ -90,10 +89,10 @@ export default class PredefinedPerspectiveOriginPosition extends UIElement {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_PAGE_TRANSFORM,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_PAGE_TRANSFORM,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
 }

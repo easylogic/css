@@ -2,7 +2,7 @@
 import Color from '../../util/Color'
 import Dom from '../../util/Dom'
 import Event, { POINTERSTART, POINTERMOVE, POINTEREND } from '../../util/Event'
-import UIElement from '../UIElement';
+import UIElement, { EVENT } from '../UIElement';
 import { getXYInCircle, caculateAngle } from '../../util/functions/math';
 
 export default class ColorWheel extends UIElement {
@@ -191,11 +191,11 @@ export default class ColorWheel extends UIElement {
         this.dispatch('changeColor',opt || {})
     }
 
-    '@changeColor' () {
+    [EVENT('changeColor')] () {
         this.refresh(true);
     }
 
-    '@initColor' () { this.refresh(true) }    
+    [EVENT('initColor')] () { this.refresh(true) }    
 
     // Event Bindings 
     [POINTEREND('document')] (e) {

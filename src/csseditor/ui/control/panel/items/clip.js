@@ -1,5 +1,5 @@
-import UIElement from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_PAGE, CHANGE_PAGE, EVENT_CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGE_PAGE, CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
 
 export default class Clip extends UIElement {
@@ -18,11 +18,10 @@ export default class Clip extends UIElement {
         `
     }
 
-    [EVENT_CHANGE_PAGE] () {
-        this.refresh()
-    }
-
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(
+        CHANGE_PAGE,
+        CHANGE_EDITOR
+    )] () {
         this.refresh()
     }
 

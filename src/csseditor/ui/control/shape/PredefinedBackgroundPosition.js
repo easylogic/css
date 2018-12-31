@@ -1,12 +1,11 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_IMAGE, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION, 
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
     CHANGE_IMAGE
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { valueUnit, pxUnit } from '../../../../util/css/types';
+import { valueUnit } from '../../../../util/css/types';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../module/ItemTypes';
 
 const defined_position = {
@@ -84,10 +83,10 @@ export default class PredefinedBackgroundPosition extends UIElement {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
 }

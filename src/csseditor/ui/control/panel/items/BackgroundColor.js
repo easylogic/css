@@ -1,6 +1,7 @@
-import { EVENT_CHANGE_LAYER_BACKGROUND_COLOR, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR } from "../../../../types/event";
 import BasePropertyItem from "./BasePropertyItem";
 import { CLICK } from "../../../../../util/Event";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class BackgroundColor extends BasePropertyItem {
     template () {
@@ -19,11 +20,11 @@ export default class BackgroundColor extends BasePropertyItem {
         ` 
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }
 
-    [EVENT_CHANGE_LAYER_BACKGROUND_COLOR] (newValue) {
+    [EVENT(CHANGE_LAYER_BACKGROUND_COLOR)] (newValue) {
         this.refs.$color.css('background-color', newValue.backgroundColor)
         this.refs.$colortext.text(newValue.backgroundColor)
     }

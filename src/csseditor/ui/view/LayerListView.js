@@ -1,29 +1,29 @@
-import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER, 
-    EVENT_CHANGE_LAYER_BACKGROUND_COLOR, 
-    EVENT_CHANGE_LAYER_CLIPPATH, 
-    EVENT_CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_LAYER_RADIUS, 
-    EVENT_CHANGE_LAYER_SIZE, 
-    EVENT_CHANGE_LAYER_TRANSFORM, 
-    EVENT_CHANGE_LAYER_FILTER, 
-    EVENT_CHANGE_LAYER_TRANSFORM_3D,
-    EVENT_CHANGE_IMAGE,
-    EVENT_CHANGE_IMAGE_ANGLE,
-    EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-    EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-    EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-    EVENT_CHANGE_IMAGE_COLOR,
-    EVENT_CHANGE_COLOR_STEP,
-    EVENT_CHANGE_SELECTION,
-    EVENT_CHANGE_LAYER_ROTATE,
-    EVENT_CHANGE_LAYER_OPACITY,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    CHANGE_EDITOR, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_BACKGROUND_COLOR, 
+    CHANGE_LAYER_CLIPPATH, 
+    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_RADIUS, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_TRANSFORM, 
+    CHANGE_LAYER_FILTER, 
+    CHANGE_LAYER_TRANSFORM_3D,
+    CHANGE_IMAGE,
+    CHANGE_IMAGE_ANGLE,
+    CHANGE_IMAGE_LINEAR_ANGLE,
+    CHANGE_IMAGE_RADIAL_POSITION,
+    CHANGE_IMAGE_RADIAL_TYPE,
+    CHANGE_IMAGE_COLOR,
+    CHANGE_COLOR_STEP,
+    CHANGE_SELECTION,
+    CHANGE_LAYER_ROTATE,
+    CHANGE_LAYER_OPACITY,
+    CHANGE_LAYER_CLIPPATH_POLYGON,
+    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
 } from '../../types/event';
-import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF } from '../../../util/Event';
+import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
 
 export default class LayerListView extends UIElement {
 
@@ -94,12 +94,12 @@ export default class LayerListView extends UIElement {
             `
     }    
 
-    'load $pageName' () {
+    [LOAD('$pageName')] () {
         var obj = this.read('selection/current/page') || { name: 'Untitled Project'};
         return obj.name === '' ? '<span>Untitled Project</span>' : `<span>${obj.name}</span>`;
     }
 
-    'load $layerList' () {
+    [LOAD('$layerList')] () {
         var page = this.read('selection/current/page')
 
         if (!page) {
@@ -149,28 +149,28 @@ export default class LayerListView extends UIElement {
     }
 
     // indivisual effect 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-        EVENT_CHANGE_LAYER_FILTER,
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_ROTATE,
-        EVENT_CHANGE_LAYER_OPACITY,
-        EVENT_CHANGE_LAYER_TRANSFORM,
-        EVENT_CHANGE_LAYER_TRANSFORM_3D,
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_BACKGROUND_COLOR,
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER_CLIPPATH_POLYGON,
+        CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+        CHANGE_LAYER_FILTER,
+        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER_RADIUS,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER_OPACITY,
+        CHANGE_LAYER_TRANSFORM,
+        CHANGE_LAYER_TRANSFORM_3D,
             
-        EVENT_CHANGE_COLOR_STEP,
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_IMAGE_ANGLE,
-        EVENT_CHANGE_IMAGE_COLOR,
-        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        EVENT_CHANGE_IMAGE_RADIAL_TYPE
+        CHANGE_COLOR_STEP,
+        CHANGE_IMAGE,
+        CHANGE_IMAGE_ANGLE,
+        CHANGE_IMAGE_COLOR,
+        CHANGE_IMAGE_LINEAR_ANGLE,
+        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE_RADIAL_TYPE
     )]() {
         this.refreshLayer()
     }
@@ -178,9 +178,9 @@ export default class LayerListView extends UIElement {
 
 
     // all effect 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh(); }
 
     [CLICK('$layerList .tree-item') + SELF] (e) { 

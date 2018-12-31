@@ -1,6 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM, EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_ROTATE } from "../../../../types/event";
+import { CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class Rotate extends BasePropertyItem {
     template () {
@@ -19,10 +20,12 @@ export default class Rotate extends BasePropertyItem {
         `
     }
 
-    [EVENT_CHANGE_LAYER] () { this.refresh(); }
-    [EVENT_CHANGE_LAYER_ROTATE] () { this.refresh(); }
-    [EVENT_CHANGE_EDITOR] () { this.refresh() }
-    [EVENT_CHANGE_SELECTION] () { this.refresh() }    
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
+    )] () { this.refresh() }    
 
     refresh() {
         this.read('selection/current/layer', (item) => {

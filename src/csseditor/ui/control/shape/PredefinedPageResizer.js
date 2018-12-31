@@ -1,6 +1,6 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/gl/filter/util';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_PAGE_SIZE, CHANGE_PAGE_SIZE, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
 import { px } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
 
@@ -66,10 +66,10 @@ export default class PredefinedPageResizer extends UIElement {
         return this.read('selection/is/page')
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_PAGE_SIZE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_PAGE_SIZE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }    
 
     change (style1 = {}, style2 = {}) {

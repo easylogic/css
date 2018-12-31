@@ -1,7 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
-import { CLICK } from "../../../../../util/Event";
+import { CHANGE_EDITOR } from "../../../../types/event";
+import { CLICK, LOAD } from "../../../../../util/Event";
 import { isObject } from "../../../../../util/functions/func";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -15,7 +16,7 @@ export default class ImageResource extends BasePropertyItem {
         `
     }
 
-    'load $imageList' () {
+    [LOAD('$imageList')] () {
         return this.read('svg/list').map((svg, index) => {
             if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
@@ -31,15 +32,15 @@ export default class ImageResource extends BasePropertyItem {
         this.load();
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.$el.toggle(this.isShow())
     }
 
-    '@changeSvgList' () {
+    [EVENT('changeSvgList')] () {
         this.refresh()
     }
 
-    '@selectImage' () {
+    [EVENT('selectImage')] () {
         this.$el.toggle(this.isShow())
     }    
 

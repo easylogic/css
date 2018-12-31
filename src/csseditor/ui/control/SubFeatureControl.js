@@ -1,11 +1,11 @@
-import UIElement, { MULTI_EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import items from './panel/items/index';
 import GradientAngle from "./shape/GradientAngle";
 import GradientPosition from "./shape/GradientPosition";
 import PredefinedLinearGradientAngle from "./shape/PredefinedLinearGradientAngle";
 import PredefinedRadialGradientPosition from "./shape/PredefinedRadialGradientPosition";
 import PredefinedRadialGradientAngle from "./shape/PredefinedRadialGradientAngle";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER, EVENT_CHANGE_PAGE } from "../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE } from "../../types/event";
 import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
@@ -116,9 +116,9 @@ export default class SubFeatureControl extends UIElement {
         return this.read('tool/get', 'guide.angle')
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_PAGE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_PAGE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh(); }
 } 

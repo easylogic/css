@@ -1,5 +1,5 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_TYPE, CHANGE_IMAGE_RADIAL_TYPE, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import { CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_EDITOR, CHANGE_SELECTION } from '../../../types/event';
 import { CLICK, CHANGE } from '../../../../util/Event';
 import { POSITION_CENTER } from '../../../module/ItemTypes';
 
@@ -32,11 +32,11 @@ export default class PredefinedRadialGradientAngle extends UIElement {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE_RADIAL_TYPE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }    
 
     [CHANGE('$select')] (e) {

@@ -1,14 +1,12 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { 
-    EVENT_CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_SIZE, 
     CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION
+    CHANGE_LAYER_SIZE, 
+    CHANGE_EDITOR,
+    CHANGE_SELECTION
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { px } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
 
@@ -50,11 +48,11 @@ export default class Size extends BasePropertyItem {
         `
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER_SIZE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] ()  { this.refresh() }
 
     refresh() {

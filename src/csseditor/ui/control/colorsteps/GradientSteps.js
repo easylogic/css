@@ -1,16 +1,15 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import Dom from '../../../../util/Dom';
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from '../../../../util/filter/functions';
 import { 
     CHANGE_COLOR_STEP, 
     REMOVE_COLOR_STEP, 
     ADD_COLOR_STEP, 
-    EVENT_CHANGE_COLOR_STEP, 
-    EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION
+    CHANGE_EDITOR,
+    CHANGE_SELECTION
 } from '../../../types/event';
 import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT } from '../../../../util/css/types';
-import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, CHECKER, DEBOUNCE } from '../../../../util/Event';
+import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, CHECKER, DEBOUNCE, LOAD } from '../../../../util/Event';
 
 export default class GradientSteps extends UIElement {
 
@@ -73,7 +72,7 @@ export default class GradientSteps extends UIElement {
     }
 
     // load 후에 이벤트를 재설정 해야한다. 
-    'load $stepList' () {
+    [LOAD('$stepList')] () {
         var item = this.read('selection/current/image')
 
         if (!item) return '';
@@ -212,7 +211,7 @@ export default class GradientSteps extends UIElement {
         }
     }
 
-    '@changeColor' () {
+    [EVENT('changeColor')] () {
 
         if (this.read('image/isNotGradientType', this.read('selection/current/image'))) return;
         if (this.read('tool/colorSource') !=  this.read('colorstep/colorSource')) return; 
@@ -232,10 +231,10 @@ export default class GradientSteps extends UIElement {
 
     }    
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_COLOR_STEP,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_COLOR_STEP,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh(); }
 
     'checkTarget' (e) {

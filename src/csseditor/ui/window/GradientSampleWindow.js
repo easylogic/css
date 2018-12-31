@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import GradientSampleList from "../control/colorsteps/GradientSampleList";
 import { CLICK } from "../../../util/Event";
 
@@ -25,7 +25,7 @@ export default class GradientSampleWindow extends UIElement {
         this.$el.toggle();
     }
 
-    '@toggleGradientSampleView' () {
+    [EVENT('toggleGradientSampleView')] () {
         this.$el.toggle();
     }
 

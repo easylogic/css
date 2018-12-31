@@ -1,18 +1,16 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
     CHANGE_LAYER_CLIPPATH_POLYGON,
-    EVENT_CHANGE_LAYER_CLIPPATH
+    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, percentUnit, stringUnit } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue, isUndefined } from "../../../../../util/functions/func";
-import { CHANGEINPUT, CLICK } from "../../../../../util/Event";
+import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
 
 export default class ClipPathPolygon extends BasePropertyItem {
     template () {
@@ -39,7 +37,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
         `
     }
 
-    'load $polygonList' () {
+    [LOAD('$polygonList')] () {
         var layer = this.read('selection/current/layer');
         if (!layer) return '';
         var points =  defaultValue ( layer.clipPathPolygonPoints, [])
@@ -75,14 +73,14 @@ export default class ClipPathPolygon extends BasePropertyItem {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER_CLIPPATH_POLYGON,
     )] () { this.refresh() }
 
-    [EVENT_CHANGE_LAYER_CLIPPATH_POLYGON_POSITION] (newValue) {
+    [EVENT(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION)] (newValue) {
         this.refreshPolygonPosition(newValue)
     }
 
@@ -118,7 +116,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
         return item.clipPathType == CLIP_PATH_TYPE_POLYGON
     }
 
-    '@toggleClipPathPolygon' (isShow) {
+    [EVENT('toggleClipPathPolygon')] (isShow) {
 
         if (isUndefined(isShow)) {
             this.$el.toggleClass('show');

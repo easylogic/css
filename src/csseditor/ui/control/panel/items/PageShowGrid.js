@@ -1,5 +1,5 @@
-import UIElement from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
 
 export default class PageShowGrid extends UIElement {
@@ -18,11 +18,11 @@ export default class PageShowGrid extends UIElement {
         `
     }
 
-    '@changeTool' () {
+    [EVENT('changeTool')] () {
         this.refresh()
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }    
 

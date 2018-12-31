@@ -1,7 +1,15 @@
 import { parseParamNumber } from '../../../../util/filter/functions';
 import shapeEditor from './shape-editor/index';
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_SIZE, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_ROTATE } from '../../../types/event';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_CLIPPATH, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_ROTATE 
+} from '../../../types/event';
 import { px } from '../../../../util/css/types';
 
 
@@ -77,14 +85,14 @@ export default class LayerShapeEditor extends UIElement {
         return this.read('selection/is/layer');
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER_ROTATE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
 }

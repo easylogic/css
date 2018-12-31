@@ -1,11 +1,10 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_LAYER_TRANSFORM, 
     CHANGE_LAYER_TRANSFORM, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER_ROTATE
+    CHANGE_EDITOR, 
+    CHANGE_LAYER_ROTATE
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
 import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
 
@@ -70,10 +69,10 @@ export default class Transform extends BasePropertyItem {
         `
     }
 
-    [MULTI_EVENT (
-        EVENT_CHANGE_LAYER_TRANSFORM,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_LAYER_ROTATE
+    [EVENT (
+        CHANGE_LAYER_TRANSFORM,
+        CHANGE_EDITOR,
+        CHANGE_LAYER_ROTATE
     )] () {
         this.refresh()
     }

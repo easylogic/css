@@ -1,18 +1,19 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION,
-    EVENT_CHANGE_IMAGE,
-    EVENT_CHANGE_IMAGE_COLOR,
-    EVENT_CHANGE_IMAGE_ANGLE,
-    EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-    EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-    EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-    EVENT_CHANGE_COLOR_STEP,
-    EVENT_SELECT_TAB_IMAGE
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION,
+    CHANGE_IMAGE,
+    CHANGE_IMAGE_COLOR,
+    CHANGE_IMAGE_ANGLE,
+    CHANGE_IMAGE_LINEAR_ANGLE,
+    CHANGE_IMAGE_RADIAL_POSITION,
+    CHANGE_IMAGE_RADIAL_TYPE,
+    CHANGE_COLOR_STEP,
+    SELECT_TAB_IMAGE
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
+import { LOAD } from "../../../../../util/Event";
 
 export default class BackgroundCode extends BasePropertyItem {
     template () {
@@ -28,7 +29,7 @@ export default class BackgroundCode extends BasePropertyItem {
         `
     }
 
-    'load $keys' () {
+    [LOAD('$keys')] () {
         var image = this.read('selection/current/image');
 
         if (!image) return ''; 
@@ -58,17 +59,17 @@ export default class BackgroundCode extends BasePropertyItem {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_IMAGE_COLOR,
-        EVENT_CHANGE_IMAGE_ANGLE,
-        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        EVENT_CHANGE_COLOR_STEP,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_SELECT_TAB_IMAGE
+    [EVENT(
+        CHANGE_IMAGE,
+        CHANGE_IMAGE_COLOR,
+        CHANGE_IMAGE_ANGLE,
+        CHANGE_IMAGE_LINEAR_ANGLE,
+        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE_RADIAL_TYPE,
+        CHANGE_COLOR_STEP,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        SELECT_TAB_IMAGE
     )] () { this.refresh() }    
 
     refresh() {

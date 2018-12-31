@@ -1,6 +1,7 @@
 import Color from '../../util/Color'
 import BaseModule from '../BaseModule';
 import { isFunction, isUndefined, isNumber } from '../../util/functions/func';
+import { ACTION, GETTER } from '../../util/Store';
 
 export default class ColorSetsList extends BaseModule {
     initialize () {
@@ -24,14 +25,14 @@ export default class ColorSetsList extends BaseModule {
     }
 
 
-    '/setUserPalette' ($store, list) {
+    [ACTION('setUserPalette')] ($store, list) {
         $store.userList = list; 
 
         $store.dispatch('resetUserPalette');
         $store.dispatch('setCurrentColorSets');
     }
 
-    '/resetUserPalette' ($store) {
+    [ACTION('resetUserPalette')] ($store) {
         if ($store.userList && $store.userList.length) {
             $store.userList = $store.userList.map( (element, index) => {
 
@@ -52,7 +53,7 @@ export default class ColorSetsList extends BaseModule {
         }
     }
 
-    '/setCurrentColorSets' ($store, nameOrIndex) {
+    [ACTION('setCurrentColorSets')] ($store, nameOrIndex) {
 
         const _list = $store.read('list');
 
@@ -69,37 +70,37 @@ export default class ColorSetsList extends BaseModule {
         $store.emit('changeCurrentColorSets');
     }
 
-    '*/getCurrentColorSets' ($store) {
+    [GETTER('getCurrentColorSets')] ($store) {
         return $store.currentColorSets;
     }
 
-    '/addCurrentColor' ($store, color) {
+    [ACTION('addCurrentColor')] ($store, color) {
         if (Array.isArray($store.currentColorSets.colors)) {
             $store.currentColorSets.colors.push(color);
             $store.emit('changeCurrentColorSets');
         } 
     }
 
-    '/setCurrentColorAll' ($store, colors = []) {
+    [ACTION('setCurrentColorAll')] ($store, colors = []) {
         $store.currentColorSets.colors = colors;
         $store.emit('changeCurrentColorSets');
     }
 
-    '/removeCurrentColor' ($store, index) {
+    [ACTION('removeCurrentColor')] ($store, index) {
         if ($store.currentColorSets.colors[index]) {
             $store.currentColorSets.colors.splice(index, 1);
             $store.emit('changeCurrentColorSets');
         }
     }
 
-    '/removeCurrentColorToTheRight' ($store, index) {
+    [ACTION('removeCurrentColorToTheRight')] ($store, index) {
         if ($store.currentColorSets.colors[index]) {
             $store.currentColorSets.colors.splice(index, Number.MAX_VALUE);
             $store.emit('changeCurrentColorSets');
         }
     }    
 
-    '/clearPalette' ($store) {
+    [ACTION('clearPalette')] ($store) {
         if ($store.currentColorSets.colors) {
             $store.currentColorSets.colors = [];
             $store.emit('changeCurrentColorSets');
@@ -107,15 +108,15 @@ export default class ColorSetsList extends BaseModule {
     }
 
 
-    '*/list' ($store) {
+    [GETTER('list')] ($store) {
         return Array.isArray($store.userList) && $store.userList.length ? $store.userList : $store.colorSetsList;
     }    
 
-    '*/getCurrentColors' ($store ) {
+    [GETTER('getCurrentColors')] ($store ) {
         return $store.read('getColors', $store.currentColorSets);
     }
 
-    '*/getColors' ($store, element) {
+    [GETTER('getColors')] ($store, element) {
         if (element.scale) {
             return Color.scale(element.scale, element.count);
         }
@@ -123,7 +124,7 @@ export default class ColorSetsList extends BaseModule {
         return element.colors || []; 
     }
 
-    '*/getColorSetsList' ($store) {
+    [GETTER('getColorSetsList')] ($store) {
         return $store.read('list').map(element => {
            return {
                name : element.name,

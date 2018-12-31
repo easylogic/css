@@ -1,5 +1,5 @@
-import UIElement from '../../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_LAYER_RADIUS } from '../../../../types/event';
+import UIElement, { EVENT } from '../../../../../colorpicker/UIElement';
+import { CHANGE_LAYER_RADIUS } from '../../../../types/event';
 
 export default class LayerRadius extends UIElement {
     template () {
@@ -14,7 +14,7 @@ export default class LayerRadius extends UIElement {
         })
     }
 
-    '@startRadius' () {
+    [EVENT('startRadius')] () {
         this.$el.css({
             'background-color': 'rgba(0, 0, 0, 0.1)',
             position: 'absolute',
@@ -26,12 +26,12 @@ export default class LayerRadius extends UIElement {
         }).show();
     }
 
-    [EVENT_CHANGE_LAYER_RADIUS] () {
+    [EVENT(CHANGE_LAYER_RADIUS)] () {
         this.refresh();
 
     }
 
-    '@endRadius' () {
+    [EVENT('endRadius')] () {
         this.$el.hide();
     }
 

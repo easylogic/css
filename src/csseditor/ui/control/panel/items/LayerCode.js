@@ -1,27 +1,28 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER,
-    EVENT_CHANGE_SELECTION,
-    EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-    EVENT_CHANGE_LAYER_CLIPPATH,
-    EVENT_CHANGE_LAYER_FILTER,
-    EVENT_CHANGE_LAYER_RADIUS,
-    EVENT_CHANGE_LAYER_ROTATE,
-    EVENT_CHANGE_LAYER_OPACITY,
-    EVENT_CHANGE_LAYER_TRANSFORM,
-    EVENT_CHANGE_LAYER_TRANSFORM_3D,
-    EVENT_CHANGE_BOXSHADOW,
-    EVENT_CHANGE_TEXTSHADOW,
-    EVENT_CHANGE_LAYER_SIZE,
-    EVENT_CHANGE_LAYER_POSITION,
-    EVENT_CHANGE_LAYER_MOVE,
-    EVENT_SELECT_TAB_LAYER,
-    EVENT_CHANGE_LAYER_BACKDROP_FILTER,
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON
+    CHANGE_EDITOR, 
+    CHANGE_LAYER,
+    CHANGE_SELECTION,
+    CHANGE_LAYER_BACKGROUND_COLOR,
+    CHANGE_LAYER_CLIPPATH,
+    CHANGE_LAYER_FILTER,
+    CHANGE_LAYER_RADIUS,
+    CHANGE_LAYER_ROTATE,
+    CHANGE_LAYER_OPACITY,
+    CHANGE_LAYER_TRANSFORM,
+    CHANGE_LAYER_TRANSFORM_3D,
+    CHANGE_BOXSHADOW,
+    CHANGE_TEXTSHADOW,
+    CHANGE_LAYER_SIZE,
+    CHANGE_LAYER_POSITION,
+    CHANGE_LAYER_MOVE,
+    SELECT_TAB_LAYER,
+    CHANGE_LAYER_BACKDROP_FILTER,
+    CHANGE_LAYER_CLIPPATH_POLYGON
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
+import { LOAD } from "../../../../../util/Event";
 
 export default class LayerCode extends BasePropertyItem {
     template () {
@@ -37,7 +38,7 @@ export default class LayerCode extends BasePropertyItem {
         `
     }
 
-    'load $keys' () {
+    [LOAD('$keys')] () {
         var layer = this.read('selection/current/layer');
 
         if (!layer) return ''; 
@@ -65,26 +66,26 @@ export default class LayerCode extends BasePropertyItem {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_LAYER_MOVE,
-        EVENT_CHANGE_LAYER_BACKGROUND_COLOR,
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON,
-        EVENT_CHANGE_LAYER_FILTER,
-        EVENT_CHANGE_LAYER_BACKDROP_FILTER,
-        EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_LAYER_ROTATE,
-        EVENT_CHANGE_LAYER_OPACITY,
-        EVENT_CHANGE_LAYER_TRANSFORM,
-        EVENT_CHANGE_LAYER_TRANSFORM_3D,
-        EVENT_CHANGE_BOXSHADOW,
-        EVENT_CHANGE_TEXTSHADOW,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_SELECT_TAB_LAYER
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER_MOVE,
+        CHANGE_LAYER_BACKGROUND_COLOR,
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER_CLIPPATH_POLYGON,
+        CHANGE_LAYER_FILTER,
+        CHANGE_LAYER_BACKDROP_FILTER,
+        CHANGE_LAYER_RADIUS,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER_OPACITY,
+        CHANGE_LAYER_TRANSFORM,
+        CHANGE_LAYER_TRANSFORM_3D,
+        CHANGE_BOXSHADOW,
+        CHANGE_TEXTSHADOW,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        SELECT_TAB_LAYER
     )] () { this.refresh() }    
 
     refresh() {

@@ -1,14 +1,12 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_EDITOR, 
-    CHANGE_IMAGE, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_IMAGE
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_IMAGE
 } from '../../../types/event';
-import { parseParamNumber } from '../../../../util/filter/functions';
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
-import { percentUnit, percent } from '../../../../util/css/types';
+import { percentUnit } from '../../../../util/css/types';
 
 export default class BackgroundResizer extends UIElement {
 
@@ -113,10 +111,10 @@ export default class BackgroundResizer extends UIElement {
         });
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { 
         this.refresh() 
     }

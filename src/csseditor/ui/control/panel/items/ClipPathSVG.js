@@ -1,11 +1,11 @@
 import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_SELECTION } from "../../../../types/event";
+import { CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION } from "../../../../types/event";
 import { CLIP_PATH_TYPE_SVG } from "../../../../module/ItemTypes";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
-import { CLICK } from "../../../../../util/Event";
+import { CLICK, LOAD } from "../../../../../util/Event";
 
 export default class ClipPathSVG extends BasePropertyItem {
 
@@ -37,7 +37,7 @@ export default class ClipPathSVG extends BasePropertyItem {
         `
     }
 
-    'load $imageList' () {
+    [LOAD('$imageList')] () {
         return this.read('svg/list').map((svg, index) => {
             if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
@@ -89,10 +89,10 @@ export default class ClipPathSVG extends BasePropertyItem {
         })
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_CLIPPATH
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_CLIPPATH
     )] (value) {
         this.refresh();
     }
@@ -105,11 +105,11 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
 
-    '@changeSvgList' () {
+    [EVENT('changeSvgList')] () {
         this.refresh()
     }
 
-    '@toggleClipPathSVG' (isShow) {
+    [EVENT('toggleClipPathSVG')] (isShow) {
         if (isUndefined(isShow)) {
             this.$el.toggleClass('show')
         } else {

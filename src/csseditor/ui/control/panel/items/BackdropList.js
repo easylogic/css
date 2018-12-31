@@ -1,9 +1,9 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_LAYER, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_FILTER, CHANGE_LAYER_FILTER, EVENT_CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_BACKDROP_FILTER } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_BACKDROP_FILTER } from "../../../../types/event";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit } from "../../../../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
-import { CLICK, CHANGE, INPUT, CHANGEINPUT } from "../../../../../util/Event";
+import { CLICK, INPUT, CHANGEINPUT, LOAD } from "../../../../../util/Event";
 import { isUndefined } from "../../../../../util/functions/func";
 
 const DROPSHADOW_FILTER_KEYS = [
@@ -95,7 +95,7 @@ export default class BackdropList extends BasePropertyItem {
         return `<div></div>`
     }
 
-    'load $filterList' () {
+    [LOAD('$filterList')] () {
 
         var layer = this.read('selection/current/layer');
 
@@ -122,14 +122,14 @@ export default class BackdropList extends BasePropertyItem {
         })
     }
 
-    [EVENT_CHANGE_LAYER_BACKDROP_FILTER] (obj) {
+    [EVENT(CHANGE_LAYER_BACKDROP_FILTER)] (obj) {
         this.refreshFilter(obj);
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER
     )] () {
         this.refresh()
     }

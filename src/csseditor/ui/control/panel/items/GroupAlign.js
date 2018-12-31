@@ -5,7 +5,6 @@ export default class GroupAlign extends BasePropertyItem {
     template () {
         return `
             <div class='property-item group-align show'>
-                <!-- <div class='title' ref="$title">Align</div> -->
                 <div class='items'>            
                     <div>
                         <div>

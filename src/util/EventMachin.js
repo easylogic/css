@@ -1,11 +1,10 @@
-import Event, { CHECK_EVENT_PATTERN, EVENT_NAME_SAPARATOR, EVENT_CHECK_SAPARATOR, EVENT_SAPARATOR, PREDEFINED_EVENT_NAMES } from './Event'
+import Event, { CHECK_PATTERN, NAME_SAPARATOR, CHECK_SAPARATOR, SAPARATOR, CHECK_LOAD_PATTERN, LOAD_SAPARATOR } from './Event'
 import Dom from './Dom'
 import State from './State'
 import { debounce, isFunction } from './functions/func';
 import { CONTROL, ALT, SHIFT, META } from './Key';
 
-const CHECK_LOAD_PATTERN = /^load (.*)/ig;
-const CHECK_FUNCTION_PATTERN = /^([^ \t]*)(\((.*)\))?$/ig;
+
 const META_KEYS = [ CONTROL, SHIFT, ALT, META];
 
 export default class EventMachin { 
@@ -135,7 +134,7 @@ export default class EventMachin {
   // load function이 정의된 객체는 load 를 실행해준다. 
   load () {
     this.filterProps(CHECK_LOAD_PATTERN).forEach(callbackName => {
-      const elName = callbackName.split('load ')[1]
+      const elName = callbackName.split(LOAD_SAPARATOR)[1]
       if (this.refs[elName]) { 
         var fragment = this.parseTemplate(this[callbackName].call(this), true);
         this.refs[elName].html(fragment)
@@ -193,7 +192,7 @@ export default class EventMachin {
   }
 
   initializeEventMachin () {
-    this.filterProps(CHECK_EVENT_PATTERN).forEach(this.parseEvent.bind(this));
+    this.filterProps(CHECK_PATTERN).forEach(this.parseEvent.bind(this));
   }
 
   /**
@@ -225,8 +224,8 @@ export default class EventMachin {
   getEventNames (eventName) {
     let results = [] 
 
-    eventName.split(EVENT_NAME_SAPARATOR).forEach(e => {
-      var arr = (PREDEFINED_EVENT_NAMES[e] || e).split(EVENT_NAME_SAPARATOR)
+    eventName.split(NAME_SAPARATOR).forEach(e => {
+      var arr = e.split(NAME_SAPARATOR)
 
       results.push(...arr)
     })
@@ -235,10 +234,10 @@ export default class EventMachin {
   }
 
   parseEvent (key) {
-    let checkMethodFilters = key.split(EVENT_CHECK_SAPARATOR).map(it => it.trim());
+    let checkMethodFilters = key.split(CHECK_SAPARATOR).map(it => it.trim());
     var eventSelectorAndBehave = checkMethodFilters.shift() ;
 
-    var [eventName, ...params] = eventSelectorAndBehave.split(EVENT_SAPARATOR);
+    var [eventName, ...params] = eventSelectorAndBehave.split(SAPARATOR);
     var eventNames =  this.getEventNames(eventName)
     var callback = this[key].bind(this)
     
@@ -339,7 +338,7 @@ export default class EventMachin {
     let eventObject = this.getDefaultEventObject(eventName, checkMethodFilters);
 
     eventObject.dom = this.getDefaultDomElement(dom);
-    eventObject.delegate = delegate.join(EVENT_SAPARATOR);
+    eventObject.delegate = delegate.join(SAPARATOR);
 
     this.addEvent(eventObject, callback);
   }

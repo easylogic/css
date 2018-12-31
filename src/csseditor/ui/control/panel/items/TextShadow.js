@@ -1,18 +1,17 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { 
-    EVENT_CHANGE_TEXTSHADOW, 
-    CHANGE_TEXTSHADOW,  
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER, 
+    CHANGE_TEXTSHADOW, 
+    CHANGE_SELECTION, 
+    CHANGE_EDITOR, 
+    CHANGE_LAYER, 
     TEXT_FILL_COLOR
 } from '../../../../types/event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
 import { parseParamNumber } from '../../../../../util/filter/functions';
 import { px } from '../../../../../util/css/types';
-import { CLICK, INPUT } from '../../../../../util/Event';
+import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -75,7 +74,7 @@ export default class TextShadow extends BasePropertyItem {
         `
     }
 
-    'load $textShadowList' () {
+    [LOAD('$textShadowList')] () {
         var item = this.read('selection/current/layer')
         if (!item) { return ''; }
 
@@ -106,7 +105,7 @@ export default class TextShadow extends BasePropertyItem {
         }
     }
 
-    [EVENT_CHANGE_TEXTSHADOW] (newValue) {
+    [EVENT(CHANGE_TEXTSHADOW)] (newValue) {
         this.refreshTextShadow(newValue);
     }
 
@@ -117,10 +116,10 @@ export default class TextShadow extends BasePropertyItem {
         }
     }
   
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_EDITOR
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_SELECTION,
+        CHANGE_EDITOR
     )] () {
         if (this.isPropertyShow()) {
             this.refresh()

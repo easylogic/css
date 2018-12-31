@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import LayerSampleList from "../control/panel/LayerSampleList";
 import { CLICK } from "../../../util/Event";
 
@@ -24,7 +24,7 @@ export default class LayerSampleWindow extends UIElement {
         this.$el.toggle();
     }
 
-    '@toggleLayerSampleView' () {
+    [EVENT('toggleLayerSampleView')] () {
         this.$el.toggle();
     }
 

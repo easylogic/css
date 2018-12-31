@@ -1,16 +1,16 @@
-import UIElement, { MULTI_EVENT } from '../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_IMAGE, 
-    EVENT_CHANGE_IMAGE_ANGLE, 
-    EVENT_CHANGE_IMAGE_COLOR, 
-    EVENT_CHANGE_IMAGE_RADIAL_POSITION, 
-    EVENT_CHANGE_IMAGE_RADIAL_TYPE, 
-    EVENT_CHANGE_IMAGE_LINEAR_ANGLE, 
-    EVENT_CHANGE_COLOR_STEP, 
-    EVENT_CHANGE_SELECTION 
+    CHANGE_EDITOR, 
+    CHANGE_IMAGE, 
+    CHANGE_IMAGE_ANGLE, 
+    CHANGE_IMAGE_COLOR, 
+    CHANGE_IMAGE_RADIAL_POSITION, 
+    CHANGE_IMAGE_RADIAL_TYPE, 
+    CHANGE_IMAGE_LINEAR_ANGLE, 
+    CHANGE_COLOR_STEP, 
+    CHANGE_SELECTION 
 } from '../../types/event';
-import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF } from '../../../util/Event';
+import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
 
 export default class ImageListView extends UIElement {
 
@@ -29,7 +29,7 @@ export default class ImageListView extends UIElement {
             ` 
     }       
 
-    'load $el' () {
+    [LOAD()] () {
         var id = this.read('selection/current/layer/id');
 
         if (!id) {
@@ -46,16 +46,16 @@ export default class ImageListView extends UIElement {
     }
 
     // individual effect
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE,
-        EVENT_CHANGE_IMAGE_ANGLE,
-        EVENT_CHANGE_IMAGE_COLOR,
-        EVENT_CHANGE_IMAGE_LINEAR_ANGLE,
-        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        EVENT_CHANGE_IMAGE_RADIAL_TYPE,
-        EVENT_CHANGE_COLOR_STEP,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE,
+        CHANGE_IMAGE_ANGLE,
+        CHANGE_IMAGE_COLOR,
+        CHANGE_IMAGE_LINEAR_ANGLE,
+        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE_RADIAL_TYPE,
+        CHANGE_COLOR_STEP,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] (newValue) { this.refresh() }
 
     [CLICK('$el .tree-item') + SELF] (e) { 

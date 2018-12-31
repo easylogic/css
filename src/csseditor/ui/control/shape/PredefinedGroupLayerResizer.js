@@ -1,20 +1,18 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { parseParamNumber } from '../../../../util/filter/functions';
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER_SIZE, 
-    EVENT_CHANGE_LAYER_POSITION, 
+    CHANGE_EDITOR, 
     CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_TRANSFORM, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER_MOVE,
     CHANGE_LAYER_ROTATE,
-    EVENT_CHANGE_LAYER_TRANSFORM, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_MOVE,
-    EVENT_CHANGE_LAYER_ROTATE,
-    EVENT_CHANGE_PAGE_SIZE
+    CHANGE_PAGE_SIZE
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { px, UNIT_PX } from '../../../../util/css/types';
-import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER } from '../../../../util/Event';
+import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER, LOAD } from '../../../../util/Event';
 import { defaultValue, isNotUndefined } from '../../../../util/functions/func';
 
 const SNAP_GRID = 20; 
@@ -45,7 +43,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return `<div class="predefined-group-resizer"></div>`
     } 
 
-    'load $el' () {
+    [LOAD()] () {
 
         var layers = this.read('selection/current/layer');
         var isImage = this.read('selection/is/image');
@@ -127,15 +125,15 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.read('selection/is/not/empty')
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER_TRANSFORM,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_ROTATE,
-        EVENT_CHANGE_LAYER_MOVE,
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_PAGE_SIZE
+    [EVENT(
+        CHANGE_LAYER_TRANSFORM,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER_MOVE,
+        CHANGE_LAYER_POSITION,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_PAGE_SIZE
     )] () { this.refresh() }
 
     caculateRightSize (item, list) {

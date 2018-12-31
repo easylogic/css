@@ -1,8 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { EVENT_CHANGE_LAYER_RADIUS, CHANGE_LAYER_RADIUS, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../../types/event";
-import { px, value2px, pxUnit } from "../../../../../util/css/types";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
+import { value2px, pxUnit } from "../../../../../util/css/types";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT } from "../../../../../util/Event";
 
@@ -45,10 +45,10 @@ export default class Radius extends BasePropertyItem {
         `
     }
 
-    [ MULTI_EVENT(
-        EVENT_CHANGE_LAYER_RADIUS,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [ EVENT(
+        CHANGE_LAYER_RADIUS,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
     refresh() {
@@ -144,7 +144,7 @@ export default class Radius extends BasePropertyItem {
         this.refreshValue();
     }
 
-    '@toggleRadius' () {
+    [EVENT('toggleRadius')] () {
         this.$el.toggleClass('show');
     }
 }

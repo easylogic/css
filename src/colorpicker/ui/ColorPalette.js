@@ -1,4 +1,4 @@
-import UIElement from '../UIElement';
+import UIElement, { EVENT } from '../UIElement';
 import Event, { POINTERSTART, POINTEREND, POINTERMOVE } from '../../util/Event'
 
 export default class ColorPalette extends UIElement {
@@ -75,11 +75,11 @@ export default class ColorPalette extends UIElement {
         this.caculateSV()
     }    
 
-    '@changeColor' () {
+    [EVENT('changeColor')] () {
         this.refresh()
     }
 
-    '@initColor' () { this.refresh() }    
+    [EVENT('initColor')] () { this.refresh() }    
 
     [POINTEREND('document')] (e) {
         this.isDown = false; 

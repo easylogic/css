@@ -1,7 +1,7 @@
-import UIElement, { MULTI_EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
 
 
 export default class FeatureControl extends UIElement {
@@ -48,9 +48,9 @@ export default class FeatureControl extends UIElement {
 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () {
         this.selectFeature();
     }

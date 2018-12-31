@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { CLICK } from "../../../util/Event";
 
@@ -224,16 +224,16 @@ ${layerStyle}
 
     }
 
-    '@toggleExport' () {
+    [EVENT('toggleExport')] () {
         this.$el.toggle();
     }
 
-    '@showExport' () {
+    [EVENT('showExport')] () {
         this.$el.show();
         this.refresh();                
     }
 
-    '@hideExport' () {
+    [EVENT('hideExport')] () {
         this.$el.hide();
     }    
 }

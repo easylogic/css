@@ -1,13 +1,13 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER_SIZE, 
-    EVENT_CHANGE_LAYER_MOVE,
-    EVENT_CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_SELECTION,
-    EVENT_CHANGE_LAYER_ROTATE
+    CHANGE_EDITOR, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_MOVE,
+    CHANGE_LAYER_POSITION, 
+    CHANGE_SELECTION,
+    CHANGE_LAYER_ROTATE
 } from '../../../types/event';
-import { RESIZE, DEBOUNCE } from '../../../../util/Event';
+import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
 
 export default class MoveGuide extends UIElement {
 
@@ -26,7 +26,7 @@ export default class MoveGuide extends UIElement {
         `
     }
 
-    'load $el' () {
+    [LOAD()] () {
         var layer = this.read('selection/current/layer');
         if (!layer) return []; 
 
@@ -61,13 +61,13 @@ export default class MoveGuide extends UIElement {
         return this.$page.hasClass('moving');
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_ROTATE,
-        EVENT_CHANGE_LAYER_MOVE,
-        EVENT_CHANGE_LAYER_POSITION,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER_MOVE,
+        CHANGE_LAYER_POSITION,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }
 
 

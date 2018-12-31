@@ -1,6 +1,6 @@
 import Dom from '../../util/Dom'
-import UIElement from '../UIElement';
-import { CLICK, CONTEXTMENU } from '../../util/Event';
+import UIElement, { EVENT } from '../UIElement';
+import { CLICK, CONTEXTMENU, LOAD } from '../../util/Event';
 
 export default class CurrentColorSets extends UIElement {
 
@@ -15,7 +15,7 @@ export default class CurrentColorSets extends UIElement {
         `
     }    
     
-    'load $colorSetsColorList' () {
+    [LOAD('$colorSetsColorList')] () {
         const currentColorSets  = this.read('getCurrentColorSets')
         const colors  = this.read('getCurrentColors')
 
@@ -42,7 +42,7 @@ export default class CurrentColorSets extends UIElement {
         this.refresh();
     }
 
-    '@changeCurrentColorSets' () {
+    [EVENT('changeCurrentColorSets')] () {
         this.refresh()
     }
 

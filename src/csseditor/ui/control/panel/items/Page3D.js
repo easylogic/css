@@ -1,5 +1,5 @@
-import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR, CHANGE_PAGE, EVENT_CHANGE_SELECTION, EVENT_CHANGE_PAGE_TRANSFORM, CHANGE_PAGE_TRANSFORM } from "../../../../types/event";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import { CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM } from "../../../../types/event";
 import { UNIT_PERCENT, unitString, unitValue, percentUnit, pxUnit, UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
@@ -44,10 +44,10 @@ export default class Page3D extends UIElement {
         `
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_PAGE_TRANSFORM
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_PAGE_TRANSFORM
     )] () {
         this.refresh()
     }

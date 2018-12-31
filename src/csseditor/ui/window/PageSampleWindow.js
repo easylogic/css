@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import PageSampleList from "../control/panel/PageSampleList";
 import { CLICK } from "../../../util/Event";
 
@@ -24,7 +24,7 @@ export default class PageSampleWindow extends UIElement {
         this.$el.toggle();
     }
 
-    '@togglePageSampleView' () {
+    [EVENT('togglePageSampleView')] () {
         this.$el.toggle();
     }
 

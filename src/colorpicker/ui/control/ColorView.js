@@ -1,4 +1,4 @@
-import UIElement from '../../UIElement';
+import UIElement, { EVENT } from '../../UIElement';
 
 export default class ColorView extends UIElement {
     template () {
@@ -13,11 +13,11 @@ export default class ColorView extends UIElement {
         this.setBackgroundColor()
     }
     
-    '@changeColor' () { 
+    [EVENT('changeColor')] () { 
         this.refresh()
     } 
 
-    '@initColor' () { this.refresh() }    
+    [EVENT('initColor')] () { this.refresh() }    
 
 }
  

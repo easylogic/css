@@ -1,6 +1,6 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../util/filter/functions";
-import { CLICK } from "../../../../util/Event";
+import { CLICK, LOAD } from "../../../../util/Event";
 
 
 export default class LayerSampleList extends UIElement {
@@ -23,7 +23,7 @@ export default class LayerSampleList extends UIElement {
         `  
     }
  
-    'load $cachedList' () {
+    [LOAD('$cachedList')] () {
         
         var list = this.list.map( (item, index) => {
             var data = this.read('layer/cache/toString', item)
@@ -87,7 +87,7 @@ export default class LayerSampleList extends UIElement {
         this.load();
     }
 
-    '@changeStorage' () {
+    [EVENT('changeStorage')] () {
         this.refresh()
     }
 

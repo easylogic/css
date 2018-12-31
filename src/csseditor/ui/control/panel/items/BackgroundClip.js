@@ -1,7 +1,7 @@
 
 import BasePropertyItem from './BasePropertyItem';
-import { EVENT_CHANGE_SELECTION, CHANGE_LAYER, EVENT_CHANGE_LAYER } from '../../../../types/event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
+import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
+import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 
 export default class BackgroundClip extends BasePropertyItem {
@@ -37,9 +37,9 @@ export default class BackgroundClip extends BasePropertyItem {
 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_SELECTION
     )] () {
         this.refresh()
     }

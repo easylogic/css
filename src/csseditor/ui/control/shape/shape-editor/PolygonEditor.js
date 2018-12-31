@@ -1,20 +1,19 @@
-import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_CLIPPATH, 
-    EVENT_CHANGE_LAYER, 
-    EVENT_CHANGE_LAYER_POSITION, 
-    EVENT_CHANGE_LAYER_SIZE, 
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER_CLIPPATH, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER_SIZE, 
     CHANGE_LAYER_CLIPPATH_POLYGON, 
-    EVENT_CHANGE_LAYER_CLIPPATH_POLYGON, 
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
 } from "../../../../types/event";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, stringUnit } from "../../../../../util/css/types";
-import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CHECKER, CAPTURE } from "../../../../../util/Event";
+import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CHECKER, CAPTURE, LOAD } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
 
 export default class PolygonEditor extends UIElement {
@@ -27,7 +26,7 @@ export default class PolygonEditor extends UIElement {
         `
     }
 
-    'load $el' () {
+    [LOAD()] () {
         var layer = this.read('selection/current/layer');
         if (!layer) return '';
         var points =  defaultValue( layer.clipPathPolygonPoints, [])
@@ -123,14 +122,14 @@ export default class PolygonEditor extends UIElement {
         }) 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_POSITION,        
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_CLIPPATH_POLYGON
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_POSITION,        
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER,
+        CHANGE_LAYER_CLIPPATH_POLYGON
     )] () {
         this.refresh()
     }

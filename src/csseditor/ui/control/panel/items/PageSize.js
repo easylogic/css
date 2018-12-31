@@ -1,6 +1,6 @@
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { parseParamNumber } from "../../../../../util/gl/filter/util";
-import { CHANGE_PAGE_SIZE, EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_PAGE_SIZE, CHANGE_EDITOR } from "../../../../types/event";
 import { px } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
 
@@ -29,7 +29,7 @@ export default class PageSize extends UIElement {
         `
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }
 

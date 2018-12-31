@@ -2,8 +2,9 @@ import BasePropertyItem from "./items/BasePropertyItem";
 import Dom from "../../../../util/Dom";
 import { parseParamNumber } from "../../../../util/filter/functions";
 import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
-import { CLICK } from "../../../../util/Event";
+import { CLICK, LOAD } from "../../../../util/Event";
 import { isObject, isUndefined } from "../../../../util/functions/func";
+import { EVENT } from "../../../../colorpicker/UIElement";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -16,7 +17,7 @@ export default class ClipPathImageList extends BasePropertyItem {
         `
     }
 
-    'load $imageList' () {
+    [LOAD('$imageList')] () {
         return this.read('svg/list').map((svg, index) => {
             if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
@@ -31,7 +32,7 @@ export default class ClipPathImageList extends BasePropertyItem {
         this.load();
     }
 
-    '@changeSvgList' () {
+    [EVENT('changeSvgList')] () {
         this.refresh()
     }
 
@@ -43,7 +44,7 @@ export default class ClipPathImageList extends BasePropertyItem {
         }
     }
 
-    '@toggleClipPathImageList' (isShow) {
+    [EVENT('toggleClipPathImageList')] (isShow) {
         this.toggle(isShow)
     }
 

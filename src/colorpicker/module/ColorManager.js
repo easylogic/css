@@ -2,6 +2,7 @@ import Color from '../../util/Color'
 import HueColor from '../../util/HueColor'
 import BaseModule from '../BaseModule';
 import { isUndefined, isString } from '../../util/functions/func';
+import { ACTION, GETTER } from '../../util/Store';
 
 export default class ColorManager extends BaseModule {
 
@@ -17,18 +18,18 @@ export default class ColorManager extends BaseModule {
         // this.$store.dispatch('changeColor');
     }
 
-    '/changeFormat' ($store, format) {
+    [ACTION('changeFormat')] ($store, format) {
         $store.format = format;
 
         $store.emit('changeFormat');
     }
 
-    '/initColor' ($store, colorObj, source) {
+    [ACTION('initColor')] ($store, colorObj, source) {
         $store.dispatch('changeColor', colorObj, source, true);
         $store.emit('initColor')
     }
 
-    '/changeColor' ($store, colorObj, source, isNotEmit) {
+    [ACTION('changeColor')] ($store, colorObj, source, isNotEmit) {
 
         colorObj = colorObj || '#FF0000'
 
@@ -69,17 +70,17 @@ export default class ColorManager extends BaseModule {
 
     }
 
-    '*/getHueColor' ($store) {
+    [GETTER('getHueColor')] ($store) {
         return HueColor.checkHueColor($store.hsv.h/360);
     }
 
-    '*/toString' ($store, type) {
+    [GETTER('toString')] ($store, type) {
         type = type || $store.format
         var colorObj = $store[type] || $store.rgb
         return Color.format(Object.assign({}, colorObj, {a: $store.alpha} ), type);
     }
 
-    '*/toColor' ($store, type) {
+    [GETTER('toColor')] ($store, type) {
         type = (type || $store.format).toLowerCase(); 
 
         if (type == 'rgb') {
@@ -93,15 +94,15 @@ export default class ColorManager extends BaseModule {
         return $store.read('toString', type);
     }
 
-    '*/toRGB' ($store) {
+    [GETTER('toRGB')] ($store) {
         return $store.read('toString', 'rgb')
     }
 
-    '*/toHSL' ($store) {
+    [GETTER('toHSL')] ($store) {
         return $store.read('toString', 'hsl')
     }
 
-    '*/toHEX' ($store) {
+    [GETTER('toHEX')] ($store) {
         return $store.read('toString', 'hex').toUpperCase()
     }
 

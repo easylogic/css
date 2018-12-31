@@ -1,12 +1,12 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_LAYER_TRANSFORM, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_LAYER, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_OPACITY
+    CHANGE_EDITOR, 
+    CHANGE_LAYER, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER_OPACITY
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { INPUT } from "../../../../../util/Event";
 
 export default class Opacity extends BasePropertyItem {
@@ -26,11 +26,11 @@ export default class Opacity extends BasePropertyItem {
         `
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_LAYER_OPACITY,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_LAYER_OPACITY,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh() }    
 
     refresh() {

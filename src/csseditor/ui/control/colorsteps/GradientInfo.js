@@ -1,8 +1,8 @@
-import UIElement, { MULTI_EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
-import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, EVENT_CHANGE_COLOR_STEP, EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../types/event";
+import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 import { UNIT_PX, UNIT_EM, UNIT_PERCENT, isPercent, isPX, isEM } from "../../../../util/css/types";
-import { CLICK, INPUT, CHANGE } from "../../../../util/Event";
+import { CLICK, INPUT, CHANGE, LOAD } from "../../../../util/Event";
 
 function checkPxEm(unit) {
     return [UNIT_PX, UNIT_EM].includes(unit);
@@ -70,7 +70,7 @@ export default class GradientInfo extends UIElement {
         }
     }
 
-    'load $colorsteps' () {
+    [LOAD('$colorsteps')] () {
 
         var item = this.read('selection/current/image')
 
@@ -113,10 +113,10 @@ export default class GradientInfo extends UIElement {
         this.load()
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_COLOR_STEP,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_COLOR_STEP,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh(); }
 
     initColor (color) {

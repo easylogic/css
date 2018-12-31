@@ -13,11 +13,12 @@ import GradientSampleView from '../ui/window/GradientSampleWindow';
 import LayerSampleView from '../ui/window/LayerSampleWindow';
 import PageSampleView from '../ui/window/PageSampleWindow';
 import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
-import { EVENT_CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
+import { CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import ImageToolbar from '../ui/view/ImageToolbar';
+import { EVENT } from '../../colorpicker/UIElement';
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -84,7 +85,7 @@ export default class CSSEditor extends BaseCSSEditor {
         }
     } 
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         /*
         this.read('selection/current/layer', (layer) => {
             var self = this; 
@@ -135,7 +136,7 @@ export default class CSSEditor extends BaseCSSEditor {
         this.$el.toggleClass('show-timeline')
     } 
 
-    '@updateLayout' (layout) {
+    [EVENT('updateLayout')] (layout) {
         // screenModes.filter(key => key != layout).forEach(key => {
         //     this.refs.$layoutMain.removeClass(`${key}-mode`)
         // })
@@ -143,11 +144,11 @@ export default class CSSEditor extends BaseCSSEditor {
         // this.refs.$layoutMain.addClass(`${layout}-mode`)
     }
 
-    '@togglePagePanel' () {
+    [EVENT('togglePagePanel')] () {
         this.$el.toggleClass('has-page-panel')
     }
 
-    '@toggleLayerPanel' () {
+    [EVENT('toggleLayerPanel')] () {
         this.$el.toggleClass('has-layer-panel')
     }
 }

@@ -1,20 +1,14 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_LAYER, 
     CHANGE_LAYER, 
-    CHANGE_LAYER_CLIPPATH, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION, 
-    EVENT_CHANGE_LAYER_CLIPPATH
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { 
-    CLIP_PATH_TYPE_NONE, 
     CLIP_PATH_TYPE_CIRCLE, 
     CLIP_PATH_TYPE_ELLIPSE, 
-    CLIP_PATH_TYPE_INSET, 
-    CLIP_PATH_TYPE_POLYGON, 
-    CLIP_PATH_TYPE_SVG, 
     CLIP_PATH_SIDE_TYPE_NONE,
     CLIP_PATH_SIDE_TYPE_CLOSEST,
     CLIP_PATH_SIDE_TYPE_FARTHEST
@@ -48,11 +42,11 @@ export default class ClipPathSide extends BasePropertyItem {
         `
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_CLIPPATH
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_CLIPPATH
     )] () { this.refresh() }
 
 
@@ -80,7 +74,7 @@ export default class ClipPathSide extends BasePropertyItem {
         if (item.clipPathType == CLIP_PATH_TYPE_ELLIPSE) return true; 
     }    
 
-    '@toggleClipPathSideType' () {
+    [EVENT('toggleClipPathSideType')] () {
         this.$el.toggleClass('show');
     }
 

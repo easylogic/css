@@ -1,6 +1,5 @@
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
-import { CHANGE_SELECTION } from '../../types/event';
 import { ITEM_TYPE_PAGE } from '../../module/ItemTypes';
 import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, KEYDOWN, SELF, CHECKER } from '../../../util/Event';
 import { ARROW_DOWN, ARROW_UP, ARROW_LEFT, ARROW_RIGHT } from '../../../util/Key';

@@ -1,7 +1,7 @@
 import BasePropertyItem from './BasePropertyItem';
-import { CHANGE_LAYER, EVENT_CHANGE_LAYER, EVENT_CHANGE_EDITOR } from '../../../../types/event';
-import { MULTI_EVENT } from '../../../../../colorpicker/UIElement';
-import { CLICK, SELF } from '../../../../../util/Event';
+import { CHANGE_LAYER, CHANGE_EDITOR } from '../../../../types/event';
+import { EVENT } from '../../../../../colorpicker/UIElement';
+import { CLICK, SELF, LOAD } from '../../../../../util/Event';
 
 export default class MixBlendList extends BasePropertyItem {
 
@@ -18,7 +18,7 @@ export default class MixBlendList extends BasePropertyItem {
         `
     }
 
-    'load $mixBlendList' () {
+    [LOAD('$mixBlendList')] () {
         var list = this.read('blend/list')
         var item = this.read('selection/current/layer')
         if (!item) { return ''; }
@@ -65,9 +65,9 @@ export default class MixBlendList extends BasePropertyItem {
         this.refresh();
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER,
-        EVENT_CHANGE_EDITOR
+    [EVENT(
+        CHANGE_LAYER,
+        CHANGE_EDITOR
     )] () {
         this.refresh()
     }

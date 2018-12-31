@@ -1,6 +1,7 @@
 import GradientSteps from "../../colorsteps/GradientSteps";
 import BasePropertyItem from "./BasePropertyItem";
-import { EVENT_CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_EDITOR } from "../../../../types/event";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 
 export default class ColorSteps extends BasePropertyItem {
     template () {
@@ -22,7 +23,7 @@ export default class ColorSteps extends BasePropertyItem {
         this.$el.toggle(this.isShow())
     }
 
-    [EVENT_CHANGE_EDITOR] () {
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
     }
 

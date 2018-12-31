@@ -1,5 +1,5 @@
 import Event, { CLICK, KEYUP, INPUT, KEYDOWN } from '../../util/Event'
-import UIElement from '../UIElement';
+import UIElement, { EVENT } from '../UIElement';
 
 export default class ColorInformation extends UIElement {
 
@@ -127,11 +127,11 @@ export default class ColorInformation extends UIElement {
         })        
     }    
 
-    '@changeColor' () {
+    [EVENT('changeColor')] () {
         this.refresh()
     }
 
-    '@initColor' () { this.refresh() }    
+    [EVENT('initColor')] () { this.refresh() }    
 
     [INPUT('$rgb_r')] (e) {  this.changeRgbColor(); }
     [INPUT('$rgb_g')] (e) {  this.changeRgbColor(); }

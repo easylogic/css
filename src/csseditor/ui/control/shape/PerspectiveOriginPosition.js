@@ -1,5 +1,9 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM, EVENT_CHANGE_PAGE_TRANSFORM } from '../../../types/event';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_PAGE_TRANSFORM 
+} from '../../../types/event';
 import { percentUnit, unitValue, valueUnit } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
@@ -143,10 +147,10 @@ export default class PerspectiveOriginPosition extends UIElement {
         });
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_PAGE_TRANSFORM,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_PAGE_TRANSFORM,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { 
         this.refresh() 
     }

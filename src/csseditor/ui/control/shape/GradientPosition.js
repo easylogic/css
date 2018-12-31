@@ -1,5 +1,9 @@
-import UIElement, { MULTI_EVENT } from '../../../../colorpicker/UIElement';
-import { EVENT_CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_IMAGE_RADIAL_POSITION, EVENT_CHANGE_SELECTION } from '../../../types/event';
+import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_IMAGE_RADIAL_POSITION, 
+    CHANGE_SELECTION 
+} from '../../../types/event';
 import { percent } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
@@ -147,15 +151,15 @@ export default class GradientPosition extends UIElement {
         });
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_IMAGE_RADIAL_POSITION,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { 
         this.refresh() 
     }
 
-    '@changeTool' () {
+    [EVENT('changeTool')] () {
         this.$el.toggle(this.isShow())
     }
 

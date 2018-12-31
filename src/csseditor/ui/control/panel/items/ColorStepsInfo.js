@@ -1,6 +1,6 @@
-import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import GradientInfo from "../../colorsteps/GradientInfo";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 
 export default class ColorStepsInfo extends UIElement {
     template () {
@@ -21,9 +21,9 @@ export default class ColorStepsInfo extends UIElement {
         this.$el.toggle(this.isShow())
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () { this.refresh(); }
 
     isShow () {

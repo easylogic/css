@@ -175,19 +175,6 @@ export default class BaseColorPicker extends UIElement {
         this.opt[key] = value; 
     }
 
-    /*
-    isType (key) {
-        return this.getOption('type') == key;
-    }
-
-    isPaletteType() {
-        return this.isType('palette');
-    }
-
-    isSketchType() {
-        return this.isType('sketch');
-    } */
-
     getContainer () {
         return this.opt.container || document.body;
     }

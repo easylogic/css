@@ -1,12 +1,11 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_LAYER_TRANSFORM_3D, 
     CHANGE_LAYER_TRANSFORM_3D, 
-    EVENT_CHANGE_EDITOR, 
-    EVENT_CHANGE_SELECTION
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION
 } from "../../../../types/event";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
 
 export default class Transform3d extends BasePropertyItem {
@@ -97,10 +96,10 @@ export default class Transform3d extends BasePropertyItem {
         `
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_LAYER_TRANSFORM_3D,
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION
+    [EVENT(
+        CHANGE_LAYER_TRANSFORM_3D,
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () {
         this.refresh()
     }

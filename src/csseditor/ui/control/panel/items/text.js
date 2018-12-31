@@ -1,12 +1,11 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION,
+    CHANGE_EDITOR,
+    CHANGE_SELECTION,
     CHANGE_LAYER_TEXT,
-    EVENT_CHANGE_LAYER_TEXT,
     TEXT_FILL_COLOR
 } from "../../../../types/event";
-import { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../colorpicker/UIElement";
 import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
 
 export default class Text extends BasePropertyItem {
@@ -48,10 +47,10 @@ export default class Text extends BasePropertyItem {
         `
     }  
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_TEXT
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_TEXT
     )] () {
         this.refresh();
     }

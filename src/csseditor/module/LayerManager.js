@@ -304,15 +304,25 @@ s
         return css;
     }
 
+    [GETTER('layer/bound/toCSS')] ($store, layer) {
+        var css = {};
+
+        if (!layer) return css; 
+
+        css.left = layer.x 
+        css.top = layer.y
+        css.width = layer.width
+        css.height = layer.height
+        css['z-index'] = layer.index;
+
+        return css;
+    }
+
     [GETTER('layer/toCSS')] ($store, layer = null, withStyle = true, image = null, isExport = false) {
         var css = {};
 
         if (withStyle) {
-            css.left = layer.x 
-            css.top = layer.y
-            css.width = layer.width
-            css.height = layer.height
-            css['z-index'] = layer.index;
+            css = Object.assign(css, $store.read('layer/bound/toCSS', layer));
         }
 
         if (layer.backgroundColor) {

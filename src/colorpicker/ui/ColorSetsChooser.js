@@ -1,5 +1,5 @@
-import UIElement from '../UIElement';
-import { CLICK } from '../../util/Event';
+import UIElement, { EVENT } from '../UIElement';
+import { CLICK, LOAD } from '../../util/Event';
 
 const DATA_COLORSETS_INDEX = 'data-colorsets-index';
 
@@ -23,16 +23,16 @@ export default class ColorSetsChooser extends UIElement {
         this.load();
     }
 
-    '@changeCurrentColorSets' () {
+    [EVENT('changeCurrentColorSets')] () {
         this.refresh()
     }
 
-    '@toggleColorChooser' () {
+    [EVENT('toggleColorChooser')] () {
         this.toggle()
     }
 
     // loadable 
-    'load $colorsetsList' () {
+    [LOAD('$colorsetsList')] () {
         // colorsets 
         const colorSets = this.read('getColorSetsList');
 

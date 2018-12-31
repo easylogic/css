@@ -1,13 +1,12 @@
 
 import ColorPicker from '../../../../../../colorpicker/index'
-import UIElement, { MULTI_EVENT } from '../../../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../../../colorpicker/UIElement';
 import { 
-    EVENT_CHANGE_COLOR_STEP, 
     CHANGE_COLOR_STEP, 
-    CHANGE_IMAGE_COLOR,
-    EVENT_CHANGE_IMAGE , 
-    EVENT_CHANGE_EDITOR,
-    EVENT_CHANGE_SELECTION
+    CHANGE_IMAGE_COLOR, 
+    CHANGE_IMAGE , 
+    CHANGE_EDITOR,
+    CHANGE_SELECTION
 } from '../../../../../types/event';
 import { isNotUndefined } from '../../../../../../util/functions/func';
 
@@ -59,20 +58,20 @@ export default class ColorPickerLayer extends UIElement {
 
     }
 
-    [EVENT_CHANGE_COLOR_STEP] (newValue) {
+    [EVENT(CHANGE_COLOR_STEP)] (newValue) {
         if (isNotUndefined(newValue.color)) {
             this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
         }
     }
 
-    '@changeColor' () {
+    [EVENT('changeColor')] () {
         this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
     } 
 
-    [MULTI_EVENT(
-      EVENT_CHANGE_IMAGE,
-      EVENT_CHANGE_EDITOR,
-      EVENT_CHANGE_SELECTION
+    [EVENT(
+      CHANGE_IMAGE,
+      CHANGE_EDITOR,
+      CHANGE_SELECTION
     )] () { this.refresh() }    
 
     refresh() {

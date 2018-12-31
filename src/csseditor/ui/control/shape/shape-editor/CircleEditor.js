@@ -1,5 +1,12 @@
-import UIElement, { MULTI_EVENT } from "../../../../../colorpicker/UIElement";
-import { EVENT_CHANGE_EDITOR, EVENT_CHANGE_SELECTION, EVENT_CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, EVENT_CHANGE_LAYER_POSITION, EVENT_CHANGE_LAYER_SIZE } from "../../../../types/event";
+import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_SELECTION, 
+    CHANGE_LAYER_CLIPPATH, 
+    CHANGE_LAYER, 
+    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER_POSITION
+} from "../../../../types/event";
 import { CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_SIDE_TYPE_NONE } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
@@ -119,13 +126,13 @@ export default class CircleEditor extends UIElement {
 
     }
 
-    [MULTI_EVENT(
-        EVENT_CHANGE_EDITOR,
-        EVENT_CHANGE_SELECTION,
-        EVENT_CHANGE_LAYER_SIZE,
-        EVENT_CHANGE_LAYER_POSITION,        
-        EVENT_CHANGE_LAYER_CLIPPATH,
-        EVENT_CHANGE_LAYER
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_SELECTION,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_POSITION,        
+        CHANGE_LAYER_CLIPPATH,
+        CHANGE_LAYER
     )] () {
         this.refresh()
     }
