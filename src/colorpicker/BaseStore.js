@@ -33,11 +33,11 @@ export default class BaseStore {
         this.getters[actionName] = { context, callback: context[action] };
     }    
 
-    dispatch (action, ...opts) {
+    dispatch (action, $1, $2, $3, $4, $5) {
         var m = this.actions[action];
 
         if (m) {
-            var ret = this.run(action, ...opts);
+            var ret = this.run(action, $1, $2, $3, $4, $5);
 
             if (ret != PREVENT) {
                 m.context.afterDispatch()
@@ -49,28 +49,28 @@ export default class BaseStore {
 
     }
 
-    run (action, ...opts) {
+    run (action, $1, $2, $3, $4, $5) {
         var m = this.actions[action];
 
         if (m) { 
-            m.callback.apply(m.context, [this, ...opts]); 
+            m.callback.call(m.context, this, $1, $2, $3, $4, $5); 
         } else {
             throw new Error('action : ' + action + ' is not a valid.')            
         }
     }    
 
-    read (action, ...opts) {
+    read (action, $1, $2, $3, $4, $5) {
         var m = this.getters[action];
 
         if (m) { 
-            return m.callback.apply(m.context, [this, ...opts]); 
+            return m.callback.call(m.context, this, $1, $2, $3, $4, $5); 
         } else {
             throw new Error('getter : ' + action + ' is not a valid.')            
         }
     }
 
-    clone (action, ...opts) {
-        return JSON.parse(JSON.stringify(this.read(action, ...opts)))
+    clone (action, $1, $2, $3, $4, $5) {
+        return JSON.parse(JSON.stringify(this.read(action, $1, $2, $3, $4, $5)))
     }
 
     addModule (ModuleClass) {
@@ -98,15 +98,14 @@ export default class BaseStore {
 
     }
 
-    emit () {
-        var args = [...arguments];
-        var event = args.shift();
+    emit ($1, $2, $3, $4, $5) {
+        var event = $1;
 
         this.callbacks.filter(f => {
             return (f.event == event)
         }).forEach(f => {
             if (f && isFunction(f.callback) && f.context.source != this.source) {
-                f.callback(...args);
+                f.callback($2, $3, $4, $5);
             }
         })
     }    

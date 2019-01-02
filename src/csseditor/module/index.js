@@ -22,9 +22,14 @@ import FilterManager from "./FilterManager";
 import BackdropManager from "./BackdropManager";
 import I18nManager from "./I18nManager";
 import ClipPathManager from "./ClipPathManager";
+import ItemCreateManager from "./ItemCreateManager";
+import ItemMoveManager from "./ItemMoveManager";
+import ItemRecoverManager from "./ItemRecoverManager";
+import ItemSearchManager from "./ItemSearchManager";
 
 
 export default [  
+
     ClipPathManager,
     I18nManager,
     BackdropManager,
@@ -42,6 +47,10 @@ export default [
     CssManager,
     StorageManager,
     ItemManager,
+    ItemCreateManager,
+    ItemMoveManager,
+    ItemRecoverManager,
+    ItemSearchManager,    
     ColorStepManager,
     ImageManager,
     LayerManager,

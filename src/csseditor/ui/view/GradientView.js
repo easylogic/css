@@ -194,8 +194,8 @@ export default class GradientView extends UIElement {
 
         if (item) {
             if (item.itemType == 'page') {
-                var list = this.read('item/list/children', item.id);
-                this.refs.$colorview.toggle(list.length)
+                var count = this.read('item/count/children', item.id);
+                this.refs.$colorview.toggle(count)
             }
         }
         

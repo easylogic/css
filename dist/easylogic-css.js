@@ -7983,15 +7983,11 @@ var BaseStore = function () {
         }
     }, {
         key: "dispatch",
-        value: function dispatch(action) {
+        value: function dispatch(action, $1, $2, $3, $4, $5) {
             var m = this.actions[action];
 
             if (m) {
-                for (var _len = arguments.length, opts = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                    opts[_key - 1] = arguments[_key];
-                }
-
-                var ret = this.run.apply(this, [action].concat(opts));
+                var ret = this.run(action, $1, $2, $3, $4, $5);
 
                 if (ret != PREVENT) {
                     m.context.afterDispatch();
@@ -8002,42 +7998,30 @@ var BaseStore = function () {
         }
     }, {
         key: "run",
-        value: function run(action) {
+        value: function run(action, $1, $2, $3, $4, $5) {
             var m = this.actions[action];
 
             if (m) {
-                for (var _len2 = arguments.length, opts = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                    opts[_key2 - 1] = arguments[_key2];
-                }
-
-                m.callback.apply(m.context, [this].concat(opts));
+                m.callback.call(m.context, this, $1, $2, $3, $4, $5);
             } else {
                 throw new Error('action : ' + action + ' is not a valid.');
             }
         }
     }, {
         key: "read",
-        value: function read(action) {
+        value: function read(action, $1, $2, $3, $4, $5) {
             var m = this.getters[action];
 
             if (m) {
-                for (var _len3 = arguments.length, opts = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-                    opts[_key3 - 1] = arguments[_key3];
-                }
-
-                return m.callback.apply(m.context, [this].concat(opts));
+                return m.callback.call(m.context, this, $1, $2, $3, $4, $5);
             } else {
                 throw new Error('getter : ' + action + ' is not a valid.');
             }
         }
     }, {
         key: "clone",
-        value: function clone(action) {
-            for (var _len4 = arguments.length, opts = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-                opts[_key4 - 1] = arguments[_key4];
-            }
-
-            return JSON.parse(JSON.stringify(this.read.apply(this, [action].concat(opts))));
+        value: function clone(action, $1, $2, $3, $4, $5) {
+            return JSON.parse(JSON.stringify(this.read(action, $1, $2, $3, $4, $5)));
         }
     }, {
         key: "addModule",
@@ -8070,17 +8054,16 @@ var BaseStore = function () {
         }
     }, {
         key: "emit",
-        value: function emit() {
+        value: function emit($1, $2, $3, $4, $5) {
             var _this2 = this;
 
-            var args = [].concat(Array.prototype.slice.call(arguments));
-            var event = args.shift();
+            var event = $1;
 
             this.callbacks.filter(function (f) {
                 return f.event == event;
             }).forEach(function (f) {
                 if (f && isFunction(f.callback) && f.context.source != _this2.source) {
-                    f.callback.apply(f, toConsumableArray(args));
+                    f.callback($2, $3, $4, $5);
                 }
             });
         }
@@ -11895,12 +11878,7 @@ var GradientManager = function (_BaseModule) {
 }(BaseModule);
 
 var INDEX_DIST = 100;
-var COPY_INDEX_DIST = 1;
 var NONE_INDEX = -99999;
-
-var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
-var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 
 var itemField = {
     'mix-blend-mode': 'mixBlendMode',
@@ -11951,7 +11929,7 @@ var updateNumberUnitField = {
     backgroundSizeWidth: UNIT_PX
 };
 
-var convertStyle = function convertStyle(item) {
+var convertStyle$1 = function convertStyle(item) {
     var style = item.style || {};
 
     Object.keys(style).forEach(function (key) {
@@ -11971,9 +11949,7 @@ var convertStyle = function convertStyle(item) {
     return item;
 };
 
-var DEFAULT_FUNCTION = function DEFAULT_FUNCTION(item) {
-    return item;
-};
+
 
 var ItemManager = function (_BaseModule) {
     inherits(ItemManager, _BaseModule);
@@ -11984,14 +11960,6 @@ var ItemManager = function (_BaseModule) {
     }
 
     createClass(ItemManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ItemManager.prototype.__proto__ || Object.getPrototypeOf(ItemManager.prototype), "initialize", this).call(this);
-
-            this.$store.items = {};
-            this.$store.itemKeys = [];
-        }
-    }, {
         key: "afterDispatch",
         value: function afterDispatch() {
             this.$store.emit(CHANGE_EDITOR);
@@ -11999,159 +11967,12 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: GETTER('item/convert/style'),
         value: function value$$1($store, item) {
-            return convertStyle(item);
-        }
-    }, {
-        key: GETTER('item/keys'),
-        value: function value$$1($store) {
-            return $store.itemKeys;
-        }
-    }, {
-        key: ACTION('item/keys/generate'),
-        value: function value$$1($store) {
-            $store.itemKeys = Object.keys($store.items);
-        }
-    }, {
-        key: ACTION('/item/initialize'),
-        value: function value$$1($store, id) {
-            delete $store.items[id];
-
-            $store.run('item/keys/generate');
-        }
-    }, {
-        key: GETTER('item/create/object'),
-        value: function value$$1($store, obj) {
-            var defaultObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            obj = Object.assign({}, $store.read('clone', defaultObj), obj);
-            obj.id = Date.now() + '-' + uuid();
-
-            $store.items[obj.id] = obj;
-
-            $store.run('item/keys/generate');
-
-            return obj.id;
-        }
-    }, {
-        key: GETTER('item/create/page'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, PAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/layer'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, LAYER_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/circle'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, CIRCLE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/group'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, GROUP_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/boxshadow'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/textshadow'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, TEXTSHADOW_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/backdrop-filter'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, BACKDROPFILTER_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER('item/create/image'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-
-            var imageId = $store.read('item/create/object', obj, IMAGE_DEFAULT_OBJECT);
-
-            if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
-
-                if (conicList.includes(obj.type)) {
-                    $store.items[imageId].angle = 0;
-                }
-
-                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
-                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
-            } else if (repeatingGradientTypeList.includes(obj.type)) {
-                if (conicList.includes(obj.type)) {
-                    $store.items[imageId].angle = 0;
-                }
-
-                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
-                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 10, index: 100 });
-            }
-
-            return imageId;
-        }
-    }, {
-        key: GETTER('item/create/colorstep'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read('item/create/object', obj, COLORSTEP_DEFAULT_OBJECT);
-        }
-
-        // 객체를 생성하면 id 만 리턴한다. 
-
-    }, {
-        key: GETTER('item/create'),
-        value: function value$$1($store, itemType) {
-            var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            return $store.read('item/create/' + itemType, obj);
-        }
-    }, {
-        key: GETTER('item/copy'),
-        value: function value$$1($store, id) {
-            var copyObject = $store.clone('item/get', id);
-
-            return $store.read('item/create', copyObject.itemType, copyObject);
+            return convertStyle$1(item);
         }
     }, {
         key: GETTER('item/get'),
         value: function value$$1($store, id) {
             return $store.items[id] || {};
-        }
-    }, {
-        key: GETTER('item/get/all'),
-        value: function value$$1($store, parentId) {
-            var items = {};
-
-            $store.read('item/each/children', parentId, function (item) {
-                items[item.id] = $store.read('clone', item);
-
-                var children = $store.read('item/get/all', item.id);
-                Object.keys(children).forEach(function (key) {
-                    items[key] = children[key];
-                });
-            });
-
-            return items;
         }
     }, {
         key: ACTION('item/set/all'),
@@ -12162,224 +11983,6 @@ var ItemManager = function (_BaseModule) {
                 $store.run('item/remove/all', parentId);
             }
             Object.assign($store.items, items);
-        }
-    }, {
-        key: GETTER('item/list'),
-        value: function value$$1($store, filterCallback) {
-            var list = $store.itemKeys.filter(filterCallback);
-
-            list.sort(function (aId, bId) {
-                return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
-            });
-
-            return list;
-        }
-    }, {
-        key: GETTER('item/filter'),
-        value: function value$$1($store, filterCallback) {
-            return $store.read('item/list', filterCallback);
-        }
-    }, {
-        key: GETTER('item/list/page'),
-        value: function value$$1($store) {
-            return $store.read('item/filter', this.checkItemCallback($store, null, 'page'));
-        }
-    }, {
-        key: GETTER('item/map/page'),
-        value: function value$$1($store, callback) {
-            return $store.read('item/list/page').map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: "checkItemCallback",
-        value: function checkItemCallback($store, parentId) {
-            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-
-            if (itemType) {
-
-                if (parentId) {
-                    return function (id) {
-                        return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType;
-                    };
-                } else {
-                    return function (id) {
-                        return $store.items[id].itemType == itemType;
-                    };
-                }
-            } else {
-                return function (id) {
-                    return $store.items[id].parentId == parentId;
-                };
-            }
-        }
-    }, {
-        key: GETTER('item/list/children'),
-        value: function value$$1($store, parentId, itemType) {
-            return $store.read('item/filter', this.checkItemCallback($store, parentId, itemType));
-        }
-    }, {
-        key: GETTER('item/count/children'),
-        value: function value$$1($store, parentId) {
-            return $store.read('item/list/children', parentId).length;
-        }
-    }, {
-        key: GETTER('item/map/children'),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read('item/list/children', parentId).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER('item/map/type/children'),
-        value: function value$$1($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
-
-            return $store.read('item/list/children', parentId, itemType).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER('item/map/image/children'),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read('item/map/type/children', parentId, ITEM_TYPE_IMAGE, callback);
-        }
-    }, {
-        key: GETTER('item/map/colorstep/children'),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read('item/map/type/children', parentId, ITEM_TYPE_COLORSTEP, callback);
-        }
-    }, {
-        key: GETTER('item/map/boxshadow/children'),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read('item/map/type/children', parentId, ITEM_TYPE_BOXSHADOW, callback);
-        }
-    }, {
-        key: GETTER('item/map/textshadow/children'),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read('item/map/type/children', parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
-        }
-    }, {
-        key: GETTER('item/filter/children'),
-        value: function value$$1($store, parentId, callback) {
-            return $store.read('item/list/children', parentId).filter(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER('item/filter/type/children'),
-        value: function value$$1($store, parentId, itemType, callback) {
-            return $store.read('item/list/children', parentId, itemType).filter(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER('item/each/children'),
-        value: function value$$1($store, parentId, callback) {
-            return $store.read('item/list/children', parentId).forEach(function (id, index) {
-                callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER('item/each/type/children'),
-        value: function value$$1($store, parentId, itemType, callback) {
-            return $store.read('item/list/children', parentId, itemType).forEach(function (id, index) {
-                callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER('item/traverse'),
-        value: function value$$1($store, parentId) {
-            var list = $store.read('item/list/children', parentId);
-
-            list.sort(function (a, b) {
-                var $a = $store.items[a];
-                var $b = $store.items[b];
-
-                if ($a.order == $b.order) {
-
-                    if (a > b) return 1;
-                    if (a < b) return -1;
-
-                    return 0;
-                }
-                return $a.order > $b.order ? 1 : -1;
-            });
-
-            return list.map(function (childId) {
-                return { id: childId, children: $store.read('item/traverse', childId) };
-            });
-        }
-    }, {
-        key: GETTER('item/tree'),
-        value: function value$$1($store) {
-            return $store.read('item/traverse', '');
-        }
-    }, {
-        key: GETTER('item/tree/normalize'),
-        value: function value$$1($store) {
-            var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-            var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-            var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-            var results = [];
-
-            var list = root != null ? $store.read('item/tree') : children;
-            list.forEach(function (item) {
-                results.push({ id: item.id, depth: depth });
-                results.push.apply(results, toConsumableArray($store.read('item/tree/normalize', null, item.children, depth + 1)));
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER('item/path'),
-        value: function value$$1($store, id) {
-            var results = [id];
-            var targetId = id;
-
-            do {
-                var item = $store.read('item/get', targetId);
-
-                if (item.parentId == '') {
-                    results.push(item.id);
-                    break;
-                } else {
-                    results.push(item.id);
-                    targetId = item.parentId;
-                }
-            } while (targetId);
-
-            return results;
-        }
-    }, {
-        key: GETTER('item/get/mode'),
-        value: function value$$1($store) {
-            return $store.selectedMode;
-        }
-    }, {
-        key: GETTER('item/get/editMode'),
-        value: function value$$1($store) {
-            return $store.editMode;
-        }
-    }, {
-        key: GETTER('item/dom'),
-        value: function value$$1($store, id) {
-            var element = document.querySelector('[item-layer-id="' + id + '"]');
-
-            if (element) {
-                return new Dom(element);
-            }
         }
     }, {
         key: ACTION('item/focus'),
@@ -12471,23 +12074,6 @@ var ItemManager = function (_BaseModule) {
 
             if (isSelected) $store.run('selection/one', id);
         }
-    }, {
-        key: GETTER('item/add/index'),
-        value: function value$$1($store, id) {
-            var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST;
-
-            return $store.items[id].index + dist;
-        }
-    }, {
-        key: GETTER('item/next/index'),
-        value: function value$$1($store, id) {
-            return $store.read('item/add/index', id, INDEX_DIST + COPY_INDEX_DIST);
-        }
-    }, {
-        key: GETTER('item/prev/index'),
-        value: function value$$1($store, id) {
-            return $store.read('item/add/index', id, -1 * (INDEX_DIST + COPY_INDEX_DIST));
-        }
 
         // initialize items 
 
@@ -12495,320 +12081,10 @@ var ItemManager = function (_BaseModule) {
         key: ACTION('item/load'),
         value: function value$$1($store) {
             $store.read('item/keys').forEach(function (id) {
-                $store.items[id] = convertStyle($store.items[id]);
+                $store.items[id] = convertStyle$1($store.items[id]);
             });
 
             $store.run('history/initialize');
-        }
-    }, {
-        key: ACTION('item/add'),
-        value: function value$$1($store, itemType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-
-            var id = $store.read('item/create', itemType);
-            var item = $store.read('item/get', id);
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run('item/set', item, isSelected);
-            $store.run('item/sort', item.id);
-        }
-    }, {
-        key: ACTION('item/prepend/image'),
-        value: function value$$1($store, imageType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-
-            $store.run('item/add/image', imageType, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION('item/add/image'),
-        value: function value$$1($store, imageType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read('item/create/image', { type: imageType });
-            var item = $store.read('item/get', id);
-            item.type = imageType;
-            item.parentId = parentId;
-            item.index = index;
-
-            $store.run('item/set', item, isSelected);
-            $store.run('item/sort', id);
-        }
-    }, {
-        key: ACTION('item/prepend/image/file'),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-
-            $store.run('item/add/image/file', img, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION('item/add/image/file'),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read('item/create/image');
-            var item = $store.read('item/get', id);
-            item.type = ITEM_TYPE_IMAGE;
-            item.parentId = parentId;
-            item.index = index;
-            item.colors = img.colors;
-            item.fileType = img.fileType;
-            item.backgroundImage = img.url;
-            item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run('item/set', item, isSelected);
-            $store.run('item/sort', id);
-        }
-    }, {
-        key: ACTION('item/set/image/file'),
-        value: function value$$1($store, id, img) {
-            var item = $store.read('item/get', id);
-            item.type = ITEM_TYPE_IMAGE;
-            item.colors = img.colors;
-            item.fileType = img.fileType || 'svg';
-            if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
-            if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
-            item.backgroundImage = img.url;
-            item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run('item/set', item);
-        }
-    }, {
-        key: ACTION('item/prepend/image/url'),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-
-            $store.run('item/add/image/url', img, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION('item/add/image/url'),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read('item/create/image');
-            var item = $store.read('item/get', id);
-            item.type = ITEM_TYPE_IMAGE;
-            item.parentId = parentId;
-            item.index = index;
-            item.colors = img.colors;
-            item.fileType = img.fileType;
-            item.backgroundImage = img.url;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run('item/set', item, isSelected);
-            $store.run('item/sort', id);
-        }
-    }, {
-        key: ACTION('item/add/page'),
-        value: function value$$1($store) {
-            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-            var pageId = $store.read('item/create', ITEM_TYPE_PAGE);
-            var layerId = $store.read('item/create', ITEM_TYPE_LAYER);
-            var imageId = $store.read('item/create', ITEM_TYPE_IMAGE);
-
-            // 페이지 생성 
-            var page = $store.read('item/get', pageId);
-            page.index = Number.MAX_SAFE_INTEGER;
-            $store.run('item/set', page);
-
-            // 레이어 생성 
-            var layer = $store.read('item/get', layerId);
-            layer.parentId = pageId;
-            layer.width = page.width;
-            layer.height = page.height;
-            // layer.style = Object.assign({}, layer.style, page.style)        
-            $store.run('item/set', layer);
-
-            // 이미지 생성 
-            var image = $store.read('item/get', imageId);
-            image.parentId = layerId;
-            $store.run('item/set', image, isSelected);
-
-            $store.run('history/initialize');
-        }
-    }, {
-        key: ACTION('item/move/to'),
-        value: function value$$1($store, sourceId, newItemId) {
-
-            var currentItem = $store.read('item/get', sourceId);
-
-            var newItem = $store.read('item/get', newItemId);
-            newItem.index = currentItem.index + COPY_INDEX_DIST;
-
-            $store.run('item/set', newItem, true);
-            $store.run('item/sort', newItemId);
-        }
-    }, {
-        key: GETTER('item/recover'),
-        value: function value$$1($store, item, parentId) {
-
-            if (item.page) {
-                return $store.read('item/recover/page', item, parentId);
-            } else if (item.layer) {
-                return $store.read('item/recover/layer', item, parentId);
-            } else if (item.image) {
-                return $store.read('item/recover/image', item, parentId);
-            } else if (item.boxshadow) {
-                return $store.read('item/recover/boxshadow', item, parentId);
-            } else if (item.textshadow) {
-                return $store.read('item/recover/textshadow', item, parentId);
-            }
-        }
-    }, {
-        key: GETTER('item/recover/image'),
-        value: function value$$1($store, image, parentId) {
-            var newImageId = $store.read('item/create/object', Object.assign({ parentId: parentId }, convertStyle(image.image)));
-            image.colorsteps.forEach(function (step) {
-                $store.read('item/create/object', Object.assign({}, step, { parentId: newImageId }));
-            });
-
-            return newImageId;
-        }
-    }, {
-        key: GETTER('item/recover/boxshadow'),
-        value: function value$$1($store, boxshadow, parentId) {
-            return $store.read('item/create/object', Object.assign({ parentId: parentId }, boxshadow.boxshadow));
-        }
-    }, {
-        key: GETTER('item/recover/textshadow'),
-        value: function value$$1($store, textshadow, parentId) {
-            return $store.read('item/create/object', Object.assign({ parentId: parentId }, textshadow.textshadow));
-        }
-    }, {
-        key: GETTER('item/recover/layer'),
-        value: function value$$1($store, layer, parentId) {
-            var newLayerId = $store.read('item/create/object', Object.assign({ parentId: parentId }, convertStyle(layer.layer)));
-            layer.images.forEach(function (image) {
-                $store.read('item/recover/image', image, newLayerId);
-            });
-
-            layer.boxshadows.forEach(function (boxshadow) {
-                $store.read('item/recover/boxshadow', boxshadow, newLayerId);
-            });
-
-            layer.textshadows.forEach(function (textshadow) {
-                $store.read('item/recover/textshadow', textshadow, newLayerId);
-            });
-
-            return newLayerId;
-        }
-    }, {
-        key: GETTER('item/recover/page'),
-        value: function value$$1($store, page) {
-            var newPageId = $store.read('item/create/object', convertStyle(page.page));
-            page.layers.forEach(function (layer) {
-                $store.read('item/recover/layer', layer, newPageId);
-            });
-
-            return newPageId;
-        }
-    }, {
-        key: ACTION('item/addCopy'),
-        value: function value$$1($store, sourceId) {
-            $store.run('item/addCache', $store.read('collect/one', sourceId), sourceId);
-        }
-    }, {
-        key: ACTION('item/addCache'),
-        value: function value$$1($store, item, sourceId) {
-            var currentItem = $store.read('item/get', sourceId);
-            $store.run('item/move/to', sourceId, $store.read('item/recover', item, currentItem.parentId));
-        }
-    }, {
-        key: ACTION('item/move/next'),
-        value: function value$$1($store, id) {
-            var item = $store.read('item/get', id);
-            item.index = $store.read('item/next/index', id);
-
-            $store.run('item/set', item, item.selected);
-            $store.run('item/sort', id);
-        }
-    }, {
-        key: ACTION('item/move/last'),
-        value: function value$$1($store, id) {
-            var item = $store.read('item/get', id);
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run('item/set', item, item.selected);
-            $store.run('item/sort', id);
-        }
-    }, {
-        key: ACTION('item/move/first'),
-        value: function value$$1($store, id) {
-            var item = $store.read('item/get', id);
-            item.index = -1 * COPY_INDEX_DIST;
-
-            $store.run('item/set', item, item.selected);
-            $store.run('item/sort', id);
-        }
-    }, {
-        key: ACTION('item/move/in'),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read('item/get', destId);
-            var sourceItem = $store.read('item/get', sourceId);
-            sourceItem.parentId = destItem.parentId;
-            sourceItem.index = destItem.index - COPY_INDEX_DIST;
-
-            $store.run('item/set', sourceItem, true);
-            $store.run('item/sort', sourceId);
-        }
-    }, {
-        key: ACTION('item/copy/in'),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read('item/get', destId);
-            var newImageId = $store.read('item/recover', $store.read('collect/one', sourceId), destItem.parentId);
-
-            var newImageItem = $store.read('item/get', newImageId);
-            newImageItem.index = destItem.index - COPY_INDEX_DIST;
-
-            $store.run('item/set', sourceItem, true);
-            $store.run('item/sort', sourceId);
-        }
-    }, {
-        key: ACTION('item/move/in/layer'),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read('item/get', destId); /* layer */
-            var sourceItem = $store.read('item/get', sourceId);
-
-            sourceItem.parentId = destItem.id;
-            sourceItem.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run('item/set', sourceItem, true);
-            $store.run('item/sort', sourceId);
-        }
-    }, {
-        key: ACTION('item/copy/in/layer'),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read('item/get', destId); /* layer */
-            var newImageId = $store.read('item/recover', $store.read('collect/one', sourceId), destItem.parentId);
-
-            var newImageItem = $store.read('item/get', newImageId);
-            newImageItem.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run('item/set', newImageItem, true);
-            $store.run('item/sort', newImageId);
-        }
-    }, {
-        key: ACTION('item/move/prev'),
-        value: function value$$1($store, id) {
-            var item = $store.read('item/get', id);
-            item.index = $store.read('item/prev/index', id);
-
-            $store.run('item/set', item, item.selected);
-            $store.run('item/sort', id);
         }
     }, {
         key: ACTION('item/sort'),
@@ -15281,7 +14557,775 @@ var ClipPathManager = function (_BaseModule) {
     return ClipPathManager;
 }(BaseModule);
 
-var ModuleList = [ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
+var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+
+var ItemCreateManager = function (_BaseModule) {
+    inherits(ItemCreateManager, _BaseModule);
+
+    function ItemCreateManager() {
+        classCallCheck(this, ItemCreateManager);
+        return possibleConstructorReturn(this, (ItemCreateManager.__proto__ || Object.getPrototypeOf(ItemCreateManager)).apply(this, arguments));
+    }
+
+    createClass(ItemCreateManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(ItemCreateManager.prototype.__proto__ || Object.getPrototypeOf(ItemCreateManager.prototype), "initialize", this).call(this);
+
+            this.$store.items = {};
+            this.$store.itemKeys = [];
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: GETTER('item/keys'),
+        value: function value$$1($store) {
+            return $store.itemKeys;
+        }
+    }, {
+        key: ACTION('item/keys/generate'),
+        value: function value$$1($store) {
+            $store.itemKeys = Object.keys($store.items);
+        }
+    }, {
+        key: ACTION('/item/initialize'),
+        value: function value$$1($store, id) {
+            delete $store.items[id];
+
+            $store.run('item/keys/generate');
+        }
+    }, {
+        key: GETTER('item/create/object'),
+        value: function value$$1($store, obj) {
+            var defaultObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            obj = Object.assign({}, $store.read('clone', defaultObj), obj);
+            obj.id = Date.now() + '-' + uuid();
+
+            $store.items[obj.id] = obj;
+
+            $store.run('item/keys/generate');
+
+            return obj.id;
+        }
+    }, {
+        key: GETTER('item/create/page'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, PAGE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/layer'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, LAYER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/circle'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, CIRCLE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/group'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, GROUP_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/boxshadow'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, BOXSHADOW_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/textshadow'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, TEXTSHADOW_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/backdrop-filter'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, BACKDROPFILTER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/image'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var imageId = $store.read('item/create/object', obj, IMAGE_DEFAULT_OBJECT);
+
+            if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
+
+                if (conicList.includes(obj.type)) {
+                    $store.items[imageId].angle = 0;
+                }
+
+                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
+                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
+            } else if (repeatingGradientTypeList.includes(obj.type)) {
+                if (conicList.includes(obj.type)) {
+                    $store.items[imageId].angle = 0;
+                }
+
+                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
+                $store.read('item/create/colorstep', { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 10, index: 100 });
+            }
+
+            return imageId;
+        }
+    }, {
+        key: GETTER('item/create/colorstep'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read('item/create/object', obj, COLORSTEP_DEFAULT_OBJECT);
+        }
+
+        // 객체를 생성하면 id 만 리턴한다. 
+
+    }, {
+        key: GETTER('item/create'),
+        value: function value$$1($store, itemType) {
+            var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            return $store.read('item/create/' + itemType, obj);
+        }
+    }, {
+        key: GETTER('item/copy'),
+        value: function value$$1($store, id) {
+            var copyObject = $store.clone('item/get', id);
+
+            return $store.read('item/create', copyObject.itemType, copyObject);
+        }
+    }, {
+        key: ACTION('item/add'),
+        value: function value$$1($store, itemType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+            var id = $store.read('item/create', itemType);
+            var item = $store.read('item/get', id);
+            item.parentId = parentId;
+
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('item/set', item, isSelected);
+            $store.run('item/sort', item.id);
+        }
+    }, {
+        key: ACTION('item/prepend/image'),
+        value: function value$$1($store, imageType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+            $store.run('item/add/image', imageType, isSelected, parentId, -1);
+        }
+    }, {
+        key: ACTION('item/add/image'),
+        value: function value$$1($store, imageType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
+
+            var id = $store.read('item/create/image', { type: imageType });
+            var item = $store.read('item/get', id);
+            item.type = imageType;
+            item.parentId = parentId;
+            item.index = index;
+
+            $store.run('item/set', item, isSelected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: ACTION('item/prepend/image/file'),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+            $store.run('item/add/image/file', img, isSelected, parentId, -1);
+        }
+    }, {
+        key: ACTION('item/add/image/file'),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
+
+            var id = $store.read('item/create/image');
+            var item = $store.read('item/get', id);
+            item.type = ITEM_TYPE_IMAGE;
+            item.parentId = parentId;
+            item.index = index;
+            item.colors = img.colors;
+            item.fileType = img.fileType;
+            item.backgroundImage = img.url;
+            item.backgroundImageDataURI = img.datauri;
+            item.backgroundSizeWidth = percentUnit(100);
+
+            $store.run('item/set', item, isSelected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: ACTION('item/set/image/file'),
+        value: function value$$1($store, id, img) {
+            var item = $store.read('item/get', id);
+            item.type = ITEM_TYPE_IMAGE;
+            item.colors = img.colors;
+            item.fileType = img.fileType || 'svg';
+            if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
+            if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
+            item.backgroundImage = img.url;
+            item.backgroundImageDataURI = img.datauri;
+            item.backgroundSizeWidth = percentUnit(100);
+
+            $store.run('item/set', item);
+        }
+    }, {
+        key: ACTION('item/prepend/image/url'),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+            $store.run('item/add/image/url', img, isSelected, parentId, -1);
+        }
+    }, {
+        key: ACTION('item/add/image/url'),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
+
+            var id = $store.read('item/create/image');
+            var item = $store.read('item/get', id);
+            item.type = ITEM_TYPE_IMAGE;
+            item.parentId = parentId;
+            item.index = index;
+            item.colors = img.colors;
+            item.fileType = img.fileType;
+            item.backgroundImage = img.url;
+            item.backgroundSizeWidth = percentUnit(100);
+
+            $store.run('item/set', item, isSelected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: ACTION('item/add/page'),
+        value: function value$$1($store) {
+            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            var pageId = $store.read('item/create', ITEM_TYPE_PAGE);
+            var layerId = $store.read('item/create', ITEM_TYPE_LAYER);
+            var imageId = $store.read('item/create', ITEM_TYPE_IMAGE);
+
+            // 페이지 생성 
+            var page = $store.read('item/get', pageId);
+            page.index = Number.MAX_SAFE_INTEGER;
+            $store.run('item/set', page);
+
+            // 레이어 생성 
+            var layer = $store.read('item/get', layerId);
+            layer.parentId = pageId;
+            layer.width = page.width;
+            layer.height = page.height;
+            // layer.style = Object.assign({}, layer.style, page.style)        
+            $store.run('item/set', layer);
+
+            // 이미지 생성 
+            var image = $store.read('item/get', imageId);
+            image.parentId = layerId;
+            $store.run('item/set', image, isSelected);
+
+            $store.run('history/initialize');
+        }
+    }]);
+    return ItemCreateManager;
+}(BaseModule);
+
+var INDEX_DIST$1 = 100;
+var COPY_INDEX_DIST = 1;
+
+
+
+var ItemMoveManager = function (_BaseModule) {
+    inherits(ItemMoveManager, _BaseModule);
+
+    function ItemMoveManager() {
+        classCallCheck(this, ItemMoveManager);
+        return possibleConstructorReturn(this, (ItemMoveManager.__proto__ || Object.getPrototypeOf(ItemMoveManager)).apply(this, arguments));
+    }
+
+    createClass(ItemMoveManager, [{
+        key: ACTION('item/move/to'),
+        value: function value($store, sourceId, newItemId) {
+
+            var currentItem = $store.read('item/get', sourceId);
+
+            var newItem = $store.read('item/get', newItemId);
+            newItem.index = currentItem.index + COPY_INDEX_DIST;
+
+            $store.run('item/set', newItem, true);
+            $store.run('item/sort', newItemId);
+        }
+    }, {
+        key: ACTION('item/move/next'),
+        value: function value($store, id) {
+            var item = $store.read('item/get', id);
+            item.index = $store.read('item/next/index', id);
+
+            $store.run('item/set', item, item.selected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: ACTION('item/move/last'),
+        value: function value($store, id) {
+            var item = $store.read('item/get', id);
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('item/set', item, item.selected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: ACTION('item/move/first'),
+        value: function value($store, id) {
+            var item = $store.read('item/get', id);
+            item.index = -1 * COPY_INDEX_DIST;
+
+            $store.run('item/set', item, item.selected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: ACTION('item/move/in'),
+        value: function value($store, destId, sourceId) {
+            var destItem = $store.read('item/get', destId);
+            var sourceItem = $store.read('item/get', sourceId);
+            sourceItem.parentId = destItem.parentId;
+            sourceItem.index = destItem.index - COPY_INDEX_DIST;
+
+            $store.run('item/set', sourceItem, true);
+            $store.run('item/sort', sourceId);
+        }
+    }, {
+        key: ACTION('item/move/in/layer'),
+        value: function value($store, destId, sourceId) {
+            var destItem = $store.read('item/get', destId); /* layer */
+            var sourceItem = $store.read('item/get', sourceId);
+
+            sourceItem.parentId = destItem.id;
+            sourceItem.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('item/set', sourceItem, true);
+            $store.run('item/sort', sourceId);
+        }
+    }, {
+        key: ACTION('item/move/prev'),
+        value: function value($store, id) {
+            var item = $store.read('item/get', id);
+            item.index = $store.read('item/prev/index', id);
+
+            $store.run('item/set', item, item.selected);
+            $store.run('item/sort', id);
+        }
+    }, {
+        key: GETTER('item/add/index'),
+        value: function value($store, id) {
+            var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST$1;
+
+            return $store.items[id].index + dist;
+        }
+    }, {
+        key: GETTER('item/next/index'),
+        value: function value($store, id) {
+            return $store.read('item/add/index', id, INDEX_DIST$1 + COPY_INDEX_DIST);
+        }
+    }, {
+        key: GETTER('item/prev/index'),
+        value: function value($store, id) {
+            return $store.read('item/add/index', id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
+        }
+    }]);
+    return ItemMoveManager;
+}(BaseModule);
+
+var COPY_INDEX_DIST$1 = 1;
+
+var ItemRecoverManager = function (_BaseModule) {
+    inherits(ItemRecoverManager, _BaseModule);
+
+    function ItemRecoverManager() {
+        classCallCheck(this, ItemRecoverManager);
+        return possibleConstructorReturn(this, (ItemRecoverManager.__proto__ || Object.getPrototypeOf(ItemRecoverManager)).apply(this, arguments));
+    }
+
+    createClass(ItemRecoverManager, [{
+        key: GETTER('item/recover'),
+        value: function value($store, item, parentId) {
+
+            if (item.page) {
+                return $store.read('item/recover/page', item, parentId);
+            } else if (item.layer) {
+                return $store.read('item/recover/layer', item, parentId);
+            } else if (item.image) {
+                return $store.read('item/recover/image', item, parentId);
+            } else if (item.boxshadow) {
+                return $store.read('item/recover/boxshadow', item, parentId);
+            } else if (item.textshadow) {
+                return $store.read('item/recover/textshadow', item, parentId);
+            }
+        }
+    }, {
+        key: GETTER('item/recover/image'),
+        value: function value($store, image, parentId) {
+            var newImageId = $store.read('item/create/object', Object.assign({ parentId: parentId }, convertStyle(image.image)));
+            image.colorsteps.forEach(function (step) {
+                $store.read('item/create/object', Object.assign({}, step, { parentId: newImageId }));
+            });
+
+            return newImageId;
+        }
+    }, {
+        key: GETTER('item/recover/boxshadow'),
+        value: function value($store, boxshadow, parentId) {
+            return $store.read('item/create/object', Object.assign({ parentId: parentId }, boxshadow.boxshadow));
+        }
+    }, {
+        key: GETTER('item/recover/textshadow'),
+        value: function value($store, textshadow, parentId) {
+            return $store.read('item/create/object', Object.assign({ parentId: parentId }, textshadow.textshadow));
+        }
+    }, {
+        key: GETTER('item/recover/layer'),
+        value: function value($store, layer, parentId) {
+            var newLayerId = $store.read('item/create/object', Object.assign({ parentId: parentId }, convertStyle(layer.layer)));
+            layer.images.forEach(function (image) {
+                $store.read('item/recover/image', image, newLayerId);
+            });
+
+            layer.boxshadows.forEach(function (boxshadow) {
+                $store.read('item/recover/boxshadow', boxshadow, newLayerId);
+            });
+
+            layer.textshadows.forEach(function (textshadow) {
+                $store.read('item/recover/textshadow', textshadow, newLayerId);
+            });
+
+            return newLayerId;
+        }
+    }, {
+        key: GETTER('item/recover/page'),
+        value: function value($store, page) {
+            var newPageId = $store.read('item/create/object', convertStyle(page.page));
+            page.layers.forEach(function (layer) {
+                $store.read('item/recover/layer', layer, newPageId);
+            });
+
+            return newPageId;
+        }
+    }, {
+        key: ACTION('item/addCache'),
+        value: function value($store, item, sourceId) {
+            var currentItem = $store.read('item/get', sourceId);
+            $store.run('item/move/to', sourceId, $store.read('item/recover', item, currentItem.parentId));
+        }
+    }, {
+        key: ACTION('item/copy/in'),
+        value: function value($store, destId, sourceId) {
+            var destItem = $store.read('item/get', destId);
+            var newImageId = $store.read('item/recover', $store.read('collect/one', sourceId), destItem.parentId);
+
+            var newImageItem = $store.read('item/get', newImageId);
+            newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
+
+            $store.run('item/set', sourceItem, true);
+            $store.run('item/sort', sourceId);
+        }
+    }, {
+        key: ACTION('item/copy/in/layer'),
+        value: function value($store, destId, sourceId) {
+            var destItem = $store.read('item/get', destId); /* layer */
+            var newImageId = $store.read('item/recover', $store.read('collect/one', sourceId), destItem.parentId);
+
+            var newImageItem = $store.read('item/get', newImageId);
+            newImageItem.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run('item/set', newImageItem, true);
+            $store.run('item/sort', newImageId);
+        }
+    }]);
+    return ItemRecoverManager;
+}(BaseModule);
+
+var DEFAULT_FUNCTION$2 = function DEFAULT_FUNCTION(item) {
+    return item;
+};
+
+var ItemSearchManager = function (_BaseModule) {
+    inherits(ItemSearchManager, _BaseModule);
+
+    function ItemSearchManager() {
+        classCallCheck(this, ItemSearchManager);
+        return possibleConstructorReturn(this, (ItemSearchManager.__proto__ || Object.getPrototypeOf(ItemSearchManager)).apply(this, arguments));
+    }
+
+    createClass(ItemSearchManager, [{
+        key: GETTER('item/get/all'),
+        value: function value($store, parentId) {
+            var items = {};
+
+            $store.read('item/each/children', parentId, function (item) {
+                items[item.id] = $store.read('clone', item);
+
+                var children = $store.read('item/get/all', item.id);
+                Object.keys(children).forEach(function (key) {
+                    items[key] = children[key];
+                });
+            });
+
+            return items;
+        }
+    }, {
+        key: GETTER('item/list'),
+        value: function value($store, filterCallback) {
+            var list = $store.itemKeys.filter(filterCallback);
+
+            list.sort(function (aId, bId) {
+                return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
+            });
+
+            return list;
+        }
+    }, {
+        key: GETTER('item/filter'),
+        value: function value($store, filterCallback) {
+            return $store.read('item/list', filterCallback);
+        }
+    }, {
+        key: GETTER('item/list/page'),
+        value: function value($store) {
+            return $store.read('item/list', this.checkOnlyItemTypeCallback($store, 'page'));
+        }
+    }, {
+        key: GETTER('item/map/page'),
+        value: function value($store, callback) {
+            return $store.read('item/list/page').map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: "checkItemTypeCallback",
+        value: function checkItemTypeCallback($store, parentId) {
+            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
+            return function (id) {
+                return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType;
+            };
+        }
+    }, {
+        key: "checkOnlyItemTypeCallback",
+        value: function checkOnlyItemTypeCallback($store, itemType) {
+            return function (id) {
+                return $store.items[id].itemType == itemType;
+            };
+        }
+    }, {
+        key: "checkParentItemCallback",
+        value: function checkParentItemCallback($store, parentId) {
+            return function (id) {
+                return $store.items[id].parentId == parentId;
+            };
+        }
+    }, {
+        key: GETTER('item/list/children'),
+        value: function value($store, parentId, itemType) {
+            if (isUndefined(itemType)) {
+                return $store.read('item/list', this.checkParentItemCallback($store, parentId));
+            } else {
+                return $store.read('item/list', this.checkItemTypeCallback($store, parentId, itemType));
+            }
+        }
+    }, {
+        key: GETTER('item/count/children'),
+        value: function value($store, parentId) {
+            return $store.read('item/list', this.checkParentItemCallback($store, parentId)).length;
+        }
+    }, {
+        key: GETTER('item/map/children'),
+        value: function value($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkParentItemCallback($store, parentId)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/map/type/children'),
+        value: function value($store, parentId, itemType) {
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, itemType)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/map/layer/children'),
+        value: function value($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_LAYER)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/map/image/children'),
+        value: function value($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/map/colorstep/children'),
+        value: function value($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_COLORSTEP)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/map/boxshadow/children'),
+        value: function value($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_BOXSHADOW)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/map/textshadow/children'),
+        value: function value($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TEXTSHADOW$1)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/filter/children'),
+        value: function value($store, parentId, callback) {
+            return $store.read('item/list/children', parentId).filter(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/each/children'),
+        value: function value($store, parentId, callback) {
+            return $store.read('item/list/children', parentId).forEach(function (id, index) {
+                callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/each/type/children'),
+        value: function value($store, parentId, itemType, callback) {
+            return $store.read('item/list/children', parentId, itemType).forEach(function (id, index) {
+                callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER('item/traverse'),
+        value: function value($store, parentId) {
+            var list = $store.read('item/list/children', parentId);
+
+            list.sort(function (a, b) {
+                var $a = $store.items[a];
+                var $b = $store.items[b];
+
+                if ($a.order == $b.order) {
+
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+
+                    return 0;
+                }
+                return $a.order > $b.order ? 1 : -1;
+            });
+
+            return list.map(function (childId) {
+                return { id: childId, children: $store.read('item/traverse', childId) };
+            });
+        }
+    }, {
+        key: GETTER('item/tree'),
+        value: function value($store) {
+            return $store.read('item/traverse', '');
+        }
+    }, {
+        key: GETTER('item/tree/normalize'),
+        value: function value($store) {
+            var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+            var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+            var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+            var results = [];
+
+            var list = root != null ? $store.read('item/tree') : children;
+            list.forEach(function (item) {
+                results.push({ id: item.id, depth: depth });
+                results.push.apply(results, toConsumableArray($store.read('item/tree/normalize', null, item.children, depth + 1)));
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER('item/path'),
+        value: function value($store, id) {
+            var results = [id];
+            var targetId = id;
+
+            do {
+                var item = $store.read('item/get', targetId);
+
+                if (item.parentId == '') {
+                    results.push(item.id);
+                    break;
+                } else {
+                    results.push(item.id);
+                    targetId = item.parentId;
+                }
+            } while (targetId);
+
+            return results;
+        }
+    }, {
+        key: GETTER('item/dom'),
+        value: function value($store, id) {
+            var element = document.querySelector('[item-layer-id="' + id + '"]');
+
+            if (element) {
+                return new Dom(element);
+            }
+        }
+    }]);
+    return ItemSearchManager;
+}(BaseModule);
+
+var ModuleList = [ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -25066,8 +25110,8 @@ var GradientView = function (_UIElement) {
 
             if (item) {
                 if (item.itemType == 'page') {
-                    var list = this.read('item/list/children', item.id);
-                    this.refs.$colorview.toggle(list.length);
+                    var count = this.read('item/count/children', item.id);
+                    this.refs.$colorview.toggle(count);
                 }
             }
         }
