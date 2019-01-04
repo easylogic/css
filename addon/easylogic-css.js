@@ -13818,7 +13818,7 @@ var TextShadowManager = function (_BaseModule) {
 
     createClass(TextShadowManager, [{
         key: GETTER('textshadow/toCSS'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
@@ -13834,7 +13834,7 @@ var TextShadowManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('textshadow/cache/toCSS'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 
@@ -13849,7 +13849,7 @@ var TextShadowManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('textshadow/toString'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
 
@@ -13861,7 +13861,7 @@ var TextShadowManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('textshadow/toTextShadowString'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
 
@@ -13869,7 +13869,7 @@ var TextShadowManager = function (_BaseModule) {
 
             var results = [];
 
-            results.push(item.offsetX || '0px', item.offsetY || '0px', item.blurRadius || '0px', item.color);
+            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), item.color);
 
             return results.join(' ');
         }

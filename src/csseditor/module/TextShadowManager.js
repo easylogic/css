@@ -1,5 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
+import { stringUnit } from "../../util/css/types";
 
 export default class TextShadowManager extends BaseModule { 
 
@@ -45,9 +46,9 @@ export default class TextShadowManager extends BaseModule {
         var results = []
 
         results.push(
-            item.offsetX || '0px',
-            item.offsetY || '0px',
-            item.blurRadius || '0px',
+            stringUnit(item.offsetX),
+            stringUnit(item.offsetY),
+            stringUnit(item.blurRadius),
             item.color
         )
 
