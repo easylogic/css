@@ -4,8 +4,6 @@ $page-item-height: 35px;
 $button-size: 24px;
 $layer-item-padding: 4px;
 $mini-layer-view-height: 420px;
-$layer-preview-size: 40px;
-$image-preview-size: 30px;
 
 .layers {
     // border-bottom: 1px solid $border-color;
@@ -79,42 +77,22 @@ $image-preview-size: 30px;
         
         .tree-item {
             display: block;
-            height: $layer-preview-size;            
-            // box-sizing: border-box;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            // padding: 5px;
             border-left: 5px solid rgba($border-color, 0.5);
-            margin-top: 10px;
+            margin: 5px 0px;
+            padding: 5px 5px;
+
+            &.image {
+                padding-left: 30px;
+            }
 
             &.selected {
                 border-left-color: #333;
                 background-color: #ececec;
                 .item-tools {
                     visibility: visible;
-                }
-            }
-
-            .item-view-container {
-                position: relative; 
-                @include transparent-background();
-                background-color: white; 
-                box-shadow: 0 0 0 rgba( 0, 0, 0, 0.5);
-                pointer-events: none;
-                display: inline-block;
-                vertical-align: middle;
-                box-sizing: border-box;
-                height: 100%;
-                width: $layer-preview-size;
-                // border: 1px solid #ececec;
-
-                .item-view {
-                    position: absolute;
-                    top: 0px;
-                    left: 0px;
-                    right: 0px;
-                    bottom: 0px;
                 }
             }
 
@@ -155,139 +133,6 @@ $image-preview-size: 30px;
 
         }
 
-        .gradient-list-group {
-            position: relative;
-            box-sizing: border-box;
-            padding-left: 45px;
-
-            &.collapsed {
-                .gradient-collapse-button {
-                    background-image: linear-gradient(to right, black, black);
-                    background-size: 1px 1px;
-                    background-position: center center;
-                    background-repeat: repeat-x;
-    
-                }
-
-                .tree-item-children {
-                    overflow:hidden;
-                    height: $image-preview-size + 2px;
-                    box-sizing: border-box;
-                    display: block;
-
-                    .tree-item {                
-                        width: $image-preview-size;        
-                        box-sizing: border-box;
-                        display: inline-block;
-                        vertical-align: middle;
-                        border-bottom: 0px;
-                        border-left: 0px;                        
-                        border: 2px solid rgba($border-color, 0.5);
-                        margin-top:1px;
-
-                        &.selected {
-                            border-color: #333;
-                        }
-                        .item-title, .item-tools {
-                            display: none;
-                        }
-                    }
-                }
-
-            }            
-
-            .gradient-collapse-button {
-                position: absolute;
-                width: 20px;
-                height: 20px;
-                box-sizing: border-box;
-                left: 25px;
-                top: 15px;
-                cursor: pointer;
-                transform: translateY(-50%) translateX(-50%);
-                background-image: linear-gradient(to right, black, black),linear-gradient(to right, black, black);
-                background-size: 1px 1px, 1px 1px;
-                background-position: center center, center center;
-                background-repeat: repeat-y, repeat-x;
-
-            }
-
-            .tree-item-children {
-
-                .tree-item {
-                    border:0px;
-                    background-color: white; 
-                    // border-bottom: 1px solid $border-color;
-                    border-left: 5px solid rgba($border-color, 0.5);
-                    transition: all 0.3s linear; 
-                    height: $image-preview-size;
-
-                    .item-view-container {
-                        width: $image-preview-size;
-                    }
-    
-                    &:first-child {
-                        // border-top: 1px solid $border-color;
-                    }
-
-                    &.selected {
-                        border-left-color: #333;
-                        // background-image: repeating-linear-gradient(135deg, rgba(0, 0, 0, 0) 0%,rgb(244,244,244) 0%,rgb(244,244,244) 10px,rgba(0, 0, 0, 0.1) 10px,rgba(0, 0, 0, 0.1) 20px);
-                        // background-repeat: repeat-x;
-                        // background-size: 14px 14px;
-                        // background-position: center center;
-                    }
-                }
-    
-                
-            }
-        }
-
-
     }
 
-    .mini-layer-view {
-        flex: none;
-        height: $mini-layer-view-height;
-        display: none;
-        border-right: 0px;
-        position: relative;        
-
-        .property-item {
-            > .title {
-                display: none;
-            }
-        }
-
-        > .tab-header {
-            > .tab-item {
-                text-align: center;
-            }
-
-        }
-
-        .tab-body {
-            border:0px;
-        }
-    }
-
-    &.show-mini-view {
-        .layer-list {
-            // bottom: $mini-layer-view-height;
-        }
-
-        .mini-layer-view {
-            display: block;
-        }
-    }
-
-}
-
-.layout-main.small-mode {
-    .layer-list {
-        .tree-item {
-            height: $layer-preview-size;
-            overflow: auto;
-        }
-    }
 }

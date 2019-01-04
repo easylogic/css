@@ -7165,24 +7165,14 @@ var EventMachin = function () {
     this.childComponents = this.components();
   }
 
-  /**
-   * 부모가 정의한 template 과  그 안에서 동작하는 자식 컴포넌트들을 다 합쳐서 
-   * 최종 element 를 만들어준다. 
-   * 
-   * 그리고 자동으로 load 되어질게 있으면 로드 해준다. 
-   */
-
-
   createClass(EventMachin, [{
     key: 'render',
     value: function render($container) {
-      // 1. 나의 template 을 만들어내고  
       this.$el = this.parseTemplate(this.template());
       this.refs.$el = this.$el;
 
       if ($container) $container.html(this.$el);
 
-      // 데이타 로드 하고 
       this.load();
 
       this.afterRender();
@@ -7190,24 +7180,11 @@ var EventMachin = function () {
   }, {
     key: 'afterRender',
     value: function afterRender() {}
-
-    /**
-     * 자식 컴포넌트로 사용될 객체 정의 
-     */
-
   }, {
     key: 'components',
     value: function components() {
       return {};
     }
-
-    /**
-     * Class 기반으로 $el 을 생성하기 위해서 
-     * 선언형으로 html 템플릿을 정의한다. 
-     * 
-     * @param {*} html 
-     */
-
   }, {
     key: 'parseTemplate',
     value: function parseTemplate(html, isLoad) {
@@ -7217,7 +7194,8 @@ var EventMachin = function () {
         html = html.join('');
       }
 
-      // 모든 element 는 root element 가 하나여야 한다. 
+      html = html.trim();
+
       var list = new Dom("div").html(html).children();
 
       var fragment = document.createDocumentFragment();
@@ -7243,14 +7221,6 @@ var EventMachin = function () {
 
       return fragment;
     }
-
-    /**
-     * target 으로 지정된 자식 컴포넌트를 대체해준다.
-     * load 이후에 parseComponent 를 한번더 실행을 해야한다. 
-     * load 이후에 새로운 Component 가 있으면 parseComponent 를 할 수가 없는데.... 
-     * 이상한데 왜 로드가 안되어 있지? 
-     */
-
   }, {
     key: 'parseComponent',
     value: function parseComponent() {
@@ -7290,9 +7260,6 @@ var EventMachin = function () {
         });
       });
     }
-
-    // load function이 정의된 객체는 load 를 실행해준다. 
-
   }, {
     key: 'load',
     value: function load() {
@@ -10829,14 +10796,6 @@ var ImageManager = function (_BaseModule) {
             var colors = [].concat(toConsumableArray(colorsteps));
             if (!colors.length) return '';
 
-            /*
-            colors.sort((a, b) => {
-                if (a.index == b.index) return 0;
-                return a.index > b.index ? 1 : -1;
-            })*/
-
-            // console.log(colors);
-
             var newColors = [];
             colors.forEach(function (c, index) {
                 if (c.cut && index > 0) {
@@ -10855,9 +10814,6 @@ var ImageManager = function (_BaseModule) {
             colors = newColors.map(function (f) {
 
                 var value$$1 = stringUnit(percentUnit(f.percent));
-
-                // console.log(value,f, f[f.unit], f.unit);
-
                 return f.color + ' ' + value$$1;
             }).join(',');
 
@@ -20335,7 +20291,7 @@ var LayerListView = function (_UIElement) {
         key: 'makeItemNodeImage',
         value: function makeItemNodeImage(item) {
             var selected = this.read('selection/check', item.id) ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" draggable="true" >\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('image/toString', item) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    &lt;' + item.type + '&gt;\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>                \n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-image-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>            \n            </div>\n            ';
+            return '\n            <div class=\'tree-item image ' + selected + '\' id="' + item.id + '" draggable="true" >\n                <div class="item-title"> \n                    &lt;' + item.type + '&gt;\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>                \n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-image-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>            \n            </div>\n            ';
         }
     }, {
         key: 'makeItemNodeLayer',
@@ -20346,7 +20302,7 @@ var LayerListView = function (_UIElement) {
 
             var selected = this.read('selection/check', item.id) ? 'selected' : '';
             var collapsed = item.gradientCollapsed ? 'collapsed' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" item-type=\'layer\' draggable="true">\n                <div class="item-view-container">\n                    <div class="item-view"  style=\'' + this.read('layer/toString', item, false) + '\'></div>\n                </div>\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group ' + collapsed + '" >\n                <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div>            \n                <div class="tree-item-children">\n                    ' + this.read('item/map/image/children', item.id, function (item) {
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" item-type=\'layer\' draggable="true">\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group" >\n                <!-- <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div> -->\n                <div class="tree-item-children">\n                    ' + this.read('item/map/image/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }).join('') + '\n                </div>\n            </div>       \n            ';
         }
@@ -20390,39 +20346,53 @@ var LayerListView = function (_UIElement) {
 
             this.$el.$('[id="' + id + '"]').addClass('selected');
         }
-    }, {
-        key: 'refreshLayer',
-        value: function refreshLayer() {
-            var _this4 = this;
 
-            this.read('selection/current/layer', function (items) {
+        // refreshLayer () {
+        //     this.read('selection/current/layer', (items) => {
 
-                if (!items.length) {
-                    items = [items];
-                }
+        //         if (!items.length) {
+        //             items = [items]
+        //         }
 
-                items.forEach(function (item) {
-                    _this4.$el.$('[id="' + item.id + '"] .item-view').cssText(_this4.read('layer/toString', item, false));
-                });
-            });
-        }
-    }, {
-        key: 'refreshImage',
-        value: function refreshImage() {
-            var _this5 = this;
+        //         items.forEach(item => {
+        //             this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
+        //         })
+        //     })
+        // }    
 
-            this.read('selection/current/image', function (item) {
-                _this5.$el.$('[id="' + item.id + '"] .item-view').cssText(_this5.read('image/toString', item));
-            });
-        }
+        // refreshImage() {
+        //     this.read('selection/current/image', (item) => {
+        //         this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
+        //     })
+        // }
 
-        // indivisual effect 
+        // // indivisual effect 
+        // [EVENT(
+        //     CHANGE_LAYER,
+        //     CHANGE_LAYER_BACKGROUND_COLOR,
+        //     CHANGE_LAYER_CLIPPATH,
+        //     CHANGE_LAYER_CLIPPATH_POLYGON,
+        //     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+        //     CHANGE_LAYER_FILTER,
+        //     CHANGE_LAYER_POSITION,
+        //     CHANGE_LAYER_RADIUS,
+        //     CHANGE_LAYER_SIZE,
+        //     CHANGE_LAYER_ROTATE,
+        //     CHANGE_LAYER_OPACITY,
+        //     CHANGE_LAYER_TRANSFORM,
+        //     CHANGE_LAYER_TRANSFORM_3D,
 
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, CHANGE_LAYER_FILTER, CHANGE_LAYER_POSITION, CHANGE_LAYER_RADIUS, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_COLOR_STEP, CHANGE_IMAGE, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE),
-        value: function value() {
-            this.refreshLayer();
-        }
+        //     CHANGE_COLOR_STEP,
+        //     CHANGE_IMAGE,
+        //     CHANGE_IMAGE_ANGLE,
+        //     CHANGE_IMAGE_COLOR,
+        //     CHANGE_IMAGE_LINEAR_ANGLE,
+        //     CHANGE_IMAGE_RADIAL_POSITION,
+        //     CHANGE_IMAGE_RADIAL_TYPE
+        // )]() {
+        //     this.refreshLayer()
+        // }
+
 
         // all effect 
 
@@ -24975,6 +24945,7 @@ var GradientView = function (_UIElement) {
             get$1(GradientView.prototype.__proto__ || Object.getPrototypeOf(GradientView.prototype), 'initialize', this).call(this);
 
             this.hasScroll = false;
+            this.initializeLayerCache();
         }
     }, {
         key: 'template',
@@ -24994,6 +24965,11 @@ var GradientView = function (_UIElement) {
             };
         }
     }, {
+        key: 'initializeLayerCache',
+        value: function initializeLayerCache() {
+            this.layerItems = {};
+        }
+    }, {
         key: LOAD('$colorview'),
         value: function value$$1() {
             var _this2 = this;
@@ -25003,6 +24979,8 @@ var GradientView = function (_UIElement) {
             if (!page) {
                 return '';
             }
+
+            this.initializeLayerCache();
 
             var list = this.read('item/map/children', page.id, function (item, index) {
                 var content = item.content || '';
@@ -25036,11 +25014,17 @@ var GradientView = function (_UIElement) {
                 }
 
                 items.forEach(function (item) {
-                    var $el = _this3.$el.$('[item-layer-id="' + item.id + '"]');
-                    $el.cssText(_this3.read('layer/toString', item, true));
+
+                    if (!_this3.layerItems[item.id]) {
+                        var $el = _this3.$el.$('[item-layer-id="' + item.id + '"]');
+
+                        _this3.layerItems[item.id] = $el;
+                    }
+
+                    _this3.layerItems[item.id].cssText(_this3.read('layer/toString', item, true));
 
                     var content = item.content || '';
-                    $el.html(content + _this3.read('layer/toStringClipPath', item));
+                    _this3.layerItems[item.id].html(content + _this3.read('layer/toStringClipPath', item));
                 });
             });
         }
@@ -25056,8 +25040,13 @@ var GradientView = function (_UIElement) {
                 }
 
                 items.forEach(function (item) {
-                    var $el = _this4.$el.$('[item-layer-id="' + item.id + '"]');
-                    $el.css(_this4.read('layer/bound/toCSS', item));
+                    if (!_this4.layerItems[item.id]) {
+                        var $el = _this4.$el.$('[item-layer-id="' + item.id + '"]');
+
+                        _this4.layerItems[item.id] = $el;
+                    }
+
+                    _this4.layerItems[item.id].css(_this4.read('layer/bound/toCSS', item));
                 });
             });
         }

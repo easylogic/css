@@ -329,14 +329,6 @@ export default class ImageManager extends BaseModule {
         var colors = [...colorsteps]
         if (!colors.length) return ''; 
         
-        /*
-        colors.sort((a, b) => {
-            if (a.index == b.index) return 0;
-            return a.index > b.index ? 1 : -1;
-        })*/
-
-        // console.log(colors);
-
         var newColors = []
         colors.forEach( (c, index) => {
             if (c.cut && index > 0) {
@@ -355,9 +347,6 @@ export default class ImageManager extends BaseModule {
         colors = newColors.map(f => {
 
             var value = stringUnit( percentUnit(f.percent) )
-
-            // console.log(value,f, f[f.unit], f.unit);
-
             return `${f.color} ${value}`
         }).join(',')
 

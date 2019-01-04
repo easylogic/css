@@ -5,6 +5,8 @@ import { debounce, isFunction } from './functions/func';
 import { CONTROL, ALT, SHIFT, META } from './Key';
 
 
+const checkGroup = /\>(\W*)\</g
+
 const META_KEYS = [ CONTROL, SHIFT, ALT, META];
 
 export default class EventMachin { 
@@ -16,20 +18,12 @@ export default class EventMachin {
     this.childComponents = this.components()
   }
 
-  /**
-   * 부모가 정의한 template 과  그 안에서 동작하는 자식 컴포넌트들을 다 합쳐서 
-   * 최종 element 를 만들어준다. 
-   * 
-   * 그리고 자동으로 load 되어질게 있으면 로드 해준다. 
-   */
   render ($container) {
-    // 1. 나의 template 을 만들어내고  
     this.$el = this.parseTemplate(this.template())
     this.refs.$el = this.$el;   
 
     if ($container) $container.html(this.$el)
 
-    // 데이타 로드 하고 
     this.load()    
 
     this.afterRender();
@@ -39,26 +33,18 @@ export default class EventMachin {
     
   }
  
-  /**
-   * 자식 컴포넌트로 사용될 객체 정의 
-   */
   components () {
     return {} 
   }
 
-  /**
-   * Class 기반으로 $el 을 생성하기 위해서 
-   * 선언형으로 html 템플릿을 정의한다. 
-   * 
-   * @param {*} html 
-   */
   parseTemplate (html, isLoad) {
 
     if (Array.isArray(html)) {
       html = html.join('')
     }
 
-    // 모든 element 는 root element 가 하나여야 한다. 
+    html = html.trim();
+
     const list = new Dom("div").html(html).children()
     
     var fragment = document.createDocumentFragment()
@@ -86,12 +72,6 @@ export default class EventMachin {
     return fragment
   }
 
-  /**
-   * target 으로 지정된 자식 컴포넌트를 대체해준다.
-   * load 이후에 parseComponent 를 한번더 실행을 해야한다. 
-   * load 이후에 새로운 Component 가 있으면 parseComponent 를 할 수가 없는데.... 
-   * 이상한데 왜 로드가 안되어 있지? 
-   */
   parseComponent () {
     const $el = this.$el; 
     Object.keys(this.childComponents).forEach(ComponentName => {
@@ -131,7 +111,6 @@ export default class EventMachin {
     })
   }
 
-  // load function이 정의된 객체는 load 를 실행해준다. 
   load () {
     this.filterProps(CHECK_LOAD_PATTERN).forEach(callbackName => {
       const elName = callbackName.split(LOAD_SAPARATOR)[1]

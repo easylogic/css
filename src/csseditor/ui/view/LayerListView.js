@@ -51,10 +51,7 @@ export default class LayerListView extends UIElement {
     makeItemNodeImage (item) {
         var selected = this.read('selection/check', item.id) ? 'selected' : ''; 
         return `
-            <div class='tree-item ${selected}' id="${item.id}" draggable="true" >
-                <div class="item-view-container">
-                    <div class="item-view"  style='${this.read('image/toString', item)}'></div>
-                </div>
+            <div class='tree-item image ${selected}' id="${item.id}" draggable="true" >
                 <div class="item-title"> 
                     &lt;${item.type}&gt;
                     <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
@@ -72,9 +69,6 @@ export default class LayerListView extends UIElement {
         var collapsed = item.gradientCollapsed ? 'collapsed' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
-                <div class="item-view-container">
-                    <div class="item-view"  style='${this.read('layer/toString', item, false)}'></div>
-                </div>
                 <div class="item-title"> 
                     ${index+1}. ${item.name || `Layer `} 
                     <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
@@ -83,8 +77,8 @@ export default class LayerListView extends UIElement {
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">+</button>
                 </div>                            
             </div>
-            <div class="gradient-list-group ${collapsed}" >
-                <div class='gradient-collapse-button' item-id="${item.id}"></div>            
+            <div class="gradient-list-group" >
+                <!-- <div class='gradient-collapse-button' item-id="${item.id}"></div> -->
                 <div class="tree-item-children">
                     ${this.read('item/map/image/children', item.id, (item) => {
                         return this.makeItemNodeImage(item)
@@ -129,51 +123,51 @@ export default class LayerListView extends UIElement {
         this.$el.$(`[id="${id}"]`).addClass('selected');
     }
 
-    refreshLayer () {
-        this.read('selection/current/layer', (items) => {
+    // refreshLayer () {
+    //     this.read('selection/current/layer', (items) => {
 
-            if (!items.length) {
-                items = [items]
-            }
+    //         if (!items.length) {
+    //             items = [items]
+    //         }
             
-            items.forEach(item => {
-                this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
-            })
-        })
-    }    
+    //         items.forEach(item => {
+    //             this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
+    //         })
+    //     })
+    // }    
 
-    refreshImage() {
-        this.read('selection/current/image', (item) => {
-            this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
-        })
-    }
+    // refreshImage() {
+    //     this.read('selection/current/image', (item) => {
+    //         this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
+    //     })
+    // }
 
-    // indivisual effect 
-    [EVENT(
-        CHANGE_LAYER,
-        CHANGE_LAYER_BACKGROUND_COLOR,
-        CHANGE_LAYER_CLIPPATH,
-        CHANGE_LAYER_CLIPPATH_POLYGON,
-        CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-        CHANGE_LAYER_FILTER,
-        CHANGE_LAYER_POSITION,
-        CHANGE_LAYER_RADIUS,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_ROTATE,
-        CHANGE_LAYER_OPACITY,
-        CHANGE_LAYER_TRANSFORM,
-        CHANGE_LAYER_TRANSFORM_3D,
+    // // indivisual effect 
+    // [EVENT(
+    //     CHANGE_LAYER,
+    //     CHANGE_LAYER_BACKGROUND_COLOR,
+    //     CHANGE_LAYER_CLIPPATH,
+    //     CHANGE_LAYER_CLIPPATH_POLYGON,
+    //     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+    //     CHANGE_LAYER_FILTER,
+    //     CHANGE_LAYER_POSITION,
+    //     CHANGE_LAYER_RADIUS,
+    //     CHANGE_LAYER_SIZE,
+    //     CHANGE_LAYER_ROTATE,
+    //     CHANGE_LAYER_OPACITY,
+    //     CHANGE_LAYER_TRANSFORM,
+    //     CHANGE_LAYER_TRANSFORM_3D,
             
-        CHANGE_COLOR_STEP,
-        CHANGE_IMAGE,
-        CHANGE_IMAGE_ANGLE,
-        CHANGE_IMAGE_COLOR,
-        CHANGE_IMAGE_LINEAR_ANGLE,
-        CHANGE_IMAGE_RADIAL_POSITION,
-        CHANGE_IMAGE_RADIAL_TYPE
-    )]() {
-        this.refreshLayer()
-    }
+    //     CHANGE_COLOR_STEP,
+    //     CHANGE_IMAGE,
+    //     CHANGE_IMAGE_ANGLE,
+    //     CHANGE_IMAGE_COLOR,
+    //     CHANGE_IMAGE_LINEAR_ANGLE,
+    //     CHANGE_IMAGE_RADIAL_POSITION,
+    //     CHANGE_IMAGE_RADIAL_TYPE
+    // )]() {
+    //     this.refreshLayer()
+    // }
 
 
 

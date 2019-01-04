@@ -49,6 +49,7 @@ export default class GradientView extends UIElement {
         super.initialize();
 
         this.hasScroll = false;
+        this.initializeLayerCache();
     }
 
     template () {
@@ -82,12 +83,18 @@ export default class GradientView extends UIElement {
         }
     }
 
+    initializeLayerCache () {
+        this.layerItems = {} 
+    }
+
     [LOAD('$colorview')] () {
         var page = this.read('selection/current/page')
 
         if (!page) {
             return ''; 
         }
+
+        this.initializeLayerCache();
 
         var list = this.read('item/map/children', page.id, (item, index) => {
             var content = item.content || '';
@@ -123,11 +130,17 @@ export default class GradientView extends UIElement {
             }
             
             items.forEach(item => {
-                var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
-                $el.cssText(this.read('layer/toString', item, true))
+
+                if (!this.layerItems[item.id]) {
+                    var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
+
+                    this.layerItems[item.id] = $el; 
+                }
+
+                this.layerItems[item.id].cssText(this.read('layer/toString', item, true))
 
                 var content = item.content || '';
-                $el.html(content + this.read('layer/toStringClipPath', item))
+                this.layerItems[item.id].html(content + this.read('layer/toStringClipPath', item))
             })
         })
     }
@@ -140,8 +153,13 @@ export default class GradientView extends UIElement {
             }
             
             items.forEach(item => {
-                var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
-                $el.css(this.read('layer/bound/toCSS', item))
+                if (!this.layerItems[item.id]) {
+                    var $el = this.$el.$(`[item-layer-id="${item.id}"]`);
+
+                    this.layerItems[item.id] = $el; 
+                }
+
+                this.layerItems[item.id].css(this.read('layer/bound/toCSS', item))            
             })
         })
     }    
