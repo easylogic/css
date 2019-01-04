@@ -82,7 +82,11 @@ export default class LayerShapeEditor extends UIElement {
     }
 
     isShow () {
-        return this.read('selection/is/layer');
+        // console.log(this.read('selection/current'));
+        return this.read('selection/is/layer') 
+            || this.read('selection/is/image')
+            || this.read('selection/is/boxshadow')
+            || this.read('selection/is/textshadow');                        
     }
 
     [EVENT(

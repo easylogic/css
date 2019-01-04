@@ -13229,37 +13229,37 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER('selection/is/layer'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_LAYER);
+            return $store.selection.itemType == ITEM_TYPE_LAYER;
         }
     }, {
         key: GETTER('selection/is/image'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_IMAGE);
+            return $store.selection.itemType == ITEM_TYPE_IMAGE;
         }
     }, {
         key: GETTER('selection/is/page'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_PAGE);
+            return $store.selection.itemType == ITEM_TYPE_PAGE;
         }
     }, {
         key: GETTER('selection/is/boxshadow'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_BOXSHADOW);
+            return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
         }
     }, {
         key: GETTER('selection/is/textshadow'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_TEXTSHADOW$1);
+            return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1;
         }
     }, {
         key: GETTER('selection/is/filter'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_FILTER);
+            return $store.selection.itemType == ITEM_TYPE_FILTER;
         }
     }, {
         key: GETTER('selection/is/backdrop-filter'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_BACKDROP);
+            return $store.selection.itemType == ITEM_TYPE_BACKDROP;
         }
     }, {
         key: GETTER('selection/is/one'),
@@ -24696,7 +24696,8 @@ var LayerShapeEditor = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('selection/is/layer');
+            // console.log(this.read('selection/current'));
+            return this.read('selection/is/layer') || this.read('selection/is/image') || this.read('selection/is/boxshadow') || this.read('selection/is/textshadow');
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),

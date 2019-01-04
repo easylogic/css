@@ -263,31 +263,31 @@ export default class SelectionManager extends BaseModule {
     }        
 
     [GETTER('selection/is/layer')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_LAYER);
+        return $store.selection.itemType == ITEM_TYPE_LAYER;
     }        
 
     [GETTER('selection/is/image')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_IMAGE);
+        return $store.selection.itemType == ITEM_TYPE_IMAGE;
     }            
 
     [GETTER('selection/is/page')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_PAGE);
+        return $store.selection.itemType == ITEM_TYPE_PAGE;
     }                
 
     [GETTER('selection/is/boxshadow')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_BOXSHADOW);
+        return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
     }                    
 
     [GETTER('selection/is/textshadow')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_TEXTSHADOW);
+        return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW;
     }                    
     
     [GETTER('selection/is/filter')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_FILTER);
+        return $store.selection.itemType == ITEM_TYPE_FILTER;
     }                    
     
     [GETTER('selection/is/backdrop-filter')] ($store, type) {
-        return $store.read('selection/is/item', ITEM_TYPE_BACKDROP);
+        return $store.selection.itemType == ITEM_TYPE_BACKDROP;
     }                        
 
     [GETTER('selection/is/one')] ($store) {

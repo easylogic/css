@@ -13381,37 +13381,37 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER('selection/is/layer'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_LAYER);
+            return $store.selection.itemType == ITEM_TYPE_LAYER;
         }
     }, {
         key: GETTER('selection/is/image'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_IMAGE);
+            return $store.selection.itemType == ITEM_TYPE_IMAGE;
         }
     }, {
         key: GETTER('selection/is/page'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_PAGE);
+            return $store.selection.itemType == ITEM_TYPE_PAGE;
         }
     }, {
         key: GETTER('selection/is/boxshadow'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_BOXSHADOW);
+            return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
         }
     }, {
         key: GETTER('selection/is/textshadow'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_TEXTSHADOW$1);
+            return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1;
         }
     }, {
         key: GETTER('selection/is/filter'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_FILTER);
+            return $store.selection.itemType == ITEM_TYPE_FILTER;
         }
     }, {
         key: GETTER('selection/is/backdrop-filter'),
         value: function value$$1($store, type) {
-            return $store.read('selection/is/item', ITEM_TYPE_BACKDROP);
+            return $store.selection.itemType == ITEM_TYPE_BACKDROP;
         }
     }, {
         key: GETTER('selection/is/one'),
@@ -20630,7 +20630,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                        <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n              \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="button-group group-order" ref="$groupOrdering">\n                    <button type="button" title="front" data-value="front"></button>\n                    <button type="button" title="back" data-value="back"></button>\n                    <button type="button" title="forward" data-value="forward"></button>\n                    <button type="button" title="backward" data-value="backward"></button>\n                </div>                \n                                \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                        <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button>\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n              \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView></ImageListView>\n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="button-group group-order" ref="$groupOrdering">\n                    <button type="button" title="front" data-value="front"></button>\n                    <button type="button" title="back" data-value="back"></button>\n                    <button type="button" title="forward" data-value="forward"></button>\n                    <button type="button" title="backward" data-value="backward"></button>\n                </div>                \n                                \n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -24847,7 +24847,8 @@ var LayerShapeEditor = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('selection/is/layer');
+            // console.log(this.read('selection/current'));
+            return this.read('selection/is/layer') || this.read('selection/is/image') || this.read('selection/is/boxshadow') || this.read('selection/is/textshadow');
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
