@@ -1,5 +1,5 @@
 import { percent2px, em2px, px2percent, em2percent, percent2em, px2em, parseParamNumber } from "../filter/functions";
-import { isString, isNotString } from "../functions/func";
+import { isString, isNotString, isNumber } from "../functions/func";
 
 export const UNIT_VALUE = 'value';
 export const UNIT_PX = 'px';
@@ -45,11 +45,12 @@ export function unit(value, unit) {
     return value + unitString(unit);
 }
 
-export function stringUnit(obj) {
+export function stringUnit(obj = pxUnit(0)) {
     return unit(obj.value, obj.unit);
 }
 
-export function unitValue(obj) {
+export function unitValue(obj = pxUnit(0)) {
+    if (isNumber(obj)) return obj; 
     return obj.value; 
 }
 
@@ -152,4 +153,18 @@ export function value2em (obj, maxValue, fontSize = 16) {
     } else if (isEmUnit(obj)) {
         return obj.value;
     }
+}
+
+export function convertPercentUnit (obj) {
+    if (isValueUnit(obj)) {
+        if (obj.value == 'left' || obj.value == 'top') {
+            return percentUnit(0);
+        } else if (obj.value == 'right' || obj.value == 'bottom') {
+            return percentUnit(100);
+        } else if (obj.value == 'center') {
+            return percentUnit(50);
+        }
+    }
+
+    return obj; 
 }

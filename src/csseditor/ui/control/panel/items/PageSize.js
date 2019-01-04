@@ -1,7 +1,6 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
-import { parseParamNumber } from "../../../../../util/gl/filter/util";
 import { CHANGE_PAGE_SIZE, CHANGE_EDITOR } from "../../../../types/event";
-import { px } from "../../../../../util/css/types";
+import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
 
 export default class PageSize extends UIElement {
@@ -13,14 +12,14 @@ export default class PageSize extends UIElement {
                         <label>   Width</label>
                         
                         <div>
-                            <input type='number' ref="$width"> <span>px</span>
+                            <input type='number' ref="$width"> <span>${UNIT_PX}</span>
                             <button type="button" ref="$rect">rect</button>
                         </div>
                     </div>
                     <div>
                         <label>Height</label>
                         <div>
-                            <input type='number' ref="$height"> <span>px</span>
+                            <input type='number' ref="$height"> <span>${UNIT_PX}</span>
                         </div>
                     </div>   
                                  
@@ -35,8 +34,8 @@ export default class PageSize extends UIElement {
 
     refresh() {
         this.read('selection/current/page', (item) => {
-            this.refs.$width.val(parseParamNumber(item.width))
-            this.refs.$height.val(parseParamNumber(item.height))
+            this.refs.$width.val(unitValue(item.width))
+            this.refs.$height.val(unitValue(item.height))
         })
         
     }
@@ -46,7 +45,7 @@ export default class PageSize extends UIElement {
         this.read('selection/current/page', (item) => {
             var newValue = {
                 id: item.id, 
-                width: px( this.refs.$width.int() )
+                width: pxUnit( this.refs.$width.int() )
             }
 
             newValue.height = newValue.width; 
@@ -58,14 +57,14 @@ export default class PageSize extends UIElement {
     [INPUT('$width')] () {
 
         this.read('selection/current/page/id', (id) => {
-            this.commit(CHANGE_PAGE_SIZE, { id, width: px(this.refs.$width.int() ) });
+            this.commit(CHANGE_PAGE_SIZE, { id, width: pxUnit(this.refs.$width.int() ) });
         })
     }
 
     [INPUT('$height')] () {
 
         this.read('selection/current/page/id', (id) => {
-            this.commit(CHANGE_PAGE_SIZE, { id, height: px(this.refs.$height.int()) });            
+            this.commit(CHANGE_PAGE_SIZE, { id, height: pxUnit(this.refs.$height.int()) });            
         })
     }    
 }

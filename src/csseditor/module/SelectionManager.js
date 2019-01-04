@@ -1,6 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_SELECTION } from "../types/event";
-import { parseParamNumber } from "../../util/filter/functions";
 import { 
     ITEM_TYPE_IMAGE, 
     ITEM_TYPE_LAYER, 
@@ -8,7 +7,7 @@ import {
     ITEM_TYPE_TEXTSHADOW, 
     ITEM_TYPE_PAGE 
 } from "./ItemTypes";
-import { px } from "../../util/css/types";
+import { unitValue, pxUnit } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 
@@ -308,10 +307,10 @@ export default class SelectionManager extends BaseModule {
         }).map(id => {
             var {x, y, width, height} = $store.items[id]
 
-            x = parseParamNumber(x);
-            y = parseParamNumber(y);
-            width = parseParamNumber(width);
-            height = parseParamNumber(height);
+            x = unitValue(x);
+            y = unitValue(y);
+            width = unitValue(width);
+            height = unitValue(height);
             var x2 = x + width;
             var y2 = y + height;
 
@@ -366,10 +365,10 @@ export default class SelectionManager extends BaseModule {
         var items = $store.selection.ids.map(id => {
             var {x, y, width, height} = $store.items[id]
 
-            x = parseParamNumber(x);
-            y = parseParamNumber(y);
-            width = parseParamNumber(width);
-            height = parseParamNumber(height);
+            x = unitValue(x);
+            y = unitValue(y);
+            width = unitValue(width);
+            height = unitValue(height);
             var x2 = x + width;
             var y2 = y + height;
 
@@ -384,10 +383,10 @@ export default class SelectionManager extends BaseModule {
         var width = x2 - x;
         var height = y2 - y; 
 
-        x = px(x)
-        y = px(y)
-        width = px(width)
-        height = px(height)
+        x = pxUnit(x)
+        y = pxUnit(y)
+        width = pxUnit(width)
+        height = pxUnit(height)
 
         if (items.length == 1) {
             return { x, y, width, height, id: items[0].id}

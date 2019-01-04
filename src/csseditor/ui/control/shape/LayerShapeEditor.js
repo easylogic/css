@@ -1,4 +1,3 @@
-import { parseParamNumber } from '../../../../util/filter/functions';
 import shapeEditor from './shape-editor/index';
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { 
@@ -10,7 +9,7 @@ import {
     CHANGE_LAYER_POSITION, 
     CHANGE_LAYER_ROTATE 
 } from '../../../types/event';
-import { px } from '../../../../util/css/types';
+import { pxUnit, stringUnit, unitValue } from '../../../../util/css/types';
 
 
 export default class LayerShapeEditor extends UIElement {
@@ -55,8 +54,13 @@ export default class LayerShapeEditor extends UIElement {
         var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
         var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-        x = px( parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) ); 
-        y = px( parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) ); 
+        x = pxUnit( unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
+        y = pxUnit( unitValue(y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
+
+        x = stringUnit(x);
+        y = stringUnit(y);
+        width = stringUnit(width);
+        height = stringUnit(height);
 
         var transform = "none"; 
         

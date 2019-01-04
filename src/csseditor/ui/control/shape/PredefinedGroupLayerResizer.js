@@ -1,5 +1,4 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { parseParamNumber } from '../../../../util/filter/functions';
 import { 
     CHANGE_EDITOR, 
     CHANGE_LAYER_SIZE, 
@@ -11,7 +10,7 @@ import {
     CHANGE_PAGE_SIZE
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
-import { px, UNIT_PX } from '../../../../util/css/types';
+import { px, UNIT_PX, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER, LOAD } from '../../../../util/Event';
 import { defaultValue, isNotUndefined } from '../../../../util/functions/func';
 
@@ -85,8 +84,13 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
         var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-        x = px( parseParamNumber(x, x => x + pageOffset.left - boardOffset.left + canvasScrollLeft) ); 
-        y = px( parseParamNumber(y, y => y + pageOffset.top - boardOffset.top  + canvasScrollTop) ); 
+        x = pxUnit( unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
+        y = pxUnit( unitValue(y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
+
+        x = stringUnit(x);
+        y = stringUnit(y);
+        width = stringUnit(width); 
+        height = stringUnit(height);
 
         var transform = "none"; 
         
@@ -112,7 +116,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     caculatePosition (list, key, align, unit = UNIT_PX ) {
 
-        var valueList = list.filter(it => it.align == align).map(it => it[key])
+        var valueList = list.filter(it => it.align == align).map(it => unitValue(it[key]) )
 
         if (valueList.length) {
             return Math.max(  Number.MIN_SAFE_INTEGER,  ...valueList )
@@ -140,8 +144,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var x = this.caculatePosition(list, 'x', 'right')
 
         if (isNotUndefined(x)) {
-            var newWidth = Math.abs(this.moveX - parseParamNumber(x))
-            item.width = newWidth; 
+            var newWidth = Math.abs(this.moveX - x)
+            item.width = pxUnit(newWidth); 
         }
     }
 
@@ -149,10 +153,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var x = this.caculatePosition(list, 'x', 'left')
 
         if (isNotUndefined(x)) {
-            var newWidth = this.width + (this.moveX - parseParamNumber(x))
+            var newWidth = this.width + (this.moveX - x)
 
-            item.x = x 
-            item.width = newWidth; 
+            item.x = pxUnit(x) 
+            item.width = pxUnit(newWidth); 
         }
     }
 
@@ -160,8 +164,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var y = this.caculatePosition(list, 'y', 'bottom')
 
         if (isNotUndefined(y)) {
-            var newHeight = Math.abs(this.moveY - parseParamNumber(y));
-            item.height = newHeight; 
+            var newHeight = Math.abs(this.moveY - y);
+            item.height = pxUnit(newHeight); 
         }
     }
 
@@ -169,10 +173,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var y = this.caculatePosition(list, 'y', 'top')
 
         if (isNotUndefined(y)) {
-            var newHeight = this.height + (this.moveY - parseParamNumber(y))
+            var newHeight = this.height + (this.moveY - y)
 
-            item.y = y 
-            item.height = newHeight; 
+            item.y = pxUnit(y) 
+            item.height = pxUnit(newHeight); 
         }
     }
 
@@ -229,7 +233,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.run('item/set', {
             id: item.id,
-            width: px (item.width + dx)
+            width: pxUnit (item.width + dx)
         });            
     }
 
@@ -238,8 +242,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.run('item/set', {
             id: item.id,
-            width: px (item.width - dx),
-            x: px (item.x + dx)
+            width: pxUnit (item.width - dx),
+            x: pxUnit (item.x + dx)
         });            
     }    
 
@@ -248,7 +252,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.run('item/set', {
             id: item.id,
-            height: px (item.height + dy) 
+            height: pxUnit (item.height + dy) 
         });            
     }    
 
@@ -257,8 +261,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         
         this.run('item/set', {
             id: item.id,
-            height: px (item.height - dy) ,
-            y: px (item.y + dy)
+            height: pxUnit (item.height - dy) ,
+            y: pxUnit (item.y + dy)
         });            
     }    
     
@@ -267,8 +271,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         
         this.run('item/set', {
             id: item.id,
-            x: px (item.x + dx) ,
-            y: px (item.y + dy)
+            x: pxUnit (item.x + dx) ,
+            y: pxUnit (item.y + dy)
         });
     }
 
@@ -343,8 +347,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         if (this.$dom) {
             var rect = this.$dom.rect()
-            this.layerX = parseParamNumber(this.$selectLayer.x);
-            this.layerY = parseParamNumber(this.$selectLayer.y);
+            this.layerX = unitValue(this.$selectLayer.x);
+            this.layerY = unitValue(this.$selectLayer.y);
             this.layerCenterX = rect.left + rect.width/2;
             this.layerCenterY = rect.top + rect.height/2;
         }
@@ -352,11 +356,11 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.rectItems = this.read('selection/current').map(it => {
             return {
                 id: it.id,
-                x: parseParamNumber(it.x),
-                y: parseParamNumber(it.y),
-                width: parseParamNumber(it.width),
-                height: parseParamNumber(it.height),
-                rotate: parseParamNumber(it.rotate || 0)
+                x: unitValue(it.x),
+                y: unitValue(it.y),
+                width: unitValue(it.width),
+                height: unitValue(it.height),
+                rotate: unitValue(it.rotate || 0)
             }
         })
 
@@ -412,7 +416,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.xy = null 
         this.moveX = null;
         this.moveY = null; 
-        this.rectItems = null
+        this.rectItems = null 
         this.currentId = null; 
 
         this.dispatch('history/push', 'Resize a layer');

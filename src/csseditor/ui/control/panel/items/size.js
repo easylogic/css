@@ -1,5 +1,4 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { parseParamNumber } from "../../../../../util/filter/functions";
 import { 
     CHANGE_LAYER_POSITION, 
     CHANGE_LAYER_SIZE, 
@@ -7,7 +6,7 @@ import {
     CHANGE_SELECTION
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { px } from "../../../../../util/css/types";
+import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
 
 export default class Size extends BasePropertyItem {
@@ -19,13 +18,13 @@ export default class Size extends BasePropertyItem {
                         <label><button type="button" ref="$rect">*</button>Width</label>
                         <div>
                             <div class='input two'> 
-                                <input type='number' ref="$width"> <span>px</span>
+                                <input type='number' ref="$width"> <span>${UNIT_PX}</span>
                             </div>
                         </div>
                         <label class='second'>height</label>
                         <div>
                             <div class="input two">
-                                <input type='number' ref="$height"> <span>px</span>
+                                <input type='number' ref="$height"> <span>${UNIT_PX}</span>
                             </div>
                         </div>                        
                     </div>   
@@ -33,13 +32,13 @@ export default class Size extends BasePropertyItem {
                         <label>X</label>
                         <div>
                             <div class='input two'> 
-                                <input type='number' ref="$x"> <span>px</span>
+                                <input type='number' ref="$x"> <span>${UNIT_PX}</span>
                             </div>
                         </div>
                         <label class='second'>Y</label>
                         <div>
                             <div class='input two'>
-                                <input type='number' ref="$y"> <span>px</span>
+                                <input type='number' ref="$y"> <span>${UNIT_PX}</span>
                             </div>
                         </div>
                     </div>
@@ -63,19 +62,19 @@ export default class Size extends BasePropertyItem {
         item = item[0];
         if (this.read('selection/is/image')) return; 
         if (item.width) {
-            this.refs.$width.val(parseParamNumber(item.width))
+            this.refs.$width.val(unitValue(item.width))
         }
 
         if (item.height) {
-            this.refs.$height.val(parseParamNumber(item.height))
+            this.refs.$height.val(unitValue(item.height))
         }
 
         if (item.x) {
-            this.refs.$x.val(parseParamNumber(item.x))
+            this.refs.$x.val(unitValue(item.x))
         }
 
         if (item.y) {
-            this.refs.$y.val(parseParamNumber(item.y))
+            this.refs.$y.val(unitValue(item.y))
         }        
         
     }
@@ -83,7 +82,7 @@ export default class Size extends BasePropertyItem {
     [CLICK('$rect')] (e) {
 
         this.read('selection/current/layer/id', (id) => {
-            var width = px(this.refs.$width.int())
+            var width = pxUnit(this.refs.$width.int())
             var height = width;
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
             this.refs.$height.val(this.refs.$width.val());            
@@ -93,14 +92,14 @@ export default class Size extends BasePropertyItem {
 
     [INPUT('$width')] () {
         this.read('selection/current/layer/id', (id) => {
-            var width = px (this.refs.$width.int())
+            var width = pxUnit(this.refs.$width.int())
             this.commit(CHANGE_LAYER_SIZE, {id, width});
         })        
     }
 
     [INPUT('$height')] () {
         this.read('selection/current/layer/id', (id) => {
-            var height = px(this.refs.$height.int())
+            var height = pxUnit(this.refs.$height.int())
             this.commit(CHANGE_LAYER_SIZE, {id, height});
         })        
     }    
@@ -108,14 +107,14 @@ export default class Size extends BasePropertyItem {
 
     [INPUT('$x')] () {
         this.read('selection/current/layer/id', (id) => {
-            var x = px (this.refs.$x.int())
+            var x = pxUnit(this.refs.$x.int())
             this.commit(CHANGE_LAYER_POSITION, {id, x});
         })
     }
 
     [INPUT('$y')] () {
         this.read('selection/current/layer/id', (id) => {
-            var y = px (this.refs.$y.int())
+            var y = pxUnit(this.refs.$y.int())
             this.commit(CHANGE_LAYER_POSITION, {id, y});
         })
     }        

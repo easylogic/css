@@ -7,7 +7,7 @@ import {
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, percentUnit, stringUnit } from "../../../../../util/css/types";
+import { unitString, percentUnit, stringUnit, unitValue } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue, isUndefined } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
@@ -56,12 +56,12 @@ export default class ClipPathPolygon extends BasePropertyItem {
                     <div class='area'></div>
                     <label>X</label>
                     <div>
-                        <input type="number" data-index="${index}" data-key='x' value="${p.x.value}" />
+                        <input type="number" data-index="${index}" data-key='x' value="${unitValue(p.x)}" />
                         ${unitString(p.x.unit)}
                     </div>
                     <label>Y</label>
                     <div>
-                        <input type="number" data-index="${index}" data-key='y' value="${p.y.value}" />
+                        <input type="number" data-index="${index}" data-key='y' value="${unitValue(p.y)}" />
                         ${unitString(p.y.unit)}
                     </div>
                     <div class='tools'>
@@ -89,10 +89,10 @@ export default class ClipPathPolygon extends BasePropertyItem {
         var pos = item.clipPathPolygonPoints[index];
 
         var x = this.refs.$polygonList.$(`[data-key="x"][data-index="${index}"]`);
-        if (x) { x.val(pos.x.value) }
+        if (x) { x.val(unitValue(pos.x)) }
 
         var y = this.refs.$polygonList.$(`[data-key="y"][data-index="${index}"]`);
-        if (y) { y.val(pos.y.value) }        
+        if (y) { y.val(unitValue(pos.y)) }
     }
 
     refresh() {

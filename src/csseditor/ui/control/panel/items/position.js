@@ -1,7 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_EDITOR } from "../../../../types/event";
-import { px } from "../../../../../util/css/types";
+import { UNIT_PX, unitValue, pxUnit } from "../../../../../util/css/types";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 
@@ -14,11 +13,11 @@ export default class Position extends BasePropertyItem {
                     <div>
                         <label>X</label>
                         <div>
-                            <input type='number' ref="$x"> <span>px</span>
+                            <input type='number' ref="$x"> <span>${UNIT_PX}</span>
                         </div>
                         <label>Y</label>
                         <div>
-                            <input type='number' ref="$y"> <span>px</span>
+                            <input type='number' ref="$y"> <span>${UNIT_PX}</span>
                         </div>
                     </div>               
                 </div>
@@ -32,22 +31,22 @@ export default class Position extends BasePropertyItem {
 
     refresh() {
         this.read('selection/current/layer', (item) => {
-            this.refs.$x.val(parseParamNumber(item.x))
-            this.refs.$y.val(parseParamNumber(item.y))
+            this.refs.$x.val(unitValue(item.x))
+            this.refs.$y.val(unitValue(item.y))
         })
         
     }
 
     [INPUT('$x')] () {
         this.read('selection/current/layer', (item) => {
-            item.x = px(this.refs.$x.int())
+            item.x = pxUnit(this.refs.$x.int())
             this.dispatch('item/set', item)
         })
     }
 
     [INPUT('$y')] () {
         this.read('selection/current/layer', (item) => {
-            item.y = px(this.refs.$y.int())
+            item.y = pxUnit(this.refs.$y.int())
             this.dispatch('item/set', item)
         })
     }    

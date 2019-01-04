@@ -1,6 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { parseParamNumber } from "../../util/filter/functions";
 import { GETTER } from "../../util/Store";
+import { unitValue, pxUnit } from "../../util/css/types";
 
 var list = new Array(100);
 var lastIndex = -1;
@@ -15,10 +15,10 @@ var MAX_DIST = 1;
 export default class GuideManager extends BaseModule {
 
     [GETTER('guide/rect')] ($store, obj) {
-        var x = parseParamNumber(obj.x);
-        var y = parseParamNumber(obj.y);
-        var width = parseParamNumber(obj.width)
-        var height = parseParamNumber(obj.height)
+        var x = unitValue(obj.x);
+        var y = unitValue(obj.y);
+        var width = unitValue(obj.width)
+        var height = unitValue(obj.height)
 
         var x2 = x + width; 
         var y2 = y + height;
@@ -33,14 +33,14 @@ export default class GuideManager extends BaseModule {
         var list = $store.read('guide/line/layer', dist);
         var x, y;
         if (list.length) {
-            var height = parseParamNumber(layer.height)
-            var width = parseParamNumber(layer.width)
-            var topY = Math.min(...list.filter(it => it.align == 'top').map(it => it.y))
-            var middleY = Math.min(...list.filter(it => it.align == 'middle').map(it => it.y))
-            var bottomY = Math.min(...list.filter(it => it.align == 'bottom').map(it => it.y))
-            var leftX = Math.min(...list.filter(it => it.align == 'left').map(it => it.x))
-            var centerX = Math.min(...list.filter(it => it.align == 'center').map(it => it.x))
-            var rightX = Math.min(...list.filter(it => it.align == 'right').map(it => it.x))
+            var height = unitValue(layer.height)
+            var width = unitValue(layer.width)
+            var topY = Math.min(...list.filter(it => it.align == 'top').map(it => unitValue(it.y)))
+            var middleY = Math.min(...list.filter(it => it.align == 'middle').map(it => unitValue(it.y)))
+            var bottomY = Math.min(...list.filter(it => it.align == 'bottom').map(it => unitValue(it.y)))
+            var leftX = Math.min(...list.filter(it => it.align == 'left').map(it => unitValue(it.x)))
+            var centerX = Math.min(...list.filter(it => it.align == 'center').map(it => unitValue(it.x)))
+            var rightX = Math.min(...list.filter(it => it.align == 'right').map(it => unitValue(it.x)))
 
             if (topY != Infinity) {
                 y = topY
@@ -79,8 +79,8 @@ export default class GuideManager extends BaseModule {
         selectedItem = $store.read('guide/rect', selectedRect || $store.read('selection/rect'));
 
         list[index++] = $store.read('guide/rect', { 
-            x: '0px', 
-            y: '0px', 
+            x: pxUnit(0), 
+            y: pxUnit(0), 
             width: page.width, 
             height: page.height 
         })

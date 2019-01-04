@@ -1,8 +1,7 @@
 import UnitRange from "./element/UnitRange";
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
-import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_IMAGE, CHANGE_EDITOR } from "../../../../types/event";
-import { UNIT_PX, percentUnit } from "../../../../../util/css/types";
+import { UNIT_PX, percentUnit, unitValue, isValueUnit, convertPercentUnit } from "../../../../../util/css/types";
 import { CLICK } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
 
@@ -140,7 +139,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.height)
+        return unitValue(layer.height)
     }
 
     getMaxY () {
@@ -148,7 +147,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.height) * 2; 
+        return unitValue(layer.height) * 2; 
     }
 
     getMaxWidth () {
@@ -156,7 +155,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.width)
+        return unitValue(layer.width)
     }
 
     getMaxX () {
@@ -164,7 +163,7 @@ export default class BackgroundSize extends UIElement {
 
         if (!layer) return 0;
 
-        return parseParamNumber(layer.width) * 2; 
+        return unitValue(layer.width) * 2; 
     }    
 
     [CLICK('$size button')] (e) {
@@ -227,8 +226,12 @@ export default class BackgroundSize extends UIElement {
             this.read('selection/current/image', (image) => {
                 this.children.$width.refresh(image.backgroundSizeWidth);
                 this.children.$height.refresh(image.backgroundSizeHeight);
-                this.children.$x.refresh(defaultValue(image.backgroundPositionX, percentUnit(0)));
-                this.children.$y.refresh(defaultValue(image.backgroundPositionY, percentUnit(0)));
+
+                var x = convertPercentUnit( defaultValue(image.backgroundPositionX, percentUnit(0)) )
+                var y = convertPercentUnit( defaultValue(image.backgroundPositionY, percentUnit(0)) )
+                
+                this.children.$x.refresh(x);
+                this.children.$y.refresh(y);
                 this.selectBackgroundSize(image.backgroundSize);
                 this.selectBackgroundRepeat(image.backgroundRepeat);
             })   

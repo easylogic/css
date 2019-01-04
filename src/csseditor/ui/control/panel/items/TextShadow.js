@@ -9,8 +9,7 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
-import { parseParamNumber } from '../../../../../util/filter/functions';
-import { px } from '../../../../../util/css/types';
+import { px, unitValue, pxUnit } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 
 export default class TextShadow extends BasePropertyItem {
@@ -51,9 +50,9 @@ export default class TextShadow extends BasePropertyItem {
 
     makeItemNodetextShadow (item) {
 
-        var offsetX = parseParamNumber(item.offsetX);
-        var offsetY = parseParamNumber(item.offsetY);
-        var blurRadius = parseParamNumber(item.blurRadius);
+        var offsetX = unitValue(item.offsetX);
+        var offsetY = unitValue(item.offsetY);
+        var blurRadius = unitValue(item.blurRadius);
         var checked = this.read('selection/check', item.id) ? 'checked': '';
 
         return `
@@ -139,7 +138,7 @@ export default class TextShadow extends BasePropertyItem {
         var field = $el.attr('data-type');
         var id = $el.parent().parent().attr('text-shadow-id')
 
-        this.commit(CHANGE_TEXTSHADOW, {id, [field]: px($el.val()) })
+        this.commit(CHANGE_TEXTSHADOW, {id, [field]: pxUnit($el.int()) })
     }
 
     [CLICK('$textShadowList .delete-textshadow')] (e) {

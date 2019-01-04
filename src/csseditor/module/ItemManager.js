@@ -1,7 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
-import { string2unit, UNIT_PX, unitObject } from "../../util/css/types";
-import { parseParamNumber } from "../../util/filter/functions";
+import { string2unit, UNIT_PX} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
 
 const INDEX_DIST = 100 ; 
@@ -46,10 +45,22 @@ const updateUnitField = {
     borderTopRightRadius: true,
     borderBottomRightRadius: true,
     backgroundSizeWidth: true,
-    backgroundSizeHeight: true
+    backgroundSizeHeight: true,
+    x: true,
+    y: true,
+    width: true,
+    height: true,
+    backgroundPositionX: true,
+    backgroundPositionY: true,
+    backgroundSizeHeight: true,
+    backgroundSizeWidth: true
 }
 
 const updateNumberUnitField = {
+    x: UNIT_PX,
+    y: UNIT_PX,
+    width: UNIT_PX,
+    height: UNIT_PX,
     backgroundPositionX: UNIT_PX,
     backgroundPositionY: UNIT_PX,
     backgroundSizeHeight: UNIT_PX,
@@ -68,9 +79,7 @@ const convertStyle = (item) => {
     Object.keys(item).forEach(key => {
         if (updateUnitField[key]) {
             item[key] = string2unit (item[key])
-        } else if (updateNumberUnitField[key]) {
-            item[key] = unitObject (parseParamNumber(item[key]), updateNumberUnitField[key])
-        }
+        } 
     })
 
     return item; 

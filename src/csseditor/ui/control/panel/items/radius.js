@@ -1,7 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
-import { value2px, pxUnit } from "../../../../../util/css/types";
+import { value2px, pxUnit, unitValue } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT } from "../../../../../util/Event";
@@ -53,8 +52,7 @@ export default class Radius extends BasePropertyItem {
 
     refresh() {
         this.read('selection/current/layer', (item) => {
-            var maxWidth = parseParamNumber(item.width);
-            var maxHeight = parseParamNumber(item.height);
+            var maxWidth = unitValue(item.width);
 
             if (item.fixedRadius) {
                 var borderRadius = defaultValue (item.borderRadius, pxUnit(0));

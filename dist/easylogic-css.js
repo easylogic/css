@@ -2229,11 +2229,16 @@ function unit(value, unit) {
     return value + unitString(unit);
 }
 
-function stringUnit(obj) {
+function stringUnit() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
+
     return unit(obj.value, obj.unit);
 }
 
-function unitValue(obj) {
+function unitValue() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
+
+    if (isNumber(obj)) return obj;
     return obj.value;
 }
 
@@ -2259,7 +2264,9 @@ function isColorUnit(obj) {
 
 
 
-
+function isValueUnit(obj) {
+    return isUnit(obj, UNIT_VALUE);
+}
 
 function unitObject(value, unit) {
     return { unit: unit, value: value };
@@ -2312,6 +2319,24 @@ function value2px(obj, maxValue) {
     } else if (isEmUnit(obj)) {
         return em2px(obj.value, maxValue, fontSize);
     }
+}
+
+
+
+
+
+function convertPercentUnit(obj) {
+    if (isValueUnit(obj)) {
+        if (obj.value == 'left' || obj.value == 'top') {
+            return percentUnit(0);
+        } else if (obj.value == 'right' || obj.value == 'bottom') {
+            return percentUnit(100);
+        } else if (obj.value == 'center') {
+            return percentUnit(50);
+        }
+    }
+
+    return obj;
 }
 
 var ITEM_TYPE_PAGE = 'page';
@@ -2453,19 +2478,19 @@ var IMAGE_DEFAULT_OBJECT = {
 
 var BOXSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_BOXSHADOW,
-    offsetX: 0,
-    offsetY: 0,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
     inset: false,
-    blurRadius: 0,
-    spreadRadius: 0,
+    blurRadius: pxUnit(0),
+    spreadRadius: pxUnit(0),
     color: 'gray'
 };
 
 var TEXTSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_TEXTSHADOW$1,
-    offsetX: 0,
-    offsetY: 0,
-    blurRadius: 0,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    blurRadius: pxUnit(0),
     color: 'gray'
 };
 
@@ -11126,7 +11151,7 @@ var LayerManager = function (_BaseModule) {
             });
 
             Object.keys(results).forEach(function (key) {
-                if (Array.isArray(results[key])) {
+                if (isArray(results[key])) {
                     results[key] = results[key].join(', ');
                 }
             });
@@ -11247,8 +11272,8 @@ var LayerManager = function (_BaseModule) {
             var transform = '';
 
             if (layer.fitClipPathSize) {
-                var widthScale = parseParamNumber$1(layer.width) / layer.clipPathSvgWidth;
-                var heightScale = parseParamNumber$1(layer.height) / layer.clipPathSvgHeight;
+                var widthScale = layer.width.value / layer.clipPathSvgWidth;
+                var heightScale = layer.height.value / layer.clipPathSvgHeight;
 
                 transform = "scale(" + widthScale + " " + heightScale + ")";
             }
@@ -11279,11 +11304,7 @@ var LayerManager = function (_BaseModule) {
 
             if (!layer.borderTopLeftRadius) return [];
 
-            var count = [layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value, layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value, layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value, layer.borderTopLeftRadius.value == layer.borderBottomLeftRadius.value].filter(function (it) {
-                return !it;
-            }).length;
-
-            if (count == 0 && layer.borderTopLeftRadius) {
+            if (layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value && layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value && layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value) {
                 return [stringUnit(layer.borderTopLeftRadius)];
             }
 
@@ -11313,10 +11334,10 @@ var LayerManager = function (_BaseModule) {
 
             if (!layer) return css;
 
-            css.left = layer.x;
-            css.top = layer.y;
-            css.width = layer.width;
-            css.height = layer.height;
+            css.left = stringUnit(layer.x);
+            css.top = stringUnit(layer.y);
+            css.width = stringUnit(layer.width);
+            css.height = stringUnit(layer.height);
             css['z-index'] = layer.index;
 
             return css;
@@ -11369,12 +11390,9 @@ var LayerManager = function (_BaseModule) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
             var layer = Object.assign({}, $store.read('item/convert/style', item.layer), { images: item.images });
-            var css = {
-                left: layer.x,
-                top: layer.y,
-                width: layer.width,
-                height: layer.height
-            };
+            var css = {};
+
+            css = Object.assign(css, $store.read('layer/bound/toCSS', layer));
 
             if (layer.backgroundColor) {
                 css['background-color'] = layer.backgroundColor;
@@ -11833,6 +11851,8 @@ var GradientManager = function (_BaseModule) {
     return GradientManager;
 }(BaseModule);
 
+var _updateUnitField;
+
 var INDEX_DIST = 100;
 var NONE_INDEX = -99999;
 
@@ -11868,22 +11888,21 @@ var itemField = {
     'translate3dZ': 'translate3dZ'
 };
 
-var updateUnitField = {
+var updateUnitField = (_updateUnitField = {
     borderRadius: true,
     borderTopLeftRadius: true,
     borderBottomLeftRadius: true,
     borderTopRightRadius: true,
     borderBottomRightRadius: true,
     backgroundSizeWidth: true,
-    backgroundSizeHeight: true
-};
-
-var updateNumberUnitField = {
-    backgroundPositionX: UNIT_PX,
-    backgroundPositionY: UNIT_PX,
-    backgroundSizeHeight: UNIT_PX,
-    backgroundSizeWidth: UNIT_PX
-};
+    backgroundSizeHeight: true,
+    x: true,
+    y: true,
+    width: true,
+    height: true,
+    backgroundPositionX: true,
+    backgroundPositionY: true
+}, defineProperty(_updateUnitField, "backgroundSizeHeight", true), defineProperty(_updateUnitField, "backgroundSizeWidth", true), _updateUnitField);
 
 var convertStyle$1 = function convertStyle(item) {
     var style = item.style || {};
@@ -11897,8 +11916,6 @@ var convertStyle$1 = function convertStyle(item) {
     Object.keys(item).forEach(function (key) {
         if (updateUnitField[key]) {
             item[key] = string2unit(item[key]);
-        } else if (updateNumberUnitField[key]) {
-            item[key] = unitObject(parseParamNumber$1(item[key]), updateNumberUnitField[key]);
         }
     });
 
@@ -12091,11 +12108,11 @@ var GuideManager = function (_BaseModule) {
 
     createClass(GuideManager, [{
         key: GETTER('guide/rect'),
-        value: function value($store, obj) {
-            var x = parseParamNumber$1(obj.x);
-            var y = parseParamNumber$1(obj.y);
-            var width = parseParamNumber$1(obj.width);
-            var height = parseParamNumber$1(obj.height);
+        value: function value$$1($store, obj) {
+            var x = unitValue(obj.x);
+            var y = unitValue(obj.y);
+            var width = unitValue(obj.width);
+            var height = unitValue(obj.height);
 
             var x2 = x + width;
             var y2 = y + height;
@@ -12107,43 +12124,43 @@ var GuideManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('guide/snap/layer'),
-        value: function value($store, layer) {
+        value: function value$$1($store, layer) {
             var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : MAX_DIST;
 
             var list = $store.read('guide/line/layer', dist);
             var x, y;
             if (list.length) {
-                var height = parseParamNumber$1(layer.height);
-                var width = parseParamNumber$1(layer.width);
+                var height = unitValue(layer.height);
+                var width = unitValue(layer.width);
                 var topY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'top';
                 }).map(function (it) {
-                    return it.y;
+                    return unitValue(it.y);
                 })));
                 var middleY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'middle';
                 }).map(function (it) {
-                    return it.y;
+                    return unitValue(it.y);
                 })));
                 var bottomY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'bottom';
                 }).map(function (it) {
-                    return it.y;
+                    return unitValue(it.y);
                 })));
                 var leftX = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'left';
                 }).map(function (it) {
-                    return it.x;
+                    return unitValue(it.x);
                 })));
                 var centerX = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'center';
                 }).map(function (it) {
-                    return it.x;
+                    return unitValue(it.x);
                 })));
                 var rightX = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
                     return it.align == 'right';
                 }).map(function (it) {
-                    return it.x;
+                    return unitValue(it.x);
                 })));
 
                 if (topY != Infinity) {
@@ -12171,7 +12188,7 @@ var GuideManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('guide/line/layer'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
             var selectedRect = arguments[2];
 
@@ -12185,8 +12202,8 @@ var GuideManager = function (_BaseModule) {
             selectedItem = $store.read('guide/rect', selectedRect || $store.read('selection/rect'));
 
             list$1[index++] = $store.read('guide/rect', {
-                x: '0px',
-                y: '0px',
+                x: pxUnit(0),
+                y: pxUnit(0),
                 width: page.width,
                 height: page.height
             });
@@ -12220,7 +12237,7 @@ var GuideManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('guide/paths'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
 
 
@@ -12233,7 +12250,7 @@ var GuideManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('guide/check'),
-        value: function value($store, item1, item2) {
+        value: function value$$1($store, item1, item2) {
             var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
 
             var results = [];
@@ -12246,7 +12263,7 @@ var GuideManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('guide/check/vertical'),
-        value: function value($store, item1, item2) {
+        value: function value$$1($store, item1, item2) {
             var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
 
             var results = [];
@@ -12287,7 +12304,7 @@ var GuideManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('guide/check/horizontal'),
-        value: function value($store, item1, item2) {
+        value: function value$$1($store, item1, item2) {
             var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
 
             var results = [];
@@ -13016,8 +13033,8 @@ var PageManager = function (_BaseModule) {
             var css = {
                 overflow: sample.clip ? 'hidden' : '',
                 'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-                width: sample.width,
-                height: sample.height
+                width: stringUnit(sample.width),
+                height: stringUnit(sample.height)
             };
 
             if (sample.perspective) {
@@ -13061,8 +13078,8 @@ var PageManager = function (_BaseModule) {
             var css = {
                 overflow: sample.clip ? 'hidden' : '',
                 'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-                width: sample.width,
-                height: sample.height
+                width: stringUnit(sample.width),
+                height: stringUnit(sample.height)
             };
 
             if (sample.perspective) {
@@ -13441,10 +13458,10 @@ var SelectionManager = function (_BaseModule) {
                     height = _$store$items$id.height;
 
 
-                x = parseParamNumber$1(x);
-                y = parseParamNumber$1(y);
-                width = parseParamNumber$1(width);
-                height = parseParamNumber$1(height);
+                x = unitValue(x);
+                y = unitValue(y);
+                width = unitValue(width);
+                height = unitValue(height);
                 var x2 = x + width;
                 var y2 = y + height;
 
@@ -13517,10 +13534,10 @@ var SelectionManager = function (_BaseModule) {
                     height = _$store$items$id2.height;
 
 
-                x = parseParamNumber$1(x);
-                y = parseParamNumber$1(y);
-                width = parseParamNumber$1(width);
-                height = parseParamNumber$1(height);
+                x = unitValue(x);
+                y = unitValue(y);
+                width = unitValue(width);
+                height = unitValue(height);
                 var x2 = x + width;
                 var y2 = y + height;
 
@@ -13543,10 +13560,10 @@ var SelectionManager = function (_BaseModule) {
             var width = x2 - x;
             var height = y2 - y;
 
-            x = px$1(x);
-            y = px$1(y);
-            width = px$1(width);
-            height = px$1(height);
+            x = pxUnit(x);
+            y = pxUnit(y);
+            width = pxUnit(width);
+            height = pxUnit(height);
 
             if (items.length == 1) {
                 return { x: x, y: y, width: width, height: height, id: items[0].id };
@@ -13707,11 +13724,11 @@ var OrderingManager = function (_BaseModule) {
         value: function left($store) {
             var items = $store.read('selection/current');
             var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.x);
+                return unitValue(item.x);
             })));
 
             items.forEach(function (item) {
-                $store.run('item/set', { id: item.id, x: px$1(newX) });
+                $store.run('item/set', { id: item.id, x: pxUnit(x) });
             });
         }
     }, {
@@ -13720,17 +13737,17 @@ var OrderingManager = function (_BaseModule) {
             var items = $store.read('selection/current');
 
             var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.x);
+                return unitValue(item.x);
             })));
 
             var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.x) + parseParamNumber$1(item.width);
+                return unitValue(item.x) + unitValue(item.width);
             })));
 
             var centerX = x + Math.floor((x2 - x) / 2);
 
             items.forEach(function (item) {
-                var newX = px$1(Math.floor(centerX - parseParamNumber$1(item.width) / 2));
+                var newX = pxUnit(Math.floor(centerX - unitValue(item.width) / 2));
                 $store.run('item/set', { id: item.id, x: newX });
             });
         }
@@ -13740,11 +13757,11 @@ var OrderingManager = function (_BaseModule) {
             var items = $store.read('selection/current');
 
             var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.x) + parseParamNumber$1(item.width);
+                return unitValue(item.x) + unitValue(item.width);
             })));
 
             items.forEach(function (item) {
-                var newX = px$1(x2 - parseParamNumber$1(item.width));
+                var newX = pxUnit(x2 - unitValue(item.width));
                 $store.run('item/set', { id: item.id, x: newX });
             });
         }
@@ -13753,11 +13770,11 @@ var OrderingManager = function (_BaseModule) {
         value: function top($store) {
             var items = $store.read('selection/current');
             var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.y);
+                return unitValue(item.y);
             })));
 
             items.forEach(function (item) {
-                $store.run('item/set', { id: item.id, y: px$1(y) });
+                $store.run('item/set', { id: item.id, y: pxUnit(y) });
             });
         }
     }, {
@@ -13766,17 +13783,17 @@ var OrderingManager = function (_BaseModule) {
             var items = $store.read('selection/current');
 
             var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.y);
+                return unitValue(item.y);
             })));
 
             var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.y) + parseParamNumber$1(item.height);
+                return unitValue(item.y) + unitValue(item.height);
             })));
 
             var centerY = y + (y2 - y) / 2;
 
             items.forEach(function (item) {
-                var newY = px$1(Math.floor(centerY - parseParamNumber$1(item.height) / 2));
+                var newY = pxUnit(Math.floor(centerY - unitValue(item.height) / 2));
                 $store.run('item/set', { id: item.id, y: newY });
             });
         }
@@ -13786,11 +13803,11 @@ var OrderingManager = function (_BaseModule) {
             var items = $store.read('selection/current');
 
             var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return parseParamNumber$1(item.y) + parseParamNumber$1(item.height);
+                return unitValue(item.y) + unitValue(item.height);
             })));
 
             items.forEach(function (item) {
-                var newY = px$1(y2 - parseParamNumber$1(item.height));
+                var newY = pxUnit(y2 - unitValue(item.height));
                 $store.run('item/set', { id: item.id, y: newY });
             });
         }
@@ -13861,7 +13878,7 @@ var MatrixManager = function (_BaseModule) {
             Object.keys(newValue).filter(function (key) {
                 return key != 'id';
             }).forEach(function (key) {
-                item[key] = px$1(parseParamNumber$2(item[key]) + newValue[key]);
+                item[key] = pxUnit(unitValue(item[key]) + newValue[key]);
             });
 
             $store.run('item/set', item);
@@ -13880,7 +13897,7 @@ var BoxShadowManager = function (_BaseModule) {
 
     createClass(BoxShadowManager, [{
         key: GETTER('boxshadow/toCSS'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
@@ -13896,7 +13913,7 @@ var BoxShadowManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('boxshadow/cache/toCSS'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 
@@ -13911,7 +13928,7 @@ var BoxShadowManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('boxshadow/toString'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
 
@@ -13923,7 +13940,7 @@ var BoxShadowManager = function (_BaseModule) {
         }
     }, {
         key: GETTER('boxshadow/toBoxShadowString'),
-        value: function value($store) {
+        value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
 
@@ -13932,10 +13949,10 @@ var BoxShadowManager = function (_BaseModule) {
             var results = [''];
 
             if (item.inset) {
-                results[0] = 'inset';
+                results.push('inset');
             }
 
-            results.push(item.offsetX || '0px', item.offsetY || '0px', item.blurRadius || '0px', item.spreadRadius || '0px', item.color);
+            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), stringUnit(item.spreadRadius), item.color);
 
             return results.join(' ');
         }
@@ -14383,8 +14400,8 @@ var ClipPathManager = function (_BaseModule) {
         key: GETTER('clip-path/make/circle'),
         value: function value$$1($store, layer) {
 
-            var width = parseParamNumber$1(layer.width);
-            var height = parseParamNumber$1(layer.height);
+            var width = unitValue(layer.width);
+            var height = unitValue(layer.height);
 
             var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
 
@@ -14410,8 +14427,8 @@ var ClipPathManager = function (_BaseModule) {
     }, {
         key: GETTER('clip-path/make/ellipse'),
         value: function value$$1($store, layer) {
-            var width = parseParamNumber$1(layer.width);
-            var height = parseParamNumber$1(layer.height);
+            var width = unitValue(layer.width);
+            var height = unitValue(layer.height);
 
             var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
             var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
@@ -15365,7 +15382,7 @@ var Size = function (_BasePropertyItem) {
     createClass(Size, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_POSITION, CHANGE_LAYER_SIZE, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -15382,19 +15399,19 @@ var Size = function (_BasePropertyItem) {
             item = item[0];
             if (this.read('selection/is/image')) return;
             if (item.width) {
-                this.refs.$width.val(parseParamNumber$1(item.width));
+                this.refs.$width.val(unitValue(item.width));
             }
 
             if (item.height) {
-                this.refs.$height.val(parseParamNumber$1(item.height));
+                this.refs.$height.val(unitValue(item.height));
             }
 
             if (item.x) {
-                this.refs.$x.val(parseParamNumber$1(item.x));
+                this.refs.$x.val(unitValue(item.x));
             }
 
             if (item.y) {
-                this.refs.$y.val(parseParamNumber$1(item.y));
+                this.refs.$y.val(unitValue(item.y));
             }
         }
     }, {
@@ -15403,7 +15420,7 @@ var Size = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('selection/current/layer/id', function (id) {
-                var width = px$1(_this2.refs.$width.int());
+                var width = pxUnit(_this2.refs.$width.int());
                 var height = width;
                 _this2.commit(CHANGE_LAYER_SIZE, { id: id, width: width, height: height });
                 _this2.refs.$height.val(_this2.refs.$width.val());
@@ -15415,7 +15432,7 @@ var Size = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('selection/current/layer/id', function (id) {
-                var width = px$1(_this3.refs.$width.int());
+                var width = pxUnit(_this3.refs.$width.int());
                 _this3.commit(CHANGE_LAYER_SIZE, { id: id, width: width });
             });
         }
@@ -15425,7 +15442,7 @@ var Size = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('selection/current/layer/id', function (id) {
-                var height = px$1(_this4.refs.$height.int());
+                var height = pxUnit(_this4.refs.$height.int());
                 _this4.commit(CHANGE_LAYER_SIZE, { id: id, height: height });
             });
         }
@@ -15435,7 +15452,7 @@ var Size = function (_BasePropertyItem) {
             var _this5 = this;
 
             this.read('selection/current/layer/id', function (id) {
-                var x = px$1(_this5.refs.$x.int());
+                var x = pxUnit(_this5.refs.$x.int());
                 _this5.commit(CHANGE_LAYER_POSITION, { id: id, x: x });
             });
         }
@@ -15445,7 +15462,7 @@ var Size = function (_BasePropertyItem) {
             var _this6 = this;
 
             this.read('selection/current/layer/id', function (id) {
-                var y = px$1(_this6.refs.$y.int());
+                var y = pxUnit(_this6.refs.$y.int());
                 _this6.commit(CHANGE_LAYER_POSITION, { id: id, y: y });
             });
         }
@@ -15464,7 +15481,7 @@ var Position = function (_BasePropertyItem) {
     createClass(Position, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item position show'>\n                <div class='title' ref=\"$title\">Position</div>\n                <div class='items'>            \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <input type='number' ref=\"$x\"> <span>px</span>\n                        </div>\n                        <label>Y</label>\n                        <div>\n                            <input type='number' ref=\"$y\"> <span>px</span>\n                        </div>\n                    </div>               \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item position show'>\n                <div class='title' ref=\"$title\">Position</div>\n                <div class='items'>            \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <input type='number' ref=\"$x\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                        <label>Y</label>\n                        <div>\n                            <input type='number' ref=\"$y\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>               \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR),
@@ -15477,8 +15494,8 @@ var Position = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('selection/current/layer', function (item) {
-                _this2.refs.$x.val(parseParamNumber$1(item.x));
-                _this2.refs.$y.val(parseParamNumber$1(item.y));
+                _this2.refs.$x.val(unitValue(item.x));
+                _this2.refs.$y.val(unitValue(item.y));
             });
         }
     }, {
@@ -15487,7 +15504,7 @@ var Position = function (_BasePropertyItem) {
             var _this3 = this;
 
             this.read('selection/current/layer', function (item) {
-                item.x = px$1(_this3.refs.$x.int());
+                item.x = pxUnit(_this3.refs.$x.int());
                 _this3.dispatch('item/set', item);
             });
         }
@@ -15497,7 +15514,7 @@ var Position = function (_BasePropertyItem) {
             var _this4 = this;
 
             this.read('selection/current/layer', function (item) {
-                item.y = px$1(_this4.refs.$y.int());
+                item.y = pxUnit(_this4.refs.$y.int());
                 _this4.dispatch('item/set', item);
             });
         }
@@ -15529,8 +15546,7 @@ var Radius = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read('selection/current/layer', function (item) {
-                var maxWidth = parseParamNumber$1(item.width);
-                var maxHeight = parseParamNumber$1(item.height);
+                var maxWidth = unitValue(item.width);
 
                 if (item.fixedRadius) {
                     var borderRadius = defaultValue(item.borderRadius, pxUnit(0));
@@ -17142,7 +17158,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.height);
+            return unitValue(layer.height);
         }
     }, {
         key: "getMaxY",
@@ -17151,7 +17167,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.height) * 2;
+            return unitValue(layer.height) * 2;
         }
     }, {
         key: "getMaxWidth",
@@ -17160,7 +17176,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.width);
+            return unitValue(layer.width);
         }
     }, {
         key: "getMaxX",
@@ -17169,7 +17185,7 @@ var BackgroundSize = function (_UIElement) {
 
             if (!layer) return 0;
 
-            return parseParamNumber$1(layer.width) * 2;
+            return unitValue(layer.width) * 2;
         }
     }, {
         key: CLICK('$size button'),
@@ -17241,8 +17257,12 @@ var BackgroundSize = function (_UIElement) {
                 this.read('selection/current/image', function (image) {
                     _this8.children.$width.refresh(image.backgroundSizeWidth);
                     _this8.children.$height.refresh(image.backgroundSizeHeight);
-                    _this8.children.$x.refresh(defaultValue(image.backgroundPositionX, percentUnit(0)));
-                    _this8.children.$y.refresh(defaultValue(image.backgroundPositionY, percentUnit(0)));
+
+                    var x = convertPercentUnit(defaultValue(image.backgroundPositionX, percentUnit(0)));
+                    var y = convertPercentUnit(defaultValue(image.backgroundPositionY, percentUnit(0)));
+
+                    _this8.children.$x.refresh(x);
+                    _this8.children.$y.refresh(y);
                     _this8.selectBackgroundSize(image.backgroundSize);
                     _this8.selectBackgroundRepeat(image.backgroundRepeat);
                 });
@@ -17269,7 +17289,7 @@ var PageSize = function (_UIElement) {
     createClass(PageSize, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        \n                        <div>\n                            <input type='number' ref=\"$width\"> <span>px</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>px</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        \n                        <div>\n                            <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR),
@@ -17282,8 +17302,8 @@ var PageSize = function (_UIElement) {
             var _this2 = this;
 
             this.read('selection/current/page', function (item) {
-                _this2.refs.$width.val(parseParamNumber$2(item.width));
-                _this2.refs.$height.val(parseParamNumber$2(item.height));
+                _this2.refs.$width.val(unitValue(item.width));
+                _this2.refs.$height.val(unitValue(item.height));
             });
         }
     }, {
@@ -17294,7 +17314,7 @@ var PageSize = function (_UIElement) {
             this.read('selection/current/page', function (item) {
                 var newValue = {
                     id: item.id,
-                    width: px$1(_this3.refs.$width.int())
+                    width: pxUnit(_this3.refs.$width.int())
                 };
 
                 newValue.height = newValue.width;
@@ -17308,7 +17328,7 @@ var PageSize = function (_UIElement) {
             var _this4 = this;
 
             this.read('selection/current/page/id', function (id) {
-                _this4.commit(CHANGE_PAGE_SIZE, { id: id, width: px$1(_this4.refs.$width.int()) });
+                _this4.commit(CHANGE_PAGE_SIZE, { id: id, width: pxUnit(_this4.refs.$width.int()) });
             });
         }
     }, {
@@ -17317,7 +17337,7 @@ var PageSize = function (_UIElement) {
             var _this5 = this;
 
             this.read('selection/current/page/id', function (id) {
-                _this5.commit(CHANGE_PAGE_SIZE, { id: id, height: px$1(_this5.refs.$height.int()) });
+                _this5.commit(CHANGE_PAGE_SIZE, { id: id, height: pxUnit(_this5.refs.$height.int()) });
             });
         }
     }]);
@@ -18610,7 +18630,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
                 var start = index == startIndex ? 'start' : '';
                 var end = index == lastIndex ? 'end' : '';
 
-                return "\n                <div class=\"polygon-item " + start + " " + end + "\" data-index=\"" + index + "\" >\n                    <div class='area'></div>\n                    <label>X</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-key='x' value=\"" + p.x.value + "\" />\n                        " + unitString(p.x.unit) + "\n                    </div>\n                    <label>Y</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-key='y' value=\"" + p.y.value + "\" />\n                        " + unitString(p.y.unit) + "\n                    </div>\n                    <div class='tools'>\n                        <button type=\"button\" data-key='delete' data-index=\"" + index + "\">&times;</button>\n                        <button type=\"button\" data-key='copy' data-index=\"" + index + "\">+</button>\n                    </div>\n                </div>\n            ";
+                return "\n                <div class=\"polygon-item " + start + " " + end + "\" data-index=\"" + index + "\" >\n                    <div class='area'></div>\n                    <label>X</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-key='x' value=\"" + unitValue(p.x) + "\" />\n                        " + unitString(p.x.unit) + "\n                    </div>\n                    <label>Y</label>\n                    <div>\n                        <input type=\"number\" data-index=\"" + index + "\" data-key='y' value=\"" + unitValue(p.y) + "\" />\n                        " + unitString(p.y.unit) + "\n                    </div>\n                    <div class='tools'>\n                        <button type=\"button\" data-key='delete' data-index=\"" + index + "\">&times;</button>\n                        <button type=\"button\" data-key='copy' data-index=\"" + index + "\">+</button>\n                    </div>\n                </div>\n            ";
             });
         }
     }, {
@@ -18631,12 +18651,12 @@ var ClipPathPolygon = function (_BasePropertyItem) {
 
             var x = this.refs.$polygonList.$("[data-key=\"x\"][data-index=\"" + index + "\"]");
             if (x) {
-                x.val(pos.x.value);
+                x.val(unitValue(pos.x));
             }
 
             var y = this.refs.$polygonList.$("[data-key=\"y\"][data-index=\"" + index + "\"]");
             if (y) {
-                y.val(pos.y.value);
+                y.val(unitValue(pos.y));
             }
         }
     }, {
@@ -18769,10 +18789,10 @@ var BoxShadow = function (_BasePropertyItem) {
         key: 'makeItemNodeBoxShadow',
         value: function makeItemNodeBoxShadow(item) {
 
-            var offsetX = parseParamNumber$1(item.offsetX);
-            var offsetY = parseParamNumber$1(item.offsetY);
-            var blurRadius = parseParamNumber$1(item.blurRadius);
-            var spreadRadius = parseParamNumber$1(item.spreadRadius);
+            var offsetX = unitValue(item.offsetX);
+            var offsetY = unitValue(item.offsetY);
+            var blurRadius = unitValue(item.blurRadius);
+            var spreadRadius = unitValue(item.spreadRadius);
 
             var checked = this.read('selection/check', item.id) ? 'checked' : '';
 
@@ -18852,7 +18872,7 @@ var BoxShadow = function (_BasePropertyItem) {
             var field = $el.attr('data-type');
             var id = $el.parent().parent().attr('box-shadow-id');
 
-            this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, px$1($el.val())));
+            this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
         }
     }, {
         key: CLICK('$boxShadowList input[type=checkbox]'),
@@ -18908,9 +18928,9 @@ var TextShadow = function (_BasePropertyItem) {
         key: 'makeItemNodetextShadow',
         value: function makeItemNodetextShadow(item) {
 
-            var offsetX = parseParamNumber$1(item.offsetX);
-            var offsetY = parseParamNumber$1(item.offsetY);
-            var blurRadius = parseParamNumber$1(item.blurRadius);
+            var offsetX = unitValue(item.offsetX);
+            var offsetY = unitValue(item.offsetY);
+            var blurRadius = unitValue(item.blurRadius);
             var checked = this.read('selection/check', item.id) ? 'checked' : '';
 
             return '\n            <div class=\'text-shadow-item ' + checked + '\' text-shadow-id="' + item.id + '">  \n                <div class="color" style="background-color: ' + item.color + ';"></div>                      \n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                </div>                \n\n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />\n                </div>\n                <button type="button" class=\'delete-textshadow\'>&times;</button>                                                                                                            \n            </div>\n        ';
@@ -18989,7 +19009,7 @@ var TextShadow = function (_BasePropertyItem) {
             var field = $el.attr('data-type');
             var id = $el.parent().parent().attr('text-shadow-id');
 
-            this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, px$1($el.val())));
+            this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
         }
     }, {
         key: CLICK('$textShadowList .delete-textshadow'),
@@ -20109,7 +20129,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>        \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -22905,14 +22925,14 @@ var LayerSampleList = function (_UIElement) {
         }
     }, {
         key: LOAD('$cachedList'),
-        value: function value() {
+        value: function value$$1() {
             var _this2 = this;
 
             var list = this.list.map(function (item, index) {
                 var data = _this2.read('layer/cache/toString', item);
 
-                var rateX = 160 / parseParamNumber$1(data.obj.width);
-                var rateY = 120 / parseParamNumber$1(data.obj.height);
+                var rateX = 160 / unitValue(data.obj.width);
+                var rateY = 120 / unitValue(data.obj.height);
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
@@ -22922,8 +22942,8 @@ var LayerSampleList = function (_UIElement) {
             var storageList = this.read('storage/layers').map(function (item) {
                 var data = _this2.read('layer/cache/toString', item);
 
-                var rateX = 160 / parseParamNumber$1(data.obj.width);
-                var rateY = 120 / parseParamNumber$1(data.obj.height);
+                var rateX = 160 / unitValue(data.obj.width);
+                var rateY = 120 / unitValue(data.obj.height);
 
                 var minRate = Math.min(rateY, rateX);
 
@@ -22951,12 +22971,12 @@ var LayerSampleList = function (_UIElement) {
         }
     }, {
         key: EVENT('changeStorage'),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
         key: CLICK('$el .layer-sample-item .add-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             var index = +e.$delegateTarget.attr('data-index');
@@ -22971,7 +22991,7 @@ var LayerSampleList = function (_UIElement) {
         }
     }, {
         key: CLICK('$el .layer-cached-item .add-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this4 = this;
 
             var newLayer = this.read('storage/layers', e.$delegateTarget.attr('data-sample-id'));
@@ -22984,13 +23004,13 @@ var LayerSampleList = function (_UIElement) {
         }
     }, {
         key: CLICK('$el .layer-cached-item .delete-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
             this.refresh();
         }
     }, {
         key: CLICK('$el .add-current-layer'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this5 = this;
 
             this.read('selection/current/layer', function (layer) {
@@ -23062,14 +23082,14 @@ var PageSampleList = function (_UIElement) {
         }
     }, {
         key: LOAD('$cachedList'),
-        value: function value() {
+        value: function value$$1() {
             var _this2 = this;
 
             var list = this.list.map(function (page, index) {
                 var data = _this2.read('page/cache/toString', page);
 
-                var rateX = 160 / parseParamNumber$1(data.obj.width);
-                var rateY = 120 / parseParamNumber$1(data.obj.height);
+                var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+                var rateY = 120 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
@@ -23082,8 +23102,8 @@ var PageSampleList = function (_UIElement) {
             var storageList = this.read('storage/pages').map(function (page) {
                 var data = _this2.read('page/cache/toString', _this2.read('item/convert/style', page.page));
 
-                var rateX = 160 / parseParamNumber$1(data.obj.width || 400);
-                var rateY = 160 / parseParamNumber$1(data.obj.height || 300);
+                var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+                var rateY = 160 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
 
                 var minRate = Math.min(rateY, rateX);
 
@@ -23114,12 +23134,12 @@ var PageSampleList = function (_UIElement) {
         }
     }, {
         key: EVENT('changeStorage'),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
         key: CLICK('$el .page-sample-item .add-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             var index = +e.$delegateTarget.attr('data-index');
@@ -23135,7 +23155,7 @@ var PageSampleList = function (_UIElement) {
         }
     }, {
         key: CLICK('$el .page-cached-item .add-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this4 = this;
 
             var newPage = this.read('storage/pages', e.$delegateTarget.attr('data-sample-id'));
@@ -23148,13 +23168,13 @@ var PageSampleList = function (_UIElement) {
         }
     }, {
         key: CLICK('$el .page-cached-item .delete-item'),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
             this.refresh();
         }
     }, {
         key: CLICK('$el .add-current-page'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this5 = this;
 
             this.read('selection/current/page', function (page) {
@@ -23367,8 +23387,13 @@ var PredefinedPageResizer = function (_UIElement) {
             var canvasScrollLeft = this.$board.scrollLeft();
             var canvasScrollTop = this.$board.scrollTop();
 
-            var x = px$1(pageOffset.left - boardOffset.left + canvasScrollLeft);
-            var y = px$1(pageOffset.top - boardOffset.top + canvasScrollTop);
+            var x = pxUnit(pageOffset.left - boardOffset.left + canvasScrollLeft);
+            var y = pxUnit(pageOffset.top - boardOffset.top + canvasScrollTop);
+
+            x = stringUnit(x);
+            y = stringUnit(y);
+            width = stringUnit(width);
+            height = stringUnit(height);
 
             this.$el.css({
                 width: width, height: height,
@@ -23395,7 +23420,7 @@ var PredefinedPageResizer = function (_UIElement) {
             var style = Object.assign({}, style1, style2);
 
             Object.keys(style).forEach(function (key) {
-                style[key] = px$1(style[key]);
+                style[key] = pxUnit(style[key]);
             });
 
             var page = this.read('selection/current/page');
@@ -23408,14 +23433,14 @@ var PredefinedPageResizer = function (_UIElement) {
         value: function changeX(dx) {
             var width = this.width + dx;
 
-            this.change({ width: px$1(width) });
+            this.change({ width: pxUnit(width) });
         }
     }, {
         key: 'changeY',
         value: function changeY(dy) {
             var height = this.height + dy;
 
-            this.change({ height: px$1(height) });
+            this.change({ height: pxUnit(height) });
         }
     }, {
         key: 'changeXY',
@@ -23423,7 +23448,7 @@ var PredefinedPageResizer = function (_UIElement) {
             var width = this.width + dx;
             var height = this.height + dy;
 
-            this.change({ width: px$1(width), height: px$1(height) });
+            this.change({ width: pxUnit(width), height: pxUnit(height) });
         }
     }, {
         key: 'toTop',
@@ -23497,8 +23522,8 @@ var PredefinedPageResizer = function (_UIElement) {
             this.currentType = type;
             this.xy = e.xy;
             this.page = this.read('selection/current/page');
-            this.width = parseParamNumber$2(this.page.width);
-            this.height = parseParamNumber$2(this.page.height);
+            this.width = unitValue(this.page.width);
+            this.height = unitValue(this.page.height);
         }
     }, {
         key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
@@ -23591,12 +23616,13 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
             var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-            x = px$1(parseParamNumber$1(x, function (x) {
-                return x + pageOffset.left - boardOffset.left + canvasScrollLeft;
-            }));
-            y = px$1(parseParamNumber$1(y, function (y) {
-                return y + pageOffset.top - boardOffset.top + canvasScrollTop;
-            }));
+            x = pxUnit(unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft);
+            y = pxUnit(unitValue(y) + pageOffset.top - boardOffset.top + canvasScrollTop);
+
+            x = stringUnit(x);
+            y = stringUnit(y);
+            width = stringUnit(width);
+            height = stringUnit(height);
 
             var transform = "none";
 
@@ -23625,7 +23651,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var valueList = list.filter(function (it) {
                 return it.align == align;
             }).map(function (it) {
-                return it[key];
+                return unitValue(it[key]);
             });
 
             if (valueList.length) {
@@ -23650,8 +23676,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var x = this.caculatePosition(list, 'x', 'right');
 
             if (isNotUndefined(x)) {
-                var newWidth = Math.abs(this.moveX - parseParamNumber$1(x));
-                item.width = newWidth;
+                var newWidth = Math.abs(this.moveX - x);
+                item.width = pxUnit(newWidth);
             }
         }
     }, {
@@ -23660,10 +23686,10 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var x = this.caculatePosition(list, 'x', 'left');
 
             if (isNotUndefined(x)) {
-                var newWidth = this.width + (this.moveX - parseParamNumber$1(x));
+                var newWidth = this.width + (this.moveX - x);
 
-                item.x = x;
-                item.width = newWidth;
+                item.x = pxUnit(x);
+                item.width = pxUnit(newWidth);
             }
         }
     }, {
@@ -23672,8 +23698,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var y = this.caculatePosition(list, 'y', 'bottom');
 
             if (isNotUndefined(y)) {
-                var newHeight = Math.abs(this.moveY - parseParamNumber$1(y));
-                item.height = newHeight;
+                var newHeight = Math.abs(this.moveY - y);
+                item.height = pxUnit(newHeight);
             }
         }
     }, {
@@ -23682,10 +23708,10 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var y = this.caculatePosition(list, 'y', 'top');
 
             if (isNotUndefined(y)) {
-                var newHeight = this.height + (this.moveY - parseParamNumber$1(y));
+                var newHeight = this.height + (this.moveY - y);
 
-                item.y = y;
-                item.height = newHeight;
+                item.y = pxUnit(y);
+                item.height = pxUnit(newHeight);
             }
         }
     }, {
@@ -23753,7 +23779,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('item/set', {
                 id: item.id,
-                width: px$1(item.width + dx)
+                width: pxUnit(item.width + dx)
             });
         }
     }, {
@@ -23764,8 +23790,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('item/set', {
                 id: item.id,
-                width: px$1(item.width - dx),
-                x: px$1(item.x + dx)
+                width: pxUnit(item.width - dx),
+                x: pxUnit(item.x + dx)
             });
         }
     }, {
@@ -23776,7 +23802,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('item/set', {
                 id: item.id,
-                height: px$1(item.height + dy)
+                height: pxUnit(item.height + dy)
             });
         }
     }, {
@@ -23787,8 +23813,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('item/set', {
                 id: item.id,
-                height: px$1(item.height - dy),
-                y: px$1(item.y + dy)
+                height: pxUnit(item.height - dy),
+                y: pxUnit(item.y + dy)
             });
         }
     }, {
@@ -23800,8 +23826,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.run('item/set', {
                 id: item.id,
-                x: px$1(item.x + dx),
-                y: px$1(item.y + dy)
+                x: pxUnit(item.x + dx),
+                y: pxUnit(item.y + dy)
             });
         }
     }, {
@@ -23911,8 +23937,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             if (this.$dom) {
                 var rect = this.$dom.rect();
-                this.layerX = parseParamNumber$1(this.$selectLayer.x);
-                this.layerY = parseParamNumber$1(this.$selectLayer.y);
+                this.layerX = unitValue(this.$selectLayer.x);
+                this.layerY = unitValue(this.$selectLayer.y);
                 this.layerCenterX = rect.left + rect.width / 2;
                 this.layerCenterY = rect.top + rect.height / 2;
             }
@@ -23920,11 +23946,11 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.rectItems = this.read('selection/current').map(function (it) {
                 return {
                     id: it.id,
-                    x: parseParamNumber$1(it.x),
-                    y: parseParamNumber$1(it.y),
-                    width: parseParamNumber$1(it.width),
-                    height: parseParamNumber$1(it.height),
-                    rotate: parseParamNumber$1(it.rotate || 0)
+                    x: unitValue(it.x),
+                    y: unitValue(it.y),
+                    width: unitValue(it.width),
+                    height: unitValue(it.height),
+                    rotate: unitValue(it.rotate || 0)
                 };
             });
 
@@ -24815,12 +24841,13 @@ var LayerShapeEditor = function (_UIElement) {
             var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
             var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
 
-            x = px$1(parseParamNumber$1(x, function (x) {
-                return x + pageOffset.left - boardOffset.left + canvasScrollLeft;
-            }));
-            y = px$1(parseParamNumber$1(y, function (y) {
-                return y + pageOffset.top - boardOffset.top + canvasScrollTop;
-            }));
+            x = pxUnit(unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft);
+            y = pxUnit(unitValue(y) + pageOffset.top - boardOffset.top + canvasScrollTop);
+
+            x = stringUnit(x);
+            y = stringUnit(y);
+            width = stringUnit(width);
+            height = stringUnit(height);
 
             var transform = "none";
 
@@ -25137,7 +25164,7 @@ var GradientView = function (_UIElement) {
     }, {
         key: 'updateSelection',
         value: function updateSelection() {
-            this.refresh();
+            // this.refresh();
         }
     }, {
         key: EVENT('changeTool'),

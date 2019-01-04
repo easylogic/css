@@ -1,5 +1,4 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { parseParamNumber } from "../../util/filter/functions";
 import { 
     CLIP_PATH_TYPE_NONE, 
     CLIP_PATH_TYPE_CIRCLE, 
@@ -11,7 +10,7 @@ import {
     CLIP_PATH_SIDE_TYPE_NONE,
     CLIP_PATH_TYPE_INSET
 } from "./ItemTypes";
-import { percent, stringUnit, percentUnit, value2px } from "../../util/css/types";
+import { percent, stringUnit, percentUnit, value2px, unitValue } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
 import clipPathList from './clip-path/index'
 import { GETTER } from "../../util/Store";
@@ -60,8 +59,8 @@ export default class ClipPathManager extends BaseModule {
 
     [GETTER('clip-path/make/circle')] ($store, layer) {
 
-        var width = parseParamNumber(layer.width);
-        var height = parseParamNumber(layer.height);
+        var width = unitValue(layer.width);
+        var height = unitValue(layer.height);
 
         var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2))/Math.sqrt(2);
 
@@ -95,8 +94,8 @@ export default class ClipPathManager extends BaseModule {
 
 
     [GETTER('clip-path/make/ellipse')] ($store, layer) {
-        var width = parseParamNumber(layer.width);
-        var height = parseParamNumber(layer.height);
+        var width = unitValue(layer.width);
+        var height = unitValue(layer.height);
 
 
         var clipPathCenterX = defaultValue (layer.clipPathCenterX, percentUnit(50)); 

@@ -1,10 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { parseParamNumber } from "../../util/filter/functions";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
-import { percent, stringUnit } from "../../util/css/types";
-import { isNotUndefined } from "../../util/functions/func";
+import { stringUnit } from "../../util/css/types";
+import { isNotUndefined, isArray } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 
 export default class LayerManager extends BaseModule {
@@ -128,7 +127,7 @@ export default class LayerManager extends BaseModule {
         })
 
         Object.keys(results).forEach(key => {
-            if (Array.isArray(results[key])) {
+            if (isArray(results[key])) {
                 results[key] = results[key].join(', ')
             }
         })
@@ -244,8 +243,8 @@ s
         let transform = '';
 
         if (layer.fitClipPathSize) {
-            const widthScale = parseParamNumber(layer.width) / layer.clipPathSvgWidth;
-            const heightScale = parseParamNumber(layer.height) / layer.clipPathSvgHeight;
+            const widthScale = layer.width.value / layer.clipPathSvgWidth;
+            const heightScale = layer.height.value / layer.clipPathSvgHeight;
     
             transform = `scale(${widthScale} ${heightScale})`    
         }
@@ -274,14 +273,10 @@ s
 
         if (!layer.borderTopLeftRadius) return []
 
-        var count = [
-            layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value,
-            layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value,
-            layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value,
-            layer.borderTopLeftRadius.value == layer.borderBottomLeftRadius.value
-        ].filter(it => !it).length
-
-        if (count == 0 && layer.borderTopLeftRadius) {
+        if (layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value 
+            && layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value
+            && layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value
+        ) {
             return [ stringUnit(layer.borderTopLeftRadius) ]
         }
 
@@ -309,10 +304,10 @@ s
 
         if (!layer) return css; 
 
-        css.left = layer.x 
-        css.top = layer.y
-        css.width = layer.width
-        css.height = layer.height
+        css.left = stringUnit(layer.x)
+        css.top = stringUnit(layer.y)
+        css.width = stringUnit(layer.width)
+        css.height = stringUnit(layer.height)
         css['z-index'] = layer.index;
 
         return css;
@@ -368,12 +363,9 @@ s
 
     [GETTER('layer/cache/toCSS')] ($store, item = null) {
         var layer = Object.assign({}, $store.read('item/convert/style', item.layer), { images: item.images });
-        var css = {
-            left: layer.x,
-            top: layer.y,
-            width: layer.width, 
-            height: layer.height
-        }
+        var css = {}
+
+        css = Object.assign(css, $store.read('layer/bound/toCSS', layer));
 
         if (layer.backgroundColor) {
             css['background-color'] = layer.backgroundColor

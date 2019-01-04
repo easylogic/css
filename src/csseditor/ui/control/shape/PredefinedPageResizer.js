@@ -1,7 +1,6 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { parseParamNumber } from '../../../../util/gl/filter/util';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
-import { px } from '../../../../util/css/types';
+import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
 
 export default class PredefinedPageResizer extends UIElement {
@@ -52,8 +51,13 @@ export default class PredefinedPageResizer extends UIElement {
         var canvasScrollLeft = this.$board.scrollLeft();
         var canvasScrollTop = this.$board.scrollTop();
 
-        var x = px (pageOffset.left - boardOffset.left + canvasScrollLeft); 
-        var y = px (pageOffset.top - boardOffset.top + canvasScrollTop) ; 
+        var x = pxUnit (pageOffset.left - boardOffset.left + canvasScrollLeft); 
+        var y = pxUnit (pageOffset.top - boardOffset.top + canvasScrollTop) ; 
+
+        x = stringUnit(x);
+        y = stringUnit(y);
+        width = stringUnit(width);
+        height = stringUnit(height);
 
         this.$el.css({ 
             width, height, 
@@ -77,7 +81,7 @@ export default class PredefinedPageResizer extends UIElement {
         let style = Object.assign({}, style1, style2);
 
         Object.keys(style).forEach(key => {
-            style[key] = px(style[key]) 
+            style[key] = pxUnit(style[key]) 
         })
 
         var page = this.read('selection/current/page')
@@ -89,20 +93,20 @@ export default class PredefinedPageResizer extends UIElement {
     changeX (dx) {
         var width = this.width + dx; 
 
-        this.change({ width: px( width ) });
+        this.change({ width: pxUnit( width ) });
     }
 
     changeY (dy) {
         var height = this.height + dy; 
 
-        this.change({ height: px( height ) });        
+        this.change({ height: pxUnit( height ) });        
     }
 
     changeXY (dx, dy) {
         var width = this.width + dx; 
         var height = this.height + dy; 
 
-        this.change({ width: px( width ), height: px( height ) });        
+        this.change({ width: pxUnit( width ), height: pxUnit( height ) });        
     }
 
     toTop () {
@@ -169,8 +173,8 @@ export default class PredefinedPageResizer extends UIElement {
         this.currentType = type; 
         this.xy = e.xy;
         this.page = this.read('selection/current/page')
-        this.width = parseParamNumber(this.page.width)
-        this.height = parseParamNumber(this.page.height)
+        this.width = unitValue(this.page.width)
+        this.height = unitValue(this.page.height)
     }
 
     [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {

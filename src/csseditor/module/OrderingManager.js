@@ -1,7 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
-import { parseParamNumber } from "../../util/filter/functions";
-import { px } from "../../util/css/types";
+import { unitValue, pxUnit } from "../../util/css/types";
 import { ACTION } from "../../util/Store";
 
 export default class OrderingManager extends BaseModule {
@@ -21,11 +20,11 @@ export default class OrderingManager extends BaseModule {
     left ($store) {
         var items = $store.read('selection/current');
         var x = Math.min(...items.map(item => {
-            return parseParamNumber(item.x)
+            return unitValue(item.x)
         }));
 
         items.forEach(item => {
-            $store.run('item/set', {id: item.id, x: px(newX)})
+            $store.run('item/set', {id: item.id, x: pxUnit(x)})
         })
     }
 
@@ -33,17 +32,17 @@ export default class OrderingManager extends BaseModule {
         var items = $store.read('selection/current');
         
         var x = Math.min(...items.map(item => {
-            return parseParamNumber(item.x)
+            return unitValue(item.x)
         }));
 
         var x2 = Math.max(...items.map(item => {
-            return parseParamNumber(item.x) + parseParamNumber(item.width);
+            return unitValue(item.x) + unitValue(item.width);
         }));
 
         var centerX = x + Math.floor((x2 - x)/2)
 
         items.forEach(item => {
-            var newX = px(Math.floor(centerX - parseParamNumber(item.width)/2));
+            var newX = pxUnit(Math.floor(centerX - unitValue(item.width)/2));
             $store.run('item/set', {id: item.id, x: newX })
         })
     }
@@ -52,11 +51,11 @@ export default class OrderingManager extends BaseModule {
         var items = $store.read('selection/current');
         
         var x2 = Math.max(...items.map(item => {
-            return parseParamNumber(item.x) + parseParamNumber(item.width);
+            return unitValue(item.x) + unitValue(item.width);
         }));
 
         items.forEach(item => {
-            var newX = px(x2 - parseParamNumber(item.width));
+            var newX = pxUnit(x2 - unitValue(item.width));
             $store.run('item/set', {id: item.id, x: newX })
         })
     }
@@ -64,11 +63,11 @@ export default class OrderingManager extends BaseModule {
     top ($store) {
         var items = $store.read('selection/current');
         var y = Math.min(...items.map(item => {
-            return parseParamNumber(item.y)
+            return unitValue(item.y)
         }));
 
         items.forEach(item => {
-            $store.run('item/set', {id: item.id, y: px(y)})
+            $store.run('item/set', {id: item.id, y: pxUnit(y)})
         })
     }
 
@@ -76,17 +75,17 @@ export default class OrderingManager extends BaseModule {
         var items = $store.read('selection/current');
         
         var y = Math.min(...items.map(item => {
-            return parseParamNumber(item.y)
+            return unitValue(item.y)
         }));
 
         var y2 = Math.max(...items.map(item => {
-            return parseParamNumber(item.y) + parseParamNumber(item.height);
+            return unitValue(item.y) + unitValue(item.height);
         }));
 
         var centerY = y + (y2 - y)/2
 
         items.forEach(item => {
-            var newY = px(Math.floor(centerY  - parseParamNumber(item.height)/2));
+            var newY = pxUnit(Math.floor(centerY  - unitValue(item.height)/2));
             $store.run('item/set', {id: item.id, y: newY })
         })
     }
@@ -95,11 +94,11 @@ export default class OrderingManager extends BaseModule {
         var items = $store.read('selection/current');
         
         var y2 = Math.max(...items.map(item => {
-            return parseParamNumber(item.y) + parseParamNumber(item.height);
+            return unitValue(item.y) + unitValue(item.height);
         }));
 
         items.forEach(item => {
-            var newY = px(y2 - parseParamNumber(item.height));
+            var newY = pxUnit(y2 - unitValue(item.height));
             $store.run('item/set', {id: item.id, y: newY })
         })
     }

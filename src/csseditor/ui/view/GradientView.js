@@ -272,7 +272,7 @@ export default class GradientView extends UIElement {
     )] () { this.refresh(); }
 
     updateSelection () {
-        this.refresh();
+        // this.refresh();
     }
 
     [EVENT('changeTool')] () {

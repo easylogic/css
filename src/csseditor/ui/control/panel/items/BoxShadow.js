@@ -8,8 +8,7 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
-import { parseParamNumber } from '../../../../../util/filter/functions';
-import { px } from '../../../../../util/css/types';
+import { pxUnit, unitValue } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 
 export default class BoxShadow extends BasePropertyItem {
@@ -56,10 +55,10 @@ export default class BoxShadow extends BasePropertyItem {
 
     makeItemNodeBoxShadow (item) {
 
-        var offsetX = parseParamNumber(item.offsetX);
-        var offsetY = parseParamNumber(item.offsetY);
-        var blurRadius = parseParamNumber(item.blurRadius);
-        var spreadRadius = parseParamNumber(item.spreadRadius);
+        var offsetX = unitValue(item.offsetX);
+        var offsetY = unitValue(item.offsetY);
+        var blurRadius = unitValue(item.blurRadius);
+        var spreadRadius = unitValue(item.spreadRadius);
 
         var checked = this.read('selection/check', item.id) ? 'checked': '';
 
@@ -152,7 +151,7 @@ export default class BoxShadow extends BasePropertyItem {
         var field = $el.attr('data-type');
         var id = $el.parent().parent().attr('box-shadow-id')
 
-        this.commit(CHANGE_BOXSHADOW, {id, [field]: px($el.val()) })
+        this.commit(CHANGE_BOXSHADOW, {id, [field]: pxUnit($el.int()) })
     }
 
     [CLICK('$boxShadowList input[type=checkbox]')] (e) {

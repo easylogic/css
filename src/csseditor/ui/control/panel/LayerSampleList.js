@@ -1,6 +1,6 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { parseParamNumber } from "../../../../util/filter/functions";
 import { CLICK, LOAD } from "../../../../util/Event";
+import { unitValue } from "../../../../util/css/types";
 
 
 export default class LayerSampleList extends UIElement {
@@ -28,8 +28,8 @@ export default class LayerSampleList extends UIElement {
         var list = this.list.map( (item, index) => {
             var data = this.read('layer/cache/toString', item)
 
-            var rateX = 160 / parseParamNumber(data.obj.width);
-            var rateY = 120 / parseParamNumber(data.obj.height);
+            var rateX = 160 / unitValue(data.obj.width);
+            var rateY = 120 / unitValue(data.obj.height);
 
             var transform = `transform: scale(${rateX} ${rateY})`
 
@@ -46,8 +46,8 @@ export default class LayerSampleList extends UIElement {
         var storageList = this.read('storage/layers').map( item => {
             var data = this.read('layer/cache/toString', item)
 
-            var rateX = 160 / parseParamNumber(data.obj.width);
-            var rateY = 120 / parseParamNumber(data.obj.height);
+            var rateX = 160 / unitValue(data.obj.width);
+            var rateY = 120 / unitValue(data.obj.height);
 
             var minRate = Math.min(rateY, rateX);            
 

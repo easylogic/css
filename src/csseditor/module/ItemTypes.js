@@ -144,20 +144,20 @@ export const IMAGE_DEFAULT_OBJECT = {
 
 export const BOXSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_BOXSHADOW,
-    offsetX: 0,
-    offsetY: 0,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
     inset: false,
-    blurRadius: 0,
-    spreadRadius: 0,
+    blurRadius: pxUnit(0),
+    spreadRadius: pxUnit(0),
     color: 'gray'
 }
 
 
 export const TEXTSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_TEXTSHADOW,
-    offsetX: 0,
-    offsetY: 0,
-    blurRadius: 0,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    blurRadius: pxUnit(0),
     color: 'gray'
 }
 

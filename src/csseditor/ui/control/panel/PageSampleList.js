@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { parseParamNumber } from "../../../../util/filter/functions";
 import { CLICK, LOAD } from "../../../../util/Event";
+import { unitValue, pxUnit } from "../../../../util/css/types";
+import { defaultValue } from "../../../../util/functions/func";
 
 
 export default class PageSampleList extends UIElement {
@@ -28,8 +29,8 @@ export default class PageSampleList extends UIElement {
         var list = this.list.map( (page, index) => {
             var data = this.read('page/cache/toString', page)
 
-            var rateX = 160 / parseParamNumber(data.obj.width);
-            var rateY = 120 / parseParamNumber(data.obj.height);
+            var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+            var rateY = 120 / unitValue(defaultValue(data.obj.height, pxUnit(300)));            
 
             var transform = `transform: scale(${rateX} ${rateY})`
 
@@ -53,8 +54,8 @@ export default class PageSampleList extends UIElement {
         var storageList = this.read('storage/pages').map( page => {
             var data = this.read('page/cache/toString', this.read('item/convert/style', page.page))
 
-            var rateX = 160 / parseParamNumber(data.obj.width || 400);
-            var rateY = 160 / parseParamNumber(data.obj.height || 300);
+            var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+            var rateY = 160 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
 
             var minRate = Math.min(rateY, rateX);
 

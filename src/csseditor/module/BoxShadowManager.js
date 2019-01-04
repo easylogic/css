@@ -1,5 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
+import { stringUnit } from "../../util/css/types";
 
 export default class BoxShadowManager extends BaseModule { 
 
@@ -45,14 +46,14 @@ export default class BoxShadowManager extends BaseModule {
         var results = ['']
 
         if (item.inset) {
-            results[0] = 'inset'
+            results.push('inset')
         }
 
         results.push(
-            item.offsetX || '0px',
-            item.offsetY || '0px',
-            item.blurRadius || '0px',
-            item.spreadRadius || '0px',
+            stringUnit(item.offsetX),
+            stringUnit(item.offsetY),
+            stringUnit(item.blurRadius),
+            stringUnit(item.spreadRadius),
             item.color
         )
 

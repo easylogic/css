@@ -36,7 +36,7 @@ export default class LayerTabView extends BaseTab {
                         <Rotate></Rotate>
                         <RadiusFixed></RadiusFixed>
                         <radius></radius>      
-                        <opacity></opacity>        
+                        <opacity></opacity>         
                         <LayerBlend></LayerBlend>
                         <BackgroundClip></BackgroundClip>                    
                     </div>

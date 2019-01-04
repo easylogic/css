@@ -20,8 +20,8 @@ export default class PageManager extends BaseModule {
         var css ={
             overflow: sample.clip ? 'hidden' : '',
             'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-            width: sample.width,
-            height: sample.height
+            width: stringUnit(sample.width),
+            height: stringUnit(sample.height)
         } 
 
         if (sample.perspective) {
@@ -61,8 +61,8 @@ export default class PageManager extends BaseModule {
         var css ={
             overflow: sample.clip ? 'hidden' : '',
             'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-            width: sample.width,
-            height: sample.height
+            width: stringUnit(sample.width),
+            height: stringUnit(sample.height)
         } 
 
 
