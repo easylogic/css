@@ -6992,7 +6992,7 @@ var DOM_EVENT_MAKE = function DOM_EVENT_MAKE() {
 };
 
 var CUSTOM = DOM_EVENT_MAKE;
-var CLICK = DOM_EVENT_MAKE('click');
+var CLICK$1 = DOM_EVENT_MAKE('click');
 var DOUBLECLICK = DOM_EVENT_MAKE('dblclick');
 var MOUSEDOWN = DOM_EVENT_MAKE('mousedown');
 var MOUSEUP = DOM_EVENT_MAKE('mouseup');
@@ -9205,7 +9205,7 @@ var ColorInformation = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$formatChangeButton'),
+        key: CLICK$1('$formatChangeButton'),
         value: function value(e) {
             this.nextFormat();
         }
@@ -9306,12 +9306,12 @@ var ColorSetsChooser = function (_UIElement) {
             this.$el.toggleClass('open');
         }
     }, {
-        key: CLICK('$toggleButton'),
+        key: CLICK$1('$toggleButton'),
         value: function value(e) {
             this.toggle();
         }
     }, {
-        key: CLICK('$colorsetsList .colorsets-item'),
+        key: CLICK$1('$colorsetsList .colorsets-item'),
         value: function value(e, $dt) {
             if ($dt) {
 
@@ -9373,7 +9373,7 @@ var CurrentColorSets = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$colorSetsChooseButton'),
+        key: CLICK$1('$colorSetsChooseButton'),
         value: function value(e) {
             this.emit('toggleColorChooser');
         }
@@ -9400,12 +9400,12 @@ var CurrentColorSets = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$colorSetsColorList .add-color-item'),
+        key: CLICK$1('$colorSetsColorList .add-color-item'),
         value: function value(e) {
             this.addColor(this.read('toColor'));
         }
     }, {
-        key: CLICK('$colorSetsColorList .color-item'),
+        key: CLICK$1('$colorSetsColorList .color-item'),
         value: function value(e, $dt) {
             this.dispatch('changeColor', $dt.attr('data-color'));
         }
@@ -9468,7 +9468,7 @@ var CurrentColorSetsContextMenu = function (_UIElement) {
             this.show(e, index);
         }
     }, {
-        key: CLICK('$el .menu-item'),
+        key: CLICK$1('$el .menu-item'),
         value: function value(e, $dt) {
             e.preventDefault();
 
@@ -10063,7 +10063,7 @@ var RingTabColorPicker = function (_BaseColorPicker) {
             return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing></ColorRing>\n                            <Palette></Palette> \n                            <div class="control">\n                                <Value></Value>\n                                <Opacity></Opacity>\n                                <div class="empty"></div>\n                                <ColorView></ColorView>\n                            </div>\n                            <Information></Information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
         }
     }, {
-        key: CLICK('$tabHeader .color-tab-item'),
+        key: CLICK$1('$tabHeader .color-tab-item'),
         value: function value(e, $dt) {
             if (!$dt.hasClass('active')) {
                 var selectedItem = this.refs.$tabHeader.$('.active');
@@ -10109,7 +10109,7 @@ var XDTabColorPicker = function (_BaseColorPicker) {
             return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette></palette> \n                            <div class="control">\n                                <Hue></Hue>\n                                <Opacity></Opacity>\n                            </div>\n                            <information></information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
         }
     }, {
-        key: CLICK('$tabHeader .color-tab-item'),
+        key: CLICK$1('$tabHeader .color-tab-item'),
         value: function value(e, $dt) {
             if (!$dt.hasClass('active')) {
                 var selectedItem = this.refs.$tabHeader.$('.active');
@@ -10768,8 +10768,8 @@ var ImageManager = function (_BaseModule) {
             var x = defaultValue(image$$1.backgroundPositionX, valueUnit(POSITION_CENTER));
             var y = defaultValue(image$$1.backgroundPositionY, valueUnit(POSITION_CENTER));
 
-            if (x == 0) x = percentUnit(0);
-            if (y == 0) y = percentUnit(0);
+            if (x === 0) x = percentUnit(0);
+            if (y === 0) y = percentUnit(0);
 
             return stringUnit(x) + ' ' + stringUnit(y);
         }
@@ -15383,7 +15383,7 @@ var BasePropertyItem = function (_UIElement) {
         key: "onToggleShow",
         value: function onToggleShow() {}
     }, {
-        key: CLICK('$title'),
+        key: CLICK$1('$title'),
         value: function value(e) {
             var $dom = new Dom(e.target);
 
@@ -15445,7 +15445,7 @@ var Size = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: CLICK('$rect'),
+        key: CLICK$1('$rect'),
         value: function value$$1(e) {
             var _this2 = this;
 
@@ -15710,7 +15710,7 @@ var Clip = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$check'),
+        key: CLICK$1('$check'),
         value: function value() {
             var _this3 = this;
 
@@ -16028,7 +16028,7 @@ var GradientSteps = function (_UIElement) {
         // checkTarget 이라는 메소드가 true 를 리턴해줘야 아래 이벤트는 실행된다. 
 
     }, {
-        key: CLICK('$back'),
+        key: CLICK$1('$back'),
         value: function value$$1(e) {
             this.addStep(e);
         }
@@ -16110,17 +16110,17 @@ var GradientSteps = function (_UIElement) {
             this.setBackgroundColor();
         }
     }, {
-        key: CLICK('$steps .step') + SHIFT,
+        key: CLICK$1('$steps .step') + SHIFT,
         value: function value$$1(e) {
             this.removeStep(e);
         }
     }, {
-        key: CLICK('$steps .step'),
+        key: CLICK$1('$steps .step'),
         value: function value$$1(e) {
             this.selectStep(e);
         }
     }, {
-        key: CLICK('$steps .guide-change'),
+        key: CLICK$1('$steps .guide-change'),
         value: function value$$1(e) {
             var id = e.$delegateTarget.attr('data-colorstep-id');
             var item = this.read('item/get', id);
@@ -16465,7 +16465,7 @@ var GradientInfo = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$colorsteps .color-view-item'),
+        key: CLICK$1('$colorsteps .color-view-item'),
         value: function value$$1(e) {
             this.selectStep(e);
         }
@@ -16577,7 +16577,7 @@ var GradientInfo = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$colorsteps .remove-step'),
+        key: CLICK$1('$colorsteps .remove-step'),
         value: function value$$1(e) {
             var item = this.read('selection/current/image');
             if (!item) return;
@@ -16589,7 +16589,7 @@ var GradientInfo = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$colorsteps .guide-change'),
+        key: CLICK$1('$colorsteps .guide-change'),
         value: function value$$1(e) {
             var id = e.$delegateTarget.attr('colorstep-id');
             var item = this.read('item/get', id);
@@ -16904,7 +16904,7 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items block'>            \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items block'>            \n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -16912,9 +16912,20 @@ var Transform3d = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
+        key: CLICK('$preserve'),
+        value: function value$$1(e) {
+            var _this2 = this;
+
+            this.read('selection/current/layer/id', function (id) {
+                var preserve = _this2.refs.$preserve.checked();
+
+                _this2.commit(CHANGE_LAYER_TRANSFORM, { id: id, preserve: preserve });
+            });
+        }
+    }, {
         key: "refresh",
         value: function refresh() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.read('selection/current/layer', function (item) {
 
@@ -16922,27 +16933,29 @@ var Transform3d = function (_BasePropertyItem) {
 
                 attr.forEach(function (key) {
                     if (item[key]) {
-                        _this2.refs["$" + key + "Range"].val(item[key]);
-                        _this2.refs["$" + key].val(item[key]);
+                        _this3.refs["$" + key + "Range"].val(item[key]);
+                        _this3.refs["$" + key].val(item[key]);
                     }
                 });
+
+                _this3.refs.$preserve.checked(!!item.preserve);
             });
         }
     }, {
         key: "updateTransform",
         value: function updateTransform(key) {
-            var _this3 = this;
+            var _this4 = this;
 
             var postfix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
             this.read('selection/current/layer/id', function (id) {
-                var value$$1 = _this3.refs['$' + key + postfix].val();
+                var value$$1 = _this4.refs['$' + key + postfix].val();
                 if (postfix == '') {
-                    _this3.refs['$' + key + 'Range'].val(value$$1);
+                    _this4.refs['$' + key + 'Range'].val(value$$1);
                 } else {
-                    _this3.refs['$' + key].val(value$$1);
+                    _this4.refs['$' + key].val(value$$1);
                 }
-                _this3.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, value$$1));
+                _this4.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
@@ -16997,7 +17010,7 @@ var UnitRange = function (_UIElement) {
             return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value$$1 + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value$$1 + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"" + UNIT_PX + "\" unit='" + UNIT_PX + "'></div>\n                    <div ref=\"$percent\" class=\"" + UNIT_PERCENT + "\" unit='" + UNIT_PERCENT + "'></div>\n                    <div ref=\"$em\" class=\"" + UNIT_EM + "\" unit='" + UNIT_EM + "'></div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$multiValue div'),
+        key: CLICK$1('$multiValue div'),
         value: function value$$1(e) {
             var unit$$1 = e.$delegateTarget.attr('unit');
             var value$$1 = e.$delegateTarget.attr('value');
@@ -17067,7 +17080,7 @@ var UnitRange = function (_UIElement) {
             this.initializeRangeMax(this.unit);
         }
     }, {
-        key: CLICK('$unit'),
+        key: CLICK$1('$unit'),
         value: function value$$1(e) {
             this.$el.toggleClass(this.showClass);
             this.updateRange();
@@ -17208,7 +17221,7 @@ var BackgroundSize = function (_UIElement) {
             return unitValue(layer.width) * 2;
         }
     }, {
-        key: CLICK('$size button'),
+        key: CLICK$1('$size button'),
         value: function value$$1(e) {
             var _this6 = this;
 
@@ -17249,7 +17262,7 @@ var BackgroundSize = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$repeat button'),
+        key: CLICK$1('$repeat button'),
         value: function value$$1(e) {
             var _this7 = this;
 
@@ -17327,7 +17340,7 @@ var PageSize = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$rect'),
+        key: CLICK$1('$rect'),
         value: function value$$1(e) {
             var _this3 = this;
 
@@ -17423,7 +17436,7 @@ var PageExport = function (_UIElement) {
             return "\n            <div class='property-item export'>\n                <div class='items no-padding'>\n                    <div>\n                        <label>Export</label>\n                        <button type=\"button\" ref=\"$exportCSS\">CSS</button>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$exportCSS'),
+        key: CLICK$1('$exportCSS'),
         value: function value(e) {
             this.emit('showExport');
         }
@@ -17497,7 +17510,7 @@ var BlendList = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: CLICK('$blendList .blend-item') + SELF,
+        key: CLICK$1('$blendList .blend-item') + SELF,
         value: function value(e) {
             var _this4 = this;
 
@@ -17577,7 +17590,7 @@ var MixBlendList = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
-        key: CLICK('$mixBlendList .blend-item') + SELF,
+        key: CLICK$1('$mixBlendList .blend-item') + SELF,
         value: function value(e) {
             var _this4 = this;
 
@@ -17695,7 +17708,7 @@ var FilterList$1 = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$filterList input[type=checkbox]'),
+        key: CLICK$1('$filterList input[type=checkbox]'),
         value: function value$$1(e) {
             var $check = e.$delegateTarget;
             var key = $check.attr('data-key');
@@ -17718,7 +17731,7 @@ var FilterList$1 = function (_BasePropertyItem) {
             this.updateFilterKeyValue(key, $number.val());
         }
     }, {
-        key: CLICK('$el .drop-shadow'),
+        key: CLICK$1('$el .drop-shadow'),
         value: function value$$1(e) {
             var color$$1 = e.$delegateTarget.css('background-color');
             this.emit('selectFillColor', color$$1, this.updateDropShadowColor.bind(this));
@@ -17772,7 +17785,7 @@ var BackgroundColor = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$colorview'),
+        key: CLICK$1('$colorview'),
         value: function value() {
             this.emit('toggleLayerColorPicker');
         }
@@ -17925,7 +17938,7 @@ var ImageResource = function (_BasePropertyItem) {
             return this.read('image/type/isImage', item.type);
         }
     }, {
-        key: CLICK('$imageList .svg-item'),
+        key: CLICK$1('$imageList .svg-item'),
         value: function value(e) {
             var _this2 = this;
 
@@ -18002,7 +18015,7 @@ var ClipPath = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$showClipPathEditor'),
+        key: CLICK$1('$showClipPathEditor'),
         value: function value() {
             var _this4 = this;
 
@@ -18050,7 +18063,7 @@ var PageShowGrid = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$check'),
+        key: CLICK$1('$check'),
         value: function value() {
             var _this3 = this;
 
@@ -18077,7 +18090,7 @@ var GroupAlign = function (_BasePropertyItem) {
             return "\n            <div class='property-item group-align show'>\n                <div class='items'>            \n                    <div>\n                        <div>\n                            <button type=\"button\" title=\"left\" data-value=\"left\"></button>\n                            <button type=\"button\" title=\"center\" data-value=\"center\"></button>\n                            <button type=\"button\" title=\"right\" data-value=\"right\"></button>\n                            <button type=\"button\" title=\"top\" data-value=\"top\"></button>\n                            <button type=\"button\" title=\"middle\" data-value=\"middle\"></button>\n                            <button type=\"button\" title=\"bottom\" data-value=\"bottom\"></button>\n                            <button type=\"button\" title=\"vertical\" data-value=\"vertical\"></button>\n                            <button type=\"button\" title=\"horizontal\" data-value=\"horizontal\"></button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$el button'),
+        key: CLICK$1('$el button'),
         value: function value(e) {
             this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'));
         }
@@ -18301,7 +18314,7 @@ var RadiusFixed = function (_BasePropertyItem) {
             this.updateTransform('radius');
         }
     }, {
-        key: CLICK('$radiusLabel'),
+        key: CLICK$1('$radiusLabel'),
         value: function value$$1() {
             this.emit('toggleRadius');
         }
@@ -18426,12 +18439,12 @@ var ClipPathSVG = function (_BasePropertyItem) {
             if (item.clipPathType == CLIP_PATH_TYPE_SVG) return true;
         }
     }, {
-        key: CLICK('$clipPath'),
+        key: CLICK$1('$clipPath'),
         value: function value() {
             this.emit('toggleClipPathImageList');
         }
     }, {
-        key: CLICK('$fit'),
+        key: CLICK$1('$fit'),
         value: function value() {
             var _this2 = this;
 
@@ -18513,7 +18526,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
             callback && callback(newValue);
         }
     }, {
-        key: CLICK('$imageList .svg-item'),
+        key: CLICK$1('$imageList .svg-item'),
         value: function value(e) {
             var _this4 = this;
 
@@ -18712,7 +18725,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: CLICK('$polygonList button[data-key]'),
+        key: CLICK$1('$polygonList button[data-key]'),
         value: function value$$1(e) {
             var _this2 = this;
 
@@ -18769,7 +18782,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$sampleList .clip-path-item'),
+        key: CLICK$1('$sampleList .clip-path-item'),
         value: function value$$1(e) {
             var _this4 = this;
 
@@ -18875,7 +18888,7 @@ var BoxShadow = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: CLICK('$add'),
+        key: CLICK$1('$add'),
         value: function value$$1(e) {
             var _this3 = this;
 
@@ -18895,7 +18908,7 @@ var BoxShadow = function (_BasePropertyItem) {
             this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
         }
     }, {
-        key: CLICK('$boxShadowList input[type=checkbox]'),
+        key: CLICK$1('$boxShadowList input[type=checkbox]'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().parent().parent().attr('box-shadow-id');
@@ -18903,7 +18916,7 @@ var BoxShadow = function (_BasePropertyItem) {
             this.commit(CHANGE_BOXSHADOW, { id: id, inset: $el.checked() });
         }
     }, {
-        key: CLICK('$boxShadowList .delete-boxshadow'),
+        key: CLICK$1('$boxShadowList .delete-boxshadow'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('box-shadow-id');
@@ -18913,7 +18926,7 @@ var BoxShadow = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
-        key: CLICK('$boxShadowList .color'),
+        key: CLICK$1('$boxShadowList .color'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('box-shadow-id');
@@ -19012,7 +19025,7 @@ var TextShadow = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: CLICK('$add'),
+        key: CLICK$1('$add'),
         value: function value$$1(e) {
             var _this3 = this;
 
@@ -19032,7 +19045,7 @@ var TextShadow = function (_BasePropertyItem) {
             this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
         }
     }, {
-        key: CLICK('$textShadowList .delete-textshadow'),
+        key: CLICK$1('$textShadowList .delete-textshadow'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('text-shadow-id');
@@ -19042,7 +19055,7 @@ var TextShadow = function (_BasePropertyItem) {
             this.refresh();
         }
     }, {
-        key: CLICK('$textShadowList .color'),
+        key: CLICK$1('$textShadowList .color'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var id = $el.parent().attr('text-shadow-id');
@@ -19243,7 +19256,7 @@ var Text = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$color'),
+        key: CLICK$1('$color'),
         value: function value(e) {
             var _this4 = this;
 
@@ -19261,7 +19274,7 @@ var Text = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$clipText'),
+        key: CLICK$1('$clipText'),
         value: function value(e) {
             var _this6 = this;
 
@@ -19835,7 +19848,7 @@ var BackdropList = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: CLICK('$filterList input[type=checkbox]'),
+        key: CLICK$1('$filterList input[type=checkbox]'),
         value: function value$$1(e) {
             var $check = e.$delegateTarget;
             var key = $check.attr('data-key');
@@ -19858,7 +19871,7 @@ var BackdropList = function (_BasePropertyItem) {
             this.updateFilterKeyValue(key, $number.val());
         }
     }, {
-        key: CLICK('$el .drop-shadow'),
+        key: CLICK$1('$el .drop-shadow'),
         value: function value$$1(e) {
             var color$$1 = e.$delegateTarget.css('background-color');
             this.emit('selectFillColor', color$$1, this.updateDropShadowColor.bind(this));
@@ -19933,7 +19946,7 @@ var Page3D = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$preserve'),
+        key: CLICK$1('$preserve'),
         value: function value$$1(e) {
             var _this3 = this;
 
@@ -20066,7 +20079,7 @@ var BaseTab = function (_UIElement) {
             return !e.$delegateTarget.hasClass('selected');
         }
     }, {
-        key: CLICK('$header .tab-item') + CHECKER('isNotSelectedTab'),
+        key: CLICK$1('$header .tab-item') + CHECKER('isNotSelectedTab'),
         value: function value(e, $dt) {
             this.selectTab($dt.attr('data-id'));
         }
@@ -20442,7 +20455,7 @@ var LayerListView = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$layerList .tree-item') + SELF,
+        key: CLICK$1('$layerList .tree-item') + SELF,
         value: function value(e) {
             var id = e.$delegateTarget.attr('id');
             this.dispatch('selection/one', id);
@@ -20515,33 +20528,33 @@ var LayerListView = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$layerList .copy-image-item'),
+        key: CLICK$1('$layerList .copy-image-item'),
         value: function value(e) {
             this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
             this.dispatch('history/push', 'Add a gradient');
             this.refresh();
         }
     }, {
-        key: CLICK('$layerList .copy-item'),
+        key: CLICK$1('$layerList .copy-item'),
         value: function value(e) {
             this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
             this.dispatch('history/push', 'Copy a layer');
             this.refresh();
         }
     }, {
-        key: CLICK('$layerList .delete-item'),
+        key: CLICK$1('$layerList .delete-item'),
         value: function value(e) {
             this.dispatch('item/remove', e.$delegateTarget.attr('item-id'));
             this.dispatch('history/push', 'Remove item');
             this.refresh();
         }
     }, {
-        key: CLICK('$viewSample'),
+        key: CLICK$1('$viewSample'),
         value: function value(e) {
             this.emit('toggleLayerSampleView');
         }
     }, {
-        key: CLICK('$layerList .gradient-collapse-button') + SELF,
+        key: CLICK$1('$layerList .gradient-collapse-button') + SELF,
         value: function value(e) {
             e.$delegateTarget.parent().toggleClass('collapsed');
             var item = this.read('item/get', e.$delegateTarget.attr('item-id'));
@@ -20601,7 +20614,7 @@ var ImageListView = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$el .tree-item') + SELF,
+        key: CLICK$1('$el .tree-item') + SELF,
         value: function value(e) {
             var id = e.$delegateTarget.attr('data-id');
 
@@ -20678,32 +20691,32 @@ var LayerToolbar = function (_UIElement) {
             return { ImageListView: ImageListView };
         }
     }, {
-        key: CLICK('$groupAlign button'),
+        key: CLICK$1('$groupAlign button'),
         value: function value(e) {
             this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'));
         }
     }, {
-        key: CLICK('$groupOrdering button'),
+        key: CLICK$1('$groupOrdering button'),
         value: function value(e) {
             this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'));
         }
     }, {
-        key: CLICK('$undo'),
+        key: CLICK$1('$undo'),
         value: function value(e) {
             this.dispatch('history/undo');
         }
     }, {
-        key: CLICK('$redo'),
+        key: CLICK$1('$redo'),
         value: function value(e) {
             this.dispatch('history/redo');
         }
     }, {
-        key: CLICK('$togglePagePanel'),
+        key: CLICK$1('$togglePagePanel'),
         value: function value() {
             this.emit('togglePagePanel');
         }
     }, {
-        key: CLICK('$toggleLayerPanel'),
+        key: CLICK$1('$toggleLayerPanel'),
         value: function value() {
             this.emit('toggleLayerPanel');
         }
@@ -21129,7 +21142,7 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
             return this.read('tool/get', 'guide.angle') && (isLinear || isConic);
         }
     }, {
-        key: CLICK('$el button') + SELF,
+        key: CLICK$1('$el button') + SELF,
         value: function value(e) {
             var _this2 = this;
 
@@ -21165,7 +21178,7 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
             return ' \n            <div class="predefined-angluar-group radial-position">\n                <button type="button" data-value="top"></button>                          \n                <button type="button" data-value="left"></button>                                                  \n                <button type="button" data-value="bottom"></button>                            \n                <button type="button" data-value="right"></button>                                        \n            </div>\n        ';
         }
     }, {
-        key: CLICK('$el button'),
+        key: CLICK$1('$el button'),
         value: function value(e) {
             var _this2 = this;
 
@@ -21240,7 +21253,7 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$center'),
+        key: CLICK$1('$center'),
         value: function value(e) {
             var _this4 = this;
 
@@ -21478,7 +21491,7 @@ var PredefinedBackgroundPosition = function (_UIElement) {
             };
         }
     }, {
-        key: CLICK('$el button') + SELF,
+        key: CLICK$1('$el button') + SELF,
         value: function value$$1(e) {
             var _this2 = this;
 
@@ -21569,7 +21582,7 @@ var PredefinedPerspectiveOriginPosition = function (_UIElement) {
             };
         }
     }, {
-        key: CLICK('$el button') + SELF,
+        key: CLICK$1('$el button') + SELF,
         value: function value$$1(e) {
             var _this2 = this;
 
@@ -22519,12 +22532,12 @@ var ExportWindow = function (_UIElement) {
             this.loadCode();
         }
     }, {
-        key: CLICK('$close'),
+        key: CLICK$1('$close'),
         value: function value(e) {
             this.$el.hide();
         }
     }, {
-        key: CLICK('$title .tool-item'),
+        key: CLICK$1('$title .tool-item'),
         value: function value(e) {
             var _this4 = this;
 
@@ -22581,7 +22594,7 @@ var Timeline = function (_UIElement) {
             return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    Timeline\n                </div>\n                <div class='timeline-body\"></div>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$header'),
+        key: CLICK$1('$header'),
         value: function value() {
             this.parent.toggleTimeline();
         }
@@ -22840,21 +22853,21 @@ var GradientSampleList = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$el .gradient-sample-item .change-item'),
+        key: CLICK$1('$el .gradient-sample-item .change-item'),
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
 
             this.dispatch('gradient/select', this.props.type, index);
         }
     }, {
-        key: CLICK('$el .gradient-sample-item .add-item'),
+        key: CLICK$1('$el .gradient-sample-item .add-item'),
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
 
             this.dispatch('gradient/add', this.props.type, index);
         }
     }, {
-        key: CLICK('$el .gradient-cached-item .add-item'),
+        key: CLICK$1('$el .gradient-cached-item .add-item'),
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
             var image = this.read('storage/images', index);
@@ -22863,7 +22876,7 @@ var GradientSampleList = function (_UIElement) {
             this.dispatch('gradient/image/add', newImage);
         }
     }, {
-        key: CLICK('$el .gradient-cached-item .change-item'),
+        key: CLICK$1('$el .gradient-cached-item .change-item'),
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
             var image = this.read('storage/images', index);
@@ -22872,7 +22885,7 @@ var GradientSampleList = function (_UIElement) {
             this.dispatch('gradient/image/select', newImage);
         }
     }, {
-        key: CLICK('$el .add-current-image'),
+        key: CLICK$1('$el .add-current-image'),
         value: function value(e) {
             var _this3 = this;
 
@@ -22908,7 +22921,7 @@ var GradientSampleWindow = function (_UIElement) {
             return "\n            <div class='gradient-sample-view'>\n                <div class=\"close\">&times;</div>\n                <GradientSampleList></GradientSampleList>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$el .close'),
+        key: CLICK$1('$el .close'),
         value: function value(e) {
             this.$el.toggle();
         }
@@ -22995,7 +23008,7 @@ var LayerSampleList = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$el .layer-sample-item .add-item'),
+        key: CLICK$1('$el .layer-sample-item .add-item'),
         value: function value$$1(e) {
             var _this3 = this;
 
@@ -23010,7 +23023,7 @@ var LayerSampleList = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$el .layer-cached-item .add-item'),
+        key: CLICK$1('$el .layer-cached-item .add-item'),
         value: function value$$1(e) {
             var _this4 = this;
 
@@ -23023,13 +23036,13 @@ var LayerSampleList = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$el .layer-cached-item .delete-item'),
+        key: CLICK$1('$el .layer-cached-item .delete-item'),
         value: function value$$1(e) {
             this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
             this.refresh();
         }
     }, {
-        key: CLICK('$el .add-current-layer'),
+        key: CLICK$1('$el .add-current-layer'),
         value: function value$$1(e) {
             var _this5 = this;
 
@@ -23065,7 +23078,7 @@ var LayerSampleWindow = function (_UIElement) {
             return "\n            <div class='layer-sample-view'>\n                <div class=\"close\">&times;</div>\n                <LayerSampleList></LayerSampleList>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$el .close'),
+        key: CLICK$1('$el .close'),
         value: function value(e) {
             this.$el.toggle();
         }
@@ -23158,7 +23171,7 @@ var PageSampleList = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: CLICK('$el .page-sample-item .add-item'),
+        key: CLICK$1('$el .page-sample-item .add-item'),
         value: function value$$1(e) {
             var _this3 = this;
 
@@ -23174,7 +23187,7 @@ var PageSampleList = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$el .page-cached-item .add-item'),
+        key: CLICK$1('$el .page-cached-item .add-item'),
         value: function value$$1(e) {
             var _this4 = this;
 
@@ -23187,13 +23200,13 @@ var PageSampleList = function (_UIElement) {
             }
         }
     }, {
-        key: CLICK('$el .page-cached-item .delete-item'),
+        key: CLICK$1('$el .page-cached-item .delete-item'),
         value: function value$$1(e) {
             this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
             this.refresh();
         }
     }, {
-        key: CLICK('$el .add-current-page'),
+        key: CLICK$1('$el .add-current-page'),
         value: function value$$1(e) {
             var _this5 = this;
 
@@ -23229,7 +23242,7 @@ var PageSampleWindow = function (_UIElement) {
             return "\n            <div class='page-sample-view'>\n                <div class=\"close\">&times;</div>\n                <PageSampleList></PageSampleList>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$el .close'),
+        key: CLICK$1('$el .close'),
         value: function value(e) {
             this.$el.toggle();
         }
@@ -23329,7 +23342,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
             callback && callback(newValue);
         }
     }, {
-        key: CLICK('$imageList .svg-item'),
+        key: CLICK$1('$imageList .svg-item'),
         value: function value(e) {
             var _this2 = this;
 
@@ -24784,14 +24797,14 @@ var PolygonEditor = function (_UIElement) {
             return new Dom(e.target).hasClass('drag-item') == false;
         }
     }, {
-        key: CLICK() + ALT,
+        key: CLICK$1() + ALT,
         value: function value$$1(e) {
             e.preventDefault();
 
             this.addPoint(e);
         }
     }, {
-        key: CLICK('$el .drag-item') + ALT + CAPTURE,
+        key: CLICK$1('$el .drag-item') + ALT + CAPTURE,
         value: function value$$1(e) {
             e.stopPropagation();
             e.preventDefault();
@@ -25210,7 +25223,7 @@ var HandleView = function (_GradientView) {
             return e.target == this.refs.$colorview.el;
         }
     }, {
-        key: CLICK('$page .layer') + SELF,
+        key: CLICK$1('$page .layer') + SELF,
         value: function value(e) {
             var id = e.$delegateTarget.attr('item-layer-id');
             if (id) {
@@ -25403,7 +25416,7 @@ var ToolMenu = function (_UIElement) {
             return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
         }
     }, {
-        key: CLICK('$check'),
+        key: CLICK$1('$check'),
         value: function value() {
             var _this2 = this;
 
@@ -25413,22 +25426,22 @@ var ToolMenu = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$saveButton'),
+        key: CLICK$1('$saveButton'),
         value: function value(e) {
             this.run('storage/save');
         }
     }, {
-        key: CLICK('$viewSample'),
+        key: CLICK$1('$viewSample'),
         value: function value(e) {
             this.emit('togglePageSampleView');
         }
     }, {
-        key: CLICK('$exportButton'),
+        key: CLICK$1('$exportButton'),
         value: function value(e) {
             this.emit('showExport');
         }
     }, {
-        key: CLICK('$addLayer'),
+        key: CLICK$1('$addLayer'),
         value: function value(e) {
             var _this3 = this;
 
@@ -25438,7 +25451,7 @@ var ToolMenu = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$addLayerCircle'),
+        key: CLICK$1('$addLayerCircle'),
         value: function value(e) {
             var _this4 = this;
 
@@ -25448,7 +25461,7 @@ var ToolMenu = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$gradientType .gradient-item'),
+        key: CLICK$1('$gradientType .gradient-item'),
         value: function value(e) {
             var _this5 = this;
 
@@ -25460,7 +25473,7 @@ var ToolMenu = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$el .gradient-sample-list'),
+        key: CLICK$1('$el .gradient-sample-list'),
         value: function value(e) {
             this.emit('toggleGradientSampleView');
         }
@@ -25532,30 +25545,30 @@ var PageListView = function (_UIElement) {
             this.emit(CHANGE_EDITOR);
         }
     }, {
-        key: CLICK('$pageList .add-page'),
+        key: CLICK$1('$pageList .add-page'),
         value: function value(e) {
             this.dispatch('item/add/page', true);
             this.refresh();
         }
     }, {
-        key: CLICK('$pageList .tree-item') + SELF,
+        key: CLICK$1('$pageList .tree-item') + SELF,
         value: function value(e) {
 
             this.dispatch('selection/one', e.$delegateTarget.attr('id'));
             this.refresh();
         }
     }, {
-        key: CLICK('$saveButton'),
+        key: CLICK$1('$saveButton'),
         value: function value(e) {
             this.run('storage/save');
         }
     }, {
-        key: CLICK('$viewSample'),
+        key: CLICK$1('$viewSample'),
         value: function value(e) {
             this.emit('togglePageSampleView');
         }
     }, {
-        key: CLICK('$exportButton'),
+        key: CLICK$1('$exportButton'),
         value: function value(e) {
             this.emit('showExport');
         }
@@ -25620,31 +25633,31 @@ var ImageToolbar = function (_UIElement) {
             return this.read('selection/is/image');
         }
     }, {
-        key: CLICK('$ordering'),
+        key: CLICK$1('$ordering'),
         value: function value(e) {
             this.dispatch('colorstep/ordering/equals');
             this.dispatch('history/push', 'Ordering gradient');
         }
     }, {
-        key: CLICK('$orderingLeft'),
+        key: CLICK$1('$orderingLeft'),
         value: function value(e) {
             this.dispatch('colorstep/ordering/equals/left');
             this.dispatch('history/push', 'Ordering gradient');
         }
     }, {
-        key: CLICK('$orderingRight'),
+        key: CLICK$1('$orderingRight'),
         value: function value(e) {
             this.dispatch('colorstep/ordering/equals/right');
             this.dispatch('history/push', 'Ordering gradient');
         }
     }, {
-        key: CLICK('$cutOff'),
+        key: CLICK$1('$cutOff'),
         value: function value(e) {
             this.dispatch('colorstep/cut/off');
             this.dispatch('history/push', 'Cut off static gradient pattern');
         }
     }, {
-        key: CLICK('$cutOn'),
+        key: CLICK$1('$cutOn'),
         value: function value(e) {
             this.dispatch('colorstep/cut/on');
             this.dispatch('history/push', 'Cut on static gradient pattern');

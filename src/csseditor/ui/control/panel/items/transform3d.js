@@ -15,6 +15,13 @@ export default class Transform3d extends BasePropertyItem {
                 <div class='title' ref="$title">Transform 3D</div> 
                 <div class='items block'>            
                     <div>
+                        <label> 3D </label>
+                        
+                        <div>
+                            <label><input type='checkbox' ref="$preserve"> preserve-3d </label>
+                        </div>
+                    </div>                    
+                    <div>
                         <label>Perspective</label>
                         <div>
                             <input type='range' data-type="perspective" ref="$perspectiveRange" min="0" max="3000">
@@ -97,6 +104,16 @@ export default class Transform3d extends BasePropertyItem {
         this.refresh()
     }
 
+
+    [CLICK('$preserve')] (e) {
+
+        this.read('selection/current/layer/id', (id) => {
+            var preserve = this.refs.$preserve.checked();
+
+            this.commit(CHANGE_LAYER_TRANSFORM, {id, preserve});
+        })
+    }    
+
     refresh() {
         this.read('selection/current/layer', (item) => {
 
@@ -112,7 +129,9 @@ export default class Transform3d extends BasePropertyItem {
                     this.refs[`$${key}Range`].val(item[key])    
                     this.refs[`$${key}`].val(item[key])    
                 }
-            })        
+            })       
+            
+            this.refs.$preserve.checked(!!item.preserve);            
         })
         
     }
