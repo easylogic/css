@@ -13,7 +13,7 @@ export default class Transform extends BasePropertyItem {
         return `
             <div class='property-item transform show'>
                 <div class='title' ref="$title">Transform 2D</div>
-                <div class='items'>            
+                <div class='items block'>            
                     <div>
                         <label>Rotate</label>
                         <div>
@@ -56,14 +56,7 @@ export default class Transform extends BasePropertyItem {
                             <input type='range' ref="$translateYRange" min="-2000" max="2000" step="1">
                             <input type='number' ref="$translateY" min="-2000" max="2000" step="1"> <span>${UNIT_PX}</span>
                         </div>
-                    </div>
-                    <div>                        
-                        <label>translateZ</label>
-                        <div>
-                            <input type='range' ref="$translateZRange" min="-2000" max="2000" step="1">
-                            <input type='number' ref="$translateZ" min="-2000" max="2000" step="1"> <span>${UNIT_PX}</span>
-                        </div>                        
-                    </div>                                                         
+                    </div>                                                   
                 </div>
             </div>
         `
@@ -80,7 +73,7 @@ export default class Transform extends BasePropertyItem {
     refresh() {
         this.read('selection/current/layer', (item) => {
 
-            var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY', 'translateZ']
+            var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY']
 
             attr.forEach( key => {
                 if (item[key]) {
@@ -110,7 +103,6 @@ export default class Transform extends BasePropertyItem {
     [CHANGEINPUT('$scaleRange')] () { this.updateTransform('scale','Range'); }
     [CHANGEINPUT('$translateXRange')] () { this.updateTransform('translateX','Range'); }
     [CHANGEINPUT('$translateYRange')] () { this.updateTransform('translateY','Range'); }
-    [CHANGEINPUT('$translateZRange')] () { this.updateTransform('translateZ','Range'); }
 
     [INPUT('$rotate')] () { this.updateTransform('rotate'); }
     [INPUT('$skewX')] () { this.updateTransform('skewX'); }
@@ -118,6 +110,5 @@ export default class Transform extends BasePropertyItem {
     [INPUT('$scale')] () { this.updateTransform('scale'); }
     [INPUT('$translateX')] () { this.updateTransform('translateX'); }
     [INPUT('$translateY')] () { this.updateTransform('translateY'); }
-    [INPUT('$translateZ')] () { this.updateTransform('translateZ'); }    
     
 }

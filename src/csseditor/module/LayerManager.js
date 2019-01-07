@@ -182,6 +182,19 @@ export default class LayerManager extends BaseModule {
         return $store.read('layer/make/map', layer, ITEM_TYPE_TEXTSHADOW, isExport);
     }    
 
+    [GETTER('layer/make/transform/rotate')] ($store, layer) {
+
+        var results = [] 
+
+        if (layer.rotate) {
+            results.push(`rotate(${layer.rotate}deg)`)
+        }
+        
+        return {
+            transform: (results.length ? results.join(' ') : 'none')
+        }
+    }
+
     [GETTER('layer/make/transform')] ($store, layer) {
 
         var results = [] 
@@ -218,18 +231,30 @@ export default class LayerManager extends BaseModule {
             results.push(`translateZ(${layer.translateZ}px)`)
         }
 
-        if (layer.rotate3dX || layer.rotate3dY || layer.rotate3dZ || layer.rotate3dA) {
-            results.push(`rotate3d( ${layer.rotate3dX||0}, ${layer.rotate3dY||0}, ${layer.rotate3dZ||0}, ${layer.rotate3dA || 0}deg  )`);
-        }
+        if (layer.rotateX) {
+            results.push(`rotateX(${layer.rotateX}deg)`)
+        }                                
 
-        if (layer.scale3dX || layer.scale3dY || layer.scale3dZ) {
-            results.push(`scale3d( ${layer.scale3dX || 1}, ${layer.scale3dY || 1}, ${layer.scale3dZ || 1})`);
-        }        
+        if (layer.rotateY) {
+            results.push(`rotateY(${layer.rotateY}deg)`)
+        }                                
 
-        if (layer.translate3dX || layer.translate3dY || layer.translate3dZ) {
-            results.push(`translate3d( ${layer.translate3dX||0}px, ${layer.translate3dY||0}px, ${layer.translate3dZ||0}px)`);
-        }                
-s
+        if (layer.rotateZ) {
+            results.push(`rotateZ(${layer.rotateZ}deg)`)
+        }      
+        
+        if (layer.scaleX) {
+            results.push(`scaleX(${layer.scaleX})`)
+        }  
+
+        if (layer.scaleY) {
+            results.push(`scaleY(${layer.scaleY})`)
+        }  
+        
+        if (layer.scaleZ) {
+            results.push(`scaleZ(${layer.scaleZ})`)
+        }          
+        
         return {
             transform: (results.length ? results.join(' ') : 'none')
         }

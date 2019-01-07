@@ -283,6 +283,9 @@ export default class ImageManager extends BaseModule {
         var x = defaultValue(image.backgroundPositionX, valueUnit(POSITION_CENTER))
         var y = defaultValue(image.backgroundPositionY, valueUnit(POSITION_CENTER))
 
+        if (x === 0) x = percentUnit(0);
+        if (y === 0) y = percentUnit(0);
+
         return `${stringUnit(x)} ${stringUnit(y)}`;
     }      
     

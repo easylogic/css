@@ -10616,6 +10616,9 @@ var ImageManager = function (_BaseModule) {
             var x = defaultValue(image$$1.backgroundPositionX, valueUnit(POSITION_CENTER));
             var y = defaultValue(image$$1.backgroundPositionY, valueUnit(POSITION_CENTER));
 
+            if (x === 0) x = percentUnit(0);
+            if (y === 0) y = percentUnit(0);
+
             return stringUnit(x) + ' ' + stringUnit(y);
         }
     }, {
@@ -11058,6 +11061,20 @@ var LayerManager = function (_BaseModule) {
             return $store.read('layer/make/map', layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
         }
     }, {
+        key: GETTER('layer/make/transform/rotate'),
+        value: function value$$1($store, layer) {
+
+            var results = [];
+
+            if (layer.rotate) {
+                results.push("rotate(" + layer.rotate + "deg)");
+            }
+
+            return {
+                transform: results.length ? results.join(' ') : 'none'
+            };
+        }
+    }, {
         key: GETTER('layer/make/transform'),
         value: function value$$1($store, layer) {
 
@@ -11095,17 +11112,30 @@ var LayerManager = function (_BaseModule) {
                 results.push("translateZ(" + layer.translateZ + "px)");
             }
 
-            if (layer.rotate3dX || layer.rotate3dY || layer.rotate3dZ || layer.rotate3dA) {
-                results.push("rotate3d( " + (layer.rotate3dX || 0) + ", " + (layer.rotate3dY || 0) + ", " + (layer.rotate3dZ || 0) + ", " + (layer.rotate3dA || 0) + "deg  )");
+            if (layer.rotateX) {
+                results.push("rotateX(" + layer.rotateX + "deg)");
             }
 
-            if (layer.scale3dX || layer.scale3dY || layer.scale3dZ) {
-                results.push("scale3d( " + (layer.scale3dX || 1) + ", " + (layer.scale3dY || 1) + ", " + (layer.scale3dZ || 1) + ")");
+            if (layer.rotateY) {
+                results.push("rotateY(" + layer.rotateY + "deg)");
             }
 
-            if (layer.translate3dX || layer.translate3dY || layer.translate3dZ) {
-                results.push("translate3d( " + (layer.translate3dX || 0) + "px, " + (layer.translate3dY || 0) + "px, " + (layer.translate3dZ || 0) + "px)");
+            if (layer.rotateZ) {
+                results.push("rotateZ(" + layer.rotateZ + "deg)");
             }
+
+            if (layer.scaleX) {
+                results.push("scaleX(" + layer.scaleX + ")");
+            }
+
+            if (layer.scaleY) {
+                results.push("scaleY(" + layer.scaleY + ")");
+            }
+
+            if (layer.scaleZ) {
+                results.push("scaleZ(" + layer.scaleZ + ")");
+            }
+
             return {
                 transform: results.length ? results.join(' ') : 'none'
             };
@@ -16606,7 +16636,7 @@ var Transform = function (_BasePropertyItem) {
     createClass(Transform, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 2D</div>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateZ</label>\n                        <div>\n                            <input type='range' ref=\"$translateZRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateZ\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>                        \n                    </div>                                                         \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 2D</div>\n                <div class='items block'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                                   \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER_ROTATE),
@@ -16620,7 +16650,7 @@ var Transform = function (_BasePropertyItem) {
 
             this.read('selection/current/layer', function (item) {
 
-                var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY', 'translateZ'];
+                var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY'];
 
                 attr.forEach(function (key) {
                     if (item[key]) {
@@ -16678,11 +16708,6 @@ var Transform = function (_BasePropertyItem) {
             this.updateTransform('translateY', 'Range');
         }
     }, {
-        key: CHANGEINPUT('$translateZRange'),
-        value: function value$$1() {
-            this.updateTransform('translateZ', 'Range');
-        }
-    }, {
         key: INPUT('$rotate'),
         value: function value$$1() {
             this.updateTransform('rotate');
@@ -16712,11 +16737,6 @@ var Transform = function (_BasePropertyItem) {
         value: function value$$1() {
             this.updateTransform('translateY');
         }
-    }, {
-        key: INPUT('$translateZ'),
-        value: function value$$1() {
-            this.updateTransform('translateZ');
-        }
     }]);
     return Transform;
 }(BasePropertyItem);
@@ -16732,10 +16752,10 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items'>            \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dX\" ref=\"$rotate3dXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dX\" ref=\"$rotate3dX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dY\" ref=\"$rotate3dYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dY\" ref=\"$rotate3dY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dZ\" ref=\"$rotate3dZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dZ\" ref=\"$rotate3dZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>3D Angle</label>\n                        <div>\n                            <input type='range' data-type=\"rotate3dA\" ref=\"$rotate3dARange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotate3dA\" ref=\"$rotate3dA\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>       \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scale3dX\" ref=\"$scale3dXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scale3dX\" ref=\"$scale3dX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scale3dY\" ref=\"$scale3dYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scale3dY\" ref=\"$scale3dY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scale3dZ\" ref=\"$scale3dZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scale3dZ\" ref=\"$scale3dZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translate3dX\" ref=\"$translate3dXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translate3dX\" ref=\"$translate3dX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translate3dY\" ref=\"$translate3dYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translate3dY\" ref=\"$translate3dY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translate3dZ\" ref=\"$translate3dZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translate3dZ\" ref=\"$translate3dZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items block'>            \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM_3D, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -16746,7 +16766,7 @@ var Transform3d = function (_BasePropertyItem) {
 
             this.read('selection/current/layer', function (item) {
 
-                var attr = ['perspective', 'rotate3dX', 'rotate3dY', 'rotate3dZ', 'rotate3dA', 'scale3dX', 'scale3dY', 'scale3dZ', 'translate3dX', 'translate3dY', 'translate3dZ'];
+                var attr = ['perspective', 'rotateX', 'rotateY', 'rotateZ', 'scaleX', 'scaleY', 'scaleZ', 'translateX', 'translateY', 'translateZ'];
 
                 attr.forEach(function (key) {
                     if (item[key]) {
@@ -16770,7 +16790,7 @@ var Transform3d = function (_BasePropertyItem) {
                 } else {
                     _this3.refs['$' + key].val(value$$1);
                 }
-                _this3.commit(CHANGE_LAYER_TRANSFORM_3D, defineProperty({ id: id }, key, value$$1));
+                _this3.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: id }, key, value$$1));
             });
         }
     }, {
@@ -23476,7 +23496,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var transform = "none";
 
             if (id) {
-                transform = this.read('layer/make/transform', this.read('item/get', id));
+                transform = this.read('layer/make/transform/rotate', this.read('item/get', id));
             }
 
             return _extends({
@@ -24701,7 +24721,7 @@ var LayerShapeEditor = function (_UIElement) {
             var transform = "none";
 
             if (id) {
-                transform = this.read('layer/make/transform', this.read('item/get', id));
+                transform = this.read('layer/make/transform/rotate', this.read('item/get', id));
             }
 
             return _extends({

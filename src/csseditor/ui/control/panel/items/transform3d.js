@@ -1,8 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    CHANGE_LAYER_TRANSFORM_3D, 
     CHANGE_EDITOR, 
-    CHANGE_SELECTION
+    CHANGE_SELECTION,
+    CHANGE_LAYER_TRANSFORM
 } from "../../../../types/event";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
@@ -13,7 +13,7 @@ export default class Transform3d extends BasePropertyItem {
         return `
             <div class='property-item transform show'>
                 <div class='title' ref="$title">Transform 3D</div> 
-                <div class='items'>            
+                <div class='items block'>            
                     <div>
                         <label>Perspective</label>
                         <div>
@@ -24,71 +24,64 @@ export default class Transform3d extends BasePropertyItem {
                     <div>
                         <label>Rotate X</label>
                         <div>
-                            <input type='range' data-type="rotate3dX" ref="$rotate3dXRange" min="-360" max="360">
-                            <input type='number' data-type="rotate3dX" ref="$rotate3dX"> <span>${UNIT_DEG}</span>
+                            <input type='range' data-type="rotateX" ref="$rotateXRange" min="-360" max="360">
+                            <input type='number' data-type="rotateX" ref="$rotateX"> <span>${UNIT_DEG}</span>
                         </div>
                     </div>
                     <div>
                         <label>Rotate Y</label>
                         <div>
-                            <input type='range' data-type="rotate3dY" ref="$rotate3dYRange" min="-360" max="360">
-                            <input type='number' data-type="rotate3dY" ref="$rotate3dY"> <span>${UNIT_DEG}</span>
+                            <input type='range' data-type="rotateY" ref="$rotateYRange" min="-360" max="360">
+                            <input type='number' data-type="rotateY" ref="$rotateY"> <span>${UNIT_DEG}</span>
                         </div>
                     </div>                    
                     <div>
                         <label>Rotate Z</label>
                         <div>
-                            <input type='range' data-type="rotate3dZ" ref="$rotate3dZRange" min="-360" max="360">
-                            <input type='number' data-type="rotate3dZ" ref="$rotate3dZ"> <span>${UNIT_DEG}</span>
+                            <input type='range' data-type="rotateZ" ref="$rotateZRange" min="-360" max="360">
+                            <input type='number' data-type="rotateZ" ref="$rotateZ"> <span>${UNIT_DEG}</span>
                         </div>
-                    </div>                                        
-                    <div>
-                        <label>3D Angle</label>
-                        <div>
-                            <input type='range' data-type="rotate3dA" ref="$rotate3dARange" min="-360" max="360">
-                            <input type='number' data-type="rotate3dA" ref="$rotate3dA"> <span>${UNIT_DEG}</span>
-                        </div>
-                    </div>       
+                    </div>                                         
                     <div>
                         <label>Scale X</label>
                         <div>
-                            <input type='range' data-type="scale3dX" ref="$scale3dXRange" min="0.5" max="10" step="0.1">
-                            <input type='number' data-type="scale3dX" ref="$scale3dX"> 
+                            <input type='range' data-type="scaleX" ref="$scaleXRange" min="0.5" max="10" step="0.1">
+                            <input type='number' data-type="scaleX" ref="$scaleX"> 
                         </div>
                     </div>                                        
                     <div>
                         <label>Scale Y</label>
                         <div>
-                            <input type='range' data-type="scale3dY" ref="$scale3dYRange" min="0.5" max="10" step="0.1">
-                            <input type='number' data-type="scale3dY" ref="$scale3dY"> 
+                            <input type='range' data-type="scaleY" ref="$scaleYRange" min="0.5" max="10" step="0.1">
+                            <input type='number' data-type="scaleY" ref="$scaleY"> 
                         </div>
                     </div>                                        
                     <div>
                         <label>Scale Z</label>
                         <div>
-                            <input type='range' data-type="scale3dZ" ref="$scale3dZRange" min="0.5" max="10" step="0.1">
-                            <input type='number' data-type="scale3dZ" ref="$scale3dZ"> 
+                            <input type='range' data-type="scaleZ" ref="$scaleZRange" min="0.5" max="10" step="0.1">
+                            <input type='number' data-type="scaleZ" ref="$scaleZ"> 
                         </div>
                     </div>    
                     <div>
                         <label>Translate X</label>
                         <div>
-                            <input type='range'  data-type="translate3dX" ref="$translate3dXRange" min="-2000" max="2000">
-                            <input type='number'  data-type="translate3dX" ref="$translate3dX" min="-2000" max="2000"> <span>${UNIT_PX}</span>
+                            <input type='range'  data-type="translateX" ref="$translateXRange" min="-2000" max="2000">
+                            <input type='number'  data-type="translateX" ref="$translateX" min="-2000" max="2000"> <span>${UNIT_PX}</span>
                         </div>
                     </div>
                     <div>
                         <label>Translate Y</label>
                         <div>
-                            <input type='range'  data-type="translate3dY" ref="$translate3dYRange" min="-2000" max="2000">
-                            <input type='number' data-type="translate3dY" ref="$translate3dY" min="-2000" max="2000"> <span>${UNIT_PX}</span> 
+                            <input type='range'  data-type="translateY" ref="$translateYRange" min="-2000" max="2000">
+                            <input type='number' data-type="translateY" ref="$translateY" min="-2000" max="2000"> <span>${UNIT_PX}</span> 
                         </div>
                     </div>
                     <div>
                         <label>Translate Z</label>
                         <div>
-                            <input type='range' data-type="translate3dZ" ref="$translate3dZRange" min="-2000" max="2000">
-                            <input type='number' data-type="translate3dZ" ref="$translate3dZ" min="-2000" max="2000">  <span>${UNIT_PX}</span>
+                            <input type='range' data-type="translateZ" ref="$translateZRange" min="-2000" max="2000">
+                            <input type='number' data-type="translateZ" ref="$translateZ" min="-2000" max="2000">  <span>${UNIT_PX}</span>
                         </div>
                     </div>                                        
                 </div>
@@ -97,7 +90,7 @@ export default class Transform3d extends BasePropertyItem {
     }
 
     [EVENT(
-        CHANGE_LAYER_TRANSFORM_3D,
+        CHANGE_LAYER_TRANSFORM,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () {
@@ -109,9 +102,9 @@ export default class Transform3d extends BasePropertyItem {
 
             var attr = [
                 'perspective',
-                'rotate3dX', 'rotate3dY', 'rotate3dZ', 'rotate3dA', 
-                'scale3dX', 'scale3dY', 'scale3dZ', 
-                'translate3dX','translate3dY','translate3dZ'
+                'rotateX', 'rotateY', 'rotateZ', 
+                'scaleX', 'scaleY', 'scaleZ', 
+                'translateX','translateY','translateZ'
             ]
 
             attr.forEach( key => {
@@ -132,7 +125,7 @@ export default class Transform3d extends BasePropertyItem {
             } else {
                 this.refs['$' + key].val(value);
             }
-            this.commit(CHANGE_LAYER_TRANSFORM_3D, {id, [key]: value })
+            this.commit(CHANGE_LAYER_TRANSFORM, {id, [key]: value })
         })
     } 
 

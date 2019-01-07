@@ -294,6 +294,112 @@
             }
         }
 
+        > .items.block > div {
+            display: block; 
+            margin-bottom: 2px;
+
+            > label {
+                display: block;
+                line-height: 1.6;
+                margin-left: 4px;
+                text-align: left;
+                padding-right: 5px;
+                box-sizing: border-box;
+            }
+
+            > div {
+                display: flex; 
+                padding-left: 10px;
+
+                input[type=range] {
+                    width: 120px;
+                    vertical-align: middle;
+                    margin-right: 2px;
+                }
+
+                input[type=number], input[type=text] {
+                    width: 60px;
+                    vertical-align: middle;        
+                    box-sizing: border-box;            
+
+                    &.full {
+                        width: 160px;
+                        height: 20px;
+                    }
+
+                    &:disabled {
+                        background-color: $border-color;
+                        // appearance: none;
+                        border:1px solid $border-color;
+                        cursor: not-allowed;
+                    }
+                }
+
+                .input {
+                    display: flex;
+                    input[type=number], input[type=text] {
+                        // width: 30px;
+                        flex:1 1 auto;
+                    }
+
+                    &.two {
+                        input[type=number], input[type=text] {
+                            width: 40px;
+                        }
+
+                        span {
+                            display: inline-block;
+                            vertical-align: middle;
+                            padding:2px;
+                        }
+                    }
+
+                }
+
+                .input-field.hex {
+                    input[type=number], input[type=text] {
+                        width: 100%;
+                    }
+                }
+
+                > span {
+                    display: inline-block;
+                    margin-left: 4px; 
+                    margin-right: 10px;
+                    vertical-align: middle;
+
+                    &.color {
+                        display:  block;
+                        height: 100%;
+                        width: 40px;
+                        margin-right: 0px;
+                        border: 1px solid $border-color;
+                    }
+
+                    &.color-text {
+                        display:  inline-block;
+                        height: 100%;
+                        margin-right: 0px;
+                        padding: 10px 0px;                        
+                    }                    
+                }
+
+                .input-text {
+                    span {
+                        display: inline-block;
+                        width: 36px;
+                        text-align: center;
+                    }
+
+                    &.two {
+                        span {
+                            width: 80px;
+                        }
+                    }
+                }
+            }
+        }        
+
         @import './property-items/gradient-steps.scss';
         @import './property-items/gradient-sample-list.scss';
         @import './property-items/gradient-steps-info.scss';

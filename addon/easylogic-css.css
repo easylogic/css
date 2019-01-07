@@ -4682,6 +4682,76 @@ html, body {
             text-align: center; }
           .csseditor .property-view .property-item > .items > div > div .input-text.two span {
             width: 80px; }
+      .csseditor .property-view .property-item > .items.block > div {
+        display: block;
+        margin-bottom: 2px; }
+        .csseditor .property-view .property-item > .items.block > div > label {
+          display: block;
+          line-height: 1.6;
+          margin-left: 4px;
+          text-align: left;
+          padding-right: 5px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+        .csseditor .property-view .property-item > .items.block > div > div {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          padding-left: 10px; }
+          .csseditor .property-view .property-item > .items.block > div > div input[type=range] {
+            width: 120px;
+            vertical-align: middle;
+            margin-right: 2px; }
+          .csseditor .property-view .property-item > .items.block > div > div input[type=number], .csseditor .property-view .property-item > .items.block > div > div input[type=text] {
+            width: 60px;
+            vertical-align: middle;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box; }
+            .csseditor .property-view .property-item > .items.block > div > div input[type=number].full, .csseditor .property-view .property-item > .items.block > div > div input[type=text].full {
+              width: 160px;
+              height: 20px; }
+            .csseditor .property-view .property-item > .items.block > div > div input[type=number]:disabled, .csseditor .property-view .property-item > .items.block > div > div input[type=text]:disabled {
+              background-color: #cccccc;
+              border: 1px solid #cccccc;
+              cursor: not-allowed; }
+          .csseditor .property-view .property-item > .items.block > div > div .input {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex; }
+            .csseditor .property-view .property-item > .items.block > div > div .input input[type=number], .csseditor .property-view .property-item > .items.block > div > div .input input[type=text] {
+              -webkit-box-flex: 1;
+                  -ms-flex: 1 1 auto;
+                      flex: 1 1 auto; }
+            .csseditor .property-view .property-item > .items.block > div > div .input.two input[type=number], .csseditor .property-view .property-item > .items.block > div > div .input.two input[type=text] {
+              width: 40px; }
+            .csseditor .property-view .property-item > .items.block > div > div .input.two span {
+              display: inline-block;
+              vertical-align: middle;
+              padding: 2px; }
+          .csseditor .property-view .property-item > .items.block > div > div .input-field.hex input[type=number], .csseditor .property-view .property-item > .items.block > div > div .input-field.hex input[type=text] {
+            width: 100%; }
+          .csseditor .property-view .property-item > .items.block > div > div > span {
+            display: inline-block;
+            margin-left: 4px;
+            margin-right: 10px;
+            vertical-align: middle; }
+            .csseditor .property-view .property-item > .items.block > div > div > span.color {
+              display: block;
+              height: 100%;
+              width: 40px;
+              margin-right: 0px;
+              border: 1px solid #cccccc; }
+            .csseditor .property-view .property-item > .items.block > div > div > span.color-text {
+              display: inline-block;
+              height: 100%;
+              margin-right: 0px;
+              padding: 10px 0px; }
+          .csseditor .property-view .property-item > .items.block > div > div .input-text span {
+            display: inline-block;
+            width: 36px;
+            text-align: center; }
+          .csseditor .property-view .property-item > .items.block > div > div .input-text.two span {
+            width: 80px; }
       .csseditor .property-view .property-item.gradient-steps {
         height: 90px;
         padding: 0px; }
