@@ -94,6 +94,22 @@ export default class SelectionManager extends BaseModule {
 
     [GETTER('selection/current')] ($store) {
         return $store.selection.ids.filter(id => !!$store.items[id]).map(id => $store.items[id])
+    }   
+
+    [GETTER('selection/unit/values')] ($store) {
+        return $store.read('selection/current').map(item => {
+            return {
+                id: item.id,
+                x: unitValue(item.x),
+                y: unitValue(item.y),
+                width: unitValue(item.width),
+                height: unitValue(item.height),                
+                x2: unitValue(item.x) + unitValue(item.width),
+                y2: unitValue(item.y) + unitValue(item.height),                
+                centerX: unitValue(item.x) + unitValue(item.width)/2,
+                centerY: unitValue(item.y) + unitValue(item.height)/2
+            }
+        });
     }
 
     getCurrentItem ($store, itemType, callback) {

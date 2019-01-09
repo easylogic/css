@@ -9,11 +9,12 @@ import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
+import { ITEM_TYPE_CIRCLE } from "../../../../module/ItemTypes";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item fixed-radius show'>
+            <div class='property-item fixed-radius'>
                 <div class='items'>            
                     <div>
                         <label > <button type="button" ref="$radiusLabel">*</button> Radius</label>
@@ -35,12 +36,28 @@ export default class RadiusFixed extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.read('selection/current/layer', (item) => {
-            var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0) )
-            this.refs.$radiusRange.val(radius.value)
-            this.refs.$radius.val(radius.value)
-        })
-        
+
+        var isShow = this.isShow();
+
+        this.$el.toggleClass('show', isShow);
+
+        if (isShow) {
+
+            this.read('selection/current/layer', (item) => {
+                var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0) )
+                this.refs.$radiusRange.val(radius.value)
+                this.refs.$radius.val(radius.value)
+            })
+        }
+    }
+
+    isShow () {
+        var layer = this.read('selection/current/layer');
+
+        if (!layer) return false; 
+        if (layer.type == ITEM_TYPE_CIRCLE) return false;
+
+        return true;
     }
 
     updateTransform (type) {

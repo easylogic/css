@@ -1,4 +1,4 @@
-import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit } from "../../util/css/types";
+import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit } from "../../util/css/types";
 import { isNotUndefined } from "../../util/functions/func";
 
 export const ITEM_TYPE_PAGE = 'page';
@@ -82,10 +82,10 @@ export const LAYER_DEFAULT_OBJECT = {
     mixBlendMode: 'normal',
     selected: true,
     visible: true,
-    x: '0px',
-    y: '0px',
-    width: '200px',
-    height: '200px',
+    x: pxUnit(0),
+    y: pxUnit(0),
+    width: pxUnit(200),
+    height: pxUnit(200),
     rotate: 0,
     opacity: 1,
     fontFamily: 'serif',
@@ -102,7 +102,8 @@ export const LAYER_DEFAULT_OBJECT = {
 
 
 export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    borderRadius: pxUnit(100),
+    type: ITEM_TYPE_CIRCLE,
+    borderRadius: percentUnit(100), 
     fixedRadius: true
 })
 

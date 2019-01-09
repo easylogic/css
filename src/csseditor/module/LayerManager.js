@@ -3,7 +3,7 @@ import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE } from "./ItemTypes";
 import { stringUnit } from "../../util/css/types";
-import { isNotUndefined, isArray } from "../../util/functions/func";
+import { isNotUndefined, isArray, cleanObject, combineKeyArray } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 
 export default class LayerManager extends BaseModule {
@@ -73,13 +73,7 @@ export default class LayerManager extends BaseModule {
             })
         })
 
-        Object.keys(results).forEach(key => {
-            if (Array.isArray(results[key])) {
-                results[key] = results[key].join(', ')
-            }
-        })
-
-        return results; 
+        return combineKeyArray(results);
     }
 
 
@@ -99,13 +93,7 @@ export default class LayerManager extends BaseModule {
             })
         })
 
-        Object.keys(results).forEach(key => {
-            if (Array.isArray(results[key])) {
-                results[key] = results[key].join(', ')
-            }
-        })
-  
-        return results; 
+        return combineKeyArray(results);
     }    
 
     [GETTER('layer/image/toImageCSS')] ($store, image) {    
@@ -375,14 +363,7 @@ export default class LayerManager extends BaseModule {
             (image) ? $store.read('layer/image/toImageCSS', image) : $store.read('layer/make/image', layer, isExport)
         )
 
-        var realCSS = {}
-        Object.keys(results).filter(key => {
-            return !!results[key]
-        }).forEach(key => {
-            realCSS[key] = results[key]
-        })
-
-        return realCSS; 
+        return cleanObject(results);
     }
 
 
@@ -421,14 +402,7 @@ export default class LayerManager extends BaseModule {
             $store.read('layer/cache/toImageCSS', layer.images)
         )
 
-        var realCSS = {}
-        Object.keys(results).filter(key => {
-            return !!results[key]
-        }).forEach(key => {
-            realCSS[key] = results[key]
-        })
-
-        return realCSS; 
+        return cleanObject(results);
     }
 
 }

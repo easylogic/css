@@ -53,7 +53,7 @@ export function isNotString (value) {
 }
 
 export function isObject (value) {
-    return typeof value == 'object'
+    return typeof value == 'object' && !isArray(value) && value !== null; 
 }
 
 export function isFunction (value) {
@@ -64,6 +64,26 @@ export function isNumber (value) {
     return typeof value == 'number';
 }
 
+export function cleanObject (obj) {
+    var realObject = {}
+    Object.keys(obj).filter(key => {
+        return !!obj[key]
+    }).forEach(key => {
+        realObject[key] = obj[key]
+    });
+
+    return realObject;
+}
+
+export function combineKeyArray (obj) {
+    Object.keys(obj).forEach(key => {
+        if (Array.isArray(obj[key])) {
+            obj[key] = obj[key].join(', ')
+        }
+    })
+
+    return obj;
+}
 
 export default {
     debounce

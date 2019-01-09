@@ -259,7 +259,7 @@ function isNotString(value) {
 }
 
 function isObject(value) {
-    return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object';
+    return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object' && !isArray(value) && value !== null;
 }
 
 function isFunction(value) {
@@ -268,6 +268,27 @@ function isFunction(value) {
 
 function isNumber(value) {
     return typeof value == 'number';
+}
+
+function cleanObject(obj) {
+    var realObject = {};
+    Object.keys(obj).filter(function (key) {
+        return !!obj[key];
+    }).forEach(function (key) {
+        realObject[key] = obj[key];
+    });
+
+    return realObject;
+}
+
+function combineKeyArray(obj) {
+    Object.keys(obj).forEach(function (key) {
+        if (Array.isArray(obj[key])) {
+            obj[key] = obj[key].join(', ');
+        }
+    });
+
+    return obj;
 }
 
 var func = {
@@ -2366,10 +2387,10 @@ var LAYER_DEFAULT_OBJECT = _extends({
     mixBlendMode: 'normal',
     selected: true,
     visible: true,
-    x: '0px',
-    y: '0px',
-    width: '200px',
-    height: '200px',
+    x: pxUnit(0),
+    y: pxUnit(0),
+    width: pxUnit(200),
+    height: pxUnit(200),
     rotate: 0,
     opacity: 1,
     fontFamily: 'serif',
@@ -2382,7 +2403,8 @@ var LAYER_DEFAULT_OBJECT = _extends({
 }, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
 
 var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    borderRadius: pxUnit(100),
+    type: ITEM_TYPE_CIRCLE,
+    borderRadius: percentUnit(100),
     fixedRadius: true
 });
 
@@ -10946,13 +10968,7 @@ var LayerManager = function (_BaseModule) {
                 });
             });
 
-            Object.keys(results).forEach(function (key) {
-                if (Array.isArray(results[key])) {
-                    results[key] = results[key].join(', ');
-                }
-            });
-
-            return results;
+            return combineKeyArray(results);
         }
     }, {
         key: GETTER('layer/cache/toImageCSS'),
@@ -10972,13 +10988,7 @@ var LayerManager = function (_BaseModule) {
                 });
             });
 
-            Object.keys(results).forEach(function (key) {
-                if (Array.isArray(results[key])) {
-                    results[key] = results[key].join(', ');
-                }
-            });
-
-            return results;
+            return combineKeyArray(results);
         }
     }, {
         key: GETTER('layer/image/toImageCSS'),
@@ -11253,14 +11263,7 @@ var LayerManager = function (_BaseModule) {
 
             var results = Object.assign(css, $store.read('layer/make/border-radius', layer), $store.read('layer/make/transform', layer), $store.read('layer/make/clip-path', layer), $store.read('layer/make/filter', layer), $store.read('layer/make/backdrop', layer), $store.read('layer/make/font', layer), $store.read('layer/make/box-shadow', layer), $store.read('layer/make/text-shadow', layer), image ? $store.read('layer/image/toImageCSS', image) : $store.read('layer/make/image', layer, isExport));
 
-            var realCSS = {};
-            Object.keys(results).filter(function (key) {
-                return !!results[key];
-            }).forEach(function (key) {
-                realCSS[key] = results[key];
-            });
-
-            return realCSS;
+            return cleanObject(results);
         }
     }, {
         key: GETTER('layer/cache/toCSS'),
@@ -11291,14 +11294,7 @@ var LayerManager = function (_BaseModule) {
 
             var results = Object.assign(css, $store.read('layer/make/border-radius', layer), $store.read('layer/make/transform', layer), $store.read('layer/make/clip-path', layer), $store.read('layer/make/filter', layer), $store.read('layer/make/backdrop', layer), $store.read('layer/make/font', layer), $store.read('layer/make/box-shadow', layer), $store.read('layer/make/text-shadow', layer), $store.read('layer/cache/toImageCSS', layer.images));
 
-            var realCSS = {};
-            Object.keys(results).filter(function (key) {
-                return !!results[key];
-            }).forEach(function (key) {
-                realCSS[key] = results[key];
-            });
-
-            return realCSS;
+            return cleanObject(results);
         }
     }]);
     return LayerManager;
@@ -13093,6 +13089,23 @@ var SelectionManager = function (_BaseModule) {
             });
         }
     }, {
+        key: GETTER('selection/unit/values'),
+        value: function value$$1($store) {
+            return $store.read('selection/current').map(function (item) {
+                return {
+                    id: item.id,
+                    x: unitValue(item.x),
+                    y: unitValue(item.y),
+                    width: unitValue(item.width),
+                    height: unitValue(item.height),
+                    x2: unitValue(item.x) + unitValue(item.width),
+                    y2: unitValue(item.y) + unitValue(item.height),
+                    centerX: unitValue(item.x) + unitValue(item.width) / 2,
+                    centerY: unitValue(item.y) + unitValue(item.height) / 2
+                };
+            });
+        }
+    }, {
         key: "getCurrentItem",
         value: function getCurrentItem($store, itemType, callback) {
             var items = null;
@@ -13592,11 +13605,99 @@ var OrderingManager = function (_BaseModule) {
             this.$store.emit(CHANGE_EDITOR);
         }
     }, {
-        key: "vertical",
-        value: function vertical($store) {}
-    }, {
         key: "horizontal",
-        value: function horizontal($store) {}
+        value: function horizontal($store) {
+            var items = $store.read('selection/unit/values');
+
+            var x = Number.MAX_SAFE_INTEGER;
+            var xItem = null;
+
+            var x2 = Number.MIN_SAFE_INTEGER;
+            var x2Item = null;
+
+            items.forEach(function (item) {
+
+                if (x > item.x) {
+                    x = item.x;
+                    xItem = item;
+                } else if (x2 < item.x2) {
+                    x2 = item.x2;
+                    x2Item = item;
+                }
+            });
+
+            var count = items.length - 2;
+            var tempIds = [xItem.id, x2Item.id];
+
+            if (count > 0) {
+                var restItems = items.filter(function (it) {
+                    return !tempIds.includes(it.id);
+                });
+
+                restItems.sort(function (a, b) {
+                    if (a.centerX == b.centerX) return 0;
+                    return a.centerX > b.centerX ? 1 : -1;
+                });
+
+                var startX = xItem.centerX;
+                var endX = x2Item.centerX;
+                var unitWidth = (endX - startX) / (count + 1);
+
+                restItems.forEach(function (item, index) {
+                    item.centerX = startX + (index + 1) * unitWidth;
+                    item.x = item.centerX - item.width / 2;
+
+                    $store.run('item/set', { id: item.id, x: pxUnit(item.x) });
+                });
+            }
+        }
+    }, {
+        key: "vertical",
+        value: function vertical($store) {
+            var items = $store.read('selection/unit/values');
+
+            var y = Number.MAX_SAFE_INTEGER;
+            var yItem = null;
+
+            var y2 = Number.MIN_SAFE_INTEGER;
+            var y2Item = null;
+
+            items.forEach(function (item) {
+
+                if (y > item.y) {
+                    y = item.y;
+                    yItem = item;
+                } else if (y2 < item.y2) {
+                    y2 = item.y2;
+                    y2Item = item;
+                }
+            });
+
+            var count = items.length - 2;
+            var tempIds = [yItem.id, y2Item.id];
+
+            if (count > 0) {
+                var restItems = items.filter(function (it) {
+                    return !tempIds.includes(it.id);
+                });
+
+                restItems.sort(function (a, b) {
+                    if (a.centerY == b.centerY) return 0;
+                    return a.centerY > b.centerY ? 1 : -1;
+                });
+
+                var startY = yItem.centerY;
+                var endY = y2Item.centerY;
+                var unitHeight = (endY - startY) / (count + 1);
+
+                restItems.forEach(function (item, index) {
+                    item.centerY = startY + (index + 1) * unitHeight;
+                    item.y = item.centerY - item.height / 2;
+
+                    $store.run('item/set', { id: item.id, y: pxUnit(item.y) });
+                });
+            }
+        }
     }, {
         key: "left",
         value: function left($store) {
@@ -17483,7 +17584,7 @@ var FilterList$1 = function (_BasePropertyItem) {
                 return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS.map(function (subkey) {
 
                     var it = _this2.read('filter/get', subkey);
-                    var value$$1 = dataObject[subkey] || it.defaultValue;
+                    var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value$$1 + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value$$1 + "</span>\n                            </span>\n                        </div>\n                        ";
@@ -18109,7 +18210,7 @@ var RadiusFixed = function (_BasePropertyItem) {
     createClass(RadiusFixed, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item fixed-radius show'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item fixed-radius'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -18121,11 +18222,28 @@ var RadiusFixed = function (_BasePropertyItem) {
         value: function refresh() {
             var _this2 = this;
 
-            this.read('selection/current/layer', function (item) {
-                var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0));
-                _this2.refs.$radiusRange.val(radius.value);
-                _this2.refs.$radius.val(radius.value);
-            });
+            var isShow = this.isShow();
+
+            this.$el.toggleClass('show', isShow);
+
+            if (isShow) {
+
+                this.read('selection/current/layer', function (item) {
+                    var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0));
+                    _this2.refs.$radiusRange.val(radius.value);
+                    _this2.refs.$radius.val(radius.value);
+                });
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var layer = this.read('selection/current/layer');
+
+            if (!layer) return false;
+            if (layer.type == ITEM_TYPE_CIRCLE) return false;
+
+            return true;
         }
     }, {
         key: "updateTransform",
@@ -19609,7 +19727,7 @@ var BackdropList = function (_BasePropertyItem) {
                 return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : '') + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
 
                     var it = _this2.read('backdrop/get', subkey);
-                    var value$$1 = dataObject[subkey] || it.defaultValue;
+                    var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value$$1 + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value$$1 + "</span>\n                            </span>\n                        </div>\n                        ";

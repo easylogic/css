@@ -1,7 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_FILTER } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, isColorUnit } from "../../../../../util/css/types";
+import { unitString, isColorUnit, unitValue } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { isUndefined } from "../../../../../util/functions/func";
@@ -63,7 +63,7 @@ export default class FilterList extends BasePropertyItem {
                 ${DROPSHADOW_FILTER_KEYS.map(subkey => {
                     
                     var it = this.read('filter/get', subkey);
-                    var value = dataObject[subkey] || it.defaultValue;
+                    var value = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
                         return `

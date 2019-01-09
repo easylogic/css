@@ -9,11 +9,97 @@ export default class OrderingManager extends BaseModule {
         this.$store.emit(CHANGE_EDITOR)
     }
 
-    vertical ($store) {
+    horizontal ($store) {
+        var items = $store.read('selection/unit/values');
+
+        var x = Number.MAX_SAFE_INTEGER;
+        var xItem = null; 
+
+        var x2 = Number.MIN_SAFE_INTEGER;
+        var x2Item = null; 
+
+        items.forEach(item => {
+
+            if (x > item.x) {
+                x = item.x; 
+                xItem = item;
+            } else if (x2 < item.x2) {
+                x2 = item.x2;                 
+                x2Item = item;
+            }
+        });
+
+        var count = items.length - 2; 
+        var tempIds = [ xItem.id, x2Item.id ]
+
+        if (count > 0) {
+            var restItems = items.filter(it => {
+                return !tempIds.includes(it.id)
+            })
+
+            restItems.sort( (a, b) => {
+                if (a.centerX == b.centerX) return 0; 
+                return a.centerX > b.centerX ? 1 : -1; 
+            })
+
+            var startX = xItem.centerX;
+            var endX = x2Item.centerX;            
+            var unitWidth = (endX - startX) / (count+1);
+
+            restItems.forEach((item, index) => {
+                item.centerX = startX + (index + 1) * unitWidth;
+                item.x = item.centerX - (item.width/2)
+
+                $store.run('item/set', {id: item.id, x: pxUnit(item.x)})
+            })
+        }
 
     }
 
-    horizontal ($store) {
+    vertical ($store) {
+        var items = $store.read('selection/unit/values');
+
+        var y = Number.MAX_SAFE_INTEGER;
+        var yItem = null; 
+
+        var y2 = Number.MIN_SAFE_INTEGER;
+        var y2Item = null; 
+
+        items.forEach(item => {
+
+            if (y > item.y) {
+                y = item.y; 
+                yItem = item;
+            } else if (y2 < item.y2) {
+                y2 = item.y2;                 
+                y2Item = item;
+            }
+        });
+
+        var count = items.length - 2; 
+        var tempIds = [ yItem.id, y2Item.id ]
+
+        if (count > 0) {
+            var restItems = items.filter(it => {
+                return !tempIds.includes(it.id)
+            })
+
+            restItems.sort( (a, b) => {
+                if (a.centerY == b.centerY) return 0; 
+                return a.centerY > b.centerY ? 1 : -1; 
+            })
+
+            var startY = yItem.centerY;
+            var endY = y2Item.centerY;            
+            var unitHeight = (endY - startY) / (count+1);
+
+            restItems.forEach((item, index) => {
+                item.centerY = startY + (index + 1) * unitHeight;
+                item.y = item.centerY - (item.height/2)
+
+                $store.run('item/set', {id: item.id, y: pxUnit(item.y)})
+            })
+        }
 
     }
 
