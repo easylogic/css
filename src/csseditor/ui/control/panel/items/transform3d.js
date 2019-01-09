@@ -6,7 +6,7 @@ import {
 } from "../../../../types/event";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
+import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
 
 export default class Transform3d extends BasePropertyItem {
     template () {
