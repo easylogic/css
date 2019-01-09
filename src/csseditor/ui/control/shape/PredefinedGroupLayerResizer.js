@@ -206,13 +206,77 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     caculateSnap () {
 
-        var list = this.read('guide/line/layer', 3);
+        var list = this.read('guide/snap/layer', 3);
 
         if (list.length) {
-            this.cacualteSizeItem(item, list);
+
+            var rect = list.shift();
+            var positionObject = null;
+
+            if (rect.type == '-') {
+                // console.log(JSON.stringify(rect));
+                if (rect.index == 0) {
+                    if (rect.targetIndex == 0) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.startY)}
+                    } else if (rect.targetIndex == 1) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.centerY)}
+                    } else if (rect.index == 2) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.endY)}
+                    }
+                    
+                } else if (rect.index == 1) {
+                    if (rect.targetIndex == 0) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.startY - Math.floor(rect.height/2))}
+                    } else if (rect.targetIndex == 1) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.centerY - Math.floor(rect.height/2))}
+                    } else if (rect.index == 2) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.endY - Math.floor(rect.height/2))}
+                    }                    
+                } else if (rect.index == 2) {
+                    if (rect.targetIndex == 0) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.startY - rect.height)}
+                    } else if (rect.targetIndex == 1) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.centerY - rect.height)}
+                    } else if (rect.index == 2) {
+                        positionObject = {id: rect.sourceId, y: pxUnit(rect.endY - rect.height)}
+                    }                    
+                }
+            } else if (rect.type == '|') {
+                if (rect.index == 0) {
+                    if (rect.targetIndex == 0) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.startX)}
+                    } else if (rect.targetIndex == 1) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.centerX)}
+                    } else if (rect.targetIndex == 2) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.endX)}
+                    }                    
+                } else if (rect.index == 1) {
+                    if (rect.targetIndex == 0) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.startX - Math.floor(rect.width/2))}
+                    } else if (rect.targetIndex == 1) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.centerX - Math.floor(rect.width/2))}
+                    } else if (rect.targetIndex == 2) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.endX - Math.floor(rect.width/2))}
+                    }
+                    
+                } else if (rect.index == 2) {
+                    if (rect.targetIndex == 0) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.startX - rect.width)}
+                    } else if (rect.targetIndex == 1) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.centerX - rect.width)}
+                    } else if (rect.targetIndex == 2) {
+                        positionObject = {id: rect.sourceId, x: pxUnit(rect.endX - rect.width)}
+                    }
+                }
+            }
+
+            if (isNotUndefined(positionObject)) {
+                this.run('item/set', positionObject)
+            }
+
+            // this.cacualteSizeItem(item, list);
         }
 
-        return item; 
     }
 
     setPosition() {
@@ -224,6 +288,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
     updatePosition (items) { 
+
         this.setPosition();
     }
 
@@ -320,8 +385,11 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             event = CHANGE_LAYER_ROTATE 
         }
 
+        this.caculateSnap();
+        this.emit(event)    
+
         this.updatePosition(items)        
-        this.emit(event)               
+           
     }
 
 
@@ -370,7 +438,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.canvasScrollTop = this.$board.scrollTop();        
     }
 
-    [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + CHECKER('isDownCheck')] (e) {
         this.targetXY = e.xy; 
 
         if (!this.xy) {
@@ -403,6 +471,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         }
 
+        this.run('tool/set', 'moving', true);
+
         this.resizeComponent();
     }
 
@@ -418,7 +488,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.moveY = null; 
         this.rectItems = null 
         this.currentId = null; 
-
+        this.run('tool/set', 'moving', false);
         this.dispatch('history/push', 'Resize a layer');
     }
 

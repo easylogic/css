@@ -14,7 +14,8 @@ var MAX_DIST = 1;
 
 export default class GuideManager extends BaseModule {
 
-    [GETTER('guide/rect')] ($store, obj) {
+    [GETTER('guide/rect/point')] ($store, obj) {
+        var id = obj.id; 
         var x = unitValue(obj.x);
         var y = unitValue(obj.y);
         var width = unitValue(obj.width)
@@ -26,194 +27,110 @@ export default class GuideManager extends BaseModule {
         var centerX = x + Math.floor(width/2); 
         var centerY = y + Math.floor(height/2); 
 
-        return {x, y, x2, y2, width, height, centerX, centerY}
+        var startX = x; 
+        var endX = x2; 
+        var startY = y; 
+        var endY = y2; 
+
+        return {
+            pointX: [ 
+                {x, y: centerY, startX, endX, centerX, id, width, height },
+                {x: centerX, y: centerY, startX, endX, centerX, id, width, height },
+                {x: x2, y: centerY, startX, endX, centerX, id, width, height }
+            ],
+
+            pointY: [
+                {x: centerX, y, startY, endY, centerY, id, width, height },
+                {x: centerX, y: centerY, startY, endY, centerY, id, width, height },
+                {x: centerX, y: y2, startY, endY, centerY, id, width, height }
+            ]
+        }
     }
 
-    [GETTER('guide/snap/layer')] ($store, layer, dist = MAX_DIST) {
-        var list = $store.read('guide/line/layer', dist);
-        var x, y;
-        if (list.length) {
-            var height = unitValue(layer.height)
-            var width = unitValue(layer.width)
-            var topY = Math.min(...list.filter(it => it.align == 'top').map(it => unitValue(it.y)))
-            var middleY = Math.min(...list.filter(it => it.align == 'middle').map(it => unitValue(it.y)))
-            var bottomY = Math.min(...list.filter(it => it.align == 'bottom').map(it => unitValue(it.y)))
-            var leftX = Math.min(...list.filter(it => it.align == 'left').map(it => unitValue(it.x)))
-            var centerX = Math.min(...list.filter(it => it.align == 'center').map(it => unitValue(it.x)))
-            var rightX = Math.min(...list.filter(it => it.align == 'right').map(it => unitValue(it.x)))
+    [GETTER('guide/compare')] ($store, A, B, dist = MAX_DIST) {
+        // x 축 비교 , x 축이 dist 안에 있으면 합격 
 
-            if (topY != Infinity) {
-                y = topY
-            } else if (bottomY != Infinity) {
-                y = bottomY -  height
-            } else if (middleY != Infinity) {
-                y =  Math.floor(middleY - height/2)
-            }
+        var results = [] 
+        A.pointX.forEach((AX, index) => {
+            B.pointX.forEach(BX => {
+                // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
+                if (Math.abs(AX.x - BX.x) <= dist) {
 
-            if (leftX  != Infinity) {
-                x = leftX
-            } else if (rightX != Infinity) {
-                x = rightX -  width
-            } else if (centerX != Infinity) {
-                x =  Math.floor(centerX - width/2)
-            }            
+                    results.push({ 
+                        type: '|', 
+                        x: BX.x, 
+                        y: AX.y, 
+                        index, 
+                        startX: BX.startX, 
+                        endX: BX.endX, 
+                        centerX: BX.centerX,
+                        sourceId: AX.id,  
+                        targetId: BX.id,
+                        width: AX.width,
+                        height: AX.height
+                    })
+                }
+            })
+        })
 
-            if (typeof x != 'undefined' && typeof y != 'undefined') {
-                return [x, y]
-            }
+        // y 축 비교,    
+        A.pointY.forEach( (AY, index) => {
+            B.pointY.forEach( (BY, targetIndex) => {
+                // console.log('y축', AY.y, BY.y, Math.abs(AY.y - BY.y),  dist)
+                if (Math.abs(AY.y - BY.y) <= dist) {
+                    results.push({ 
+                        type: '-', 
+                        x: AY.x, 
+                        y: BY.y, 
+                        index, 
+                        targetIndex,
+                        startY: BY.startY, 
+                        endY: BY.endY, 
+                        centerY: BY.centerY, 
+                        sourceId: AY.id,  
+                        targetId: BY.id,
+                        width: AY.width,
+                        height: AY.height
+                    })
+                }
+            }) 
+        })
 
-        }
+        return results;
+    }
 
-        return []
-
-    } 
-
-    [GETTER('guide/line/layer')] ($store , dist = MAX_DIST, selectedRect) {
-
+    [GETTER('guide/snap/layer')] ($store, dist = MAX_DIST) {
         var page = $store.read('selection/current/page');
 
         if (!page) return []
         if (page.selected) return []
 
-        var index = 0; 
-        selectedItem = $store.read('guide/rect', selectedRect || $store.read('selection/rect'));
-
-        list[index++] = $store.read('guide/rect', { 
+        var selectionRect = $store.read('guide/rect/point', $store.read('selection/rect'));
+        var pageRect = $store.read('guide/rect/point', { 
             x: pxUnit(0), 
             y: pxUnit(0), 
             width: page.width, 
             height: page.height 
         })
 
+        var layers = [] 
         $store.read('item/each/children', page.id, (item) => {
             if ($store.read('selection/check', item.id) == false) { 
-                var newItem = $store.read('guide/rect', { 
-                    x: item.x, 
-                    y: item.y,
-                    width: item.width,
-                    height: item.height
-                })                
-                list[index++] = newItem
+                layers.push($store.read('guide/rect/point', item))
             }
         })
+        layers.push(pageRect);
 
-        list.forEach(it => {
-            var distance = Math.sqrt(
-                Math.pow(it.centerX - selectedItem.centerX,2) + 
-                Math.pow(it.centerY - selectedItem.centerY,2)
-            )
+        var points = []
 
-            it.distance = distance
+        layers.forEach(B => {
+            points.push(...$store.read('guide/compare', selectionRect, B, dist));
         })
 
-        list.sort( (a, b) => {
-            if (a.distance == b.distance ) return 0; 
-            return a.distance > b.distance ? 1 : -1; 
-        })
+        // console.log(points);
 
-        lastIndex = 3; 
-        
-        return $store.read('guide/paths', dist); 
-    }
+        return points.filter( (_, index) => index === 0);
 
-    [GETTER('guide/paths')] ($store, dist = MAX_DIST) {
-
-        var results = [] 
-        for(var i = 0; i < lastIndex; i++) {
-            results.push(...$store.read('guide/check', list[i], selectedItem, dist))
-        }
-
-        return results; 
-    }
-
-    [GETTER('guide/check')] ($store, item1, item2, dist = MAX_DIST) {
-        var results = []
-
-        results.push(...$store.read('guide/check/vertical', item1, item2, dist))
-
-        results.push(...$store.read('guide/check/horizontal', item1, item2, dist))
-
-        return results;
-    }
-
-    [GETTER('guide/check/vertical')] ($store, item1, item2, dist = MAX_DIST) {
-        var results = []
-
-        verticalKeys.forEach(key => {
-            // top
-            if (Math.abs(item1.y - item2[key]) < dist) {
-                results.push({ type: '-', 
-                    align: verticalAlign[key],
-                    x: Math.min(item1.centerX, item2.centerX), 
-                    y: item1.y,  
-                    width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
-                })
-            }
-
-            // middle
-            if (Math.abs(item1.centerY - item2[key]) < dist) {
-                results.push({ type: '-', 
-                    align: verticalAlign[key],
-                    x: Math.min(item1.centerX, item2.centerX), 
-                    y: item1.centerY,  
-                    width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
-                })
-            }
-
-            // bottom
-            if (Math.abs(item1.y2 - item2[key]) < dist) {
-                results.push({ type: '-', 
-                    align: verticalAlign[key],
-                    x: Math.min(item1.centerX, item2.centerX), 
-                    y: item1.y2,  
-                    width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
-                })
-            }
-
-        })
-
-        return results; 
-    }
-
-    [GETTER('guide/check/horizontal')] ($store, item1, item2, dist = MAX_DIST) {
-        var results = []
-
-        horizontalKeys.forEach(key => {
-
-            // left 
-            if (Math.abs(item1.x - item2[key]) < dist) {
-                results.push({ type: '|', 
-                    align: horizontalAlign[key],
-                    x: item1.x, 
-                    y: Math.min(item1.centerY, item2.centerY),  
-                    height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
-                })
-            }
-
-            // center
-            if (Math.abs(item1.centerX - item2[key]) < dist) {
-                results.push({ type: '|', 
-                    align: horizontalAlign[key],
-                    x: item1.centerX, 
-                    y: Math.min(item1.centerY, item2.centerY),  
-                    height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
-                })
-            }
-
-            // right
-            if (Math.abs(item1.x2 - item2[key]) < dist) {
-                results.push({ type: '|', 
-                    align: horizontalAlign[key],
-                    x: item1.x2, 
-                    y: Math.min(item1.centerY, item2.centerY),  
-                    height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
-                })
-            }
-
-        })
-        
-        return results; 
-    }
-
+    } 
 
 }

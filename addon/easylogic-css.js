@@ -11962,14 +11962,6 @@ var ItemManager = function (_BaseModule) {
     return ItemManager;
 }(BaseModule);
 
-var list$1 = new Array(100);
-var lastIndex = -1;
-var selectedItem = {};
-
-var verticalKeys = ['y', 'centerY', 'y2'];
-var verticalAlign = { 'y': 'top', 'centerY': 'middle', 'y2': 'bottom' };
-var horizontalKeys = ['x', 'centerX', 'x2'];
-var horizontalAlign = { 'x': 'left', 'centerX': 'center', 'x2': 'right' };
 var MAX_DIST = 1;
 
 var GuideManager = function (_BaseModule) {
@@ -11981,8 +11973,9 @@ var GuideManager = function (_BaseModule) {
     }
 
     createClass(GuideManager, [{
-        key: GETTER('guide/rect'),
+        key: GETTER('guide/rect/point'),
         value: function value$$1($store, obj) {
+            var id = obj.id;
             var x = unitValue(obj.x);
             var y = unitValue(obj.y);
             var width = unitValue(obj.width);
@@ -11994,229 +11987,109 @@ var GuideManager = function (_BaseModule) {
             var centerX = x + Math.floor(width / 2);
             var centerY = y + Math.floor(height / 2);
 
-            return { x: x, y: y, x2: x2, y2: y2, width: width, height: height, centerX: centerX, centerY: centerY };
+            var startX = x;
+            var endX = x2;
+            var startY = y;
+            var endY = y2;
+
+            return {
+                pointX: [{ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height }, { x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height }, { x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height }],
+
+                pointY: [{ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height }, { x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height }, { x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height }]
+            };
+        }
+    }, {
+        key: GETTER('guide/compare'),
+        value: function value$$1($store, A, B) {
+            var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
+
+            // x 축 비교 , x 축이 dist 안에 있으면 합격 
+
+            var results = [];
+            A.pointX.forEach(function (AX, index) {
+                B.pointX.forEach(function (BX) {
+                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
+                    if (Math.abs(AX.x - BX.x) <= dist) {
+
+                        results.push({
+                            type: '|',
+                            x: BX.x,
+                            y: AX.y,
+                            index: index,
+                            startX: BX.startX,
+                            endX: BX.endX,
+                            centerX: BX.centerX,
+                            sourceId: AX.id,
+                            targetId: BX.id,
+                            width: AX.width,
+                            height: AX.height
+                        });
+                    }
+                });
+            });
+
+            // y 축 비교,    
+            A.pointY.forEach(function (AY, index) {
+                B.pointY.forEach(function (BY, targetIndex) {
+                    // console.log('y축', AY.y, BY.y, Math.abs(AY.y - BY.y),  dist)
+                    if (Math.abs(AY.y - BY.y) <= dist) {
+                        results.push({
+                            type: '-',
+                            x: AY.x,
+                            y: BY.y,
+                            index: index,
+                            targetIndex: targetIndex,
+                            startY: BY.startY,
+                            endY: BY.endY,
+                            centerY: BY.centerY,
+                            sourceId: AY.id,
+                            targetId: BY.id,
+                            width: AY.width,
+                            height: AY.height
+                        });
+                    }
+                });
+            });
+
+            return results;
         }
     }, {
         key: GETTER('guide/snap/layer'),
-        value: function value$$1($store, layer) {
-            var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : MAX_DIST;
-
-            var list = $store.read('guide/line/layer', dist);
-            var x, y;
-            if (list.length) {
-                var height = unitValue(layer.height);
-                var width = unitValue(layer.width);
-                var topY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
-                    return it.align == 'top';
-                }).map(function (it) {
-                    return unitValue(it.y);
-                })));
-                var middleY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
-                    return it.align == 'middle';
-                }).map(function (it) {
-                    return unitValue(it.y);
-                })));
-                var bottomY = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
-                    return it.align == 'bottom';
-                }).map(function (it) {
-                    return unitValue(it.y);
-                })));
-                var leftX = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
-                    return it.align == 'left';
-                }).map(function (it) {
-                    return unitValue(it.x);
-                })));
-                var centerX = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
-                    return it.align == 'center';
-                }).map(function (it) {
-                    return unitValue(it.x);
-                })));
-                var rightX = Math.min.apply(Math, toConsumableArray(list.filter(function (it) {
-                    return it.align == 'right';
-                }).map(function (it) {
-                    return unitValue(it.x);
-                })));
-
-                if (topY != Infinity) {
-                    y = topY;
-                } else if (bottomY != Infinity) {
-                    y = bottomY - height;
-                } else if (middleY != Infinity) {
-                    y = Math.floor(middleY - height / 2);
-                }
-
-                if (leftX != Infinity) {
-                    x = leftX;
-                } else if (rightX != Infinity) {
-                    x = rightX - width;
-                } else if (centerX != Infinity) {
-                    x = Math.floor(centerX - width / 2);
-                }
-
-                if (typeof x != 'undefined' && typeof y != 'undefined') {
-                    return [x, y];
-                }
-            }
-
-            return [];
-        }
-    }, {
-        key: GETTER('guide/line/layer'),
         value: function value$$1($store) {
             var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
-            var selectedRect = arguments[2];
-
 
             var page = $store.read('selection/current/page');
 
             if (!page) return [];
             if (page.selected) return [];
 
-            var index = 0;
-            selectedItem = $store.read('guide/rect', selectedRect || $store.read('selection/rect'));
-
-            list$1[index++] = $store.read('guide/rect', {
+            var selectionRect = $store.read('guide/rect/point', $store.read('selection/rect'));
+            var pageRect = $store.read('guide/rect/point', {
                 x: pxUnit(0),
                 y: pxUnit(0),
                 width: page.width,
                 height: page.height
             });
 
+            var layers = [];
             $store.read('item/each/children', page.id, function (item) {
                 if ($store.read('selection/check', item.id) == false) {
-                    var newItem = $store.read('guide/rect', {
-                        x: item.x,
-                        y: item.y,
-                        width: item.width,
-                        height: item.height
-                    });
-                    list$1[index++] = newItem;
+                    layers.push($store.read('guide/rect/point', item));
                 }
             });
+            layers.push(pageRect);
 
-            list$1.forEach(function (it) {
-                var distance = Math.sqrt(Math.pow(it.centerX - selectedItem.centerX, 2) + Math.pow(it.centerY - selectedItem.centerY, 2));
+            var points = [];
 
-                it.distance = distance;
+            layers.forEach(function (B) {
+                points.push.apply(points, toConsumableArray($store.read('guide/compare', selectionRect, B, dist)));
             });
 
-            list$1.sort(function (a, b) {
-                if (a.distance == b.distance) return 0;
-                return a.distance > b.distance ? 1 : -1;
+            // console.log(points);
+
+            return points.filter(function (_, index) {
+                return index === 0;
             });
-
-            lastIndex = 3;
-
-            return $store.read('guide/paths', dist);
-        }
-    }, {
-        key: GETTER('guide/paths'),
-        value: function value$$1($store) {
-            var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
-
-
-            var results = [];
-            for (var i = 0; i < lastIndex; i++) {
-                results.push.apply(results, toConsumableArray($store.read('guide/check', list$1[i], selectedItem, dist)));
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('guide/check'),
-        value: function value$$1($store, item1, item2) {
-            var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
-
-            var results = [];
-
-            results.push.apply(results, toConsumableArray($store.read('guide/check/vertical', item1, item2, dist)));
-
-            results.push.apply(results, toConsumableArray($store.read('guide/check/horizontal', item1, item2, dist)));
-
-            return results;
-        }
-    }, {
-        key: GETTER('guide/check/vertical'),
-        value: function value$$1($store, item1, item2) {
-            var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
-
-            var results = [];
-
-            verticalKeys.forEach(function (key) {
-                // top
-                if (Math.abs(item1.y - item2[key]) < dist) {
-                    results.push({ type: '-',
-                        align: verticalAlign[key],
-                        x: Math.min(item1.centerX, item2.centerX),
-                        y: item1.y,
-                        width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
-                    });
-                }
-
-                // middle
-                if (Math.abs(item1.centerY - item2[key]) < dist) {
-                    results.push({ type: '-',
-                        align: verticalAlign[key],
-                        x: Math.min(item1.centerX, item2.centerX),
-                        y: item1.centerY,
-                        width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
-                    });
-                }
-
-                // bottom
-                if (Math.abs(item1.y2 - item2[key]) < dist) {
-                    results.push({ type: '-',
-                        align: verticalAlign[key],
-                        x: Math.min(item1.centerX, item2.centerX),
-                        y: item1.y2,
-                        width: Math.max(item1.centerX, item2.centerX) - Math.min(item1.centerX, item2.centerX)
-                    });
-                }
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER('guide/check/horizontal'),
-        value: function value$$1($store, item1, item2) {
-            var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
-
-            var results = [];
-
-            horizontalKeys.forEach(function (key) {
-
-                // left 
-                if (Math.abs(item1.x - item2[key]) < dist) {
-                    results.push({ type: '|',
-                        align: horizontalAlign[key],
-                        x: item1.x,
-                        y: Math.min(item1.centerY, item2.centerY),
-                        height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
-                    });
-                }
-
-                // center
-                if (Math.abs(item1.centerX - item2[key]) < dist) {
-                    results.push({ type: '|',
-                        align: horizontalAlign[key],
-                        x: item1.centerX,
-                        y: Math.min(item1.centerY, item2.centerY),
-                        height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
-                    });
-                }
-
-                // right
-                if (Math.abs(item1.x2 - item2[key]) < dist) {
-                    results.push({ type: '|',
-                        align: horizontalAlign[key],
-                        x: item1.x2,
-                        y: Math.min(item1.centerY, item2.centerY),
-                        height: Math.max(item1.centerY, item2.centerY) - Math.min(item1.centerY, item2.centerY)
-                    });
-                }
-            });
-
-            return results;
         }
     }]);
     return GuideManager;
@@ -23747,13 +23620,74 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         key: 'caculateSnap',
         value: function caculateSnap() {
 
-            var list = this.read('guide/line/layer', 3);
+            var list = this.read('guide/snap/layer', 3);
 
             if (list.length) {
-                this.cacualteSizeItem(item, list);
-            }
 
-            return item;
+                var rect = list.shift();
+                var positionObject = null;
+
+                if (rect.type == '-') {
+                    // console.log(JSON.stringify(rect));
+                    if (rect.index == 0) {
+                        if (rect.targetIndex == 0) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.startY) };
+                        } else if (rect.targetIndex == 1) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.centerY) };
+                        } else if (rect.index == 2) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.endY) };
+                        }
+                    } else if (rect.index == 1) {
+                        if (rect.targetIndex == 0) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.startY - Math.floor(rect.height / 2)) };
+                        } else if (rect.targetIndex == 1) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.centerY - Math.floor(rect.height / 2)) };
+                        } else if (rect.index == 2) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.endY - Math.floor(rect.height / 2)) };
+                        }
+                    } else if (rect.index == 2) {
+                        if (rect.targetIndex == 0) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.startY - rect.height) };
+                        } else if (rect.targetIndex == 1) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.centerY - rect.height) };
+                        } else if (rect.index == 2) {
+                            positionObject = { id: rect.sourceId, y: pxUnit(rect.endY - rect.height) };
+                        }
+                    }
+                } else if (rect.type == '|') {
+                    if (rect.index == 0) {
+                        if (rect.targetIndex == 0) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.startX) };
+                        } else if (rect.targetIndex == 1) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.centerX) };
+                        } else if (rect.targetIndex == 2) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.endX) };
+                        }
+                    } else if (rect.index == 1) {
+                        if (rect.targetIndex == 0) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.startX - Math.floor(rect.width / 2)) };
+                        } else if (rect.targetIndex == 1) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.centerX - Math.floor(rect.width / 2)) };
+                        } else if (rect.targetIndex == 2) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.endX - Math.floor(rect.width / 2)) };
+                        }
+                    } else if (rect.index == 2) {
+                        if (rect.targetIndex == 0) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.startX - rect.width) };
+                        } else if (rect.targetIndex == 1) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.centerX - rect.width) };
+                        } else if (rect.targetIndex == 2) {
+                            positionObject = { id: rect.sourceId, x: pxUnit(rect.endX - rect.width) };
+                        }
+                    }
+                }
+
+                if (isNotUndefined(positionObject)) {
+                    this.run('item/set', positionObject);
+                }
+
+                // this.cacualteSizeItem(item, list);
+            }
         }
     }, {
         key: 'setPosition',
@@ -23769,6 +23703,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: 'updatePosition',
         value: function updatePosition(items) {
+
             this.setPosition();
         }
     }, {
@@ -23907,8 +23842,10 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 event = CHANGE_LAYER_ROTATE;
             }
 
-            this.updatePosition(items);
+            this.caculateSnap();
             this.emit(event);
+
+            this.updatePosition(items);
         }
 
         /* drag  */
@@ -23960,7 +23897,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.canvasScrollTop = this.$board.scrollTop();
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + CHECKER('isDownCheck'),
         value: function value$$1(e) {
             this.targetXY = e.xy;
 
@@ -23993,6 +23930,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 }
             }
 
+            this.run('tool/set', 'moving', true);
+
             this.resizeComponent();
         }
     }, {
@@ -24010,7 +23949,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.moveY = null;
             this.rectItems = null;
             this.currentId = null;
-
+            this.run('tool/set', 'moving', false);
             this.dispatch('history/push', 'Resize a layer');
         }
     }, {
@@ -24913,7 +24852,7 @@ var MoveGuide = function (_UIElement) {
             var layer = this.read('selection/current/layer');
             if (!layer) return [];
 
-            var list = this.read('guide/line/layer', 3);
+            var list = this.read('guide/snap/layer', 3);
 
             var bo = this.$board.offset();
             var po = this.$page.offset();
@@ -24943,7 +24882,7 @@ var MoveGuide = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.$page.hasClass('moving');
+            return this.read('tool/get', 'moving');
         }
     }, {
         key: EVENT(CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION),

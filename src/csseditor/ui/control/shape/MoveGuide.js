@@ -30,7 +30,7 @@ export default class MoveGuide extends UIElement {
         var layer = this.read('selection/current/layer');
         if (!layer) return []; 
 
-        var list = this.read('guide/line/layer', 3);        
+        var list = this.read('guide/snap/layer', 3);
 
         var bo = this.$board.offset()
         var po = this.$page.offset()
@@ -58,7 +58,7 @@ export default class MoveGuide extends UIElement {
     }
 
     isShow() {
-        return this.$page.hasClass('moving');
+        return  this.read('tool/get', 'moving');
     }
 
     [EVENT(
