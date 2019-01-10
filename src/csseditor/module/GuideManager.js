@@ -1,15 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { GETTER } from "../../util/Store";
+import { GETTER, ACTION } from "../../util/Store";
 import { unitValue, pxUnit } from "../../util/css/types";
+import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL } from "./ItemTypes";
+import { isNotUndefined } from "../../util/functions/func";
 
-var list = new Array(100);
-var lastIndex = -1;
-var selectedItem = {}
-
-var verticalKeys = ['y', 'centerY', 'y2']
-var verticalAlign = { 'y' : 'top', 'centerY' : 'middle', 'y2' : 'bottom' }
-var horizontalKeys = ['x', 'centerX', 'x2']
-var horizontalAlign = { 'x' : 'left', 'centerX' : 'center', 'x2' : 'right' }
 var MAX_DIST = 1; 
 
 export default class GuideManager extends BaseModule {
@@ -52,15 +46,16 @@ export default class GuideManager extends BaseModule {
 
         var results = [] 
         A.pointX.forEach((AX, index) => {
-            B.pointX.forEach(BX => {
+            B.pointX.forEach((BX, targetIndex) => {
                 // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
                 if (Math.abs(AX.x - BX.x) <= dist) {
 
                     results.push({ 
-                        type: '|', 
+                        type: GUIDE_TYPE_VERTICAL, 
                         x: BX.x, 
                         y: AX.y, 
                         index, 
+                        targetIndex,
                         startX: BX.startX, 
                         endX: BX.endX, 
                         centerX: BX.centerX,
@@ -79,7 +74,7 @@ export default class GuideManager extends BaseModule {
                 // console.log('y축', AY.y, BY.y, Math.abs(AY.y - BY.y),  dist)
                 if (Math.abs(AY.y - BY.y) <= dist) {
                     results.push({ 
-                        type: '-', 
+                        type: GUIDE_TYPE_HORIZONTAL, 
                         x: AY.x, 
                         y: BY.y, 
                         index, 
@@ -132,5 +127,54 @@ export default class GuideManager extends BaseModule {
         return points.filter( (_, index) => index === 0);
 
     } 
+
+    [ACTION('guide/snap/caculate')] ($store, dist = MAX_DIST) {
+
+        var list = $store.read('guide/snap/layer', dist);
+
+        if (list.length) {
+
+            list.forEach(rect => {
+            
+                var positionObject = null;
+
+                if (rect.type == GUIDE_TYPE_HORIZONTAL) {
+                    var y
+    
+                    switch (rect.targetIndex) {
+                        case 0: y = rect.startY; break;
+                        case 1: y = rect.centerY; break;
+                        case 2: y = rect.endY; break;
+                    }
+    
+                    switch (rect.index) {
+                        case 1: y -= Math.floor(rect.height/2); break;
+                        case 2: y -= rect.height; break;
+                    }
+    
+                    positionObject = {id: rect.sourceId, y: pxUnit(y)}
+                } else if (rect.type == GUIDE_TYPE_VERTICAL) {
+                    var x; 
+                    switch (rect.targetIndex) {
+                        case 0: x = rect.startX; break;
+                        case 1: x = rect.centerX; break;
+                        case 2: x = rect.endX; break;
+                    }
+    
+                    switch (rect.index) {
+                        case 1: x -= Math.floor(rect.width/2); break;
+                        case 2: x -= rect.width; break;
+                    }
+    
+                    positionObject = {id: rect.sourceId, x: pxUnit(x)}
+                }
+    
+                if (isNotUndefined(positionObject)) {
+                    $store.run('item/set', positionObject)
+                }
+            })
+        }
+
+    }
 
 }

@@ -2554,6 +2554,9 @@ var IMAGE_FILE_TYPE_GIF = 'gif';
 var IMAGE_FILE_TYPE_PNG = 'png';
 var IMAGE_FILE_TYPE_SVG = 'svg';
 
+var GUIDE_TYPE_VERTICAL = '|';
+var GUIDE_TYPE_HORIZONTAL = '-';
+
 function rotateDegree(angle) {
     var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : POSITION_CENTER;
     var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : POSITION_CENTER;
@@ -12159,15 +12162,16 @@ var GuideManager = function (_BaseModule) {
 
             var results = [];
             A.pointX.forEach(function (AX, index) {
-                B.pointX.forEach(function (BX) {
+                B.pointX.forEach(function (BX, targetIndex) {
                     // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
                     if (Math.abs(AX.x - BX.x) <= dist) {
 
                         results.push({
-                            type: '|',
+                            type: GUIDE_TYPE_VERTICAL,
                             x: BX.x,
                             y: AX.y,
                             index: index,
+                            targetIndex: targetIndex,
                             startX: BX.startX,
                             endX: BX.endX,
                             centerX: BX.centerX,
@@ -12186,7 +12190,7 @@ var GuideManager = function (_BaseModule) {
                     // console.log('y축', AY.y, BY.y, Math.abs(AY.y - BY.y),  dist)
                     if (Math.abs(AY.y - BY.y) <= dist) {
                         results.push({
-                            type: '-',
+                            type: GUIDE_TYPE_HORIZONTAL,
                             x: AY.x,
                             y: BY.y,
                             index: index,
@@ -12242,6 +12246,67 @@ var GuideManager = function (_BaseModule) {
             return points.filter(function (_, index) {
                 return index === 0;
             });
+        }
+    }, {
+        key: ACTION('guide/snap/caculate'),
+        value: function value$$1($store) {
+            var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
+
+
+            var list = $store.read('guide/snap/layer', dist);
+
+            if (list.length) {
+
+                list.forEach(function (rect) {
+
+                    var positionObject = null;
+
+                    if (rect.type == GUIDE_TYPE_HORIZONTAL) {
+                        var y;
+
+                        switch (rect.targetIndex) {
+                            case 0:
+                                y = rect.startY;break;
+                            case 1:
+                                y = rect.centerY;break;
+                            case 2:
+                                y = rect.endY;break;
+                        }
+
+                        switch (rect.index) {
+                            case 1:
+                                y -= Math.floor(rect.height / 2);break;
+                            case 2:
+                                y -= rect.height;break;
+                        }
+
+                        positionObject = { id: rect.sourceId, y: pxUnit(y) };
+                    } else if (rect.type == GUIDE_TYPE_VERTICAL) {
+                        var x;
+                        switch (rect.targetIndex) {
+                            case 0:
+                                x = rect.startX;break;
+                            case 1:
+                                x = rect.centerX;break;
+                            case 2:
+                                x = rect.endX;break;
+                        }
+
+                        switch (rect.index) {
+                            case 1:
+                                x -= Math.floor(rect.width / 2);break;
+                            case 2:
+                                x -= rect.width;break;
+                        }
+
+                        positionObject = { id: rect.sourceId, x: pxUnit(x) };
+                    }
+
+                    if (isNotUndefined(positionObject)) {
+                        $store.run('item/set', positionObject);
+                    }
+                });
+            }
         }
     }]);
     return GuideManager;
@@ -23770,75 +23835,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: 'caculateSnap',
         value: function caculateSnap() {
-
-            var list = this.read('guide/snap/layer', 3);
-
-            if (list.length) {
-
-                var rect = list.shift();
-                var positionObject = null;
-
-                if (rect.type == '-') {
-                    // console.log(JSON.stringify(rect));
-                    if (rect.index == 0) {
-                        if (rect.targetIndex == 0) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.startY) };
-                        } else if (rect.targetIndex == 1) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.centerY) };
-                        } else if (rect.index == 2) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.endY) };
-                        }
-                    } else if (rect.index == 1) {
-                        if (rect.targetIndex == 0) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.startY - Math.floor(rect.height / 2)) };
-                        } else if (rect.targetIndex == 1) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.centerY - Math.floor(rect.height / 2)) };
-                        } else if (rect.index == 2) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.endY - Math.floor(rect.height / 2)) };
-                        }
-                    } else if (rect.index == 2) {
-                        if (rect.targetIndex == 0) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.startY - rect.height) };
-                        } else if (rect.targetIndex == 1) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.centerY - rect.height) };
-                        } else if (rect.index == 2) {
-                            positionObject = { id: rect.sourceId, y: pxUnit(rect.endY - rect.height) };
-                        }
-                    }
-                } else if (rect.type == '|') {
-                    if (rect.index == 0) {
-                        if (rect.targetIndex == 0) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.startX) };
-                        } else if (rect.targetIndex == 1) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.centerX) };
-                        } else if (rect.targetIndex == 2) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.endX) };
-                        }
-                    } else if (rect.index == 1) {
-                        if (rect.targetIndex == 0) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.startX - Math.floor(rect.width / 2)) };
-                        } else if (rect.targetIndex == 1) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.centerX - Math.floor(rect.width / 2)) };
-                        } else if (rect.targetIndex == 2) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.endX - Math.floor(rect.width / 2)) };
-                        }
-                    } else if (rect.index == 2) {
-                        if (rect.targetIndex == 0) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.startX - rect.width) };
-                        } else if (rect.targetIndex == 1) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.centerX - rect.width) };
-                        } else if (rect.targetIndex == 2) {
-                            positionObject = { id: rect.sourceId, x: pxUnit(rect.endX - rect.width) };
-                        }
-                    }
-                }
-
-                if (isNotUndefined(positionObject)) {
-                    this.run('item/set', positionObject);
-                }
-
-                // this.cacualteSizeItem(item, list);
-            }
+            this.run('guide/snap/caculate', 3);
         }
     }, {
         key: 'setPosition',

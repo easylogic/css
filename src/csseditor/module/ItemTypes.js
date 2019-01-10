@@ -200,3 +200,6 @@ export const IMAGE_FILE_TYPE_JPG = 'jpg'
 export const IMAGE_FILE_TYPE_GIF = 'gif'
 export const IMAGE_FILE_TYPE_PNG = 'png'
 export const IMAGE_FILE_TYPE_SVG = 'svg'
+
+export const GUIDE_TYPE_VERTICAL = '|';
+export const GUIDE_TYPE_HORIZONTAL = '-';
