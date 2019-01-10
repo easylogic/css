@@ -1740,10 +1740,10 @@ html, body {
         line-height: 1.6;
         outline: none;
         cursor: pointer; }
-      .csseditor .tool-menu .items .codepen {
+      .csseditor .tool-menu .items .codepen, .csseditor .tool-menu .items .jsfiddle {
         padding: 0px !important;
         border-left: 0px !important; }
-        .csseditor .tool-menu .items .codepen button {
+        .csseditor .tool-menu .items .codepen button, .csseditor .tool-menu .items .jsfiddle button {
           -webkit-appearance: none;
              -moz-appearance: none;
                   appearance: none;
