@@ -22417,7 +22417,7 @@ var ExportWindow = function (_UIElement) {
     createClass(ExportWindow, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">Code\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>\n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlTitle\">Full HTML</div>\n                                <div class=\"tool-item\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                            <div class=\"buttons\">\n                                <form action=\"https://codepen.io/pen/define\" method=\"POST\" target=\"_blank\">\n                                    <input type=\"hidden\" name=\"data\" ref=\"$codepen\" value=''>\n                                    <button type=\"submit\">Create New CodePen</button>\n                                </form>\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlContent\">\n                                <textarea ref=\"$fullhtml\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>                            \n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "afterRender",
@@ -22429,7 +22429,7 @@ var ExportWindow = function (_UIElement) {
                     mode: null }, { matches: /(text|application)\/(x-)?vb(a|script)/i,
                     mode: "vbscript" }]
             };
-            this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
+            this.cmFullHtml = CodeMirror.fromTextArea(this.refs.$fullhtml.el, {
                 lineNumbers: true,
                 readOnly: true,
                 lineWrapping: true,
@@ -22437,6 +22437,13 @@ var ExportWindow = function (_UIElement) {
                 colorpicker: {
                     mode: 'view'
                 }
+            });
+
+            this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
+                lineNumbers: true,
+                readOnly: true,
+                lineWrapping: true,
+                mode: mixedMode
             });
 
             this.cmCss = CodeMirror.fromTextArea(this.refs.$css.el, {
@@ -22555,9 +22562,21 @@ var ExportWindow = function (_UIElement) {
             var styleText = "\n#page-1 { \n" + pageStyle + "\n}\n" + layerStyle + "\n\n";
             var style = "<style type=\"text/css\">" + styleText + "</style>\n";
             return {
-                html: style + html,
+                html: html,
+                fullhtml: style + html,
                 css: styleText
             };
+        }
+    }, {
+        key: "getCodePenCode",
+        value: function getCodePenCode(obj) {
+            var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'CSS Gradient Editor';
+            var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'EasyLogic Studio';
+
+            return JSON.stringify(_extends({
+                title: title,
+                description: description
+            }, obj)).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
         }
     }, {
         key: "loadCode",
@@ -22570,6 +22589,11 @@ var ExportWindow = function (_UIElement) {
 
             var generateCode = this.generateCode();
 
+            if (this.cmFullHtml) {
+                this.cmFullHtml.setValue(generateCode.fullhtml);
+                this.cmFullHtml.refresh();
+            }
+
             if (this.cmHtml) {
                 this.cmHtml.setValue(generateCode.html);
                 this.cmHtml.refresh();
@@ -22580,7 +22604,12 @@ var ExportWindow = function (_UIElement) {
                 this.cmCss.refresh();
             }
 
-            this.refs.$preview.html(generateCode.html);
+            this.refs.$codepen.val(this.getCodePenCode({
+                html: generateCode.html,
+                css: generateCode.css
+            }));
+
+            this.refs.$preview.html(generateCode.fullhtml);
         }
     }, {
         key: "refresh",
@@ -22612,6 +22641,7 @@ var ExportWindow = function (_UIElement) {
                 var obj = _this4.refs[key];
                 obj.toggleClass('selected', "$" + type + "Content" == key);
 
+                if (_this4.cmFullHtml) _this4.cmFullHtml.refresh();
                 if (_this4.cmHtml) _this4.cmHtml.refresh();
                 if (_this4.cmCss) _this4.cmCss.refresh();
             });

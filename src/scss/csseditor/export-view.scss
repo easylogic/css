@@ -1,4 +1,4 @@
-$title-height: 22px;
+$title-height: 30px;
 
 .export-view {
     position: absolute;
@@ -50,7 +50,7 @@ $title-height: 22px;
                 box-sizing: border-box;        
                 
                 .tools {
-                    float:right;
+                    float: left; 
                     display:inline-block;
                     height: 100%;
                     .tool-item {
@@ -65,6 +65,30 @@ $title-height: 22px;
                             background-color: white;
                             color: black; 
                         }
+                    }
+                }
+
+                .buttons {
+                    float: right;
+                    display: inline-block;
+                    height: 100%;
+                    padding: 2px;
+
+                    form {
+                        display: inline-block;
+                        margin: 0px;
+                        padding: 0px;
+                    }
+
+                    button {
+                        display: inline-block;
+                        appearance: none;
+                        height: 100%;
+                        box-sizing: border-box;
+                        margin: 0px;
+                        padding: 5px;
+                        border: 1px solid $border-color;
+                        cursor: pointer;
                     }
                 }
             }

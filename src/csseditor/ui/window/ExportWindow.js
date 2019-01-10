@@ -10,19 +10,29 @@ export default class ExportWindow extends UIElement {
                 <div class="color-view">
                     <div class="close" ref="$close">&times;</div>        
                     <div class="codeview-container">
-                        <div class="title">Code
+                        <div class="title">
                             <div class="tools" ref="$title">
-                                <div class="tool-item selected" data-type="html" ref="$htmlTitle">HTML</div>
+                                <div class="tool-item selected" data-type="fullhtml" ref="$fullhtmlTitle">Full HTML</div>
+                                <div class="tool-item" data-type="html" ref="$htmlTitle">HTML</div>
                                 <div class="tool-item" data-type="css" ref="$cssTitle">CSS</div>
+                            </div>
+                            <div class="buttons">
+                                <form action="https://codepen.io/pen/define" method="POST" target="_blank">
+                                    <input type="hidden" name="data" ref="$codepen" value=''>
+                                    <button type="submit">Create New CodePen</button>
+                                </form>
                             </div>
                         </div>
                         <div class="codeview">
-                            <div class="content-item selected" data-type="html" ref="$htmlContent">
+                            <div class="content-item selected" data-type="fullhtml" ref="$fullhtmlContent">
+                                <textarea ref="$fullhtml"></textarea>
+                            </div>
+                            <div class="content-item" data-type="html" ref="$htmlContent">
                                 <textarea ref="$html"></textarea>
                             </div>
                             <div class="content-item" data-type="css" ref="$cssContent">
                                 <textarea ref="$css"></textarea>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                     <div class="preview-container">
@@ -43,7 +53,7 @@ export default class ExportWindow extends UIElement {
                           {matches: /(text|application)\/(x-)?vb(a|script)/i,
                            mode: "vbscript"}]
           };
-        this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
+        this.cmFullHtml = CodeMirror.fromTextArea(this.refs.$fullhtml.el, {
             lineNumbers: true, 
             readOnly: true,
             lineWrapping: true,
@@ -53,7 +63,13 @@ export default class ExportWindow extends UIElement {
             }
         });
 
-        
+        this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
+            lineNumbers: true, 
+            readOnly: true,
+            lineWrapping: true,
+            mode : mixedMode
+        });
+
         this.cmCss = CodeMirror.fromTextArea(this.refs.$css.el, {
             lineNumbers: true, 
             readOnly: true,
@@ -171,9 +187,18 @@ ${layerStyle}
 `
         var style = `<style type="text/css">${styleText}</style>\n`
         return {
-            html: style + html,
+            html,
+            fullhtml: style + html,
             css: styleText
         } 
+    }
+
+    getCodePenCode (obj, title = 'CSS Gradient Editor', description = 'EasyLogic Studio') {
+        return JSON.stringify({
+            title,
+            description,
+            ...obj
+        }).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
     }
 
     loadCode () {
@@ -185,17 +210,28 @@ ${layerStyle}
 
         var generateCode = this.generateCode()
 
+        if (this.cmFullHtml) {
+            this.cmFullHtml.setValue(generateCode.fullhtml);
+            this.cmFullHtml.refresh();
+        }
+
         if (this.cmHtml) {
             this.cmHtml.setValue(generateCode.html);
             this.cmHtml.refresh();
         }
+
 
         if (this.cmCss) {
             this.cmCss.setValue(generateCode.css);
             this.cmCss.refresh();
         }        
 
-        this.refs.$preview.html(generateCode.html);
+        this.refs.$codepen.val(this.getCodePenCode({
+            html: generateCode.html, 
+            css: generateCode.css 
+        }))
+
+        this.refs.$preview.html(generateCode.fullhtml);
     }
 
     refresh () {
@@ -218,6 +254,7 @@ ${layerStyle}
             var obj = this.refs[key];
             obj.toggleClass('selected', `$${type}Content` == key);
 
+            if (this.cmFullHtml) this.cmFullHtml.refresh();
             if (this.cmHtml) this.cmHtml.refresh();
             if (this.cmCss) this.cmCss.refresh();
         })        

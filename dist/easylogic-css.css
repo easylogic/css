@@ -5944,13 +5944,13 @@ html, body {
           top: 0px;
           left: 0px;
           right: 0px;
-          height: 22px;
+          height: 30px;
           background-color: #ececec;
           font-size: 12px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box; }
           .csseditor .export-view .color-view .codeview-container .title .tools, .csseditor .export-view .canvas-view .codeview-container .title .tools {
-            float: right;
+            float: left;
             display: inline-block;
             height: 100%; }
             .csseditor .export-view .color-view .codeview-container .title .tools .tool-item, .csseditor .export-view .canvas-view .codeview-container .title .tools .tool-item {
@@ -5965,12 +5965,33 @@ html, body {
               .csseditor .export-view .color-view .codeview-container .title .tools .tool-item.selected, .csseditor .export-view .canvas-view .codeview-container .title .tools .tool-item.selected {
                 background-color: white;
                 color: black; }
+          .csseditor .export-view .color-view .codeview-container .title .buttons, .csseditor .export-view .canvas-view .codeview-container .title .buttons {
+            float: right;
+            display: inline-block;
+            height: 100%;
+            padding: 2px; }
+            .csseditor .export-view .color-view .codeview-container .title .buttons form, .csseditor .export-view .canvas-view .codeview-container .title .buttons form {
+              display: inline-block;
+              margin: 0px;
+              padding: 0px; }
+            .csseditor .export-view .color-view .codeview-container .title .buttons button, .csseditor .export-view .canvas-view .codeview-container .title .buttons button {
+              display: inline-block;
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              height: 100%;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              margin: 0px;
+              padding: 5px;
+              border: 1px solid #cccccc;
+              cursor: pointer; }
         .csseditor .export-view .color-view .codeview-container .codeview, .csseditor .export-view .canvas-view .codeview-container .codeview {
           position: absolute;
           left: 0px;
           right: 0px;
           bottom: 0px;
-          top: 22px;
+          top: 30px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box; }
           .csseditor .export-view .color-view .codeview-container .codeview .CodeMirror, .csseditor .export-view .canvas-view .codeview-container .codeview .CodeMirror {
@@ -6000,7 +6021,7 @@ html, body {
           top: 0px;
           left: 0px;
           right: 0px;
-          height: 22px;
+          height: 30px;
           background-color: #ececec;
           font-size: 12px;
           padding: 5px;
@@ -6010,7 +6031,7 @@ html, body {
           position: absolute;
           right: 0px;
           left: 0px;
-          top: 22px;
+          top: 30px;
           bottom: 0px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
