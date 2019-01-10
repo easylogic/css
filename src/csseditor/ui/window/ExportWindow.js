@@ -82,125 +82,6 @@ export default class ExportWindow extends UIElement {
     }
  
 
-    makePageCSS (page) {
-
-        var css = Object.assign({ 
-                position: 'relative' 
-            },
-            this.read('page/toCSS', page) 
-        )
-
-        return this.read('css/toString', css);
-    }
-
-    getClassName (className) {
-        return (className || '').split(' ').map(it => '.' + it).join('')
-    }
-
-    getPageStyle (page) {
-        var pageStyle = this.makePageCSS(page).split(';').map(it => {
-            return `\t` + it + ';';
-        }).join('\n')
-
-        return pageStyle;
-    }
-
-    getPageHtml (page) {
-        var html = `<div id="page-1">\n${this.read('item/map/children', page.id, (item, index) => {
-
-            var idString = item.idString || 'layer-' + (index+1)
-            var className = item.className
-
-            var selector = [] 
-
-            if (className) {
-                selector.push(`class="${className}"`)
-            }
-
-            if (!selector.length && item.idString) {
-                selector.push(`id="${idString}"`);
-            } else {
-                selector.push(`id="layer-${index+1}"`);
-            }
-
-
-            var clipPath = this.read('layer/toStringClipPath', item);
-
-            if (clipPath) {
-                clipPath = `\t\t\n${clipPath}`
-            }
-
-            var content = item.content || ''
-
-            return `\t<div ${selector.join(' ')}>${content}${clipPath}</div>`
-        }).join('\n')}
-</div>`
-
-        return html;
-    }
-
-    getLayerStyle (page) {
-        var layerStyle = this.read('item/map/children', page.id, (item, index) => {
-
-
-            var idString = item.idString || 'layer-' + (index+1)
-            var className = item.className
-
-            var selector = [] 
-
-            if (className) {
-                selector = this.getClassName(className);
-            } else  {
-                selector = `#${idString}`
-            }
-
-            var css = this.read('layer/toExport', item, true).split(';').map(it => {
-                return '\t' + it + ';';
-            }).join('\n');
-
-            return `${selector} {\n${css}\n}`;
-        }).join('\n')
-
-
-        return layerStyle;
-    }
-
-    generateCode () {
-        var page = this.read('selection/current/page')
-
-        if (!page) {
-            return '';  
-        }
-
-        var pageStyle = this.getPageStyle(page);
-
-        var html = this.getPageHtml(page);
-
-        var layerStyle = this.getLayerStyle(page);
-
-        var styleText = `
-#page-1 { 
-${pageStyle}
-}
-${layerStyle}
-
-`
-        var style = `<style type="text/css">${styleText}</style>\n`
-        return {
-            html,
-            fullhtml: style + html,
-            css: styleText
-        } 
-    }
-
-    getCodePenCode (obj, title = 'CSS Gradient Editor', description = 'EasyLogic Studio') {
-        return JSON.stringify({
-            title,
-            description,
-            ...obj
-        }).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
-    }
-
     loadCode () {
         var page = this.read('selection/current/page')
 
@@ -208,7 +89,7 @@ ${layerStyle}
             return '';  
         }
 
-        var generateCode = this.generateCode()
+        var generateCode = this.read('export/generate/code')
 
         if (this.cmFullHtml) {
             this.cmFullHtml.setValue(generateCode.fullhtml);
@@ -226,7 +107,7 @@ ${layerStyle}
             this.cmCss.refresh();
         }        
 
-        this.refs.$codepen.val(this.getCodePenCode({
+        this.refs.$codepen.val(this.read('export/codepen/code', {
             html: generateCode.html, 
             css: generateCode.css 
         }))

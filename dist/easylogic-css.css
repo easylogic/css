@@ -1740,6 +1740,26 @@ html, body {
         line-height: 1.6;
         outline: none;
         cursor: pointer; }
+      .csseditor .tool-menu .items .codepen {
+        padding: 0px !important;
+        border-left: 0px !important; }
+        .csseditor .tool-menu .items .codepen button {
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          border: 0px;
+          vertical-align: middle;
+          border-left: 1px solid #cccccc;
+          height: 100%;
+          display: inline-block;
+          padding: 10px 20px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          text-decoration: none;
+          color: #333333;
+          line-height: 1.6;
+          outline: none;
+          cursor: pointer; }
     .csseditor .tool-menu .add-items {
       display: inline-block;
       padding: 5px 0px;

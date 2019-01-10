@@ -11,7 +11,7 @@ export class EventChecker {
 
 // event name regular expression
 export const CHECK_LOAD_PATTERN = /^load (.*)/ig;
-export const CHECK_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll)/ig;
+export const CHECK_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll|submit)/ig;
 
 export const NAME_SAPARATOR = ':'
 export const CHECK_SAPARATOR = '|'
@@ -57,6 +57,7 @@ export const INPUT = DOM_EVENT_MAKE('input')
 export const PASTE = DOM_EVENT_MAKE('paste')
 export const RESIZE = DOM_EVENT_MAKE('resize')
 export const SCROLL = DOM_EVENT_MAKE('scroll')
+export const SUBMIT = DOM_EVENT_MAKE('submit')
 export const POINTERSTART = CUSTOM('mousedown', 'touchstart')
 export const POINTERMOVE = CUSTOM('mousemove', 'touchmove')
 export const POINTEREND = CUSTOM('mouseup', 'touchend')

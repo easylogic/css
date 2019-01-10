@@ -22,6 +22,27 @@
             outline: none;
             cursor: pointer;
         }
+
+        .codepen {
+            padding: 0px !important;
+            border-left: 0px !important; 
+
+            button {
+                appearance: none;
+                border: 0px;
+                vertical-align: middle;
+                border-left: 1px solid $border-color;
+                height: 100%;
+                display: inline-block;
+                padding: 10px 20px;
+                box-sizing: border-box;
+                text-decoration: none;
+                color: #333333;
+                line-height: 1.6;
+                outline: none;
+                cursor: pointer;
+            }
+        }
     }
 
     .add-items {

@@ -1,7 +1,7 @@
 import UIElement from '../../../colorpicker/UIElement';
 import PageShowGrid from '../control/panel/items/PageShowGrid';
 import { ITEM_TYPE_LAYER, ITEM_TYPE_CIRCLE } from '../../module/ItemTypes';
-import { CLICK } from '../../../util/Event';
+import { CLICK, SUBMIT } from '../../../util/Event';
 
 export default class ToolMenu extends UIElement {
 
@@ -40,12 +40,26 @@ export default class ToolMenu extends UIElement {
                 </div>
                 <div class='items'>
                     <label>Show Grid <input type='checkbox' ref="$check"></label>                
-                    <button type="button" ref="$exportButton">Export</button>                
+                    <button type="button" ref="$exportButton">Export</button>    
+                    <form ref="$form" class='codepen' action="https://codepen.io/pen/define" method="POST" target="_blank">
+                        <input type="hidden" name="data" ref="$codepen" value=''>
+                        <button type="submit">Create New CodePen</button>
+                    </form>            
                     <button type="button" ref="$saveButton">Save</button>
                     <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>
                 </div>
             </div>
         `
+    }
+
+    [SUBMIT('$form')] () {
+        var generateCode = this.read('export/generate/code');
+        this.refs.$codepen.val(this.read('export/codepen/code', {
+            html: generateCode.html, 
+            css: generateCode.css 
+        }))
+
+        return false; 
     }
 
 

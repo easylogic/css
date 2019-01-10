@@ -6843,7 +6843,7 @@ var EventChecker = function () {
 
 // event name regular expression
 var CHECK_LOAD_PATTERN = /^load (.*)/ig;
-var CHECK_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll)/ig;
+var CHECK_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll|submit)/ig;
 
 var NAME_SAPARATOR = ':';
 var CHECK_SAPARATOR = '|';
@@ -6896,6 +6896,7 @@ var INPUT = DOM_EVENT_MAKE('input');
 var PASTE = DOM_EVENT_MAKE('paste');
 var RESIZE = DOM_EVENT_MAKE('resize');
 var SCROLL = DOM_EVENT_MAKE('scroll');
+var SUBMIT = DOM_EVENT_MAKE('submit');
 var POINTERSTART = CUSTOM('mousedown', 'touchstart');
 var POINTERMOVE = CUSTOM('mousemove', 'touchmove');
 var POINTEREND = CUSTOM('mouseup', 'touchend');
@@ -15215,7 +15216,141 @@ var ItemSearchManager = function (_BaseModule) {
     return ItemSearchManager;
 }(BaseModule);
 
-var ModuleList = [ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var ExportManager = function (_BaseModule) {
+    inherits(ExportManager, _BaseModule);
+
+    function ExportManager() {
+        classCallCheck(this, ExportManager);
+        return possibleConstructorReturn(this, (ExportManager.__proto__ || Object.getPrototypeOf(ExportManager)).apply(this, arguments));
+    }
+
+    createClass(ExportManager, [{
+        key: "makePageCSS",
+        value: function makePageCSS($store, page) {
+
+            var css = Object.assign({
+                position: 'relative'
+            }, $store.read('page/toCSS', page));
+
+            return $store.read('css/toString', css);
+        }
+    }, {
+        key: "getClassName",
+        value: function getClassName(className) {
+            return (className || '').split(' ').map(function (it) {
+                return '.' + it;
+            }).join('');
+        }
+    }, {
+        key: "getPageStyle",
+        value: function getPageStyle($store, page) {
+            var pageStyle = this.makePageCSS($store, page).split(';').map(function (it) {
+                return "\t" + it + ';';
+            }).join('\n');
+
+            return pageStyle;
+        }
+    }, {
+        key: "getPageHtml",
+        value: function getPageHtml($store, page) {
+            var html = "<div id=\"page-1\">\n" + $store.read('item/map/children', page.id, function (item, index) {
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                var selector = [];
+
+                if (className) {
+                    selector.push("class=\"" + className + "\"");
+                }
+
+                if (!selector.length && item.idString) {
+                    selector.push("id=\"" + idString + "\"");
+                } else {
+                    selector.push("id=\"layer-" + (index + 1) + "\"");
+                }
+
+                var clipPath = $store.read('layer/toStringClipPath', item);
+
+                if (clipPath) {
+                    clipPath = "\t\t\n" + clipPath;
+                }
+
+                var content = item.content || '';
+
+                return "\t<div " + selector.join(' ') + ">" + content + clipPath + "</div>";
+            }).join('\n') + "\n</div>";
+
+            return html;
+        }
+    }, {
+        key: "getLayerStyle",
+        value: function getLayerStyle($store, page) {
+            var _this2 = this;
+
+            var layerStyle = $store.read('item/map/children', page.id, function (item, index) {
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                var selector = [];
+
+                if (className) {
+                    selector = _this2.getClassName(className);
+                } else {
+                    selector = "#" + idString;
+                }
+
+                var css = $store.read('layer/toExport', item, true).split(';').map(function (it) {
+                    return '\t' + it + ';';
+                }).join('\n');
+
+                return selector + " {\n" + css + "\n}";
+            }).join('\n');
+
+            return layerStyle;
+        }
+    }, {
+        key: GETTER('export/generate/code'),
+        value: function value($store) {
+            var page = $store.read('selection/current/page');
+
+            if (!page) {
+                return '';
+            }
+
+            var pageStyle = this.getPageStyle($store, page);
+
+            var html = this.getPageHtml($store, page);
+
+            var layerStyle = this.getLayerStyle($store, page);
+
+            var styleText = "\n#page-1 { \n" + pageStyle + "\n}\n" + layerStyle + "\n\n";
+            var style = "<style type=\"text/css\">" + styleText + "</style>\n";
+            return {
+                html: html,
+                fullhtml: style + html,
+                css: styleText
+            };
+        }
+    }, {
+        key: GETTER('export/codepen/code'),
+        value: function value($store, obj) {
+            var title = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'CSS Gradient Editor';
+            var description = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'EasyLogic Studio';
+            var link = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : ' - https://css.easylogic.studio';
+
+            return JSON.stringify(_extends({
+                title: title,
+                description: description + link,
+                tags: ["css", "gradient", "editor", "easylogic", "studio"]
+            }, obj)).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
+        }
+    }]);
+    return ExportManager;
+}(BaseModule);
+
+var ModuleList = [ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -22305,128 +22440,6 @@ var ExportWindow = function (_UIElement) {
             });
         }
     }, {
-        key: "makePageCSS",
-        value: function makePageCSS(page) {
-
-            var css = Object.assign({
-                position: 'relative'
-            }, this.read('page/toCSS', page));
-
-            return this.read('css/toString', css);
-        }
-    }, {
-        key: "getClassName",
-        value: function getClassName(className) {
-            return (className || '').split(' ').map(function (it) {
-                return '.' + it;
-            }).join('');
-        }
-    }, {
-        key: "getPageStyle",
-        value: function getPageStyle(page) {
-            var pageStyle = this.makePageCSS(page).split(';').map(function (it) {
-                return "\t" + it + ';';
-            }).join('\n');
-
-            return pageStyle;
-        }
-    }, {
-        key: "getPageHtml",
-        value: function getPageHtml(page) {
-            var _this2 = this;
-
-            var html = "<div id=\"page-1\">\n" + this.read('item/map/children', page.id, function (item, index) {
-
-                var idString = item.idString || 'layer-' + (index + 1);
-                var className = item.className;
-
-                var selector = [];
-
-                if (className) {
-                    selector.push("class=\"" + className + "\"");
-                }
-
-                if (!selector.length && item.idString) {
-                    selector.push("id=\"" + idString + "\"");
-                } else {
-                    selector.push("id=\"layer-" + (index + 1) + "\"");
-                }
-
-                var clipPath = _this2.read('layer/toStringClipPath', item);
-
-                if (clipPath) {
-                    clipPath = "\t\t\n" + clipPath;
-                }
-
-                var content = item.content || '';
-
-                return "\t<div " + selector.join(' ') + ">" + content + clipPath + "</div>";
-            }).join('\n') + "\n</div>";
-
-            return html;
-        }
-    }, {
-        key: "getLayerStyle",
-        value: function getLayerStyle(page) {
-            var _this3 = this;
-
-            var layerStyle = this.read('item/map/children', page.id, function (item, index) {
-
-                var idString = item.idString || 'layer-' + (index + 1);
-                var className = item.className;
-
-                var selector = [];
-
-                if (className) {
-                    selector = _this3.getClassName(className);
-                } else {
-                    selector = "#" + idString;
-                }
-
-                var css = _this3.read('layer/toExport', item, true).split(';').map(function (it) {
-                    return '\t' + it + ';';
-                }).join('\n');
-
-                return selector + " {\n" + css + "\n}";
-            }).join('\n');
-
-            return layerStyle;
-        }
-    }, {
-        key: "generateCode",
-        value: function generateCode() {
-            var page = this.read('selection/current/page');
-
-            if (!page) {
-                return '';
-            }
-
-            var pageStyle = this.getPageStyle(page);
-
-            var html = this.getPageHtml(page);
-
-            var layerStyle = this.getLayerStyle(page);
-
-            var styleText = "\n#page-1 { \n" + pageStyle + "\n}\n" + layerStyle + "\n\n";
-            var style = "<style type=\"text/css\">" + styleText + "</style>\n";
-            return {
-                html: html,
-                fullhtml: style + html,
-                css: styleText
-            };
-        }
-    }, {
-        key: "getCodePenCode",
-        value: function getCodePenCode(obj) {
-            var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'CSS Gradient Editor';
-            var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'EasyLogic Studio';
-
-            return JSON.stringify(_extends({
-                title: title,
-                description: description
-            }, obj)).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
-        }
-    }, {
         key: "loadCode",
         value: function loadCode() {
             var page = this.read('selection/current/page');
@@ -22435,7 +22448,7 @@ var ExportWindow = function (_UIElement) {
                 return '';
             }
 
-            var generateCode = this.generateCode();
+            var generateCode = this.read('export/generate/code');
 
             if (this.cmFullHtml) {
                 this.cmFullHtml.setValue(generateCode.fullhtml);
@@ -22452,7 +22465,7 @@ var ExportWindow = function (_UIElement) {
                 this.cmCss.refresh();
             }
 
-            this.refs.$codepen.val(this.getCodePenCode({
+            this.refs.$codepen.val(this.read('export/codepen/code', {
                 html: generateCode.html,
                 css: generateCode.css
             }));
@@ -22472,26 +22485,26 @@ var ExportWindow = function (_UIElement) {
     }, {
         key: CLICK('$title .tool-item'),
         value: function value(e) {
-            var _this4 = this;
+            var _this2 = this;
 
             var type = e.$delegateTarget.attr('data-type');
 
             Object.keys(this.refs).filter(function (it) {
                 return it.includes('Title');
             }).forEach(function (key) {
-                var obj = _this4.refs[key];
+                var obj = _this2.refs[key];
                 obj.toggleClass('selected', "$" + type + "Title" == key);
             });
 
             Object.keys(this.refs).filter(function (it) {
                 return it.includes('Content');
             }).forEach(function (key) {
-                var obj = _this4.refs[key];
+                var obj = _this2.refs[key];
                 obj.toggleClass('selected', "$" + type + "Content" == key);
 
-                if (_this4.cmFullHtml) _this4.cmFullHtml.refresh();
-                if (_this4.cmHtml) _this4.cmHtml.refresh();
-                if (_this4.cmCss) _this4.cmCss.refresh();
+                if (_this2.cmFullHtml) _this2.cmFullHtml.refresh();
+                if (_this2.cmHtml) _this2.cmHtml.refresh();
+                if (_this2.cmCss) _this2.cmCss.refresh();
             });
         }
     }, {
@@ -25346,7 +25359,18 @@ var ToolMenu = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>                \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>    \n                    <form ref="$form" class=\'codepen\' action="https://codepen.io/pen/define" method="POST" target="_blank">\n                        <input type="hidden" name="data" ref="$codepen" value=\'\'>\n                        <button type="submit">Create New CodePen</button>\n                    </form>            \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: SUBMIT('$form'),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+            this.refs.$codepen.val(this.read('export/codepen/code', {
+                html: generateCode.html,
+                css: generateCode.css
+            }));
+
+            return false;
         }
     }, {
         key: CLICK('$check'),

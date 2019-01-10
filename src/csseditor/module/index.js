@@ -26,10 +26,11 @@ import ItemCreateManager from "./ItemCreateManager";
 import ItemMoveManager from "./ItemMoveManager";
 import ItemRecoverManager from "./ItemRecoverManager";
 import ItemSearchManager from "./ItemSearchManager";
+import ExportManager from "./ExportManager";
 
 
 export default [  
-
+    ExportManager,
     ClipPathManager,
     I18nManager,
     BackdropManager,
