@@ -25494,6 +25494,63 @@ var HandleView = function (_GradientView) {
     return HandleView;
 }(GradientView);
 
+var ExportCodePenButton = function (_UIElement) {
+    inherits(ExportCodePenButton, _UIElement);
+
+    function ExportCodePenButton() {
+        classCallCheck(this, ExportCodePenButton);
+        return possibleConstructorReturn(this, (ExportCodePenButton.__proto__ || Object.getPrototypeOf(ExportCodePenButton)).apply(this, arguments));
+    }
+
+    createClass(ExportCodePenButton, [{
+        key: "template",
+        value: function template() {
+            return "\n            <form class='codepen' action=\"https://codepen.io/pen/define\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"data\" ref=\"$codepen\" value=''>\n                <button type=\"submit\">CodePen</button>\n            </form>     \n        ";
+        }
+    }, {
+        key: SUBMIT(),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+            this.refs.$codepen.val(this.read('export/codepen/code', {
+                html: generateCode.html,
+                css: generateCode.css
+            }));
+
+            return false;
+        }
+    }]);
+    return ExportCodePenButton;
+}(UIElement);
+
+var ExportJSFiddleButton = function (_UIElement) {
+    inherits(ExportJSFiddleButton, _UIElement);
+
+    function ExportJSFiddleButton() {
+        classCallCheck(this, ExportJSFiddleButton);
+        return possibleConstructorReturn(this, (ExportJSFiddleButton.__proto__ || Object.getPrototypeOf(ExportJSFiddleButton)).apply(this, arguments));
+    }
+
+    createClass(ExportJSFiddleButton, [{
+        key: "template",
+        value: function template() {
+            return "\n            <form class='jsfiddle' action=\"http://jsfiddle.net/api/post/library/pure/\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"title\" ref=\"$title\" value=''>\n                <input type=\"hidden\" name=\"description\" ref=\"$description\" value=''>\n                <input type=\"hidden\" name=\"html\" ref=\"$html\" value=''>\n                <input type=\"hidden\" name=\"css\" ref=\"$css\" value=''>\n                <input type=\"hidden\" name=\"dtd\" value='html 5'>\n                <button type=\"submit\">JSFiddle</button>\n            </form>     \n        ";
+        }
+    }, {
+        key: SUBMIT(),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+
+            this.refs.$title.val('CSS Gradient Editor');
+            this.refs.$description.val('EasyLogic Studio - https://css.easylogic.studio');
+            this.refs.$html.val(generateCode.html);
+            this.refs.$css.val(generateCode.css);
+
+            return false;
+        }
+    }]);
+    return ExportJSFiddleButton;
+}(UIElement);
+
 var ToolMenu = function (_UIElement) {
     inherits(ToolMenu, _UIElement);
 
@@ -25505,23 +25562,16 @@ var ToolMenu = function (_UIElement) {
     createClass(ToolMenu, [{
         key: 'components',
         value: function components() {
-            return { PageShowGrid: PageShowGrid };
+            return {
+                PageShowGrid: PageShowGrid,
+                ExportCodePenButton: ExportCodePenButton,
+                ExportJSFiddleButton: ExportJSFiddleButton
+            };
         }
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>    \n                    <form ref="$form" class=\'codepen\' action="https://codepen.io/pen/define" method="POST" target="_blank">\n                        <input type="hidden" name="data" ref="$codepen" value=\'\'>\n                        <button type="submit">Create New CodePen</button>\n                    </form>            \n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: SUBMIT('$form'),
-        value: function value() {
-            var generateCode = this.read('export/generate/code');
-            this.refs.$codepen.val(this.read('export/codepen/code', {
-                html: generateCode.html,
-                css: generateCode.css
-            }));
-
-            return false;
+            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>    \n                    <ExportCodePenButton></ExportCodePenButton>\n                    <ExportJSFiddleButton></ExportJSFiddleButton>\n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: CLICK('$check'),
