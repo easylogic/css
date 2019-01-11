@@ -13,19 +13,20 @@ import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER, LOAD } from '../../../../util/Event';
 import { defaultValue, isNotUndefined } from '../../../../util/functions/func';
+import { 
+    SEGMENT_TYPE_MOVE, 
+    SEGMENT_TYPE_RIGHT, 
+    SEGMENT_TYPE_LEFT, 
+    SEGMENT_TYPE_TOP, 
+    SEGMENT_TYPE_BOTTOM, 
+    SEGMENT_TYPE_TOP_RIGHT, 
+    SEGMENT_TYPE_BOTTOM_RIGHT, 
+    SEGMENT_TYPE_BOTTOM_LEFT, 
+    SEGMENT_TYPE_TOP_LEFT, 
+    SEGMENT_TYPE_ROTATE 
+} from '../../../module/ItemTypes';
 
 const SNAP_GRID = 20; 
-
-const SEGMENT_TYPE_ROTATE = 'rotate';
-const SEGMENT_TYPE_MOVE = 'move';
-const SEGMENT_TYPE_TOP = 'to top';
-const SEGMENT_TYPE_LEFT = 'to left';
-const SEGMENT_TYPE_RIGHT = 'to right';
-const SEGMENT_TYPE_BOTTOM = 'to bottom';
-const SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-const SEGMENT_TYPE_TOP_LEFT = 'to top left';
-const SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-const SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
 
 export default class PredefinedGroupLayerResizer extends UIElement {
 
@@ -205,9 +206,9 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
     caculateSnap () {
-        if (this.currentType == SEGMENT_TYPE_MOVE) {
-            this.run('guide/snap/caculate', 3, this.currentType);
-        }
+        // if (this.currentType == SEGMENT_TYPE_MOVE) {
+        this.run('guide/snap/caculate', 3, this.currentType);
+        // }
 
     }
 

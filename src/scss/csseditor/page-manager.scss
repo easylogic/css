@@ -126,6 +126,7 @@ $layer-item-padding: 4px;
                 background-color: #333;
                 border-radius: 3px;
                 margin-bottom: 5px;
+                pointer-events: none;
             }
 
             .item-title {

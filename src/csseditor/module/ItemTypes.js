@@ -215,3 +215,26 @@ export const IMAGE_FILE_TYPE_SVG = 'svg'
 
 export const GUIDE_TYPE_VERTICAL = '|';
 export const GUIDE_TYPE_HORIZONTAL = '-';
+
+export const SEGMENT_TYPE_ROTATE = 'rotate';
+export const SEGMENT_TYPE_MOVE = 'move';
+export const SEGMENT_TYPE_TOP = 'to top';
+export const SEGMENT_TYPE_LEFT = 'to left';
+export const SEGMENT_TYPE_RIGHT = 'to right';
+export const SEGMENT_TYPE_BOTTOM = 'to bottom';
+export const SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+export const SEGMENT_TYPE_TOP_LEFT = 'to top left';
+export const SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+export const SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
+export const SEGMENT_CHECK = {
+    [SEGMENT_TYPE_MOVE]: {move: true},
+    [SEGMENT_TYPE_TOP]: {yIndex : 0},
+    [SEGMENT_TYPE_TOP_LEFT]: {yIndex : 0, xIndex: 0},
+    [SEGMENT_TYPE_TOP_RIGHT]: {yIndex : 0, xIndex: 2},
+    [SEGMENT_TYPE_LEFT]: {xIndex : 0},
+    [SEGMENT_TYPE_RIGHT]: {xIndex : 2},
+    [SEGMENT_TYPE_BOTTOM]: {yIndex : 2},
+    [SEGMENT_TYPE_BOTTOM_LEFT]: {yIndex : 2, xIndex: 0},
+    [SEGMENT_TYPE_BOTTOM_RIGHT]: {yIndex : 2, xIndex: 2}
+}

@@ -2306,6 +2306,8 @@ function convertPercentUnit(obj) {
     return obj;
 }
 
+var _SEGMENT_CHECK;
+
 var ITEM_TYPE_PAGE = 'page';
 var ITEM_TYPE_LAYER = 'layer';
 var ITEM_TYPE_CIRCLE = 'circle';
@@ -2513,6 +2515,19 @@ var IMAGE_FILE_TYPE_SVG = 'svg';
 
 var GUIDE_TYPE_VERTICAL = '|';
 var GUIDE_TYPE_HORIZONTAL = '-';
+
+var SEGMENT_TYPE_ROTATE = 'rotate';
+var SEGMENT_TYPE_MOVE = 'move';
+var SEGMENT_TYPE_TOP = 'to top';
+var SEGMENT_TYPE_LEFT = 'to left';
+var SEGMENT_TYPE_RIGHT = 'to right';
+var SEGMENT_TYPE_BOTTOM = 'to bottom';
+var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+var SEGMENT_TYPE_TOP_LEFT = 'to top left';
+var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
+var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
 
 function rotateDegree(angle) {
     var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : POSITION_CENTER;
@@ -11990,6 +12005,8 @@ var GuideManager = function (_BaseModule) {
     createClass(GuideManager, [{
         key: GETTER('guide/rect/point'),
         value: function value$$1($store, obj) {
+            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
+
             var id = obj.id;
             var x = unitValue(obj.x);
             var y = unitValue(obj.y);
@@ -12006,12 +12023,34 @@ var GuideManager = function (_BaseModule) {
             var endX = x2;
             var startY = y;
             var endY = y2;
+            var pointX = [];
+            var pointY = [];
 
-            return {
-                pointX: [{ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height }, { x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height }, { x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height }],
+            var segment = SEGMENT_CHECK[segmentType];
 
-                pointY: [{ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height }, { x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height }, { x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height }]
-            };
+            if (!segment) return { pointX: pointX, pointY: pointY };
+
+            if (segment.move) {
+                pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+                pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+                pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+
+                pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+                pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+                pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+
+                return { pointX: pointX, pointY: pointY };
+            } else {
+                if (segment.xIndex === 0) pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+                if (segment.xIndex === 1) pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+                if (segment.xIndex === 2) pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+
+                if (segment.yIndex === 0) pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+                if (segment.yIndex === 1) pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+                if (segment.yIndex === 2) pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+
+                return { pointX: pointX, pointY: pointY };
+            }
         }
     }, {
         key: GETTER('guide/compare'),
@@ -12037,6 +12076,7 @@ var GuideManager = function (_BaseModule) {
                             centerX: BX.centerX,
                             sourceId: AX.id,
                             targetId: BX.id,
+                            sourceX: AX.startX,
                             width: AX.width,
                             height: AX.height
                         });
@@ -12060,6 +12100,7 @@ var GuideManager = function (_BaseModule) {
                             centerY: BY.centerY,
                             sourceId: AY.id,
                             targetId: BY.id,
+                            sourceY: AY.startY,
                             width: AY.width,
                             height: AY.height
                         });
@@ -12073,13 +12114,14 @@ var GuideManager = function (_BaseModule) {
         key: GETTER('guide/snap/layer'),
         value: function value$$1($store) {
             var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
+            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
 
             var page = $store.read('selection/current/page');
 
             if (!page) return [];
             if (page.selected) return [];
 
-            var selectionRect = $store.read('guide/rect/point', $store.read('selection/rect'));
+            var selectionRect = $store.read('guide/rect/point', $store.read('selection/rect'), segmentType);
             var pageRect = $store.read('guide/rect/point', {
                 x: pxUnit(0),
                 y: pxUnit(0),
@@ -12108,62 +12150,111 @@ var GuideManager = function (_BaseModule) {
     }, {
         key: ACTION('guide/snap/caculate'),
         value: function value$$1($store) {
+            var _this2 = this;
+
             var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
+            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
 
 
-            var list = $store.read('guide/snap/layer', dist);
+            var list = $store.read('guide/snap/layer', dist, segmentType);
 
             if (list.length) {
 
                 list.forEach(function (rect) {
 
-                    var positionObject = null;
-
-                    if (rect.type == GUIDE_TYPE_HORIZONTAL) {
-                        var y;
-
-                        switch (rect.targetIndex) {
-                            case 0:
-                                y = rect.startY;break;
-                            case 1:
-                                y = rect.centerY;break;
-                            case 2:
-                                y = rect.endY;break;
-                        }
-
-                        switch (rect.index) {
-                            case 1:
-                                y -= Math.floor(rect.height / 2);break;
-                            case 2:
-                                y -= rect.height;break;
-                        }
-
-                        positionObject = { id: rect.sourceId, y: pxUnit(y) };
-                    } else if (rect.type == GUIDE_TYPE_VERTICAL) {
-                        var x;
-                        switch (rect.targetIndex) {
-                            case 0:
-                                x = rect.startX;break;
-                            case 1:
-                                x = rect.centerX;break;
-                            case 2:
-                                x = rect.endX;break;
-                        }
-
-                        switch (rect.index) {
-                            case 1:
-                                x -= Math.floor(rect.width / 2);break;
-                            case 2:
-                                x -= rect.width;break;
-                        }
-
-                        positionObject = { id: rect.sourceId, x: pxUnit(x) };
-                    }
-
-                    if (isNotUndefined(positionObject)) {
-                        $store.run('item/set', positionObject);
+                    if (segmentType == SEGMENT_TYPE_MOVE) {
+                        _this2.moveSnap($store, rect, segmentType);
+                    } else {
+                        _this2.sizeSnap($store, rect, segmentType);
                     }
                 });
+            }
+        }
+    }, {
+        key: "sizeSnap",
+        value: function sizeSnap($store, rect, segmentType) {
+            var positionObject = null;
+            if (rect.type == GUIDE_TYPE_HORIZONTAL) {
+                var y;
+
+                if (segmentType == SEGMENT_TYPE_TOP || segmentType == SEGMENT_TYPE_TOP_LEFT || segmentType == SEGMENT_TYPE_TOP_RIGHT) {
+                    y = rect.y;
+                    var height = rect.height + (rect.sourceY - y);
+
+                    positionObject = { id: rect.sourceId, y: pxUnit(y), height: pxUnit(height) };
+                } else if (segmentType == SEGMENT_TYPE_BOTTOM || segmentType == SEGMENT_TYPE_BOTTOM_LEFT || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
+                    var height = rect.y - rect.sourceY;
+
+                    positionObject = { id: rect.sourceId, height: pxUnit(height) };
+                }
+            } else if (rect.type == GUIDE_TYPE_VERTICAL) {
+                var x;
+                if (segmentType == SEGMENT_TYPE_LEFT || segmentType == SEGMENT_TYPE_TOP_LEFT || segmentType == SEGMENT_TYPE_BOTTOM_LEFT) {
+                    x = rect.x;
+                    var width = rect.width + (rect.sourceX - x);
+
+                    positionObject = { id: rect.sourceId, x: pxUnit(x), width: pxUnit(width) };
+                } else if (segmentType == SEGMENT_TYPE_RIGHT || segmentType == SEGMENT_TYPE_TOP_RIGHT || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
+                    var width = rect.x - rect.sourceX;
+
+                    positionObject = { id: rect.sourceId, width: pxUnit(width) };
+                }
+            }
+            if (isNotUndefined(positionObject)) {
+                $store.run('item/set', positionObject);
+            }
+        }
+    }, {
+        key: "moveSnap",
+        value: function moveSnap($store, rect) {
+            var positionObject = null;
+            if (rect.type == GUIDE_TYPE_HORIZONTAL) {
+                var y;
+                switch (rect.targetIndex) {
+                    case 0:
+                        y = rect.startY;
+                        break;
+                    case 1:
+                        y = rect.centerY;
+                        break;
+                    case 2:
+                        y = rect.endY;
+                        break;
+                }
+                switch (rect.index) {
+                    case 1:
+                        y -= Math.floor(rect.height / 2);
+                        break;
+                    case 2:
+                        y -= rect.height;
+                        break;
+                }
+                positionObject = { id: rect.sourceId, y: pxUnit(y) };
+            } else if (rect.type == GUIDE_TYPE_VERTICAL) {
+                var x;
+                switch (rect.targetIndex) {
+                    case 0:
+                        x = rect.startX;
+                        break;
+                    case 1:
+                        x = rect.centerX;
+                        break;
+                    case 2:
+                        x = rect.endX;
+                        break;
+                }
+                switch (rect.index) {
+                    case 1:
+                        x -= Math.floor(rect.width / 2);
+                        break;
+                    case 2:
+                        x -= rect.width;
+                        break;
+                }
+                positionObject = { id: rect.sourceId, x: pxUnit(x) };
+            }
+            if (isNotUndefined(positionObject)) {
+                $store.run('item/set', positionObject);
             }
         }
     }]);
@@ -23599,17 +23690,6 @@ var PredefinedPageResizer = function (_UIElement) {
 
 var SNAP_GRID = 20;
 
-var SEGMENT_TYPE_ROTATE = 'rotate';
-var SEGMENT_TYPE_MOVE = 'move';
-var SEGMENT_TYPE_TOP = 'to top';
-var SEGMENT_TYPE_LEFT = 'to left';
-var SEGMENT_TYPE_RIGHT = 'to right';
-var SEGMENT_TYPE_BOTTOM = 'to bottom';
-var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-var SEGMENT_TYPE_TOP_LEFT = 'to top left';
-var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
-
 var PredefinedGroupLayerResizer = function (_UIElement) {
     inherits(PredefinedGroupLayerResizer, _UIElement);
 
@@ -23796,9 +23876,9 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: 'caculateSnap',
         value: function caculateSnap() {
-            if (this.currentType == SEGMENT_TYPE_MOVE) {
-                this.run('guide/snap/caculate', 3, this.currentType);
-            }
+            // if (this.currentType == SEGMENT_TYPE_MOVE) {
+            this.run('guide/snap/caculate', 3, this.currentType);
+            // }
         }
     }, {
         key: 'setPosition',

@@ -1937,7 +1937,8 @@ html, body {
           width: 100%;
           background-color: #333;
           border-radius: 3px;
-          margin-bottom: 5px; }
+          margin-bottom: 5px;
+          pointer-events: none; }
         .csseditor .pages .page-list .tree-item .item-title {
           display: inline-block;
           font-size: 12px;
