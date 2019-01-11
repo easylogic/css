@@ -55,6 +55,15 @@ $direction-border: 2px solid $pointer-color;
         box-shadow: 8px 9px 20px -5px #777;   
         box-sizing: border-box;           
         
+
+        &::before {
+            position: absolute;
+            bottom: 100%;
+            content: attr(title);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
         &.moving {
             .predefined-layer-resizer {
                 display: none !important;

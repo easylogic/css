@@ -242,8 +242,8 @@ export default class ItemCreateManager extends BaseModule {
         // 레이어 생성 
         var layer = $store.read('item/get', layerId);
         layer.parentId = pageId; 
-        layer.width = page.width;
-        layer.height = page.height; 
+        layer.width = $store.read('clone', page.width);
+        layer.height = $store.read('clone', page.height); 
         // layer.style = Object.assign({}, layer.style, page.style)        
         $store.run('item/set', layer);
 

@@ -1929,7 +1929,7 @@ html, body {
         padding: 10px 10px;
         vertical-align: top; }
         .csseditor .pages .page-list .tree-item.selected {
-          background-color: white;
+          background-color: #a7a7a7;
           border-right: 1px solid white;
           margin-right: -1px; }
         .csseditor .pages .page-list .tree-item .item-preview {
@@ -3360,6 +3360,12 @@ html, body {
               box-shadow: 8px 9px 20px -5px #777;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
+      .csseditor .page-view .gradient-color-view-container::before {
+        position: absolute;
+        bottom: 100%;
+        content: attr(title);
+        display: inline-block;
+        padding-bottom: 5px; }
       .csseditor .page-view .gradient-color-view-container.moving .predefined-layer-resizer {
         display: none !important; }
       .csseditor .page-view .gradient-color-view-container.moving .predefined-page-resizer {

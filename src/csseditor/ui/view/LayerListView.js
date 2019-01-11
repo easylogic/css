@@ -66,7 +66,6 @@ export default class LayerListView extends UIElement {
     
     makeItemNodeLayer (item, index = 0) {
         var selected = this.read('selection/check', item.id) ? 'selected' : ''; 
-        var collapsed = item.gradientCollapsed ? 'collapsed' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-title"> 

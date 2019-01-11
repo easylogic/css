@@ -36,7 +36,8 @@ import {
     CHANGE_LAYER_BACKDROP_FILTER,
     CHANGE_LAYER_CLIPPATH_POLYGON,
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    CHANGE_PAGE_TRANSFORM
+    CHANGE_PAGE_TRANSFORM,
+    CHANGE_PAGE_NAME
 } from '../../types/event';
 import { px } from '../../../util/css/types';
 import { LOAD } from '../../../util/Event';
@@ -114,6 +115,7 @@ export default class GradientView extends UIElement {
     }
 
     refresh (isDrag) {
+        this.hasScroll = false; 
         this.setBackgroundColor();
         this.load();
 
@@ -176,7 +178,8 @@ export default class GradientView extends UIElement {
         }
 
         var colorviewCSS = this.read('page/colorview/toCSS', page || {clip: false});
-        this.refs.$canvas.css(canvasCSS);
+        this.refs.$canvas.css(canvasCSS)
+        this.refs.$page.attr('title', page.name || 'page');
         this.refs.$page.css(pageCSS)
         this.refs.$colorview.css(colorviewCSS);
 
@@ -225,6 +228,10 @@ export default class GradientView extends UIElement {
         CHANGE_PAGE,
         CHANGE_PAGE_TRANSFORM
     )] () { this.setBackgroundColor(); }
+
+    [EVENT(CHANGE_PAGE_NAME)] () {
+        this.setBackgroundColor();
+    }
 
     // [EVENT(
     //     CHANGE_LAYER_POSITION,

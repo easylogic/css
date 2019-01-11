@@ -443,7 +443,7 @@ export default class ImageManager extends BaseModule {
         if (colors == '') return '' 
         var opt = ''
         var radialType = image.radialType;
-        var radialPosition = image.radialPosition;
+        var radialPosition = image.radialPosition || [POSITION_CENTER, POSITION_CENTER];
         var gradientType = image.type
 
         radialPosition = (DEFINED_POSITIONS[radialPosition]) ? radialPosition : radialPosition.join(' ')
@@ -459,7 +459,7 @@ export default class ImageManager extends BaseModule {
         if (colors == '') return '' 
         var opt = []
         var conicAngle = image.angle;
-        var conicPosition = image.radialPosition;
+        var conicPosition = image.radialPosition  || [POSITION_CENTER, POSITION_CENTER];
         var gradientType = image.type
 
         conicPosition = (DEFINED_POSITIONS[conicPosition]) ? conicPosition : conicPosition.join(' ')

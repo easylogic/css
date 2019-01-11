@@ -10845,7 +10845,7 @@ var ImageManager = function (_BaseModule) {
             if (colors == '') return '';
             var opt = '';
             var radialType = image$$1.radialType;
-            var radialPosition = image$$1.radialPosition;
+            var radialPosition = image$$1.radialPosition || [POSITION_CENTER, POSITION_CENTER];
             var gradientType = image$$1.type;
 
             radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(' ');
@@ -10864,7 +10864,7 @@ var ImageManager = function (_BaseModule) {
             if (colors == '') return '';
             var opt = [];
             var conicAngle = image$$1.angle;
-            var conicPosition = image$$1.radialPosition;
+            var conicPosition = image$$1.radialPosition || [POSITION_CENTER, POSITION_CENTER];
             var gradientType = image$$1.type;
 
             conicPosition = DEFINED_POSITIONS[conicPosition] ? conicPosition : conicPosition.join(' ');
@@ -14832,8 +14832,8 @@ var ItemCreateManager = function (_BaseModule) {
             // 레이어 생성 
             var layer = $store.read('item/get', layerId);
             layer.parentId = pageId;
-            layer.width = page.width;
-            layer.height = page.height;
+            layer.width = $store.read('clone', page.width);
+            layer.height = $store.read('clone', page.height);
             // layer.style = Object.assign({}, layer.style, page.style)        
             $store.run('item/set', layer);
 
@@ -20493,7 +20493,6 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read('selection/check', item.id) ? 'selected' : '';
-            var collapsed = item.gradientCollapsed ? 'collapsed' : '';
             return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" item-type=\'layer\' draggable="true">\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group" >\n                <!-- <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div> -->\n                <div class="tree-item-children">\n                    ' + this.read('item/map/image/children', item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }).join('') + '\n                </div>\n            </div>       \n            ';
@@ -25155,6 +25154,7 @@ var GradientView = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh(isDrag) {
+            this.hasScroll = false;
             this.setBackgroundColor();
             this.load();
 
@@ -25223,6 +25223,7 @@ var GradientView = function (_UIElement) {
 
             var colorviewCSS = this.read('page/colorview/toCSS', page || { clip: false });
             this.refs.$canvas.css(canvasCSS);
+            this.refs.$page.attr('title', page.name || 'page');
             this.refs.$page.css(pageCSS);
             this.refs.$colorview.css(colorviewCSS);
 
@@ -25264,6 +25265,11 @@ var GradientView = function (_UIElement) {
         }
     }, {
         key: EVENT(CHANGE_PAGE_SIZE, CHANGE_PAGE, CHANGE_PAGE_TRANSFORM),
+        value: function value$$1() {
+            this.setBackgroundColor();
+        }
+    }, {
+        key: EVENT(CHANGE_PAGE_NAME),
         value: function value$$1() {
             this.setBackgroundColor();
         }
@@ -25619,7 +25625,7 @@ var PageListView = function (_UIElement) {
         key: 'makeItemNodePage',
         value: function makeItemNodePage(item, index, selectedId) {
             var selected = item.id == selectedId ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'page\'>\n                <div class="item-preview"></div>\n                <div class="item-title">\n                    ' + (item.name || 'Project ' + index) + '\n                </div>   \n            </div>\n            ';
+            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'page\'>\n                <div class="item-preview"></div>\n                <div class="item-title">\n                    ' + (item.name || 'Project ' + (index + 1)) + '\n                </div>   \n            </div>\n            ';
         }
     }, {
         key: LOAD('$pageList'),
@@ -25655,7 +25661,8 @@ var PageListView = function (_UIElement) {
         key: CLICK('$pageList .tree-item') + SELF,
         value: function value(e) {
 
-            this.dispatch('selection/one', e.$delegateTarget.attr('id'));
+            this.run('selection/one', e.$delegateTarget.attr('id'));
+            this.emit(CHANGE_EDITOR);
             this.refresh();
         }
     }, {

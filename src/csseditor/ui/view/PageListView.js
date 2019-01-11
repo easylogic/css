@@ -43,7 +43,7 @@ export default class PageListView extends UIElement {
             <div class='tree-item ${selected}' id="${item.id}" type='page'>
                 <div class="item-preview"></div>
                 <div class="item-title">
-                    ${item.name || `Project ${index}`}
+                    ${item.name || `Project ${index+1}`}
                 </div>   
             </div>
             `
@@ -76,7 +76,8 @@ export default class PageListView extends UIElement {
 
     [CLICK('$pageList .tree-item') + SELF] (e) { 
 
-        this.dispatch('selection/one', e.$delegateTarget.attr('id'));       
+        this.run('selection/one', e.$delegateTarget.attr('id')); 
+        this.emit(CHANGE_EDITOR);      
         this.refresh();
     }
 
