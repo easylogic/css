@@ -20,8 +20,8 @@ export const PAGE_DEFAULT_OBJECT = {
     name: '',
     parentId: '',
     index: 0,
-    width: '400px',
-    height: '300px'
+    width: pxUnit(400),
+    height: pxUnit(300)
 }
 
 export const FILTER_DEFAULT_OBJECT = {

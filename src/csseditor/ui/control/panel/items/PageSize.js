@@ -28,7 +28,10 @@ export default class PageSize extends UIElement {
         `
     }
 
-    [EVENT(CHANGE_EDITOR)] () {
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_PAGE_SIZE
+    )] () {
         this.refresh()
     }
 

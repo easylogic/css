@@ -2325,8 +2325,8 @@ var PAGE_DEFAULT_OBJECT = {
     name: '',
     parentId: '',
     index: 0,
-    width: '400px',
-    height: '300px'
+    width: pxUnit(400),
+    height: pxUnit(300)
 };
 
 var FILTER_DEFAULT_OBJECT = {
@@ -17356,7 +17356,7 @@ var PageSize = function (_UIElement) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        \n                        <div>\n                            <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR, CHANGE_PAGE_SIZE),
         value: function value$$1() {
             this.refresh();
         }
@@ -23796,7 +23796,9 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: 'caculateSnap',
         value: function caculateSnap() {
-            this.run('guide/snap/caculate', 3);
+            if (this.currentType == SEGMENT_TYPE_MOVE) {
+                this.run('guide/snap/caculate', 3, this.currentType);
+            }
         }
     }, {
         key: 'setPosition',

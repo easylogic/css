@@ -205,7 +205,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
     caculateSnap () {
-        this.run('guide/snap/caculate', 3);
+        if (this.currentType == SEGMENT_TYPE_MOVE) {
+            this.run('guide/snap/caculate', 3, this.currentType);
+        }
+
     }
 
     setPosition() {
