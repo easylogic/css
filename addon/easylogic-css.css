@@ -1740,16 +1740,17 @@ html, body {
         line-height: 1.6;
         outline: none;
         cursor: pointer; }
-      .csseditor .tool-menu .items .codepen {
+      .csseditor .tool-menu .items .codepen, .csseditor .tool-menu .items .jsfiddle {
         padding: 0px !important;
         border-left: 0px !important; }
-        .csseditor .tool-menu .items .codepen button {
+        .csseditor .tool-menu .items .codepen button, .csseditor .tool-menu .items .jsfiddle button {
           -webkit-appearance: none;
              -moz-appearance: none;
                   appearance: none;
           border: 0px;
           vertical-align: middle;
           border-left: 1px solid #cccccc;
+          background-color: transparent;
           height: 100%;
           display: inline-block;
           padding: 10px 20px;
@@ -6005,7 +6006,8 @@ html, body {
               margin: 0px;
               padding: 5px;
               border: 1px solid #cccccc;
-              cursor: pointer; }
+              cursor: pointer;
+              outline: none; }
         .csseditor .export-view .color-view .codeview-container .codeview, .csseditor .export-view .canvas-view .codeview-container .codeview {
           position: absolute;
           left: 0px;

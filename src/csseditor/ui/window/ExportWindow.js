@@ -1,8 +1,19 @@
 import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { CLICK } from "../../../util/Event";
+import ExportCodePenButton from "../view/export/ExportCodPenButton";
+import ExportJSFiddleButton from "../view/export/ExportJSFiddleButton";
+
+
 
 export default class ExportWindow extends UIElement {
+
+    components () {
+        return {
+            ExportJSFiddleButton,
+            ExportCodePenButton            
+        }
+    }
 
     template () {
         return `
@@ -17,10 +28,8 @@ export default class ExportWindow extends UIElement {
                                 <div class="tool-item" data-type="css" ref="$cssTitle">CSS</div>
                             </div>
                             <div class="buttons">
-                                <form action="https://codepen.io/pen/define" method="POST" target="_blank">
-                                    <input type="hidden" name="data" ref="$codepen" value=''>
-                                    <button type="submit">Create New CodePen</button>
-                                </form>
+                                <ExportCodePenButton></ExportCodePenButton>
+                                <ExportJSFiddleButton></ExportJSFiddleButton>
                             </div>
                         </div>
                         <div class="codeview">
@@ -106,11 +115,6 @@ export default class ExportWindow extends UIElement {
             this.cmCss.setValue(generateCode.css);
             this.cmCss.refresh();
         }        
-
-        this.refs.$codepen.val(this.read('export/codepen/code', {
-            html: generateCode.html, 
-            css: generateCode.css 
-        }))
 
         this.refs.$preview.html(generateCode.fullhtml);
     }

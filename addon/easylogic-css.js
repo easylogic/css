@@ -22389,6 +22389,63 @@ var ColorPickerCodeMirror = {
     load: LOAD_CODEMIRROR_COLORPICKER
 };
 
+var ExportCodePenButton = function (_UIElement) {
+    inherits(ExportCodePenButton, _UIElement);
+
+    function ExportCodePenButton() {
+        classCallCheck(this, ExportCodePenButton);
+        return possibleConstructorReturn(this, (ExportCodePenButton.__proto__ || Object.getPrototypeOf(ExportCodePenButton)).apply(this, arguments));
+    }
+
+    createClass(ExportCodePenButton, [{
+        key: "template",
+        value: function template() {
+            return "\n            <form class='codepen' action=\"https://codepen.io/pen/define\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"data\" ref=\"$codepen\" value=''>\n                <button type=\"submit\">CodePen</button>\n            </form>     \n        ";
+        }
+    }, {
+        key: SUBMIT(),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+            this.refs.$codepen.val(this.read('export/codepen/code', {
+                html: generateCode.html,
+                css: generateCode.css
+            }));
+
+            return false;
+        }
+    }]);
+    return ExportCodePenButton;
+}(UIElement);
+
+var ExportJSFiddleButton = function (_UIElement) {
+    inherits(ExportJSFiddleButton, _UIElement);
+
+    function ExportJSFiddleButton() {
+        classCallCheck(this, ExportJSFiddleButton);
+        return possibleConstructorReturn(this, (ExportJSFiddleButton.__proto__ || Object.getPrototypeOf(ExportJSFiddleButton)).apply(this, arguments));
+    }
+
+    createClass(ExportJSFiddleButton, [{
+        key: "template",
+        value: function template() {
+            return "\n            <form class='jsfiddle' action=\"http://jsfiddle.net/api/post/library/pure/\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"title\" ref=\"$title\" value=''>\n                <input type=\"hidden\" name=\"description\" ref=\"$description\" value=''>\n                <input type=\"hidden\" name=\"html\" ref=\"$html\" value=''>\n                <input type=\"hidden\" name=\"css\" ref=\"$css\" value=''>\n                <input type=\"hidden\" name=\"dtd\" value='html 5'>\n                <button type=\"submit\">JSFiddle</button>\n            </form>     \n        ";
+        }
+    }, {
+        key: SUBMIT(),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+
+            this.refs.$title.val('CSS Gradient Editor');
+            this.refs.$description.val('EasyLogic Studio - https://css.easylogic.studio');
+            this.refs.$html.val(generateCode.html);
+            this.refs.$css.val(generateCode.css);
+
+            return false;
+        }
+    }]);
+    return ExportJSFiddleButton;
+}(UIElement);
+
 var ExportWindow = function (_UIElement) {
     inherits(ExportWindow, _UIElement);
 
@@ -22398,9 +22455,17 @@ var ExportWindow = function (_UIElement) {
     }
 
     createClass(ExportWindow, [{
+        key: "components",
+        value: function components() {
+            return {
+                ExportJSFiddleButton: ExportJSFiddleButton,
+                ExportCodePenButton: ExportCodePenButton
+            };
+        }
+    }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlTitle\">Full HTML</div>\n                                <div class=\"tool-item\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                            <div class=\"buttons\">\n                                <form action=\"https://codepen.io/pen/define\" method=\"POST\" target=\"_blank\">\n                                    <input type=\"hidden\" name=\"data\" ref=\"$codepen\" value=''>\n                                    <button type=\"submit\">Create New CodePen</button>\n                                </form>\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlContent\">\n                                <textarea ref=\"$fullhtml\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>                            \n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlTitle\">Full HTML</div>\n                                <div class=\"tool-item\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                            <div class=\"buttons\">\n                                <ExportCodePenButton></ExportCodePenButton>\n                                <ExportJSFiddleButton></ExportJSFiddleButton>\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlContent\">\n                                <textarea ref=\"$fullhtml\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>                            \n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "afterRender",
@@ -22464,11 +22529,6 @@ var ExportWindow = function (_UIElement) {
                 this.cmCss.setValue(generateCode.css);
                 this.cmCss.refresh();
             }
-
-            this.refs.$codepen.val(this.read('export/codepen/code', {
-                html: generateCode.html,
-                css: generateCode.css
-            }));
 
             this.refs.$preview.html(generateCode.fullhtml);
         }
@@ -25342,63 +25402,6 @@ var HandleView = function (_GradientView) {
     }]);
     return HandleView;
 }(GradientView);
-
-var ExportCodePenButton = function (_UIElement) {
-    inherits(ExportCodePenButton, _UIElement);
-
-    function ExportCodePenButton() {
-        classCallCheck(this, ExportCodePenButton);
-        return possibleConstructorReturn(this, (ExportCodePenButton.__proto__ || Object.getPrototypeOf(ExportCodePenButton)).apply(this, arguments));
-    }
-
-    createClass(ExportCodePenButton, [{
-        key: "template",
-        value: function template() {
-            return "\n            <form class='codepen' action=\"https://codepen.io/pen/define\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"data\" ref=\"$codepen\" value=''>\n                <button type=\"submit\">CodePen</button>\n            </form>     \n        ";
-        }
-    }, {
-        key: SUBMIT(),
-        value: function value() {
-            var generateCode = this.read('export/generate/code');
-            this.refs.$codepen.val(this.read('export/codepen/code', {
-                html: generateCode.html,
-                css: generateCode.css
-            }));
-
-            return false;
-        }
-    }]);
-    return ExportCodePenButton;
-}(UIElement);
-
-var ExportJSFiddleButton = function (_UIElement) {
-    inherits(ExportJSFiddleButton, _UIElement);
-
-    function ExportJSFiddleButton() {
-        classCallCheck(this, ExportJSFiddleButton);
-        return possibleConstructorReturn(this, (ExportJSFiddleButton.__proto__ || Object.getPrototypeOf(ExportJSFiddleButton)).apply(this, arguments));
-    }
-
-    createClass(ExportJSFiddleButton, [{
-        key: "template",
-        value: function template() {
-            return "\n            <form class='jsfiddle' action=\"http://jsfiddle.net/api/post/library/pure/\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"title\" ref=\"$title\" value=''>\n                <input type=\"hidden\" name=\"description\" ref=\"$description\" value=''>\n                <input type=\"hidden\" name=\"html\" ref=\"$html\" value=''>\n                <input type=\"hidden\" name=\"css\" ref=\"$css\" value=''>\n                <input type=\"hidden\" name=\"dtd\" value='html 5'>\n                <button type=\"submit\">JSFiddle</button>\n            </form>     \n        ";
-        }
-    }, {
-        key: SUBMIT(),
-        value: function value() {
-            var generateCode = this.read('export/generate/code');
-
-            this.refs.$title.val('CSS Gradient Editor');
-            this.refs.$description.val('EasyLogic Studio - https://css.easylogic.studio');
-            this.refs.$html.val(generateCode.html);
-            this.refs.$css.val(generateCode.css);
-
-            return false;
-        }
-    }]);
-    return ExportJSFiddleButton;
-}(UIElement);
 
 var ToolMenu = function (_UIElement) {
     inherits(ToolMenu, _UIElement);
