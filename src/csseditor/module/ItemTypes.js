@@ -10,8 +10,13 @@ export const ITEM_TYPE_BOXSHADOW = 'boxshadow';
 export const ITEM_TYPE_TEXTSHADOW = 'textshadow';
 export const ITEM_TYPE_COLORSTEP = 'colorstep';
 
+export const IS_OBJECT = 'object';
+export const IS_ATTRIBUTE = 'attribute';
+
+/* page is equal to artboard */ 
 export const PAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_PAGE,
+    is: IS_OBJECT,
     name: '',
     parentId: '',
     index: 0,
@@ -73,8 +78,10 @@ export const CLIP_PATH_DEFAULT_OBJECT = {
     clipPathCenterY: undefined
 }
 
+/* layer can has children layers. */
 export const LAYER_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_LAYER,
+    is: IS_OBJECT,
     name: '',
     index: 0,    
     backgroundColor: 'rgba(0, 0, 0, 1)',
@@ -109,17 +116,19 @@ export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
 
 export const GROUP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_GROUP,
+    is: IS_OBJECT,
     name: '',
     index: 0,    
     parentId: '',
     selected: true,
     visible: true,
-    x: '0px',
-    y: '0px'
+    x: pxUnit(0),
+    y: pxUnit(0)
 }
 
 export const IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
+    is: IS_ATTRIBUTE,
     type: 'static',
     fileType: '',       // select file type as imagefile,  png, gif, jpg, svg if type is image 
     index: 0,    
@@ -145,6 +154,7 @@ export const IMAGE_DEFAULT_OBJECT = {
 
 export const BOXSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_BOXSHADOW,
+    is: IS_ATTRIBUTE,
     offsetX: pxUnit(0),
     offsetY: pxUnit(0),
     inset: false,
@@ -156,6 +166,7 @@ export const BOXSHADOW_DEFAULT_OBJECT = {
 
 export const TEXTSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_TEXTSHADOW,
+    is: IS_ATTRIBUTE,
     offsetX: pxUnit(0),
     offsetY: pxUnit(0),
     blurRadius: pxUnit(0),
@@ -164,6 +175,7 @@ export const TEXTSHADOW_DEFAULT_OBJECT = {
 
 export const COLORSTEP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_COLORSTEP,
+    is: IS_ATTRIBUTE,
     parentId: '',
     percent: 0,
     color: 'rgba(0, 0, 0, 0)'

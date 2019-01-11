@@ -2369,8 +2369,13 @@ var ITEM_TYPE_BOXSHADOW = 'boxshadow';
 var ITEM_TYPE_TEXTSHADOW$1 = 'textshadow';
 var ITEM_TYPE_COLORSTEP = 'colorstep';
 
+var IS_OBJECT = 'object';
+var IS_ATTRIBUTE = 'attribute';
+
+/* page is equal to artboard */
 var PAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_PAGE,
+    is: IS_OBJECT,
     name: '',
     parentId: '',
     index: 0,
@@ -2430,10 +2435,11 @@ var CLIP_PATH_DEFAULT_OBJECT = {
     clipPathRadiusY: undefined,
     clipPathCenterX: undefined,
     clipPathCenterY: undefined
-};
 
-var LAYER_DEFAULT_OBJECT = _extends({
+    /* layer can has children layers. */
+};var LAYER_DEFAULT_OBJECT = _extends({
     itemType: ITEM_TYPE_LAYER,
+    is: IS_OBJECT,
     name: '',
     index: 0,
     backgroundColor: 'rgba(0, 0, 0, 1)',
@@ -2464,17 +2470,19 @@ var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
 
 var GROUP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_GROUP,
+    is: IS_OBJECT,
     name: '',
     index: 0,
     parentId: '',
     selected: true,
     visible: true,
-    x: '0px',
-    y: '0px'
+    x: pxUnit(0),
+    y: pxUnit(0)
 };
 
 var IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
+    is: IS_ATTRIBUTE,
     type: 'static',
     fileType: '', // select file type as imagefile,  png, gif, jpg, svg if type is image 
     index: 0,
@@ -2500,6 +2508,7 @@ var IMAGE_DEFAULT_OBJECT = {
 
 var BOXSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_BOXSHADOW,
+    is: IS_ATTRIBUTE,
     offsetX: pxUnit(0),
     offsetY: pxUnit(0),
     inset: false,
@@ -2510,6 +2519,7 @@ var BOXSHADOW_DEFAULT_OBJECT = {
 
 var TEXTSHADOW_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_TEXTSHADOW$1,
+    is: IS_ATTRIBUTE,
     offsetX: pxUnit(0),
     offsetY: pxUnit(0),
     blurRadius: pxUnit(0),
@@ -2518,6 +2528,7 @@ var TEXTSHADOW_DEFAULT_OBJECT = {
 
 var COLORSTEP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_COLORSTEP,
+    is: IS_ATTRIBUTE,
     parentId: '',
     percent: 0,
     color: 'rgba(0, 0, 0, 0)'
@@ -12244,9 +12255,7 @@ var GuideManager = function (_BaseModule) {
 
             // console.log(points);
 
-            return points.filter(function (_, index) {
-                return index === 0;
-            });
+            return points; //.filter( (_, index) => index === 0);
         }
     }, {
         key: ACTION('guide/snap/caculate'),

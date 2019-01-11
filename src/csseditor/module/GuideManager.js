@@ -124,7 +124,7 @@ export default class GuideManager extends BaseModule {
 
         // console.log(points);
 
-        return points.filter( (_, index) => index === 0);
+        return points //.filter( (_, index) => index === 0);
 
     } 
 
