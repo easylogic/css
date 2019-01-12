@@ -1,3 +1,5 @@
+$move-line-border: 1px solid #f9b8ff;
+
 .move-guide {
     position: absolute;
     left: 0px;
@@ -9,8 +11,16 @@
 
     .line { 
         position: absolute;
-        border-top: 1px dashed #c7c7c7;
-        border-left: 1px dashed #c7c7c7;
+        border-top: $move-line-border;
+        border-left: $move-line-border;
         box-sizing: border-box;
+
+        // &.horizontal {
+        //     transform: translateY(-0.5px);
+        // }
+
+        // &.vertical {
+        //     transform: translateX(-0.5px);
+        // }
     }
 }
