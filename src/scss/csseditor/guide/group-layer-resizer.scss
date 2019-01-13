@@ -24,6 +24,16 @@
             display: none;
         }
 
+        &.image > .image-panel {
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            box-sizing: border-box;
+        }
+
         .event-panel {
             pointer-events: all;
             position: absolute;

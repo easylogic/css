@@ -7,7 +7,8 @@ import {
     CHANGE_SELECTION, 
     CHANGE_LAYER_MOVE,
     CHANGE_LAYER_ROTATE,
-    CHANGE_PAGE_SIZE
+    CHANGE_PAGE_SIZE,
+    CHANGE_IMAGE
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
@@ -57,9 +58,18 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return layers.map(item => { 
             var css = this.setRectangle(item);
             var image = isImage ? 'image' : ''; 
+
+            var backgroundCSS = {} 
+
+            if (image == 'image') {
+                var backgroundImage = this.read('selection/current/image');
+
+                backgroundCSS = this.read('image/backgroundSize/toCSS', backgroundImage);
+            }
             return ` 
                 <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('css/toString', css)}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
+                    <div class="image-panel" style="${this.read('css/toString', backgroundCSS)}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>
@@ -138,8 +148,12 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         CHANGE_LAYER_POSITION,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_PAGE_SIZE
+        CHANGE_PAGE_SIZE,
     )] () { this.refresh() }
+
+    [EVENT(
+        CHANGE_IMAGE
+    )] () { this.refresh() }    
 
     caculateRightSize (item, list) {
         var x = this.caculatePosition(list, 'x', 'right')

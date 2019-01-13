@@ -2837,7 +2837,7 @@ html, body {
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 30px;
+    top: 15px;
     width: 400px;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
@@ -3646,6 +3646,15 @@ html, body {
                 box-sizing: border-box; }
         .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer.image > * {
           display: none; }
+        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer.image > .image-panel {
+          display: block;
+          position: absolute;
+          top: 0px;
+          left: 0px;
+          right: 0px;
+          bottom: 0px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
         .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer .event-panel {
           pointer-events: all;
           position: absolute;
@@ -5542,6 +5551,50 @@ html, body {
                 appearance: none;
         border: 1px solid #cccccc;
         font-size: 20px; }
+      .csseditor .property-view .property-item.image-sorting .items > div > label {
+        display: inline-block;
+        line-height: 2;
+        padding: 2px 5px;
+        height: 100%;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        vertical-align: middle;
+        width: 50px; }
+      .csseditor .property-view .property-item.image-sorting .button-group {
+        display: inline-block;
+        vertical-align: middle;
+        padding: 2px 0px; }
+        .csseditor .property-view .property-item.image-sorting .button-group button {
+          -webkit-box-flex: 1;
+              -ms-flex: 1 1 auto;
+                  flex: 1 1 auto;
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          border: 1px solid #cccccc;
+          outline: none;
+          vertical-align: middle;
+          display: inline-block; }
+          .csseditor .property-view .property-item.image-sorting .button-group button:not(:first-child) {
+            margin-left: -1px; }
+          .csseditor .property-view .property-item.image-sorting .button-group button.cut {
+            width: 18px;
+            height: 18px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            border: 1px solid #cccccc;
+            cursor: pointer;
+            background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
+            background-image: linear-gradient(to top, black 0%, black 100%);
+            background-size: 4px 4px;
+            background-position: 6px center;
+            background-repeat: repeat-y; }
+            .csseditor .property-view .property-item.image-sorting .button-group button.cut.on {
+              background-position: center 6px;
+              background-repeat: repeat-x; }
+      .csseditor .property-view .property-item.image-sorting .step-align {
+        display: inline-block;
+        vertical-align: middle; }
     .csseditor .property-view .gradient-view {
       height: 230px;
       width: 100%; }

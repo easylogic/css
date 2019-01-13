@@ -13,9 +13,7 @@ export default class GradientInfo extends UIElement {
     template () { 
         return ` 
             <div class='gradient-info'>
-                <div class="form-item" ref="$colorsteps">
-
-                </div>
+                <div class="form-item" ref="$colorsteps"></div>
             </div>
         ` 
     }

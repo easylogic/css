@@ -43,8 +43,12 @@ import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
 import BackdropList from "./BackdropList";
 import EmptyArea from "./EmptyArea";
 import Page3D from "./Page3D";
+import ImageSorting from "./ImageSorting";
+
+
 
 export default {
+    ImageSorting, 
     Page3D,
     ClipPathSide,
     ClipPathPolygon,

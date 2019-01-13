@@ -16,6 +16,7 @@ export default class ImageTabView extends BaseTab {
                     <div class="tab-content flex selected" data-id="gradient">
                         <div class='fixed'>
                             <ColorPickerPanel></ColorPickerPanel>
+                            <ImageSorting></ImageSorting>
                             <ColorStepsInfo></ColorStepsInfo>                            
                         </div>
                         <div class='scroll'>

@@ -10697,6 +10697,28 @@ var ImageManager = function (_BaseModule) {
             return position || $store.read('image/get', 'radialPosition');
         }
     }, {
+        key: GETTER('image/backgroundSize/toCSS'),
+        value: function value$$1($store) {
+            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var backgroundPosition = $store.read('image/toBackgroundPositionString', image$$1, isExport);
+            var backgroundSize = $store.read('image/toBackgroundSizeString', image$$1, isExport);
+            if (backgroundSize) {
+                results['background-size'] = backgroundSize;
+            }
+
+            if (backgroundPosition) {
+                results['background-position'] = backgroundPosition;
+            }
+            results['background-image'] = 'linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))';
+            results['background-repeat'] = 'no-repeat';
+
+            return results;
+        }
+    }, {
         key: GETTER('image/toCSS'),
         value: function value$$1($store) {
             var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -16636,7 +16658,7 @@ var GradientInfo = function (_UIElement) {
     createClass(GradientInfo, [{
         key: "template",
         value: function template() {
-            return " \n            <div class='gradient-info'>\n                <div class=\"form-item\" ref=\"$colorsteps\">\n\n                </div>\n            </div>\n        ";
+            return " \n            <div class='gradient-info'>\n                <div class=\"form-item\" ref=\"$colorsteps\"></div>\n            </div>\n        ";
         }
     }, {
         key: "getUnitName",
@@ -20329,9 +20351,75 @@ var Page3D = function (_UIElement) {
     return Page3D;
 }(UIElement);
 
-var _Page3D$ClipPathSide$;
+var ImageSorting = function (_BasePropertyItem) {
+    inherits(ImageSorting, _BasePropertyItem);
 
-var items = (_Page3D$ClipPathSide$ = {
+    function ImageSorting() {
+        classCallCheck(this, ImageSorting);
+        return possibleConstructorReturn(this, (ImageSorting.__proto__ || Object.getPrototypeOf(ImageSorting)).apply(this, arguments));
+    }
+
+    createClass(ImageSorting, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class=\'property-item image-sorting show\'>\n            <div class=\'items\'>             \n                <div>\n                    <label>Sorting</label>\n                    <div class="button-group">\n                        <button ref="$ordering" title="Full Ordering">=|=</button>\n                        <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                        <button ref="$orderingRight" title="Right Ordering">|=</button>\n                    </div>\n\n                    <label>Cutting</label>\n                    <div class="button-group">\n                        <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                        <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                    </div>      \n                </div>           \n            </div>\n        </div>\n        ';
+        }
+
+        // indivisual layer effect 
+
+    }, {
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read('selection/is/image');
+        }
+    }, {
+        key: CLICK('$ordering'),
+        value: function value(e) {
+            this.dispatch('colorstep/ordering/equals');
+            this.dispatch('history/push', 'Ordering gradient');
+        }
+    }, {
+        key: CLICK('$orderingLeft'),
+        value: function value(e) {
+            this.dispatch('colorstep/ordering/equals/left');
+            this.dispatch('history/push', 'Ordering gradient');
+        }
+    }, {
+        key: CLICK('$orderingRight'),
+        value: function value(e) {
+            this.dispatch('colorstep/ordering/equals/right');
+            this.dispatch('history/push', 'Ordering gradient');
+        }
+    }, {
+        key: CLICK('$cutOff'),
+        value: function value(e) {
+            this.dispatch('colorstep/cut/off');
+            this.dispatch('history/push', 'Cut off static gradient pattern');
+        }
+    }, {
+        key: CLICK('$cutOn'),
+        value: function value(e) {
+            this.dispatch('colorstep/cut/on');
+            this.dispatch('history/push', 'Cut on static gradient pattern');
+        }
+    }]);
+    return ImageSorting;
+}(BasePropertyItem);
+
+var _ImageSorting$Page3D$;
+
+var items = (_ImageSorting$Page3D$ = {
+    ImageSorting: ImageSorting,
     Page3D: Page3D,
     ClipPathSide: ClipPathSide,
     ClipPathPolygon: ClipPathPolygon,
@@ -20349,7 +20437,7 @@ var items = (_Page3D$ClipPathSide$ = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_Page3D$ClipPathSide$, "ClipPathSVG", ClipPathSVG), defineProperty(_Page3D$ClipPathSide$, "Opacity", Opacity$3), defineProperty(_Page3D$ClipPathSide$, "RadiusFixed", RadiusFixed), defineProperty(_Page3D$ClipPathSide$, "Rotate", Rotate), defineProperty(_Page3D$ClipPathSide$, "LayerBlend", LayerBlend), defineProperty(_Page3D$ClipPathSide$, "GroupAlign", GroupAlign), defineProperty(_Page3D$ClipPathSide$, "PageShowGrid", PageShowGrid), defineProperty(_Page3D$ClipPathSide$, "ClipPath", ClipPath), defineProperty(_Page3D$ClipPathSide$, "ImageResource", ImageResource), defineProperty(_Page3D$ClipPathSide$, "BackgroundColor", BackgroundColor), defineProperty(_Page3D$ClipPathSide$, "BackgroundBlend", BackgroundBlend), defineProperty(_Page3D$ClipPathSide$, "BlendList", BlendList), defineProperty(_Page3D$ClipPathSide$, "MixBlendList", MixBlendList), defineProperty(_Page3D$ClipPathSide$, "FilterList", FilterList$1), defineProperty(_Page3D$ClipPathSide$, "PageExport", PageExport), defineProperty(_Page3D$ClipPathSide$, "PageSize", PageSize), defineProperty(_Page3D$ClipPathSide$, "PageName", PageName), defineProperty(_Page3D$ClipPathSide$, "BackgroundSize", BackgroundSize), defineProperty(_Page3D$ClipPathSide$, "Transform3d", Transform3d), defineProperty(_Page3D$ClipPathSide$, "Transform", Transform), defineProperty(_Page3D$ClipPathSide$, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_Page3D$ClipPathSide$, "ColorPickerPanel", ColorPickerPanel), defineProperty(_Page3D$ClipPathSide$, "ColorStepsInfo", ColorStepsInfo), defineProperty(_Page3D$ClipPathSide$, "ColorSteps", ColorSteps), defineProperty(_Page3D$ClipPathSide$, "Name", Name), defineProperty(_Page3D$ClipPathSide$, "Size", Size), defineProperty(_Page3D$ClipPathSide$, "Position", Position), defineProperty(_Page3D$ClipPathSide$, "Radius", Radius), defineProperty(_Page3D$ClipPathSide$, "Clip", Clip), _Page3D$ClipPathSide$);
+}, defineProperty(_ImageSorting$Page3D$, "ClipPathSVG", ClipPathSVG), defineProperty(_ImageSorting$Page3D$, "Opacity", Opacity$3), defineProperty(_ImageSorting$Page3D$, "RadiusFixed", RadiusFixed), defineProperty(_ImageSorting$Page3D$, "Rotate", Rotate), defineProperty(_ImageSorting$Page3D$, "LayerBlend", LayerBlend), defineProperty(_ImageSorting$Page3D$, "GroupAlign", GroupAlign), defineProperty(_ImageSorting$Page3D$, "PageShowGrid", PageShowGrid), defineProperty(_ImageSorting$Page3D$, "ClipPath", ClipPath), defineProperty(_ImageSorting$Page3D$, "ImageResource", ImageResource), defineProperty(_ImageSorting$Page3D$, "BackgroundColor", BackgroundColor), defineProperty(_ImageSorting$Page3D$, "BackgroundBlend", BackgroundBlend), defineProperty(_ImageSorting$Page3D$, "BlendList", BlendList), defineProperty(_ImageSorting$Page3D$, "MixBlendList", MixBlendList), defineProperty(_ImageSorting$Page3D$, "FilterList", FilterList$1), defineProperty(_ImageSorting$Page3D$, "PageExport", PageExport), defineProperty(_ImageSorting$Page3D$, "PageSize", PageSize), defineProperty(_ImageSorting$Page3D$, "PageName", PageName), defineProperty(_ImageSorting$Page3D$, "BackgroundSize", BackgroundSize), defineProperty(_ImageSorting$Page3D$, "Transform3d", Transform3d), defineProperty(_ImageSorting$Page3D$, "Transform", Transform), defineProperty(_ImageSorting$Page3D$, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_ImageSorting$Page3D$, "ColorPickerPanel", ColorPickerPanel), defineProperty(_ImageSorting$Page3D$, "ColorStepsInfo", ColorStepsInfo), defineProperty(_ImageSorting$Page3D$, "ColorSteps", ColorSteps), defineProperty(_ImageSorting$Page3D$, "Name", Name), defineProperty(_ImageSorting$Page3D$, "Size", Size), defineProperty(_ImageSorting$Page3D$, "Position", Position), defineProperty(_ImageSorting$Page3D$, "Radius", Radius), defineProperty(_ImageSorting$Page3D$, "Clip", Clip), _ImageSorting$Page3D$);
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -20517,7 +20605,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ImageSorting></ImageSorting>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
@@ -23879,7 +23967,15 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return layers.map(function (item) {
                 var css = _this2.setRectangle(item);
                 var image = isImage ? 'image' : '';
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('css/toString', css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
+
+                var backgroundCSS = {};
+
+                if (image == 'image') {
+                    var backgroundImage = _this2.read('selection/current/image');
+
+                    backgroundCSS = _this2.read('image/backgroundSize/toCSS', backgroundImage);
+                }
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('css/toString', css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="' + _this2.read('css/toString', backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
             });
         }
     }, {
@@ -23947,6 +24043,11 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_SIZE),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_IMAGE),
         value: function value$$1() {
             this.refresh();
         }
@@ -25860,71 +25961,6 @@ var SelectLayerView = function (_UIElement) {
     return SelectLayerView;
 }(UIElement);
 
-var ImageToolbar = function (_UIElement) {
-    inherits(ImageToolbar, _UIElement);
-
-    function ImageToolbar() {
-        classCallCheck(this, ImageToolbar);
-        return possibleConstructorReturn(this, (ImageToolbar.__proto__ || Object.getPrototypeOf(ImageToolbar)).apply(this, arguments));
-    }
-
-    createClass(ImageToolbar, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'image-toolbar\'>            \n                <div class="step-align">\n                    <label>Sorting</label>\n                    <div class="button-group">\n                        <button ref="$ordering" title="Full Ordering">=|=</button>\n                        <button ref="$orderingLeft" title="Left Ordering">=|</button>\n                        <button ref="$orderingRight" title="Right Ordering">|=</button>\n                    </div>\n\n                    <label>Cutting</label>\n                    <div class="button-group">\n                        <button class="cut" ref="$cutOff" title="Cut Off"></button>\n                        <button class="cut on" ref="$cutOn" title="Cut On"></button>\n                    </div>      \n                </div>\n                                \n            </div>\n        ';
-        }
-
-        // indivisual layer effect 
-
-    }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            return this.read('selection/is/image');
-        }
-    }, {
-        key: CLICK('$ordering'),
-        value: function value(e) {
-            this.dispatch('colorstep/ordering/equals');
-            this.dispatch('history/push', 'Ordering gradient');
-        }
-    }, {
-        key: CLICK('$orderingLeft'),
-        value: function value(e) {
-            this.dispatch('colorstep/ordering/equals/left');
-            this.dispatch('history/push', 'Ordering gradient');
-        }
-    }, {
-        key: CLICK('$orderingRight'),
-        value: function value(e) {
-            this.dispatch('colorstep/ordering/equals/right');
-            this.dispatch('history/push', 'Ordering gradient');
-        }
-    }, {
-        key: CLICK('$cutOff'),
-        value: function value(e) {
-            this.dispatch('colorstep/cut/off');
-            this.dispatch('history/push', 'Cut off static gradient pattern');
-        }
-    }, {
-        key: CLICK('$cutOn'),
-        value: function value(e) {
-            this.dispatch('colorstep/cut/on');
-            this.dispatch('history/push', 'Cut on static gradient pattern');
-        }
-    }]);
-    return ImageToolbar;
-}(UIElement);
-
 var CSSEditor$1 = function (_BaseCSSEditor) {
     inherits(CSSEditor, _BaseCSSEditor);
 
@@ -25945,13 +25981,12 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">' + this.i18n('app.title') + '</h1>\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <LayerToolbar></LayerToolbar>\n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <ImageToolbar></ImageToolbar>\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">' + this.i18n('app.title') + '</h1>\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <LayerToolbar></LayerToolbar>\n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
-                ImageToolbar: ImageToolbar,
                 SelectLayerView: SelectLayerView,
                 ToolMenu: ToolMenu,
                 LayerToolbar: LayerToolbar,

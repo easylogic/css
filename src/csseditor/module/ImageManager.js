@@ -170,6 +170,24 @@ export default class ImageManager extends BaseModule {
         return position || $store.read('image/get', 'radialPosition');
     }
 
+    [GETTER('image/backgroundSize/toCSS')] ($store, image = null, isExport = false) {
+
+        var results = {} 
+        var backgroundPosition = $store.read('image/toBackgroundPositionString', image, isExport)
+        var backgroundSize = $store.read('image/toBackgroundSizeString', image, isExport)
+        if (backgroundSize) {
+            results['background-size'] = backgroundSize;
+        }
+
+        if (backgroundPosition) {
+            results['background-position'] = backgroundPosition;
+        }                   
+        results['background-image'] = 'linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))';
+        results['background-repeat'] = 'no-repeat';        
+
+        return results 
+    }
+
     [GETTER('image/toCSS')] ($store, image = null, isExport = false) {
 
         var results = {} 
@@ -200,7 +218,7 @@ export default class ImageManager extends BaseModule {
         }              
 
         return results
-    }
+    }    
 
     [GETTER('image/cache/toCSS')] ($store, item = {}) {
         var image = Object.assign({}, item.image, {colorsteps: item.colorsteps}); 
