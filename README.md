@@ -1,7 +1,7 @@
 # EasyLogic Studio - Enjoyable CSS Gradient Editor
 
 
-This project is a simple editor for CSS Gradient. 
+This project is purity CSS editor. 
 
 https://css.easylogic.studio/
 
@@ -21,7 +21,10 @@ You can use it as you see it.
 * Support static colorstep 
 * Support DIV clip-path property for SVG 
 * Support to export (html, css)
+* Support to export both codepen and jsfiddle
 * Support local storage 
+* Support css filter 
+* Support box-shadow, text-shadow 
 
 
 

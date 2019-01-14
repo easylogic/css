@@ -1318,7 +1318,9 @@ html, body {
         padding: 0px 4px;
         margin: 0px;
         text-align: center;
-        font-size: 32px;
+        font-size: 26px;
+        vertical-align: middle;
+        display: inline-block;
         letter-spacing: 8px;
         -webkit-box-flex: 0;
             -ms-flex: none;
