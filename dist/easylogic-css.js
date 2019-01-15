@@ -11921,7 +11921,7 @@ var ItemManager = function (_BaseModule) {
                 }
 
                 $store.items[id].index = NONE_INDEX;
-                $store.read('item/sort', id);
+                $store.run('item/sort', id);
 
                 if ($store.items[id].backgroundImage) {
                     URL.revokeObjectURL($store.items[id].backgroundImage);
@@ -14779,7 +14779,7 @@ var ItemCreateManager = function (_BaseModule) {
             $store.itemKeys = Object.keys($store.items);
         }
     }, {
-        key: ACTION('/item/initialize'),
+        key: ACTION('item/initialize'),
         value: function value$$1($store, id) {
             delete $store.items[id];
 

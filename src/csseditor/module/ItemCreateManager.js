@@ -61,7 +61,7 @@ export default class ItemCreateManager extends BaseModule {
         $store.itemKeys =  Object.keys($store.items);
     }
 
-    [ACTION('/item/initialize')] ($store, id) {
+    [ACTION('item/initialize')] ($store, id) {
         delete $store.items[id];
 
         $store.run('item/keys/generate')
