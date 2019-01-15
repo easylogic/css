@@ -18,109 +18,111 @@
         font-weight: 500;
     }
 
-    .gradient-sample-list {
-        position: absolute;
-        top: 40px;
-        left: 40px;
-        right: 40px;
-        bottom: 40px;
-        text-align: left;
-        overflow: auto;
 
-        .cached-list {
+}
 
-            .add-current-image {
-                appearance: none;
-                border: 1px solid $border-color;
-                vertical-align: top;
-                background-color: white;
-                font-size: 50px;
-                line-height: 0px;
-                font-weight: 100;
-                cursor: pointer;
+.gradient-sample-list {
+    position: relative;
+
+    > h1 {
+        font-size: 13px;
+        margin: 0 auto;
+        padding: 5px; 
+        background-color: #ececec;
+        font-weight: bold;
+    }
+
+    .cached-list {
+        display: grid;
+        grid-template-columns:  1fr 1fr 1fr 1fr;
+
+        .add-current-image {
+            appearance: none;
+            border: 1px solid $border-color;
+            vertical-align: top;
+            background-color: white;
+            font-size: 50px;
+            line-height: 0px;
+            font-weight: 100;
+            cursor: pointer;
+        }
+        .gradient-sample-item, .gradient-cached-item, .add-current-image, .empty {
+            display:inline-block;
+            box-sizing: border-box;
+            position: relative;
+            margin: 2px;
+            padding: 10px 0px;
+            font-size: 11px;
+            height: 60px;
+            text-align: center;            
+
+            &:not(.empty) {
+                border: 1px solid rgba($border-color, 0.5);
             }
-            .gradient-sample-item, .gradient-cached-item, .add-current-image, .empty {
-                width: 160px;
-                height: 120px;
-                display:inline-block;
+
+            .preview {
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                margin: 0 auto; 
+            }
+
+            .item-tools {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                display: none; 
+                background-color: rgba(0, 0, 0, 0.2);
+                text-align: center;
                 box-sizing: border-box;
-                margin-right: 5px;
-                margin-bottom: 5px;
-                position: relative;
+                padding: 20px 5px;
 
-                &:not(.empty) {
-                    border: 1px solid $border-color;
-                }
-
-                .item-tools {
-                    position: absolute;
-                    left: 0px;
-                    top: 0px;
-                    right: 0px;
-                    bottom: 0px;
-                    display: none; 
+                button {
+                    appearance: none;
+                    // border: 1px solid $border-color;
                     background-color: rgba(0, 0, 0, 0.5);
-                    text-align: center;
+                    color: white;
+                    font-size: 14px;
+                    width: 20px;
+                    height: 20px;
                     box-sizing: border-box;
-                    padding: 40px 20px;
+                    border-radius: 50%;
+                    padding: 5px;
+                    text-align: center;
+                    line-height: 0; 
+                    cursor: pointer;
+                    outline: none;
 
-                    button {
-                        appearance: none;
-                        // border: 1px solid $border-color;
-                        background-color: rgba(0, 0, 0, 0.5);
-                        color: white;
-                        font-size: 20px;
-                        width: 30px;
-                        height: 30px;
-                        box-sizing: border-box;
-                        border-radius: 50%;
-                        padding: 5px;
-                        text-align: center;
-                        line-height: 0; 
-                        cursor: pointer;
-                        outline: none;
-
-                        &.add-item {
-                            transform: rotate(45deg);
-                        }
-
-                        &.change-item {
-                            position: relative;
-
-                            &:before {
-                                content: "";
-                                position: absolute;
-                                left: 50%;
-                                top: 50%;
-                                width: 10px;
-                                height: 10px;
-                                border: 2px solid white;
-                                box-sizing: border-box;
-                                transform: translateX(-50%) translateY(-50%);
-                            }
-                        }
+                    &.add-item {
+                        transform: rotate(45deg);
                     }
-                }
 
-                &:hover {
-                    .item-tools {
-                        display: inline-block;
+                    &.change-item {
+                        position: relative;
+
+                        &:before {
+                            content: "";
+                            position: absolute;
+                            left: 50%;
+                            top: 50%;
+                            width: 10px;
+                            height: 10px;
+                            border: 1px solid white;
+                            box-sizing: border-box;
+                            transform: translateX(-50%) translateY(-50%);
+                        }
                     }
                 }
             }
 
+            &:hover {
+                .item-tools {
+                    display: inline-block;
+                }
+            }
         }
+
     }
 }
-
-
-
-.layout-main {
-    &.expertor-mode {
-        .gradient-sample-view {
-            top: 70px;
-            // left: $left-size - 50px + $gradient-box-size; 
-        }
-    }
-}
-

@@ -1,0 +1,49 @@
+$pointer-color: rgba(#ececec, 0.8);
+$direction-border: 2px solid $pointer-color;
+$page-item-height: 30px;
+$button-size: 24px;
+$layer-item-padding: 4px;
+
+.shapes {
+    position: relative;
+    box-sizing: border-box;
+
+    > h1 {
+        font-size: 13px;
+        margin: 0 auto;
+        padding: 5px;
+        background-color: #ececec;
+        font-weight: bold;
+    }
+    
+    .shapes-list {
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns:  1fr 1fr 1fr;
+        
+        button {
+            height: 62px;
+            background-color: transparent;
+            appearance: none;
+            display: inline-block;
+            margin: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ececec;
+            cursor: pointer;
+            position: relative;
+            pointer-events: all;
+            vertical-align: middle; 
+
+            &.rect {
+                border-color: #333; 
+                background-color: #333;
+            }
+
+            &.circle {
+                border-color: #333;                 
+                border-radius: 50%;
+                background-color: #333;                
+            }
+        }      
+    }
+}

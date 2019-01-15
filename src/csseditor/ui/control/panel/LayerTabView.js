@@ -8,7 +8,7 @@ export default class LayerTabView extends BaseTab {
     template () {
         return `
         <div class="tab horizontal">
-            <div class="tab-header" ref="$header">
+            <div class="tab-header no-border" ref="$header">
                 <div class="tab-item" data-id="page">Page</div>
                 <div class="tab-item selected" data-id="info">Info</div>
                 <div class="tab-item" data-id="fill">Fill</div>       

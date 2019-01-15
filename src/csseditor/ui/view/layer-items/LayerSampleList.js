@@ -1,7 +1,6 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { CLICK, LOAD } from "../../../../util/Event";
 import { unitValue } from "../../../../util/css/types";
-
+import { LOAD, CLICK } from "../../../../util/Event";
 
 export default class LayerSampleList extends UIElement {
  
@@ -17,6 +16,7 @@ export default class LayerSampleList extends UIElement {
 
         return `
         <div class="layer-sample-list">
+            <h1>User Layer</h1>        
             <div class='cached-list' ref="$cachedList"></div>
 
         </div>
@@ -26,10 +26,11 @@ export default class LayerSampleList extends UIElement {
     [LOAD('$cachedList')] () {
         
         var list = this.list.map( (item, index) => {
+
             var data = this.read('layer/cache/toString', item)
 
-            var rateX = 160 / unitValue(data.obj.width);
-            var rateY = 120 / unitValue(data.obj.height);
+            var rateX = 60 / unitValue(data.obj.width);
+            var rateY = 62 / unitValue(data.obj.height);
 
             var transform = `transform: scale(${rateX} ${rateY})`
 
@@ -46,8 +47,8 @@ export default class LayerSampleList extends UIElement {
         var storageList = this.read('storage/layers').map( item => {
             var data = this.read('layer/cache/toString', item)
 
-            var rateX = 160 / unitValue(data.obj.width);
-            var rateY = 120 / unitValue(data.obj.height);
+            var rateX = 60 / unitValue(item.layer.width);
+            var rateY = 62 / unitValue(item.layer.height);
 
             var minRate = Math.min(rateY, rateX);            
 

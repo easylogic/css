@@ -3,7 +3,7 @@ import { CHANGE_EDITOR } from "../types/event";
 import { string2unit, UNIT_PX} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
 
-const INDEX_DIST = 100 ; 
+export const INDEX_DIST = 100 ; 
 const NONE_INDEX = -99999;
 
 const itemField = {

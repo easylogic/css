@@ -11762,173 +11762,6 @@ var ColorList = {
     types: types
 };
 
-var GradientManager = function (_BaseModule) {
-    inherits(GradientManager, _BaseModule);
-
-    function GradientManager() {
-        classCallCheck(this, GradientManager);
-        return possibleConstructorReturn(this, (GradientManager.__proto__ || Object.getPrototypeOf(GradientManager)).apply(this, arguments));
-    }
-
-    createClass(GradientManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit('changeEditor');
-        }
-    }, {
-        key: GETTER('gradient/list/sample'),
-        value: function value($store) {
-            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
-
-
-            var results = [];
-
-            if (type == 'all') {
-                results.push.apply(results, toConsumableArray(gradientList.map(function (it) {
-                    return Object.assign({}, it);
-                })));
-
-                results.push({
-                    type: 'static',
-                    color: ColorList.list['material'][0]
-                });
-            } else {
-                results.push.apply(results, toConsumableArray(ColorList.list['material'].map(function (color) {
-                    return Object.assign({}, { type: 'static', color: color });
-                })));
-            }
-
-            return results;
-        }
-    }, {
-        key: ACTION('gradient/image/select'),
-        value: function value($store, obj) {
-            var image = $store.read('selection/current/image');
-
-            if (image) {
-
-                $store.run('item/remove/children', image.id);
-
-                image = Object.assign({}, image, obj);
-
-                if (image.colorsteps) {
-
-                    if (isUndefined(image.colorsteps[0].index)) {
-                        image.colorsteps.sort(function (a, b) {
-
-                            var aValue = $store.read('image/get/stepValue', a);
-                            var bValue = $store.read('image/get/stepValue', b);
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    } else {
-                        image.colorsteps.sort(function (a, b) {
-
-                            var aValue = a.index;
-                            var bValue = b.index;
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    }
-
-                    image.colorsteps.forEach(function (step, index) {
-                        step.parentId = image.id;
-                        step.index = index * 100;
-                        $store.read('item/create/colorstep', step);
-                    });
-                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
-                    delete image.colorsteps;
-                }
-
-                $store.run('item/set', image);
-            } else {
-                $store.read('selection/current/layer', function (layer) {
-                    layer.backgroundColor = obj.color;
-                    $store.run('item/set', layer);
-                });
-            }
-        }
-    }, {
-        key: ACTION('gradient/image/add'),
-        value: function value($store, obj) {
-            var image = $store.read('selection/current/image');
-
-            if (image) {
-
-                // $store.run('item/remove/children', image.id);
-
-                var newImageId = $store.read('item/create/object', Object.assign({}, image, obj));
-                var newImage = $store.read('item/get', newImageId);
-                newImage.index -= 1;
-
-                if (newImage.colorsteps) {
-
-                    if (isUndefined(newImage.colorsteps[0].index)) {
-                        newImage.colorsteps.sort(function (a, b) {
-
-                            var aValue = $store.read('image/get/stepValue', a);
-                            var bValue = $store.read('image/get/stepValue', b);
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    } else {
-                        newImage.colorsteps.sort(function (a, b) {
-
-                            var aValue = a.index;
-                            var bValue = b.index;
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    }
-
-                    newImage.colorsteps.forEach(function (step, index) {
-                        step.parentId = newImage.id;
-                        step.index = index * 100;
-                        $store.read('item/create/colorstep', step);
-                    });
-                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
-                    delete newImage.colorsteps;
-                }
-
-                $store.run('item/move/in', image.id, newImage.id);
-            } else {
-                // $store.read('selection/current/layer', (layer) => {
-                //     layer.backgroundColor = obj.color;
-                //     $store.run('item/set', layer);
-                // })
-
-            }
-        }
-    }, {
-        key: ACTION('gradient/select'),
-        value: function value($store, type, index) {
-            var obj = $store.read('gradient/list/sample', type)[index];
-
-            if (obj) {
-                $store.run('gradient/image/select', obj);
-            }
-        }
-    }, {
-        key: ACTION('gradient/add'),
-        value: function value($store, type, index) {
-            var obj = $store.read('gradient/list/sample', type)[index];
-
-            if (obj) {
-                $store.run('gradient/image/add', obj);
-            }
-        }
-    }]);
-    return GradientManager;
-}(BaseModule);
-
 var _updateUnitField;
 
 var INDEX_DIST = 100;
@@ -11982,7 +11815,7 @@ var updateUnitField = (_updateUnitField = {
     backgroundPositionY: true
 }, defineProperty(_updateUnitField, "backgroundSizeHeight", true), defineProperty(_updateUnitField, "backgroundSizeWidth", true), _updateUnitField);
 
-var convertStyle$1 = function convertStyle(item) {
+var convertStyle = function convertStyle(item) {
     var style = item.style || {};
 
     Object.keys(style).forEach(function (key) {
@@ -12018,7 +11851,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: GETTER('item/convert/style'),
         value: function value$$1($store, item) {
-            return convertStyle$1(item);
+            return convertStyle(item);
         }
     }, {
         key: GETTER('item/get'),
@@ -12132,7 +11965,7 @@ var ItemManager = function (_BaseModule) {
         key: ACTION('item/load'),
         value: function value$$1($store) {
             $store.read('item/keys').forEach(function (id) {
-                $store.items[id] = convertStyle$1($store.items[id]);
+                $store.items[id] = convertStyle($store.items[id]);
             });
 
             $store.run('history/initialize');
@@ -12164,6 +11997,194 @@ var ItemManager = function (_BaseModule) {
         }
     }]);
     return ItemManager;
+}(BaseModule);
+
+var GradientManager = function (_BaseModule) {
+    inherits(GradientManager, _BaseModule);
+
+    function GradientManager() {
+        classCallCheck(this, GradientManager);
+        return possibleConstructorReturn(this, (GradientManager.__proto__ || Object.getPrototypeOf(GradientManager)).apply(this, arguments));
+    }
+
+    createClass(GradientManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: GETTER('gradient/list/sample'),
+        value: function value($store) {
+            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
+
+
+            var results = [];
+
+            if (type == 'all') {
+                results.push.apply(results, toConsumableArray(gradientList.map(function (it) {
+                    return Object.assign({}, it);
+                })));
+
+                results.push({
+                    type: 'static',
+                    color: ColorList.list['material'][0]
+                });
+            } else {
+                results.push.apply(results, toConsumableArray(ColorList.list['material'].map(function (color) {
+                    return Object.assign({}, { type: 'static', color: color });
+                })));
+            }
+
+            return results;
+        }
+    }, {
+        key: ACTION('gradient/image/select'),
+        value: function value($store, obj) {
+            var image = $store.read('selection/current/image');
+
+            if (image) {
+
+                $store.run('item/remove/children', image.id);
+
+                image = Object.assign({}, image, obj);
+
+                if (image.colorsteps) {
+
+                    if (isUndefined(image.colorsteps[0].index)) {
+                        image.colorsteps.sort(function (a, b) {
+
+                            var aValue = $store.read('image/get/stepValue', a);
+                            var bValue = $store.read('image/get/stepValue', b);
+
+                            if (aValue == bValue) return 0;
+
+                            return aValue > bValue ? 1 : -1;
+                        });
+                    } else {
+                        image.colorsteps.sort(function (a, b) {
+
+                            var aValue = a.index;
+                            var bValue = b.index;
+
+                            if (aValue == bValue) return 0;
+
+                            return aValue > bValue ? 1 : -1;
+                        });
+                    }
+
+                    image.colorsteps.forEach(function (step, index) {
+                        step.parentId = image.id;
+                        step.index = index * INDEX_DIST;
+                        $store.read('item/create/colorstep', step);
+                    });
+                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
+                    delete image.colorsteps;
+                }
+
+                $store.run('item/set', image);
+            } else {
+                $store.read('selection/current/layer', function (layer) {
+                    layer.backgroundColor = obj.color;
+                    $store.run('item/set', layer);
+                });
+            }
+        }
+    }, {
+        key: "getFirstImage",
+        value: function getFirstImage($store) {
+            var image = $store.read('selection/current/image');
+
+            if (!image) {
+                var layer = $store.read('selection/current/layer');
+
+                if (!layer) {
+                    return;
+                }
+
+                var images = $store.read('item/map/image/children', layer.id);
+
+                if (images.length) {
+                    image = images[0];
+                }
+            }
+
+            return image;
+        }
+    }, {
+        key: ACTION('gradient/image/add'),
+        value: function value($store, obj) {
+            var image = this.getFirstImage($store);
+
+            if (image) {
+
+                // $store.run('item/remove/children', image.id);
+
+                var newImageId = $store.read('item/create/object', Object.assign({}, image, obj));
+                var newImage = $store.read('item/get', newImageId);
+                newImage.index -= 1;
+
+                if (newImage.colorsteps) {
+
+                    if (isUndefined(newImage.colorsteps[0].index)) {
+                        newImage.colorsteps.sort(function (a, b) {
+
+                            var aValue = $store.read('image/get/stepValue', a);
+                            var bValue = $store.read('image/get/stepValue', b);
+
+                            if (aValue == bValue) return 0;
+
+                            return aValue > bValue ? 1 : -1;
+                        });
+                    } else {
+                        newImage.colorsteps.sort(function (a, b) {
+
+                            var aValue = a.index;
+                            var bValue = b.index;
+
+                            if (aValue == bValue) return 0;
+
+                            return aValue > bValue ? 1 : -1;
+                        });
+                    }
+
+                    newImage.colorsteps.forEach(function (step, index) {
+                        step.parentId = newImage.id;
+                        step.index = index * 100;
+                        $store.read('item/create/colorstep', step);
+                    });
+                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
+                    delete newImage.colorsteps;
+                }
+
+                $store.run('item/move/in', image.id, newImage.id);
+            } else {
+                // $store.read('selection/current/layer', (layer) => {
+                //     layer.backgroundColor = obj.color;
+                //     $store.run('item/set', layer);
+                // })
+
+            }
+        }
+    }, {
+        key: ACTION('gradient/select'),
+        value: function value($store, type, index) {
+            var obj = $store.read('gradient/list/sample', type)[index];
+
+            if (obj) {
+                $store.run('gradient/image/select', obj);
+            }
+        }
+    }, {
+        key: ACTION('gradient/add'),
+        value: function value($store, type, index) {
+            var obj = $store.read('gradient/list/sample', type)[index];
+
+            if (obj) {
+                $store.run('gradient/image/add', obj);
+            }
+        }
+    }]);
+    return GradientManager;
 }(BaseModule);
 
 var MAX_DIST = 1;
@@ -12828,7 +12849,7 @@ var ExternalResourceManager = function (_BaseModule) {
     createClass(ExternalResourceManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit('changeEditor');
+            this.$store.emit(CHANGE_EDITOR);
         }
     }, {
         key: ACTION('external/paste'),
@@ -14483,7 +14504,7 @@ var I18nManager = function (_BaseModule) {
     }, {
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.emit('changeEditor');
+            this.emit(CHANGE_EDITOR);
         }
     }, {
         key: ACTION('i18n/change/language'),
@@ -15036,6 +15057,11 @@ var ItemMoveManager = function (_BaseModule) {
     }
 
     createClass(ItemMoveManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
         key: ACTION('item/move/to'),
         value: function value($store, sourceId, newItemId) {
 
@@ -15138,6 +15164,11 @@ var ItemRecoverManager = function (_BaseModule) {
     }
 
     createClass(ItemRecoverManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
         key: GETTER('item/recover'),
         value: function value($store, item, parentId) {
 
@@ -15156,7 +15187,7 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: GETTER('item/recover/image'),
         value: function value($store, image, parentId) {
-            var newImageId = $store.read('item/create/object', Object.assign({ parentId: parentId }, convertStyle(image.image)));
+            var newImageId = $store.read('item/create/object', Object.assign({ parentId: parentId }, $store.read('item/convert/style', image.image)));
             image.colorsteps.forEach(function (step) {
                 $store.read('item/create/object', Object.assign({}, step, { parentId: newImageId }));
             });
@@ -15176,16 +15207,20 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: GETTER('item/recover/layer'),
         value: function value($store, layer, parentId) {
-            var newLayerId = $store.read('item/create/object', Object.assign({ parentId: parentId }, convertStyle(layer.layer)));
-            layer.images.forEach(function (image) {
+            var newLayerId = $store.read('item/create/object', Object.assign({ parentId: parentId }, $store.read('item/convert/style', layer.layer)));
+
+            var images = layer.images || [];
+            images.forEach(function (image) {
                 $store.read('item/recover/image', image, newLayerId);
             });
 
-            layer.boxshadows.forEach(function (boxshadow) {
+            var boxshadows = layer.boxshadows || [];
+            boxshadows.forEach(function (boxshadow) {
                 $store.read('item/recover/boxshadow', boxshadow, newLayerId);
             });
 
-            layer.textshadows.forEach(function (textshadow) {
+            var textshadows = layer.textshadows || [];
+            textshadows.forEach(function (textshadow) {
                 $store.read('item/recover/textshadow', textshadow, newLayerId);
             });
 
@@ -15194,7 +15229,7 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: GETTER('item/recover/page'),
         value: function value($store, page) {
-            var newPageId = $store.read('item/create/object', convertStyle(page.page));
+            var newPageId = $store.read('item/create/object', $store.read('item/convert/style', page.page));
             page.layers.forEach(function (layer) {
                 $store.read('item/recover/layer', layer, newPageId);
             });
@@ -20541,7 +20576,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -20605,7 +20640,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ImageSorting></ImageSorting>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ImageSorting></ImageSorting>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
@@ -20695,253 +20730,6 @@ var FeatureControl = function (_UIElement) {
         }
     }]);
     return FeatureControl;
-}(UIElement);
-
-var LayerListView = function (_UIElement) {
-    inherits(LayerListView, _UIElement);
-
-    function LayerListView() {
-        classCallCheck(this, LayerListView);
-        return possibleConstructorReturn(this, (LayerListView.__proto__ || Object.getPrototypeOf(LayerListView)).apply(this, arguments));
-    }
-
-    createClass(LayerListView, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'layers show-mini-view\'>\n                <div class=\'title\'> \n                    <h1 ref="$pageName"></h1>\n                </div>             \n                <div class="layer-list" ref="$layerList"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'makeItemNode',
-        value: function makeItemNode(node, index) {
-            var item = this.read('item/get', node.id);
-
-            if (item.itemType == 'layer') {
-                return this.makeItemNodeLayer(item, index);
-            }
-        }
-    }, {
-        key: 'makeItemNodeImage',
-        value: function makeItemNodeImage(item) {
-            var selected = this.read('selection/check', item.id) ? 'selected' : '';
-            return '\n            <div class=\'tree-item image ' + selected + '\' id="' + item.id + '" draggable="true" >\n                <div class="item-title"> \n                    &lt;' + item.type + '&gt;\n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>                \n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-image-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>            \n            </div>\n            ';
-        }
-    }, {
-        key: 'makeItemNodeLayer',
-        value: function makeItemNodeLayer(item) {
-            var _this2 = this;
-
-            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            var selected = this.read('selection/check', item.id) ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" item-type=\'layer\' draggable="true">\n                <div class="item-title"> \n                    ' + (index + 1) + '. ' + (item.name || 'Layer ') + ' \n                    <button type="button" class=\'delete-item\' item-id=\'' + item.id + '\' title="Remove">&times;</button>\n                </div>\n                <div class=\'item-tools\'>\n                    <button type="button" class=\'copy-item\' item-id=\'' + item.id + '\' title="Copy">+</button>\n                </div>                            \n            </div>\n            <div class="gradient-list-group" >\n                <!-- <div class=\'gradient-collapse-button\' item-id="' + item.id + '"></div> -->\n                <div class="tree-item-children">\n                    ' + this.read('item/map/image/children', item.id, function (item) {
-                return _this2.makeItemNodeImage(item);
-            }).join('') + '\n                </div>\n            </div>       \n            ';
-        }
-    }, {
-        key: LOAD('$pageName'),
-        value: function value() {
-            var obj = this.read('selection/current/page') || { name: 'Untitled Project' };
-            return obj.name === '' ? '<span>Untitled Project</span>' : '<span>' + obj.name + '</span>';
-        }
-    }, {
-        key: LOAD('$layerList'),
-        value: function value() {
-            var _this3 = this;
-
-            var page = this.read('selection/current/page');
-
-            if (!page) {
-                return '';
-            }
-
-            return this.read('item/map/children', page.id, function (item, index) {
-                return _this3.makeItemNode(item, index);
-            }).reverse();
-        }
-    }, {
-        key: 'refreshSelection',
-        value: function refreshSelection() {}
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: 'refreshSelection',
-        value: function refreshSelection(id) {
-            var $selected = this.$el.$(".selected");
-
-            if ($selected) {
-                $selected.removeClass('selected');
-            }
-
-            this.$el.$('[id="' + id + '"]').addClass('selected');
-        }
-
-        // refreshLayer () {
-        //     this.read('selection/current/layer', (items) => {
-
-        //         if (!items.length) {
-        //             items = [items]
-        //         }
-
-        //         items.forEach(item => {
-        //             this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
-        //         })
-        //     })
-        // }    
-
-        // refreshImage() {
-        //     this.read('selection/current/image', (item) => {
-        //         this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
-        //     })
-        // }
-
-        // // indivisual effect 
-        // [EVENT(
-        //     CHANGE_LAYER,
-        //     CHANGE_LAYER_BACKGROUND_COLOR,
-        //     CHANGE_LAYER_CLIPPATH,
-        //     CHANGE_LAYER_CLIPPATH_POLYGON,
-        //     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-        //     CHANGE_LAYER_FILTER,
-        //     CHANGE_LAYER_POSITION,
-        //     CHANGE_LAYER_RADIUS,
-        //     CHANGE_LAYER_SIZE,
-        //     CHANGE_LAYER_ROTATE,
-        //     CHANGE_LAYER_OPACITY,
-        //     CHANGE_LAYER_TRANSFORM,
-        //     CHANGE_LAYER_TRANSFORM_3D,
-
-        //     CHANGE_COLOR_STEP,
-        //     CHANGE_IMAGE,
-        //     CHANGE_IMAGE_ANGLE,
-        //     CHANGE_IMAGE_COLOR,
-        //     CHANGE_IMAGE_LINEAR_ANGLE,
-        //     CHANGE_IMAGE_RADIAL_POSITION,
-        //     CHANGE_IMAGE_RADIAL_TYPE
-        // )]() {
-        //     this.refreshLayer()
-        // }
-
-
-        // all effect 
-
-    }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$layerList .tree-item') + SELF,
-        value: function value(e) {
-            var id = e.$delegateTarget.attr('id');
-            this.dispatch('selection/one', id);
-            this.run('item/focus', id);
-            this.refreshSelection(id);
-        }
-    }, {
-        key: DRAGSTART('$layerList .tree-item'),
-        value: function value(e) {
-            this.draggedLayer = e.$delegateTarget;
-            this.draggedLayer.css('opacity', 0.5);
-            // e.preventDefault();
-        }
-    }, {
-        key: DRAGEND('$layerList .tree-item'),
-        value: function value(e) {
-
-            if (this.draggedLayer) {
-                this.draggedLayer.css('opacity', 1);
-            }
-        }
-    }, {
-        key: DRAGOVER('$layerList .tree-item'),
-        value: function value(e) {
-            e.preventDefault();
-        }
-    }, {
-        key: DROP('$layerList .tree-item') + SELF,
-        value: function value(e) {
-            e.preventDefault();
-
-            var destId = e.$delegateTarget.attr('id');
-            var sourceId = this.draggedLayer.attr('id');
-
-            var sourceItem = this.read('item/get', sourceId);
-            var destItem = this.read('item/get', destId);
-
-            this.draggedLayer = null;
-            if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
-                if (e.ctrlKey) {
-                    this.dispatch('item/copy/in/layer', destId, sourceId);
-                } else {
-                    this.dispatch('item/move/in/layer', destId, sourceId);
-                }
-
-                this.dispatch('history/push', 'Change gradient position ');
-                this.refresh();
-            } else if (destItem.itemType == sourceItem.itemType) {
-                if (e.ctrlKey) {
-                    this.dispatch('item/copy/in', destId, sourceId);
-                } else {
-                    this.dispatch('item/move/in', destId, sourceId);
-                }
-                this.dispatch('history/push', 'Change item position ');
-                this.refresh();
-            }
-        }
-    }, {
-        key: DROP('$layerList'),
-        value: function value(e) {
-            e.preventDefault();
-
-            if (this.draggedLayer) {
-                var sourceId = this.draggedLayer.attr('id');
-
-                this.draggedLayer = null;
-                this.dispatch('item/move/last', sourceId);
-                this.dispatch('history/push', 'Change layer position ');
-                this.refresh();
-            }
-        }
-    }, {
-        key: CLICK('$layerList .copy-image-item'),
-        value: function value(e) {
-            this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
-            this.dispatch('history/push', 'Add a gradient');
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$layerList .copy-item'),
-        value: function value(e) {
-            this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
-            this.dispatch('history/push', 'Copy a layer');
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$layerList .delete-item'),
-        value: function value(e) {
-            this.dispatch('item/remove', e.$delegateTarget.attr('item-id'));
-            this.dispatch('history/push', 'Remove item');
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$viewSample'),
-        value: function value(e) {
-            this.emit('toggleLayerSampleView');
-        }
-    }, {
-        key: CLICK('$layerList .gradient-collapse-button') + SELF,
-        value: function value(e) {
-            e.$delegateTarget.parent().toggleClass('collapsed');
-            var item = this.read('item/get', e.$delegateTarget.attr('item-id'));
-
-            item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
-            this.run('item/set', item);
-        }
-    }]);
-    return LayerListView;
 }(UIElement);
 
 var ImageListView = function (_UIElement) {
@@ -21061,7 +20849,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div class="panel-toolbar">\n                    <div class="button-group">\n                        <button class="page-panel-button" ref="$togglePagePanel" title="Toggle Page">Page</button>\n                        <!-- <button class="layer-panel-button" ref="$toggleLayerPanel" title="Toggle Layer">Layer</button> -->\n                    </div>\n                    <label>&nbsp;</label>\n                    <div class="button-group">\n                        <button class="dodo" ref="$undo" title="Undo">Undo</button>\n                        <button class="dodo" ref="$redo" title="Redo">Redo</button>\n                    </div> \n                </div>\n              \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView></ImageListView>               \n                </div>\n               \n                <div class="button-group group-align" ref="$groupAlign">\n                    <button type="button" title="left" data-value="left"></button>\n                    <button type="button" title="center" data-value="center"></button>\n                    <button type="button" title="right" data-value="right"></button>\n                    <button type="button" title="top" data-value="top"></button>\n                    <button type="button" title="middle" data-value="middle"></button>\n                    <button type="button" title="bottom" data-value="bottom"></button>\n                    <button type="button" title="vertical" data-value="vertical"></button>\n                    <button type="button" title="horizontal" data-value="horizontal"></button>\n                </div>\n\n                <div class="button-group group-order" ref="$groupOrdering">\n                    <button type="button" title="front" data-value="front"></button>\n                    <button type="button" title="back" data-value="back"></button>\n                    <button type="button" title="forward" data-value="forward"></button>\n                    <button type="button" title="backward" data-value="backward"></button>\n                </div>                \n                                \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView></ImageListView>               \n                </div>    \n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -21077,16 +20865,6 @@ var LayerToolbar = function (_UIElement) {
         key: CLICK('$groupOrdering button'),
         value: function value(e) {
             this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'));
-        }
-    }, {
-        key: CLICK('$undo'),
-        value: function value(e) {
-            this.dispatch('history/undo');
-        }
-    }, {
-        key: CLICK('$redo'),
-        value: function value(e) {
-            this.dispatch('history/redo');
         }
     }, {
         key: CLICK('$togglePagePanel'),
@@ -23139,467 +22917,6 @@ var ScaleFunctions = (_ScaleFunctions = {
     'color': 'makeScaleFunctionForColor',
     'number': 'makeScaleFunctionForNumber'
 }, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
-
-var GradientSampleList = function (_UIElement) {
-    inherits(GradientSampleList, _UIElement);
-
-    function GradientSampleList() {
-        classCallCheck(this, GradientSampleList);
-        return possibleConstructorReturn(this, (GradientSampleList.__proto__ || Object.getPrototypeOf(GradientSampleList)).apply(this, arguments));
-    }
-
-    createClass(GradientSampleList, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(GradientSampleList.prototype.__proto__ || Object.getPrototypeOf(GradientSampleList.prototype), "initialize", this).call(this);
-
-            this.list = this.read('gradient/list/sample', this.props.type);
-            this.dispatch('storage/load/image');
-        }
-    }, {
-        key: "template",
-        value: function template() {
-
-            return "\n        <div class=\"gradient-sample-list\">\n            <div class='cached-list' ref=\"$cachedList\"></div>\n        </div>\n        ";
-        }
-    }, {
-        key: LOAD('$cachedList'),
-        value: function value() {
-            var _this2 = this;
-
-            var list = this.list.map(function (item, index) {
-                return "\n            <div class='gradient-sample-item' style='" + _this2.read('image/toString', item) + "' data-index=\"" + index + "\">\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                    <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                </div>          \n            </div>";
-            });
-
-            var storageList = this.read('storage/images').map(function (item, index) {
-                var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
-                return "\n                <div class='gradient-cached-item' style='" + _this2.read('image/toString', newImage) + "' data-index=\"" + index + "\">\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                        <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                    </div>          \n                </div>\n            ";
-            });
-
-            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-image\" title=\"Cache a image\">+</button>"]);
-
-            var emptyCount = 5 - results.length % 5;
-
-            var arr = [].concat(toConsumableArray(Array(emptyCount)));
-
-            arr.forEach(function (it) {
-                results.push("<div class='empty'></div>");
-            });
-
-            return results;
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT('changeStorage'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .gradient-sample-item .change-item'),
-        value: function value(e) {
-            var index = +e.$delegateTarget.attr('data-index');
-
-            this.dispatch('gradient/select', this.props.type, index);
-        }
-    }, {
-        key: CLICK('$el .gradient-sample-item .add-item'),
-        value: function value(e) {
-            var index = +e.$delegateTarget.attr('data-index');
-
-            this.dispatch('gradient/add', this.props.type, index);
-        }
-    }, {
-        key: CLICK('$el .gradient-cached-item .add-item'),
-        value: function value(e) {
-            var index = +e.$delegateTarget.attr('data-index');
-            var image = this.read('storage/images', index);
-            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
-
-            this.dispatch('gradient/image/add', newImage);
-        }
-    }, {
-        key: CLICK('$el .gradient-cached-item .change-item'),
-        value: function value(e) {
-            var index = +e.$delegateTarget.attr('data-index');
-            var image = this.read('storage/images', index);
-            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
-
-            this.dispatch('gradient/image/select', newImage);
-        }
-    }, {
-        key: CLICK('$el .add-current-image'),
-        value: function value(e) {
-            var _this3 = this;
-
-            this.read('selection/current/image', function (image) {
-                var newImage = _this3.read('collect/image/one', image.id);
-
-                _this3.dispatch('storage/add/image', newImage);
-                _this3.refresh();
-            });
-        }
-    }]);
-    return GradientSampleList;
-}(UIElement);
-
-var GradientSampleWindow = function (_UIElement) {
-    inherits(GradientSampleWindow, _UIElement);
-
-    function GradientSampleWindow() {
-        classCallCheck(this, GradientSampleWindow);
-        return possibleConstructorReturn(this, (GradientSampleWindow.__proto__ || Object.getPrototypeOf(GradientSampleWindow)).apply(this, arguments));
-    }
-
-    createClass(GradientSampleWindow, [{
-        key: "components",
-        value: function components() {
-            return {
-                GradientSampleList: GradientSampleList
-            };
-        }
-    }, {
-        key: "template",
-        value: function template() {
-            return "\n            <div class='gradient-sample-view'>\n                <div class=\"close\">&times;</div>\n                <GradientSampleList></GradientSampleList>\n            </div>\n        ";
-        }
-    }, {
-        key: CLICK('$el .close'),
-        value: function value(e) {
-            this.$el.toggle();
-        }
-    }, {
-        key: EVENT('toggleGradientSampleView'),
-        value: function value() {
-            this.$el.toggle();
-        }
-    }]);
-    return GradientSampleWindow;
-}(UIElement);
-
-var LayerSampleList = function (_UIElement) {
-    inherits(LayerSampleList, _UIElement);
-
-    function LayerSampleList() {
-        classCallCheck(this, LayerSampleList);
-        return possibleConstructorReturn(this, (LayerSampleList.__proto__ || Object.getPrototypeOf(LayerSampleList)).apply(this, arguments));
-    }
-
-    createClass(LayerSampleList, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(LayerSampleList.prototype.__proto__ || Object.getPrototypeOf(LayerSampleList.prototype), "initialize", this).call(this);
-
-            this.list = this.read('layer/list/sample', this.props.type);
-            this.dispatch('storage/load/layer');
-        }
-    }, {
-        key: "template",
-        value: function template() {
-
-            return "\n        <div class=\"layer-sample-list\">\n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
-        }
-    }, {
-        key: LOAD('$cachedList'),
-        value: function value$$1() {
-            var _this2 = this;
-
-            var list = this.list.map(function (item, index) {
-                var data = _this2.read('layer/cache/toString', item);
-
-                var rateX = 160 / unitValue(data.obj.width);
-                var rateY = 120 / unitValue(data.obj.height);
-
-                var transform = "transform: scale(" + rateX + " " + rateY + ")";
-
-                return "\n            <div class='layer-sample-item'  data-sample-id=\"" + item.id + "\">\n                <div class=\"layer-view\" style=\"" + data.css + "; " + transform + "\"></div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>          \n            </div>";
-            });
-
-            var storageList = this.read('storage/layers').map(function (item) {
-                var data = _this2.read('layer/cache/toString', item);
-
-                var rateX = 160 / unitValue(data.obj.width);
-                var rateY = 120 / unitValue(data.obj.height);
-
-                var minRate = Math.min(rateY, rateX);
-
-                var transform = "transform-origin: left top;transform: scale(" + minRate + ")";
-
-                return "\n                <div class='layer-cached-item' data-sample-id=\"" + item.id + "\">\n                    <div class=\"layer-view\" style=\"" + data.css + "; " + transform + "\"></div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"" + item.id + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"" + item.id + "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            ";
-            });
-
-            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-layer\" title=\"Cache a layer\">+</button>"]);
-
-            var emptyCount = 5 - results.length % 5;
-
-            var arr = [].concat(toConsumableArray(Array(emptyCount)));
-
-            arr.forEach(function (it) {
-                results.push("<div class='empty'></div>");
-            });
-
-            return results;
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT('changeStorage'),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .layer-sample-item .add-item'),
-        value: function value$$1(e) {
-            var _this3 = this;
-
-            var index = +e.$delegateTarget.attr('data-index');
-
-            var newLayer = this.list[index];
-
-            if (newLayer) {
-                this.read('selection/current/layer', function (layer) {
-                    _this3.dispatch('item/addCache', newLayer, layer.id);
-                });
-            }
-        }
-    }, {
-        key: CLICK('$el .layer-cached-item .add-item'),
-        value: function value$$1(e) {
-            var _this4 = this;
-
-            var newLayer = this.read('storage/layers', e.$delegateTarget.attr('data-sample-id'));
-
-            if (newLayer) {
-                this.read('selection/current/layer', function (layer) {
-                    _this4.dispatch('item/addCache', newLayer, layer.id);
-                });
-            }
-        }
-    }, {
-        key: CLICK('$el .layer-cached-item .delete-item'),
-        value: function value$$1(e) {
-            this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .add-current-layer'),
-        value: function value$$1(e) {
-            var _this5 = this;
-
-            this.read('selection/current/layer', function (layer) {
-                var newLayer = _this5.read('collect/layer/one', layer.id);
-
-                _this5.dispatch('storage/add/layer', newLayer);
-                _this5.refresh();
-            });
-        }
-    }]);
-    return LayerSampleList;
-}(UIElement);
-
-var LayerSampleWindow = function (_UIElement) {
-    inherits(LayerSampleWindow, _UIElement);
-
-    function LayerSampleWindow() {
-        classCallCheck(this, LayerSampleWindow);
-        return possibleConstructorReturn(this, (LayerSampleWindow.__proto__ || Object.getPrototypeOf(LayerSampleWindow)).apply(this, arguments));
-    }
-
-    createClass(LayerSampleWindow, [{
-        key: "components",
-        value: function components() {
-            return {
-                LayerSampleList: LayerSampleList
-            };
-        }
-    }, {
-        key: "template",
-        value: function template() {
-            return "\n            <div class='layer-sample-view'>\n                <div class=\"close\">&times;</div>\n                <LayerSampleList></LayerSampleList>\n            </div>\n        ";
-        }
-    }, {
-        key: CLICK('$el .close'),
-        value: function value(e) {
-            this.$el.toggle();
-        }
-    }, {
-        key: EVENT('toggleLayerSampleView'),
-        value: function value() {
-            this.$el.toggle();
-        }
-    }]);
-    return LayerSampleWindow;
-}(UIElement);
-
-var PageSampleList = function (_UIElement) {
-    inherits(PageSampleList, _UIElement);
-
-    function PageSampleList() {
-        classCallCheck(this, PageSampleList);
-        return possibleConstructorReturn(this, (PageSampleList.__proto__ || Object.getPrototypeOf(PageSampleList)).apply(this, arguments));
-    }
-
-    createClass(PageSampleList, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(PageSampleList.prototype.__proto__ || Object.getPrototypeOf(PageSampleList.prototype), "initialize", this).call(this);
-
-            this.list = [];
-            this.dispatch('storage/load/page');
-        }
-    }, {
-        key: "template",
-        value: function template() {
-
-            return "\n        <div class=\"page-sample-list\">\n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
-        }
-    }, {
-        key: LOAD('$cachedList'),
-        value: function value$$1() {
-            var _this2 = this;
-
-            var list = this.list.map(function (page, index) {
-                var data = _this2.read('page/cache/toString', page);
-
-                var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
-                var rateY = 120 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
-
-                var transform = "transform: scale(" + rateX + " " + rateY + ")";
-
-                return "\n            <div class='page-sample-item'  data-sample-id=\"" + page.id + "\">\n                <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                " + page.layers.map(function (layer) {
-                    var data = _this2.read('layer/cache/toString', layer);
-                    return "\n                        <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                    ";
-                }).join('') + "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>";
-            });
-
-            var storageList = this.read('storage/pages').map(function (page) {
-                var data = _this2.read('page/cache/toString', _this2.read('item/convert/style', page.page));
-
-                var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
-                var rateY = 160 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
-
-                var minRate = Math.min(rateY, rateX);
-
-                var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
-
-                return "\n                <div class='page-cached-item' data-sample-id=\"" + page.id + "\">\n                    <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                    " + page.layers.map(function (layer) {
-                    var data = _this2.read('layer/cache/toString', layer);
-                    return "\n                            <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                        ";
-                }).join('') + "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"" + page.id + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"" + page.id + "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            ";
-            });
-
-            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-page\" title=\"Cache a page\">+</button>"]);
-
-            var emptyCount = 5 - results.length % 5;
-
-            var arr = [].concat(toConsumableArray(Array(emptyCount)));
-
-            arr.forEach(function (it) {
-                results.push("<div class='empty'></div>");
-            });
-
-            return results;
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT('changeStorage'),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .page-sample-item .add-item'),
-        value: function value$$1(e) {
-            var _this3 = this;
-
-            var index = +e.$delegateTarget.attr('data-index');
-
-            var newPage = this.list[index];
-
-            if (newPage) {
-                this.read('selection/current/page', function (page) {
-                    _this3.dispatch('item/addCache', newPage, page.id);
-                    _this3.emit('changePage');
-                });
-            }
-        }
-    }, {
-        key: CLICK('$el .page-cached-item .add-item'),
-        value: function value$$1(e) {
-            var _this4 = this;
-
-            var newPage = this.read('storage/pages', e.$delegateTarget.attr('data-sample-id'));
-            if (newPage) {
-                this.read('selection/current/page', function (page) {
-                    _this4.dispatch('item/addCache', newPage, page.id);
-                    _this4.emit('changePage');
-                });
-            }
-        }
-    }, {
-        key: CLICK('$el .page-cached-item .delete-item'),
-        value: function value$$1(e) {
-            this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .add-current-page'),
-        value: function value$$1(e) {
-            var _this5 = this;
-
-            this.read('selection/current/page', function (page) {
-                var newPage = _this5.read('collect/page/one', page.id);
-
-                _this5.dispatch('storage/add/page', newPage);
-                _this5.refresh();
-            });
-        }
-    }]);
-    return PageSampleList;
-}(UIElement);
-
-var PageSampleWindow = function (_UIElement) {
-    inherits(PageSampleWindow, _UIElement);
-
-    function PageSampleWindow() {
-        classCallCheck(this, PageSampleWindow);
-        return possibleConstructorReturn(this, (PageSampleWindow.__proto__ || Object.getPrototypeOf(PageSampleWindow)).apply(this, arguments));
-    }
-
-    createClass(PageSampleWindow, [{
-        key: "components",
-        value: function components() {
-            return {
-                PageSampleList: PageSampleList
-            };
-        }
-    }, {
-        key: "template",
-        value: function template() {
-            return "\n            <div class='page-sample-view'>\n                <div class=\"close\">&times;</div>\n                <PageSampleList></PageSampleList>\n            </div>\n        ";
-        }
-    }, {
-        key: CLICK('$el .close'),
-        value: function value(e) {
-            this.$el.toggle();
-        }
-    }, {
-        key: EVENT('togglePageSampleView'),
-        value: function value() {
-            this.$el.toggle();
-        }
-    }]);
-    return PageSampleWindow;
-}(UIElement);
 
 var ClipPathImageList = function (_BasePropertyItem) {
     inherits(ClipPathImageList, _BasePropertyItem);
@@ -25752,6 +25069,339 @@ var HandleView = function (_GradientView) {
     return HandleView;
 }(GradientView);
 
+var MenuItem = function (_UIElement) {
+    inherits(MenuItem, _UIElement);
+
+    function MenuItem() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, MenuItem);
+
+        var _this = possibleConstructorReturn(this, (MenuItem.__proto__ || Object.getPrototypeOf(MenuItem)).call(this, opt, props, parent));
+
+        _this.title = '';
+        _this.icon = '';
+        _this.checked = false;
+        return _this;
+    }
+
+    createClass(MenuItem, [{
+        key: "template",
+        value: function template() {
+            return "\n            <button type=\"button\" class='menu-item' checked=\"" + (this.checked ? 'checked' : '') + "\">\n                <div class=\"icon " + this.icon + "\"></div>\n                <div class=\"title\">" + this.title + "</div>\n            </button>\n        ";
+        }
+    }, {
+        key: "clickButton",
+        value: function clickButton(e) {}
+    }, {
+        key: CLICK(),
+        value: function value(e) {
+            this.clickButton(e);
+        }
+    }]);
+    return MenuItem;
+}(UIElement);
+
+var Export = function (_MenuItem) {
+    inherits(Export, _MenuItem);
+
+    function Export() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Export);
+
+        var _this = possibleConstructorReturn(this, (Export.__proto__ || Object.getPrototypeOf(Export)).call(this, opt, props, parent));
+
+        _this.title = props.title || 'Export';
+        _this.icon = 'export';
+        return _this;
+    }
+
+    createClass(Export, [{
+        key: 'clickButton',
+        value: function clickButton(e) {
+            this.emit('showExport');
+        }
+    }]);
+    return Export;
+}(MenuItem);
+
+var Redo = function (_MenuItem) {
+    inherits(Redo, _MenuItem);
+
+    function Redo() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Redo);
+
+        var _this = possibleConstructorReturn(this, (Redo.__proto__ || Object.getPrototypeOf(Redo)).call(this, opt, props, parent));
+
+        _this.title = props.title || 'Redo';
+        _this.icon = 'redo';
+        return _this;
+    }
+
+    createClass(Redo, [{
+        key: 'clickButton',
+        value: function clickButton(e) {
+            this.dispatch('history/redo');
+        }
+    }]);
+    return Redo;
+}(MenuItem);
+
+var Undo = function (_MenuItem) {
+    inherits(Undo, _MenuItem);
+
+    function Undo() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Undo);
+
+        var _this = possibleConstructorReturn(this, (Undo.__proto__ || Object.getPrototypeOf(Undo)).call(this, opt, props, parent));
+
+        _this.title = props.title || 'Undo';
+        _this.icon = 'undo';
+        return _this;
+    }
+
+    createClass(Undo, [{
+        key: 'clickButton',
+        value: function clickButton(e) {
+            this.dispatch('history/undo');
+        }
+    }]);
+    return Undo;
+}(MenuItem);
+
+var Save = function (_MenuItem) {
+    inherits(Save, _MenuItem);
+
+    function Save() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Save);
+
+        var _this = possibleConstructorReturn(this, (Save.__proto__ || Object.getPrototypeOf(Save)).call(this, opt, props, parent));
+
+        _this.title = props.title || 'Save';
+        _this.icon = 'save';
+        return _this;
+    }
+
+    createClass(Save, [{
+        key: 'clickButton',
+        value: function clickButton(e) {
+            this.run('storage/save');
+        }
+    }]);
+    return Save;
+}(MenuItem);
+
+var ShowGrid = function (_MenuItem) {
+    inherits(ShowGrid, _MenuItem);
+
+    function ShowGrid() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, ShowGrid);
+
+        var _this = possibleConstructorReturn(this, (ShowGrid.__proto__ || Object.getPrototypeOf(ShowGrid)).call(this, opt, props, parent));
+
+        _this.title = props.title || 'Show Grid';
+        _this.icon = 'show-grid';
+        _this.checked = _this.read('tool/get', 'show.grid');
+        return _this;
+    }
+
+    createClass(ShowGrid, [{
+        key: "clickButton",
+        value: function clickButton(e) {
+            var _this2 = this;
+
+            this.read('selection/current/page', function (item) {
+                _this2.checked = !_this2.checked;
+                _this2.run('tool/set', 'show.grid', _this2.checked);
+                _this2.dispatch('tool/set', 'snap.grid', _this2.checked);
+            });
+
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.$el.attr('checked', this.checked ? 'checked' : '');
+        }
+    }]);
+    return ShowGrid;
+}(MenuItem);
+
+var Github = function (_MenuItem) {
+    inherits(Github, _MenuItem);
+
+    function Github() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Github);
+
+        var _this = possibleConstructorReturn(this, (Github.__proto__ || Object.getPrototypeOf(Github)).call(this, opt, props, parent));
+
+        _this.title = props.title || 'Github';
+        _this.icon = 'github';
+        return _this;
+    }
+
+    createClass(Github, [{
+        key: 'clickButton',
+        value: function clickButton(e) {
+            window.open('https://github.com/easylogic/css', 'github-window');
+        }
+    }]);
+    return Github;
+}(MenuItem);
+
+var ExportCodePen = function (_MenuItem) {
+    inherits(ExportCodePen, _MenuItem);
+
+    function ExportCodePen() {
+        classCallCheck(this, ExportCodePen);
+        return possibleConstructorReturn(this, (ExportCodePen.__proto__ || Object.getPrototypeOf(ExportCodePen)).apply(this, arguments));
+    }
+
+    createClass(ExportCodePen, [{
+        key: "template",
+        value: function template() {
+            return "\n            <form class='codepen' action=\"https://codepen.io/pen/define\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"data\" ref=\"$codepen\" value=''>\n                <button type=\"submit\">\n                    <div class='icon codepen'></div>\n                    <div class='titie'>CodePen</div>\n                </button>\n            </form>     \n        ";
+        }
+    }, {
+        key: SUBMIT(),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+            this.refs.$codepen.val(this.read('export/codepen/code', {
+                html: generateCode.html,
+                css: generateCode.css
+            }));
+
+            return false;
+        }
+    }]);
+    return ExportCodePen;
+}(MenuItem);
+
+var ExportJSFiddle = function (_MenuItem) {
+    inherits(ExportJSFiddle, _MenuItem);
+
+    function ExportJSFiddle() {
+        classCallCheck(this, ExportJSFiddle);
+        return possibleConstructorReturn(this, (ExportJSFiddle.__proto__ || Object.getPrototypeOf(ExportJSFiddle)).apply(this, arguments));
+    }
+
+    createClass(ExportJSFiddle, [{
+        key: "template",
+        value: function template() {
+            return "\n            <form class='jsfiddle' action=\"http://jsfiddle.net/api/post/library/pure/\" method=\"POST\" target=\"_blank\">\n                <input type=\"hidden\" name=\"title\" ref=\"$title\" value=''>\n                <input type=\"hidden\" name=\"description\" ref=\"$description\" value=''>\n                <input type=\"hidden\" name=\"html\" ref=\"$html\" value=''>\n                <input type=\"hidden\" name=\"css\" ref=\"$css\" value=''>\n                <input type=\"hidden\" name=\"dtd\" value='html 5'>\n                <button type=\"submit\">\n                    <div class='icon jsfiddle'></div>\n                    <div class='titie'>JSFiddle</div>\n                </button>                \n            </form>     \n        ";
+        }
+    }, {
+        key: SUBMIT(),
+        value: function value() {
+            var generateCode = this.read('export/generate/code');
+
+            this.refs.$title.val('CSS Gradient Editor');
+            this.refs.$description.val('EasyLogic Studio - https://css.easylogic.studio');
+            this.refs.$html.val(generateCode.html);
+            this.refs.$css.val(generateCode.css);
+
+            return false;
+        }
+    }]);
+    return ExportJSFiddle;
+}(MenuItem);
+
+var Rect = function (_MenuItem) {
+    inherits(Rect, _MenuItem);
+
+    function Rect() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Rect);
+
+        var _this = possibleConstructorReturn(this, (Rect.__proto__ || Object.getPrototypeOf(Rect)).call(this, opt, props, parent));
+
+        _this.title = props.title || '+ Rect';
+        _this.icon = 'rect';
+        return _this;
+    }
+
+    createClass(Rect, [{
+        key: "clickButton",
+        value: function clickButton(e) {
+            var _this2 = this;
+
+            this.read('selection/current/page', function (page) {
+                _this2.dispatch('item/add', ITEM_TYPE_LAYER, true, page.id);
+                _this2.dispatch('history/push', 'Add a layer');
+            });
+        }
+    }]);
+    return Rect;
+}(MenuItem);
+
+var Circle = function (_MenuItem) {
+    inherits(Circle, _MenuItem);
+
+    function Circle() {
+        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        classCallCheck(this, Circle);
+
+        var _this = possibleConstructorReturn(this, (Circle.__proto__ || Object.getPrototypeOf(Circle)).call(this, opt, props, parent));
+
+        _this.title = props.title || '+ Circle';
+        _this.icon = 'circle';
+        return _this;
+    }
+
+    createClass(Circle, [{
+        key: "clickButton",
+        value: function clickButton(e) {
+            var _this2 = this;
+
+            this.read('selection/current/page', function (page) {
+                _this2.dispatch('item/add', ITEM_TYPE_CIRCLE, true, page.id);
+                _this2.dispatch('history/push', 'Add a layer');
+            });
+        }
+    }]);
+    return Circle;
+}(MenuItem);
+
+var menuItems = {
+    Rect: Rect,
+    Circle: Circle,
+    ExportJSFiddle: ExportJSFiddle,
+    ExportCodePen: ExportCodePen,
+    Github: Github,
+    Export: Export,
+    Redo: Redo,
+    Undo: Undo,
+    Save: Save,
+    ShowGrid: ShowGrid
+};
+
 var ToolMenu = function (_UIElement) {
     inherits(ToolMenu, _UIElement);
 
@@ -25763,81 +25413,443 @@ var ToolMenu = function (_UIElement) {
     createClass(ToolMenu, [{
         key: 'components',
         value: function components() {
-            return {
-                PageShowGrid: PageShowGrid,
-                ExportCodePenButton: ExportCodePenButton,
-                ExportJSFiddleButton: ExportJSFiddleButton
-            };
+            return menuItems;
         }
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'tool-menu\'>        \n                <div class="add-items">\n                    <label>Layer </label>\n                    <button type="button" class=\'add-layer rect\' ref="$addLayer"></button>\n                    <button type="button" class=\'add-layer circle\' ref="$addLayerCircle"></button>\n                    <button type="button" class=\'view-sample arrow\' ref="$viewSample"></button>\n                   \n                </div>\n                <div class="add-items">\n                    <label>Gradient </label>\n                    <div class=\'gradient-type\' ref="$gradientType">\n                        <div class="gradient-item linear" data-type="linear" title="Linear Gradient"></div>\n                        <div class="gradient-item radial" data-type="radial" title="Radial Gradient"></div>\n                        <div class="gradient-item conic" data-type="conic" title="Conic Gradient"></div>                            \n                        <div class="gradient-item repeating-linear" data-type="repeating-linear" title="repeating Linear Gradient"></div>\n                        <div class="gradient-item repeating-radial" data-type="repeating-radial" title="repeating Radial Gradient"></div>\n                        <div class="gradient-item repeating-conic" data-type="repeating-conic" title="repeating Conic Gradient"></div>                            \n                        <div class="gradient-item static" data-type="static" title="Static Color"></div>                                \n                        <div class="gradient-item image" data-type="image" title="Background Image">\n                            <div class="m1"></div>\n                            <div class="m2"></div>\n                            <div class="m3"></div> \n                        </div>                                                  \n                        <div class="gradient-sample-list arrow" title="Gradient Sample View">\n                        </div>     \n                    </div>\n                </div>\n                <div class=\'items\'>\n                    <label>Show Grid <input type=\'checkbox\' ref="$check"></label>                \n                    <button type="button" ref="$exportButton">Export</button>    \n                    <ExportCodePenButton></ExportCodePenButton>\n                    <ExportJSFiddleButton></ExportJSFiddleButton>\n                    <button type="button" ref="$saveButton">Save</button>\n                    <a class="button" href="https://github.com/easylogic/css" target="_github_">Github</a>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'tool-menu\'>\n                <div class=\'items left\'>\n                    <Undo></Undo>\n                    <Redo></Redo>\n                    <ShowGrid></ShowGrid>                    \n                </div>\n\n                <div class=\'items flex-2\'>\n                    <Rect></Rect>\n                    <Circle></Circle>\n                </div>\n\n                <div class=\'items\'>\n                    <Save></Save>\n                </div>\n                \n                <div class=\'items  right\'>\n                    <Export></Export>\n                    <ExportCodePen></ExportCodePen>\n                    <ExportJSFiddle></ExportJSFiddle>\n                    <Github></Github>                    \n                </div>                \n            </div>\n        ';
+        }
+    }]);
+    return ToolMenu;
+}(UIElement);
+
+var BasicGradient = function (_UIElement) {
+    inherits(BasicGradient, _UIElement);
+
+    function BasicGradient() {
+        classCallCheck(this, BasicGradient);
+        return possibleConstructorReturn(this, (BasicGradient.__proto__ || Object.getPrototypeOf(BasicGradient)).apply(this, arguments));
+    }
+
+    createClass(BasicGradient, [{
+        key: "template",
+        value: function template() {
+
+            return "\n        <div class=\"gradient-sample-list\">\n            <h1>Basic gradient</h1>\n            <div class='gradient-type' ref=\"$gradientType\">\n                <div>\n                    <div class=\"gradient-item linear\" data-type=\"linear\" title=\"Linear\"></div>\n                    <div class=\"gradient-item radial\" data-type=\"radial\" title=\"Radial\"></div>\n                    <div class=\"gradient-item conic\" data-type=\"conic\" title=\"Conic\"></div>                            \n                    <div class=\"gradient-item static\" data-type=\"static\" title=\"Static\"></div>                                                    \n                </div>\n                <div>\n                    <div class=\"gradient-item repeating-linear\" data-type=\"repeating-linear\" title=\"Linear\"></div>\n                    <div class=\"gradient-item repeating-radial\" data-type=\"repeating-radial\" title=\"Radial\"></div>\n                    <div class=\"gradient-item repeating-conic\" data-type=\"repeating-conic\" title=\"Conic\"></div>                            \n\n                    <div class=\"gradient-item image\" data-type=\"image\" title=\"Image\">\n                        <div>\n                            <div class=\"m1\"></div>\n                            <div class=\"m2\"></div>\n                            <div class=\"m3\"></div> \n                        </div>\n                    </div>                                                  \n                </div>\n            </div>\n        </div>\n        ";
         }
     }, {
-        key: CLICK('$check'),
+        key: CLICK('$gradientType .gradient-item'),
+        value: function value(e) {
+            var _this2 = this;
+
+            this.read('selection/current/layer', function (item) {
+                var type = e.$delegateTarget.attr('data-type');
+
+                _this2.dispatch('item/prepend/image', type, true, item.id);
+                _this2.dispatch('history/push', "Add " + type + " gradient");
+            });
+        }
+    }]);
+    return BasicGradient;
+}(UIElement);
+
+var GradientSampleList = function (_UIElement) {
+    inherits(GradientSampleList, _UIElement);
+
+    function GradientSampleList() {
+        classCallCheck(this, GradientSampleList);
+        return possibleConstructorReturn(this, (GradientSampleList.__proto__ || Object.getPrototypeOf(GradientSampleList)).apply(this, arguments));
+    }
+
+    createClass(GradientSampleList, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(GradientSampleList.prototype.__proto__ || Object.getPrototypeOf(GradientSampleList.prototype), "initialize", this).call(this);
+
+            this.list = this.read('gradient/list/sample', this.props.type);
+            this.dispatch('storage/load/image');
+        }
+    }, {
+        key: "template",
+        value: function template() {
+
+            return "\n        <div class=\"gradient-sample-list\">\n            <h1>User gradient</h1>            \n            <div class='cached-list' ref=\"$cachedList\"></div>\n        </div>\n        ";
+        }
+    }, {
+        key: LOAD('$cachedList'),
         value: function value() {
             var _this2 = this;
 
-            this.read('selection/current/page', function (item) {
-                _this2.run('tool/set', 'show.grid', _this2.refs.$check.checked());
-                _this2.dispatch('tool/set', 'snap.grid', _this2.refs.$check.checked());
+            var list = this.list.map(function (item, index) {
+                return "\n            <div class='gradient-sample-item' data-index=\"" + index + "\">\n                <div class='preview' style='" + _this2.read('image/toString', item) + "'></div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                    <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                </div>          \n            </div>";
+            });
+
+            var storageList = this.read('storage/images').map(function (item, index) {
+                var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
+                return "\n                <div class='gradient-cached-item' data-index=\"" + index + "\">\n                    <div class='preview' style='" + _this2.read('image/toString', newImage) + "'></div>                \n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                    </div>          \n                </div>\n            ";
+            });
+
+            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-image\" title=\"Cache a image\">+</button>"]);
+
+            var emptyCount = 5 - results.length % 5;
+
+            var arr = [].concat(toConsumableArray(Array(emptyCount)));
+
+            arr.forEach(function (it) {
+                results.push("<div class='empty'></div>");
+            });
+
+            return results;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT('changeStorage'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .gradient-sample-item .change-item'),
+        value: function value(e) {
+            var index = +e.$delegateTarget.attr('data-index');
+
+            this.dispatch('gradient/select', this.props.type, index);
+        }
+    }, {
+        key: CLICK('$el .gradient-sample-item .add-item'),
+        value: function value(e) {
+            var index = +e.$delegateTarget.attr('data-index');
+
+            this.dispatch('gradient/add', this.props.type, index);
+        }
+    }, {
+        key: CLICK('$el .gradient-cached-item .add-item'),
+        value: function value(e) {
+            var index = +e.$delegateTarget.attr('data-index');
+            var image = this.read('storage/images', index);
+            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
+
+            this.dispatch('gradient/image/add', this.read('item/convert/style', newImage));
+        }
+    }, {
+        key: CLICK('$el .gradient-cached-item .change-item'),
+        value: function value(e) {
+            var index = +e.$delegateTarget.attr('data-index');
+            var image = this.read('storage/images', index);
+            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
+
+            this.dispatch('gradient/image/select', this.read('item/convert/style', newImage));
+        }
+    }, {
+        key: CLICK('$el .add-current-image'),
+        value: function value(e) {
+            var _this3 = this;
+
+            this.read('selection/current/image', function (image) {
+                var newImage = _this3.read('collect/image/one', image.id);
+
+                _this3.dispatch('storage/add/image', newImage);
+                _this3.refresh();
             });
         }
-    }, {
-        key: CLICK('$saveButton'),
-        value: function value(e) {
-            this.run('storage/save');
+    }]);
+    return GradientSampleList;
+}(UIElement);
+
+var LayerSampleList = function (_UIElement) {
+    inherits(LayerSampleList, _UIElement);
+
+    function LayerSampleList() {
+        classCallCheck(this, LayerSampleList);
+        return possibleConstructorReturn(this, (LayerSampleList.__proto__ || Object.getPrototypeOf(LayerSampleList)).apply(this, arguments));
+    }
+
+    createClass(LayerSampleList, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(LayerSampleList.prototype.__proto__ || Object.getPrototypeOf(LayerSampleList.prototype), "initialize", this).call(this);
+
+            this.list = this.read('layer/list/sample', this.props.type);
+            this.dispatch('storage/load/layer');
         }
     }, {
-        key: CLICK('$viewSample'),
-        value: function value(e) {
-            this.emit('togglePageSampleView');
+        key: "template",
+        value: function template() {
+
+            return "\n        <div class=\"layer-sample-list\">\n            <h1>User Layer</h1>        \n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
         }
     }, {
-        key: CLICK('$exportButton'),
-        value: function value(e) {
-            this.emit('showExport');
+        key: LOAD('$cachedList'),
+        value: function value$$1() {
+            var _this2 = this;
+
+            var list = this.list.map(function (item, index) {
+
+                var data = _this2.read('layer/cache/toString', item);
+
+                var rateX = 60 / unitValue(data.obj.width);
+                var rateY = 62 / unitValue(data.obj.height);
+
+                var transform = "transform: scale(" + rateX + " " + rateY + ")";
+
+                return "\n            <div class='layer-sample-item'  data-sample-id=\"" + item.id + "\">\n                <div class=\"layer-view\" style=\"" + data.css + "; " + transform + "\"></div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>          \n            </div>";
+            });
+
+            var storageList = this.read('storage/layers').map(function (item) {
+                var data = _this2.read('layer/cache/toString', item);
+
+                var rateX = 60 / unitValue(item.layer.width);
+                var rateY = 62 / unitValue(item.layer.height);
+
+                var minRate = Math.min(rateY, rateX);
+
+                var transform = "transform-origin: left top;transform: scale(" + minRate + ")";
+
+                return "\n                <div class='layer-cached-item' data-sample-id=\"" + item.id + "\">\n                    <div class=\"layer-view\" style=\"" + data.css + "; " + transform + "\"></div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"" + item.id + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"" + item.id + "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            ";
+            });
+
+            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-layer\" title=\"Cache a layer\">+</button>"]);
+
+            var emptyCount = 5 - results.length % 5;
+
+            var arr = [].concat(toConsumableArray(Array(emptyCount)));
+
+            arr.forEach(function (it) {
+                results.push("<div class='empty'></div>");
+            });
+
+            return results;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT('changeStorage'),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .layer-sample-item .add-item'),
+        value: function value$$1(e) {
+            var _this3 = this;
+
+            var index = +e.$delegateTarget.attr('data-index');
+
+            var newLayer = this.list[index];
+
+            if (newLayer) {
+                this.read('selection/current/layer', function (layer) {
+                    _this3.dispatch('item/addCache', newLayer, layer.id);
+                });
+            }
+        }
+    }, {
+        key: CLICK('$el .layer-cached-item .add-item'),
+        value: function value$$1(e) {
+            var _this4 = this;
+
+            var newLayer = this.read('storage/layers', e.$delegateTarget.attr('data-sample-id'));
+
+            if (newLayer) {
+                this.read('selection/current/layer', function (layer) {
+                    _this4.dispatch('item/addCache', newLayer, layer.id);
+                });
+            }
+        }
+    }, {
+        key: CLICK('$el .layer-cached-item .delete-item'),
+        value: function value$$1(e) {
+            this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .add-current-layer'),
+        value: function value$$1(e) {
+            var _this5 = this;
+
+            this.read('selection/current/layer', function (layer) {
+                var newLayer = _this5.read('collect/layer/one', layer.id);
+
+                _this5.dispatch('storage/add/layer', newLayer);
+                _this5.refresh();
+            });
+        }
+    }]);
+    return LayerSampleList;
+}(UIElement);
+
+var ShapeListView = function (_UIElement) {
+    inherits(ShapeListView, _UIElement);
+
+    function ShapeListView() {
+        classCallCheck(this, ShapeListView);
+        return possibleConstructorReturn(this, (ShapeListView.__proto__ || Object.getPrototypeOf(ShapeListView)).apply(this, arguments));
+    }
+
+    createClass(ShapeListView, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='shapes'>         \n                <h1>Basic Layer</h1>            \n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    <button type=\"button\" class='add-layer rect' ref=\"$addLayer\"></button>\n                    <button type=\"button\" class='add-layer circle' ref=\"$addLayerCircle\"></button>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: CLICK('$addLayer'),
         value: function value(e) {
-            var _this3 = this;
+            var _this2 = this;
 
             this.read('selection/current/page', function (page) {
-                _this3.dispatch('item/add', ITEM_TYPE_LAYER, true, page.id);
-                _this3.dispatch('history/push', 'Add a layer');
+                _this2.dispatch('item/add', ITEM_TYPE_LAYER, true, page.id);
+                _this2.dispatch('history/push', 'Add a layer');
             });
         }
     }, {
         key: CLICK('$addLayerCircle'),
         value: function value(e) {
-            var _this4 = this;
+            var _this3 = this;
 
             this.read('selection/current/page', function (page) {
-                _this4.dispatch('item/add', ITEM_TYPE_CIRCLE, true, page.id);
-                _this4.dispatch('history/push', 'Add a layer');
+                _this3.dispatch('item/add', ITEM_TYPE_CIRCLE, true, page.id);
+                _this3.dispatch('history/push', 'Add a layer');
             });
-        }
-    }, {
-        key: CLICK('$gradientType .gradient-item'),
-        value: function value(e) {
-            var _this5 = this;
-
-            this.read('selection/current/layer', function (item) {
-                var type = e.$delegateTarget.attr('data-type');
-
-                _this5.dispatch('item/prepend/image', type, true, item.id);
-                _this5.dispatch('history/push', 'Add ' + type + ' gradient');
-            });
-        }
-    }, {
-        key: CLICK('$el .gradient-sample-list'),
-        value: function value(e) {
-            this.emit('toggleGradientSampleView');
         }
     }]);
-    return ToolMenu;
+    return ShapeListView;
+}(UIElement);
+
+var PageSampleList = function (_UIElement) {
+    inherits(PageSampleList, _UIElement);
+
+    function PageSampleList() {
+        classCallCheck(this, PageSampleList);
+        return possibleConstructorReturn(this, (PageSampleList.__proto__ || Object.getPrototypeOf(PageSampleList)).apply(this, arguments));
+    }
+
+    createClass(PageSampleList, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(PageSampleList.prototype.__proto__ || Object.getPrototypeOf(PageSampleList.prototype), "initialize", this).call(this);
+
+            this.list = [];
+            this.dispatch('storage/load/page');
+        }
+    }, {
+        key: "template",
+        value: function template() {
+
+            return "\n        <div class=\"page-sample-list\">\n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
+        }
+    }, {
+        key: LOAD('$cachedList'),
+        value: function value$$1() {
+            var _this2 = this;
+
+            var list = this.list.map(function (page, index) {
+                var data = _this2.read('page/cache/toString', page);
+
+                var rateX = 72 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+                var rateY = 70 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
+
+                var transform = "transform: scale(" + rateX + " " + rateY + ")";
+
+                return "\n            <div class='page-sample-item'  data-sample-id=\"" + page.id + "\">\n                <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                " + page.layers.map(function (layer) {
+                    var data = _this2.read('layer/cache/toString', layer);
+                    return "\n                        <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                    ";
+                }).join('') + "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>";
+            });
+
+            var storageList = this.read('storage/pages').map(function (page) {
+                var samplePage = _this2.read('item/convert/style', page.page);
+
+                var data = _this2.read('page/cache/toString', samplePage);
+                var rateX = 72 / unitValue(defaultValue(samplePage.width, pxUnit(400)));
+                var rateY = 70 / unitValue(defaultValue(samplePage.height, pxUnit(300)));
+
+                var minRate = Math.min(rateY, rateX);
+
+                var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
+
+                return "\n                <div class='page-cached-item' data-sample-id=\"" + page.id + "\">\n                    <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                    " + page.layers.map(function (layer) {
+                    var data = _this2.read('layer/cache/toString', layer);
+                    return "\n                            <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                        ";
+                }).join('') + "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"" + page.id + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"" + page.id + "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            ";
+            });
+
+            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-page\" title=\"Cache a page\">+</button>"]);
+
+            var emptyCount = 5 - results.length % 5;
+
+            var arr = [].concat(toConsumableArray(Array(emptyCount)));
+
+            arr.forEach(function (it) {
+                results.push("<div class='empty'></div>");
+            });
+
+            return results;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT('changeStorage'),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .page-sample-item .add-item'),
+        value: function value$$1(e) {
+            var _this3 = this;
+
+            var index = +e.$delegateTarget.attr('data-index');
+
+            var newPage = this.list[index];
+
+            if (newPage) {
+                this.read('selection/current/page', function (page) {
+                    _this3.dispatch('item/addCache', newPage, page.id);
+                    _this3.emit('changePage');
+                });
+            }
+        }
+    }, {
+        key: CLICK('$el .page-cached-item .add-item'),
+        value: function value$$1(e) {
+            var _this4 = this;
+
+            var newPage = this.read('storage/pages', e.$delegateTarget.attr('data-sample-id'));
+            if (newPage) {
+                this.read('selection/current/page', function (page) {
+                    _this4.dispatch('item/addCache', newPage, page.id);
+                    _this4.emit('changePage');
+                });
+            }
+        }
+    }, {
+        key: CLICK('$el .page-cached-item .delete-item'),
+        value: function value$$1(e) {
+            this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .add-current-page'),
+        value: function value$$1(e) {
+            var _this5 = this;
+
+            this.read('selection/current/page', function (page) {
+                var newPage = _this5.read('collect/page/one', page.id);
+
+                _this5.dispatch('storage/add/page', newPage);
+                _this5.refresh();
+            });
+        }
+    }]);
+    return PageSampleList;
 }(UIElement);
 
 var PageListView = function (_UIElement) {
@@ -25849,17 +25861,17 @@ var PageListView = function (_UIElement) {
     }
 
     createClass(PageListView, [{
-        key: 'components',
+        key: "components",
         value: function components() {
-            return { PageShowGrid: PageShowGrid };
+            return { PageSampleList: PageSampleList };
         }
     }, {
-        key: 'template',
+        key: "template",
         value: function template() {
-            return '\n            <div class=\'pages\'>         \n                <div class="page-list" ref="$pageList">\n                \n                </div>\n                <div class=\'project-tools\'>\n                    <button type="button" class=\'view-sample\' ref="$viewSample"></button>                \n                </div>\n            </div>\n        ';
+            return "\n            <div class='pages'>         \n                <div class=\"page-list\" ref=\"$pageList\">\n                \n                </div>\n                <PageSampleList></PageSampleList>\n            </div>\n        ";
         }
     }, {
-        key: 'makeItemNode',
+        key: "makeItemNode",
         value: function makeItemNode(node, index) {
             var item = this.read('item/get', node.id);
 
@@ -25874,10 +25886,10 @@ var PageListView = function (_UIElement) {
             }
         }
     }, {
-        key: 'makeItemNodePage',
+        key: "makeItemNodePage",
         value: function makeItemNodePage(item, index, selectedId) {
             var selected = item.id == selectedId ? 'selected' : '';
-            return '\n            <div class=\'tree-item ' + selected + '\' id="' + item.id + '" type=\'page\'>\n                <div class="item-preview"></div>\n                <div class="item-title">\n                    ' + (item.name || 'Project ' + (index + 1)) + '\n                </div>   \n            </div>\n            ';
+            return "\n            <div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n                <div class=\"item-preview\"></div>\n                <div class=\"item-title\">\n                    " + (item.name || "Project " + (index + 1)) + "\n                </div>   \n            </div>\n            ";
         }
     }, {
         key: LOAD('$pageList'),
@@ -25888,12 +25900,12 @@ var PageListView = function (_UIElement) {
                 return _this2.makeItemNode(item, index);
             }).join('');
 
-            str += '<button type="button" class=\'add-page\'></button>';
+            str += "<button type=\"button\" class='add-page' title=\"Add a page\"></button>";
 
             return str;
         }
     }, {
-        key: 'refresh',
+        key: "refresh",
         value: function refresh() {
             this.load();
         }
@@ -25936,8 +25948,258 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var SelectLayerView = function (_UIElement) {
-    inherits(SelectLayerView, _UIElement);
+var LayerListView = function (_UIElement) {
+    inherits(LayerListView, _UIElement);
+
+    function LayerListView() {
+        classCallCheck(this, LayerListView);
+        return possibleConstructorReturn(this, (LayerListView.__proto__ || Object.getPrototypeOf(LayerListView)).apply(this, arguments));
+    }
+
+    createClass(LayerListView, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='layers show-mini-view'>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+        }
+    }, {
+        key: "makeItemNode",
+        value: function makeItemNode(node, index) {
+            var item = this.read('item/get', node.id);
+
+            if (item.itemType == 'layer') {
+                return this.makeItemNodeLayer(item, index);
+            }
+        }
+    }, {
+        key: "makeItemNodeImage",
+        value: function makeItemNodeImage(item) {
+            var selected = this.read('selection/check', item.id) ? 'selected' : '';
+            return "\n            <div class='tree-item image " + selected + "' id=\"" + item.id + "\" draggable=\"true\" >\n                <div class=\"item-title\"> \n                    &lt;" + item.type + "&gt;\n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                </div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='copy-image-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>            \n            </div>\n            ";
+        }
+    }, {
+        key: "makeItemNodeLayer",
+        value: function makeItemNodeLayer(item) {
+            var _this2 = this;
+
+            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+            var selected = this.read('selection/check', item.id) ? 'selected' : '';
+            return "\n            <div class='tree-item " + selected + "' id=\"" + item.id + "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> \n                    " + (index + 1) + ". " + (item.name || "Layer ") + " \n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                </div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='copy-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>                            \n            </div>\n            <div class=\"gradient-list-group\" >\n                <!-- <div class='gradient-collapse-button' item-id=\"" + item.id + "\"></div> -->\n                <div class=\"tree-item-children\">\n                    " + this.read('item/map/image/children', item.id, function (item) {
+                return _this2.makeItemNodeImage(item);
+            }).join('') + "\n                </div>\n            </div>       \n            ";
+        }
+    }, {
+        key: LOAD('$layerList'),
+        value: function value() {
+            var _this3 = this;
+
+            var page = this.read('selection/current/page');
+
+            if (!page) {
+                return '';
+            }
+
+            return this.read('item/map/children', page.id, function (item, index) {
+                return _this3.makeItemNode(item, index);
+            }).reverse();
+        }
+    }, {
+        key: "refreshSelection",
+        value: function refreshSelection() {}
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: "refreshSelection",
+        value: function refreshSelection(id) {
+            var $selected = this.$el.$(".selected");
+
+            if ($selected) {
+                $selected.removeClass('selected');
+            }
+
+            this.$el.$("[id=\"" + id + "\"]").addClass('selected');
+        }
+
+        // refreshLayer () {
+        //     this.read('selection/current/layer', (items) => {
+
+        //         if (!items.length) {
+        //             items = [items]
+        //         }
+
+        //         items.forEach(item => {
+        //             this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
+        //         })
+        //     })
+        // }    
+
+        // refreshImage() {
+        //     this.read('selection/current/image', (item) => {
+        //         this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
+        //     })
+        // }
+
+        // // indivisual effect 
+        // [EVENT(
+        //     CHANGE_LAYER,
+        //     CHANGE_LAYER_BACKGROUND_COLOR,
+        //     CHANGE_LAYER_CLIPPATH,
+        //     CHANGE_LAYER_CLIPPATH_POLYGON,
+        //     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
+        //     CHANGE_LAYER_FILTER,
+        //     CHANGE_LAYER_POSITION,
+        //     CHANGE_LAYER_RADIUS,
+        //     CHANGE_LAYER_SIZE,
+        //     CHANGE_LAYER_ROTATE,
+        //     CHANGE_LAYER_OPACITY,
+        //     CHANGE_LAYER_TRANSFORM,
+        //     CHANGE_LAYER_TRANSFORM_3D,
+
+        //     CHANGE_COLOR_STEP,
+        //     CHANGE_IMAGE,
+        //     CHANGE_IMAGE_ANGLE,
+        //     CHANGE_IMAGE_COLOR,
+        //     CHANGE_IMAGE_LINEAR_ANGLE,
+        //     CHANGE_IMAGE_RADIAL_POSITION,
+        //     CHANGE_IMAGE_RADIAL_TYPE
+        // )]() {
+        //     this.refreshLayer()
+        // }
+
+
+        // all effect 
+
+    }, {
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$layerList .tree-item') + SELF,
+        value: function value(e) {
+            var id = e.$delegateTarget.attr('id');
+            this.dispatch('selection/one', id);
+            this.run('item/focus', id);
+            this.refreshSelection(id);
+        }
+    }, {
+        key: DRAGSTART('$layerList .tree-item'),
+        value: function value(e) {
+            this.draggedLayer = e.$delegateTarget;
+            this.draggedLayer.css('opacity', 0.5);
+            // e.preventDefault();
+        }
+    }, {
+        key: DRAGEND('$layerList .tree-item'),
+        value: function value(e) {
+
+            if (this.draggedLayer) {
+                this.draggedLayer.css('opacity', 1);
+            }
+        }
+    }, {
+        key: DRAGOVER('$layerList .tree-item'),
+        value: function value(e) {
+            e.preventDefault();
+        }
+    }, {
+        key: DROP('$layerList .tree-item') + SELF,
+        value: function value(e) {
+            e.preventDefault();
+
+            var destId = e.$delegateTarget.attr('id');
+            var sourceId = this.draggedLayer.attr('id');
+
+            var sourceItem = this.read('item/get', sourceId);
+            var destItem = this.read('item/get', destId);
+
+            this.draggedLayer = null;
+            if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
+                if (e.ctrlKey) {
+                    this.dispatch('item/copy/in/layer', destId, sourceId);
+                } else {
+                    this.dispatch('item/move/in/layer', destId, sourceId);
+                }
+
+                this.dispatch('history/push', "Change gradient position ");
+                this.refresh();
+            } else if (destItem.itemType == sourceItem.itemType) {
+                if (e.ctrlKey) {
+                    this.dispatch('item/copy/in', destId, sourceId);
+                } else {
+                    this.dispatch('item/move/in', destId, sourceId);
+                }
+                this.dispatch('history/push', "Change item position ");
+                this.refresh();
+            }
+        }
+    }, {
+        key: DROP('$layerList'),
+        value: function value(e) {
+            e.preventDefault();
+
+            if (this.draggedLayer) {
+                var sourceId = this.draggedLayer.attr('id');
+
+                this.draggedLayer = null;
+                this.dispatch('item/move/last', sourceId);
+                this.dispatch('history/push', "Change layer position ");
+                this.refresh();
+            }
+        }
+    }, {
+        key: CLICK('$layerList .copy-image-item'),
+        value: function value(e) {
+            this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.dispatch('history/push', "Add a gradient");
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$layerList .copy-item'),
+        value: function value(e) {
+            this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.dispatch('history/push', "Copy a layer");
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$layerList .delete-item'),
+        value: function value(e) {
+            this.dispatch('item/remove', e.$delegateTarget.attr('item-id'));
+            this.dispatch('history/push', "Remove item");
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$viewSample'),
+        value: function value(e) {
+            this.emit('toggleLayerSampleView');
+        }
+    }, {
+        key: CLICK('$layerList .gradient-collapse-button') + SELF,
+        value: function value(e) {
+            e.$delegateTarget.parent().toggleClass('collapsed');
+            var item = this.read('item/get', e.$delegateTarget.attr('item-id'));
+
+            item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
+            this.run('item/set', item);
+        }
+    }]);
+    return LayerListView;
+}(UIElement);
+
+var layerItems = {
+    LayerListView: LayerListView,
+    PageListView: PageListView,
+    ShapeListView: ShapeListView,
+    LayerSampleList: LayerSampleList,
+    GradientSampleList: GradientSampleList,
+    BasicGradient: BasicGradient
+};
+
+var SelectLayerView = function (_BaseTab) {
+    inherits(SelectLayerView, _BaseTab);
 
     function SelectLayerView() {
         classCallCheck(this, SelectLayerView);
@@ -25947,18 +26209,42 @@ var SelectLayerView = function (_UIElement) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"select-layer-view\">\n\n                <div class=\"item-info\">\n                    <LayerListView></LayerListView>\n                </div>\n                <PageListView></PageListView>                            \n            </div>\n        ";
+            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradients\">Gradient</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageListView></PageListView>                            \n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <LayerListView></LayerListView>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView></ShapeListView>                    \n                        <LayerSampleList></LayerSampleList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradients\">\n                        <BasicGradient></BasicGradient>\n                        <GradientSampleList></GradientSampleList>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return {
-                PageListView: PageListView,
-                LayerListView: LayerListView
-            };
+            return _extends({}, layerItems);
         }
     }]);
     return SelectLayerView;
+}(BaseTab);
+
+var Alignment = function (_UIElement) {
+    inherits(Alignment, _UIElement);
+
+    function Alignment() {
+        classCallCheck(this, Alignment);
+        return possibleConstructorReturn(this, (Alignment.__proto__ || Object.getPrototypeOf(Alignment)).apply(this, arguments));
+    }
+
+    createClass(Alignment, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='alignment'>\n                <div class=\"button-group group-align\" ref=\"$groupAlign\">\n                    <button type=\"button\" title=\"left\" data-value=\"left\"></button>\n                    <button type=\"button\" title=\"center\" data-value=\"center\"></button>\n                    <button type=\"button\" title=\"right\" data-value=\"right\"></button>\n                    <button type=\"button\" title=\"top\" data-value=\"top\"></button>\n                    <button type=\"button\" title=\"middle\" data-value=\"middle\"></button>\n                    <button type=\"button\" title=\"bottom\" data-value=\"bottom\"></button>\n                    <button type=\"button\" title=\"vertical\" data-value=\"vertical\"></button>\n                    <button type=\"button\" title=\"horizontal\" data-value=\"horizontal\"></button>\n                </div>\n\n                <div class=\"button-group group-order\" ref=\"$groupOrdering\">\n                    <button type=\"button\" title=\"front\" data-value=\"front\"></button>\n                    <button type=\"button\" title=\"back\" data-value=\"back\"></button>\n                    <button type=\"button\" title=\"forward\" data-value=\"forward\"></button>\n                    <button type=\"button\" title=\"backward\" data-value=\"backward\"></button>\n                </div>                \n                        \n            </div>\n        ";
+        }
+    }, {
+        key: CLICK('$groupAlign button'),
+        value: function value(e) {
+            this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'));
+        }
+    }, {
+        key: CLICK('$groupOrdering button'),
+        value: function value(e) {
+            this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'));
+        }
+    }]);
+    return Alignment;
 }(UIElement);
 
 var CSSEditor$1 = function (_BaseCSSEditor) {
@@ -25975,33 +26261,30 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
             var _this2 = this;
 
             setTimeout(function () {
-                _this2.emit('changeEditor');
+                _this2.emit(CHANGE_EDITOR);
             }, 100);
         }
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <h1 class="header-title">' + this.i18n('app.title') + '</h1>\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                    <LayerToolbar></LayerToolbar>\n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportView></ExportView>\n                <DropView></DropView>\n                <GradientSampleView></GradientSampleView>\n                <LayerSampleView></LayerSampleView>\n                <PageSampleView></PageSampleView>\n            </div>\n        ';
+            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                \n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>                \n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <Alignment></Alignment>\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportWindow></ExportWindow>\n                <DropView></DropView>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
+                Alignment: Alignment,
                 SelectLayerView: SelectLayerView,
                 ToolMenu: ToolMenu,
                 LayerToolbar: LayerToolbar,
                 ClipPathImageList: ClipPathImageList,
-                GradientSampleView: GradientSampleWindow,
                 VerticalColorStep: VerticalColorStep,
                 DropView: DropView,
-                ExportView: ExportWindow,
+                ExportWindow: ExportWindow,
                 HandleView: HandleView,
                 FeatureControl: FeatureControl,
-                LayerListView: LayerListView,
                 SubFeatureControl: SubFeatureControl,
-                Timeline: Timeline,
-                LayerSampleView: LayerSampleWindow,
-                PageSampleView: PageSampleWindow
+                Timeline: Timeline
             };
         }
     }, {

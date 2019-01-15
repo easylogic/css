@@ -1,38 +1,12 @@
-import UIElement, { EVENT } from '../../../colorpicker/UIElement';
-import { 
-    CHANGE_EDITOR, 
-    CHANGE_LAYER, 
-    CHANGE_LAYER_BACKGROUND_COLOR, 
-    CHANGE_LAYER_CLIPPATH, 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_RADIUS, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_TRANSFORM, 
-    CHANGE_LAYER_FILTER, 
-    CHANGE_LAYER_TRANSFORM_3D,
-    CHANGE_IMAGE,
-    CHANGE_IMAGE_ANGLE,
-    CHANGE_IMAGE_LINEAR_ANGLE,
-    CHANGE_IMAGE_RADIAL_POSITION,
-    CHANGE_IMAGE_RADIAL_TYPE,
-    CHANGE_IMAGE_COLOR,
-    CHANGE_COLOR_STEP,
-    CHANGE_SELECTION,
-    CHANGE_LAYER_ROTATE,
-    CHANGE_LAYER_OPACITY,
-    CHANGE_LAYER_CLIPPATH_POLYGON,
-    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-} from '../../types/event';
-import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
+import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
+import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 
 export default class LayerListView extends UIElement {
 
     template () { 
         return `
             <div class='layers show-mini-view'>
-                <div class='title'> 
-                    <h1 ref="$pageName"></h1>
-                </div>             
                 <div class="layer-list" ref="$layerList"></div>
             </div>
         `
@@ -86,11 +60,6 @@ export default class LayerListView extends UIElement {
             </div>       
             `
     }    
-
-    [LOAD('$pageName')] () {
-        var obj = this.read('selection/current/page') || { name: 'Untitled Project'};
-        return obj.name === '' ? '<span>Untitled Project</span>' : `<span>${obj.name}</span>`;
-    }
 
     [LOAD('$layerList')] () {
         var page = this.read('selection/current/page')

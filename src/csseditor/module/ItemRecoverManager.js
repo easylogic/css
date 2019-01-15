@@ -1,10 +1,14 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
+import { CHANGE_EDITOR } from "../types/event";
 
 const COPY_INDEX_DIST = 1; 
 
 export default class ItemRecoverManager extends BaseModule {
 
+    afterDispatch() {
+        this.$store.emit(CHANGE_EDITOR);
+    }
 
     [GETTER('item/recover')] ($store, item, parentId) {
 
@@ -22,7 +26,7 @@ export default class ItemRecoverManager extends BaseModule {
     }
 
     [GETTER('item/recover/image')] ($store, image, parentId) {
-        var newImageId = $store.read('item/create/object', Object.assign({parentId}, convertStyle(image.image)));
+        var newImageId = $store.read('item/create/object', Object.assign({parentId}, $store.read('item/convert/style', image.image)));
         image.colorsteps.forEach(step => {
             $store.read('item/create/object', Object.assign({}, step, {parentId: newImageId}))
         })
@@ -40,17 +44,21 @@ export default class ItemRecoverManager extends BaseModule {
 
     [GETTER('item/recover/layer')] ($store, layer, parentId) {
         var newLayerId = $store.read('item/create/object', 
-            Object.assign({parentId}, convertStyle(layer.layer))
+            Object.assign({parentId}, $store.read('item/convert/style',layer.layer))
         );
-        layer.images.forEach(image => {
+
+        var images = layer.images || [] 
+        images.forEach(image => {
             $store.read('item/recover/image', image, newLayerId);
         })
 
-        layer.boxshadows.forEach(boxshadow => {
+        var boxshadows = layer.boxshadows || []
+        boxshadows.forEach(boxshadow => {
             $store.read('item/recover/boxshadow', boxshadow, newLayerId);
         })
 
-        layer.textshadows.forEach(textshadow => {
+        var textshadows = layer.textshadows || []
+        textshadows.forEach(textshadow => {
             $store.read('item/recover/textshadow', textshadow, newLayerId);
         })
 
@@ -58,7 +66,7 @@ export default class ItemRecoverManager extends BaseModule {
     }
  
     [GETTER('item/recover/page')] ($store, page) {
-        var newPageId = $store.read('item/create/object', convertStyle(page.page));
+        var newPageId = $store.read('item/create/object', $store.read('item/convert/style',page.page));
         page.layers.forEach(layer => {
             $store.read('item/recover/layer', layer, newPageId);
         })

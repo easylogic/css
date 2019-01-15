@@ -1,29 +1,26 @@
 import BaseCSSEditor from '../BaseCSSEditor';
 import FeatureControl from '../ui/control/FeatureControl';
 
-import LayerListView from '../ui/view/LayerListView';
 import LayerToolbar from '../ui/view/LayerToolbar';
 import SubFeatureControl from '../ui/control/SubFeatureControl';
-import ExportView from '../ui/window/ExportWindow';
+import ExportWindow from '../ui/window/ExportWindow';
 import Timeline from '../ui/control/Timeline';
 import DropView from '../ui/control/DropView';
 import VerticalColorStep from '../ui/control/VerticalColorStep';
 import Animation from '../../util/animation/Animation';
-import GradientSampleView from '../ui/window/GradientSampleWindow';
-import LayerSampleView from '../ui/window/LayerSampleWindow';
-import PageSampleView from '../ui/window/PageSampleWindow';
 import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
 import { CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import { EVENT } from '../../colorpicker/UIElement';
+import Alignment from '../ui/control/Alignment';
 
 export default class CSSEditor extends BaseCSSEditor {
 
     afterRender() { 
         setTimeout(() => {
-            this.emit('changeEditor');
+            this.emit(CHANGE_EDITOR);
         }, 100)
     }
 
@@ -31,54 +28,49 @@ export default class CSSEditor extends BaseCSSEditor {
         return `
             <div class="layout-main expertor-mode" ref="$layoutMain">
                 <div class="layout-header">
-                    <h1 class="header-title">${this.i18n('app.title')}</h1>
                     <div class="page-tab-menu">
                         <ToolMenu></ToolMenu>
                     </div>
                 </div>
                 <div class="layout-top">
-                    <LayerToolbar></LayerToolbar>
+                
                 </div>
                 <div class="layout-left">      
                     <SelectLayerView></SelectLayerView>
                 </div>
                 <div class="layout-body">
+                    <LayerToolbar></LayerToolbar>                
                     <VerticalColorStep></VerticalColorStep>
                     <HandleView></HandleView>                      
                 </div>                
                 <div class="layout-right">
+                    <Alignment></Alignment>
                     <FeatureControl></FeatureControl>
                     <ClipPathImageList></ClipPathImageList>
                 </div>
                 <div class="layout-footer">
                     <Timeline></Timeline>
                 </div>
-                <ExportView></ExportView>
+                <ExportWindow></ExportWindow>
                 <DropView></DropView>
-                <GradientSampleView></GradientSampleView>
-                <LayerSampleView></LayerSampleView>
-                <PageSampleView></PageSampleView>
             </div>
         `
     }
 
     components() {      
         return { 
+            Alignment,
             SelectLayerView,
             ToolMenu,
             LayerToolbar,
             ClipPathImageList,
-            GradientSampleView,
             VerticalColorStep, 
             DropView,
-            ExportView,
+            ExportWindow,
             HandleView,
             FeatureControl, 
-            LayerListView, 
             SubFeatureControl, 
-            Timeline,
-            LayerSampleView,
-            PageSampleView
+            Timeline
         }
     } 
 

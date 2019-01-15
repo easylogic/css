@@ -1,128 +1,87 @@
 .tool-menu {
     height: 100%;
     box-sizing: border-box;
+    display: flex; 
+    padding-left: 10px;
+    padding-right: 10px;
+
     .items {
-        text-align: right;
+        flex: 1 1 auto;
+        text-align: center;
         height: 100%;
         box-sizing: border-box;
-        float: right;
+        padding: 0px 5px;
 
-        > * {
-            appearance: none;
-            border: 0px;
-            vertical-align: middle;
-            border-left: 1px solid $border-color;
-            height: 100%;
+        &.flex-2 {
+            flex: 5; 
+        }
+
+        &.left {
+            text-align: left;
+        }
+
+        &.right {
+            text-align: right; 
+        }
+
+        form {
             display: inline-block;
-            padding: 10px 20px;
+            vertical-align: middle;
+        }
+
+        button {
+            appearance: none;
+            vertical-align: middle;
+            border: 0px;
+            display: inline-block;
+            padding: 10px 2px;
             box-sizing: border-box;
             text-decoration: none;
             color: #333333;
             line-height: 1.6;
             outline: none;
             cursor: pointer;
-        }
+            text-align: center; 
+            margin-right: 5px;
 
-        .codepen, .jsfiddle {
-            padding: 0px !important;
-            border-left: 0px !important; 
-
-            button {
-                appearance: none;
-                border: 0px;
-                vertical-align: middle;
-                border-left: 1px solid $border-color;
-                background-color: transparent;
-                height: 100%;
-                display: inline-block;
-                padding: 10px 20px;
-                box-sizing: border-box;
-                text-decoration: none;
-                color: #333333;
-                line-height: 1.6;
-                outline: none;
-                cursor: pointer;
+            &[checked='checked'] {
+                .icon {
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
             }
         }
-    }
 
-    .add-items {
-        display: inline-block;
-        padding: 5px 0px;
-        box-sizing: border-box;
-        height: 100%;
-        vertical-align: middle;
-
-        label {
-            vertical-align: middle;
-            display: inline-block;
+        .icon {
+            margin: 0 auto; 
+            width : 30px;
+            height: 30px;
+            background-color: rgba(206, 206, 206, 0.5);
             box-sizing: border-box;
-            padding: 5px;            
-        }
-
-        button {
-
-            background-color: transparent;
-            appearance: none;
-            display: inline-block;
-            width: 28px;
-            height: 28px;
-            box-sizing: border-box;
-            border: 1px solid #ececec;
-            cursor: pointer;
-            position: relative;
-            pointer-events: all;
-            vertical-align: middle;
-            margin-bottom: 2px;
-    
-            &:first-child {
-                margin-right: 1px; 
-            }            
 
             &.rect {
-                border-color: #333; 
-                background-color: #333;
+                background-color: transparent;
+                border: 1px solid $border-color;
+
             }
 
             &.circle {
-                border-color: #333;                 
-                border-radius: 50%;
-                background-color: #333;                
+                background-color: transparent;
+                border: 1px solid $border-color;
+                border-radius: 100%;
+            }  
+            
+            &.show-grid {
+                background-color: transparent;
+                background-image: 
+                    linear-gradient(to right, black, black), linear-gradient(to right, black, black),
+                    linear-gradient(to right, black, black), linear-gradient(to right, black, black),
+                    linear-gradient(to right, black, black), linear-gradient(to right, black, black),
+                    linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+                background-size: 1px 100%, 1px 100%, 1px 100%,1px 100%,100% 1px, 100% 1px, 100% 1px, 100% 1px;
+                background-position: 3px 0px, 27px 0px, 11px 0px, 19px 0px, 0px 3px, 0px 11px, 0px 19px, 0px 27px;
+                background-repeat: no-repeat;
             }
-
-            &.view-sample {
-                width: 30px;
-                box-sizing: border-box;
-                position: relative;
-                &.arrow {
-                    background-image: radial-gradient(ellipse at center, rgba(216,216,216, 0) 0%,rgba(119,119,119,0.45) 0%,rgba(119,119,119,0.45) 33.33%,rgba(67,67,67,0.69) 33.33%,rgba(67,67,67,0.69) 66.67%,rgb(0,0,0) 66.67%,rgb(0,0,0) 100%);
-                    background-size: 5px 5px;
-                    background-repeat: round;                 
-                }
-            }
-        }        
-
-    }
-
-
-    .gradient-type {
-        padding-top: 1px;
-    }
-    .gradient-sample-list {
-        display: inline-block;
-        height: 30px;
-        width: 30px;
-        vertical-align: middle;
-        position: relative;
-        text-align: center;
-        border: 1px solid #f1f1f1;
-        box-sizing: border-box;
-        margin-bottom: 2px;
-
-        &.arrow {
-            background-image: radial-gradient(ellipse at center, rgba(216,216,216, 0) 0%,rgba(119,119,119,0.45) 0%,rgba(119,119,119,0.45) 33.33%,rgba(67,67,67,0.69) 33.33%,rgba(67,67,67,0.69) 66.67%,rgb(0,0,0) 66.67%,rgb(0,0,0) 100%);
-            background-size: 5px 5px;
-            background-repeat: round;
         }
-    } 
+    }
+
 }

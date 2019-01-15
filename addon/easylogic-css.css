@@ -1201,79 +1201,30 @@ html, body {
       bottom: 300px; }
     .csseditor .layout-main.show-timeline .layout-footer {
       height: 300px; }
-    .csseditor .layout-main.has-page-panel .select-layer-view .pages {
+    .csseditor .layout-main .select-layer-view .pages {
       display: block; }
-    .csseditor .layout-main.has-page-panel .select-layer-view .item-info {
+    .csseditor .layout-main .select-layer-view .item-info {
       left: 70px; }
-      .csseditor .layout-main.has-page-panel .select-layer-view .item-info .page-info {
+      .csseditor .layout-main .select-layer-view .item-info .page-info {
         display: block; }
-      .csseditor .layout-main.has-page-panel .select-layer-view .item-info .layers {
+      .csseditor .layout-main .select-layer-view .item-info .layers {
         top: 0px; }
-    .csseditor .layout-main.has-layer-panel .layout-left {
-      width: 70px; }
-      .csseditor .layout-main.has-layer-panel .layout-left .select-layer-view .item-info .page-info {
-        display: none; }
-      .csseditor .layout-main.has-layer-panel .layout-left .select-layer-view .item-info .layers.show-mini-view .title {
-        display: none; }
-      .csseditor .layout-main.has-layer-panel .layout-left .layer-list {
-        padding-left: 0px;
-        padding-right: 0px;
-        border-top: 0px; }
-        .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item {
-          padding: 8px;
-          border-left: 0px;
-          height: auto; }
-          .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item.selected {
-            background-color: #333; }
-          .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item .item-view-container {
-            width: 100%;
-            height: 53px; }
-          .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item .item-title, .csseditor .layout-main.has-layer-panel .layout-left .layer-list .tree-item .item-tools {
-            display: none; }
-        .csseditor .layout-main.has-layer-panel .layout-left .layer-list .gradient-list-group {
-          display: none; }
-    .csseditor .layout-main.has-layer-panel .layout-body {
-      left: 70px; }
-    .csseditor .layout-main.has-page-panel.has-layer-panel .select-layer-view .item-info .page-info {
-      display: none; }
-    .csseditor .layout-main.has-page-panel.has-layer-panel .select-layer-view .item-info .layers.show-mini-view .title {
-      display: none; }
-    .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left {
-      width: 140px; }
-      .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list {
-        padding-left: 0px;
-        padding-right: 0px;
-        border-top: 0px; }
-        .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item {
-          padding: 8px;
-          border-left: 0px;
-          height: auto; }
-          .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item.selected {
-            background-color: #333; }
-          .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item .item-view-container {
-            width: 100%;
-            height: 53px; }
-          .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item .item-title, .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .tree-item .item-tools {
-            display: none; }
-        .csseditor .layout-main.has-page-panel.has-layer-panel .layout-left .layer-list .gradient-list-group {
-          display: none; }
-    .csseditor .layout-main.has-page-panel.has-layer-panel .layout-body {
-      left: 140px; }
     .csseditor .layout-main .layout-top {
       position: absolute;
       left: 0px;
       right: 0px;
-      top: 40px;
-      height: 40px;
+      top: 66px;
+      height: 66px;
       z-index: 1;
       border-bottom: 1px solid #cccccc;
       -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
+              box-sizing: border-box;
+      display: none; }
     .csseditor .layout-main .layout-right {
       position: absolute;
       right: 0px;
       width: 300px;
-      top: 80px;
+      top: 0px;
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
@@ -1285,7 +1236,7 @@ html, body {
       position: absolute;
       left: 0px;
       width: 300px;
-      top: 80px;
+      top: 66px;
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
@@ -1295,15 +1246,15 @@ html, body {
       position: absolute;
       left: 300px;
       right: 300px;
-      top: 80px;
+      top: 66px;
       bottom: 0px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
     .csseditor .layout-main .layout-header {
       position: absolute;
       left: 0px;
-      right: 0px;
-      height: 40px;
+      right: 300px;
+      height: 66px;
       top: 0px;
       z-index: 0;
       overflow: hidden;
@@ -1313,31 +1264,6 @@ html, body {
       display: -ms-flexbox;
       display: flex;
       border-bottom: 1px solid #cccccc; }
-      .csseditor .layout-main .layout-header .header-title {
-        width: 300px;
-        padding: 0px 4px;
-        margin: 0px;
-        text-align: center;
-        font-size: 26px;
-        vertical-align: middle;
-        display: inline-block;
-        letter-spacing: 8px;
-        -webkit-box-flex: 0;
-            -ms-flex: none;
-                flex: none;
-        display: block;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        font-weight: 900;
-        line-height: 1.6;
-        background-image: -webkit-gradient(linear, left bottom, left top, from(#C6FFDD), color-stop(50%, #FBD786), to(#f7797d));
-        background-image: linear-gradient(to top, #C6FFDD 0%, #FBD786 50%, #f7797d 100%);
-        background-size: auto;
-        background-blend-mode: multiply;
-        background-color: rgba(245, 0, 255, 0);
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent; }
       .csseditor .layout-main .layout-header .page-tab-menu {
         -webkit-box-flex: 1;
             -ms-flex: 1 1 auto;
@@ -1479,6 +1405,8 @@ html, body {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex; }
+      .csseditor .tab .tab-header.no-border .tab-item {
+        border: 0px !important; }
       .csseditor .tab .tab-header .tab-item {
         -webkit-box-flex: 1;
             -ms-flex: 1;
@@ -1499,6 +1427,8 @@ html, body {
           color: black; }
         .csseditor .tab .tab-header .tab-item.selected {
           background-color: #cccccc; }
+        .csseditor .tab .tab-header .tab-item.small-font {
+          font-size: 11px; }
     .csseditor .tab .tab-body {
       position: absolute;
       left: 0px;
@@ -1561,6 +1491,19 @@ html, body {
     .csseditor .tab.bottom > .tab-body {
       top: 0px;
       bottom: 30px; }
+    .csseditor .tab.horizontal.left .tab-header {
+      left: 0px;
+      width: 50px;
+      display: inline-block; }
+      .csseditor .tab.horizontal.left .tab-header .tab-item {
+        height: 50px;
+        overflow: auto;
+        line-height: 3; }
+    .csseditor .tab.horizontal.left .tab-body {
+      left: 50px;
+      right: 0px;
+      border-left: 1px solid #cccccc;
+      border-right: 0px; }
     .csseditor .tab.horizontal .tab-header {
       left: auto;
       top: 0px;
@@ -1575,9 +1518,10 @@ html, body {
         border-bottom: 1px solid #cccccc;
         text-align: center;
         min-height: 40px;
-        line-height: 2;
-        overflow: hidden;
-        text-overflow: ellipsis; }
+        overflow: auto;
+        line-height: 3; }
+        .csseditor .tab.horizontal .tab-header .tab-item.selected {
+          background-color: rgba(204, 204, 204, 0.5); }
     .csseditor .tab.horizontal .tab-body {
       top: 0px;
       right: 50px;
@@ -1718,122 +1662,117 @@ html, body {
   .csseditor .tool-menu {
     height: 100%;
     -webkit-box-sizing: border-box;
-            box-sizing: border-box; }
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px; }
     .csseditor .tool-menu .items {
-      text-align: right;
+      -webkit-box-flex: 1;
+          -ms-flex: 1 1 auto;
+              flex: 1 1 auto;
+      text-align: center;
       height: 100%;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      float: right; }
-      .csseditor .tool-menu .items > * {
+      padding: 0px 5px; }
+      .csseditor .tool-menu .items.flex-2 {
+        -webkit-box-flex: 5;
+            -ms-flex: 5;
+                flex: 5; }
+      .csseditor .tool-menu .items.left {
+        text-align: left; }
+      .csseditor .tool-menu .items.right {
+        text-align: right; }
+      .csseditor .tool-menu .items form {
+        display: inline-block;
+        vertical-align: middle; }
+      .csseditor .tool-menu .items button {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
-        border: 0px;
         vertical-align: middle;
-        border-left: 1px solid #cccccc;
-        height: 100%;
+        border: 0px;
         display: inline-block;
-        padding: 10px 20px;
+        padding: 10px 2px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         text-decoration: none;
         color: #333333;
         line-height: 1.6;
         outline: none;
-        cursor: pointer; }
-      .csseditor .tool-menu .items .codepen, .csseditor .tool-menu .items .jsfiddle {
-        padding: 0px !important;
-        border-left: 0px !important; }
-        .csseditor .tool-menu .items .codepen button, .csseditor .tool-menu .items .jsfiddle button {
-          -webkit-appearance: none;
-             -moz-appearance: none;
-                  appearance: none;
-          border: 0px;
-          vertical-align: middle;
-          border-left: 1px solid #cccccc;
+        cursor: pointer;
+        text-align: center;
+        margin-right: 5px; }
+        .csseditor .tool-menu .items button[checked='checked'] .icon {
+          background-color: rgba(0, 0, 0, 0.1); }
+      .csseditor .tool-menu .items .icon {
+        margin: 0 auto;
+        width: 30px;
+        height: 30px;
+        background-color: rgba(206, 206, 206, 0.5);
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
+        .csseditor .tool-menu .items .icon.rect {
           background-color: transparent;
-          height: 100%;
-          display: inline-block;
-          padding: 10px 20px;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          text-decoration: none;
-          color: #333333;
-          line-height: 1.6;
-          outline: none;
-          cursor: pointer; }
-    .csseditor .tool-menu .add-items {
-      display: inline-block;
-      padding: 5px 0px;
+          border: 1px solid #cccccc; }
+        .csseditor .tool-menu .items .icon.circle {
+          background-color: transparent;
+          border: 1px solid #cccccc;
+          border-radius: 100%; }
+        .csseditor .tool-menu .items .icon.show-grid {
+          background-color: transparent;
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black), linear-gradient(to right, black, black), linear-gradient(to right, black, black), linear-gradient(to right, black, black), linear-gradient(to right, black, black), linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 100%, 1px 100%, 1px 100%,1px 100%,100% 1px, 100% 1px, 100% 1px, 100% 1px;
+          background-position: 3px 0px, 27px 0px, 11px 0px, 19px 0px, 0px 3px, 0px 11px, 0px 19px, 0px 27px;
+          background-repeat: no-repeat; }
+  .csseditor .shapes {
+    position: relative;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box; }
+    .csseditor .shapes > h1 {
+      font-size: 13px;
+      margin: 0 auto;
+      padding: 5px;
+      background-color: #ececec;
+      font-weight: bold; }
+    .csseditor .shapes .shapes-list {
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      height: 100%;
-      vertical-align: middle; }
-      .csseditor .tool-menu .add-items label {
-        vertical-align: middle;
-        display: inline-block;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        padding: 5px; }
-      .csseditor .tool-menu .add-items button {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr; }
+      .csseditor .shapes .shapes-list button {
+        height: 62px;
         background-color: transparent;
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
         display: inline-block;
-        width: 28px;
-        height: 28px;
+        margin: 10px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         border: 1px solid #ececec;
         cursor: pointer;
         position: relative;
         pointer-events: all;
-        vertical-align: middle;
-        margin-bottom: 2px; }
-        .csseditor .tool-menu .add-items button:first-child {
-          margin-right: 1px; }
-        .csseditor .tool-menu .add-items button.rect {
+        vertical-align: middle; }
+        .csseditor .shapes .shapes-list button.rect {
           border-color: #333;
           background-color: #333; }
-        .csseditor .tool-menu .add-items button.circle {
+        .csseditor .shapes .shapes-list button.circle {
           border-color: #333;
           border-radius: 50%;
           background-color: #333; }
-        .csseditor .tool-menu .add-items button.view-sample {
-          width: 30px;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          position: relative; }
-          .csseditor .tool-menu .add-items button.view-sample.arrow {
-            background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
-            background-size: 5px 5px;
-            background-repeat: round; }
-    .csseditor .tool-menu .gradient-type {
-      padding-top: 1px; }
-    .csseditor .tool-menu .gradient-sample-list {
-      display: inline-block;
-      height: 30px;
-      width: 30px;
-      vertical-align: middle;
-      position: relative;
-      text-align: center;
-      border: 1px solid #f1f1f1;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      margin-bottom: 2px; }
-      .csseditor .tool-menu .gradient-sample-list.arrow {
-        background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
-        background-size: 5px 5px;
-        background-repeat: round; }
   .csseditor .pages {
     display: none;
     position: absolute;
     left: 0px;
-    width: 70px;
+    right: 0px;
     top: 0px;
     bottom: 0px;
+    overflow: auto;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     background-color: rgba(199, 199, 199, 0.2);
@@ -1919,30 +1858,35 @@ html, body {
           background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
           background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
           background-size: 1px 30px, 30px 1px;
-          background-position: center 20px, 20px center;
+          background-position: center center, center center;
           background-repeat: no-repeat; }
       .csseditor .pages .page-list .tree-item {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         cursor: pointer;
         position: relative;
-        height: 80px;
-        text-align: center;
+        height: 50px;
         padding: 10px 10px;
         vertical-align: top; }
         .csseditor .pages .page-list .tree-item.selected {
-          background-color: #a7a7a7;
+          background-color: white;
           border-right: 1px solid white;
+          border-bottom: 1px solid #cccccc;
           margin-right: -1px; }
+          .csseditor .pages .page-list .tree-item.selected:not(:first-child) {
+            border-top: 1px solid #cccccc; }
         .csseditor .pages .page-list .tree-item .item-preview {
-          height: 50px;
-          width: 100%;
+          height: 40px;
+          width: 40px;
           background-color: #333;
           border-radius: 3px;
           margin-bottom: 5px;
-          pointer-events: none; }
+          pointer-events: none;
+          display: inline-block;
+          vertical-align: middle; }
         .csseditor .pages .page-list .tree-item .item-title {
           display: inline-block;
+          vertical-align: middle;
           font-size: 12px;
           pointer-events: none; }
   .csseditor .layout-main.expertor-mode .pages .page-list .tree-item {
@@ -2001,7 +1945,6 @@ html, body {
           -ms-flex: 1 1 auto;
               flex: 1 1 auto;
       overflow: auto;
-      border-top: 1px solid #ececec;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       position: relative;
@@ -2059,10 +2002,16 @@ html, body {
               -webkit-transform: translateY(-50%);
                       transform: translateY(-50%); }
   .csseditor .layer-toolbar {
-    background-color: white;
+    position: absolute;
+    z-index: 5;
+    left: 0px;
+    right: 0px;
+    top: 0px;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
-    padding: 3px 10px; }
+    padding: 3px 0px;
+    display: inline-block;
+    text-align: center; }
     .csseditor .layer-toolbar .panel-toolbar {
       display: inline-block;
       vertical-align: middle;
@@ -2114,7 +2063,7 @@ html, body {
       vertical-align: middle;
       margin-right: 10px; }
     .csseditor .layer-toolbar .group-align {
-      float: right; }
+      text-align: center; }
       .csseditor .layer-toolbar .group-align button {
         -webkit-appearance: none;
            -moz-appearance: none;
@@ -2127,6 +2076,8 @@ html, body {
         border: 0px;
         outline: none;
         cursor: pointer;
+        -webkit-transform: scale(0.6);
+                transform: scale(0.6);
         background-color: white; }
         .csseditor .layer-toolbar .group-align button[data-value="left"] {
           background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
@@ -2177,8 +2128,7 @@ html, body {
           background-size: 2px 24px, 10px 18px, 2px 24px;
           background-position: 6px 3px, 11px 6px, 24px 3px; }
     .csseditor .layer-toolbar .group-order {
-      float: right;
-      margin-right: 20px; }
+      text-align: center; }
       .csseditor .layer-toolbar .group-order button {
         margin-right: 10px;
         -webkit-appearance: none;
@@ -2192,6 +2142,8 @@ html, body {
         border: 0px;
         outline: none;
         cursor: pointer;
+        -webkit-transform: scale(0.7);
+                transform: scale(0.7);
         background-color: white; }
         .csseditor .layer-toolbar .group-order button[data-value="forward"] {
           background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
@@ -2276,6 +2228,7 @@ html, body {
     border-left: 1px solid #ececec; }
     .csseditor .image-list .tree-item {
       display: inline-block;
+      margin-bottom: 5px;
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -2558,8 +2511,9 @@ html, body {
             box-sizing: border-box;
     left: 0px;
     right: 0px;
-    top: 0px;
-    bottom: 0px; }
+    top: 65px;
+    bottom: 0px;
+    border-top: 1px solid #cccccc; }
     .csseditor .feature-control .feature {
       display: none;
       position: absolute;
@@ -2636,49 +2590,68 @@ html, body {
               flex: none;
       height: 30px;
       border-bottom: 1px solid #cccccc; }
-  .csseditor .gradient-type {
+  .csseditor .gradient-type > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .csseditor .gradient-type label {
+    font-size: 12px;
+    vertical-align: middle;
     display: inline-block;
-    vertical-align: top; }
-    .csseditor .gradient-type label {
-      font-size: 12px;
-      vertical-align: middle;
+    min-width: 60px; }
+  .csseditor .gradient-type .gradient-item {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    border: 1px solid #ececec;
+    cursor: pointer;
+    position: relative;
+    pointer-events: all;
+    vertical-align: middle;
+    margin: 2px;
+    padding: 5px 0px;
+    font-size: 11px;
+    text-align: center; }
+    .csseditor .gradient-type .gradient-item:before {
+      content: "";
       display: inline-block;
-      min-width: 60px; }
-    .csseditor .gradient-type .gradient-item {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      border: 1px solid #ececec;
-      cursor: pointer;
-      position: relative;
-      pointer-events: all;
-      vertical-align: middle;
-      margin-bottom: 2px; }
-      .csseditor .gradient-type .gradient-item:first-child {
-        margin-right: 1px; }
-      .csseditor .gradient-type .gradient-item.selected {
-        border-color: black; }
-      .csseditor .gradient-type .gradient-item.static {
-        background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
-        background-image: linear-gradient(to right, #333, #333); }
-      .csseditor .gradient-type .gradient-item.linear {
-        background-image: -webkit-gradient(linear, left top, right top, from(black), to(gray));
-        background-image: linear-gradient(to right, black, gray); }
-      .csseditor .gradient-type .gradient-item.radial {
-        background-image: radial-gradient(closest-side, black, #ebf8e1, gray); }
-      .csseditor .gradient-type .gradient-item.conic {
-        background-image: conic-gradient(black, #ebf8e1); }
-      .csseditor .gradient-type .gradient-item.repeating-linear {
-        background-image: repeating-linear-gradient(45deg, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
-      .csseditor .gradient-type .gradient-item.repeating-radial {
-        background-image: repeating-radial-gradient(circle, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
-      .csseditor .gradient-type .gradient-item.repeating-conic {
-        background-image: repeating-conic-gradient(#3f87a6, #ebf8e1 5%, #f69d3c 10%); }
-      .csseditor .gradient-type .gradient-item.image {
+      width: 30px;
+      height: 30px;
+      margin: 0 auto; }
+    .csseditor .gradient-type .gradient-item:after {
+      content: attr(title);
+      display: block; }
+    .csseditor .gradient-type .gradient-item:first-child {
+      margin-right: 1px; }
+    .csseditor .gradient-type .gradient-item.selected {
+      border-color: black; }
+    .csseditor .gradient-type .gradient-item.static:before {
+      background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
+      background-image: linear-gradient(to right, #333, #333); }
+    .csseditor .gradient-type .gradient-item.linear:before {
+      background-image: -webkit-gradient(linear, left top, right top, from(black), to(gray));
+      background-image: linear-gradient(to right, black, gray); }
+    .csseditor .gradient-type .gradient-item.radial:before {
+      background-image: radial-gradient(closest-side, black, #ebf8e1, gray); }
+    .csseditor .gradient-type .gradient-item.conic:before {
+      background-image: conic-gradient(black, #ebf8e1); }
+    .csseditor .gradient-type .gradient-item.repeating-linear:before {
+      background-image: repeating-linear-gradient(45deg, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
+    .csseditor .gradient-type .gradient-item.repeating-radial:before {
+      background-image: repeating-radial-gradient(circle, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
+    .csseditor .gradient-type .gradient-item.repeating-conic:before {
+      background-image: repeating-conic-gradient(#3f87a6, #ebf8e1 5%, #f69d3c 10%); }
+    .csseditor .gradient-type .gradient-item.image {
+      overflow: hidden; }
+      .csseditor .gradient-type .gradient-item.image:before {
+        display: none; }
+      .csseditor .gradient-type .gradient-item.image > div {
+        position: relative;
+        margin: 0 auto;
+        width: 30px;
+        height: 30px;
+        display: inline-block;
         overflow: hidden; }
-        .csseditor .gradient-type .gradient-item.image .m1 {
+        .csseditor .gradient-type .gradient-item.image > div .m1 {
           width: 100%;
           height: 100%;
           position: absolute;
@@ -2687,7 +2660,7 @@ html, body {
           left: -20%;
           -webkit-transform: rotate(45deg);
                   transform: rotate(45deg); }
-        .csseditor .gradient-type .gradient-item.image .m2 {
+        .csseditor .gradient-type .gradient-item.image > div .m2 {
           width: 100%;
           height: 100%;
           position: absolute;
@@ -2696,7 +2669,7 @@ html, body {
           left: 40%;
           -webkit-transform: rotate(45deg);
                   transform: rotate(45deg); }
-        .csseditor .gradient-type .gradient-item.image .m3 {
+        .csseditor .gradient-type .gradient-item.image > div .m3 {
           width: 6px;
           height: 6px;
           border-radius: 50%;
@@ -2839,7 +2812,7 @@ html, body {
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 15px;
+    top: 45px;
     width: 400px;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
@@ -3021,7 +2994,7 @@ html, body {
     position: absolute;
     left: 300px;
     right: 0px;
-    top: 80px;
+    top: 132px;
     bottom: 0px;
     background-color: rgba(255, 255, 255, 0.9);
     z-index: 100000;
@@ -3033,15 +3006,18 @@ html, body {
       top: 0px;
       display: inline-block;
       font-weight: 500; }
-    .csseditor .gradient-sample-view .gradient-sample-list {
-      position: absolute;
-      top: 40px;
-      left: 40px;
-      right: 40px;
-      bottom: 40px;
-      text-align: left;
-      overflow: auto; }
-      .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image {
+  .csseditor .gradient-sample-list {
+    position: relative; }
+    .csseditor .gradient-sample-list > h1 {
+      font-size: 13px;
+      margin: 0 auto;
+      padding: 5px;
+      background-color: #ececec;
+      font-weight: bold; }
+    .csseditor .gradient-sample-list .cached-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr; }
+      .csseditor .gradient-sample-list .cached-list .add-current-image {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
@@ -3052,38 +3028,44 @@ html, body {
         line-height: 0px;
         font-weight: 100;
         cursor: pointer; }
-      .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty {
-        width: 160px;
-        height: 120px;
+      .csseditor .gradient-sample-list .cached-list .gradient-sample-item, .csseditor .gradient-sample-list .cached-list .gradient-cached-item, .csseditor .gradient-sample-list .cached-list .add-current-image, .csseditor .gradient-sample-list .cached-list .empty {
         display: inline-block;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        position: relative; }
-        .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item:not(.empty), .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item:not(.empty), .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image:not(.empty), .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid #cccccc; }
-        .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty .item-tools {
+        position: relative;
+        margin: 2px;
+        padding: 10px 0px;
+        font-size: 11px;
+        height: 60px;
+        text-align: center; }
+        .csseditor .gradient-sample-list .cached-list .gradient-sample-item:not(.empty), .csseditor .gradient-sample-list .cached-list .gradient-cached-item:not(.empty), .csseditor .gradient-sample-list .cached-list .add-current-image:not(.empty), .csseditor .gradient-sample-list .cached-list .empty:not(.empty) {
+          border: 1px solid rgba(204, 204, 204, 0.5); }
+        .csseditor .gradient-sample-list .cached-list .gradient-sample-item .preview, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .preview, .csseditor .gradient-sample-list .cached-list .add-current-image .preview, .csseditor .gradient-sample-list .cached-list .empty .preview {
+          display: inline-block;
+          width: 30px;
+          height: 30px;
+          margin: 0 auto; }
+        .csseditor .gradient-sample-list .cached-list .gradient-sample-item .item-tools, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .item-tools, .csseditor .gradient-sample-list .cached-list .add-current-image .item-tools, .csseditor .gradient-sample-list .cached-list .empty .item-tools {
           position: absolute;
           left: 0px;
           top: 0px;
           right: 0px;
           bottom: 0px;
           display: none;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgba(0, 0, 0, 0.2);
           text-align: center;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
-          padding: 40px 20px; }
-          .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item .item-tools button, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item .item-tools button, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image .item-tools button, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty .item-tools button {
+          padding: 20px 5px; }
+          .csseditor .gradient-sample-list .cached-list .gradient-sample-item .item-tools button, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .item-tools button, .csseditor .gradient-sample-list .cached-list .add-current-image .item-tools button, .csseditor .gradient-sample-list .cached-list .empty .item-tools button {
             -webkit-appearance: none;
                -moz-appearance: none;
                     appearance: none;
             background-color: rgba(0, 0, 0, 0.5);
             color: white;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
+            font-size: 14px;
+            width: 20px;
+            height: 20px;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
             border-radius: 50%;
@@ -3092,32 +3074,30 @@ html, body {
             line-height: 0;
             cursor: pointer;
             outline: none; }
-            .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item .item-tools button.add-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item .item-tools button.add-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image .item-tools button.add-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty .item-tools button.add-item {
+            .csseditor .gradient-sample-list .cached-list .gradient-sample-item .item-tools button.add-item, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .item-tools button.add-item, .csseditor .gradient-sample-list .cached-list .add-current-image .item-tools button.add-item, .csseditor .gradient-sample-list .cached-list .empty .item-tools button.add-item {
               -webkit-transform: rotate(45deg);
                       transform: rotate(45deg); }
-            .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item .item-tools button.change-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item .item-tools button.change-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image .item-tools button.change-item, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty .item-tools button.change-item {
+            .csseditor .gradient-sample-list .cached-list .gradient-sample-item .item-tools button.change-item, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .item-tools button.change-item, .csseditor .gradient-sample-list .cached-list .add-current-image .item-tools button.change-item, .csseditor .gradient-sample-list .cached-list .empty .item-tools button.change-item {
               position: relative; }
-              .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item .item-tools button.change-item:before, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item .item-tools button.change-item:before, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image .item-tools button.change-item:before, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty .item-tools button.change-item:before {
+              .csseditor .gradient-sample-list .cached-list .gradient-sample-item .item-tools button.change-item:before, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .item-tools button.change-item:before, .csseditor .gradient-sample-list .cached-list .add-current-image .item-tools button.change-item:before, .csseditor .gradient-sample-list .cached-list .empty .item-tools button.change-item:before {
                 content: "";
                 position: absolute;
                 left: 50%;
                 top: 50%;
                 width: 10px;
                 height: 10px;
-                border: 2px solid white;
+                border: 1px solid white;
                 -webkit-box-sizing: border-box;
                         box-sizing: border-box;
                 -webkit-transform: translateX(-50%) translateY(-50%);
                         transform: translateX(-50%) translateY(-50%); }
-        .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-sample-item:hover .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .gradient-cached-item:hover .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .add-current-image:hover .item-tools, .csseditor .gradient-sample-view .gradient-sample-list .cached-list .empty:hover .item-tools {
+        .csseditor .gradient-sample-list .cached-list .gradient-sample-item:hover .item-tools, .csseditor .gradient-sample-list .cached-list .gradient-cached-item:hover .item-tools, .csseditor .gradient-sample-list .cached-list .add-current-image:hover .item-tools, .csseditor .gradient-sample-list .cached-list .empty:hover .item-tools {
           display: inline-block; }
-  .csseditor .layout-main.expertor-mode .gradient-sample-view {
-    top: 70px; }
   .csseditor .layer-sample-view {
     position: absolute;
     left: 300px;
     right: 0px;
-    top: 80px;
+    top: 132px;
     bottom: 0px;
     background-color: rgba(255, 255, 255, 0.95);
     z-index: 1000000;
@@ -3129,15 +3109,18 @@ html, body {
       top: 0px;
       display: inline-block;
       font-weight: 500; }
-    .csseditor .layer-sample-view .layer-sample-list {
-      position: absolute;
-      top: 40px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      text-align: center;
-      overflow: auto; }
-      .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer {
+  .csseditor .layer-sample-list {
+    position: relative; }
+    .csseditor .layer-sample-list > h1 {
+      font-size: 13px;
+      margin: 0 auto;
+      padding: 5px;
+      background-color: #ececec;
+      font-weight: bold; }
+    .csseditor .layer-sample-list .cached-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr; }
+      .csseditor .layer-sample-list .cached-list .add-current-layer {
         -webkit-appearance: none;
            -moz-appearance: none;
                 appearance: none;
@@ -3147,20 +3130,18 @@ html, body {
         font-size: 50px;
         line-height: 0px;
         font-weight: 100; }
-      .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item {
+      .csseditor .layer-sample-list .cached-list .layer-sample-item, .csseditor .layer-sample-list .cached-list .layer-cached-item {
         background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAJElEQVQYV2NctWrVfwYkEBYWxojMZ6SDAmT7QGx0K1EcRBsFAADeG/3M/HteAAAAAElFTkSuQmCC") repeat; }
-      .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty {
-        width: 160px;
-        height: 120px;
+      .csseditor .layer-sample-list .cached-list .layer-sample-item, .csseditor .layer-sample-list .cached-list .layer-cached-item, .csseditor .layer-sample-list .cached-list .add-current-layer, .csseditor .layer-sample-list .cached-list .empty {
+        height: 62px;
         display: inline-block;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        margin-right: 5px;
-        margin-bottom: 5px;
+        margin: 10px;
         position: relative; }
-        .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item:not(.empty), .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item:not(.empty), .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer:not(.empty), .csseditor .layer-sample-view .layer-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid #cccccc, 0.5; }
-        .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty .item-tools {
+        .csseditor .layer-sample-list .cached-list .layer-sample-item:not(.empty), .csseditor .layer-sample-list .cached-list .layer-cached-item:not(.empty), .csseditor .layer-sample-list .cached-list .add-current-layer:not(.empty), .csseditor .layer-sample-list .cached-list .empty:not(.empty) {
+          border: 1px solid rgba(204, 204, 204, 0.5); }
+        .csseditor .layer-sample-list .cached-list .layer-sample-item .item-tools, .csseditor .layer-sample-list .cached-list .layer-cached-item .item-tools, .csseditor .layer-sample-list .cached-list .add-current-layer .item-tools, .csseditor .layer-sample-list .cached-list .empty .item-tools {
           position: absolute;
           left: 0px;
           top: 0px;
@@ -3171,30 +3152,30 @@ html, body {
           text-align: center;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
-          padding: 40px 20px; }
-          .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item .item-tools button, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item .item-tools button, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer .item-tools button, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty .item-tools button {
+          padding: 20px 0px; }
+          .csseditor .layer-sample-list .cached-list .layer-sample-item .item-tools button, .csseditor .layer-sample-list .cached-list .layer-cached-item .item-tools button, .csseditor .layer-sample-list .cached-list .add-current-layer .item-tools button, .csseditor .layer-sample-list .cached-list .empty .item-tools button {
             -webkit-appearance: none;
                -moz-appearance: none;
                     appearance: none;
             background-color: rgba(0, 0, 0, 0.5);
             color: white;
             font-size: 20px;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
             border-radius: 50%;
-            padding: 5px;
+            padding: 3px;
             text-align: center;
             line-height: 0;
             cursor: pointer;
             outline: none; }
-            .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item .item-tools button.add-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item .item-tools button.add-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer .item-tools button.add-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty .item-tools button.add-item {
+            .csseditor .layer-sample-list .cached-list .layer-sample-item .item-tools button.add-item, .csseditor .layer-sample-list .cached-list .layer-cached-item .item-tools button.add-item, .csseditor .layer-sample-list .cached-list .add-current-layer .item-tools button.add-item, .csseditor .layer-sample-list .cached-list .empty .item-tools button.add-item {
               -webkit-transform: rotate(45deg);
                       transform: rotate(45deg); }
-            .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item .item-tools button.change-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item .item-tools button.change-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer .item-tools button.change-item, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty .item-tools button.change-item {
+            .csseditor .layer-sample-list .cached-list .layer-sample-item .item-tools button.change-item, .csseditor .layer-sample-list .cached-list .layer-cached-item .item-tools button.change-item, .csseditor .layer-sample-list .cached-list .add-current-layer .item-tools button.change-item, .csseditor .layer-sample-list .cached-list .empty .item-tools button.change-item {
               position: relative; }
-              .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item .item-tools button.change-item:before, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item .item-tools button.change-item:before, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer .item-tools button.change-item:before, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty .item-tools button.change-item:before {
+              .csseditor .layer-sample-list .cached-list .layer-sample-item .item-tools button.change-item:before, .csseditor .layer-sample-list .cached-list .layer-cached-item .item-tools button.change-item:before, .csseditor .layer-sample-list .cached-list .add-current-layer .item-tools button.change-item:before, .csseditor .layer-sample-list .cached-list .empty .item-tools button.change-item:before {
                 content: "";
                 position: absolute;
                 left: 50%;
@@ -3206,15 +3187,13 @@ html, body {
                         box-sizing: border-box;
                 -webkit-transform: translateX(-50%) translateY(-50%);
                         transform: translateX(-50%) translateY(-50%); }
-        .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-sample-item:hover .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .layer-cached-item:hover .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .add-current-layer:hover .item-tools, .csseditor .layer-sample-view .layer-sample-list .cached-list .empty:hover .item-tools {
+        .csseditor .layer-sample-list .cached-list .layer-sample-item:hover .item-tools, .csseditor .layer-sample-list .cached-list .layer-cached-item:hover .item-tools, .csseditor .layer-sample-list .cached-list .add-current-layer:hover .item-tools, .csseditor .layer-sample-list .cached-list .empty:hover .item-tools {
           display: inline-block; }
-  .csseditor .layout-main.expertor-mode .layer-sample-view {
-    top: 70px; }
   .csseditor .page-sample-view {
     position: absolute;
     left: 0px;
     right: 0px;
-    top: 40px;
+    top: 66px;
     bottom: 0px;
     background-color: rgba(255, 255, 255, 0.99);
     z-index: 1000001;
@@ -3226,86 +3205,78 @@ html, body {
       top: 0px;
       display: inline-block;
       font-weight: 500; }
-    .csseditor .page-sample-view .page-sample-list {
-      position: absolute;
-      top: 40px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      text-align: center;
-      overflow: auto; }
-      .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page {
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
+  .csseditor .page-sample-list .cached-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; }
+    .csseditor .page-sample-list .cached-list .add-current-page {
+      -webkit-appearance: none;
+         -moz-appearance: none;
+              appearance: none;
+      border: 1px solid #cccccc;
+      vertical-align: top;
+      background-color: white;
+      font-size: 50px;
+      line-height: 0px;
+      font-weight: 100;
+      cursor: pointer; }
+    .csseditor .page-sample-list .cached-list .page-sample-item, .csseditor .page-sample-list .cached-list .page-cached-item, .csseditor .page-sample-list .cached-list .add-current-page, .csseditor .page-sample-list .cached-list .empty {
+      height: 70px;
+      display: inline-block;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      position: relative;
+      margin: 5px; }
+      .csseditor .page-sample-list .cached-list .page-sample-item:not(.empty), .csseditor .page-sample-list .cached-list .page-cached-item:not(.empty), .csseditor .page-sample-list .cached-list .add-current-page:not(.empty), .csseditor .page-sample-list .cached-list .empty:not(.empty) {
         border: 1px solid #cccccc;
-        vertical-align: top;
-        background-color: white;
-        font-size: 50px;
-        line-height: 0px;
-        font-weight: 100; }
-      .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page, .csseditor .page-sample-view .page-sample-list .cached-list .empty {
-        width: 160px;
-        height: 160px;
-        display: inline-block;
+        background-color: white; }
+      .csseditor .page-sample-list .cached-list .page-sample-item .item-tools, .csseditor .page-sample-list .cached-list .page-cached-item .item-tools, .csseditor .page-sample-list .cached-list .add-current-page .item-tools, .csseditor .page-sample-list .cached-list .empty .item-tools {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        display: none;
+        background-color: rgba(0, 0, 0, 0.5);
+        text-align: center;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        position: relative; }
-        .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item:not(.empty), .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item:not(.empty), .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page:not(.empty), .csseditor .page-sample-view .page-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid #cccccc;
-          background-color: white; }
-        .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .empty .item-tools {
-          position: absolute;
-          left: 0px;
-          top: 0px;
-          right: 0px;
-          bottom: 0px;
-          display: none;
+        padding: 20px 0px; }
+        .csseditor .page-sample-list .cached-list .page-sample-item .item-tools button, .csseditor .page-sample-list .cached-list .page-cached-item .item-tools button, .csseditor .page-sample-list .cached-list .add-current-page .item-tools button, .csseditor .page-sample-list .cached-list .empty .item-tools button {
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
           background-color: rgba(0, 0, 0, 0.5);
-          text-align: center;
+          color: white;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
-          padding: 40px 20px; }
-          .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item .item-tools button, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item .item-tools button, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page .item-tools button, .csseditor .page-sample-view .page-sample-list .cached-list .empty .item-tools button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            border-radius: 50%;
-            padding: 5px;
-            text-align: center;
-            line-height: 0;
-            cursor: pointer;
-            outline: none; }
-            .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item .item-tools button.add-item, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item .item-tools button.add-item, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page .item-tools button.add-item, .csseditor .page-sample-view .page-sample-list .cached-list .empty .item-tools button.add-item {
-              -webkit-transform: rotate(45deg);
-                      transform: rotate(45deg); }
-            .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item .item-tools button.change-item, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item .item-tools button.change-item, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page .item-tools button.change-item, .csseditor .page-sample-view .page-sample-list .cached-list .empty .item-tools button.change-item {
-              position: relative; }
-              .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item .item-tools button.change-item:before, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item .item-tools button.change-item:before, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page .item-tools button.change-item:before, .csseditor .page-sample-view .page-sample-list .cached-list .empty .item-tools button.change-item:before {
-                content: "";
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 10px;
-                height: 10px;
-                border: 2px solid white;
-                -webkit-box-sizing: border-box;
-                        box-sizing: border-box;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-        .csseditor .page-sample-view .page-sample-list .cached-list .page-sample-item:hover .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .page-cached-item:hover .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .add-current-page:hover .item-tools, .csseditor .page-sample-view .page-sample-list .cached-list .empty:hover .item-tools {
-          display: inline-block; }
-  .csseditor .layout-main.expertor-mode .page-sample-view {
-    top: 30px; }
+          border-radius: 50%;
+          padding: 3px;
+          text-align: center;
+          line-height: 0;
+          cursor: pointer;
+          outline: none; }
+          .csseditor .page-sample-list .cached-list .page-sample-item .item-tools button.add-item, .csseditor .page-sample-list .cached-list .page-cached-item .item-tools button.add-item, .csseditor .page-sample-list .cached-list .add-current-page .item-tools button.add-item, .csseditor .page-sample-list .cached-list .empty .item-tools button.add-item {
+            -webkit-transform: rotate(45deg);
+                    transform: rotate(45deg); }
+          .csseditor .page-sample-list .cached-list .page-sample-item .item-tools button.change-item, .csseditor .page-sample-list .cached-list .page-cached-item .item-tools button.change-item, .csseditor .page-sample-list .cached-list .add-current-page .item-tools button.change-item, .csseditor .page-sample-list .cached-list .empty .item-tools button.change-item {
+            position: relative; }
+            .csseditor .page-sample-list .cached-list .page-sample-item .item-tools button.change-item:before, .csseditor .page-sample-list .cached-list .page-cached-item .item-tools button.change-item:before, .csseditor .page-sample-list .cached-list .add-current-page .item-tools button.change-item:before, .csseditor .page-sample-list .cached-list .empty .item-tools button.change-item:before {
+              content: "";
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              width: 10px;
+              height: 10px;
+              border: 2px solid white;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              -webkit-transform: translateX(-50%) translateY(-50%);
+                      transform: translateX(-50%) translateY(-50%); }
+      .csseditor .page-sample-list .cached-list .page-sample-item:hover .item-tools, .csseditor .page-sample-list .cached-list .page-cached-item:hover .item-tools, .csseditor .page-sample-list .cached-list .add-current-page:hover .item-tools, .csseditor .page-sample-list .cached-list .empty:hover .item-tools {
+        display: inline-block; }
   .csseditor .page-view {
     position: absolute;
     left: 0px;
@@ -3970,6 +3941,113 @@ html, body {
       .csseditor .page-view .colorpicker-layer .colorsets .menu .color-sets-choose-btn {
         background-color: transparent;
         border: 0px; }
+  .csseditor .group-align {
+    text-align: center; }
+    .csseditor .group-align button {
+      -webkit-appearance: none;
+         -moz-appearance: none;
+              appearance: none;
+      width: 30px;
+      height: 30px;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      display: inline-block;
+      border: 0px;
+      outline: none;
+      cursor: pointer;
+      -webkit-transform: scale(0.6);
+              transform: scale(0.6);
+      background-color: white; }
+      .csseditor .group-align button[data-value="left"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 20px 8px, 16px 8px, 2px 24px;
+        background-position: 6px 6px, 6px 16px, 2px 3px; }
+      .csseditor .group-align button[data-value="right"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 20px 8px, 16px 8px, 2px 24px;
+        background-position: 5px 6px, 9px 16px, 27px 3px; }
+      .csseditor .group-align button[data-value="center"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 20px 8px, 16px 8px, 2px 24px;
+        background-position: 5px 6px, 7px 16px, 14px 3px; }
+      .csseditor .group-align button[data-value="middle"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 8px 20px, 8px 16px, 24px 2px;
+        background-position: 6px 5px, 16px 7px, 3px 14px; }
+      .csseditor .group-align button[data-value="top"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 8px 20px, 8px 16px, 24px 2px;
+        background-position: 6px 8px, 16px 8px, 3px 4px; }
+      .csseditor .group-align button[data-value="bottom"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 8px 20px, 8px 16px, 24px 2px;
+        background-position: 6px 4px, 16px 8px, 3px 26px; }
+      .csseditor .group-align button[data-value="vertical"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
+        background-repeat: no-repeat;
+        background-size: 24px 2px, 18px 10px, 24px 2px;
+        background-position: 3px 6px, 6px 11px, 3px 24px; }
+      .csseditor .group-align button[data-value="horizontal"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
+        background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
+        background-repeat: no-repeat;
+        background-size: 2px 24px, 10px 18px, 2px 24px;
+        background-position: 6px 3px, 11px 6px, 24px 3px; }
+  .csseditor .group-order {
+    text-align: center; }
+    .csseditor .group-order button {
+      margin-right: 10px;
+      -webkit-appearance: none;
+         -moz-appearance: none;
+              appearance: none;
+      width: 30px;
+      height: 30px;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      display: inline-block;
+      border: 0px;
+      outline: none;
+      cursor: pointer;
+      -webkit-transform: scale(0.7);
+              transform: scale(0.7);
+      background-color: white; }
+      .csseditor .group-order button[data-value="forward"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+        background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+        background-repeat: no-repeat;
+        background-size: 18px 18px,20px 20px,16px 16px,18px 18px;
+        background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+      .csseditor .group-order button[data-value="backward"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 16px 16px,18px 18px,18px 18px,20px 20px;
+        background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+      .csseditor .group-order button[data-value="front"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+        background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+        background-repeat: no-repeat;
+        background-size: 16px 16px,18px 18px,16px 16px,18px 18px,16px 16px,18px 18px;
+        background-position: 6px 6px, 5px 5px, 1px 1px, 0px 0px, 11px 11px, 10px 10px; }
+      .csseditor .group-order button[data-value="back"] {
+        background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+        background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+        background-repeat: no-repeat;
+        background-size: 12px 12px,14px 14px,12px 12px,14px 14px,18px 18px,20px 20px;
+        background-position: 1px 1px, 0px 0px, 15px 15px, 14px 14px,5px 5px, 4px 4px; }
   .csseditor .drag-angle-rect {
     position: absolute;
     display: none;
@@ -4947,6 +5025,7 @@ html, body {
         .csseditor .property-view .property-item.sample-list .gradient-sample-list .gradient-cached-item:first-child {
           margin-left: 0px; }
         .csseditor .property-view .property-item.sample-list .gradient-sample-list .cached-list {
+          margin-top: 10px;
           display: inline-block;
           vertical-align: middle; }
         .csseditor .property-view .property-item.sample-list .gradient-sample-list .tools {
@@ -5233,7 +5312,7 @@ html, body {
         background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.5)), to(rgba(128, 128, 128, 0.5)));
         background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(128, 128, 128, 0.5)); }
       .csseditor .property-view .property-item .group-align {
-        float: right; }
+        text-align: center; }
         .csseditor .property-view .property-item .group-align button {
           -webkit-appearance: none;
              -moz-appearance: none;
@@ -5246,6 +5325,8 @@ html, body {
           border: 0px;
           outline: none;
           cursor: pointer;
+          -webkit-transform: scale(0.6);
+                  transform: scale(0.6);
           background-color: white; }
           .csseditor .property-view .property-item .group-align button[data-value="left"] {
             background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
@@ -5296,8 +5377,7 @@ html, body {
             background-size: 2px 24px, 10px 18px, 2px 24px;
             background-position: 6px 3px, 11px 6px, 24px 3px; }
       .csseditor .property-view .property-item .group-order {
-        float: right;
-        margin-right: 20px; }
+        text-align: center; }
         .csseditor .property-view .property-item .group-order button {
           margin-right: 10px;
           -webkit-appearance: none;
@@ -5311,6 +5391,8 @@ html, body {
           border: 0px;
           outline: none;
           cursor: pointer;
+          -webkit-transform: scale(0.7);
+                  transform: scale(0.7);
           background-color: white; }
           .csseditor .property-view .property-item .group-order button[data-value="forward"] {
             background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));

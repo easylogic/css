@@ -18,7 +18,7 @@ $align-sub-color: #ccc;
 
 
 .group-align {
-    float:right;
+    text-align: center;
     button {
         appearance: none;
         width: 30px;
@@ -28,6 +28,7 @@ $align-sub-color: #ccc;
         border:0px;
         outline: none;
         cursor:pointer;
+        transform: scale(0.6);
         background-color: white;
 
         &[data-value="left"] {
@@ -81,8 +82,7 @@ $align-sub-color: #ccc;
 }
 
 .group-order {
-    float:right;
-    margin-right: 20px;
+    text-align: center;
     button {
         margin-right: 10px;
         appearance: none;
@@ -93,6 +93,7 @@ $align-sub-color: #ccc;
         border:0px;
         outline: none;
         cursor:pointer;
+        transform: scale(0.7);
         background-color: white;
 
         $main-box-color: yellow;

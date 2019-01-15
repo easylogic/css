@@ -8,7 +8,7 @@ export default class ImageTabView extends BaseTab {
     template () {
         return `
             <div class="tab horizontal">
-                <div class="tab-header" ref="$header">
+                <div class="tab-header no-border" ref="$header">
                     <div class="tab-item selected" data-id="gradient">Gradient</div>
                     <div class="tab-item" data-id="css">CSS</div>
                 </div>

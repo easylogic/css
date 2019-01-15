@@ -1,7 +1,13 @@
 .layer-toolbar {
-    background-color: white;
+    position: absolute;
+    z-index: 5;
+    left: 0px;
+    right: 0px;
+    top: 0px;
     box-sizing: border-box;
-    padding: 3px 10px;
+    padding: 3px 0px;
+    display:inline-block;
+    text-align: center;
 
     .panel-toolbar {
         display:inline-block;

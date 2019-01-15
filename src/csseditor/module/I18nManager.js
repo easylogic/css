@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import i18n, { LANG_EN, LANG_KO } from "./i18n/index";
 import { ACTION, GETTER } from "../../util/Store";
+import { CHANGE_EDITOR } from "../types/event";
 
 export default class I18nManager extends BaseModule {
 
@@ -11,7 +12,7 @@ export default class I18nManager extends BaseModule {
     }
 
     afterDispatch() {
-        this.emit('changeEditor');
+        this.emit(CHANGE_EDITOR);
     }
 
     [ACTION('i18n/change/language')] ($store, lang = LANG_EN) {

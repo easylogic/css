@@ -4,8 +4,8 @@ $selected-color: #cccccc;
 $font-color: black;
 $pointer-color: rgba(#ececec, 0.8);
 $gutter: 8px;
-$tool-size: 40px;
-$top-size: 40px;
+$tool-size: 66px;
+$top-size: 50px;
 $left-size: 300px;
 $left-layer-panel: 70px;
 $left-page-size: 70px;
@@ -38,127 +38,21 @@ $layer-toolbar-height: 0px;
     }
 
 
-    &.has-page-panel {
-
-        .select-layer-view {
-            .pages {
-                display: block; 
-            }
-    
-            .item-info {
-                .page-info {
-                    display: block;
-                }
-    
-                left: $left-page-size;
-    
-                .layers {
-                    top: 0px;
-                }
-            }
+    .select-layer-view {
+        .pages {
+            display: block; 
         }
 
-    }    
-
-    &.has-layer-panel {
-        
-        .layout-left {
-            width: $left-layer-panel;
-
-            .select-layer-view {
-                .item-info {
-                    .page-info {
-                        display: none;
-                    }
-    
-                    .layers.show-mini-view {
-                        .title {
-                            display: none;
-                        }
-                    }
-                }
-            }     
-
-            .layer-list {
-                padding-left:0px;
-                padding-right: 0px;
-                border-top: 0px; 
-                .tree-item {
-                    padding: 8px;
-                    border-left: 0px;
-                    height: auto;
-
-                    &.selected {
-                        background-color: #333;
-                    }
-
-                    .item-view-container {
-                        width: 100%;
-                        height: 53px;
-                    }        
-                    
-                    .item-title, .item-tools {
-                        display: none;
-                    }            
-                }
-                .gradient-list-group {
-                    display:none;
-                }
+        .item-info {
+            .page-info {
+                display: block;
             }
-        }
 
-        .layout-body {
-            left: $left-layer-panel + $gradient-box-size;
-        }
-    }
+            left: $left-page-size;
 
-    &.has-page-panel.has-layer-panel {
-        .select-layer-view {
-            .item-info {
-                .page-info {
-                    display: none;
-                }
-
-                .layers.show-mini-view {
-                    .title {
-                        display: none;
-                    }
-                }
+            .layers {
+                top: 0px;
             }
-        }        
-        .layout-left {
-            width: $left-page-size + $left-layer-panel;
-
-            .layer-list {
-                padding-left:0px;
-                padding-right: 0px;
-                border-top: 0px;                 
-                .tree-item {
-                    padding: 8px;
-                    border-left: 0px;
-                    height: auto;     
-
-                    &.selected {
-                        background-color: #333;
-                    }
-
-                    .item-view-container {
-                        width: 100%;
-                        height: 53px;
-                    }
-
-                    .item-title, .item-tools {
-                        display: none;
-                    }
-
-                }                
-                .gradient-list-group {
-                    display:none;
-                }
-            }
-        }        
-        .layout-body {
-            left: $left-page-size + $left-layer-panel + $gradient-box-size;
         }
     }
 
@@ -170,7 +64,8 @@ $layer-toolbar-height: 0px;
         height: $tool-size;
         z-index: 1;         
         border-bottom: 1px solid $border-color;
-        box-sizing: border-box;
+        box-sizing: border-box; 
+        display: none;
     }
 
     .layout-right {
@@ -178,7 +73,7 @@ $layer-toolbar-height: 0px;
         right : 0px;
         // left: $left-size;
         width: $right-size;
-        top: $tool-size + $top-size;
+        top: 0px;
         bottom: 0px;
         // overflow: auto;
         box-sizing: border-box;
@@ -194,7 +89,7 @@ $layer-toolbar-height: 0px;
         position: absolute;
         left: 0px;
         width: $left-size;
-        top: $tool-size + $top-size;
+        top: $tool-size;
         bottom: 0px;
         box-sizing: border-box;
         border-right: 1px solid $border-color;
@@ -206,7 +101,7 @@ $layer-toolbar-height: 0px;
         position: absolute;
         left: $left-size + $gradient-box-size;
         right: $right-size;
-        top: $tool-size + $top-size;
+        top: $tool-size;
         bottom: 0px;
         box-sizing: border-box;
         // transition: $show-timeline-animation;        
@@ -215,7 +110,7 @@ $layer-toolbar-height: 0px;
     .layout-header {
         position: absolute;
         left: 0px;
-        right: 0px;
+        right: $right-size;
         height: $tool-size;
         top: 0px; 
         z-index: 0; 
@@ -223,29 +118,6 @@ $layer-toolbar-height: 0px;
         box-sizing: border-box;
         display: flex; 
         border-bottom: 1px solid $border-color;
-
-        .header-title {
-            width: $left-size;
-            padding: 0px 4px;
-            margin: 0px;
-            text-align: center;
-            font-size: 26px;
-            vertical-align: middle;
-            display: inline-block;
-            letter-spacing: 8px; 
-            flex: none;
-            display: block; 
-            box-sizing: border-box;
-            font-weight: 900;
-            line-height: 1.6;
-            background-image: linear-gradient(to top, #C6FFDD 0%,#FBD786 50%,#f7797d 100%);
-            background-size: auto;
-            background-blend-mode: multiply;
-            background-color: rgba(245,0,255,0);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
 
         .page-tab-menu {
             flex: 1 1 auto; 
@@ -278,6 +150,7 @@ $layer-toolbar-height: 0px;
 @import './select-layer-view.scss';
 @import './colorpicker-ui.scss';
 @import './tool-menu.scss';
+@import './shape-manager.scss';
 @import './page-manager.scss';
 @import './layer-manager.scss';
 @import './layer-toolbar.scss';
@@ -294,6 +167,7 @@ $layer-toolbar-height: 0px;
 @import './layer-sample-view.scss';
 @import './page-sample-view.scss';
 @import './view.scss';       
+@import './property-items/group-align.scss';
 
 
 @import './drag-angle.scss';

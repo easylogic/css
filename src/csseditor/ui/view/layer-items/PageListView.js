@@ -1,12 +1,12 @@
-import UIElement, { EVENT } from '../../../colorpicker/UIElement';
-import PageShowGrid from '../control/panel/items/PageShowGrid';
-import { CHANGE_PAGE, CHANGE_EDITOR } from '../../types/event';
-import { CLICK, SELF, LOAD } from '../../../util/Event';
+import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import PageSampleList from "../../control/panel/PageSampleList";
+import { LOAD, CLICK, SELF } from "../../../../util/Event";
+import { CHANGE_PAGE, CHANGE_EDITOR } from "../../../types/event";
 
 export default class PageListView extends UIElement {
 
     components () {
-        return { PageShowGrid }
+        return { PageSampleList }
     }
 
     template () { 
@@ -15,9 +15,7 @@ export default class PageListView extends UIElement {
                 <div class="page-list" ref="$pageList">
                 
                 </div>
-                <div class='project-tools'>
-                    <button type="button" class='view-sample' ref="$viewSample"></button>                
-                </div>
+                <PageSampleList></PageSampleList>
             </div>
         `
     }
@@ -54,7 +52,7 @@ export default class PageListView extends UIElement {
             return this.makeItemNode(item, index); 
         }).join('');
 
-        str += `<button type="button" class='add-page'></button>`
+        str += `<button type="button" class='add-page' title="Add a page"></button>`
 
         return str; 
     }

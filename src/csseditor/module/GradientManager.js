@@ -3,11 +3,13 @@ import gradientList from './gradients/index';
 import ColorList from "./color-list/index";
 import { isUndefined } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
+import { CHANGE_EDITOR } from "../types/event";
+import { INDEX_DIST } from "./ItemManager";
 
 export default class GradientManager extends BaseModule {
 
     afterDispatch( ) {
-        this.$store.emit('changeEditor')
+        this.$store.emit(CHANGE_EDITOR)
     }
  
     [GETTER('gradient/list/sample')] ($store, type = 'all') {
@@ -68,7 +70,7 @@ export default class GradientManager extends BaseModule {
 
                 image.colorsteps.forEach( (step, index) => {
                     step.parentId = image.id; 
-                    step.index = index * 100; 
+                    step.index = index * INDEX_DIST; 
                     $store.read('item/create/colorstep', step);
                 })
                 // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
@@ -85,8 +87,28 @@ export default class GradientManager extends BaseModule {
         }
     }
 
-    [ACTION('gradient/image/add')] ($store, obj) {
+    getFirstImage ($store) {
         var image = $store.read('selection/current/image')
+
+        if (!image) {
+            var layer = $store.read('selection/current/layer');
+
+            if (!layer) {
+                return; 
+            }
+    
+            var images = $store.read('item/map/image/children', layer.id)
+    
+            if (images.length) {
+                image = images[0];
+            }    
+        }
+
+        return image; 
+    }
+
+    [ACTION('gradient/image/add')] ($store, obj) {
+        var image = this.getFirstImage($store);
 
         if (image) {
 

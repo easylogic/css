@@ -1,5 +1,6 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { CLICK, LOAD } from "../../../../util/Event";
+import { LOAD, CLICK } from "../../../../util/Event";
+
 
 export default class GradientSampleList extends UIElement  {
  
@@ -15,6 +16,7 @@ export default class GradientSampleList extends UIElement  {
 
         return `
         <div class="gradient-sample-list">
+            <h1>User gradient</h1>            
             <div class='cached-list' ref="$cachedList"></div>
         </div>
         `  
@@ -24,7 +26,8 @@ export default class GradientSampleList extends UIElement  {
 
         var list = this.list.map( (item, index) => {
             return `
-            <div class='gradient-sample-item' style='${this.read('image/toString', item)}' data-index="${index}">
+            <div class='gradient-sample-item' data-index="${index}">
+                <div class='preview' style='${this.read('image/toString', item)}'></div>
                 <div class='item-tools'>
                     <button type="button" class='add-item'  data-index="${index}" title="Addd">&times;</button>                
                     <button type="button" class='change-item'  data-index="${index}" title="Change"></button>
@@ -35,9 +38,10 @@ export default class GradientSampleList extends UIElement  {
         var storageList = this.read('storage/images').map( (item, index) => {
             var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps })
             return `
-                <div class='gradient-cached-item' style='${this.read('image/toString', newImage)}' data-index="${index}">
+                <div class='gradient-cached-item' data-index="${index}">
+                    <div class='preview' style='${this.read('image/toString', newImage)}'></div>                
                     <div class='item-tools'>
-                        <button type="button" class='add-item'  data-index="${index}" title="Addd">&times;</button>                
+                        <button type="button" class='add-item'  data-index="${index}" title="Add">&times;</button>                
                         <button type="button" class='change-item'  data-index="${index}" title="Change"></button>
                     </div>          
                 </div>
@@ -87,7 +91,7 @@ export default class GradientSampleList extends UIElement  {
         var image = this.read('storage/images', index);
         var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps })        
 
-        this.dispatch('gradient/image/add', newImage );
+        this.dispatch('gradient/image/add', this.read('item/convert/style', newImage) );
     }
 
     [CLICK('$el .gradient-cached-item .change-item')] (e) {
@@ -95,7 +99,7 @@ export default class GradientSampleList extends UIElement  {
         var image = this.read('storage/images', index);
         var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps })        
 
-        this.dispatch('gradient/image/select', newImage );
+        this.dispatch('gradient/image/select', this.read('item/convert/style', newImage));
     }
 
     [CLICK('$el .add-current-image')] (e) {
@@ -107,5 +111,6 @@ export default class GradientSampleList extends UIElement  {
         })
         
     }
+
 
 } 

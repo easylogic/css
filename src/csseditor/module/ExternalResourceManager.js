@@ -1,12 +1,13 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { ACTION } from "../../util/Store";
+import { CHANGE_EDITOR } from "../types/event";
 
 
 export default class ExternalResourceManager extends BaseModule {
 
 
     afterDispatch () {
-        this.$store.emit('changeEditor')
+        this.$store.emit(CHANGE_EDITOR)
     }
 
     [ACTION('external/paste')] ($store, dataTransfer, layerId) {

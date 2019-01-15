@@ -9,8 +9,9 @@ $layer-item-padding: 4px;
     box-sizing: border-box;
     left: 0px;
     right: 0px;
-    top: 0px;
+    top: 65px;
     bottom: 0px;
+    border-top: 1px solid $border-color;
 
     .feature {
         display: none; 

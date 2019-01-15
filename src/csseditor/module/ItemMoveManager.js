@@ -1,5 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
+import { CHANGE_EDITOR } from "../types/event";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -8,6 +9,9 @@ export const DEFAULT_FUNCTION = (item) => item;
 
 export default class ItemMoveManager extends BaseModule {
 
+    afterDispatch() {
+        this.$store.emit(CHANGE_EDITOR);
+    }
 
     [ACTION('item/move/to')] ($store, sourceId, newItemId) {
 

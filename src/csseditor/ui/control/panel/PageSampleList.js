@@ -29,8 +29,8 @@ export default class PageSampleList extends UIElement {
         var list = this.list.map( (page, index) => {
             var data = this.read('page/cache/toString', page)
 
-            var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
-            var rateY = 120 / unitValue(defaultValue(data.obj.height, pxUnit(300)));            
+            var rateX = 72 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+            var rateY = 70 / unitValue(defaultValue(data.obj.height, pxUnit(300)));            
 
             var transform = `transform: scale(${rateX} ${rateY})`
 
@@ -52,10 +52,11 @@ export default class PageSampleList extends UIElement {
         })
 
         var storageList = this.read('storage/pages').map( page => {
-            var data = this.read('page/cache/toString', this.read('item/convert/style', page.page))
+            var samplePage = this.read('item/convert/style', page.page);
 
-            var rateX = 160 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
-            var rateY = 160 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
+            var data = this.read('page/cache/toString', samplePage)
+            var rateX = 72 / unitValue(defaultValue(samplePage.width, pxUnit(400)));
+            var rateY = 70 / unitValue(defaultValue(samplePage.height, pxUnit(300)));
 
             var minRate = Math.min(rateY, rateX);
 
