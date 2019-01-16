@@ -5,11 +5,23 @@ import { GETTER, ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
 import { ITEM_GET, ITEM_REMOVE_CHILDREN, ITEM_REMOVE } from "./ItemTypes";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "./SelectionTypes";
+import { clone } from "../../util/functions/func";
 
 export default class GradientManager extends BaseModule {
 
     afterDispatch( ) {
         this.$store.emit(CHANGE_EDITOR)
+    }
+
+    getStaticList () {
+        return ColorList.list['material'].map(color => {
+            return {
+                image: { 
+                    type: 'static',
+                    color
+                }
+            }
+        });
     }
  
     [GETTER('gradient/list/sample')] ($store, type = 'all') {
@@ -18,19 +30,11 @@ export default class GradientManager extends BaseModule {
 
         if (type == 'all') {
             results.push(...gradientList.map(it => {
-                return Object.assign({}, it)
+                return clone(it)
             }));
-
-            results.push( { 
-                type: 'static', 
-                color: ColorList.list['material'][0]
-            })
-
-        } else {
-            results.push(...ColorList.list['material'].map(color => {
-                return Object.assign({}, { type: 'static', color})
-            }))
         }
+
+        results.push(...this.getStaticList());
 
         return results;
     }

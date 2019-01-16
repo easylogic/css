@@ -4,6 +4,7 @@ $tab-border-color: $border-color;
 $tab-selected-color: $selected-color;
 
 $tab-horizontal-header-width: 50px;
+$tab-horizontal-header-right-width: 60px;
 .tab {
     position: absolute;
     left: 0px;
@@ -164,6 +165,7 @@ $tab-horizontal-header-width: 50px;
                     height: $tab-horizontal-header-width; 
                     overflow: auto;
                     line-height: 3;
+                    min-width: $tab-horizontal-header-width;
                 }
             }
 
@@ -179,7 +181,8 @@ $tab-horizontal-header-width: 50px;
             left: auto;
             top: 0px;
             bottom: 0px;
-            width: $tab-horizontal-header-width;
+            width: $tab-horizontal-header-right-width;
+            height: auto;
             display: inline-block;
 
             .tab-item {
@@ -187,7 +190,8 @@ $tab-horizontal-header-width: 50px;
                 border-bottom: 1px solid $border-color;
                 text-align: center;
                 line-height: 3;   
-                height: $tab-horizontal-header-width;   
+                height: $tab-horizontal-header-right-width - 10px;   
+                min-width: $tab-horizontal-header-right-width;
                 
                 &.selected {
                     background-color: rgba($tab-selected-color, 0.5);
@@ -197,7 +201,7 @@ $tab-horizontal-header-width: 50px;
 
         .tab-body {
             top: 0px;
-            right: $tab-horizontal-header-width;
+            right: $tab-horizontal-header-right-width;
             border:0px;
             border-right: 1px solid $border-color;
         }

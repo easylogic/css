@@ -14,6 +14,7 @@ export const ITEM_CREATE_COLORSTEP = 'item/create/colorstep'
 export const ITEM_CREATE = 'item/create'
 export const ITEM_COPY = 'item/copy'
 export const ITEM_ADD = 'item/add'
+export const ITEM_ADD_LAYER = 'item/add/layer'
 export const ITEM_CREATE_IMAGE_WITH_COLORSTEP = 'item/create/image/with/colorstep';
 export const ITEM_PREPEND_IMAGE = 'item/prepend/image'
 export const ITEM_ADD_IMAGE = 'item/add/image'

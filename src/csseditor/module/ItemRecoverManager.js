@@ -96,6 +96,11 @@ export default class ItemRecoverManager extends BaseModule {
         $store.run('item/move/to', sourceId, $store.read('item/recover', item, currentItem.parentId)); 
     }
 
+    [ACTION('item/addCopy')] ($store, sourceId) {
+        var currentItem = $store.read(ITEM_GET, sourceId);
+        $store.run('item/move/to', sourceId, $store.read('item/recover', $store.read(COLLECT_ONE, sourceId), currentItem.parentId)); 
+    }    
+
 
     [ACTION('item/copy/in')] ($store, destId, sourceId) {
         var destItem = $store.read(ITEM_GET, destId);

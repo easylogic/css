@@ -10360,6 +10360,7 @@ var ITEM_CREATE_COLORSTEP = 'item/create/colorstep';
 var ITEM_CREATE = 'item/create';
 var ITEM_COPY = 'item/copy';
 var ITEM_ADD = 'item/add';
+var ITEM_ADD_LAYER = 'item/add/layer';
 var ITEM_CREATE_IMAGE_WITH_COLORSTEP = 'item/create/image/with/colorstep';
 var ITEM_PREPEND_IMAGE = 'item/prepend/image';
 var ITEM_ADD_IMAGE = 'item/add/image';
@@ -11957,6 +11958,18 @@ var GradientManager = function (_BaseModule) {
             this.$store.emit(CHANGE_EDITOR);
         }
     }, {
+        key: "getStaticList",
+        value: function getStaticList() {
+            return ColorList.list['material'].map(function (color) {
+                return {
+                    image: {
+                        type: 'static',
+                        color: color
+                    }
+                };
+            });
+        }
+    }, {
         key: GETTER('gradient/list/sample'),
         value: function value($store) {
             var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
@@ -11966,18 +11979,11 @@ var GradientManager = function (_BaseModule) {
 
             if (type == 'all') {
                 results.push.apply(results, toConsumableArray(gradientList.map(function (it) {
-                    return Object.assign({}, it);
-                })));
-
-                results.push({
-                    type: 'static',
-                    color: ColorList.list['material'][0]
-                });
-            } else {
-                results.push.apply(results, toConsumableArray(ColorList.list['material'].map(function (color) {
-                    return Object.assign({}, { type: 'static', color: color });
+                    return clone(it);
                 })));
             }
+
+            results.push.apply(results, toConsumableArray(this.getStaticList()));
 
             return results;
         }
@@ -13809,17 +13815,21 @@ var SelectionManager = function (_BaseModule) {
 
             var width = x2 - x;
             var height = y2 - y;
+            var centerX = x + width / 2;
+            var centerY = y + height / 2;
 
             x = pxUnit(x);
             y = pxUnit(y);
             width = pxUnit(width);
             height = pxUnit(height);
+            centerX = pxUnit(centerX);
+            centerY = pxUnit(centerY);
 
             if (items.length == 1) {
-                return { x: x, y: y, width: width, height: height, id: items[0].id };
+                return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY, id: items[0].id };
             }
 
-            return { x: x, y: y, width: width, height: height };
+            return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY };
         }
     }]);
     return SelectionManager;
@@ -15052,6 +15062,26 @@ var ItemCreateManager = function (_BaseModule) {
             $store.run(ITEM_SORT, item.id);
         }
     }, {
+        key: ACTION(ITEM_ADD_LAYER),
+        value: function value$$1($store, itemType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+            var rect = $store.read(SELECTION_RECT);
+
+            var id = $store.read(ITEM_CREATE, itemType);
+            var item = $store.read(ITEM_GET, id);
+            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
+            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
+
+            item.parentId = parentId;
+
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET$1, item, isSelected);
+            $store.run(ITEM_SORT, item.id);
+        }
+    }, {
         key: ACTION(ITEM_PREPEND_IMAGE),
         value: function value$$1($store, imageType) {
             var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -15378,6 +15408,12 @@ var ItemRecoverManager = function (_BaseModule) {
         value: function value($store, item, sourceId) {
             var currentItem = $store.read(ITEM_GET, sourceId);
             $store.run('item/move/to', sourceId, $store.read('item/recover', item, currentItem.parentId));
+        }
+    }, {
+        key: ACTION('item/addCopy'),
+        value: function value($store, sourceId) {
+            var currentItem = $store.read(ITEM_GET, sourceId);
+            $store.run('item/move/to', sourceId, $store.read('item/recover', $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
         }
     }, {
         key: ACTION('item/copy/in'),
@@ -20797,7 +20833,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -25572,7 +25608,7 @@ var Rect = function (_MenuItem) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                _this2.dispatch(ITEM_ADD, ITEM_TYPE_LAYER, true, id);
+                _this2.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_LAYER, true, id);
                 _this2.dispatch('history/push', 'Add a layer');
             });
         }
@@ -25602,7 +25638,7 @@ var Circle = function (_MenuItem) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                _this2.dispatch(ITEM_ADD, ITEM_TYPE_CIRCLE, true, id);
+                _this2.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_CIRCLE, true, id);
                 _this2.dispatch('history/push', 'Add a layer');
             });
         }
@@ -25984,7 +26020,7 @@ var ShapeListView = function (_UIElement) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                _this2.dispatch(ITEM_ADD, ITEM_TYPE_LAYER, true, id);
+                _this2.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_LAYER, true, id);
                 _this2.dispatch(HISTORY_PUSH, 'Add a layer');
             });
         }
@@ -25994,7 +26030,7 @@ var ShapeListView = function (_UIElement) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                _this3.dispatch(ITEM_ADD, ITEM_TYPE_CIRCLE, true, id);
+                _this3.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_CIRCLE, true, id);
                 _this3.dispatch(HISTORY_PUSH, 'Add a layer');
             });
         }

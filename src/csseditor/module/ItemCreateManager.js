@@ -22,10 +22,11 @@ import {
     ITEM_GET,
     ITEM_SORT
 } from "./ItemTypes";
-import { percentUnit } from "../../util/css/types";
+import { percentUnit, pxUnit, unitValue } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL } from "./ItemCreateTypes";
+import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER } from "./ItemCreateTypes";
 import { clone } from "../../util/functions/func";
+import { SELECTION_RECT } from "./SelectionTypes";
 
 const gradientTypeList = [
     IMAGE_ITEM_TYPE_LINEAR,
@@ -159,6 +160,22 @@ export default class ItemCreateManager extends BaseModule {
     [ACTION(ITEM_ADD)] ($store, itemType, isSelected = false, parentId = '') {
         var id = $store.read(ITEM_CREATE, itemType);
         var item = $store.read(ITEM_GET, id);
+        item.parentId = parentId; 
+
+        item.index = Number.MAX_SAFE_INTEGER; 
+
+        $store.run(ITEM_SET, item, isSelected);
+        $store.run(ITEM_SORT, item.id)
+    }
+
+    [ACTION(ITEM_ADD_LAYER)] ($store, itemType, isSelected = false, parentId = '') {
+        var rect = $store.read(SELECTION_RECT);
+
+        var id = $store.read(ITEM_CREATE, itemType);
+        var item = $store.read(ITEM_GET, id);
+        item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width)/2);
+        item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height)/2);
+
         item.parentId = parentId; 
 
         item.index = Number.MAX_SAFE_INTEGER; 

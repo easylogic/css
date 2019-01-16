@@ -408,17 +408,22 @@ export default class SelectionManager extends BaseModule {
 
         var width = x2 - x;
         var height = y2 - y; 
+        var centerX = x + (width/2);
+        var centerY = y + (height/2);
 
         x = pxUnit(x)
         y = pxUnit(y)
         width = pxUnit(width)
         height = pxUnit(height)
+        centerX = pxUnit(centerX);
+        centerY = pxUnit(centerY);        
+
 
         if (items.length == 1) {
-            return { x, y, width, height, id: items[0].id}
+            return { x, y, width, height, centerX, centerY, id: items[0].id}
         }
 
-        return { x, y, width, height}
+        return { x, y, width, height, centerX, centerY}
     }
 
 }
