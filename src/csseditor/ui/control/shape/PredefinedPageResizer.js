@@ -3,6 +3,7 @@ import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../type
 import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
 import { SELECTION_CURRENT_PAGE } from '../../../module/SelectionTypes';
+import { HISTORY_PUSH } from '../../../module/HistoryTypes';
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -187,7 +188,7 @@ export default class PredefinedPageResizer extends UIElement {
     [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
         this.currentType = null; 
         this.xy = null 
-        this.dispatch('history/push', 'Resize a layer');        
+        this.dispatch(HISTORY_PUSH, 'Resize a layer');        
     }
 
     [RESIZE('window') + DEBOUNCE(300)] (e) {

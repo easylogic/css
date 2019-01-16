@@ -16395,7 +16395,7 @@ var GradientSteps = function (_UIElement) {
 
             this.run('colorstep/remove', id);
             this.emit(REMOVE_COLOR_STEP, id);
-            this.run('history/push', 'Remove colorstep');
+            this.run(HISTORY_PUSH, 'Remove colorstep');
             this.refresh();
         }
     }, {
@@ -16489,7 +16489,7 @@ var GradientSteps = function (_UIElement) {
                 // var cut = !item.cut;
                 var newValue = { id: item.id, cut: !item.cut };
                 this.commit(CHANGE_COLOR_STEP, newValue);
-                this.run('history/push', 'Apply cut option');
+                this.run(HISTORY_PUSH, 'Apply cut option');
 
                 this.refresh();
             }
@@ -16630,7 +16630,7 @@ var GradientSteps = function (_UIElement) {
             this.isDown = false;
             if (this.refs.$stepList) {
                 this.refs.$stepList.removeClass('mode-drag');
-                this.run('history/push', 'Moved colorstep');
+                this.run(HISTORY_PUSH, 'Moved colorstep');
             }
         }
     }, {
@@ -19269,7 +19269,7 @@ var BoxShadow = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
                 _this3.dispatch(ITEM_ADD, ITEM_TYPE_BOXSHADOW, false, id);
-                _this3.dispatch('history/push', 'Add Box Shadow');
+                _this3.dispatch(HISTORY_PUSH, 'Add Box Shadow');
                 _this3.refresh();
             });
         }
@@ -19406,7 +19406,7 @@ var TextShadow = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
                 _this3.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW$1, false, id);
-                _this3.dispatch('history/push', 'Add text Shadow');
+                _this3.dispatch(HISTORY_PUSH, 'Add text Shadow');
                 _this3.refresh();
             });
         }
@@ -23338,7 +23338,7 @@ var PredefinedPageResizer = function (_UIElement) {
         value: function value$$1(e) {
             this.currentType = null;
             this.xy = null;
-            this.dispatch('history/push', 'Resize a layer');
+            this.dispatch(HISTORY_PUSH, 'Resize a layer');
         }
     }, {
         key: RESIZE('window') + DEBOUNCE(300),
@@ -23815,7 +23815,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.rectItems = null;
             this.currentId = null;
             this.run('tool/set', 'moving', false);
-            this.dispatch('history/push', 'Resize a layer');
+            this.dispatch(HISTORY_PUSH, 'Resize a layer');
         }
     }, {
         key: RESIZE('window') + DEBOUNCE(300),
@@ -25458,7 +25458,7 @@ var Rect = function (_MenuItem) {
 
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
                 _this2.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_LAYER, true, id);
-                _this2.dispatch('history/push', 'Add a layer');
+                _this2.dispatch(HISTORY_PUSH, 'Add a layer');
             });
         }
     }]);
@@ -25488,7 +25488,7 @@ var Circle = function (_MenuItem) {
 
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
                 _this2.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_CIRCLE, true, id);
-                _this2.dispatch('history/push', 'Add a layer');
+                _this2.dispatch(HISTORY_PUSH, 'Add a layer');
             });
         }
     }]);
@@ -25612,7 +25612,7 @@ var BasicGradient = function (_UIElement) {
                 var type = e.$delegateTarget.attr('data-type');
 
                 _this2.dispatch('item/prepend/image', type, true, item.id);
-                _this2.dispatch('history/push', "Add " + type + " gradient");
+                _this2.dispatch(HISTORY_PUSH, "Add " + type + " gradient");
             });
         }
     }]);
@@ -26243,7 +26243,7 @@ var LayerListView = function (_UIElement) {
                     this.dispatch('item/move/in/layer', destId, sourceId);
                 }
 
-                this.dispatch('history/push', "Change gradient position ");
+                this.dispatch(HISTORY_PUSH, "Change gradient position ");
                 this.refresh();
             } else if (destItem.itemType == sourceItem.itemType) {
                 if (e.ctrlKey) {
@@ -26251,7 +26251,7 @@ var LayerListView = function (_UIElement) {
                 } else {
                     this.dispatch('item/move/in', destId, sourceId);
                 }
-                this.dispatch('history/push', "Change item position ");
+                this.dispatch(HISTORY_PUSH, "Change item position ");
                 this.refresh();
             }
         }
@@ -26265,7 +26265,7 @@ var LayerListView = function (_UIElement) {
 
                 this.draggedLayer = null;
                 this.dispatch('item/move/last', sourceId);
-                this.dispatch('history/push', "Change layer position ");
+                this.dispatch(HISTORY_PUSH, "Change layer position ");
                 this.refresh();
             }
         }
@@ -26273,21 +26273,21 @@ var LayerListView = function (_UIElement) {
         key: CLICK('$layerList .copy-image-item'),
         value: function value(e) {
             this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
-            this.dispatch('history/push', "Add a gradient");
+            this.dispatch(HISTORY_PUSH, "Add a gradient");
             this.refresh();
         }
     }, {
         key: CLICK('$layerList .copy-item'),
         value: function value(e) {
             this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
-            this.dispatch('history/push', "Copy a layer");
+            this.dispatch(HISTORY_PUSH, "Copy a layer");
             this.refresh();
         }
     }, {
         key: CLICK('$layerList .delete-item'),
         value: function value(e) {
             this.dispatch(ITEM_REMOVE, e.$delegateTarget.attr('item-id'));
-            this.dispatch('history/push', "Remove item");
+            this.dispatch(HISTORY_PUSH, "Remove item");
             this.refresh();
         }
     }, {

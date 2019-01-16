@@ -3,6 +3,7 @@ import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 import { ITEM_SET, ITEM_GET, ITEM_REMOVE } from "../../../module/ItemTypes";
 import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../module/SelectionTypes";
+import { HISTORY_PUSH } from "../../../module/HistoryTypes";
 
 export default class LayerListView extends UIElement {
 
@@ -140,7 +141,7 @@ export default class LayerListView extends UIElement {
                 this.dispatch('item/move/in/layer', destId, sourceId)
             }
 
-            this.dispatch('history/push', `Change gradient position `);         
+            this.dispatch(HISTORY_PUSH, `Change gradient position `);         
             this.refresh()            
         } else if (destItem.itemType == sourceItem.itemType ) {
             if (e.ctrlKey) {
@@ -148,7 +149,7 @@ export default class LayerListView extends UIElement {
             } else {
                 this.dispatch('item/move/in', destId, sourceId)
             }
-            this.dispatch('history/push', `Change item position `);         
+            this.dispatch(HISTORY_PUSH, `Change item position `);         
             this.refresh()            
         }
 
@@ -162,7 +163,7 @@ export default class LayerListView extends UIElement {
 
             this.draggedLayer = null; 
             this.dispatch('item/move/last', sourceId)
-            this.dispatch('history/push', `Change layer position `);                     
+            this.dispatch(HISTORY_PUSH, `Change layer position `);                     
             this.refresh()
         }
 
@@ -170,19 +171,19 @@ export default class LayerListView extends UIElement {
 
     [CLICK('$layerList .copy-image-item')] (e) {
         this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.dispatch('history/push', `Add a gradient`);                 
+        this.dispatch(HISTORY_PUSH, `Add a gradient`);                 
         this.refresh()
     }
 
     [CLICK('$layerList .copy-item')] (e) {
         this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'))
-        this.dispatch('history/push', `Copy a layer`);                         
+        this.dispatch(HISTORY_PUSH, `Copy a layer`);                         
         this.refresh()
     }
 
     [CLICK('$layerList .delete-item')] (e) {
         this.dispatch(ITEM_REMOVE, e.$delegateTarget.attr('item-id'))
-        this.dispatch('history/push', `Remove item`);                         
+        this.dispatch(HISTORY_PUSH, `Remove item`);                         
         this.refresh()
     } 
 

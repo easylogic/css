@@ -13,6 +13,7 @@ import { px, unitValue, pxUnit } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../module/SelectionTypes';
+import { HISTORY_PUSH } from '../../../../module/HistoryTypes';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -130,7 +131,7 @@ export default class TextShadow extends BasePropertyItem {
     [CLICK('$add')] (e) {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, false, id)
-            this.dispatch('history/push', `Add text Shadow` );        
+            this.dispatch(HISTORY_PUSH, `Add text Shadow` );        
             this.refresh();
         }); 
     }

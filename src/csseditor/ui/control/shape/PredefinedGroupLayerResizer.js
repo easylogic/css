@@ -31,6 +31,7 @@ import {
 import { CSS_TOSTRING } from '../../../module/CssTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../module/SelectionTypes';
 import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../module/LayerTypes';
+import { HISTORY_PUSH } from '../../../module/HistoryTypes';
 
 const SNAP_GRID = 20; 
 
@@ -440,7 +441,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.rectItems = null 
         this.currentId = null; 
         this.run('tool/set', 'moving', false);
-        this.dispatch('history/push', 'Resize a layer');
+        this.dispatch(HISTORY_PUSH, 'Resize a layer');
     }
 
     [RESIZE('window') + DEBOUNCE(300)] (e) {

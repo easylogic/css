@@ -12,6 +12,7 @@ import { pxUnit, unitValue } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../module/SelectionTypes';
+import { HISTORY_PUSH } from '../../../../module/HistoryTypes';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -143,7 +144,7 @@ export default class BoxShadow extends BasePropertyItem {
     [CLICK('$add')] (e) {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.dispatch(ITEM_ADD, ITEM_TYPE_BOXSHADOW, false, id)
-            this.dispatch('history/push', `Add Box Shadow` );        
+            this.dispatch(HISTORY_PUSH, `Add Box Shadow` );        
             this.refresh();
         }); 
     }
