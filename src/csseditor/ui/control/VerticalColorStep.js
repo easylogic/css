@@ -12,15 +12,17 @@ export default class VerticalColorStep extends UIElement {
 
     template () {
         return `
-            <div class='vertical-colorstep'>
-                <GradientSteps></GradientSteps>
+            <div class='vertical-colorstep-container'>
+                <div class='vertical-colorstep' ref="$verticalColorstep">
+                    <GradientSteps></GradientSteps>
+                </div>
             </div>
         `
     }
 
     refresh () {
         this.$el.toggle(this.isShow())
-        this.$el.px('width', this.$store.step.width);
+        this.refs.$verticalColorstep.px('width', this.$store.step.width);
     }
 
     [EVENT(

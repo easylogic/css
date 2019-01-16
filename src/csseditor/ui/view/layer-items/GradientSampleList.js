@@ -25,9 +25,10 @@ export default class GradientSampleList extends UIElement  {
     [LOAD('$cachedList')] () {
 
         var list = this.list.map( (item, index) => {
+            var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps })
             return `
             <div class='gradient-sample-item' data-index="${index}">
-                <div class='preview' style='${this.read('image/toString', item)}'></div>
+                <div class='preview' style='${this.read('image/toString', newImage)}'></div>                
                 <div class='item-tools'>
                     <button type="button" class='add-item'  data-index="${index}" title="Addd">&times;</button>                
                     <button type="button" class='change-item'  data-index="${index}" title="Change"></button>

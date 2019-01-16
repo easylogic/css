@@ -26,24 +26,37 @@ export default class ItemRecoverManager extends BaseModule {
     }
 
     [GETTER('item/recover/image')] ($store, image, parentId) {
-        var newImageId = $store.read('item/create/object', Object.assign({parentId}, $store.read('item/convert/style', image.image)));
-        image.colorsteps.forEach(step => {
-            $store.read('item/create/object', Object.assign({}, step, {parentId: newImageId}))
+        var newImageId = $store.read(
+            'item/create/image', 
+            Object.assign({parentId}, $store.read('item/convert/style', image.image))
+        );
+        var colorsteps = (image.colorsteps || []);
+        
+        colorsteps.forEach(step => {
+            $store.read('item/recover/colorstep', step, newImageId);
         })
 
         return newImageId;
     }
-
+    [GETTER('item/recover/colorstep')] ($store, colorstep, parentId) {
+        return $store.read('item/create/colorstep', Object.assign({parentId}, colorstep));
+    }
     [GETTER('item/recover/boxshadow')] ($store, boxshadow, parentId) {
-        return $store.read('item/create/object', Object.assign({parentId}, boxshadow.boxshadow));
+        return $store.read(
+            'item/create/boxshadow', 
+            Object.assign({parentId}, $store.read('item/convert/style', boxshadow.boxshadow))
+        );
     }    
 
     [GETTER('item/recover/textshadow')] ($store, textshadow, parentId) {
-        return $store.read('item/create/object', Object.assign({parentId}, textshadow.textshadow));
+        return $store.read(
+            'item/create/textshadow', 
+            Object.assign({parentId}, $store.read('item/convert/style', textshadow.textshadow))
+        );
     }        
 
     [GETTER('item/recover/layer')] ($store, layer, parentId) {
-        var newLayerId = $store.read('item/create/object', 
+        var newLayerId = $store.read('item/create/layer', 
             Object.assign({parentId}, $store.read('item/convert/style',layer.layer))
         );
 
@@ -66,7 +79,7 @@ export default class ItemRecoverManager extends BaseModule {
     }
  
     [GETTER('item/recover/page')] ($store, page) {
-        var newPageId = $store.read('item/create/object', $store.read('item/convert/style',page.page));
+        var newPageId = $store.read('item/create/page', $store.read('item/convert/style',page.page));
         page.layers.forEach(layer => {
             $store.read('item/recover/layer', layer, newPageId);
         })

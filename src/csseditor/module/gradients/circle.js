@@ -1,11 +1,13 @@
 import { POSITION_CENTER } from "../ItemTypes";
 
 export default { 
-    type: 'radial', 
-    radialPosition: POSITION_CENTER,
-    radialType: 'circle',    
+    image: {
+        type: 'radial', 
+        radialPosition: POSITION_CENTER,
+        radialType: 'circle'
+    },
     colorsteps: [
-        {color: 'white', percent: 0},
-        {color : 'black', percent:50}
+        {color: 'white', percent: 0, index: 0},
+        {color : 'black', percent:50, index: 100}
     ]
 }

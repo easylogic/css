@@ -107,6 +107,10 @@ export default class ItemCreateManager extends BaseModule {
     }        
     
     [GETTER('item/create/image')] ($store, obj = {}) {
+        return $store.read('item/create/object', obj, IMAGE_DEFAULT_OBJECT);
+    }    
+
+    [GETTER('item/create/image/with/colorstep')] ($store, obj = {}) {
 
         var imageId = $store.read('item/create/object', obj, IMAGE_DEFAULT_OBJECT);
 
@@ -132,7 +136,7 @@ export default class ItemCreateManager extends BaseModule {
         }
 
         return imageId; 
-    }    
+    }        
 
     [GETTER('item/create/colorstep')] ($store, obj = {}) {
         return $store.read('item/create/object', obj, COLORSTEP_DEFAULT_OBJECT);
@@ -166,7 +170,7 @@ export default class ItemCreateManager extends BaseModule {
     }        
 
     [ACTION('item/add/image')] ($store, imageType, isSelected = false, parentId = '', index = Number.MAX_SAFE_INTEGER) {
-        var id = $store.read('item/create/image', { type : imageType });
+        var id = $store.read('item/create/image/with/colorstep', { type : imageType });
         var item = $store.read('item/get', id);
         item.type = imageType; 
         item.parentId = parentId; 

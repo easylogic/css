@@ -69,7 +69,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             return ` 
                 <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read('css/toString', css)}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
-                    <div class="image-panel" style="${this.read('css/toString', backgroundCSS)}"></div>
+                    <div class="image-panel" style="display:none;${this.read('css/toString', backgroundCSS)}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>

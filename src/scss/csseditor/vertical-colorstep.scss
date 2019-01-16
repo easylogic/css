@@ -1,7 +1,15 @@
+.vertical-colorstep-container {
+    position: absolute;
+    top: 45px + $layer-toolbar-height;    
+    left: 0px;
+    right: 0px;
+    height: 50px;
+}
+
 .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 45px + $layer-toolbar-height;
+    top: 0px;
     width: 400px;
     transform: translateX(-50%);
     display: inline-block;

@@ -296,7 +296,10 @@ export default class GradientSteps extends UIElement {
         var item = this.read('item/get', parent.attr('id'));
             
         this.read('item/each/children', item.parentId, (step) => {
-            if (step.selected) step.selected = false; 
+            if (step.selected) {
+                step.selected = false;
+                this.run('item/set', step);
+            } 
         })
 
         item.selected = true; 

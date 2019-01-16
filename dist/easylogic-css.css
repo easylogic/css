@@ -1509,17 +1509,13 @@ html, body {
       top: 0px;
       bottom: 0px;
       width: 50px;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-              flex-direction: column; }
+      display: inline-block; }
       .csseditor .tab.horizontal .tab-header .tab-item {
         border: 0px;
         border-bottom: 1px solid #cccccc;
         text-align: center;
-        min-height: 40px;
-        overflow: auto;
-        line-height: 3; }
+        line-height: 3;
+        height: 50px; }
         .csseditor .tab.horizontal .tab-header .tab-item.selected {
           background-color: rgba(204, 204, 204, 0.5); }
     .csseditor .tab.horizontal .tab-body {
@@ -2809,10 +2805,16 @@ html, body {
             width: 2px;
             height: 2px;
             background-color: black; }
+  .csseditor .vertical-colorstep-container {
+    position: absolute;
+    top: 45px;
+    left: 0px;
+    right: 0px;
+    height: 50px; }
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
-    top: 45px;
+    top: 0px;
     width: 400px;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);

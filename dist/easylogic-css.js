@@ -10565,6 +10565,12 @@ var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITI
 
 var IMAGE_LIST = [IMAGE_FILE_TYPE_JPG, IMAGE_FILE_TYPE_PNG, IMAGE_FILE_TYPE_GIF, IMAGE_FILE_TYPE_SVG];
 
+var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
+var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
+var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
+var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
+
 var ImageManager = function (_BaseModule) {
     inherits(ImageManager, _BaseModule);
 
@@ -10660,27 +10666,27 @@ var ImageManager = function (_BaseModule) {
     }, {
         key: GETTER('image/type/isLinear'),
         value: function value$$1($store, type) {
-            return [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR].includes(type);
+            return LINEAR_GRADIENT_LIST.includes(type);
         }
     }, {
         key: GETTER('image/type/isRadial'),
         value: function value$$1($store, type) {
-            return [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL].includes(type);
+            return RADIAL_GRADIENT_LIST.includes(type);
         }
     }, {
         key: GETTER('image/type/isConic'),
         value: function value$$1($store, type) {
-            return [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC].includes(type);
+            return CONIC_GRADIENT_LIST.includes(type);
         }
     }, {
         key: GETTER('image/type/isImage'),
         value: function value$$1($store, type) {
-            return [IMAGE_ITEM_TYPE_IMAGE].includes(type);
+            return IMAGE_GRADIENT_LIST.includes(type);
         }
     }, {
         key: GETTER('image/type/isStatic'),
         value: function value$$1($store, type) {
-            return [IMAGE_ITEM_TYPE_STATIC].includes(type);
+            return STATIC_GRADIENT_LIST.includes(type);
         }
     }, {
         key: GETTER('image/angle'),
@@ -11668,83 +11674,109 @@ var BlendManager = function (_BaseModule) {
 }(BaseModule);
 
 var sample1 = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: 'red', percent: 0 }, { color: 'blue', percent: 10 }, { color: 'yellow', percent: 40 }, { color: 'green', percent: 60 }, { color: 'magenta', percent: 80 }, { color: 'black', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: 'red', percent: 0, index: 0 }, { color: 'blue', percent: 10, index: 100 }, { color: 'yellow', percent: 40, index: 200 }, { color: 'green', percent: 60, index: 300 }, { color: 'magenta', percent: 80, index: 400 }, { color: 'black', percent: 100, index: 500 }]
 };
 
 var gradegray = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#bdc3c7', percent: 0 }, { color: '#2c3e50', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#bdc3c7', percent: 0, index: 0 }, { color: '#2c3e50', percent: 100, index: 100 }]
 };
 
 var piggypink = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#ee9ca7', percent: 0 }, { color: '#ffdde1', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#ee9ca7', percent: 0, index: 0 }, { color: '#ffdde1', percent: 100, index: 100 }]
 };
 
 var coolblues = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#2193b0', percent: 0 }, { color: '#6dd5ed', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#2193b0', percent: 0, index: 0 }, { color: '#6dd5ed', percent: 100, index: 100 }]
 };
 
 var megatron = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#C6FFDD', percent: 0 }, { color: '#FBD786', percent: 50 }, { color: '#f7797d', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#C6FFDD', percent: 0, index: 0 }, { color: '#FBD786', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
 };
 
 var jshine = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#12c2e9', percent: 0 }, { color: '#c471ed', percent: 50 }, { color: '#f7797d', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#12c2e9', percent: 0, index: 0 }, { color: '#c471ed', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
 };
 
 var darkocean = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#373B44', percent: 0 }, { color: '#4286f4', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#373B44', percent: 0, index: 0 }, { color: '#4286f4', percent: 100, index: 100 }]
 };
 
 var yoda = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#FF0099', percent: 0 }, { color: '#493240', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#FF0099', percent: 0, index: 0 }, { color: '#493240', percent: 100, index: 100 }]
 };
 
 var liberty = {
-    type: 'linear',
-    angle: 90,
-    colorsteps: [{ color: '#200122', percent: 0 }, { color: '#6f0000', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#200122', percent: 0, index: 0 }, { color: '#6f0000', percent: 100, index: 100 }]
 };
 
 var silence = {
-    type: 'linear',
-    angle: 340,
-    colorsteps: [{ color: '#b721ff', percent: 0 }, { color: '#21d4fd', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 340
+    },
+    colorsteps: [{ color: '#b721ff', percent: 0, index: 0 }, { color: '#21d4fd', percent: 100, index: 100 }]
 };
 
 var circle = {
-    type: 'radial',
-    radialPosition: POSITION_CENTER,
-    radialType: 'circle',
-    colorsteps: [{ color: 'white', percent: 0 }, { color: 'black', percent: 50 }]
+    image: {
+        type: 'radial',
+        radialPosition: POSITION_CENTER,
+        radialType: 'circle'
+    },
+    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'black', percent: 50, index: 100 }]
 };
 
 var circle2 = {
-    type: 'repeating-radial',
-    radialPosition: 'top',
-    radialType: 'circle',
-    colorsteps: [{ color: 'white', percent: 0 }, { color: 'rgb(255,82,2)', percent: 9 }]
+    image: {
+        type: 'repeating-radial',
+        radialPosition: 'top',
+        radialType: 'circle'
+    },
+    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'rgb(255,82,2)', percent: 9, index: 100 }]
 };
 
 var deepblue = {
-    type: 'linear',
-    angle: 'to right',
-    colorsteps: [{ color: '#6a11cb', percent: 0 }, { color: '#2575fc', percent: 100 }]
+    image: {
+        type: 'linear',
+        angle: 'to right'
+    },
+    colorsteps: [{ color: '#6a11cb', percent: 0, index: 0 }, { color: '#2575fc', percent: 100, index: 100 }]
 };
 
 var gradientList = [deepblue, sample1, gradegray, piggypink, coolblues, megatron, jshine, darkocean, yoda, liberty, silence, circle, circle2];
@@ -12040,53 +12072,17 @@ var GradientManager = function (_BaseModule) {
     }, {
         key: ACTION('gradient/image/select'),
         value: function value($store, obj) {
-            var image = $store.read('selection/current/image');
+            var image = this.getFirstImage($store);
 
             if (image) {
-
+                var newImageId = $store.read('item/recover/image', obj, $store.read('selection/current/layer/id'));
+                $store.run('item/move/in', image.id, newImageId);
                 $store.run('item/remove/children', image.id);
-
-                image = Object.assign({}, image, obj);
-
-                if (image.colorsteps) {
-
-                    if (isUndefined(image.colorsteps[0].index)) {
-                        image.colorsteps.sort(function (a, b) {
-
-                            var aValue = $store.read('image/get/stepValue', a);
-                            var bValue = $store.read('image/get/stepValue', b);
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    } else {
-                        image.colorsteps.sort(function (a, b) {
-
-                            var aValue = a.index;
-                            var bValue = b.index;
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    }
-
-                    image.colorsteps.forEach(function (step, index) {
-                        step.parentId = image.id;
-                        step.index = index * INDEX_DIST;
-                        $store.read('item/create/colorstep', step);
-                    });
-                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
-                    delete image.colorsteps;
-                }
-
-                $store.run('item/set', image);
+                $store.run('item/remove', image.id);
             } else {
-                $store.read('selection/current/layer', function (layer) {
-                    layer.backgroundColor = obj.color;
-                    $store.run('item/set', layer);
-                });
+                var newImageId = $store.read('item/recover/image', obj, $store.read('selection/current/layer/id'));
+                var newImage = $store.read('item/get', newImageId);
+                $store.run('item/set', newImage);
             }
         }
     }, {
@@ -12114,55 +12110,14 @@ var GradientManager = function (_BaseModule) {
         key: ACTION('gradient/image/add'),
         value: function value($store, obj) {
             var image = this.getFirstImage($store);
-
+            var layerId = $store.read('selection/current/layer/id');
             if (image) {
-
-                // $store.run('item/remove/children', image.id);
-
-                var newImageId = $store.read('item/create/object', Object.assign({}, image, obj));
-                var newImage = $store.read('item/get', newImageId);
-                newImage.index -= 1;
-
-                if (newImage.colorsteps) {
-
-                    if (isUndefined(newImage.colorsteps[0].index)) {
-                        newImage.colorsteps.sort(function (a, b) {
-
-                            var aValue = $store.read('image/get/stepValue', a);
-                            var bValue = $store.read('image/get/stepValue', b);
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    } else {
-                        newImage.colorsteps.sort(function (a, b) {
-
-                            var aValue = a.index;
-                            var bValue = b.index;
-
-                            if (aValue == bValue) return 0;
-
-                            return aValue > bValue ? 1 : -1;
-                        });
-                    }
-
-                    newImage.colorsteps.forEach(function (step, index) {
-                        step.parentId = newImage.id;
-                        step.index = index * 100;
-                        $store.read('item/create/colorstep', step);
-                    });
-                    // 기존 데이타를 변경 후에 colorsteps 는 지운다. 
-                    delete newImage.colorsteps;
-                }
-
-                $store.run('item/move/in', image.id, newImage.id);
+                var newImageId = $store.read('item/recover/image', obj, layerId);
+                $store.run('item/move/in', image.id, newImageId);
             } else {
-                // $store.read('selection/current/layer', (layer) => {
-                //     layer.backgroundColor = obj.color;
-                //     $store.run('item/set', layer);
-                // })
-
+                var newImageId = $store.read('item/recover/image', obj, layerId);
+                var newImage = $store.read('item/get', newImageId);
+                $store.run('item/set', newImage);
             }
         }
     }, {
@@ -14853,6 +14808,13 @@ var ItemCreateManager = function (_BaseModule) {
         value: function value$$1($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+            return $store.read('item/create/object', obj, IMAGE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER('item/create/image/with/colorstep'),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
 
             var imageId = $store.read('item/create/object', obj, IMAGE_DEFAULT_OBJECT);
 
@@ -14929,7 +14891,7 @@ var ItemCreateManager = function (_BaseModule) {
             var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
             var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
 
-            var id = $store.read('item/create/image', { type: imageType });
+            var id = $store.read('item/create/image/with/colorstep', { type: imageType });
             var item = $store.read('item/get', id);
             item.type = imageType;
             item.parentId = parentId;
@@ -15187,27 +15149,34 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: GETTER('item/recover/image'),
         value: function value($store, image, parentId) {
-            var newImageId = $store.read('item/create/object', Object.assign({ parentId: parentId }, $store.read('item/convert/style', image.image)));
-            image.colorsteps.forEach(function (step) {
-                $store.read('item/create/object', Object.assign({}, step, { parentId: newImageId }));
+            var newImageId = $store.read('item/create/image', Object.assign({ parentId: parentId }, $store.read('item/convert/style', image.image)));
+            var colorsteps = image.colorsteps || [];
+
+            colorsteps.forEach(function (step) {
+                $store.read('item/recover/colorstep', step, newImageId);
             });
 
             return newImageId;
         }
     }, {
+        key: GETTER('item/recover/colorstep'),
+        value: function value($store, colorstep, parentId) {
+            return $store.read('item/create/colorstep', Object.assign({ parentId: parentId }, colorstep));
+        }
+    }, {
         key: GETTER('item/recover/boxshadow'),
         value: function value($store, boxshadow, parentId) {
-            return $store.read('item/create/object', Object.assign({ parentId: parentId }, boxshadow.boxshadow));
+            return $store.read('item/create/boxshadow', Object.assign({ parentId: parentId }, $store.read('item/convert/style', boxshadow.boxshadow)));
         }
     }, {
         key: GETTER('item/recover/textshadow'),
         value: function value($store, textshadow, parentId) {
-            return $store.read('item/create/object', Object.assign({ parentId: parentId }, textshadow.textshadow));
+            return $store.read('item/create/textshadow', Object.assign({ parentId: parentId }, $store.read('item/convert/style', textshadow.textshadow)));
         }
     }, {
         key: GETTER('item/recover/layer'),
         value: function value($store, layer, parentId) {
-            var newLayerId = $store.read('item/create/object', Object.assign({ parentId: parentId }, $store.read('item/convert/style', layer.layer)));
+            var newLayerId = $store.read('item/create/layer', Object.assign({ parentId: parentId }, $store.read('item/convert/style', layer.layer)));
 
             var images = layer.images || [];
             images.forEach(function (image) {
@@ -15229,7 +15198,7 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: GETTER('item/recover/page'),
         value: function value($store, page) {
-            var newPageId = $store.read('item/create/object', $store.read('item/convert/style', page.page));
+            var newPageId = $store.read('item/create/page', $store.read('item/convert/style', page.page));
             page.layers.forEach(function (layer) {
                 $store.read('item/recover/layer', layer, newPageId);
             });
@@ -16418,11 +16387,16 @@ var GradientSteps = function (_UIElement) {
     }, {
         key: 'selectStep',
         value: function selectStep(e) {
+            var _this4 = this;
+
             var parent = e.$delegateTarget.parent();
             var item = this.read('item/get', parent.attr('id'));
 
             this.read('item/each/children', item.parentId, function (step) {
-                if (step.selected) step.selected = false;
+                if (step.selected) {
+                    step.selected = false;
+                    _this4.run('item/set', step);
+                }
             });
 
             item.selected = true;
@@ -20415,7 +20389,22 @@ var ImageSorting = function (_BasePropertyItem) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('selection/is/image');
+
+            this.read('image/type/isImage');
+
+            var isImage = this.read('selection/is/image');
+
+            if (!isImage) return false;
+
+            var image = this.read('selection/current/image');
+
+            if (!image) return false;
+
+            if (this.read('image/type/isImage', image.type)) {
+                return false;
+            }
+
+            return true;
         }
     }, {
         key: CLICK('$ordering'),
@@ -20576,7 +20565,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="info">Info</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="info">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>\n                        <BackgroundClip></BackgroundClip>                    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -22842,13 +22831,13 @@ var VerticalColorStep = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='vertical-colorstep'>\n                <GradientSteps></GradientSteps>\n            </div>\n        ";
+            return "\n            <div class='vertical-colorstep-container'>\n                <div class='vertical-colorstep' ref=\"$verticalColorstep\">\n                    <GradientSteps></GradientSteps>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
         value: function refresh() {
             this.$el.toggle(this.isShow());
-            this.$el.px('width', this.$store.step.width);
+            this.refs.$verticalColorstep.px('width', this.$store.step.width);
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
@@ -23292,7 +23281,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
                     backgroundCSS = _this2.read('image/backgroundSize/toCSS', backgroundImage);
                 }
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('css/toString', css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="' + _this2.read('css/toString', backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read('css/toString', css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read('css/toString', backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
             });
         }
     }, {
@@ -25482,7 +25471,8 @@ var GradientSampleList = function (_UIElement) {
             var _this2 = this;
 
             var list = this.list.map(function (item, index) {
-                return "\n            <div class='gradient-sample-item' data-index=\"" + index + "\">\n                <div class='preview' style='" + _this2.read('image/toString', item) + "'></div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                    <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                </div>          \n            </div>";
+                var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
+                return "\n            <div class='gradient-sample-item' data-index=\"" + index + "\">\n                <div class='preview' style='" + _this2.read('image/toString', newImage) + "'></div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                    <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                </div>          \n            </div>";
             });
 
             var storageList = this.read('storage/images').map(function (item, index) {

@@ -41,7 +41,22 @@ export default class ImageSorting extends BasePropertyItem {
     }
 
     isShow() {
-        return this.read('selection/is/image');
+        
+        this.read('image/type/isImage');
+
+        var isImage = this.read('selection/is/image');
+
+        if (!isImage) return false; 
+
+        var image = this.read('selection/current/image');
+
+        if (!image) return false;
+
+        if (this.read('image/type/isImage', image.type)) {
+            return false; 
+        }
+
+        return true; 
     }
 
 

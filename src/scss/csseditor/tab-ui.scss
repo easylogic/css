@@ -180,15 +180,14 @@ $tab-horizontal-header-width: 50px;
             top: 0px;
             bottom: 0px;
             width: $tab-horizontal-header-width;
-            flex-direction: column; 
+            display: inline-block;
 
             .tab-item {
                 border: 0px;
                 border-bottom: 1px solid $border-color;
                 text-align: center;
-                min-height: 40px;
-                overflow: auto;
-                line-height: 3;     
+                line-height: 3;   
+                height: $tab-horizontal-header-width;   
                 
                 &.selected {
                     background-color: rgba($tab-selected-color, 0.5);

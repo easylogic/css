@@ -62,6 +62,11 @@ const IMAGE_LIST = [
     IMAGE_FILE_TYPE_SVG
 ]
 
+const LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
+const RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
+const CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+const IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
+const STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
 export default class ImageManager extends BaseModule { 
  
     [GETTER('image/get/file')] ($store, files, callback, colorCount = 16) {
@@ -143,23 +148,23 @@ export default class ImageManager extends BaseModule {
     }    
 
     [GETTER('image/type/isLinear')] ($store, type) {
-        return [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR].includes(type)
+        return LINEAR_GRADIENT_LIST.includes(type)
     }
 
     [GETTER('image/type/isRadial')] ($store, type) {
-        return [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL].includes(type)
+        return RADIAL_GRADIENT_LIST.includes(type)
     }    
 
     [GETTER('image/type/isConic')] ($store, type) {
-        return [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC].includes(type)
+        return CONIC_GRADIENT_LIST.includes(type)
     }        
 
     [GETTER('image/type/isImage')] ($store, type) {
-        return [IMAGE_ITEM_TYPE_IMAGE].includes(type)
+        return IMAGE_GRADIENT_LIST.includes(type)
     }
 
     [GETTER('image/type/isStatic')] ($store, type) {
-        return [IMAGE_ITEM_TYPE_STATIC].includes(type)
+        return STATIC_GRADIENT_LIST.includes(type)
     }    
 
     [GETTER('image/angle')] ($store, angle = '') {
