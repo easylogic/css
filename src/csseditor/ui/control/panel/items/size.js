@@ -8,6 +8,7 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT, SELECTION_IS_IMAGE } from "../../../../module/SelectionTypes";
 
 export default class Size extends BasePropertyItem {
     template () {
@@ -55,12 +56,12 @@ export default class Size extends BasePropertyItem {
     )] ()  { this.refresh() }
 
     refresh() {
-        var item = this.read('selection/current')
+        var item = this.read(SELECTION_CURRENT)
         if (!item) return; 
         if (!item.length) return; 
 
         item = item[0];
-        if (this.read('selection/is/image')) return; 
+        if (this.read(SELECTION_IS_IMAGE)) return; 
         if (item.width) {
             this.refs.$width.val(unitValue(item.width))
         }
@@ -81,7 +82,7 @@ export default class Size extends BasePropertyItem {
 
     [CLICK('$rect')] (e) {
 
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var width = pxUnit(this.refs.$width.int())
             var height = width;
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
@@ -91,14 +92,14 @@ export default class Size extends BasePropertyItem {
     }
 
     [INPUT('$width')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var width = pxUnit(this.refs.$width.int())
             this.commit(CHANGE_LAYER_SIZE, {id, width});
         })        
     }
 
     [INPUT('$height')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var height = pxUnit(this.refs.$height.int())
             this.commit(CHANGE_LAYER_SIZE, {id, height});
         })        
@@ -106,14 +107,14 @@ export default class Size extends BasePropertyItem {
 
 
     [INPUT('$x')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var x = pxUnit(this.refs.$x.int())
             this.commit(CHANGE_LAYER_POSITION, {id, x});
         })
     }
 
     [INPUT('$y')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var y = pxUnit(this.refs.$y.int())
             this.commit(CHANGE_LAYER_POSITION, {id, y});
         })

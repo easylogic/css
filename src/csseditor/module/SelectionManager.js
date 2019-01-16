@@ -5,11 +5,13 @@ import {
     ITEM_TYPE_LAYER, 
     ITEM_TYPE_BOXSHADOW, 
     ITEM_TYPE_TEXTSHADOW, 
-    ITEM_TYPE_PAGE 
+    ITEM_TYPE_PAGE, 
+    ITEM_GET
 } from "./ItemTypes";
 import { unitValue, pxUnit } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
+import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "./SelectionTypes";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -55,7 +57,7 @@ export default class SelectionManager extends BaseModule {
         return true;
     }
 
-    [GETTER('selection/initialize/data')] ($store) {
+    [GETTER(SELECTION_INITIALIZE_DATA)] ($store) {
         return {
             type: SELECT_MODE_ONE,
             ids: [],
@@ -64,40 +66,40 @@ export default class SelectionManager extends BaseModule {
         }
     }
 
-    [GETTER('selection/ids')] ($store) {
+    [GETTER(SELECTION_IDS)] ($store) {
         return $store.selection.ids || []
     }
 
-    [GETTER('selection/check')] ($store, id) {
+    [GETTER(SELECTION_CHECK)] ($store, id) {
         return $store.selection.ids.includes(id);
     }
 
-    [GETTER('selection/is/empty')] ($store) {
+    [GETTER(SELECTION_IS_EMPTY)] ($store) {
         return $store.selection.ids.length === 0; 
     }
 
-    [GETTER('selection/is/not/empty')] ($store) {
+    [GETTER(SELECTION_IS_NOT_EMPTY)] ($store) {
         return $store.selection.ids.length > 0; 
     }    
 
-    [GETTER('selection/has/one')] ($store) {
+    [GETTER(SELECTION_HAS_ONE)] ($store) {
         return $store.selection.ids.length === 1; 
     }
 
-    [GETTER('selection/has/many')] ($store) {
+    [GETTER(SELECTION_HAS_MANY)] ($store) {
         return $store.selection.ids.length > 1; 
     }
 
-    [GETTER('selection/type')] ($store) {
+    [GETTER(SELECTION_TYPE)] ($store) {
         return $store.selection.type;
     }
 
-    [GETTER('selection/current')] ($store) {
+    [GETTER(SELECTION_CURRENT)] ($store) {
         return $store.selection.ids.filter(id => !!$store.items[id]).map(id => $store.items[id])
     }   
 
-    [GETTER('selection/unit/values')] ($store) {
-        return $store.read('selection/current').map(item => {
+    [GETTER(SELECTION_UNIT_VALUES)] ($store) {
+        return $store.read(SELECTION_CURRENT).map(item => {
             return {
                 id: item.id,
                 x: unitValue(item.x),
@@ -116,11 +118,11 @@ export default class SelectionManager extends BaseModule {
         var items = null
 
         if ($store.selection.itemType == itemType) {
-            var items = $store.read('selection/current')
+            var items = $store.read(SELECTION_CURRENT)
         }
 
         if (Array.isArray(items) && items.length) {
-            if ($store.read('selection/is/one')) {
+            if ($store.read(SELECTION_IS_ONE)) {
                 if (isFunction(callback)) callback (items[0])
                 return items[0]
             } else {
@@ -137,11 +139,11 @@ export default class SelectionManager extends BaseModule {
         var items = null
 
         if ($store.selection.itemType == itemType) {
-            var items = $store.read('selection/current')
+            var items = $store.read(SELECTION_CURRENT)
         }
 
         if (Array.isArray(items) && items.length) {
-            if ($store.read('selection/is/one') ) {
+            if ($store.read(SELECTION_IS_ONE) ) {
                 if (isFunction(callback)) callback (items[0].id)
                 return items[0].id
             } else {
@@ -153,44 +155,44 @@ export default class SelectionManager extends BaseModule {
         return items;
     }
 
-    [GETTER('selection/current/image')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_IMAGE)] ($store, callback) {
         return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
     }
 
-    [GETTER('selection/current/image/id')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_IMAGE_ID)] ($store, callback) {
         return this.getCurrentItemId($store, ITEM_TYPE_IMAGE, callback);
     }   
 
-    [GETTER('selection/current/boxshadow')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_BOXSHADOW)] ($store, callback) {
         return this.getCurrentItem($store, ITEM_TYPE_BOXSHADOW, callback);
     }
 
-    [GETTER('selection/current/boxshadow/id')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_BOXSHADOW_ID)] ($store, callback) {
         return this.getCurrentItemId($store, ITEM_TYPE_BOXSHADOW, callback);
     }       
 
-    [GETTER('selection/current/textshadow')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_TEXTSHADOW)] ($store, callback) {
         return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW, callback);
     }
 
-    [GETTER('selection/current/textshadow/id')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_TEXTSHADOW_ID)] ($store, callback) {
         return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW, callback);
     }       
 
-    [GETTER('selection/current/layer')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_LAYER)] ($store, callback) {
         var layers = null
 
         if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-            var layers = $store.read('selection/current')
+            var layers = $store.read(SELECTION_CURRENT)
         } else if (
             $store.selection.itemType == ITEM_TYPE_IMAGE 
             || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
             || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
         ) {
-            var layers = $store.read('selection/current').map(item => $store.items[item.parentId]) 
+            var layers = $store.read(SELECTION_CURRENT).map(item => $store.items[item.parentId]) 
         }
         if (Array.isArray(layers) && layers.length) {
-            if ($store.read('selection/is/one')) {
+            if ($store.read(SELECTION_IS_ONE)) {
                 if (isFunction(callback)) callback (layers[0])
                 return layers[0]
             } else {
@@ -202,21 +204,21 @@ export default class SelectionManager extends BaseModule {
         return layers;
     }
 
-    [GETTER('selection/current/layer/id')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_LAYER_ID)] ($store, callback) {
         var layers = null
 
         if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-            var layers = $store.read('selection/current')
+            var layers = $store.read(SELECTION_CURRENT)
         } else if (
                 $store.selection.itemType == ITEM_TYPE_IMAGE 
                 || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
                 || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
         ) {
-            var layers = $store.read('selection/current').map(item => $store.items[item.parentId]) 
+            var layers = $store.read(SELECTION_CURRENT).map(item => $store.items[item.parentId]) 
         }
 
         if (Array.isArray(layers) && layers.length) {
-            if ($store.read('selection/is/one') ) {
+            if ($store.read(SELECTION_IS_ONE) ) {
                 if (isFunction(callback)) callback (layers[0].id)
                 return layers[0].id
             } else {
@@ -228,11 +230,11 @@ export default class SelectionManager extends BaseModule {
         return layers;
     }
     
-    [GETTER('selection/current/page')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_PAGE)] ($store, callback) {
 
-        var pages = $store.read('selection/current').map(it => {
+        var pages = $store.read(SELECTION_CURRENT).map(it => {
             var path = $store.read('item/path', it.id)
-            return $store.read('item/get', path[path.length-1])
+            return $store.read(ITEM_GET, path[path.length-1])
         });
 
         if (Array.isArray(pages) && pages.length ) {
@@ -244,11 +246,11 @@ export default class SelectionManager extends BaseModule {
 
     }    
 
-    [GETTER('selection/current/page/id')] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_PAGE_ID)] ($store, callback) {
        
-        var pages = $store.read('selection/current').map(it => {
+        var pages = $store.read(SELECTION_CURRENT).map(it => {
             var path = $store.read('item/path', it.id)
-            return $store.read('item/get', path[path.length-1])
+            return $store.read(ITEM_GET, path[path.length-1])
         });
 
         if (Array.isArray(pages) && pages.length ) {
@@ -261,63 +263,71 @@ export default class SelectionManager extends BaseModule {
     }    
 
 
-    [GETTER('selection/mode')] ($store) {
+    [GETTER(SELECTION_MODE)] ($store) {
         return $store.selection;
     }
 
-    [GETTER('selection/is')] ($store, type) {
+    [GETTER(SELECTION_IS)] ($store, type) {
         return $store.selection.type == type; 
     }
 
-    [GETTER('selection/is/item')] ($store, type) {
+    [GETTER(SELECTION_IS_ITEM)] ($store, type) {
         return $store.selection.itemType == type; 
     }    
 
-    [GETTER('selection/is/empty')] ($store) {
-        return $store.selection.ids.length == 0; 
-    }        
-
-    [GETTER('selection/is/layer')] ($store, type) {
+    [GETTER(SELECTION_IS_LAYER)] ($store, type) {
         return $store.selection.itemType == ITEM_TYPE_LAYER;
     }        
 
-    [GETTER('selection/is/image')] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_IMAGE;
+    [GETTER(SELECTION_IS_IMAGE)] ($store, type) {
+
+        var isImage = $store.selection.itemType == ITEM_TYPE_IMAGE;
+        var isTypeCheck = true; 
+
+        if (type) {
+            if ($store.selection.ids.length ) {
+                var item = $store.read(ITEM_GET, $store.selection.ids[0]);
+
+                isTypeCheck = item.type == type
+            }
+        }
+
+        return isImage && isTypeCheck;
     }            
 
-    [GETTER('selection/is/page')] ($store, type) {
+    [GETTER(SELECTION_IS_PAGE)] ($store, type) {
         return $store.selection.itemType == ITEM_TYPE_PAGE;
     }                
 
-    [GETTER('selection/is/boxshadow')] ($store, type) {
+    [GETTER(SELECTION_IS_BOXSHADOW)] ($store, type) {
         return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
     }                    
 
-    [GETTER('selection/is/textshadow')] ($store, type) {
+    [GETTER(SELECTION_IS_TEXTSHADOW)] ($store, type) {
         return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW;
     }                    
     
-    [GETTER('selection/is/filter')] ($store, type) {
+    [GETTER(SELECTION_IS_FILTER)] ($store, type) {
         return $store.selection.itemType == ITEM_TYPE_FILTER;
     }                    
     
-    [GETTER('selection/is/backdrop-filter')] ($store, type) {
+    [GETTER(SELECTION_IS_BACKDROP_FILTER)] ($store, type) {
         return $store.selection.itemType == ITEM_TYPE_BACKDROP;
     }                        
 
-    [GETTER('selection/is/one')] ($store) {
-        return $store.read('selection/is', SELECT_MODE_ONE)
+    [GETTER(SELECTION_IS_ONE)] ($store) {
+        return $store.read(SELECTION_IS, SELECT_MODE_ONE)
     }
 
-    [GETTER('selection/is/group')] ($store) {
-        return $store.read('selection/is', SELECT_MODE_GROUP)
+    [GETTER(SELECTION_IS_GROUP)] ($store) {
+        return $store.read(SELECTION_IS, SELECT_MODE_GROUP)
     }    
 
-    [GETTER('selection/is/area')] ($store) {
-        return $store.read('selection/is', SELECT_MODE_AREA)
+    [GETTER(SELECTION_IS_AREA)] ($store) {
+        return $store.read(SELECTION_IS, SELECT_MODE_AREA)
     }        
 
-    [GETTER('selection/layers')] ($store) {
+    [GETTER(SELECTION_LAYERS)] ($store) {
         return $store.read('item/filter', (id) => {
             return $store.items[id].itemType == ITEM_TYPE_LAYER
         }).map(id => {
@@ -334,7 +344,7 @@ export default class SelectionManager extends BaseModule {
         })
     }
 
-    [ACTION('selection/one')] ($store, selectedId = '') {
+    [ACTION(SELECTION_ONE)] ($store, selectedId = '') {
         $store.selection = {  
             type: SELECT_MODE_ONE, 
             ids: [selectedId],
@@ -342,21 +352,21 @@ export default class SelectionManager extends BaseModule {
         }
     }    
 
-    [ACTION('selection/change')] ($store, itemType) {
+    [ACTION(SELECTION_CHANGE)] ($store, itemType) {
         if (itemType == ITEM_TYPE_PAGE) {
-            $store.read('selection/current/page', (page) => {
-                $store.run('selection/one', page.id);
+            $store.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+                $store.run(SELECTION_ONE, id);
             })
         }
     }
 
-    [ACTION('selection/area')] ($store, {x, y, width, height})  {
+    [ACTION(SELECTION_AREA)] ($store, {x, y, width, height})  {
         var x2 = x + width; 
         var y2 = y + height; 
 
         var area = {x, y, width, height, x2, y2}
 
-        var layers = $store.read('selection/layers')
+        var layers = $store.read(SELECTION_LAYERS)
 
         var selectItems = []
         layers.forEach(it => {
@@ -373,11 +383,11 @@ export default class SelectionManager extends BaseModule {
                 itemType: ITEM_TYPE_LAYER
             }
         } else {
-            $store.run('selection/change', ITEM_TYPE_PAGE)
+            $store.run(SELECTION_CHANGE, ITEM_TYPE_PAGE)
         }        
     }
 
-    [GETTER('selection/rect')] ($store) {
+    [GETTER(SELECTION_RECT)] ($store) {
         var items = $store.selection.ids.map(id => {
             var {x, y, width, height} = $store.items[id]
 

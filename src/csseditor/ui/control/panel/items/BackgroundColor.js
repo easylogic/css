@@ -2,6 +2,7 @@ import { CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR } from "../../../../types/
 import BasePropertyItem from "./BasePropertyItem";
 import { CLICK } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class BackgroundColor extends BasePropertyItem {
     template () {
@@ -30,7 +31,7 @@ export default class BackgroundColor extends BasePropertyItem {
     }
 
     refresh() {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             this.refs.$color.css('background-color', layer.backgroundColor)
             this.refs.$colortext.text(layer.backgroundColor)
         });

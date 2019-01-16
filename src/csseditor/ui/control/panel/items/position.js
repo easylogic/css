@@ -3,6 +3,8 @@ import { CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, unitValue, pxUnit } from "../../../../../util/css/types";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
+import { ITEM_SET } from "../../../../module/ItemTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class Position extends BasePropertyItem {
     template () {
@@ -30,7 +32,7 @@ export default class Position extends BasePropertyItem {
     }
 
     refresh() {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
             this.refs.$x.val(unitValue(item.x))
             this.refs.$y.val(unitValue(item.y))
         })
@@ -38,16 +40,16 @@ export default class Position extends BasePropertyItem {
     }
 
     [INPUT('$x')] () {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
             item.x = pxUnit(this.refs.$x.int())
-            this.dispatch('item/set', item)
+            this.dispatch(ITEM_SET, item)
         })
     }
 
     [INPUT('$y')] () {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
             item.y = pxUnit(this.refs.$y.int())
-            this.dispatch('item/set', item)
+            this.dispatch(ITEM_SET, item)
         })
     }    
 }

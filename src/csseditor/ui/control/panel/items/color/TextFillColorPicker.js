@@ -6,6 +6,7 @@ import {
     CHANGE_SELECTION,
     TEXT_FILL_COLOR
 } from '../../../../../types/event';
+import { ITEM_GET } from '../../../../../module/ItemTypes';
 
 export default class TextFillColorPicker extends UIElement {
  
@@ -41,7 +42,7 @@ export default class TextFillColorPicker extends UIElement {
 
     [EVENT(TEXT_FILL_COLOR)] (id, eventType) {
         this.changeColorId = id;
-        this.itemType = this.read('item/get', id).itemType;
+        this.itemType = this.read(ITEM_GET, id).itemType;
         this.eventType = eventType;
 
         this.refresh();
@@ -54,7 +55,7 @@ export default class TextFillColorPicker extends UIElement {
 
     refresh() {
         if (this.changeColorId) {
-            var item = this.read('item/get', this.changeColorId);
+            var item = this.read(ITEM_GET, this.changeColorId);
             this.colorPicker.initColorWithoutChangeEvent(item.color);
         }
 

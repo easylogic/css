@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
+import { SELECTION_CURRENT_PAGE } from "../../../../module/SelectionTypes";
 
 export default class PageShowGrid extends UIElement {
     template () {
@@ -27,13 +28,13 @@ export default class PageShowGrid extends UIElement {
     }    
 
     refresh() {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             this.refs.$check.checked(this.read('tool/get', 'show.grid'));
         })        
     }
 
     [CLICK('$check')] () {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             this.run('tool/set', 'show.grid', this.refs.$check.checked())
             this.dispatch('tool/set', 'snap.grid', this.refs.$check.checked())
         })

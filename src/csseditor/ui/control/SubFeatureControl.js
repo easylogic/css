@@ -10,6 +10,7 @@ import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
 import PerspectiveOriginPosition from "./shape/PerspectiveOriginPosition";
+import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from "../../module/SelectionTypes";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -66,27 +67,27 @@ export default class SubFeatureControl extends UIElement {
 
 
     isShow () {
-        //if (!this.read('selection/is/image')) return false;         
+        //if (!this.read(SELECTION_IS_IMAGE)) return false;         
         return true;
     }
 
     isNotImage () {
-        return this.read('selection/is/image') == false;
+        return this.read(SELECTION_IS_IMAGE) == false;
     }
 
     isNotPage () {
         if (!this.read('selection/is/page')) return true; 
 
-        var item = this.read('selection/current/page');
+        var item = this.read(SELECTION_CURRENT_PAGE);
         if (!item) return true; 
 
         return !item.preserve
     }
 
     isLinearShow () {
-        if (!this.read('selection/is/image')) return false; 
+        if (!this.read(SELECTION_IS_IMAGE)) return false; 
 
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!item) return false; 
 
@@ -101,9 +102,9 @@ export default class SubFeatureControl extends UIElement {
     }
 
     isRadialShow () {
-        if (!this.read('selection/is/image')) return false; 
+        if (!this.read(SELECTION_IS_IMAGE)) return false; 
 
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
         if (!item) return false; 
 
         var isRadial = this.read('image/type/isRadial', item.type)

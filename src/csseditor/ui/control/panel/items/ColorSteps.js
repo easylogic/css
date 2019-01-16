@@ -28,7 +28,7 @@ export default class ColorSteps extends BasePropertyItem {
     }
 
     isShow () {
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!item) return false; 
 

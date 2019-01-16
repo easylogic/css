@@ -2,6 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import SVGList from "./svg/index";
 import Dom from "../../util/Dom";
 import { GETTER, ACTION } from "../../util/Store";
+import { clone } from "../../util/functions/func";
 
 export default class SVGManager extends BaseModule {
 
@@ -20,7 +21,7 @@ export default class SVGManager extends BaseModule {
     } 
 
     [ACTION('svg/list/load')] ($store, loadList = []) {
-        $store.svgList = $store.read('clone', loadList);
+        $store.svgList = clone(loadList);
     }
 
     [GETTER('svg/get/clipPath')] ($store, svg, id, callback, transform = "") {

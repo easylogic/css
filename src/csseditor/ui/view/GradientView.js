@@ -41,6 +41,8 @@ import {
 } from '../../types/event';
 import { px } from '../../../util/css/types';
 import { LOAD } from '../../../util/Event';
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../module/SelectionTypes';
+import { LAYER_TOSTRING, LAYER_TOSTRING_CLIPPATH, LAYER_BOUND_TOCSS } from '../../module/LayerTypes';
 
 
 
@@ -89,7 +91,7 @@ export default class GradientView extends UIElement {
     }
 
     [LOAD('$colorview')] () {
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
             return ''; 
@@ -104,7 +106,7 @@ export default class GradientView extends UIElement {
                     class='layer' 
                     item-layer-id="${item.id}" 
                     title="${index+1}. ${item.name || 'Layer'}" 
-                    style='${this.read('layer/toString', item, true)}'>${content}${this.read('layer/toStringClipPath', item)}</div>`
+                    style='${this.read(LAYER_TOSTRING, item, true)}'>${content}${this.read(LAYER_TOSTRING_CLIPPATH, item)}</div>`
         });
 
         return list; 
@@ -125,7 +127,7 @@ export default class GradientView extends UIElement {
     }
     
     refreshLayer () {
-        this.read('selection/current/layer', (items) => {
+        this.read(SELECTION_CURRENT_LAYER, (items) => {
 
             if (!items.length) {
                 items = [items]
@@ -139,16 +141,16 @@ export default class GradientView extends UIElement {
                     this.layerItems[item.id] = $el; 
                 }
 
-                this.layerItems[item.id].cssText(this.read('layer/toString', item, true))
+                this.layerItems[item.id].cssText(this.read(LAYER_TOSTRING, item, true))
 
                 var content = item.content || '';
-                this.layerItems[item.id].html(content + this.read('layer/toStringClipPath', item))
+                this.layerItems[item.id].html(content + this.read(LAYER_TOSTRING_CLIPPATH, item))
             })
         })
     }
 
     refreshLayerPosition () {
-        this.read('selection/current/layer', (items) => {
+        this.read(SELECTION_CURRENT_LAYER, (items) => {
 
             if (!items.length) {
                 items = [items]
@@ -161,14 +163,14 @@ export default class GradientView extends UIElement {
                     this.layerItems[item.id] = $el; 
                 }
 
-                this.layerItems[item.id].css(this.read('layer/bound/toCSS', item))            
+                this.layerItems[item.id].css(this.read(LAYER_BOUND_TOCSS, item))            
             })
         })
     }    
  
     setBackgroundColor() {
 
-        var page = this.read('selection/current/page');
+        var page = this.read(SELECTION_CURRENT_PAGE);
 
         var pageCSS = this.read('page/toCSS', page || {clip: false});
 
@@ -208,7 +210,7 @@ export default class GradientView extends UIElement {
             this.hasScroll = true; 
         }
 
-        var item = this.read('selection/current/page')
+        var item = this.read(SELECTION_CURRENT_PAGE)
 
         this.refs.$page.toggle(item)
 

@@ -3,6 +3,7 @@ import { CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM } f
 import { UNIT_PERCENT, unitString, unitValue, percentUnit, pxUnit, UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
 
 export default class Page3D extends UIElement {
     template () {
@@ -53,7 +54,7 @@ export default class Page3D extends UIElement {
     }
 
     refresh() {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             var perspective = unitValue( defaultValue(item.perspective, pxUnit (0)) );
             var perspectiveOriginPositionX = unitValue( defaultValue(item.perspectiveOriginPositionX, percentUnit(0)) );
             var perspectiveOriginPositionY = unitValue( defaultValue(item.perspectiveOriginPositionY, percentUnit(0)) );
@@ -72,7 +73,7 @@ export default class Page3D extends UIElement {
 
     [CLICK('$preserve')] (e) {
 
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var preserve = this.refs.$preserve.checked();
 
             this.commit(CHANGE_PAGE, {id, preserve});
@@ -80,7 +81,7 @@ export default class Page3D extends UIElement {
     }
 
     [INPUT('$perspective')] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var value = this.refs.$perspective.val();
             var perspective = pxUnit(+value);
 
@@ -90,7 +91,7 @@ export default class Page3D extends UIElement {
     }
 
     [CHANGEINPUT('$perspectiveRange')] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var value = this.refs.$perspectiveRange.val();
             var perspective = pxUnit(+value);
 
@@ -100,7 +101,7 @@ export default class Page3D extends UIElement {
     }    
 
     [INPUT('$x')] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var value = this.refs.$x.val()
             var perspectiveOriginPositionX = percentUnit(+value);
 
@@ -110,7 +111,7 @@ export default class Page3D extends UIElement {
     }    
 
     [CHANGEINPUT('$xRange')] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var value = this.refs.$xRange.val();
             var perspectiveOriginPositionX = percentUnit(+value);
 
@@ -121,7 +122,7 @@ export default class Page3D extends UIElement {
 
 
     [INPUT('$y')] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var value = this.refs.$y.val();
             var perspectiveOriginPositionY = percentUnit(+value);
 
@@ -132,7 +133,7 @@ export default class Page3D extends UIElement {
 
 
     [CHANGEINPUT('$yRange')] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var value = this.refs.$yRange.val();
             var perspectiveOriginPositionY = percentUnit(+value);
 

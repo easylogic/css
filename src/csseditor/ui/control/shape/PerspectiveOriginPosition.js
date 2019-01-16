@@ -8,6 +8,7 @@ import { percentUnit, unitValue, valueUnit } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../module/SelectionTypes';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
@@ -41,7 +42,7 @@ export default class PerspectiveOriginPosition extends UIElement {
     isShow () {
         if (!this.read('selection/is/page')) return false; 
 
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
         if (!page) return false; 
 
         return !!page.preserve;  
@@ -107,7 +108,7 @@ export default class PerspectiveOriginPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('selection/current/page');
+        var item = this.read(SELECTION_CURRENT_PAGE);
 
         if (!item) return ''; 
 
@@ -142,7 +143,7 @@ export default class PerspectiveOriginPosition extends UIElement {
     }
 
     setPerspectiveOriginPosition (perspectiveOriginPositionX, perspectiveOriginPositionY) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionX, perspectiveOriginPositionY});
         });
     }

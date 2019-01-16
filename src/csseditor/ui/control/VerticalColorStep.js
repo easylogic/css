@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
+import { SELECTION_CURRENT_IMAGE } from "../../module/SelectionTypes";
 
 export default class VerticalColorStep extends UIElement {
 
@@ -31,7 +32,7 @@ export default class VerticalColorStep extends UIElement {
     )] () { this.refresh() }
 
     isShow () {
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!item) return false; 
 

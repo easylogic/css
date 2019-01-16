@@ -9,6 +9,7 @@ import {
     CHANGE_SELECTION
 } from '../../../../../types/event';
 import { isNotUndefined } from '../../../../../../util/functions/func';
+import { SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../../module/SelectionTypes';
 
 export default class ColorPickerLayer extends UIElement {
 
@@ -36,13 +37,13 @@ export default class ColorPickerLayer extends UIElement {
     }
 
     changeColor (color) {
-        var item = this.read('selection/current')
+        var item = this.read(SELECTION_CURRENT)
 
         if (!item.length) return; 
 
         item = item[0];
 
-        if (this.read('selection/is/image')) {
+        if (this.read(SELECTION_IS_IMAGE)) {
             
             if (this.read('image/type/isStatic', item.type)) {
                 this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
@@ -75,8 +76,8 @@ export default class ColorPickerLayer extends UIElement {
     )] () { this.refresh() }    
 
     refresh() {
-        if (this.read('selection/is/image')) {
-            this.read('selection/current/image', (image) => {
+        if (this.read(SELECTION_IS_IMAGE)) {
+            this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 if (this.read('image/type/isStatic', image.type)) {
                     this.colorPicker.initColorWithoutChangeEvent(image.color);
                 } else if (this.read('image/type/isGradient', image.type)) {

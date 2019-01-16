@@ -6,11 +6,12 @@ import {
     CHANGE_SELECTION,
     CHANGE_LAYER_BACKGROUND_COLOR
 } from '../../../../../types/event';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../../../module/SelectionTypes';
 
 export default class LayerColorPickerLayer extends UIElement {
 
     afterRender () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         var defaultColor = layer ? layer.backgroundColor : 'rgba(0, 0, 0, 0)'
 
@@ -35,7 +36,7 @@ export default class LayerColorPickerLayer extends UIElement {
     }
 
     changeColor (color) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_BACKGROUND_COLOR, {id, backgroundColor: color})
         })
     }
@@ -47,8 +48,8 @@ export default class LayerColorPickerLayer extends UIElement {
     )] () { this.refresh() }    
 
     refresh() {
-        if (this.read('selection/is/layer')) {
-            this.read('selection/current/layer', (layer) => {
+        if (this.read(SELECTION_IS_LAYER)) {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 if (layer.backgroundColor) {
                     if (layer.backgroundColor.includes('rgb')) return;
                     this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);

@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import ColorPicker  from "./color/ColorPicker";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
+import { SELECTION_CURRENT_IMAGE } from "../../../../module/SelectionTypes";
 
 
 
@@ -30,7 +31,7 @@ export default class ColorPickerPanel extends UIElement {
     )] () { this.refresh() }
 
     isShow () {
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!item) return false; 
 

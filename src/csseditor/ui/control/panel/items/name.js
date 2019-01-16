@@ -2,6 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT } from "../../../../module/SelectionTypes";
 
 export default class Name extends BasePropertyItem {
     template () {
@@ -37,7 +38,7 @@ export default class Name extends BasePropertyItem {
     }
 
     refresh() {
-        var item = this.read('selection/current');
+        var item = this.read(SELECTION_CURRENT);
 
         if (!item.length) return;
 
@@ -58,19 +59,19 @@ export default class Name extends BasePropertyItem {
     }
 
     [INPUT('$name')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, name: this.refs.$name.val()});
         });
     }
 
     [INPUT('$class')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, className: this.refs.$class.val()});
         });        
     }    
 
     [INPUT('$id')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_NAME , {id, idString: this.refs.$id.val()});
         });          
     }        

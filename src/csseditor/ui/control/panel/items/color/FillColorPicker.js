@@ -5,6 +5,7 @@ import {
     CHANGE_EDITOR,
     CHANGE_SELECTION
 } from '../../../../../types/event';
+import { ITEM_GET } from '../../../../../module/ItemTypes';
 
 export default class FillColorPicker extends UIElement {
 
@@ -36,13 +37,16 @@ export default class FillColorPicker extends UIElement {
         if (this.changeColorId) {
             this.commit(this.eventType, {id: this.changeColorId, color})
         } else {
-            this.callback(color);
+            if (this.callback) {
+                this.callback(color);
+            }
+
         }
     }
 
     [EVENT('fillColorId')] (id, eventType) {
         this.changeColorId = id;
-        this.itemType = this.read('item/get', id).itemType;
+        this.itemType = this.read(ITEM_GET, id).itemType;
         this.eventType = eventType;
 
         this.color = null;
@@ -68,7 +72,7 @@ export default class FillColorPicker extends UIElement {
 
     refresh() {
         if (this.changeColorId) {
-            var item = this.read('item/get', this.changeColorId);
+            var item = this.read(ITEM_GET, this.changeColorId);
             this.colorPicker.initColorWithoutChangeEvent(item.color);
         } else if (this.callback) {
             this.colorPicker.initColorWithoutChangeEvent(this.color);

@@ -2,6 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class Rotate extends BasePropertyItem {
     template () {
@@ -28,7 +29,7 @@ export default class Rotate extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
             this.refs.$rotateRange.val(item.rotate || "0")
             this.refs.$rotate.val(item.rotate || "0")
         })
@@ -36,7 +37,7 @@ export default class Rotate extends BasePropertyItem {
     }
 
     updateTransform (type) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
 
             if (type == 'rotate') {
                 this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate: this.refs.$rotate.val()})

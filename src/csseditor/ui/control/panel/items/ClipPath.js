@@ -15,6 +15,7 @@ import {
     CLIP_PATH_TYPE_SVG
 } from "../../../../module/ItemTypes";
 import { CHANGE, CLICK } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 const CLIP_PATH_TYPES = [
     CLIP_PATH_TYPE_NONE,
@@ -57,18 +58,18 @@ export default class ClipPath extends BasePropertyItem {
         CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        // CHANGE_LAYER_CLIPPATH
+        CHANGE_LAYER_CLIPPATH
     )] () { this.refresh() }
 
     refresh() {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             this.refs.$showClipPathEditor.checked(layer.showClipPathEditor);
             this.refs.$clipType.val(layer.clipPathType || CLIP_PATH_TYPE_NONE);
         });
     }
 
     [CHANGE('$clipType')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 
                 clipPathType: this.refs.$clipType.val()
@@ -77,7 +78,7 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     [CLICK('$showClipPathEditor')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 
                 showClipPathEditor: this.refs.$showClipPathEditor.checked()

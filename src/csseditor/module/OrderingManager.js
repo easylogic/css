@@ -2,6 +2,8 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { unitValue, pxUnit } from "../../util/css/types";
 import { ACTION } from "../../util/Store";
+import { ITEM_SET } from "./ItemTypes";
+import { SELECTION_UNIT_VALUES, SELECTION_CURRENT, SELECTION_CURRENT_LAYER_ID } from "./SelectionTypes";
 
 export default class OrderingManager extends BaseModule {
 
@@ -10,7 +12,7 @@ export default class OrderingManager extends BaseModule {
     }
 
     horizontal ($store) {
-        var items = $store.read('selection/unit/values');
+        var items = $store.read(SELECTION_UNIT_VALUES);
 
         var x = Number.MAX_SAFE_INTEGER;
         var xItem = null; 
@@ -50,14 +52,14 @@ export default class OrderingManager extends BaseModule {
                 item.centerX = startX + (index + 1) * unitWidth;
                 item.x = item.centerX - (item.width/2)
 
-                $store.run('item/set', {id: item.id, x: pxUnit(item.x)})
+                $store.run(ITEM_SET, {id: item.id, x: pxUnit(item.x)})
             })
         }
 
     }
 
     vertical ($store) {
-        var items = $store.read('selection/unit/values');
+        var items = $store.read(SELECTION_UNIT_VALUES);
 
         var y = Number.MAX_SAFE_INTEGER;
         var yItem = null; 
@@ -97,25 +99,25 @@ export default class OrderingManager extends BaseModule {
                 item.centerY = startY + (index + 1) * unitHeight;
                 item.y = item.centerY - (item.height/2)
 
-                $store.run('item/set', {id: item.id, y: pxUnit(item.y)})
+                $store.run(ITEM_SET, {id: item.id, y: pxUnit(item.y)})
             })
         }
 
     }
 
     left ($store) {
-        var items = $store.read('selection/current');
+        var items = $store.read(SELECTION_CURRENT);
         var x = Math.min(...items.map(item => {
             return unitValue(item.x)
         }));
 
         items.forEach(item => {
-            $store.run('item/set', {id: item.id, x: pxUnit(x)})
+            $store.run(ITEM_SET, {id: item.id, x: pxUnit(x)})
         })
     }
 
     center ($store) {
-        var items = $store.read('selection/current');
+        var items = $store.read(SELECTION_CURRENT);
         
         var x = Math.min(...items.map(item => {
             return unitValue(item.x)
@@ -129,12 +131,12 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newX = pxUnit(Math.floor(centerX - unitValue(item.width)/2));
-            $store.run('item/set', {id: item.id, x: newX })
+            $store.run(ITEM_SET, {id: item.id, x: newX })
         })
     }
 
     right ($store) {
-        var items = $store.read('selection/current');
+        var items = $store.read(SELECTION_CURRENT);
         
         var x2 = Math.max(...items.map(item => {
             return unitValue(item.x) + unitValue(item.width);
@@ -142,23 +144,23 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newX = pxUnit(x2 - unitValue(item.width));
-            $store.run('item/set', {id: item.id, x: newX })
+            $store.run(ITEM_SET, {id: item.id, x: newX })
         })
     }
 
     top ($store) {
-        var items = $store.read('selection/current');
+        var items = $store.read(SELECTION_CURRENT);
         var y = Math.min(...items.map(item => {
             return unitValue(item.y)
         }));
 
         items.forEach(item => {
-            $store.run('item/set', {id: item.id, y: pxUnit(y)})
+            $store.run(ITEM_SET, {id: item.id, y: pxUnit(y)})
         })
     }
 
     middle ($store) {
-        var items = $store.read('selection/current');
+        var items = $store.read(SELECTION_CURRENT);
         
         var y = Math.min(...items.map(item => {
             return unitValue(item.y)
@@ -172,12 +174,12 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newY = pxUnit(Math.floor(centerY  - unitValue(item.height)/2));
-            $store.run('item/set', {id: item.id, y: newY })
+            $store.run(ITEM_SET, {id: item.id, y: newY })
         })
     }
 
     bottom ($store) {
-        var items = $store.read('selection/current');
+        var items = $store.read(SELECTION_CURRENT);
         
         var y2 = Math.max(...items.map(item => {
             return unitValue(item.y) + unitValue(item.height);
@@ -185,7 +187,7 @@ export default class OrderingManager extends BaseModule {
 
         items.forEach(item => {
             var newY = pxUnit(y2 - unitValue(item.height));
-            $store.run('item/set', {id: item.id, y: newY })
+            $store.run(ITEM_SET, {id: item.id, y: newY })
         })
     }
 
@@ -196,25 +198,25 @@ export default class OrderingManager extends BaseModule {
     }
 
     forward ($store) {
-        $store.read('selection/current/layer/id', id => {
+        $store.read(SELECTION_CURRENT_LAYER_ID, id => {
             $store.run('item/move/next', id) 
         })                     
     }
 
     backward ($store) {
-        $store.read('selection/current/layer/id', id => {
+        $store.read(SELECTION_CURRENT_LAYER_ID, id => {
             $store.run('item/move/prev', id) 
         })           
     }
     
     front ($store) {
-        $store.read('selection/current/layer/id', id => {
+        $store.read(SELECTION_CURRENT_LAYER_ID, id => {
             $store.run('item/move/last', id) 
         })
     }
     
     back ($store) {
-        $store.read('selection/current/layer/id', id => {
+        $store.read(SELECTION_CURRENT_LAYER_ID, id => {
             $store.run('item/move/first', id) 
         })                
 

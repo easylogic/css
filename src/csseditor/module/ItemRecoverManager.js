@@ -1,6 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
+import { ITEM_SET, ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SORT } from "./ItemTypes";
+import { ITEM_CREATE_PAGE, ITEM_CREATE_LAYER } from "./ItemCreateTypes";
+import { COLLECT_ONE } from "./CollectTypes";
 
 const COPY_INDEX_DIST = 1; 
 
@@ -28,7 +31,7 @@ export default class ItemRecoverManager extends BaseModule {
     [GETTER('item/recover/image')] ($store, image, parentId) {
         var newImageId = $store.read(
             'item/create/image', 
-            Object.assign({parentId}, $store.read('item/convert/style', image.image))
+            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE, image.image))
         );
         var colorsteps = (image.colorsteps || []);
         
@@ -44,20 +47,20 @@ export default class ItemRecoverManager extends BaseModule {
     [GETTER('item/recover/boxshadow')] ($store, boxshadow, parentId) {
         return $store.read(
             'item/create/boxshadow', 
-            Object.assign({parentId}, $store.read('item/convert/style', boxshadow.boxshadow))
+            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow))
         );
     }    
 
     [GETTER('item/recover/textshadow')] ($store, textshadow, parentId) {
         return $store.read(
             'item/create/textshadow', 
-            Object.assign({parentId}, $store.read('item/convert/style', textshadow.textshadow))
+            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow))
         );
     }        
 
     [GETTER('item/recover/layer')] ($store, layer, parentId) {
-        var newLayerId = $store.read('item/create/layer', 
-            Object.assign({parentId}, $store.read('item/convert/style',layer.layer))
+        var newLayerId = $store.read(ITEM_CREATE_LAYER, 
+            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE,layer.layer))
         );
 
         var images = layer.images || [] 
@@ -79,7 +82,7 @@ export default class ItemRecoverManager extends BaseModule {
     }
  
     [GETTER('item/recover/page')] ($store, page) {
-        var newPageId = $store.read('item/create/page', $store.read('item/convert/style',page.page));
+        var newPageId = $store.read(ITEM_CREATE_PAGE, $store.read(ITEM_CONVERT_STYLE,page.page));
         page.layers.forEach(layer => {
             $store.read('item/recover/layer', layer, newPageId);
         })
@@ -89,38 +92,38 @@ export default class ItemRecoverManager extends BaseModule {
 
 
     [ACTION('item/addCache')] ($store, item, sourceId) {
-        var currentItem = $store.read('item/get', sourceId);
+        var currentItem = $store.read(ITEM_GET, sourceId);
         $store.run('item/move/to', sourceId, $store.read('item/recover', item, currentItem.parentId)); 
     }
 
 
     [ACTION('item/copy/in')] ($store, destId, sourceId) {
-        var destItem = $store.read('item/get', destId);
+        var destItem = $store.read(ITEM_GET, destId);
         var newImageId = $store.read('item/recover', 
-            $store.read('collect/one', sourceId), 
+            $store.read(COLLECT_ONE, sourceId), 
             destItem.parentId
         );
 
-        var newImageItem = $store.read('item/get', newImageId);
+        var newImageItem = $store.read(ITEM_GET, newImageId);
         newImageItem.index = destItem.index - COPY_INDEX_DIST;
 
-        $store.run('item/set', sourceItem, true);
-        $store.run('item/sort', sourceId);
+        $store.run(ITEM_SET, sourceItem, true);
+        $store.run(ITEM_SORT, sourceId);
     }        
 
 
     [ACTION('item/copy/in/layer')] ($store, destId, sourceId) {
-        var destItem = $store.read('item/get', destId);  /* layer */ 
+        var destItem = $store.read(ITEM_GET, destId);  /* layer */ 
         var newImageId = $store.read('item/recover', 
-            $store.read('collect/one', sourceId), 
+            $store.read(COLLECT_ONE, sourceId), 
             destItem.parentId
         );
 
-        var newImageItem = $store.read('item/get', newImageId);
+        var newImageItem = $store.read(ITEM_GET, newImageId);
         newImageItem.index = Number.MAX_SAFE_INTEGER;
 
-        $store.run('item/set', newImageItem, true);        
-        $store.run('item/sort', newImageId);
+        $store.run(ITEM_SET, newImageItem, true);        
+        $store.run(ITEM_SORT, newImageId);
     }            
 
 }

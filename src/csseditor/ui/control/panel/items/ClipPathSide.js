@@ -14,6 +14,7 @@ import {
     CLIP_PATH_SIDE_TYPE_FARTHEST
 } from "../../../../module/ItemTypes";
 import { CHANGE } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 
 const CLIP_PATH_SIDE_TYPES = [
@@ -58,7 +59,7 @@ export default class ClipPathSide extends BasePropertyItem {
 
         if (isShow) {
 
-            this.read('selection/current/layer', (layer) => {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 this.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
             });
         }
@@ -66,7 +67,7 @@ export default class ClipPathSide extends BasePropertyItem {
     }
 
     isShow () {
-        var item = this.read('selection/current/layer');
+        var item = this.read(SELECTION_CURRENT_LAYER);
 
         if (!item) return false;
         
@@ -79,7 +80,7 @@ export default class ClipPathSide extends BasePropertyItem {
     }
 
     [CHANGE('$clipSideType')] () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_CLIPPATH, {
                 id, 
                 clipPathSideType: this.refs.$clipSideType.val()

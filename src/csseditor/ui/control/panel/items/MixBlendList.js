@@ -2,6 +2,8 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_LAYER, CHANGE_EDITOR } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
+import { BLEND_LIST, BLEND_TOSTRING_WITHOUT_DIMENSION } from '../../../../module/BlendTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../../module/SelectionTypes';
 
 export default class MixBlendList extends BasePropertyItem {
 
@@ -19,8 +21,8 @@ export default class MixBlendList extends BasePropertyItem {
     }
 
     [LOAD('$mixBlendList')] () {
-        var list = this.read('blend/list')
-        var item = this.read('selection/current/layer')
+        var list = this.read(BLEND_LIST)
+        var item = this.read(SELECTION_CURRENT_LAYER)
         if (!item) { return ''; }
 
         return  `<div>${list.map((blend) => {
@@ -29,7 +31,7 @@ export default class MixBlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container">
-                                <div class="blend-item-blend-view"  style='${this.read('blend/toStringWithoutDimension', item, blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read(BLEND_TOSTRING_WITHOUT_DIMENSION, item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>`
@@ -39,7 +41,7 @@ export default class MixBlendList extends BasePropertyItem {
 
 
     isShow () {
-        var image = this.read('selection/current/image')
+        var image = this.read(SELECTION_CURRENT_IMAGE)
 
         if (image) return false; 
 
@@ -55,7 +57,7 @@ export default class MixBlendList extends BasePropertyItem {
         if(isShow && this.parent.selectedTabId == 'mix') {
             this.load()
 
-            this.read('selection/current/layer', (layer) => {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 this.refs.$desc.text(layer.mixBlendMode)
             })        
         }
@@ -73,7 +75,7 @@ export default class MixBlendList extends BasePropertyItem {
     }
 
     [CLICK('$mixBlendList .blend-item') + SELF] (e) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER, {id, mixBlendMode: e.$delegateTarget.attr('data-mode')}, true)
             this.refresh();
         });

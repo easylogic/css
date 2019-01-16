@@ -9,6 +9,7 @@ import {
 } from '../../../types/event';
 import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
 import { GUIDE_TYPE_HORIZONTAL } from '../../../module/ItemTypes';
+import { SELECTION_CURRENT_LAYER } from '../../../module/SelectionTypes';
 
 export default class MoveGuide extends UIElement {
 
@@ -28,7 +29,7 @@ export default class MoveGuide extends UIElement {
     }
 
     [LOAD()] () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
         if (!layer) return []; 
 
         var list = this.read('guide/snap/layer', 3);

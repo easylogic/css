@@ -82,6 +82,7 @@ export const CLIP_PATH_DEFAULT_OBJECT = {
 export const LAYER_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_LAYER,
     is: IS_OBJECT,
+    type: SHAPE_TYPE_RECT,
     name: '',
     index: 0,    
     backgroundColor: 'rgba(0, 0, 0, 1)',
@@ -109,7 +110,7 @@ export const LAYER_DEFAULT_OBJECT = {
 
 
 export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
-    type: ITEM_TYPE_CIRCLE,
+    type: SHAPE_TYPE_CIRCLE,
     borderRadius: percentUnit(100), 
     fixedRadius: true
 })
@@ -149,7 +150,9 @@ export const IMAGE_DEFAULT_OBJECT = {
     backgroundBlendMode: 'normal',
     backgroundColor: null,
     backgroundAttachment: null,
-    backgroundClip: null
+    backgroundClip: null,
+    backgroundImage: null,
+    backgroundImageDataURI: null
 }
 
 export const BOXSHADOW_DEFAULT_OBJECT = {
@@ -181,6 +184,9 @@ export const COLORSTEP_DEFAULT_OBJECT = {
     color: 'rgba(0, 0, 0, 0)'
 }
 
+export const SHAPE_TYPE_RECT = 'rect';
+export const SHAPE_TYPE_CIRCLE = 'circle';
+export const SHAPE_TYPE_POLYGON = 'polygon';
 
 export const IMAGE_ITEM_TYPE_LINEAR = 'linear';
 export const IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
@@ -238,3 +244,11 @@ export const SEGMENT_CHECK = {
     [SEGMENT_TYPE_BOTTOM_LEFT]: {yIndex : 2, xIndex: 0},
     [SEGMENT_TYPE_BOTTOM_RIGHT]: {yIndex : 2, xIndex: 2}
 }
+
+export const ITEM_SET = 'item/set';
+export const ITEM_GET = 'ITEM_GET';
+export const ITEM_CONVERT_STYLE = 'item/convert/style';
+export const ITEM_SET_ALL = 'item/set/all';
+export const ITEM_SORT = 'item/sort';
+export const ITEM_REMOVE_CHILDREN = 'item/remove/children';
+export const ITEM_REMOVE = 'item/remove';

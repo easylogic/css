@@ -1,5 +1,7 @@
 import UIElement from "../../../colorpicker/UIElement";
 import { DROP, DRAGOUT, DRAGOVER, PASTE } from "../../../util/Event";
+import { SELECTION_CURRENT_LAYER } from "../../module/SelectionTypes";
+import { ITEM_PREPEND_IMAGE_URL, ITEM_PREPEND_IMAGE_FILE } from "../../module/ItemCreateTypes";
 
 export default class DropView extends UIElement {
 
@@ -34,18 +36,18 @@ export default class DropView extends UIElement {
         })
 
         if (dataList.length) {
-            this.read('selection/current/layer', (layer) => {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 this.read('image/get/url', dataList, (img) => {
-                    this.dispatch('item/prepend/image/url', img, true, layer.id);
+                    this.dispatch(ITEM_PREPEND_IMAGE_URL, img, true, layer.id);
                 })
             })            
         }
 
         var files = [...dataTransfer.files]; 
         if (files.length) {
-            this.read('selection/current/layer', (layer) => {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 this.read('image/get/file', files, (img) => {
-                    this.dispatch('item/prepend/image/file', img, true, layer.id);
+                    this.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layer.id);
                 })
             })
         }
@@ -65,18 +67,18 @@ export default class DropView extends UIElement {
         })
 
         if (dataList.length) {
-            this.read('selection/current/layer', (layer) => {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 this.read('image/get/url', dataList, (url) => {
-                    this.dispatch('item/prepend/image/url', url, true, layer.id);
+                    this.dispatch(ITEM_PREPEND_IMAGE_URL, url, true, layer.id);
                 })
             })            
         }
 
         var files = [...dataTransfer.files]; 
         if (files.length) {
-            this.read('selection/current/layer', (layer) => {
+            this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 this.read('image/get/file', files, (img) => {
-                    this.dispatch('item/prepend/image/file', img, true, layer.id);
+                    this.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layer.id);
                     this.refresh();
                 })
             })

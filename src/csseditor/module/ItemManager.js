@@ -2,6 +2,10 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { string2unit, UNIT_PX} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
+import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE } from "./ItemTypes";
+import { ITEM_KEYS, ITEM_INITIALIZE } from "./ItemCreateTypes";
+import { SELECTION_ONE } from "./SelectionTypes";
+import { clone } from "../../util/functions/func";
 
 export const INDEX_DIST = 100 ; 
 const NONE_INDEX = -99999;
@@ -93,16 +97,16 @@ export default class ItemManager extends BaseModule {
         this.$store.emit(CHANGE_EDITOR)
     }
 
-    [GETTER('item/convert/style')] ($store, item) {
+    [GETTER(ITEM_CONVERT_STYLE)] ($store, item) {
         return convertStyle(item);
     }
 
 
-    [GETTER('item/get')] ($store, id) {
+    [GETTER(ITEM_GET)] ($store, id) {
         return $store.items[id] || {};
     }
 
-    [ACTION('item/set/all')] ($store, parentId, items, isRemove = true) {
+    [ACTION(ITEM_SET_ALL)] ($store, parentId, items, isRemove = true) {
         if (isRemove) { 
             $store.run('item/remove/all', parentId);
         }
@@ -118,10 +122,10 @@ export default class ItemManager extends BaseModule {
     }
 
 
-    [ACTION('item/remove')] ($store, id) {
+    [ACTION(ITEM_REMOVE)] ($store, id) {
         if (id) {
 
-            var item = $store.read('item/get', id);
+            var item = $store.read(ITEM_GET, id);
             var itemType = item.itemType; 
 
             if (item.parentId) {
@@ -141,7 +145,7 @@ export default class ItemManager extends BaseModule {
 
 
             if (nextSelectedId) {
-                $store.run('selection/one', nextSelectedId)
+                $store.run(SELECTION_ONE, nextSelectedId)
             } else {
                 if (item.index > 0 ) {
                     for(var i = 0, len = list.length; i < len; i++) {
@@ -153,21 +157,21 @@ export default class ItemManager extends BaseModule {
                     }
 
                     if (nextSelectedId) {
-                        $store.run('selection/one', nextSelectedId)
+                        $store.run(SELECTION_ONE, nextSelectedId)
                     }                        
                 } else {
-                    $store.run('selection/one', item.parentId)
+                    $store.run(SELECTION_ONE, item.parentId)
                 }
             }
 
 
             $store.items[id].index = NONE_INDEX;
-            $store.run('item/sort', id);
+            $store.run(ITEM_SORT, id);
 
             if ($store.items[id].backgroundImage) {
                 URL.revokeObjectURL($store.items[id].backgroundImage);
             }
-            $store.run('item/initialize', id);
+            $store.run(ITEM_INITIALIZE, id);
         }
     }
     
@@ -177,36 +181,36 @@ export default class ItemManager extends BaseModule {
 
             $store.run('item/remove/all', item.id);
 
-            $store.run('item/initialize', item.id);
+            $store.run(ITEM_INITIALIZE, item.id);
 
         })
     }
 
-    [ACTION('item/remove/children')] ($store, parentId) {
+    [ACTION(ITEM_REMOVE_CHILDREN)] ($store, parentId) {
         $store.read('item/each/children', parentId, (item) => {
-            $store.run('item/remove', item.id);
+            $store.run(ITEM_REMOVE, item.id);
         })
     }
 
-    [ACTION('item/set')] ($store, obj = {}, isSelected = false) {
+    [ACTION(ITEM_SET)] ($store, obj = {}, isSelected = false) {
         var id = obj.id; 
-        var prevItem = $store.clone('item/get', id)
+        var prevItem = clone($store.read(ITEM_GET, id));
         $store.items[id] = Object.assign({}, prevItem, obj);
 
-        if (isSelected) $store.run('selection/one', id)
+        if (isSelected) $store.run(SELECTION_ONE, id)
     }
     
     // initialize items 
     [ACTION('item/load')] ($store) { 
-        $store.read('item/keys').forEach(id => {
+        $store.read(ITEM_KEYS).forEach(id => {
             $store.items[id] = convertStyle($store.items[id])
         })
 
         $store.run('history/initialize');
     }  
 
-    [ACTION('item/sort')] ($store, id) {
-        var item = $store.read('item/get', id);
+    [ACTION(ITEM_SORT)] ($store, id) {
+        var item = $store.read(ITEM_GET, id);
         var itemType = item.itemType; 
 
         if (item.parentId) {

@@ -1,7 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit, stringUnit } from "../../util/css/types";
-import { FILTER_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT_KEYS } from "./ItemTypes";
+import { FILTER_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT_KEYS, ITEM_GET } from "./ItemTypes";
 import { GETTER } from "../../util/Store";
+import { clone } from "../../util/functions/func";
 const filterInfo = {
     'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
     'filterGrayscale' : { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
@@ -33,14 +34,14 @@ export default class FilterManager extends BaseModule {
     }    
 
     [GETTER('filter/list')] ($store, layerId) {
-        var layer = $store.read('item/get', layerId);
+        var layer = $store.read(ITEM_GET, layerId);
         var realFilters = {}
         
         FILTER_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign({}, $store.read('clone', FILTER_DEFAULT_OBJECT), realFilters)
+        realFilters = Object.assign(clone(FILTER_DEFAULT_OBJECT), realFilters)
 
         var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}
@@ -61,7 +62,7 @@ export default class FilterManager extends BaseModule {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign({}, $store.read('clone', FILTER_DEFAULT_OBJECT), realFilters)
+        realFilters = Object.assign(clone(FILTER_DEFAULT_OBJECT), realFilters)
 
         var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}

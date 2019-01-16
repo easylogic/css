@@ -3,6 +3,7 @@ import GradientView from './GradientView';
 import { ITEM_TYPE_PAGE } from '../../module/ItemTypes';
 import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, KEYDOWN, SELF, CHECKER } from '../../../util/Event';
 import { ARROW_DOWN, ARROW_UP, ARROW_LEFT, ARROW_RIGHT } from '../../../util/Key';
+import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER } from '../../module/SelectionTypes';
 
 export default class HandleView extends GradientView {
 
@@ -14,7 +15,7 @@ export default class HandleView extends GradientView {
     [CLICK('$page .layer') + SELF] (e) {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
-            this.dispatch('selection/one', id);
+            this.dispatch(SELECTION_ONE, id);
             this.run('item/focus', id);
         }
     }
@@ -45,7 +46,7 @@ export default class HandleView extends GradientView {
     }       
     
     refreshPosition (obj) {
-        this.read('selection/current').forEach(item => {
+        this.read(SELECTION_CURRENT).forEach(item => {
             this.dispatch('matrix/move', Object.assign({id: item.id}, obj))
             this.refreshLayer();
         })    
@@ -151,8 +152,8 @@ export default class HandleView extends GradientView {
 
         this.updateSelection();         
         
-        if (this.read('selection/is/layer')) {
-            var items = this.read('selection/current');
+        if (this.read(SELECTION_IS_LAYER)) {
+            var items = this.read(SELECTION_CURRENT);
             this.run('item/focus', items[0].id);                 
         }
 

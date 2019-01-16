@@ -10,6 +10,9 @@ import {
     CHANGE_LAYER_ROTATE 
 } from '../../../types/event';
 import { pxUnit, stringUnit, unitValue } from '../../../../util/css/types';
+import { ITEM_GET } from '../../../module/ItemTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW } from '../../../module/SelectionTypes';
+import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../module/LayerTypes';
 
 
 export default class LayerShapeEditor extends UIElement {
@@ -65,7 +68,7 @@ export default class LayerShapeEditor extends UIElement {
         var transform = "none"; 
         
         if (id) {
-            transform = this.read('layer/make/transform/rotate', this.read('item/get', id));
+            transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
         }
 
         return { 
@@ -78,7 +81,7 @@ export default class LayerShapeEditor extends UIElement {
     }    
 
     setPosition () {
-        var item = this.read('selection/current/layer')
+        var item = this.read(SELECTION_CURRENT_LAYER)
 
         if (!item) return; 
 
@@ -86,11 +89,11 @@ export default class LayerShapeEditor extends UIElement {
     }
 
     isShow () {
-        // console.log(this.read('selection/current'));
-        return this.read('selection/is/layer') 
-            || this.read('selection/is/image')
-            || this.read('selection/is/boxshadow')
-            || this.read('selection/is/textshadow');                        
+        // console.log(this.read(SELECTION_CURRENT));
+        return this.read(SELECTION_IS_LAYER) 
+            || this.read(SELECTION_IS_IMAGE)
+            || this.read(SELECTION_IS_BOXSHADOW)
+            || this.read(SELECTION_IS_TEXTSHADOW);                        
     }
 
     [EVENT(

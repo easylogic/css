@@ -15,6 +15,7 @@ import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, stringUnit } from "../../../../../util/css/types";
 import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CHECKER, CAPTURE, LOAD } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class PolygonEditor extends UIElement {
 
@@ -27,7 +28,7 @@ export default class PolygonEditor extends UIElement {
     }
 
     [LOAD()] () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
         if (!layer) return '';
         var points =  defaultValue( layer.clipPathPolygonPoints, [])
         if (!points.length) return '';
@@ -57,7 +58,7 @@ export default class PolygonEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read('selection/current/layer')
+        var item = this.read(SELECTION_CURRENT_LAYER)
 
         if (!item) return false; 
 
@@ -109,7 +110,7 @@ export default class PolygonEditor extends UIElement {
     }
 
     updateClipPath () {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             var polygonIndex = +this.$dragItem.attr('data-point-index');
             var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
             clipPathPolygonPoints[polygonIndex] = this.$dragPoint;
@@ -129,7 +130,8 @@ export default class PolygonEditor extends UIElement {
         CHANGE_LAYER_POSITION,        
         CHANGE_LAYER_CLIPPATH,
         CHANGE_LAYER,
-        CHANGE_LAYER_CLIPPATH_POLYGON
+        CHANGE_LAYER_CLIPPATH_POLYGON,
+        CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
     )] () {
         this.refresh()
     }
@@ -168,7 +170,7 @@ export default class PolygonEditor extends UIElement {
             y: percentUnit( px2percent( top, height) )
         }
 
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
             clipPathPolygonPoints.push(point);
 
@@ -180,7 +182,7 @@ export default class PolygonEditor extends UIElement {
     deletePoint (e) {
         var index = +e.$delegateTarget.attr('data-point-index')
 
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
             clipPathPolygonPoints.splice(index, 1);
 

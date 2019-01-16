@@ -1,8 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { unitValue, pxUnit } from "../../util/css/types";
-import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_MOVE, SEGMENT_CHECK, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_RIGHT } from "./ItemTypes";
+import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_MOVE, SEGMENT_CHECK, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_RIGHT, ITEM_SET } from "./ItemTypes";
 import { isNotUndefined } from "../../util/functions/func";
+import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "./SelectionTypes";
 
 var MAX_DIST = 1; 
 
@@ -113,12 +114,12 @@ export default class GuideManager extends BaseModule {
     }
 
     [GETTER('guide/snap/layer')] ($store, dist = MAX_DIST, segmentType = SEGMENT_TYPE_MOVE) {
-        var page = $store.read('selection/current/page');
+        var page = $store.read(SELECTION_CURRENT_PAGE);
 
         if (!page) return []
         if (page.selected) return []
 
-        var selectionRect = $store.read('guide/rect/point', $store.read('selection/rect'), segmentType);
+        var selectionRect = $store.read('guide/rect/point', $store.read(SELECTION_RECT), segmentType);
         var pageRect = $store.read('guide/rect/point', { 
             x: pxUnit(0), 
             y: pxUnit(0), 
@@ -128,7 +129,7 @@ export default class GuideManager extends BaseModule {
 
         var layers = [] 
         $store.read('item/each/children', page.id, (item) => {
-            if ($store.read('selection/check', item.id) == false) { 
+            if ($store.read(SELECTION_CHECK, item.id) == false) { 
                 layers.push($store.read('guide/rect/point', item))
             }
         })
@@ -211,7 +212,7 @@ export default class GuideManager extends BaseModule {
             }
         }
         if (isNotUndefined(positionObject)) {
-            $store.run('item/set', positionObject);
+            $store.run(ITEM_SET, positionObject);
         }
     }
 
@@ -265,7 +266,7 @@ export default class GuideManager extends BaseModule {
             positionObject = { id: rect.sourceId, x: pxUnit(x) };
         }
         if (isNotUndefined(positionObject)) {
-            $store.run('item/set', positionObject);
+            $store.run(ITEM_SET, positionObject);
         }
     }
 }

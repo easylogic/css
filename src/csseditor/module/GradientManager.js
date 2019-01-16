@@ -1,10 +1,10 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import gradientList from './gradients/index';
 import ColorList from "./color-list/index";
-import { isUndefined } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
-import { INDEX_DIST } from "./ItemManager";
+import { ITEM_GET, ITEM_REMOVE_CHILDREN, ITEM_REMOVE } from "./ItemTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "./SelectionTypes";
 
 export default class GradientManager extends BaseModule {
 
@@ -39,23 +39,23 @@ export default class GradientManager extends BaseModule {
         var image = this.getFirstImage($store);
 
         if (image) {
-            var newImageId = $store.read('item/recover/image', obj, $store.read('selection/current/layer/id'))
+            var newImageId = $store.read('item/recover/image', obj, $store.read(SELECTION_CURRENT_LAYER_ID))
             $store.run('item/move/in', image.id, newImageId);
-            $store.run('item/remove/children', image.id);            
-            $store.run('item/remove', image.id);
+            $store.run(ITEM_REMOVE_CHILDREN, image.id);            
+            $store.run(ITEM_REMOVE, image.id);
         } else {
-            var newImageId = $store.read('item/recover/image', obj, $store.read('selection/current/layer/id'))
-            var newImage = $store.read('item/get', newImageId);
-            $store.run('item/set', newImage);
+            var newImageId = $store.read('item/recover/image', obj, $store.read(SELECTION_CURRENT_LAYER_ID))
+            var newImage = $store.read(ITEM_GET, newImageId);
+            $store.run(ITEM_SET, newImage);
 
         }
     }
 
     getFirstImage ($store) {
-        var image = $store.read('selection/current/image')
+        var image = $store.read(SELECTION_CURRENT_IMAGE)
 
         if (!image) {
-            var layer = $store.read('selection/current/layer');
+            var layer = $store.read(SELECTION_CURRENT_LAYER);
 
             if (!layer) {
                 return; 
@@ -73,14 +73,14 @@ export default class GradientManager extends BaseModule {
 
     [ACTION('gradient/image/add')] ($store, obj) {
         var image = this.getFirstImage($store);
-        var layerId = $store.read('selection/current/layer/id');
+        var layerId = $store.read(SELECTION_CURRENT_LAYER_ID);
         if (image) {
             var newImageId = $store.read('item/recover/image', obj, layerId)
             $store.run('item/move/in', image.id, newImageId);
         } else {
             var newImageId = $store.read('item/recover/image', obj, layerId)
-            var newImage = $store.read('item/get', newImageId);
-            $store.run('item/set', newImage);
+            var newImage = $store.read(ITEM_GET, newImageId);
+            $store.run(ITEM_SET, newImage);
         }
     }    
 

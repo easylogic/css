@@ -64,6 +64,10 @@ export function isNumber (value) {
     return typeof value == 'number';
 }
 
+export function clone (obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
 export function cleanObject (obj) {
     var realObject = {}
     Object.keys(obj).filter(key => {

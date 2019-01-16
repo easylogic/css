@@ -1,5 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
+import { BLEND_LAYER_TOSTRING, BLEND_IMAGE_TOSTRING, BLEND_TOSTRING_WITHOUT_DIMENSION, BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE, BLEND_LIST } from "./BlendTypes";
+import { clone } from "../../util/functions/func";
+import { LAYER_TOSTRING } from "./LayerTypes";
 
 const blend_list = [
     'normal', 'multiply', 'screen', 'overlay', 'darken', 
@@ -16,18 +19,18 @@ export default class BlendManager extends BaseModule {
         this.$store.blendMode = '';
     }
 
-    [GETTER('blend/layer/toString')] ($store, item, mixBlend = '', withStyle = true) {
+    [GETTER(BLEND_LAYER_TOSTRING)] ($store, item, mixBlend = '', withStyle = true) {
 
-        item = $store.read('clone', item);
+        item = clone(item);
 
         item.mixBlendMode = mixBlend;
 
-        return $store.read('layer/toString', item, withStyle)
+        return $store.read(LAYER_TOSTRING, item, withStyle)
     }    
 
-    [GETTER('blend/image/toString')] ($store, item, blend = '', withStyle = true) {
+    [GETTER(BLEND_IMAGE_TOSTRING)] ($store, item, blend = '', withStyle = true) {
 
-        item = $store.read('clone', item);
+        item = clone(item);
 
         item.backgroundBlendMode = blend;
 
@@ -36,13 +39,13 @@ export default class BlendManager extends BaseModule {
         return $store.read('image/toString', item, withStyle)
     }        
 
-    [GETTER('blend/toStringWithoutDimension')] ($store, item, mixBlend = '') {
-        return $store.read('blend/layer/toString', item, mixBlend, false)
+    [GETTER(BLEND_TOSTRING_WITHOUT_DIMENSION)] ($store, item, mixBlend = '') {
+        return $store.read(BLEND_LAYER_TOSTRING, item, mixBlend, false)
     }        
 
-    [GETTER('blend/toStringWithoutDimensionForImage')] ($store, item, blend = 'normal') {
+    [GETTER(BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE)] ($store, item, blend = 'normal') {
         // console.log(item, blend);
-        var cssText = $store.read('blend/image/toString', item, blend, false);
+        var cssText = $store.read(BLEND_IMAGE_TOSTRING, item, blend, false);
 
         cssText = cssText.split(';').map(it => {
             return it.split(':').map(it => it.trim())
@@ -65,7 +68,7 @@ export default class BlendManager extends BaseModule {
         return cssText; 
     }        
 
-    [GETTER('blend/list')] ($store) {
+    [GETTER(BLEND_LIST)] ($store) {
         return blend_list;
     }
 

@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import GradientInfo from "../../colorsteps/GradientInfo";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
+import { SELECTION_CURRENT_IMAGE } from "../../../../module/SelectionTypes";
 
 export default class ColorStepsInfo extends UIElement {
     template () {
@@ -27,7 +28,7 @@ export default class ColorStepsInfo extends UIElement {
     )] () { this.refresh(); }
 
     isShow () {
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
         if (!item) return false; 
 
         return this.read('image/type/isGradient', item.type)

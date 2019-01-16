@@ -43,7 +43,7 @@ export default class ImageToolbar extends UIElement {
     }
 
     isShow() {
-        return this.read('selection/is/image');
+        return this.read(SELECTION_IS_IMAGE);
     }
 
 

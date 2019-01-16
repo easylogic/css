@@ -3,6 +3,7 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
+import { BLEND_LIST, BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE } from '../../../../module/BlendTypes';
 
 export default class BlendList extends BasePropertyItem {
 
@@ -22,9 +23,9 @@ export default class BlendList extends BasePropertyItem {
     }
 
     [LOAD('$blendList')] () {
-        var list = this.read('blend/list')
+        var list = this.read(BLEND_LIST)
 
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
         if (!item) { return ''; }
 
         return  `<div>${list.map((blend) => {
@@ -33,7 +34,7 @@ export default class BlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ${blend};">
-                                <div class="blend-item-blend-view"  style='${this.read('blend/toStringWithoutDimensionForImage', item, blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read(BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE, item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>` 
@@ -43,7 +44,7 @@ export default class BlendList extends BasePropertyItem {
 
 
     isShow () {
-        return this.read('selection/is/image'); 
+        return this.read(SELECTION_IS_IMAGE); 
     }    
 
     refresh () {
@@ -52,7 +53,7 @@ export default class BlendList extends BasePropertyItem {
 
         this.$el.toggle(isShow);
 
-        this.read('selection/current/image', (image) => {
+        this.read(SELECTION_CURRENT_IMAGE, (image) => {
             this.refs.$desc.text(image.backgroundBlendMode || 'normal')
         })
 
@@ -72,7 +73,7 @@ export default class BlendList extends BasePropertyItem {
 
 
     [CLICK('$blendList .blend-item') + SELF] (e) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: e.$delegateTarget.attr('data-mode')}, true)
             this.refresh();
         });

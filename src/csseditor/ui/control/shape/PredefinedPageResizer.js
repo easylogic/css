@@ -2,6 +2,7 @@ import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
 import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
+import { SELECTION_CURRENT_PAGE } from '../../../module/SelectionTypes';
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -40,7 +41,7 @@ export default class PredefinedPageResizer extends UIElement {
 
 
     setPosition () {
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) return; 
 
@@ -84,7 +85,7 @@ export default class PredefinedPageResizer extends UIElement {
             style[key] = pxUnit(style[key]) 
         })
 
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
         page = Object.assign(page, style)
         this.commit(CHANGE_PAGE_SIZE, page)
         this.refresh();
@@ -172,7 +173,7 @@ export default class PredefinedPageResizer extends UIElement {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;
-        this.page = this.read('selection/current/page')
+        this.page = this.read(SELECTION_CURRENT_PAGE)
         this.width = unitValue(this.page.width)
         this.height = unitValue(this.page.height)
     }

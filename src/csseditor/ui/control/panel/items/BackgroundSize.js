@@ -4,6 +4,7 @@ import { CHANGE_IMAGE, CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, percentUnit, unitValue, isValueUnit, convertPercentUnit } from "../../../../../util/css/types";
 import { CLICK } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
+import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_IMAGE } from "../../../../module/SelectionTypes";
 
 export default class BackgroundSize extends UIElement {
     components () {
@@ -111,31 +112,31 @@ export default class BackgroundSize extends UIElement {
     }
 
     updateWidth (backgroundSizeWidth) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundSizeWidth})
         })
     }
 
     updateHeight (backgroundSizeHeight) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundSizeHeight})
         })
     }
 
     updateX (backgroundPositionX) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundPositionX})
         })
     }    
 
     updateY (backgroundPositionY) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundPositionY})
         })
     }        
 
     getMaxHeight () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return 0;
 
@@ -143,7 +144,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     getMaxY () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return 0;
 
@@ -151,7 +152,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     getMaxWidth () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return 0;
 
@@ -159,7 +160,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     getMaxX () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return 0;
 
@@ -168,7 +169,7 @@ export default class BackgroundSize extends UIElement {
 
     [CLICK('$size button')] (e) {
         
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             var newValue = { id, backgroundSize: e.$delegateTarget.val()}
             this.selectBackgroundSize(newValue.backgroundSize);
             this.commit(CHANGE_IMAGE, newValue);
@@ -202,7 +203,7 @@ export default class BackgroundSize extends UIElement {
     }
 
     [CLICK('$repeat button')] (e) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             var newValue = {id, backgroundRepeat: e.$delegateTarget.val()}
             this.selectBackgroundRepeat(newValue.backgroundRepeat);
             this.commit(CHANGE_IMAGE, newValue);
@@ -223,7 +224,7 @@ export default class BackgroundSize extends UIElement {
         this.$el.toggle(isShow)
 
         if (isShow) {
-            this.read('selection/current/image', (image) => {
+            this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 this.children.$width.refresh(image.backgroundSizeWidth);
                 this.children.$height.refresh(image.backgroundSizeHeight);
 

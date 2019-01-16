@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_SELECTION } from '../../../types/event';
 import { CLICK } from '../../../../util/Event';
+import { SELECTION_CURRENT_IMAGE_ID, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../module/SelectionTypes';
 
 
 export default class PredefinedRadialGradientPosition extends UIElement {
@@ -16,7 +17,7 @@ export default class PredefinedRadialGradientPosition extends UIElement {
         `
     }
     [CLICK('$el button')] (e) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition: e.$delegateTarget.attr('data-value')})
         })
     }
@@ -26,9 +27,9 @@ export default class PredefinedRadialGradientPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read('selection/is/image')) return false; 
+        if (!this.read(SELECTION_IS_IMAGE)) return false; 
 
-        var image = this.read('selection/current/image')
+        var image = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!image) { return false; }
 

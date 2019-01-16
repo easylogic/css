@@ -1,6 +1,8 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
+import { ITEM_SET, ITEM_GET, ITEM_REMOVE } from "../../../module/ItemTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../module/SelectionTypes";
 
 export default class LayerListView extends UIElement {
 
@@ -13,7 +15,7 @@ export default class LayerListView extends UIElement {
     }
 
     makeItemNode (node, index) {
-        var item = this.read('item/get', node.id);
+        var item = this.read(ITEM_GET, node.id);
 
         if (item.itemType == 'layer') {
             return this.makeItemNodeLayer(item, index);
@@ -23,7 +25,7 @@ export default class LayerListView extends UIElement {
 
    
     makeItemNodeImage (item) {
-        var selected = this.read('selection/check', item.id) ? 'selected' : ''; 
+        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : ''; 
         return `
             <div class='tree-item image ${selected}' id="${item.id}" draggable="true" >
                 <div class="item-title"> 
@@ -39,7 +41,7 @@ export default class LayerListView extends UIElement {
  
     
     makeItemNodeLayer (item, index = 0) {
-        var selected = this.read('selection/check', item.id) ? 'selected' : ''; 
+        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : ''; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-title"> 
@@ -62,7 +64,7 @@ export default class LayerListView extends UIElement {
     }    
 
     [LOAD('$layerList')] () {
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
             return '';
@@ -91,54 +93,6 @@ export default class LayerListView extends UIElement {
         this.$el.$(`[id="${id}"]`).addClass('selected');
     }
 
-    // refreshLayer () {
-    //     this.read('selection/current/layer', (items) => {
-
-    //         if (!items.length) {
-    //             items = [items]
-    //         }
-            
-    //         items.forEach(item => {
-    //             this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('layer/toString', item, false))
-    //         })
-    //     })
-    // }    
-
-    // refreshImage() {
-    //     this.read('selection/current/image', (item) => {
-    //         this.$el.$(`[id="${item.id}"] .item-view`).cssText(this.read('image/toString', item))
-    //     })
-    // }
-
-    // // indivisual effect 
-    // [EVENT(
-    //     CHANGE_LAYER,
-    //     CHANGE_LAYER_BACKGROUND_COLOR,
-    //     CHANGE_LAYER_CLIPPATH,
-    //     CHANGE_LAYER_CLIPPATH_POLYGON,
-    //     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    //     CHANGE_LAYER_FILTER,
-    //     CHANGE_LAYER_POSITION,
-    //     CHANGE_LAYER_RADIUS,
-    //     CHANGE_LAYER_SIZE,
-    //     CHANGE_LAYER_ROTATE,
-    //     CHANGE_LAYER_OPACITY,
-    //     CHANGE_LAYER_TRANSFORM,
-    //     CHANGE_LAYER_TRANSFORM_3D,
-            
-    //     CHANGE_COLOR_STEP,
-    //     CHANGE_IMAGE,
-    //     CHANGE_IMAGE_ANGLE,
-    //     CHANGE_IMAGE_COLOR,
-    //     CHANGE_IMAGE_LINEAR_ANGLE,
-    //     CHANGE_IMAGE_RADIAL_POSITION,
-    //     CHANGE_IMAGE_RADIAL_TYPE
-    // )]() {
-    //     this.refreshLayer()
-    // }
-
-
-
     // all effect 
     [EVENT(
         CHANGE_EDITOR,
@@ -147,7 +101,7 @@ export default class LayerListView extends UIElement {
 
     [CLICK('$layerList .tree-item') + SELF] (e) { 
         var id = e.$delegateTarget.attr('id');
-        this.dispatch('selection/one', id);        
+        this.dispatch(SELECTION_ONE, id);        
         this.run('item/focus', id);
         this.refreshSelection(id);
     }
@@ -175,8 +129,8 @@ export default class LayerListView extends UIElement {
         var destId = e.$delegateTarget.attr('id')
         var sourceId = this.draggedLayer.attr('id')
 
-        var sourceItem = this.read('item/get', sourceId);
-        var destItem = this.read('item/get', destId);
+        var sourceItem = this.read(ITEM_GET, sourceId);
+        var destItem = this.read(ITEM_GET, destId);
 
         this.draggedLayer = null;         
         if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
@@ -227,7 +181,7 @@ export default class LayerListView extends UIElement {
     }
 
     [CLICK('$layerList .delete-item')] (e) {
-        this.dispatch('item/remove', e.$delegateTarget.attr('item-id'))
+        this.dispatch(ITEM_REMOVE, e.$delegateTarget.attr('item-id'))
         this.dispatch('history/push', `Remove item`);                         
         this.refresh()
     } 
@@ -238,9 +192,9 @@ export default class LayerListView extends UIElement {
 
     [CLICK('$layerList .gradient-collapse-button') + SELF] (e) {
         e.$delegateTarget.parent().toggleClass('collapsed')
-        var item = this.read('item/get', e.$delegateTarget.attr('item-id'))
+        var item = this.read(ITEM_GET, e.$delegateTarget.attr('item-id'))
 
         item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
-        this.run('item/set', item);
+        this.run(ITEM_SET, item);
     }
 }

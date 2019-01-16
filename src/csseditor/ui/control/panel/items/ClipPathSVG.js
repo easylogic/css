@@ -6,6 +6,7 @@ import { CLIP_PATH_TYPE_SVG } from "../../../../module/ItemTypes";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../module/SelectionTypes";
 
 export default class ClipPathSVG extends BasePropertyItem {
 
@@ -69,7 +70,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
 
     isShow () {
-        var item = this.read('selection/current/layer');
+        var item = this.read(SELECTION_CURRENT_LAYER);
 
         if (!item) return false;
         
@@ -82,7 +83,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     [CLICK('$fit')] () {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
             this.commit(CHANGE_LAYER_CLIPPATH, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
             this.refresh();            
@@ -98,7 +99,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     updateView () {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             this.refs.$clipPath.html(defaultValue(layer.clipPathSvg, ''))
             this.refs.$fit.checked(defaultValue(layer.fitClipPathSize, false))
         });
@@ -165,7 +166,7 @@ export default class ClipPathSVG extends BasePropertyItem {
         var key = e.$delegateTarget.attr('data-key')
 
         if (index) {
-            this.read('selection/current/layer/id', (id) => {
+            this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
                 var svg = this.read('svg/get', +index);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
@@ -177,7 +178,7 @@ export default class ClipPathSVG extends BasePropertyItem {
             })
         } else if (key) {
 
-            this.read('selection/current/layer/id', (id) => {
+            this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
                 var svg = this.read('svg/get', Number.MAX_SAFE_INTEGER, key);
 
                 this.setClipPathSvg(id, svg, (newValue) => {

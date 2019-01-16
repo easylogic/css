@@ -2,6 +2,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
+import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE } from '../../../../module/SelectionTypes';
 
 export default class BackgroundInfo extends BasePropertyItem {
 
@@ -23,12 +24,12 @@ export default class BackgroundInfo extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read('selection/is/image'); 
+        return this.read(SELECTION_IS_IMAGE); 
     }    
 
     refresh () {
 
-        this.read('selection/current/image', (image) => {
+        this.read(SELECTION_CURRENT_IMAGE, (image) => {
             this.refs.$type.text(image.type)
             this.refs.$typeView.attr('data-type', image.type)
         })

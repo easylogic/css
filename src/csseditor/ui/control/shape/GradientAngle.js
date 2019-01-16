@@ -2,6 +2,7 @@ import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION } from '../../../types/event';
 import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
 
 export default class GradientAngle extends UIElement {
 
@@ -28,9 +29,9 @@ export default class GradientAngle extends UIElement {
     }
 
     isShow () {
-        if (!this.read('selection/is/image')) return false; 
+        if (!this.read(SELECTION_IS_IMAGE)) return false; 
 
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!item) return false; 
 
@@ -62,7 +63,7 @@ export default class GradientAngle extends UIElement {
     }    
 
     getDefaultValue() {
-        var image = this.read('selection/current/image');
+        var image = this.read(SELECTION_CURRENT_IMAGE);
         if (!image) return 0 
 
         var angle = this.read('image/angle', image.angle) 
@@ -100,7 +101,7 @@ export default class GradientAngle extends UIElement {
 
     setAngle (angle) {
 
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE_ANGLE, {id, angle});
         })
 

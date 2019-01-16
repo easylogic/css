@@ -1,7 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { uuid } from "../../util/functions/math";
-import { isNotUndefined, isFunction } from "../../util/functions/func";
+import { isNotUndefined, isFunction, clone } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
+import { ITEM_KEYS_GENERATE } from "./ItemCreateTypes";
+import { SELECTION_ONE } from "./SelectionTypes";
 
 const SAVE_ID = 'css-imageeditor'
 const CACHED_PAGE_SAVE_ID = 'css-imageeditor-cached-pages'
@@ -64,7 +66,7 @@ export default class StorageManager extends BaseModule {
     }
 
     [ACTION('storage/unshift/layer')] ($store, layer) {
-        var item = $store.read('clone', layer);
+        var item = clone(layer);
         item.id = uuid()
         $store.cachedLayers.unshift(item);
 
@@ -72,7 +74,7 @@ export default class StorageManager extends BaseModule {
     }
 
     [ACTION('storage/add/layer')] ($store, layer) {
-        var item = $store.read('clone', layer);
+        var item = clone(layer);
         item.id = uuid()        
         $store.cachedLayers.push(item);
 
@@ -98,7 +100,7 @@ export default class StorageManager extends BaseModule {
     }            
 
     [ACTION('storage/unshift/page')] ($store, page) {
-        var item = $store.read('clone', page);
+        var item = clone(page);
         item.id = uuid()
         $store.cachedPages.unshift(item);
 
@@ -106,7 +108,7 @@ export default class StorageManager extends BaseModule {
     }
 
     [ACTION('storage/add/page')] ($store, page) {
-        var item = $store.read('clone', page);
+        var item = clone(page);
         item.id = uuid()        
         $store.cachedPages.push(item);
 
@@ -132,7 +134,7 @@ export default class StorageManager extends BaseModule {
     }            
 
     [ACTION('storage/add/image')] ($store, image) {
-        var item = $store.read('clone', image);
+        var item = clone(image);
         item.id = uuid()        
         $store.cachedImages.push(item);
 
@@ -194,10 +196,10 @@ export default class StorageManager extends BaseModule {
         if (obj.selectedMode) $store.selectedMode = obj.selectedMode
         if (obj.selection) $store.selection = obj.selection
 
-        $store.run('item/keys/generate');
+        $store.run(ITEM_KEYS_GENERATE);
 
         if ($store.selectedId) {
-            $store.run('selection/one', $store.selectedId);
+            $store.run(SELECTION_ONE, $store.selectedId);
         }
 
         if (isFunction(callback)) {

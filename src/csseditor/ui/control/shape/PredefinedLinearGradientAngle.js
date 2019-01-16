@@ -5,6 +5,7 @@ import {
     CHANGE_SELECTION
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
 
 export default class PredefinedLinearGradientAngle extends UIElement {
 
@@ -29,8 +30,8 @@ export default class PredefinedLinearGradientAngle extends UIElement {
 
 
     isShow () {
-        if (!this.read('selection/is/image')) return false;         
-        var image = this.read('selection/current/image')
+        if (!this.read(SELECTION_IS_IMAGE)) return false;         
+        var image = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!image) { return false; }
 
@@ -42,7 +43,7 @@ export default class PredefinedLinearGradientAngle extends UIElement {
 
     
     [CLICK('$el button') + SELF] (e) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE_LINEAR_ANGLE, {id, angle: e.$delegateTarget.attr('data-value')})
         })
     }

@@ -20,6 +20,7 @@ export default class ImageTabView extends BaseTab {
                             <ColorStepsInfo></ColorStepsInfo>                            
                         </div>
                         <div class='scroll'>
+                            <BackgroundImage></BackgroundImage>
                             <BackgroundInfo></BackgroundInfo>
                             <BackgroundBlend></BackgroundBlend>
                             <div class='sub-feature'>

@@ -4,7 +4,8 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit, unitValue } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
-import { isUndefined } from "../../../../../util/functions/func";
+import { isUndefined, clone } from "../../../../../util/functions/func";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 const DROPSHADOW_FILTER_KEYS = [
     'filterDropshadowOffsetX',
@@ -97,7 +98,7 @@ export default class FilterList extends BasePropertyItem {
 
     [LOAD('$filterList')] () {
 
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return '' 
 
@@ -136,9 +137,9 @@ export default class FilterList extends BasePropertyItem {
 
     updateFilterKeyValue (key, lastValue) {
 
-        this.read('selection/current/layer', layer => {
+        this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id; 
-            var value = layer[key] || this.read('clone', FILTER_DEFAULT_OBJECT[key]);
+            var value = layer[key] || clone(FILTER_DEFAULT_OBJECT[key]);
             value.value = lastValue 
 
             this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
@@ -147,9 +148,9 @@ export default class FilterList extends BasePropertyItem {
 
     updateFilterKeyChecked (key, checked) {
 
-        this.read('selection/current/layer', layer => {
+        this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id;             
-            var value = layer[key] || this.read('clone', FILTER_DEFAULT_OBJECT[key]);
+            var value = layer[key] || clone(FILTER_DEFAULT_OBJECT[key]);
             value.checked = checked 
 
             this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })

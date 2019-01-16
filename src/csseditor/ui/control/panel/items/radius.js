@@ -4,6 +4,7 @@ import { value2px, pxUnit, unitValue } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 
 export default class Radius extends BasePropertyItem {
@@ -51,7 +52,7 @@ export default class Radius extends BasePropertyItem {
     )] () { this.refresh() }
 
     refresh() {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
             var maxWidth = unitValue(item.width);
 
             if (item.fixedRadius) {
@@ -90,7 +91,7 @@ export default class Radius extends BasePropertyItem {
     }
 
     refreshValue () {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_RADIUS, { 
                 id, 
                 borderTopLeftRadius: pxUnit( this.refs.$topLeftRadius.val()), 

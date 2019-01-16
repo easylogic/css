@@ -2,6 +2,7 @@ import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
+import { SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_GROUP, SELECTION_IS_IMAGE } from "../../module/SelectionTypes";
 
 
 export default class FeatureControl extends UIElement {
@@ -28,7 +29,7 @@ export default class FeatureControl extends UIElement {
 
     selectFeature () {
 
-        var item = this.read('selection/current');
+        var item = this.read(SELECTION_CURRENT);
 
         if (!item.length) return false; 
         
@@ -38,9 +39,9 @@ export default class FeatureControl extends UIElement {
 
         var selectType = 'layer'; 
 
-        if (this.read('selection/is/layer') || this.read('selection/is/group')) {
+        if (this.read(SELECTION_IS_LAYER) || this.read(SELECTION_IS_GROUP)) {
             selectType = 'layer';
-        } else if (this.read('selection/is/image')) {
+        } else if (this.read(SELECTION_IS_IMAGE)) {
             selectType = 'image';
         }
 

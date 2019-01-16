@@ -8,6 +8,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import UnitRange from "./element/UnitRange";
 import { UNIT_PX } from "../../../../../util/css/types";
 import { CHANGE } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 
 
@@ -96,7 +97,7 @@ export default class Font extends BasePropertyItem {
     }    
 
     refresh () {
-        this.read('selection/current/layer', layer => {
+        this.read(SELECTION_CURRENT_LAYER, layer => {
             this.refs.$fontFamily.val(layer.fontFamily);
             this.refs.$fontWeight.val(layer.fontWeight);
             this.children.$fontSize.refresh(layer.fontSize);
@@ -113,25 +114,25 @@ export default class Font extends BasePropertyItem {
     }
 
     updateFontSize (fontSize) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, fontSize})
         })
     }
 
     updateLineHeight (lineHeight) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, lineHeight})
         })
     }    
 
     updateFontFamily (fontFamily) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, fontFamily})
         })
     }
 
     updateFontWeight (fontWeight) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER_TEXT, {id, fontWeight})
         })
     }    

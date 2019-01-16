@@ -1,12 +1,14 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { stringUnit, isPercentUnit } from "../../util/css/types";
 import { GETTER } from "../../util/Store";
+import { ITEM_GET, ITEM_CONVERT_STYLE } from "./ItemTypes";
+import { CSS_TOSTRING } from "./CssTypes";
 
 export default class PageManager extends BaseModule {
 
     [GETTER('page/toString')] ($store, id) {
 
-        var page = $store.read('item/get', id);
+        var page = $store.read(ITEM_GET, id);
         var obj = $store.read('page/toCSS', page) || {};
 
         return Object.keys(obj).map(key => {
@@ -15,7 +17,7 @@ export default class PageManager extends BaseModule {
     }
 
     [GETTER('page/toCSS')] ($store, page = {}) {
-        var sample = $store.read('item/convert/style', page || {}) 
+        var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
             overflow: sample.clip ? 'hidden' : '',
@@ -37,7 +39,7 @@ export default class PageManager extends BaseModule {
     }
 
     [GETTER('page/colorview/toCSS')] ($store, page = {}) {
-        var sample = $store.read('item/convert/style', page || {}) 
+        var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
             'transform-style': sample.preserve ? 'preserve-3d' : 'flat'
@@ -56,7 +58,7 @@ export default class PageManager extends BaseModule {
     }    
 
     [GETTER('page/cache/toCSS')] ($store, page = {}) {
-        var sample = $store.read('item/convert/style', page || {}) 
+        var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
             overflow: sample.clip ? 'hidden' : '',
@@ -82,7 +84,7 @@ export default class PageManager extends BaseModule {
         var obj = $store.read('page/cache/toCSS',  page) || {};
 
         return {
-            css: $store.read('css/toString', obj),
+            css: $store.read(CSS_TOSTRING, obj),
             obj
         }
     }    

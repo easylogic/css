@@ -4,7 +4,9 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit, unitValue } from "../../../../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 import { CLICK, INPUT, CHANGEINPUT, LOAD } from "../../../../../util/Event";
-import { isUndefined } from "../../../../../util/functions/func";
+import { isUndefined, clone } from "../../../../../util/functions/func";
+import { BACKDROP_GET, BACKDROP_LIST } from "../../../../module/BackdropTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 const DROPSHADOW_FILTER_KEYS = [
     'backdropDropshadowOffsetX',
@@ -62,7 +64,7 @@ export default class BackdropList extends BasePropertyItem {
             <div class='items'>
                 ${DROPSHADOW_FILTER_KEYS.map(subkey => {
                     
-                    var it = this.read('backdrop/get', subkey);
+                    var it = this.read(BACKDROP_GET, subkey);
                     var value = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
@@ -97,15 +99,15 @@ export default class BackdropList extends BasePropertyItem {
 
     [LOAD('$filterList')] () {
 
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return '' 
 
-        var filterKeys = this.read('backdrop/list', layer.id) 
+        var filterKeys = this.read(BACKDROP_LIST, layer.id) 
 
         return filterKeys.map(key => {
             var realKey = key
-            var viewObject = this.read('backdrop/get', realKey);
+            var viewObject = this.read(BACKDROP_GET, realKey);
             var dataObject = layer || {}
              return `
                 <div class='filter-item'>
@@ -145,9 +147,9 @@ export default class BackdropList extends BasePropertyItem {
 
     updateFilterKeyValue (key, lastValue) {
 
-        this.read('selection/current/layer', layer => {
+        this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id; 
-            var value = layer[key] || this.read('clone', BACKDROP_DEFAULT_OBJECT[key]);
+            var value = layer[key] || clone(BACKDROP_DEFAULT_OBJECT[key]);
             value.value = lastValue 
 
             this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })
@@ -156,9 +158,9 @@ export default class BackdropList extends BasePropertyItem {
 
     updateFilterKeyChecked (key, checked) {
 
-        this.read('selection/current/layer', layer => {
+        this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id;             
-            var value = layer[key] || this.read('clone', BACKDROP_DEFAULT_OBJECT[key]);
+            var value = layer[key] || clone(BACKDROP_DEFAULT_OBJECT[key]);
             value.checked = checked 
 
             this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })

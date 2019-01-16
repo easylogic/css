@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_PAGE_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
 
 export default class PageName extends UIElement {
     template () {
@@ -23,7 +24,7 @@ export default class PageName extends UIElement {
     }
 
     refresh() {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             var name = '';
             if (item) {
                 name = item.name ; 
@@ -37,7 +38,7 @@ export default class PageName extends UIElement {
     }
 
     [INPUT('$name')] () {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             this.commit(CHANGE_PAGE_NAME, {id, name: this.refs.$name.val()});
         });
     }

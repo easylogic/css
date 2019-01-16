@@ -1,6 +1,7 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
+import { SELECTION_CURRENT_PAGE } from "../../../module/SelectionTypes";
 
 
 export default class ShowGrid extends MenuItem {
@@ -13,7 +14,7 @@ export default class ShowGrid extends MenuItem {
     }
 
     clickButton (e) {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             this.checked = !this.checked; 
             this.run('tool/set', 'show.grid', this.checked)
             this.dispatch('tool/set', 'snap.grid', this.checked)

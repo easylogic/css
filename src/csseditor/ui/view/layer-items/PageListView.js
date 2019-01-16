@@ -2,6 +2,9 @@ import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import PageSampleList from "../../control/panel/PageSampleList";
 import { LOAD, CLICK, SELF } from "../../../../util/Event";
 import { CHANGE_PAGE, CHANGE_EDITOR } from "../../../types/event";
+import { ITEM_GET } from "../../../module/ItemTypes";
+import { ITEM_ADD_PAGE } from "../../../module/ItemCreateTypes";
+import { SELECTION_ONE, SELECTION_CURRENT_PAGE } from "../../../module/SelectionTypes";
 
 export default class PageListView extends UIElement {
 
@@ -21,9 +24,9 @@ export default class PageListView extends UIElement {
     }
 
     makeItemNode (node, index) {
-        var item = this.read('item/get', node.id);
+        var item = this.read(ITEM_GET, node.id);
 
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
 
         var selectedId = '' 
 
@@ -68,13 +71,13 @@ export default class PageListView extends UIElement {
     }
 
     [CLICK('$pageList .add-page')] (e) {
-        this.dispatch('item/add/page', true);
+        this.dispatch(ITEM_ADD_PAGE, true);
         this.refresh();
     }
 
     [CLICK('$pageList .tree-item') + SELF] (e) { 
 
-        this.run('selection/one', e.$delegateTarget.attr('id')); 
+        this.run(SELECTION_ONE, e.$delegateTarget.attr('id')); 
         this.emit(CHANGE_EDITOR);      
         this.refresh();
     }

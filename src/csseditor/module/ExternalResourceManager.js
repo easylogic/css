@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
+import { EXTERNAL_PASTE } from "./ExternalResourceTypes";
 
 
 export default class ExternalResourceManager extends BaseModule {
@@ -10,7 +11,7 @@ export default class ExternalResourceManager extends BaseModule {
         this.$store.emit(CHANGE_EDITOR)
     }
 
-    [ACTION('external/paste')] ($store, dataTransfer, layerId) {
+    [ACTION(EXTERNAL_PASTE)] ($store, dataTransfer, layerId) {
         var items = [...dataTransfer.items]
         var types = [...dataTransfer.types].filter(type => type == 'text/uri-list');
         
@@ -21,7 +22,7 @@ export default class ExternalResourceManager extends BaseModule {
         if (dataList.length) {
             $store.read('image/get/url', dataList, (url) => {
 
-                $store.run('item/prepend/image/url', url, true, layerId);
+                $store.run(ITEM_PREPEND_IMAGE_URL, url, true, layerId);
             })
         }
 
@@ -29,7 +30,7 @@ export default class ExternalResourceManager extends BaseModule {
         if (files.length) {
 
             $store.read('image/get/file', files, (img) => {
-                $store.dispatch('item/prepend/image/file', img, true, layerId);
+                $store.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layerId);
             })
         }
     } 

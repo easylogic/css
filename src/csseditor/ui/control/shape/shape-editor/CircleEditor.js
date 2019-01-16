@@ -12,6 +12,7 @@ import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, value2px } from "../../../../../util/css/types";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class CircleEditor extends UIElement {
 
@@ -32,7 +33,7 @@ export default class CircleEditor extends UIElement {
         if (isShow) {
             this.cachedRectangle = false;       
             
-            this.read('selection/current/layer', layer => {
+            this.read(SELECTION_CURRENT_LAYER, layer => {
                 var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE)
                 this.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE)
             })
@@ -43,7 +44,7 @@ export default class CircleEditor extends UIElement {
     }
 
     refreshPointer () {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
             if (layer.clipPathType !== CLIP_PATH_TYPE_CIRCLE) return;
 
@@ -64,7 +65,7 @@ export default class CircleEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read('selection/current/layer')
+        var item = this.read(SELECTION_CURRENT_LAYER)
 
         if (!item) return false; 
 
@@ -156,7 +157,7 @@ export default class CircleEditor extends UIElement {
 
     [POINTERSTART()] (e) {
         this.isDown = true; 
-        this.layer = this.read('selection/current/layer');
+        this.layer = this.read(SELECTION_CURRENT_LAYER);
         // this.refreshUI(e);        
     }    
     

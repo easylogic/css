@@ -1,5 +1,6 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { CLICK } from "../../../../util/Event";
+import { SELECTION_CURRENT_LAYER } from "../../../module/SelectionTypes";
 
 export default class BasicGradient extends UIElement  {
 
@@ -34,7 +35,7 @@ export default class BasicGradient extends UIElement  {
     }
 
     [CLICK('$gradientType .gradient-item')] (e) {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
             var type = e.$delegateTarget.attr('data-type')
 
             this.dispatch('item/prepend/image', type, true, item.id)

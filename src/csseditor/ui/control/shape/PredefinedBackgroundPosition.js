@@ -7,6 +7,7 @@ import {
 import { CLICK, SELF } from '../../../../util/Event';
 import { valueUnit } from '../../../../util/css/types';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../module/ItemTypes';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
 
 const defined_position = {
     'to right': { 
@@ -66,7 +67,7 @@ export default class PredefinedBackgroundPosition extends UIElement {
 
 
     isShow () {
-        return this.read('selection/is/image')
+        return this.read(SELECTION_IS_IMAGE)
     }
 
     getPosition (type) {
@@ -77,7 +78,7 @@ export default class PredefinedBackgroundPosition extends UIElement {
     }
 
     [CLICK('$el button') + SELF] (e) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
             this.commit(CHANGE_IMAGE, {id, ...pos})
         })

@@ -5,10 +5,11 @@ import {
     ITEM_TYPE_COLORSTEP,
     ITEM_TYPE_BOXSHADOW,
     ITEM_TYPE_TEXTSHADOW,
-    ITEM_TYPE_LAYER
+    ITEM_TYPE_LAYER,
+    ITEM_GET
 } from "./ItemTypes";
 import { GETTER } from "../../util/Store";
-import { isUndefined } from "../../util/functions/func";
+import { isUndefined, clone } from "../../util/functions/func";
 export const DEFAULT_FUNCTION = (item) => item; 
 
 export default class ItemSearchManager extends BaseModule {
@@ -17,7 +18,7 @@ export default class ItemSearchManager extends BaseModule {
         var items = {}
 
         $store.read('item/each/children', parentId, (item) => {
-            items[item.id] = $store.read('clone', item);
+            items[item.id] = clone(item);
 
             var children = $store.read('item/get/all', item.id)
             Object.keys(children).forEach(key => {
@@ -187,7 +188,7 @@ export default class ItemSearchManager extends BaseModule {
         var targetId = id; 
 
         do {
-            var item = $store.read('item/get', targetId);
+            var item = $store.read(ITEM_GET, targetId);
 
             if (item.parentId == '') {
                 results.push(item.id);

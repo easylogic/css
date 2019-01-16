@@ -11,6 +11,8 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
 import { px, unitValue, pxUnit } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
+import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../module/SelectionTypes';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -53,7 +55,7 @@ export default class TextShadow extends BasePropertyItem {
         var offsetX = unitValue(item.offsetX);
         var offsetY = unitValue(item.offsetY);
         var blurRadius = unitValue(item.blurRadius);
-        var checked = this.read('selection/check', item.id) ? 'checked': '';
+        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': '';
 
         return `
             <div class='text-shadow-item ${checked}' text-shadow-id="${item.id}">  
@@ -74,7 +76,7 @@ export default class TextShadow extends BasePropertyItem {
     }
 
     [LOAD('$textShadowList')] () {
-        var item = this.read('selection/current/layer')
+        var item = this.read(SELECTION_CURRENT_LAYER)
         if (!item) { return ''; }
 
         var results =  this.read('item/map/textshadow/children', item.id, (item) => {
@@ -90,7 +92,7 @@ export default class TextShadow extends BasePropertyItem {
 
     isShow () {
         return true; 
-        // return this.read('selection/is/layer'); 
+        // return this.read(SELECTION_IS_LAYER); 
     }    
 
     refresh () {
@@ -126,8 +128,8 @@ export default class TextShadow extends BasePropertyItem {
     }
 
     [CLICK('$add')] (e) {
-        this.read('selection/current/layer/id', (id) => {
-            this.dispatch('item/add', ITEM_TYPE_TEXTSHADOW, false, id)
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
+            this.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, false, id)
             this.dispatch('history/push', `Add text Shadow` );        
             this.refresh();
         }); 
@@ -145,7 +147,7 @@ export default class TextShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('text-shadow-id')
 
-        this.run('item/initialize', id);
+        this.run(ITEM_INITIALIZE, id);
         this.emit(CHANGE_TEXTSHADOW)
         this.refresh();
     }
@@ -154,7 +156,7 @@ export default class TextShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('text-shadow-id')
 
-        this.dispatch('selection/one', id);
+        this.dispatch(SELECTION_ONE, id);
         this.emit(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
         this.refresh();
     }

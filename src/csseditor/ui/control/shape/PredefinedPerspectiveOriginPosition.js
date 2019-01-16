@@ -7,6 +7,7 @@ import {
 import { CLICK, SELF } from '../../../../util/Event';
 import { percentUnit, valueUnit } from '../../../../util/css/types';
 import { POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../module/ItemTypes';
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../module/SelectionTypes';
 
 const defined_position = {
     'to right': { 
@@ -68,7 +69,7 @@ export default class PredefinedPerspectiveOriginPosition extends UIElement {
     isShow () {
         if (!this.read('selection/is/page')) return false; 
 
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) return false; 
 
@@ -83,7 +84,7 @@ export default class PredefinedPerspectiveOriginPosition extends UIElement {
     }
 
     [CLICK('$el button') + SELF] (e) {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_IDs, (id) => {
             var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
             this.commit(CHANGE_PAGE_TRANSFORM, {id, ...pos})
         })

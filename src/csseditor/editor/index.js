@@ -15,6 +15,7 @@ import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import { EVENT } from '../../colorpicker/UIElement';
 import Alignment from '../ui/control/Alignment';
+import { ITEM_ADD_PAGE } from '../module/ItemCreateTypes';
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -76,7 +77,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     [EVENT(CHANGE_EDITOR)] () {
         /*
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             var self = this; 
             var obj = layer.style
             var aniObject = Animation.createTimeline([{
@@ -113,7 +114,7 @@ export default class CSSEditor extends BaseCSSEditor {
     loadStart (isAdd) {
         this.dispatch('storage/load', (isLoaded) => {
             if (!isLoaded && isAdd) { 
-                this.dispatch('item/add/page', true)
+                this.dispatch(ITEM_ADD_PAGE, true)
             } else {
                 this.dispatch('item/load');
             }

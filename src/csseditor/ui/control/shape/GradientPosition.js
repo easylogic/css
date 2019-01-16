@@ -8,6 +8,7 @@ import { percent } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
 import { isString } from '../../../../util/functions/func';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
@@ -39,9 +40,9 @@ export default class GradientPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read('selection/is/image')) return false; 
+        if (!this.read(SELECTION_IS_IMAGE)) return false; 
 
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
         if (!item) return false; 
 
 
@@ -113,7 +114,7 @@ export default class GradientPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('selection/current/image');
+        var item = this.read(SELECTION_CURRENT_IMAGE);
 
         if (!item) return ''; 
 
@@ -145,7 +146,7 @@ export default class GradientPosition extends UIElement {
     }
 
     setRadialPosition (radialPosition) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
 
             this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition});
         });

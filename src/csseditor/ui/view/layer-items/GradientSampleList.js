@@ -1,5 +1,8 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK } from "../../../../util/Event";
+import { ITEM_CONVERT_STYLE } from "../../../module/ItemTypes";
+import { COLLECT_IMAGE_ONE } from "../../../module/CollectTypes";
+import { SELECTION_CURRENT_IMAGE_ID } from "../../../module/SelectionTypes";
 
 
 export default class GradientSampleList extends UIElement  {
@@ -92,7 +95,7 @@ export default class GradientSampleList extends UIElement  {
         var image = this.read('storage/images', index);
         var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps })        
 
-        this.dispatch('gradient/image/add', this.read('item/convert/style', newImage) );
+        this.dispatch('gradient/image/add', this.read(ITEM_CONVERT_STYLE, newImage) );
     }
 
     [CLICK('$el .gradient-cached-item .change-item')] (e) {
@@ -100,12 +103,12 @@ export default class GradientSampleList extends UIElement  {
         var image = this.read('storage/images', index);
         var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps })        
 
-        this.dispatch('gradient/image/select', this.read('item/convert/style', newImage));
+        this.dispatch('gradient/image/select', this.read(ITEM_CONVERT_STYLE, newImage));
     }
 
     [CLICK('$el .add-current-image')] (e) {
-        this.read('selection/current/image', (image) => {
-            var newImage = this.read('collect/image/one', image.id)
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
+            var newImage = this.read(COLLECT_IMAGE_ONE, id)
 
             this.dispatch('storage/add/image', newImage);
             this.refresh();

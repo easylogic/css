@@ -45,7 +45,7 @@ export default class ImageResource extends BasePropertyItem {
     }    
 
     isShow () {
-        var item = this.read('selection/current/image')
+        var item = this.read(SELECTION_CURRENT_IMAGE)
 
         if (!item) return false; 
 
@@ -56,7 +56,7 @@ export default class ImageResource extends BasePropertyItem {
         var [index, key] = e.$delegateTarget.attrs('data-index', 'data-key')
 
         if (index) {
-            this.read('selection/current/image', (image) => {
+            this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 var file = this.read('svg/get/blob', +index);
                 this.read('image/get/blob', [file], (newImage) => {
                     this.dispatch('item/set/image/file', image.id, newImage)
@@ -64,7 +64,7 @@ export default class ImageResource extends BasePropertyItem {
             })
         } else if (key) {
 
-            this.read('selection/current/image', (image) => {
+            this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 var file = this.read('svg/get/blob', Number.MAX_SAFE_INTEGER, key);
                 this.read('image/get/blob', [file], (newImage) => {
                     this.dispatch('item/set/image/file', image.id, newImage)

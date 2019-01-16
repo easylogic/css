@@ -7,6 +7,7 @@ import {
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
 import { percentUnit } from '../../../../util/css/types';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
 
 export default class BackgroundResizer extends UIElement {
 
@@ -31,7 +32,7 @@ export default class BackgroundResizer extends UIElement {
     }
 
     isShow () {
-        return this.read('selection/is/image');
+        return this.read(SELECTION_IS_IMAGE);
     }
 
     getCurrentXY(e, position) {
@@ -59,7 +60,7 @@ export default class BackgroundResizer extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read('selection/current/image');
+        var item = this.read(SELECTION_CURRENT_IMAGE);
 
         if (!item) return ''; 
 
@@ -106,7 +107,7 @@ export default class BackgroundResizer extends UIElement {
     }
 
     setBackgroundPosition (backgroundPositionX, backgroundPositionY) {
-        this.read('selection/current/image/id', (id) => {
+        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
             this.commit(CHANGE_IMAGE, {id, backgroundPositionX, backgroundPositionY});
         });
     }

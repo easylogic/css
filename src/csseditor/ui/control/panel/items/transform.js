@@ -7,6 +7,7 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
 import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class Transform extends BasePropertyItem {
     template () {
@@ -71,7 +72,7 @@ export default class Transform extends BasePropertyItem {
     }
 
     refresh() {
-        this.read('selection/current/layer', (item) => {
+        this.read(SELECTION_CURRENT_LAYER, (item) => {
 
             var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY']
 
@@ -86,7 +87,7 @@ export default class Transform extends BasePropertyItem {
     }
 
     updateTransform (key, postfix = '') {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var value = this.refs['$' + key + postfix].val();
             if (postfix == '') {
                 this.refs['$' + key + 'Range'].val(value);

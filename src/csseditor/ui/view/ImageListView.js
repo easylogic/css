@@ -11,6 +11,7 @@ import {
     CHANGE_SELECTION 
 } from '../../types/event';
 import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CHECK, SELECTION_ONE } from '../../module/SelectionTypes';
 
 export default class ImageListView extends UIElement {
 
@@ -19,7 +20,7 @@ export default class ImageListView extends UIElement {
     }
 
     makeItemNodeImage (item) {
-        var selected = this.read('selection/check', item.id) ? 'selected' : '' 
+        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : '' 
         return `
             <div class='tree-item ${selected}' data-id="${item.id}" draggable="true" title="${item.type}" >
                 <div class="item-view-container">
@@ -30,7 +31,7 @@ export default class ImageListView extends UIElement {
     }       
 
     [LOAD()] () {
-        var id = this.read('selection/current/layer/id');
+        var id = this.read(SELECTION_CURRENT_LAYER_ID);
 
         if (!id) {
             return '';
@@ -62,7 +63,7 @@ export default class ImageListView extends UIElement {
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
-            this.dispatch('selection/one', id);
+            this.dispatch(SELECTION_ONE, id);
             this.refresh();
         }
 

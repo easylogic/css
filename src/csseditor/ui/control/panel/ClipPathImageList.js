@@ -5,6 +5,7 @@ import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
 import { CLICK, LOAD } from "../../../../util/Event";
 import { isObject, isUndefined } from "../../../../util/functions/func";
 import { EVENT } from "../../../../colorpicker/UIElement";
+import { SELECTION_CURRENT_LAYER_ID } from "../../../module/SelectionTypes";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -91,7 +92,7 @@ export default class ClipPathImageList extends BasePropertyItem {
         var key = e.$delegateTarget.attr('data-key')
 
         if (index) {
-            this.read('selection/current/layer/id', (id) => {
+            this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
                 var svg = this.read('svg/get', +index);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
@@ -102,7 +103,7 @@ export default class ClipPathImageList extends BasePropertyItem {
 
             })
         } else if (key) {
-            this.read('selection/current/layer/id', (id) => {
+            this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
                 var svg = this.read('svg/get', Number.MAX_SAFE_INTEGER, key);
 
                 this.setClipPathSvg(id, svg, (newValue) => {

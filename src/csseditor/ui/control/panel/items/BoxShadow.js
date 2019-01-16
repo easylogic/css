@@ -10,6 +10,8 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
 import { pxUnit, unitValue } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
+import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../module/SelectionTypes';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -60,7 +62,7 @@ export default class BoxShadow extends BasePropertyItem {
         var blurRadius = unitValue(item.blurRadius);
         var spreadRadius = unitValue(item.spreadRadius);
 
-        var checked = this.read('selection/check', item.id) ? 'checked': '';
+        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': '';
 
         return `
             <div class='box-shadow-item ${checked}' box-shadow-id="${item.id}">  
@@ -87,7 +89,7 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
     [LOAD('$boxShadowList')] () {
-        var item = this.read('selection/current/layer')
+        var item = this.read(SELECTION_CURRENT_LAYER)
         if (!item) { return ''; }
 
         var results =  this.read('item/map/boxshadow/children', item.id, (item) => {
@@ -103,7 +105,7 @@ export default class BoxShadow extends BasePropertyItem {
 
     isShow () {
         return true; 
-        // return this.read('selection/is/layer'); 
+        // return this.read(SELECTION_IS_LAYER); 
     }    
 
     refresh () {
@@ -139,8 +141,8 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
     [CLICK('$add')] (e) {
-        this.read('selection/current/layer/id', (id) => {
-            this.dispatch('item/add', ITEM_TYPE_BOXSHADOW, false, id)
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
+            this.dispatch(ITEM_ADD, ITEM_TYPE_BOXSHADOW, false, id)
             this.dispatch('history/push', `Add Box Shadow` );        
             this.refresh();
         }); 
@@ -165,7 +167,7 @@ export default class BoxShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('box-shadow-id')
 
-        this.run('item/initialize', id);
+        this.run(ITEM_INITIALIZE, id);
         this.emit(CHANGE_BOXSHADOW)
         this.refresh();
     }
@@ -174,7 +176,7 @@ export default class BoxShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = $el.parent().attr('box-shadow-id')
 
-        this.dispatch('selection/one', id);
+        this.dispatch(SELECTION_ONE, id);
         this.emit('fillColorId', id, CHANGE_BOXSHADOW);
         this.refresh();
     }

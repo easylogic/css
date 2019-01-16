@@ -2,6 +2,7 @@ import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_PAGE_SIZE, CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
 
 export default class PageSize extends UIElement {
     template () {
@@ -36,7 +37,7 @@ export default class PageSize extends UIElement {
     }
 
     refresh() {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             this.refs.$width.val(unitValue(item.width))
             this.refs.$height.val(unitValue(item.height))
         })
@@ -45,7 +46,7 @@ export default class PageSize extends UIElement {
 
     [CLICK('$rect')] (e) {
 
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             var newValue = {
                 id: item.id, 
                 width: pxUnit( this.refs.$width.int() )
@@ -59,14 +60,14 @@ export default class PageSize extends UIElement {
 
     [INPUT('$width')] () {
 
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             this.commit(CHANGE_PAGE_SIZE, { id, width: pxUnit(this.refs.$width.int() ) });
         })
     }
 
     [INPUT('$height')] () {
 
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             this.commit(CHANGE_PAGE_SIZE, { id, height: pxUnit(this.refs.$height.int()) });            
         })
     }    

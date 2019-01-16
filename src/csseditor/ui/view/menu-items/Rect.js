@@ -1,5 +1,7 @@
 import MenuItem from "./MenuItem";
 import { ITEM_TYPE_LAYER } from "../../../module/ItemTypes";
+import { ITEM_ADD } from "../../../module/ItemCreateTypes";
+import { SELECTION_CURRENT_PAGE_ID } from "../../../module/SelectionTypes";
 
 export default class Rect extends MenuItem {
     constructor(opt = {}, props = {}, parent = null) {
@@ -10,8 +12,8 @@ export default class Rect extends MenuItem {
     }
 
     clickButton (e) {
-        this.read('selection/current/page', (page) => {
-            this.dispatch('item/add', ITEM_TYPE_LAYER, true, page.id)
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+            this.dispatch(ITEM_ADD, ITEM_TYPE_LAYER, true, id)
             this.dispatch('history/push', 'Add a layer');
         });
     }

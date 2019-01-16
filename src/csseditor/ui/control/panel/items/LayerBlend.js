@@ -3,6 +3,8 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
 import { CHANGE } from '../../../../../util/Event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
+import { BLEND_LIST } from '../../../../module/BlendTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../module/SelectionTypes';
 
 export default class LayerBlend extends BasePropertyItem {
 
@@ -14,7 +16,7 @@ export default class LayerBlend extends BasePropertyItem {
                     <label>Blend</label>
                     <div class='size-list' ref="$size">
                         <select ref="$blend">
-                        ${this.read('blend/list').map(blend => {
+                        ${this.read(BLEND_LIST).map(blend => {
                             return `<option value="${blend}">${blend}</option>`
                         }).join('')}
                         </select>
@@ -26,12 +28,12 @@ export default class LayerBlend extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read('selection/is/layer'); 
+        return this.read(SELECTION_IS_LAYER); 
     }    
 
     refresh () {
 
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
             this.refs.$blend.val(layer.mixBlendMode)
         })
 
@@ -45,7 +47,7 @@ export default class LayerBlend extends BasePropertyItem {
     }
 
     [CHANGE('$blend')] (e) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             this.commit(CHANGE_LAYER, {id, mixBlendMode: this.refs.$blend.val() })
         });
     }

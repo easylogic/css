@@ -10,6 +10,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
 import { ITEM_TYPE_CIRCLE } from "../../../../module/ItemTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {
@@ -43,7 +44,7 @@ export default class RadiusFixed extends BasePropertyItem {
 
         if (isShow) {
 
-            this.read('selection/current/layer', (item) => {
+            this.read(SELECTION_CURRENT_LAYER, (item) => {
                 var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0) )
                 this.refs.$radiusRange.val(radius.value)
                 this.refs.$radius.val(radius.value)
@@ -52,7 +53,7 @@ export default class RadiusFixed extends BasePropertyItem {
     }
 
     isShow () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return false; 
         if (layer.type == ITEM_TYPE_CIRCLE) return false;
@@ -61,7 +62,7 @@ export default class RadiusFixed extends BasePropertyItem {
     }
 
     updateTransform (type) {
-        this.read('selection/current/layer/id', (id) => {
+        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
 
             if (type == 'radius') {
                 this.commit(CHANGE_LAYER_RADIUS, {

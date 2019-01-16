@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_PAGE, CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
 
 export default class Clip extends UIElement {
     template () {
@@ -26,13 +27,13 @@ export default class Clip extends UIElement {
     }
 
     refresh() {
-        this.read('selection/current/page', (item) => {
+        this.read(SELECTION_CURRENT_PAGE, (item) => {
             this.refs.$check.checked(item.clip)
         })        
     }
 
     [CLICK('$check')] () {
-        this.read('selection/current/page/id', (id) => {
+        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             this.commit(CHANGE_PAGE_SIZE, {id, clip: this.refs.$check.checked() } )
         })
     }

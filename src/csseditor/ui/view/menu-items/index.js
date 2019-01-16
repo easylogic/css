@@ -8,8 +8,11 @@ import ExportCodePen from "./ExportCodPen";
 import ExportJSFiddle from "./ExportJSFiddle";
 import Rect from "./Rect";
 import Circle from "./Circle";
+import ShowClipPath from "./ShowClipPath";
+
 
 export default {
+    ShowClipPath,
     Rect,
     Circle,
     ExportJSFiddle,

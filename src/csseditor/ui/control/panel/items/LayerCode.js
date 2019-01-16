@@ -23,6 +23,8 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { LAYER_TOEXPORT } from "../../../../module/LayerTypes";
 
 export default class LayerCode extends BasePropertyItem {
     template () {
@@ -39,11 +41,11 @@ export default class LayerCode extends BasePropertyItem {
     }
 
     [LOAD('$keys')] () {
-        var layer = this.read('selection/current/layer');
+        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return ''; 
 
-        return this.read('layer/toExport', layer, true).split(';').map(it => {
+        return this.read(LAYER_TOEXPORT, layer, true).split(';').map(it => {
             var [key, value] = it.split(':');
 
             if (key == 'background-image' || key == 'box-shadow' || key == 'text-shadow') {

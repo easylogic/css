@@ -12,6 +12,7 @@ import { defaultValue } from "../../../../../util/functions/func";
 import { percentUnit, value2px } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
+import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
 export default class InsetEditor extends UIElement {
 
@@ -40,7 +41,7 @@ export default class InsetEditor extends UIElement {
     }
 
     refreshPointer () {
-        this.read('selection/current/layer', (layer) => {
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
             if (layer.clipPathType !== CLIP_PATH_TYPE_INSET) return;
 
@@ -74,7 +75,7 @@ export default class InsetEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read('selection/current/layer')
+        var item = this.read(SELECTION_CURRENT_LAYER)
 
         if (!item) return false; 
 
@@ -172,7 +173,7 @@ export default class InsetEditor extends UIElement {
 
     [POINTERSTART()] (e) {
         this.isDown = true; 
-        this.layer = this.read('selection/current/layer');
+        this.layer = this.read(SELECTION_CURRENT_LAYER);
         // this.refreshUI(e);        
     }    
     

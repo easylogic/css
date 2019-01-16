@@ -44,10 +44,12 @@ import BackdropList from "./BackdropList";
 import EmptyArea from "./EmptyArea";
 import Page3D from "./Page3D";
 import ImageSorting from "./ImageSorting";
+import BackgroundImage from "./BackgroundImage";
 
 
 
 export default {
+    BackgroundImage,
     ImageSorting, 
     Page3D,
     ClipPathSide,

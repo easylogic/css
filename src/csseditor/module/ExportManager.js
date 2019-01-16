@@ -1,5 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { ACTION, GETTER } from "../../util/Store";
+import { GETTER } from "../../util/Store";
+import { SELECTION_CURRENT_PAGE } from "./SelectionTypes";
+import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "./ExportTpyes";
+import { CSS_TOSTRING } from "./CssTypes";
+import { LAYER_TOSTRING_CLIPPATH, LAYER_TOEXPORT } from "./LayerTypes";
 
 
 export default class ExportManager extends BaseModule {
@@ -12,7 +16,7 @@ export default class ExportManager extends BaseModule {
             $store.read('page/toCSS', page) 
         )
 
-        return $store.read('css/toString', css);
+        return $store.read(CSS_TOSTRING, css);
     }
 
     getClassName (className) {
@@ -46,7 +50,7 @@ export default class ExportManager extends BaseModule {
             }
 
 
-            var clipPath = $store.read('layer/toStringClipPath', item);
+            var clipPath = $store.read(LAYER_TOSTRING_CLIPPATH, item);
 
             if (clipPath) {
                 clipPath = `\t\t\n${clipPath}`
@@ -75,7 +79,7 @@ export default class ExportManager extends BaseModule {
                 selector = `#${idString}`
             }
 
-            var css = $store.read('layer/toExport', item, true).split(';').map(it => {
+            var css = $store.read(LAYER_TOEXPORT, item, true).split(';').map(it => {
                 return '\t' + it + ';';
             }).join('\n');
 
@@ -87,8 +91,8 @@ export default class ExportManager extends BaseModule {
     }
 
 
-    [GETTER('export/generate/code')] ($store) {
-        var page = $store.read('selection/current/page')
+    [GETTER(EXPORT_GENERATE_CODE)] ($store) {
+        var page = $store.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
             return '';  
@@ -116,7 +120,7 @@ ${layerStyle}
     } 
 
 
-    [GETTER('export/codepen/code')] ($store, obj, title = 'CSS Gradient Editor', description = 'EasyLogic Studio', link = ' - https://css.easylogic.studio') {
+    [GETTER(EXPORT_CODEPEN_CODE)] ($store, obj, title = 'CSS Gradient Editor', description = 'EasyLogic Studio', link = ' - https://css.easylogic.studio') {
         return JSON.stringify({
             title,
             description: description + link,

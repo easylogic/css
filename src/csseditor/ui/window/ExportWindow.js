@@ -3,6 +3,7 @@ import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { CLICK } from "../../../util/Event";
 import ExportCodePenButton from "../view/export/ExportCodPenButton";
 import ExportJSFiddleButton from "../view/export/ExportJSFiddleButton";
+import { SELECTION_CURRENT_PAGE } from "../../module/SelectionTypes";
 
 
 
@@ -92,7 +93,7 @@ export default class ExportWindow extends UIElement {
  
 
     loadCode () {
-        var page = this.read('selection/current/page')
+        var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
             return '';  
