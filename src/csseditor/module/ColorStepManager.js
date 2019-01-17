@@ -2,13 +2,14 @@ import BaseModule from "../../colorpicker/BaseModule";
 import Color from "../../util/Color";
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
 import { CHANGE_EDITOR } from "../types/event";
-import { ITEM_TYPE_COLORSTEP, ITEM_SET, ITEM_GET, ITEM_SORT, ITEM_REMOVE } from "./ItemTypes";
+import { ITEM_TYPE_COLORSTEP, ITEM_SET, ITEM_GET, ITEM_SORT, ITEM_REMOVE } from "../types/ItemTypes";
 import { isPX, isEM } from "../../util/css/types";
 import { isUndefined, defaultValue } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
-import { SELECTION_CURRENT_IMAGE } from "./SelectionTypes";
-import { COLORSTEP_COLOR_SOURCE, COLORSTEP_CURRENT, COLORSTEP_LIST, COLORSTEP_INIT_COLOR, COLORSTEP_ADD, COLORSTEP_REMOVE, COLORSTEP_SORT, COLORSTEP_SORT_LIST, COLORSTEP_CURRENT_INDEX, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON, COLORSTEP_UNIT_VALUE, COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT } from "./ColorStepTypes";
-import { ITEM_CREATE_COLORSTEP } from "./ItemCreateTypes";
+import { SELECTION_CURRENT_IMAGE } from "../types/SelectionTypes";
+import { COLORSTEP_COLOR_SOURCE, COLORSTEP_CURRENT, COLORSTEP_LIST, COLORSTEP_INIT_COLOR, COLORSTEP_ADD, COLORSTEP_REMOVE, COLORSTEP_SORT, COLORSTEP_SORT_LIST, COLORSTEP_CURRENT_INDEX, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON, COLORSTEP_UNIT_VALUE, COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT } from "../types/ColorStepTypes";
+import { ITEM_CREATE_COLORSTEP } from "../types/ItemCreateTypes";
+import { ITEM_MAP_CHILDREN, ITEM_LIST_CHILDREN } from "../types/ItemSearchTypes";
 
 const INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP
 
@@ -46,7 +47,7 @@ export default class ColorStepManager extends BaseModule {
 
     [ACTION(COLORSTEP_ADD)] ($store, item, percent) {
 
-        var list = $store.read('item/list/children', item.id)
+        var list = $store.read(ITEM_LIST_CHILDREN, item.id)
 
         if (!list.length) {
 
@@ -111,7 +112,7 @@ export default class ColorStepManager extends BaseModule {
     }
 
     [GETTER(COLORSTEP_SORT_LIST)] ($store, parentId) {
-        var colorsteps = $store.read('item/map/children', parentId);
+        var colorsteps = $store.read(ITEM_MAP_CHILDREN, parentId);
 
         colorsteps.sort( (a, b) => {
             if (a.index == b.index) return 0; 

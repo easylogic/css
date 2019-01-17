@@ -2,7 +2,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE } from '../../../../module/SelectionTypes';
+import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE } from '../../../../types/SelectionTypes';
 
 export default class BackgroundInfo extends BasePropertyItem {
 

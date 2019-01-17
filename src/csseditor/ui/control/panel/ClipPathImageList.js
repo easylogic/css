@@ -5,7 +5,8 @@ import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
 import { CLICK, LOAD } from "../../../../util/Event";
 import { isObject, isUndefined } from "../../../../util/functions/func";
 import { EVENT } from "../../../../colorpicker/UIElement";
-import { SELECTION_CURRENT_LAYER_ID } from "../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID } from "../../../types/SelectionTypes";
+import { SVG_LIST, SVG_GET } from "../../../types/SVGTypes";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -19,7 +20,7 @@ export default class ClipPathImageList extends BasePropertyItem {
     }
 
     [LOAD('$imageList')] () {
-        return this.read('svg/list').map((svg, index) => {
+        return this.read(SVG_LIST).map((svg, index) => {
             if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
             }  else {
@@ -93,7 +94,7 @@ export default class ClipPathImageList extends BasePropertyItem {
 
         if (index) {
             this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-                var svg = this.read('svg/get', +index);
+                var svg = this.read(SVG_GET, +index);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
                     this.commit(CHANGE_LAYER_CLIPPATH, newValue)
@@ -104,7 +105,7 @@ export default class ClipPathImageList extends BasePropertyItem {
             })
         } else if (key) {
             this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-                var svg = this.read('svg/get', Number.MAX_SAFE_INTEGER, key);
+                var svg = this.read(SVG_GET, Number.MAX_SAFE_INTEGER, key);
 
                 this.setClipPathSvg(id, svg, (newValue) => {
                     this.commit(CHANGE_LAYER_CLIPPATH, newValue)

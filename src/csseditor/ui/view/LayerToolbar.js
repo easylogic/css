@@ -16,21 +16,5 @@ export default class LayerToolbar extends UIElement {
 
     components () {
         return { ImageListView }
-    }
-
-    [CLICK('$groupAlign button')] (e) {
-        this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'))
-    }
-
-    [CLICK('$groupOrdering button')] (e) {
-        this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'))
-    }    
-
-    [CLICK('$togglePagePanel')] () {
-        this.emit('togglePagePanel');
-    }
-
-    [CLICK('$toggleLayerPanel')] () {
-        this.emit('toggleLayerPanel');
-    }    
+    } 
 }

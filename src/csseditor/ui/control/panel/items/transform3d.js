@@ -7,7 +7,7 @@ import {
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class Transform3d extends BasePropertyItem {
     template () {

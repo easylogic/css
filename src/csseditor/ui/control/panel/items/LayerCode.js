@@ -23,8 +23,8 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
-import { LAYER_TOEXPORT } from "../../../../module/LayerTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { LAYER_TOEXPORT } from "../../../../types/LayerTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class LayerCode extends BasePropertyItem {

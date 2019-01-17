@@ -2,11 +2,11 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_BACKDROP_FILTER } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
-import { BACKDROP_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
+import { BACKDROP_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
 import { CLICK, INPUT, CHANGEINPUT, LOAD } from "../../../../../util/Event";
 import { isUndefined, clone } from "../../../../../util/functions/func";
-import { BACKDROP_GET, BACKDROP_LIST } from "../../../../module/BackdropTypes";
-import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { BACKDROP_GET, BACKDROP_LIST } from "../../../../types/BackdropTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 const DROPSHADOW_FILTER_KEYS = [
     'backdropDropshadowOffsetX',

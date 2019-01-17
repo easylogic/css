@@ -8,7 +8,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import UnitRange from "./element/UnitRange";
 import { UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { CHANGE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 
 

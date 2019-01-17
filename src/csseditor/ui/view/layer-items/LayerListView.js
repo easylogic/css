@@ -1,10 +1,13 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
-import { ITEM_SET, ITEM_GET, ITEM_REMOVE } from "../../../module/ItemTypes";
-import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../module/SelectionTypes";
-import { HISTORY_PUSH } from "../../../module/HistoryTypes";
+import { ITEM_SET, ITEM_GET, ITEM_REMOVE, ITEM_FOCUS } from "../../../types/ItemTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../types/SelectionTypes";
+import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
+import { ITEM_MOVE_IN_LAYER, ITEM_MOVE_IN, ITEM_MOVE_LAST } from "../../../types/ItemMoveTypes";
+import { ITEM_ADD_COPY, ITEM_COPY_IN, ITEM_COPY_IN_LAYER } from "../../../types/ItemRecoverTypes";
+import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_CHILDREN } from "../../../types/ItemSearchTypes";
 
 export default class LayerListView extends UIElement {
 
@@ -57,7 +60,7 @@ export default class LayerListView extends UIElement {
             <div class="gradient-list-group" >
                 <!-- <div class='gradient-collapse-button' item-id="${item.id}"></div> -->
                 <div class="tree-item-children">
-                    ${this.read('item/map/image/children', item.id, (item) => {
+                    ${this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, (item) => {
                         return this.makeItemNodeImage(item)
                     }).join(EMPTY_STRING)}
                 </div>
@@ -72,7 +75,7 @@ export default class LayerListView extends UIElement {
             return EMPTY_STRING;
         }
 
-        return this.read('item/map/children', page.id, (item, index) => {
+        return this.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
             return this.makeItemNode(item, index); 
         }).reverse();
     }
@@ -104,7 +107,7 @@ export default class LayerListView extends UIElement {
     [CLICK('$layerList .tree-item') + SELF] (e) { 
         var id = e.$delegateTarget.attr('id');
         this.dispatch(SELECTION_ONE, id);        
-        this.run('item/focus', id);
+        this.run(ITEM_FOCUS, id);
         this.refreshSelection(id);
     }
 
@@ -137,18 +140,18 @@ export default class LayerListView extends UIElement {
         this.draggedLayer = null;         
         if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
             if (e.ctrlKey) {
-                this.dispatch('item/copy/in/layer', destId, sourceId)
+                this.dispatch(ITEM_COPY_IN_LAYER, destId, sourceId)
             } else {
-                this.dispatch('item/move/in/layer', destId, sourceId)
+                this.dispatch(ITEM_MOVE_IN_LAYER, destId, sourceId)
             }
 
             this.dispatch(HISTORY_PUSH, `Change gradient position `);         
             this.refresh()            
         } else if (destItem.itemType == sourceItem.itemType ) {
             if (e.ctrlKey) {
-                this.dispatch('item/copy/in', destId, sourceId)
+                this.dispatch(ITEM_COPY_IN, destId, sourceId)
             } else {
-                this.dispatch('item/move/in', destId, sourceId)
+                this.dispatch(ITEM_MOVE_IN, destId, sourceId)
             }
             this.dispatch(HISTORY_PUSH, `Change item position `);         
             this.refresh()            
@@ -163,7 +166,7 @@ export default class LayerListView extends UIElement {
             var sourceId = this.draggedLayer.attr('id')
 
             this.draggedLayer = null; 
-            this.dispatch('item/move/last', sourceId)
+            this.dispatch(ITEM_MOVE_LAST, sourceId)
             this.dispatch(HISTORY_PUSH, `Change layer position `);                     
             this.refresh()
         }
@@ -171,13 +174,13 @@ export default class LayerListView extends UIElement {
     }           
 
     [CLICK('$layerList .copy-image-item')] (e) {
-        this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.dispatch(ITEM_ADD_COPY, e.$delegateTarget.attr('item-id'))
         this.dispatch(HISTORY_PUSH, `Add a gradient`);                 
         this.refresh()
     }
 
     [CLICK('$layerList .copy-item')] (e) {
-        this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'))
+        this.dispatch(ITEM_ADD_COPY, e.$delegateTarget.attr('item-id'))
         this.dispatch(HISTORY_PUSH, `Copy a layer`);                         
         this.refresh()
     }

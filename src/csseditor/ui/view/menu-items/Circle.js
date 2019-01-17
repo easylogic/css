@@ -1,8 +1,8 @@
 import MenuItem from "./MenuItem";
-import { ITEM_TYPE_CIRCLE } from "../../../module/ItemTypes";
-import { ITEM_ADD_LAYER } from "../../../module/ItemCreateTypes";
-import { SELECTION_CURRENT_PAGE_ID } from "../../../module/SelectionTypes";
-import { HISTORY_PUSH } from "../../../module/HistoryTypes";
+import { ITEM_TYPE_CIRCLE } from "../../../types/ItemTypes";
+import { ITEM_ADD_LAYER } from "../../../types/ItemCreateTypes";
+import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
+import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 
 export default class Circle extends MenuItem {
     constructor(opt = {}, props = {}, parent = null) {

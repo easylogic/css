@@ -10,10 +10,11 @@ import {
 } from '../../../types/event';
 import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT, EMPTY_STRING } from '../../../../util/css/types';
 import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, CHECKER, DEBOUNCE, LOAD } from '../../../../util/Event';
-import { ITEM_SET, ITEM_GET } from '../../../module/ItemTypes';
-import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../module/SelectionTypes';
-import { HISTORY_PUSH } from '../../../module/HistoryTypes';
-import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TO_LINEAR_RIGHT, IMAGE_TYPE_IS_NOT_GRADIENT } from '../../../module/ImageTypes';
+import { ITEM_SET, ITEM_GET } from '../../../types/ItemTypes';
+import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
+import { HISTORY_PUSH } from '../../../types/HistoryTypes';
+import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TO_LINEAR_RIGHT, IMAGE_TYPE_IS_NOT_GRADIENT } from '../../../types/ImageTypes';
+import { ITEM_MAP_CHILDREN, ITEM_EACH_CHILDREN } from '../../../types/ItemSearchTypes';
 
 export default class GradientSteps extends UIElement {
 
@@ -81,7 +82,7 @@ export default class GradientSteps extends UIElement {
 
         if (!item) return EMPTY_STRING;
 
-        return this.read('item/map/children', item.id, (step) => {
+        return this.read(ITEM_MAP_CHILDREN, item.id, (step) => {
 
             var cut = step.cut ? 'cut' : EMPTY_STRING; 
             var unitValue = this.read('colorstep/unit/value', step, this.getMaxValue());
@@ -299,7 +300,7 @@ export default class GradientSteps extends UIElement {
         var parent = e.$delegateTarget.parent();
         var item = this.read(ITEM_GET, parent.attr('id'));
             
-        this.read('item/each/children', item.parentId, (step) => {
+        this.read(ITEM_EACH_CHILDREN, item.parentId, (step) => {
             if (step.selected) {
                 step.selected = false;
                 this.run(ITEM_SET, step);

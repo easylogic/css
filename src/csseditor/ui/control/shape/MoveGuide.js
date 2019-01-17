@@ -8,8 +8,8 @@ import {
     CHANGE_LAYER_ROTATE
 } from '../../../types/event';
 import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
-import { GUIDE_TYPE_HORIZONTAL } from '../../../module/ItemTypes';
-import { SELECTION_CURRENT_LAYER } from '../../../module/SelectionTypes';
+import { GUIDE_TYPE_HORIZONTAL } from '../../../types/ItemTypes';
+import { SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 
 export default class MoveGuide extends UIElement {
 

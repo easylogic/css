@@ -1,6 +1,6 @@
 import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
-import { ITEM_SET } from "../csseditor/module/ItemTypes";
+import { ITEM_SET } from "../csseditor/types/ItemTypes";
 
 // const CHECK_STORE_PATTERN = /^@/
 const CHECK_STORE_MULTI_PATTERN = /^ME@/

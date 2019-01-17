@@ -6,10 +6,10 @@ import {
 } from '../../../types/event';
 import { percent, EMPTY_STRING } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
-import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
+import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../types/ItemTypes';
 import { isString } from '../../../../util/functions/func';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
-import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../module/ImageTypes';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
+import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../types/ImageTypes';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],

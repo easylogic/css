@@ -252,3 +252,6 @@ export const ITEM_SET_ALL = 'item/set/all';
 export const ITEM_SORT = 'item/sort';
 export const ITEM_REMOVE_CHILDREN = 'item/remove/children';
 export const ITEM_REMOVE = 'item/remove';
+export const ITEM_REMOVE_ALL = 'item/remove/all';
+export const ITEM_FOCUS = 'item/focus';
+export const ITEM_LOAD = 'item/load';

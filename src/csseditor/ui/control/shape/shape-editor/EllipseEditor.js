@@ -10,12 +10,12 @@ import {
 import { 
     CLIP_PATH_TYPE_ELLIPSE, 
     CLIP_PATH_SIDE_TYPE_NONE
-} from "../../../../module/ItemTypes";
+} from "../../../../types/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { percentUnit, value2px } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class EllipseEditor extends UIElement {
 

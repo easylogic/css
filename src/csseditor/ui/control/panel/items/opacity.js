@@ -8,7 +8,7 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class Opacity extends BasePropertyItem {
     template () {

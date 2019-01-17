@@ -9,8 +9,8 @@ import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { ITEM_TYPE_CIRCLE } from "../../../../module/ItemTypes";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { ITEM_TYPE_CIRCLE } from "../../../../types/ItemTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {

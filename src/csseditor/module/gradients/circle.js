@@ -1,4 +1,4 @@
-import { POSITION_CENTER } from "../ItemTypes";
+import { POSITION_CENTER } from "../../types/ItemTypes";
 
 export default { 
     image: {

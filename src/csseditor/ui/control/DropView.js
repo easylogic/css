@@ -1,8 +1,8 @@
 import UIElement from "../../../colorpicker/UIElement";
 import { DROP, DRAGOUT, DRAGOVER, PASTE } from "../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../module/SelectionTypes";
-import { ITEM_PREPEND_IMAGE_URL, ITEM_PREPEND_IMAGE_FILE } from "../../module/ItemCreateTypes";
-import { IMAGE_GET_URL, IMAGE_GET_FILE } from "../../module/ImageTypes";
+import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
+import { ITEM_PREPEND_IMAGE_URL, ITEM_PREPEND_IMAGE_FILE } from "../../types/ItemCreateTypes";
+import { IMAGE_GET_URL, IMAGE_GET_FILE } from "../../types/ImageTypes";
 
 export default class DropView extends UIElement {
 

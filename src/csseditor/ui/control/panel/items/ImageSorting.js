@@ -2,10 +2,10 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_EDITOR, CHANGE_SELECTION } from '../../../../types/event';
 import { CLICK } from '../../../../../util/Event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../module/SelectionTypes';
-import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../../../module/ColorStepTypes';
-import { HISTORY_PUSH } from '../../../../module/HistoryTypes';
-import { IMAGE_TYPE_IS_IMAGE } from '../../../../module/ImageTypes';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../types/SelectionTypes';
+import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../../../types/ColorStepTypes';
+import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
+import { IMAGE_TYPE_IS_IMAGE } from '../../../../types/ImageTypes';
 
 export default class ImageSorting extends BasePropertyItem {
 

@@ -6,22 +6,24 @@ import {
     ITEM_TYPE_BOXSHADOW,
     ITEM_TYPE_TEXTSHADOW,
     ITEM_TYPE_LAYER,
-    ITEM_GET
-} from "./ItemTypes";
+    ITEM_GET,
+    ITEM_TYPE_PAGE
+} from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
 import { isUndefined, clone } from "../../util/functions/func";
 import { EMPTY_STRING } from "../../util/css/types";
+import { ITEM_MAP_PAGE, ITEM_LIST_PAGE, ITEM_GET_ALL, ITEM_EACH_CHILDREN, ITEM_LIST, ITEM_FILTER, ITEM_LIST_CHILDREN, ITEM_COUNT_CHILDREN, ITEM_MAP_CHILDREN, ITEM_MAP_TYPE_CHILDREN, ITEM_MAP_LAYER_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN, ITEM_MAP_BOXSHADOW_CHILDREN, ITEM_MAP_TEXTSHADOW_CHILDREN, ITEM_FILTER_CHILDREN, ITEM_EACH_TYPE_CHILDREN, ITEM_TRAVERSE, ITEM_TREE, ITEM_TREE_NORMALIZE, ITEM_PATH, ITEM_DOM } from "../types/ItemSearchTypes";
 export const DEFAULT_FUNCTION = (item) => item; 
 
 export default class ItemSearchManager extends BaseModule {
 
-    [GETTER('item/get/all')] ($store, parentId) {
+    [GETTER(ITEM_GET_ALL)] ($store, parentId) {
         var items = {}
 
-        $store.read('item/each/children', parentId, (item) => {
+        $store.read(ITEM_EACH_CHILDREN, parentId, (item) => {
             items[item.id] = clone(item);
 
-            var children = $store.read('item/get/all', item.id)
+            var children = $store.read(ITEM_GET_ALL, item.id)
             Object.keys(children).forEach(key => {
                 items[key] = children[key];
             }); 
@@ -30,7 +32,7 @@ export default class ItemSearchManager extends BaseModule {
         return items; 
     }
 
-    [GETTER('item/list')] ($store, filterCallback) {
+    [GETTER(ITEM_LIST)] ($store, filterCallback) {
         var list = $store.itemKeys.filter(filterCallback)
 
         list.sort( (aId, bId) => {
@@ -40,16 +42,16 @@ export default class ItemSearchManager extends BaseModule {
         return list; 
     }
 
-    [GETTER('item/filter')] ($store, filterCallback) {
-        return $store.read('item/list', filterCallback)
+    [GETTER(ITEM_FILTER)] ($store, filterCallback) {
+        return $store.read(ITEM_LIST, filterCallback)
     }    
 
-    [GETTER('item/list/page')] ($store) {
-        return $store.read('item/list', this.checkOnlyItemTypeCallback($store, 'page'));
+    [GETTER(ITEM_LIST_PAGE)] ($store) {
+        return $store.read(ITEM_LIST, this.checkOnlyItemTypeCallback($store, ITEM_TYPE_PAGE));
     } 
 
-    [GETTER('item/map/page')] ($store, callback) {
-        return $store.read('item/list/page').map( (id, index) => {
+    [GETTER(ITEM_MAP_PAGE)] ($store, callback) {
+        return $store.read(ITEM_LIST_PAGE).map( (id, index) => {
             return callback($store.items[id], index)
         }); 
     }    
@@ -74,80 +76,80 @@ export default class ItemSearchManager extends BaseModule {
     }
         
 
-    [GETTER('item/list/children')] ($store, parentId, itemType) {
+    [GETTER(ITEM_LIST_CHILDREN)] ($store, parentId, itemType) {
         if (isUndefined(itemType)) {
-            return $store.read('item/list', this.checkParentItemCallback($store, parentId));
+            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
         } else {
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, itemType));
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
         }
     }
 
-    [GETTER('item/count/children')] ($store, parentId) {
-        return $store.read('item/list', this.checkParentItemCallback($store, parentId)).length;
+    [GETTER(ITEM_COUNT_CHILDREN)] ($store, parentId) {
+        return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).length;
     }    
 
-    [GETTER('item/map/children')] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkParentItemCallback($store, parentId)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }    
 
-    [GETTER('item/map/type/children')] ($store, parentId, itemType, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkItemTypeCallback($store, parentId, itemType)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_TYPE_CHILDREN)] ($store, parentId, itemType, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType)).map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }        
 
-    [GETTER('item/map/layer/children')] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_LAYER)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_LAYER_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_LAYER)).map(function (id, index) { 
             return callback($store.items[id], index)
         });        
     }
 
-    [GETTER('item/map/image/children')] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_IMAGE_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) { 
             return callback($store.items[id], index)
         });        
     }
 
-    [GETTER('item/map/colorstep/children')] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_COLORSTEP)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_COLORSTEP_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_COLORSTEP)).map(function (id, index) { 
             return callback($store.items[id], index)
         });        
     }    
 
-    [GETTER('item/map/boxshadow/children')] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_BOXSHADOW)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_BOXSHADOW_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_BOXSHADOW)).map(function (id, index) { 
             return callback($store.items[id], index)
         });        
     }    
 
-    [GETTER('item/map/textshadow/children')] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TEXTSHADOW)).map(function (id, index) { 
+    [GETTER(ITEM_MAP_TEXTSHADOW_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TEXTSHADOW)).map(function (id, index) { 
             return callback($store.items[id], index)
         });        
     }            
 
-    [GETTER('item/filter/children')] ($store, parentId, callback) {
-        return $store.read('item/list/children', parentId).filter(function (id, index) { 
+    [GETTER(ITEM_FILTER_CHILDREN)] ($store, parentId, callback) {
+        return $store.read(ITEM_LIST_CHILDREN, parentId).filter(function (id, index) { 
             return callback($store.items[id], index)
         });
     }  
 
-    [GETTER('item/each/children')] ($store, parentId, callback) {
-        return $store.read('item/list/children', parentId).forEach(function (id, index) { 
+    [GETTER(ITEM_EACH_CHILDREN)] ($store, parentId, callback) {
+        return $store.read(ITEM_LIST_CHILDREN, parentId).forEach(function (id, index) { 
             callback($store.items[id], index)
         });
     }        
 
-    [GETTER('item/each/type/children')] ($store, parentId, itemType, callback) {
-        return $store.read('item/list/children', parentId, itemType).forEach(function (id, index) { 
+    [GETTER(ITEM_EACH_TYPE_CHILDREN)] ($store, parentId, itemType, callback) {
+        return $store.read(ITEM_LIST_CHILDREN, parentId, itemType).forEach(function (id, index) { 
             callback($store.items[id], index)
         });
     }            
 
-    [GETTER('item/traverse')] ($store, parentId) {
-        var list = $store.read('item/list/children', parentId);
+    [GETTER(ITEM_TRAVERSE)] ($store, parentId) {
+        var list = $store.read(ITEM_LIST_CHILDREN, parentId);
         
         list.sort( (a, b) => {
             var $a = $store.items[a];
@@ -164,27 +166,27 @@ export default class ItemSearchManager extends BaseModule {
         })
         
         return list.map(childId => {
-            return { id: childId, children: $store.read('item/traverse', childId)}
+            return { id: childId, children: $store.read(ITEM_TRAVERSE, childId)}
         })
     }
 
-    [GETTER('item/tree')] ($store) {
-        return $store.read('item/traverse', EMPTY_STRING);
+    [GETTER(ITEM_TREE)] ($store) {
+        return $store.read(ITEM_TRAVERSE, EMPTY_STRING);
     }
 
-    [GETTER('item/tree/normalize')] ($store, root = [], children = [], depth = 0) {
+    [GETTER(ITEM_TREE_NORMALIZE)] ($store, root = [], children = [], depth = 0) {
         var results = [] 
 
-        var list = (root != null ? $store.read('item/tree') : children);
+        var list = (root != null ? $store.read(ITEM_TREE) : children);
         list.forEach(item => {
             results.push({ id: item.id, depth })
-            results.push(... $store.read('item/tree/normalize', null, item.children, depth + 1))
+            results.push(... $store.read(ITEM_TREE_NORMALIZE, null, item.children, depth + 1))
         });
 
         return results; 
     }   
     
-    [GETTER('item/path')] ($store, id) {
+    [GETTER(ITEM_PATH)] ($store, id) {
         var results = [id] 
         var targetId = id; 
 
@@ -204,7 +206,7 @@ export default class ItemSearchManager extends BaseModule {
         return results;
     }
 
-    [GETTER('item/dom')] ($store, id) {
+    [GETTER(ITEM_DOM)] ($store, id) {
         var element = document.querySelector('[item-layer-id="' + id + '"]');
 
         if (element) {

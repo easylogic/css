@@ -4,6 +4,7 @@ import Dom from "../../util/Dom";
 import { GETTER, ACTION } from "../../util/Store";
 import { clone } from "../../util/functions/func";
 import { EMPTY_STRING } from "../../util/css/types";
+import { SVG_LIST_LOAD, SVG_LIST, SVG_GET_CLIPPATH, SVG_GET_BLOB, SVG_GET } from "../types/SVGTypes";
 
 export default class SVGManager extends BaseModule {
 
@@ -17,15 +18,15 @@ export default class SVGManager extends BaseModule {
         this.$store.emit('changeSvgList')
     }
  
-    [GETTER('svg/list')] ($store) {
+    [GETTER(SVG_LIST)] ($store) {
         return [...SVGList, ...$store.svgList];
     } 
 
-    [ACTION('svg/list/load')] ($store, loadList = []) {
+    [ACTION(SVG_LIST_LOAD)] ($store, loadList = []) {s
         $store.svgList = clone(loadList);
     }
 
-    [GETTER('svg/get/clipPath')] ($store, svg, id, callback, transform = "") {
+    [GETTER(SVG_GET_CLIPPATH)] ($store, svg, id, callback, transform = "") {
 
         var $div = new Dom('div');
         var paths = $div.html(svg).$('svg').html();
@@ -35,7 +36,7 @@ export default class SVGManager extends BaseModule {
         callback && callback(svg, id);
     }
 
-    [GETTER('svg/get/blob')] ($store, index, key) {
+    [GETTER(SVG_GET_BLOB)] ($store, index, key) {
         if (SVGList[index]) {
             var svg = `${SVGList[index]}`;
 
@@ -51,7 +52,7 @@ export default class SVGManager extends BaseModule {
         return EMPTY_STRING; 
     }
 
-    [GETTER('svg/get')] ($store, index, key) {
+    [GETTER(SVG_GET)] ($store, index, key) {
         if (SVGList[index]) {
             return SVGList[index];
         } else {

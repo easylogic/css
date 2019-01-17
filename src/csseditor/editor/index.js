@@ -15,7 +15,9 @@ import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import { EVENT } from '../../colorpicker/UIElement';
 import Alignment from '../ui/control/Alignment';
-import { ITEM_ADD_PAGE } from '../module/ItemCreateTypes';
+import { ITEM_ADD_PAGE } from '../types/ItemCreateTypes';
+import { ITEM_LOAD } from '../types/ItemTypes';
+import { STORAGE_LOAD } from '../types/StorageTypes';
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -112,11 +114,11 @@ export default class CSSEditor extends BaseCSSEditor {
     }
 
     loadStart (isAdd) {
-        this.dispatch('storage/load', (isLoaded) => {
+        this.dispatch(STORAGE_LOAD, (isLoaded) => {
             if (!isLoaded && isAdd) { 
                 this.dispatch(ITEM_ADD_PAGE, true)
             } else {
-                this.dispatch('item/load');
+                this.dispatch(ITEM_LOAD);
             }
             this.emit(CHANGE_PAGE)
         });

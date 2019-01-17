@@ -2,10 +2,12 @@ import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import PageSampleList from "../../control/panel/PageSampleList";
 import { LOAD, CLICK, SELF } from "../../../../util/Event";
 import { CHANGE_PAGE, CHANGE_EDITOR } from "../../../types/event";
-import { ITEM_GET } from "../../../module/ItemTypes";
-import { ITEM_ADD_PAGE } from "../../../module/ItemCreateTypes";
-import { SELECTION_ONE, SELECTION_CURRENT_PAGE } from "../../../module/SelectionTypes";
+import { ITEM_GET } from "../../../types/ItemTypes";
+import { ITEM_ADD_PAGE } from "../../../types/ItemCreateTypes";
+import { SELECTION_ONE, SELECTION_CURRENT_PAGE } from "../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
+import { ITEM_MAP_PAGE } from "../../../types/ItemSearchTypes";
+import { STORAGE_SAVE } from "../../../types/StorageTypes";
 
 export default class PageListView extends UIElement {
 
@@ -52,7 +54,7 @@ export default class PageListView extends UIElement {
     }
 
     [LOAD('$pageList')] () {
-        var str = this.read('item/map/page', (item, index) => {
+        var str = this.read(ITEM_MAP_PAGE, (item, index) => {
             return this.makeItemNode(item, index); 
         }).join(EMPTY_STRING);
 
@@ -84,7 +86,7 @@ export default class PageListView extends UIElement {
     }
 
     [CLICK('$saveButton')] (e) {
-        this.run('storage/save');
+        this.run(STORAGE_SAVE);
     }
 
     [CLICK('$viewSample')] (e) {

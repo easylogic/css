@@ -2,8 +2,8 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_LAYER, CHANGE_EDITOR } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
-import { BLEND_LIST, BLEND_TOSTRING_WITHOUT_DIMENSION } from '../../../../module/BlendTypes';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../../module/SelectionTypes';
+import { BLEND_LIST, BLEND_TO_STRING_WITHOUT_DIMENSION } from '../../../../types/BlendTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../../types/SelectionTypes';
 import { EMPTY_STRING } from '../../../../../util/css/types';
 
 export default class MixBlendList extends BasePropertyItem {
@@ -32,7 +32,7 @@ export default class MixBlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container">
-                                <div class="blend-item-blend-view"  style='${this.read(BLEND_TOSTRING_WITHOUT_DIMENSION, item, blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read(BLEND_TO_STRING_WITHOUT_DIMENSION, item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>`

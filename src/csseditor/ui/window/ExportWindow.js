@@ -3,7 +3,7 @@ import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { CLICK } from "../../../util/Event";
 import ExportCodePenButton from "../view/export/ExportCodPenButton";
 import ExportJSFiddleButton from "../view/export/ExportJSFiddleButton";
-import { SELECTION_CURRENT_PAGE } from "../../module/SelectionTypes";
+import { SELECTION_CURRENT_PAGE } from "../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../util/css/types";
 
 

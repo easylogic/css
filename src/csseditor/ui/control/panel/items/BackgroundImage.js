@@ -3,8 +3,8 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
-import { IMAGE_ITEM_TYPE_IMAGE } from '../../../../module/ItemTypes';
-import { SELECTION_IS_IMAGE } from '../../../../module/SelectionTypes';
+import { IMAGE_ITEM_TYPE_IMAGE } from '../../../../types/ItemTypes';
+import { SELECTION_IS_IMAGE } from '../../../../types/SelectionTypes';
 
 export default class BackgroundImage extends BasePropertyItem {
 

@@ -2,7 +2,7 @@ import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_PAGE_SIZE, CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../types/SelectionTypes";
 
 export default class PageSize extends UIElement {
     template () {

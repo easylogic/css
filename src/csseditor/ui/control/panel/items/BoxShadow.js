@@ -7,12 +7,13 @@ import {
     CHANGE_LAYER 
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
+import { ITEM_TYPE_BOXSHADOW } from '../../../../types/ItemTypes';
 import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
-import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../module/SelectionTypes';
-import { HISTORY_PUSH } from '../../../../module/HistoryTypes';
+import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../types/ItemCreateTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
+import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
+import { ITEM_MAP_BOXSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -93,7 +94,7 @@ export default class BoxShadow extends BasePropertyItem {
         var item = this.read(SELECTION_CURRENT_LAYER)
         if (!item) { return EMPTY_STRING; }
 
-        var results =  this.read('item/map/boxshadow/children', item.id, (item) => {
+        var results =  this.read(ITEM_MAP_BOXSHADOW_CHILDREN, item.id, (item) => {
             return this.makeItemNodeBoxShadow(item)
         })
 

@@ -1,10 +1,11 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { SELECT_MODE_ONE } from "./SelectionManager";
 import { ACTION } from "../../util/Store";
-import { ITEM_SET_ALL } from "./ItemTypes";
-import { HISTORY_INITIALIZE, HISTORY_PUSH, HISTORY_UNDO, HISTORY_REDO } from "./HistoryTypes";
-import { SELECTION_INITIALIZE_DATA, SELECTION_CURRENT_PAGE } from "./SelectionTypes";
+import { ITEM_SET_ALL } from "../types/ItemTypes";
+import { HISTORY_INITIALIZE, HISTORY_PUSH, HISTORY_UNDO, HISTORY_REDO } from "../types/HistoryTypes";
+import { SELECTION_INITIALIZE_DATA, SELECTION_CURRENT_PAGE } from "../types/SelectionTypes";
 import { clone } from "../../util/functions/func";
+import { ITEM_GET_ALL } from "../types/ItemSearchTypes";
 
 const HISTORY_MAX = 200; 
 
@@ -47,7 +48,7 @@ export default class HistoryManager extends BaseModule {
     setHistory($store, page) {
         if (page && !$store.historyOriginal[page.id]) {
             $store.historyOriginal[page.id] = { 
-                items: clone($store.read('item/get/all', page.id)), 
+                items: clone($store.read(ITEM_GET_ALL, page.id)), 
                 selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
             }
             $store.histories[page.id] = [] 
@@ -66,7 +67,7 @@ export default class HistoryManager extends BaseModule {
 
             histories.push({ 
                 title, 
-                items: clone($store.read('item/get/all', page.id)),
+                items: clone($store.read(ITEM_GET_ALL, page.id)),
                 selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
             });
 

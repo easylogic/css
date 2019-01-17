@@ -13,9 +13,9 @@ import {
     CLIP_PATH_TYPE_INSET, 
     CLIP_PATH_TYPE_POLYGON, 
     CLIP_PATH_TYPE_SVG
-} from "../../../../module/ItemTypes";
+} from "../../../../types/ItemTypes";
 import { CHANGE, CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 
 const CLIP_PATH_TYPES = [

@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class Name extends BasePropertyItem {

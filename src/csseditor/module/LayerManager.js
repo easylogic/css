@@ -1,15 +1,17 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
-import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE, ITEM_CONVERT_STYLE } from "./ItemTypes";
+import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE, ITEM_CONVERT_STYLE } from "../types/ItemTypes";
 import { stringUnit, EMPTY_STRING } from "../../util/css/types";
 import { isNotUndefined, isArray, cleanObject, combineKeyArray } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
-import { BACKDROP_TOCSS } from "./BackdropTypes";
-import { CSS_TOSTRING } from "./CssTypes";
-import { CLIPPATH_TOCSS } from "./ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TOSTRING, LAYER_TOCSS, LAYER_CACHE_TOSTRING, LAYER_CACHE_TOCSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TOIMAGECSS, LAYER_CACHE_TOIMAGECSS, LAYER_IMAGE_TOIMAGECSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TOSTRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TOCSS } from "./LayerTypes";
-import { IMAGE_TO_CSS } from "./ImageTypes";
+import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
+import { CSS_TO_STRING } from "../types/CssTypes";
+import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TOIMAGECSS, LAYER_CACHE_TOIMAGECSS, LAYER_IMAGE_TOIMAGECSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS } from "../types/LayerTypes";
+import { IMAGE_TO_CSS } from "../types/ImageTypes";
+import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
+import { FILTER_TO_CSS } from "../types/FilterTypes";
 
 export default class LayerManager extends BaseModule {
    
@@ -22,9 +24,9 @@ export default class LayerManager extends BaseModule {
         return results;
     }
 
-    [GETTER(LAYER_TOSTRING)] ($store, layer, withStyle = true, image = null) {
+    [GETTER(LAYER_TO_STRING)] ($store, layer, withStyle = true, image = null) {
 
-        var obj = $store.read(LAYER_TOCSS, layer, withStyle, image) || {};
+        var obj = $store.read(LAYER_TO_CSS, layer, withStyle, image) || {};
 
         if (image) {
             delete obj['background-color'];
@@ -32,41 +34,41 @@ export default class LayerManager extends BaseModule {
             delete obj['filter'];
         }
 
-        return $store.read(CSS_TOSTRING, obj);
+        return $store.read(CSS_TO_STRING, obj);
     }
 
-    [GETTER(LAYER_CACHE_TOSTRING)] ($store, layer, opt = {}) {
-        var obj = $store.read(LAYER_CACHE_TOCSS, layer) || {};
+    [GETTER(LAYER_CACHE_TO_STRING)] ($store, layer, opt = {}) {
+        var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
         obj.position = 'absolute';
         return {
-            css: $store.read(CSS_TOSTRING, obj),
+            css: $store.read(CSS_TO_STRING, obj),
             obj
         }
     }    
 
     [GETTER(LAYER_TOEXPORT)] ($store, layer, withStyle = true) {
 
-        var obj = $store.read(LAYER_TOCSS, layer, withStyle, null, true) || {};
+        var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
         obj.position = obj.position || 'absolute';
 
-        return $store.read(CSS_TOSTRING, obj);
+        return $store.read(CSS_TO_STRING, obj);
     }    
 
     [GETTER(LAYER_MAKE_CLIPPATH)] ($store, layer) {
-        return $store.read(CLIPPATH_TOCSS, layer);
+        return $store.read(CLIPPATH_TO_CSS, layer);
     }
 
     [GETTER(LAYER_MAKE_FILTER)] ($store, layer) {       
-        return $store.read('filter/toCSS', layer);
+        return $store.read(FILTER_TO_CSS, layer);
     }
 
     [GETTER(LAYER_MAKE_BACKDROP)] ($store, layer) {       
-        return $store.read(BACKDROP_TOCSS, layer);
+        return $store.read(BACKDROP_TO_CSS, layer);
     }    
 
     [GETTER(LAYER_TOIMAGECSS)] ($store, layer, isExport = false) {    
         var results = {}
-        $store.read('item/each/children', layer.id, (item)  => {
+        $store.read(ITEM_EACH_CHILDREN, layer.id, (item)  => {
             var css = $store.read(IMAGE_TO_CSS, item, isExport);
 
             Object.keys(css).forEach(key => {
@@ -253,7 +255,7 @@ export default class LayerManager extends BaseModule {
         }
     }
 
-    [GETTER(LAYER_TOSTRING_CLIPPATH)] ($store, layer) {
+    [GETTER(LAYER_TO_STRING_CLIPPATH)] ($store, layer) {
         
         if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING; 
         if (!layer.clipPathSvg) return EMPTY_STRING; 
@@ -275,7 +277,7 @@ export default class LayerManager extends BaseModule {
     }
 
     [GETTER(LAYER_GET_CLIPPATH)] ($store, layer) {
-        var items = $store.read('item/filter/children', layer.id, function (image) {
+        var items = $store.read(ITEM_FILTER_CHILDREN, layer.id, function (image) {
             return image.isClipPath
         }).map(id => {
             return $store.items[id]
@@ -317,7 +319,7 @@ export default class LayerManager extends BaseModule {
         return css;
     }
 
-    [GETTER(LAYER_BOUND_TOCSS)] ($store, layer) {
+    [GETTER(LAYER_BOUND_TO_CSS)] ($store, layer) {
         var css = {};
 
         if (!layer) return css; 
@@ -331,11 +333,11 @@ export default class LayerManager extends BaseModule {
         return css;
     }
 
-    [GETTER(LAYER_TOCSS)] ($store, layer = null, withStyle = true, image = null, isExport = false) {
+    [GETTER(LAYER_TO_CSS)] ($store, layer = null, withStyle = true, image = null, isExport = false) {
         var css = {};
 
         if (withStyle) {
-            css = Object.assign(css, $store.read(LAYER_BOUND_TOCSS, layer));
+            css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
         }
 
         if (layer.backgroundColor) {
@@ -372,11 +374,11 @@ export default class LayerManager extends BaseModule {
     }
 
 
-    [GETTER(LAYER_CACHE_TOCSS)] ($store, item = null) {
+    [GETTER(LAYER_CACHE_TO_CSS)] ($store, item = null) {
         var layer = Object.assign({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
         var css = {}
 
-        css = Object.assign(css, $store.read(LAYER_BOUND_TOCSS, layer));
+        css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
 
         if (layer.backgroundColor) {
             css['background-color'] = layer.backgroundColor

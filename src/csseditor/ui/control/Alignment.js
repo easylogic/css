@@ -3,6 +3,7 @@ import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
 import { CLICK } from "../../../util/Event";
+import { ORDERING_INDEX, ORDERING_TYPE } from "../../types/OrderingTypes";
 
 
 export default class Alignment extends UIElement {
@@ -33,10 +34,10 @@ export default class Alignment extends UIElement {
     }
 
     [CLICK('$groupAlign button')] (e) {
-        this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'))
+        this.dispatch(ORDERING_TYPE, e.$delegateTarget.attr('data-value'))
     }
 
     [CLICK('$groupOrdering button')] (e) {
-        this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'))
+        this.dispatch(ORDERING_INDEX, e.$delegateTarget.attr('data-value'))
     }    
 }

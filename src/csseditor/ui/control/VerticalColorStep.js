@@ -1,8 +1,8 @@
 import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
-import { SELECTION_CURRENT_IMAGE } from "../../module/SelectionTypes";
-import { IMAGE_TYPE_IS_GRADIENT } from "../../module/ImageTypes";
+import { SELECTION_CURRENT_IMAGE } from "../../types/SelectionTypes";
+import { IMAGE_TYPE_IS_GRADIENT } from "../../types/ImageTypes";
 
 export default class VerticalColorStep extends UIElement {
 

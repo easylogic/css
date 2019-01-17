@@ -14,8 +14,8 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
-import { SELECTION_CURRENT_IMAGE } from "../../../../module/SelectionTypes";
-import { LAYER_IMAGE_TOIMAGECSS } from "../../../../module/LayerTypes";
+import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
+import { LAYER_IMAGE_TOIMAGECSS } from "../../../../types/LayerTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class BackgroundCode extends BasePropertyItem {

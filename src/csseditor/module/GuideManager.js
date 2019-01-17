@@ -1,9 +1,10 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { unitValue, pxUnit } from "../../util/css/types";
-import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_MOVE, SEGMENT_CHECK, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_RIGHT, ITEM_SET } from "./ItemTypes";
+import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_MOVE, SEGMENT_CHECK, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_RIGHT, ITEM_SET } from "../types/ItemTypes";
 import { isNotUndefined } from "../../util/functions/func";
-import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "./SelectionTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "../types/SelectionTypes";
+import { ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
 
 var MAX_DIST = 1; 
 
@@ -128,7 +129,7 @@ export default class GuideManager extends BaseModule {
         })
 
         var layers = [] 
-        $store.read('item/each/children', page.id, (item) => {
+        $store.read(ITEM_EACH_CHILDREN, page.id, (item) => {
             if ($store.read(SELECTION_CHECK, item.id) == false) { 
                 layers.push($store.read('guide/rect/point', item))
             }

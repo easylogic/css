@@ -1,9 +1,11 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { unitValue } from "../../../../util/css/types";
 import { LOAD, CLICK } from "../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../module/SelectionTypes";
-import { LAYER_LIST_SAMPLE, LAYER_CACHE_TOSTRING } from "../../../module/LayerTypes";
-import { COLLECT_LAYER_ONE } from "../../../module/CollectTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";
+import { LAYER_LIST_SAMPLE, LAYER_CACHE_TO_STRING } from "../../../types/LayerTypes";
+import { COLLECT_LAYER_ONE } from "../../../types/CollectTypes";
+import { ITEM_ADD_CACHE } from "../../../types/ItemRecoverTypes";
+import { STORAGE_LOAD_LAYER, STORAGE_LAYERS, STORAGE_REMOVE_LAYER, STORAGE_ADD_LAYER } from "../../../types/StorageTypes";
 
 export default class LayerSampleList extends UIElement {
  
@@ -11,7 +13,7 @@ export default class LayerSampleList extends UIElement {
         super.initialize();
 
         this.list = this.read(LAYER_LIST_SAMPLE, this.props.type); 
-        this.dispatch('storage/load/layer')
+        this.dispatch(STORAGE_LOAD_LAYER)
 
     }
 
@@ -30,7 +32,7 @@ export default class LayerSampleList extends UIElement {
         
         var list = this.list.map( (item, index) => {
 
-            var data = this.read(LAYER_CACHE_TOSTRING, item)
+            var data = this.read(LAYER_CACHE_TO_STRING, item)
 
             var rateX = 60 / unitValue(data.obj.width);
             var rateY = 62 / unitValue(data.obj.height);
@@ -47,8 +49,8 @@ export default class LayerSampleList extends UIElement {
             </div>`
         })
 
-        var storageList = this.read('storage/layers').map( item => {
-            var data = this.read(LAYER_CACHE_TOSTRING, item)
+        var storageList = this.read(STORAGE_LAYERS).map( item => {
+            var data = this.read(LAYER_CACHE_TO_STRING, item)
 
             var rateX = 60 / unitValue(item.layer.width);
             var rateY = 62 / unitValue(item.layer.height);
@@ -102,23 +104,23 @@ export default class LayerSampleList extends UIElement {
 
         if (newLayer) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.dispatch('item/addCache', newLayer, layer.id );
+                this.dispatch(ITEM_ADD_CACHE, newLayer, layer.id );
             })
         }
     }    
 
     [CLICK('$el .layer-cached-item .add-item')] (e) {
-        var newLayer = this.read('storage/layers', e.$delegateTarget.attr('data-sample-id'));
+        var newLayer = this.read(STORAGE_LAYERS, e.$delegateTarget.attr('data-sample-id'));
         
         if (newLayer) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.dispatch('item/addCache', newLayer, layer.id );
+                this.dispatch(ITEM_ADD_CACHE, newLayer, layer.id );
             })            
         }
     }
 
     [CLICK('$el .layer-cached-item .delete-item')] (e) {
-        this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
+        this.dispatch(STORAGE_REMOVE_LAYER, e.$delegateTarget.attr('data-sample-id'));
         this.refresh();
     }    
 
@@ -126,7 +128,7 @@ export default class LayerSampleList extends UIElement {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
             var newLayer = this.read(COLLECT_LAYER_ONE, layer.id)
 
-            this.dispatch('storage/add/layer', newLayer);
+            this.dispatch(STORAGE_ADD_LAYER, newLayer);
             this.refresh();
         })
         

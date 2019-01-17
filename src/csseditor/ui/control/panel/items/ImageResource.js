@@ -3,7 +3,9 @@ import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { isObject } from "../../../../../util/functions/func";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { IMAGE_TYPE_IS_IMAGE, IMAGE_GET_BLOB } from "../../../../module/ImageTypes";
+import { IMAGE_TYPE_IS_IMAGE, IMAGE_GET_BLOB } from "../../../../types/ImageTypes";
+import { ITEM_SET_IMAGE_FILE } from "../../../../types/ItemCreateTypes";
+import { SVG_LIST, SVG_GET_BLOB } from "../../../../types/SVGTypes";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -18,7 +20,7 @@ export default class ImageResource extends BasePropertyItem {
     }
 
     [LOAD('$imageList')] () {
-        return this.read('svg/list').map((svg, index) => {
+        return this.read(SVG_LIST).map((svg, index) => {
             if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
             }  else {
@@ -56,19 +58,19 @@ export default class ImageResource extends BasePropertyItem {
     [CLICK('$imageList .svg-item')] (e) {
         var [index, key] = e.$delegateTarget.attrs('data-index', 'data-key')
 
-        if (index) {
+        if (index) { 
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
-                var file = this.read('svg/get/blob', +index);
+                var file = this.read(SVG_GET_BLOB, +index);
                 this.read(IMAGE_GET_BLOB, [file], (newImage) => {
-                    this.dispatch('item/set/image/file', image.id, newImage)
+                    this.dispatch(ITEM_SET_IMAGE_FILE, image.id, newImage)
                 });
             })
         } else if (key) {
 
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
-                var file = this.read('svg/get/blob', Number.MAX_SAFE_INTEGER, key);
+                var file = this.read(SVG_GET_BLOB, Number.MAX_SAFE_INTEGER, key);
                 this.read(IMAGE_GET_BLOB, [file], (newImage) => {
-                    this.dispatch('item/set/image/file', image.id, newImage)
+                    this.dispatch(ITEM_SET_IMAGE_FILE, image.id, newImage)
                 });
             })
         } 

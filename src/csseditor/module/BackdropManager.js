@@ -1,8 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit } from "../../util/css/types";
-import { BACKDROP_DEFAULT_OBJECT_KEYS, BACKDROP_DEFAULT_OBJECT, ITEM_GET } from "./ItemTypes";
+import { BACKDROP_DEFAULT_OBJECT_KEYS, BACKDROP_DEFAULT_OBJECT, ITEM_GET } from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
-import { BACKDROP_GET, BACKDROP_LIST, BACKDROP_TOCSS } from "./BackdropTypes";
+import { BACKDROP_GET, BACKDROP_LIST, BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { clone } from "../../util/functions/func";
 const backdropInfo = {
     'backdropBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
@@ -56,7 +56,7 @@ export default class BackdropManager extends BaseModule {
     }
 
 
-    [GETTER(BACKDROP_TOCSS)] ($store, layer) {       
+    [GETTER(BACKDROP_TO_CSS)] ($store, layer) {       
         var realFilters = {}
         
         BACKDROP_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {

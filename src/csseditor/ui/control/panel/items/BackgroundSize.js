@@ -4,7 +4,7 @@ import { CHANGE_IMAGE, CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, percentUnit, unitValue, isValueUnit, convertPercentUnit } from "../../../../../util/css/types";
 import { CLICK } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
-import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_IMAGE } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
 
 export default class BackgroundSize extends UIElement {
     components () {

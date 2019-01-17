@@ -2,10 +2,14 @@ import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CLICK, LOAD } from "../../../../util/Event";
 import { unitValue, pxUnit, EMPTY_STRING } from "../../../../util/css/types";
 import { defaultValue } from "../../../../util/functions/func";
-import { ITEM_CONVERT_STYLE } from "../../../module/ItemTypes";
-import { SELECTION_CURRENT_PAGE_ID } from "../../../module/SelectionTypes";
-import { LAYER_CACHE_TOSTRING } from "../../../module/LayerTypes";
-import { COLLECT_PAGE_ONE } from "../../../module/CollectTypes";
+import { ITEM_CONVERT_STYLE } from "../../../types/ItemTypes";
+import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
+import { LAYER_CACHE_TO_STRING } from "../../../types/LayerTypes";
+import { COLLECT_PAGE_ONE } from "../../../types/CollectTypes";
+import { ITEM_ADD_CACHE } from "../../../types/ItemRecoverTypes";
+import { CHANGE_PAGE } from "../../../types/event";
+import { PAGE_CACHE_TO_STRING } from "../../../types/PageTypes";
+import { STORAGE_LOAD_PAGE, STORAGE_PAGES, STORAGE_REMOVE_PAGE, STORAGE_ADD_PAGE } from "../../../types/StorageTypes";
 
 
 export default class PageSampleList extends UIElement {
@@ -14,7 +18,7 @@ export default class PageSampleList extends UIElement {
         super.initialize();
 
         this.list = [] 
-        this.dispatch('storage/load/page')
+        this.dispatch(STORAGE_LOAD_PAGE)
 
     }
 
@@ -31,7 +35,7 @@ export default class PageSampleList extends UIElement {
     [LOAD('$cachedList')] () {
         
         var list = this.list.map( (page, index) => {
-            var data = this.read('page/cache/toString', page)
+            var data = this.read(PAGE_CACHE_TO_STRING, page)
 
             var rateX = 72 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
             var rateY = 70 / unitValue(defaultValue(data.obj.height, pxUnit(300)));            
@@ -42,7 +46,7 @@ export default class PageSampleList extends UIElement {
             <div class='page-sample-item'  data-sample-id="${page.id}">
                 <div class="page-view" style="${data.css}; ${transform}">
                 ${page.layers.map(layer => {
-                    var data = this.read(LAYER_CACHE_TOSTRING, layer)
+                    var data = this.read(LAYER_CACHE_TO_STRING, layer)
                     return `
                         <div class="layer-view" style="${data.css}"></div>
                     `
@@ -55,10 +59,10 @@ export default class PageSampleList extends UIElement {
             </div>`
         })
 
-        var storageList = this.read('storage/pages').map( page => {
+        var storageList = this.read(STORAGE_PAGES).map( page => {
             var samplePage = this.read(ITEM_CONVERT_STYLE, page.page);
 
-            var data = this.read('page/cache/toString', samplePage)
+            var data = this.read(PAGE_CACHE_TO_STRING, samplePage)
             var rateX = 72 / unitValue(defaultValue(samplePage.width, pxUnit(400)));
             var rateY = 70 / unitValue(defaultValue(samplePage.height, pxUnit(300)));
 
@@ -70,7 +74,7 @@ export default class PageSampleList extends UIElement {
                 <div class='page-cached-item' data-sample-id="${page.id}">
                     <div class="page-view" style="${data.css}; ${transform}">
                     ${page.layers.map(layer => {
-                        var data = this.read(LAYER_CACHE_TOSTRING, layer)
+                        var data = this.read(LAYER_CACHE_TO_STRING, layer)
                         return `
                             <div class="layer-view" style="${data.css}"></div>
                         `
@@ -117,25 +121,25 @@ export default class PageSampleList extends UIElement {
 
         if (newPage) {
             this.read(SELECTION_CURRENT_PAGE_ID, id => {
-                this.dispatch('item/addCache', newPage, id );
-                this.emit('changePage');                
+                this.dispatch(ITEM_ADD_CACHE, newPage, id );
+                this.emit(CHANGE_PAGE);                
             })
         }
     }    
 
     [CLICK('$el .page-cached-item .add-item')] (e) {
-        var newPage = this.read('storage/pages', e.$delegateTarget.attr('data-sample-id'));
+        var newPage = this.read(STORAGE_PAGES, e.$delegateTarget.attr('data-sample-id'));
         if (newPage) {
             this.read(SELECTION_CURRENT_PAGE_ID, id => {
-                this.dispatch('item/addCache', newPage, id );
-                this.emit('changePage');
+                this.dispatch(ITEM_ADD_CACHE, newPage, id );
+                this.emit(CHANGE_PAGE);
             })
             
         }
     }
 
     [CLICK('$el .page-cached-item .delete-item')] (e) {
-        this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
+        this.dispatch(STORAGE_REMOVE_PAGE, e.$delegateTarget.attr('data-sample-id'));
         this.refresh();
     }    
 
@@ -143,7 +147,7 @@ export default class PageSampleList extends UIElement {
         this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
             var newPage = this.read(COLLECT_PAGE_ONE, id)
 
-            this.dispatch('storage/add/page', newPage);
+            this.dispatch(STORAGE_ADD_PAGE, newPage);
             this.refresh();
         })
         

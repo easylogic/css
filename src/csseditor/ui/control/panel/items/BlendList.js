@@ -3,7 +3,7 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
-import { BLEND_LIST, BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE } from '../../../../module/BlendTypes';
+import { BLEND_LIST, BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE } from '../../../../types/BlendTypes';
 import { EMPTY_STRING } from '../../../../../util/css/types';
 
 export default class BlendList extends BasePropertyItem {
@@ -35,7 +35,7 @@ export default class BlendList extends BasePropertyItem {
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ${blend};">
-                                <div class="blend-item-blend-view"  style='${this.read(BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE, item, blend)}'></div>
+                                <div class="blend-item-blend-view"  style='${this.read(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE, item, blend)}'></div>
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>` 

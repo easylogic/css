@@ -1,7 +1,7 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
-import { SELECTION_CURRENT_PAGE } from "../../../module/SelectionTypes";
+import { SELECTION_CURRENT_PAGE } from "../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
 
 

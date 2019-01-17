@@ -2,8 +2,10 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { unitValue, pxUnit } from "../../util/css/types";
 import { ACTION } from "../../util/Store";
-import { ITEM_SET } from "./ItemTypes";
-import { SELECTION_UNIT_VALUES, SELECTION_CURRENT, SELECTION_CURRENT_LAYER_ID } from "./SelectionTypes";
+import { ITEM_SET } from "../types/ItemTypes";
+import { SELECTION_UNIT_VALUES, SELECTION_CURRENT, SELECTION_CURRENT_LAYER_ID } from "../types/SelectionTypes";
+import { ITEM_MOVE_NEXT, ITEM_MOVE_PREV, ITEM_MOVE_LAST, ITEM_MOVE_FIRST } from "../types/ItemMoveTypes";
+import { ORDERING_INDEX, ORDERING_TYPE } from "../types/OrderingTypes";
 
 export default class OrderingManager extends BaseModule {
 
@@ -191,7 +193,7 @@ export default class OrderingManager extends BaseModule {
         })
     }
 
-    '/ordering/type' ($store, type) {
+    [ACTION(ORDERING_TYPE)] ($store, type) {
         if (this[type]) {
             this[type].call(this, $store);
         }
@@ -199,31 +201,31 @@ export default class OrderingManager extends BaseModule {
 
     forward ($store) {
         $store.read(SELECTION_CURRENT_LAYER_ID, id => {
-            $store.run('item/move/next', id) 
+            $store.run(ITEM_MOVE_NEXT, id) 
         })                     
     }
 
     backward ($store) {
         $store.read(SELECTION_CURRENT_LAYER_ID, id => {
-            $store.run('item/move/prev', id) 
+            $store.run(ITEM_MOVE_PREV, id) 
         })           
     }
     
     front ($store) {
         $store.read(SELECTION_CURRENT_LAYER_ID, id => {
-            $store.run('item/move/last', id) 
+            $store.run(ITEM_MOVE_LAST, id) 
         })
     }
     
     back ($store) {
         $store.read(SELECTION_CURRENT_LAYER_ID, id => {
-            $store.run('item/move/first', id) 
+            $store.run(ITEM_MOVE_FIRST, id) 
         })                
 
     }    
 
 
-    [ACTION('ordering/index')] ($store, type) {
+    [ACTION(ORDERING_INDEX)] ($store, type) {
         if (this[type]) {
             this[type].call(this, $store);
         }

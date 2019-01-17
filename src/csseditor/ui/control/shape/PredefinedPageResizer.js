@@ -2,8 +2,8 @@ import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
 import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
-import { SELECTION_CURRENT_PAGE } from '../../../module/SelectionTypes';
-import { HISTORY_PUSH } from '../../../module/HistoryTypes';
+import { SELECTION_CURRENT_PAGE } from '../../../types/SelectionTypes';
+import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 
 export default class PredefinedPageResizer extends UIElement {
 

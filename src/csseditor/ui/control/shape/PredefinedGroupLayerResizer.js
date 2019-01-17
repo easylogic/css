@@ -27,12 +27,13 @@ import {
     SEGMENT_TYPE_ROTATE, 
     ITEM_SET,
     ITEM_GET
-} from '../../../module/ItemTypes';
-import { CSS_TOSTRING } from '../../../module/CssTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../module/SelectionTypes';
-import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../module/LayerTypes';
-import { HISTORY_PUSH } from '../../../module/HistoryTypes';
-import { IMAGE_TO_BACKGROUND_SIZE_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../module/ImageTypes';
+} from '../../../types/ItemTypes';
+import { CSS_TO_STRING } from '../../../types/CssTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../types/SelectionTypes';
+import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../types/LayerTypes';
+import { HISTORY_PUSH } from '../../../types/HistoryTypes';
+import { IMAGE_TO_BACKGROUND_SIZE_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../types/ImageTypes';
+import { ITEM_DOM } from '../../../types/ItemSearchTypes';
 
 const SNAP_GRID = 20; 
 
@@ -74,9 +75,9 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                 backgroundCSS = this.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
             }
             return ` 
-                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read(CSS_TOSTRING, css)}" >
+                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read(CSS_TO_STRING, css)}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
-                    <div class="image-panel" style="display:none;${this.read(CSS_TOSTRING, backgroundCSS)}"></div>
+                    <div class="image-panel" style="display:none;${this.read(CSS_TO_STRING, backgroundCSS)}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>
@@ -236,7 +237,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.$el.children().forEach($el => {
             var item = this.read(ITEM_GET, $el.attr('predefined-layer-id'));
 
-            $el.cssText(this.read(CSS_TOSTRING, this.setRectangle(item)));
+            $el.cssText(this.read(CSS_TO_STRING, this.setRectangle(item)));
         })
     }
 
@@ -363,7 +364,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         var layerId = e.$delegateTarget.parent().attr('predefined-layer-id')
-        this.$dom = this.read('item/dom', layerId);
+        this.$dom = this.read(ITEM_DOM, layerId);
         this.$selectLayer = this.read(ITEM_GET, layerId);
 
         if (this.$dom) {

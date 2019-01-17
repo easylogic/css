@@ -1,8 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
-import { EXTERNAL_PASTE } from "./ExternalResourceTypes";
-import { IMAGE_GET_URL, IMAGE_GET_FILE } from "./ImageTypes";
+import { EXTERNAL_PASTE } from "../types/ExternalResourceTypes";
+import { IMAGE_GET_URL, IMAGE_GET_FILE } from "../types/ImageTypes";
 
 
 export default class ExternalResourceManager extends BaseModule {

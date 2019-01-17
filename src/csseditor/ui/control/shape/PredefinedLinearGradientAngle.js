@@ -5,8 +5,8 @@ import {
     CHANGE_SELECTION
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC } from '../../../module/ImageTypes';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
+import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC } from '../../../types/ImageTypes';
 
 export default class PredefinedLinearGradientAngle extends UIElement {
 

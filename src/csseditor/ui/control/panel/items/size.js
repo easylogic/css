@@ -8,7 +8,7 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT, SELECTION_IS_IMAGE } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT, SELECTION_IS_IMAGE } from "../../../../types/SelectionTypes";
 
 export default class Size extends BasePropertyItem {
     template () {

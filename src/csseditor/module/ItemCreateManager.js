@@ -20,13 +20,20 @@ import {
     IMAGE_ITEM_TYPE_IMAGE,
     ITEM_SET,
     ITEM_GET,
-    ITEM_SORT
-} from "./ItemTypes";
+    ITEM_SORT,
+    ITEM_TYPE_PAGE,
+    ITEM_TYPE_LAYER,
+    ITEM_TYPE_IMAGE,
+    ITEM_TYPE_BOXSHADOW,
+    ITEM_TYPE_TEXTSHADOW,
+    ITEM_TYPE_COLORSTEP
+} from "../types/ItemTypes";
 import { percentUnit, pxUnit, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER } from "./ItemCreateTypes";
+import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER } from "../types/ItemCreateTypes";
 import { clone } from "../../util/functions/func";
-import { SELECTION_RECT } from "./SelectionTypes";
+import { SELECTION_RECT } from "../types/SelectionTypes";
+import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 
 const gradientTypeList = [
     IMAGE_ITEM_TYPE_LINEAR,
@@ -42,6 +49,15 @@ const conicList = [
     IMAGE_ITEM_TYPE_CONIC,
     IMAGE_ITEM_TYPE_REPEATING_CONIC
 ]
+
+const itemCreateActions = {
+    [ITEM_TYPE_PAGE] : ITEM_CREATE_PAGE,
+    [ITEM_TYPE_LAYER] : ITEM_CREATE_LAYER,
+    [ITEM_TYPE_IMAGE] : ITEM_CREATE_IMAGE,
+    [ITEM_TYPE_BOXSHADOW] : ITEM_CREATE_BOXSHADOW,
+    [ITEM_TYPE_TEXTSHADOW] : ITEM_CREATE_TEXTSHADOW,
+    [ITEM_TYPE_COLORSTEP] : ITEM_CREATE_COLORSTEP
+}
 
 export default class ItemCreateManager extends BaseModule {
 
@@ -103,11 +119,7 @@ export default class ItemCreateManager extends BaseModule {
 
     [GETTER(ITEM_CREATE_TEXTSHADOW)] ($store, obj = {}) {
         return $store.read(ITEM_CREATE_OBJECT, obj, TEXTSHADOW_DEFAULT_OBJECT);
-    }    
-
-    [GETTER('item/create/backdrop-filter')] ($store, obj = {}) {
-        return $store.read(ITEM_CREATE_OBJECT, obj, BACKDROPFILTER_DEFAULT_OBJECT);
-    }        
+    }          
     
     [GETTER(ITEM_CREATE_IMAGE)] ($store, obj = {}) {
         return $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
@@ -116,7 +128,8 @@ export default class ItemCreateManager extends BaseModule {
     [GETTER(ITEM_CREATE_IMAGE_WITH_COLORSTEP)] ($store, obj = {}) {
 
         var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
-
+        var color_0 = 'rgba(216,216,216, 0)';
+        var color_1 = 'rgba(216,216,216, 1)';
         if (obj.type == IMAGE_ITEM_TYPE_STATIC) {
  
         } else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {
@@ -127,15 +140,15 @@ export default class ItemCreateManager extends BaseModule {
                 $store.items[imageId].angle = 0; 
             }
 
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0});
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100});
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: color_0, percent: 0, index: 0});
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: color_1, percent: 100, index: 100});
         } else if (repeatingGradientTypeList.includes(obj.type)) {
             if (conicList.includes(obj.type)) {
                 $store.items[imageId].angle = 0; 
             }
 
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0});
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 10, index: 100});
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: color_0, percent: 0, index: 0});
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId: imageId, color: color_1, percent: 10, index: 100});
         }
 
         return imageId; 
@@ -145,9 +158,8 @@ export default class ItemCreateManager extends BaseModule {
         return $store.read(ITEM_CREATE_OBJECT, obj, COLORSTEP_DEFAULT_OBJECT);
     }        
 
-    // 객체를 생성하면 id 만 리턴한다. 
     [GETTER(ITEM_CREATE)] ($store, itemType, obj = {}) {
-        return $store.read('item/create/' + itemType, obj);
+        return $store.read(itemCreateActions[itemType], obj);
     }
 
     [GETTER(ITEM_COPY)] ($store, id) {
@@ -268,6 +280,6 @@ export default class ItemCreateManager extends BaseModule {
         image.parentId = layerId; 
         $store.run(ITEM_SET, image, isSelected);      
         
-        $store.run('history/initialize');
+        $store.run(HISTORY_INITIALIZE);
     }
 }

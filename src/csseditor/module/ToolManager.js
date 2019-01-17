@@ -2,6 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { isFunction, isUndefined } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
+import { CLONE, TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE } from "../types/ToolTypes";
 
 export default class ToolManager extends BaseModule {
 
@@ -19,37 +20,37 @@ export default class ToolManager extends BaseModule {
         }
     } 
 
-    [GETTER('clone')] ($store, object) {
+    [GETTER(CLONE)] ($store, object) {
         return JSON.parse(JSON.stringify(object))
     }
 
-    [GETTER('tool/colorSource')] ($store) {
+    [GETTER(TOOL_COLOR_SOURCE)] ($store) {
         return $store.tool.colorSource
     }
 
-    [GETTER('tool/get')] ($store, key, defaultValue) {
+    [GETTER(TOOL_GET)] ($store, key, defaultValue) {
         return isUndefined($store.tool[key]) ? defaultValue : $store.tool[key]
     }    
 
-    [ACTION('tool/setColorSource')] ($store, colorSource) {
+    [ACTION(TOOL_SET_COLOR_SOURCE)] ($store, colorSource) {
         $store.tool.colorSource = colorSource;
     }
 
-    [ACTION('tool/changeColor')] ($store, color) {
+    [ACTION(TOOL_CHANGE_COLOR)] ($store, color) {
         $store.tool.color = color 
 
         $store.emit('changeColor')
     }
 
 
-    [ACTION('tool/set')] ($store, key, value) {
+    [ACTION(TOOL_SET)] ($store, key, value) {
         $store.tool[key] = value
 
         $store.emit('changeTool')
     }
 
 
-    [ACTION('tool/toggle')] ($store, key, isForce) {
+    [ACTION(TOOL_TOGGLE)] ($store, key, isForce) {
         if (isFunction(isForce)) {
             $store.tool[key] = !$store.tool[key]
         } else {

@@ -10,9 +10,9 @@ import {
     CHANGE_LAYER_ROTATE 
 } from '../../../types/event';
 import { pxUnit, stringUnit, unitValue } from '../../../../util/css/types';
-import { ITEM_GET } from '../../../module/ItemTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW } from '../../../module/SelectionTypes';
-import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../module/LayerTypes';
+import { ITEM_GET } from '../../../types/ItemTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW } from '../../../types/SelectionTypes';
+import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../types/LayerTypes';
 
 
 export default class LayerShapeEditor extends UIElement {

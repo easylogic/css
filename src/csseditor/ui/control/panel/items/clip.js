@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_PAGE, CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../types/SelectionTypes";
 
 export default class Clip extends UIElement {
     template () {

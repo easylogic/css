@@ -2,10 +2,12 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { string2unit, UNIT_PX, EMPTY_STRING} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE } from "./ItemTypes";
-import { ITEM_KEYS, ITEM_INITIALIZE } from "./ItemCreateTypes";
-import { SELECTION_ONE } from "./SelectionTypes";
+import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE, ITEM_REMOVE_ALL, ITEM_FOCUS, ITEM_LOAD } from "../types/ItemTypes";
+import { ITEM_KEYS, ITEM_INITIALIZE } from "../types/ItemCreateTypes";
+import { SELECTION_ONE } from "../types/SelectionTypes";
 import { clone } from "../../util/functions/func";
+import { ITEM_LIST_CHILDREN, ITEM_LIST_PAGE, ITEM_EACH_CHILDREN, ITEM_DOM } from "../types/ItemSearchTypes";
+import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 
 export const INDEX_DIST = 100 ; 
 const NONE_INDEX = -99999;
@@ -108,13 +110,13 @@ export default class ItemManager extends BaseModule {
 
     [ACTION(ITEM_SET_ALL)] ($store, parentId, items, isRemove = true) {
         if (isRemove) { 
-            $store.run('item/remove/all', parentId);
+            $store.run(ITEM_REMOVE_ALL, parentId);
         }
         Object.assign($store.items, items);
     }
  
-    [ACTION('item/focus')] ($store, id) {
-        var $el = $store.read('item/dom', id);
+    [ACTION(ITEM_FOCUS)] ($store, id) {
+        var $el = $store.read(ITEM_DOM, id);
 
         if ($el && $el.el) {
             $el.el.focus();
@@ -129,9 +131,9 @@ export default class ItemManager extends BaseModule {
             var itemType = item.itemType; 
 
             if (item.parentId) {
-                var list = $store.read('item/list/children', item.parentId, itemType);
+                var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
             } else {
-                var list = $store.read('item/list/page');
+                var list = $store.read(ITEM_LIST_PAGE);
             }
 
             var nextSelectedId = EMPTY_STRING
@@ -176,10 +178,10 @@ export default class ItemManager extends BaseModule {
     }
     
 
-   [ACTION('item/remove/all')] ($store, parentId) {
-        $store.read('item/each/children', parentId, (item) => {
+   [ACTION(ITEM_REMOVE_ALL)] ($store, parentId) {
+        $store.read(ITEM_EACH_CHILDREN, parentId, (item) => {
 
-            $store.run('item/remove/all', item.id);
+            $store.run(ITEM_REMOVE_ALL, item.id);
 
             $store.run(ITEM_INITIALIZE, item.id);
 
@@ -187,7 +189,7 @@ export default class ItemManager extends BaseModule {
     }
 
     [ACTION(ITEM_REMOVE_CHILDREN)] ($store, parentId) {
-        $store.read('item/each/children', parentId, (item) => {
+        $store.read(ITEM_EACH_CHILDREN, parentId, (item) => {
             $store.run(ITEM_REMOVE, item.id);
         })
     }
@@ -201,12 +203,12 @@ export default class ItemManager extends BaseModule {
     }
     
     // initialize items 
-    [ACTION('item/load')] ($store) { 
+    [ACTION(ITEM_LOAD)] ($store) { 
         $store.read(ITEM_KEYS).forEach(id => {
             $store.items[id] = convertStyle($store.items[id])
         })
 
-        $store.run('history/initialize');
+        $store.run(HISTORY_INITIALIZE);
     }  
 
     [ACTION(ITEM_SORT)] ($store, id) {
@@ -214,9 +216,9 @@ export default class ItemManager extends BaseModule {
         var itemType = item.itemType; 
 
         if (item.parentId) {
-            var list = $store.read('item/list/children', item.parentId, itemType);
+            var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
         } else {
-            var list = $store.read('item/list/page');
+            var list = $store.read(ITEM_LIST_PAGE);
         }
 
         // 필요 없는 index 를 가진 객체는 지운다. 

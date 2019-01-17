@@ -1,9 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
-import { BLEND_LAYER_TOSTRING, BLEND_IMAGE_TOSTRING, BLEND_TOSTRING_WITHOUT_DIMENSION, BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE, BLEND_LIST } from "./BlendTypes";
+import { BLEND_LAYER_TO_STRING, BLEND_IMAGE_TO_STRING, BLEND_TO_STRING_WITHOUT_DIMENSION, BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE, BLEND_LIST } from "../types/BlendTypes";
 import { clone } from "../../util/functions/func";
-import { LAYER_TOSTRING } from "./LayerTypes";
-import { IMAGE_TO_STRING } from "./ImageTypes";
+import { LAYER_TO_STRING } from "../types/LayerTypes";
+import { IMAGE_TO_STRING } from "../types/ImageTypes";
 import { EMPTY_STRING } from "../../util/css/types";
 
 const blend_list = [
@@ -21,16 +21,16 @@ export default class BlendManager extends BaseModule {
         this.$store.blendMode = EMPTY_STRING;
     }
 
-    [GETTER(BLEND_LAYER_TOSTRING)] ($store, item, mixBlend = EMPTY_STRING, withStyle = true) {
+    [GETTER(BLEND_LAYER_TO_STRING)] ($store, item, mixBlend = EMPTY_STRING, withStyle = true) {
 
         item = clone(item);
 
         item.mixBlendMode = mixBlend;
 
-        return $store.read(LAYER_TOSTRING, item, withStyle)
+        return $store.read(LAYER_TO_STRING, item, withStyle)
     }    
 
-    [GETTER(BLEND_IMAGE_TOSTRING)] ($store, item, blend = EMPTY_STRING, withStyle = true) {
+    [GETTER(BLEND_IMAGE_TO_STRING)] ($store, item, blend = EMPTY_STRING, withStyle = true) {
 
         item = clone(item);
 
@@ -39,13 +39,13 @@ export default class BlendManager extends BaseModule {
         return $store.read(IMAGE_TO_STRING, item, withStyle)
     }        
 
-    [GETTER(BLEND_TOSTRING_WITHOUT_DIMENSION)] ($store, item, mixBlend = EMPTY_STRING) {
-        return $store.read(BLEND_LAYER_TOSTRING, item, mixBlend, false)
+    [GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION)] ($store, item, mixBlend = EMPTY_STRING) {
+        return $store.read(BLEND_LAYER_TO_STRING, item, mixBlend, false)
     }        
 
-    [GETTER(BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE)] ($store, item, blend = 'normal') {
+    [GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE)] ($store, item, blend = 'normal') {
         // console.log(item, blend);
-        var cssText = $store.read(BLEND_IMAGE_TOSTRING, item, blend, false);
+        var cssText = $store.read(BLEND_IMAGE_TO_STRING, item, blend, false);
 
         cssText = cssText.split(';').map(it => {
             return it.split(':').map(it => it.trim())

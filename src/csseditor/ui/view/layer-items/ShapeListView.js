@@ -1,9 +1,9 @@
 import UIElement from "../../../../colorpicker/UIElement";
-import { ITEM_TYPE_LAYER, ITEM_TYPE_CIRCLE } from "../../../module/ItemTypes";
+import { ITEM_TYPE_LAYER, ITEM_TYPE_CIRCLE } from "../../../types/ItemTypes";
 import { CLICK } from "../../../../util/Event";
-import { ITEM_ADD_LAYER } from "../../../module/ItemCreateTypes";
-import { SELECTION_CURRENT_PAGE_ID } from "../../../module/SelectionTypes";
-import { HISTORY_PUSH } from "../../../module/HistoryTypes";
+import { ITEM_ADD_LAYER } from "../../../types/ItemCreateTypes";
+import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
+import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 
 
 export default class ShapeListView extends UIElement {

@@ -7,7 +7,7 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class Text extends BasePropertyItem {

@@ -1,7 +1,7 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH } from "../../../types/event";
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from "../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from "../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
 
 

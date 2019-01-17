@@ -7,8 +7,8 @@ import {
 import { percentUnit, unitValue, valueUnit, EMPTY_STRING } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
-import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../module/SelectionTypes';
+import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../types/ItemTypes';
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../types/SelectionTypes';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],

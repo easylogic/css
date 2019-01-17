@@ -2,7 +2,7 @@ import { CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR } from "../../../../types/
 import BasePropertyItem from "./BasePropertyItem";
 import { CLICK } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class BackgroundColor extends BasePropertyItem {
     template () {

@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_PAGE } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_PAGE } from "../../../../types/SelectionTypes";
 
 export default class PageShowGrid extends UIElement {
     template () {

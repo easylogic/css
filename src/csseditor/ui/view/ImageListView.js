@@ -11,9 +11,11 @@ import {
     CHANGE_SELECTION 
 } from '../../types/event';
 import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CHECK, SELECTION_ONE } from '../../module/SelectionTypes';
-import { IMAGE_TO_STRING } from '../../module/ImageTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CHECK, SELECTION_ONE } from '../../types/SelectionTypes';
+import { IMAGE_TO_STRING } from '../../types/ImageTypes';
 import { EMPTY_STRING } from '../../../util/css/types';
+import { ITEM_MOVE_IN, ITEM_MOVE_LAST } from '../../types/ItemMoveTypes';
+import { ITEM_MAP_IMAGE_CHILDREN } from '../../types/ItemSearchTypes';
 
 export default class ImageListView extends UIElement {
 
@@ -39,7 +41,7 @@ export default class ImageListView extends UIElement {
             return EMPTY_STRING;
         }
 
-        return this.read('item/map/image/children', id, (item) => {
+        return this.read(ITEM_MAP_IMAGE_CHILDREN, id, (item) => {
             return this.makeItemNodeImage(item)
         })
     }
@@ -96,7 +98,7 @@ export default class ImageListView extends UIElement {
         var sourceId = this.draggedImage.attr('data-id')
 
         this.draggedImage = null; 
-        this.dispatch('item/move/in', destId, sourceId)
+        this.dispatch(ITEM_MOVE_IN, destId, sourceId)
         this.refresh()
     }       
     
@@ -107,7 +109,7 @@ export default class ImageListView extends UIElement {
             var sourceId = this.draggedImage.attr('data-id')
 
             this.draggedImage = null; 
-            this.dispatch('item/move/last', sourceId)
+            this.dispatch(ITEM_MOVE_LAST, sourceId)
             this.refresh()
         }
 

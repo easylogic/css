@@ -6,7 +6,7 @@ import {
     CHANGE_SELECTION,
     CHANGE_LAYER_BACKGROUND_COLOR
 } from '../../../../../types/event';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../../module/SelectionTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../../types/SelectionTypes';
 
 export default class InfoFillColorPicker extends UIElement {
  

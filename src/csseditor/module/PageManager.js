@@ -1,22 +1,23 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { stringUnit, isPercentUnit, EMPTY_STRING } from "../../util/css/types";
 import { GETTER } from "../../util/Store";
-import { ITEM_GET, ITEM_CONVERT_STYLE } from "./ItemTypes";
-import { CSS_TOSTRING } from "./CssTypes";
+import { ITEM_GET, ITEM_CONVERT_STYLE } from "../types/ItemTypes";
+import { CSS_TO_STRING } from "../types/CssTypes";
+import { PAGE_TO_STRING, PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS, PAGE_CACHE_TO_CSS, PAGE_CACHE_TO_STRING } from "../types/PageTypes";
 
 export default class PageManager extends BaseModule {
 
-    [GETTER('page/toString')] ($store, id) {
+    [GETTER(PAGE_TO_STRING)] ($store, id) {
 
         var page = $store.read(ITEM_GET, id);
-        var obj = $store.read('page/toCSS', page) || {};
+        var obj = $store.read(PAGE_TO_CSS, page) || {};
 
         return Object.keys(obj).map(key => {
             return `${key}: ${obj[key]};`
         }).join(' ')
     }
 
-    [GETTER('page/toCSS')] ($store, page = {}) {
+    [GETTER(PAGE_TO_CSS)] ($store, page = {}) {
         var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
@@ -38,7 +39,7 @@ export default class PageManager extends BaseModule {
 
     }
 
-    [GETTER('page/colorview/toCSS')] ($store, page = {}) {
+    [GETTER(PAGE_COLORVIEW_TO_CSS)] ($store, page = {}) {
         var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
@@ -57,7 +58,7 @@ export default class PageManager extends BaseModule {
 
     }    
 
-    [GETTER('page/cache/toCSS')] ($store, page = {}) {
+    [GETTER(PAGE_CACHE_TO_CSS)] ($store, page = {}) {
         var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
@@ -80,11 +81,11 @@ export default class PageManager extends BaseModule {
         return $store.read('css/sorting', css); 
     }    
 
-    [GETTER('page/cache/toString')] ($store, page) {
-        var obj = $store.read('page/cache/toCSS',  page) || {};
+    [GETTER(PAGE_CACHE_TO_STRING)] ($store, page) {
+        var obj = $store.read(PAGE_CACHE_TO_CSS,  page) || {};
 
         return {
-            css: $store.read(CSS_TOSTRING, obj),
+            css: $store.read(CSS_TO_STRING, obj),
             obj
         }
     }    

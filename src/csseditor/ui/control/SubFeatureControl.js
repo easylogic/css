@@ -10,8 +10,8 @@ import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
 import PerspectiveOriginPosition from "./shape/PerspectiveOriginPosition";
-import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from "../../module/SelectionTypes";
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_RADIAL } from "../../module/ImageTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from "../../types/SelectionTypes";
+import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_RADIAL } from "../../types/ImageTypes";
 
 
 export default class SubFeatureControl extends UIElement {

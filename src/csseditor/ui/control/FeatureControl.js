@@ -2,7 +2,7 @@ import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
-import { SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_GROUP, SELECTION_IS_IMAGE } from "../../module/SelectionTypes";
+import { SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_GROUP, SELECTION_IS_IMAGE } from "../../types/SelectionTypes";
 
 
 export default class FeatureControl extends UIElement {

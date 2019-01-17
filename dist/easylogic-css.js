@@ -2603,6 +2603,9 @@ var ITEM_SET_ALL = 'item/set/all';
 var ITEM_SORT = 'item/sort';
 var ITEM_REMOVE_CHILDREN = 'item/remove/children';
 var ITEM_REMOVE = 'item/remove';
+var ITEM_REMOVE_ALL = 'item/remove/all';
+var ITEM_FOCUS = 'item/focus';
+var ITEM_LOAD = 'item/load';
 
 function rotateDegree(angle) {
     var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : POSITION_CENTER;
@@ -9388,7 +9391,7 @@ var ColorSetsChooser = function (_UIElement) {
         value: function value$$1(e, $dt) {
             if ($dt) {
 
-                var index = parseInt($item.attr(DATA_COLORSETS_INDEX));
+                var index = parseInt($dt.attr(DATA_COLORSETS_INDEX));
 
                 this.dispatch('setCurrentColorSets', index);
 
@@ -10246,6 +10249,9 @@ var ColorPicker = {
 };
 
 /* event trigger */
+
+
+
 var CHANGE_EDITOR = 'CHANGE_EDITOR';
 var CHANGE_SELECTION = 'CHANGE_SELECTION';
 var CHANGE_PAGE = 'CHANGE_PAGE';
@@ -10374,6 +10380,29 @@ var ITEM_PREPEND_IMAGE_URL$1 = 'item/prepend/image/url';
 var ITEM_ADD_IMAGE_URL = 'item/add/image/url';
 var ITEM_ADD_PAGE = 'item/add/page';
 
+var ITEM_GET_ALL = 'item/get/all';
+var ITEM_LIST = 'item/list';
+var ITEM_LIST_PAGE = 'item/list/page';
+var ITEM_LIST_CHILDREN = 'item/list/children';
+var ITEM_FILTER = 'item/filter';
+var ITEM_FILTER_CHILDREN = 'item/filter/children';
+var ITEM_MAP_PAGE = 'item/map/page';
+var ITEM_COUNT_CHILDREN = 'item/count/children';
+var ITEM_MAP_CHILDREN = 'item/map/children';
+var ITEM_MAP_TYPE_CHILDREN = 'item/map/type/children';
+var ITEM_MAP_LAYER_CHILDREN = 'item/map/layer/children';
+var ITEM_MAP_IMAGE_CHILDREN = 'item/map/image/children';
+var ITEM_MAP_COLORSTEP_CHILDREN = 'item/map/colorstep/children';
+var ITEM_MAP_BOXSHADOW_CHILDREN = 'item/map/boxshadow/children';
+var ITEM_MAP_TEXTSHADOW_CHILDREN = 'item/map/textshadow/children';
+var ITEM_EACH_CHILDREN = 'item/each/children';
+var ITEM_EACH_TYPE_CHILDREN = 'item/each/type/children';
+var ITEM_TRAVERSE = 'item/traverse';
+var ITEM_TREE = 'item/tree';
+var ITEM_TREE_NORMALIZE = 'item/tree/normalize';
+var ITEM_PATH = 'item/path';
+var ITEM_DOM = 'item/dom';
+
 var INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP;
 
 var ColorStepManager = function (_BaseModule) {
@@ -10424,7 +10453,7 @@ var ColorStepManager = function (_BaseModule) {
         key: ACTION(COLORSTEP_ADD),
         value: function value$$1($store, item, percent$$1) {
 
-            var list = $store.read('item/list/children', item.id);
+            var list = $store.read(ITEM_LIST_CHILDREN, item.id);
 
             if (!list.length) {
 
@@ -10492,7 +10521,7 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: GETTER(COLORSTEP_SORT_LIST),
         value: function value$$1($store, parentId) {
-            var colorsteps = $store.read('item/map/children', parentId);
+            var colorsteps = $store.read(ITEM_MAP_CHILDREN, parentId);
 
             colorsteps.sort(function (a, b) {
                 if (a.index == b.index) return 0;
@@ -11033,7 +11062,7 @@ var ImageManager = function (_BaseModule) {
 
             if (!image$$1) return EMPTY_STRING;
 
-            var colorsteps = image$$1.colorsteps || $store.read('item/map/children', image$$1.id);
+            var colorsteps = image$$1.colorsteps || $store.read(ITEM_MAP_CHILDREN, image$$1.id);
 
             if (!colorsteps) return EMPTY_STRING;
 
@@ -11071,7 +11100,7 @@ var ImageManager = function (_BaseModule) {
 
             if (!image$$1) return EMPTY_STRING;
 
-            var colorsteps = image$$1.colorsteps || $store.read('item/map/children', image$$1.id, function (step) {
+            var colorsteps = image$$1.colorsteps || $store.read(ITEM_MAP_CHILDREN, image$$1.id, function (step) {
                 return step;
             });
 
@@ -11226,11 +11255,11 @@ var layerList = [
 
 var BACKDROP_GET = 'backdrop/get';
 var BACKDROP_LIST = 'backdrop/list';
-var BACKDROP_TOCSS = 'backdrop/toCSS';
+var BACKDROP_TO_CSS = 'backdrop/toCSS';
 
 var CSS_FILTERING = 'css/filtering';
 var CSS_SORTING = 'css/sorting';
-var CSS_TOSTRING = 'css/toString';
+var CSS_TO_STRING = 'css/toString';
 var CSS_GENERATE = 'css/generate';
 
 var CLIPPATH_SAMPLE_LIST = 'clip-path/sample/list';
@@ -11240,11 +11269,11 @@ var CLIPPATH_MAKE_ELLIPSE = 'clip-path/make/ellipse';
 var CLIPPATH_MAKE_INSET = 'clip-path/make/inset';
 var CLIPPATH_MAKE_POLYGON = 'clip-path/make/polygon';
 var CLIPPATH_MAKE_SVG = 'clip-path/make/svg';
-var CLIPPATH_TOCSS = 'clip-path/toCSS';
+var CLIPPATH_TO_CSS = 'clip-path/toCSS';
 
 var LAYER_LIST_SAMPLE = 'layer/list/sample';
-var LAYER_TOSTRING = 'layer/toString';
-var LAYER_CACHE_TOSTRING = 'layer/cache/toString';
+var LAYER_TO_STRING = 'layer/toString';
+var LAYER_CACHE_TO_STRING = 'layer/cache/toString';
 var LAYER_TOEXPORT = 'layer/toExport';
 var LAYER_MAKE_CLIPPATH = 'layer/make/clip-path';
 var LAYER_MAKE_FILTER = 'layer/make/filter';
@@ -11259,12 +11288,16 @@ var LAYER_MAKE_IMAGE = 'layer/make/image';
 var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
 var LAYER_MAKE_TRANSFORM_ROTATE = 'layer/make/transform/rotate';
 var LAYER_MAKE_TRANSFORM = 'layer/make/transform';
-var LAYER_TOSTRING_CLIPPATH = 'layer/toStringClipPath';
+var LAYER_TO_STRING_CLIPPATH = 'layer/toStringClipPath';
 var LAYER_GET_CLIPPATH = 'layer/getClipPath';
-var LAYER_BOUND_TOCSS = 'layer/bound/toCSS';
-var LAYER_TOCSS = 'layer/toCSS';
-var LAYER_CACHE_TOCSS = 'layer/cache/toCSS';
+var LAYER_BOUND_TO_CSS = 'layer/bound/toCSS';
+var LAYER_TO_CSS = 'layer/toCSS';
+var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
 var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
+
+var FILTER_GET = 'filter/get';
+var FILTER_LIST = 'filter/list';
+var FILTER_TO_CSS = 'filter/toCSS';
 
 var LayerManager = function (_BaseModule) {
     inherits(LayerManager, _BaseModule);
@@ -11286,13 +11319,13 @@ var LayerManager = function (_BaseModule) {
             return results;
         }
     }, {
-        key: GETTER(LAYER_TOSTRING),
+        key: GETTER(LAYER_TO_STRING),
         value: function value$$1($store, layer) {
             var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
             var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
 
 
-            var obj = $store.read(LAYER_TOCSS, layer, withStyle, image) || {};
+            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, image) || {};
 
             if (image) {
                 delete obj['background-color'];
@@ -11300,15 +11333,15 @@ var LayerManager = function (_BaseModule) {
                 delete obj['filter'];
             }
 
-            return $store.read(CSS_TOSTRING, obj);
+            return $store.read(CSS_TO_STRING, obj);
         }
     }, {
-        key: GETTER(LAYER_CACHE_TOSTRING),
+        key: GETTER(LAYER_CACHE_TO_STRING),
         value: function value$$1($store, layer) {
-            var obj = $store.read(LAYER_CACHE_TOCSS, layer) || {};
+            var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
             obj.position = 'absolute';
             return {
-                css: $store.read(CSS_TOSTRING, obj),
+                css: $store.read(CSS_TO_STRING, obj),
                 obj: obj
             };
         }
@@ -11318,25 +11351,25 @@ var LayerManager = function (_BaseModule) {
             var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
 
-            var obj = $store.read(LAYER_TOCSS, layer, withStyle, null, true) || {};
+            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
             obj.position = obj.position || 'absolute';
 
-            return $store.read(CSS_TOSTRING, obj);
+            return $store.read(CSS_TO_STRING, obj);
         }
     }, {
         key: GETTER(LAYER_MAKE_CLIPPATH),
         value: function value$$1($store, layer) {
-            return $store.read(CLIPPATH_TOCSS, layer);
+            return $store.read(CLIPPATH_TO_CSS, layer);
         }
     }, {
         key: GETTER(LAYER_MAKE_FILTER),
         value: function value$$1($store, layer) {
-            return $store.read('filter/toCSS', layer);
+            return $store.read(FILTER_TO_CSS, layer);
         }
     }, {
         key: GETTER(LAYER_MAKE_BACKDROP),
         value: function value$$1($store, layer) {
-            return $store.read(BACKDROP_TOCSS, layer);
+            return $store.read(BACKDROP_TO_CSS, layer);
         }
     }, {
         key: GETTER(LAYER_TOIMAGECSS),
@@ -11344,7 +11377,7 @@ var LayerManager = function (_BaseModule) {
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             var results = {};
-            $store.read('item/each/children', layer.id, function (item) {
+            $store.read(ITEM_EACH_CHILDREN, layer.id, function (item) {
                 var css = $store.read(IMAGE_TO_CSS, item, isExport);
 
                 Object.keys(css).forEach(function (key) {
@@ -11539,7 +11572,7 @@ var LayerManager = function (_BaseModule) {
             };
         }
     }, {
-        key: GETTER(LAYER_TOSTRING_CLIPPATH),
+        key: GETTER(LAYER_TO_STRING_CLIPPATH),
         value: function value$$1($store, layer) {
 
             if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING;
@@ -11563,7 +11596,7 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_GET_CLIPPATH),
         value: function value$$1($store, layer) {
-            var items = $store.read('item/filter/children', layer.id, function (image) {
+            var items = $store.read(ITEM_FILTER_CHILDREN, layer.id, function (image) {
                 return image.isClipPath;
             }).map(function (id) {
                 return $store.items[id];
@@ -11604,7 +11637,7 @@ var LayerManager = function (_BaseModule) {
             return css;
         }
     }, {
-        key: GETTER(LAYER_BOUND_TOCSS),
+        key: GETTER(LAYER_BOUND_TO_CSS),
         value: function value$$1($store, layer) {
             var css = {};
 
@@ -11619,7 +11652,7 @@ var LayerManager = function (_BaseModule) {
             return css;
         }
     }, {
-        key: GETTER(LAYER_TOCSS),
+        key: GETTER(LAYER_TO_CSS),
         value: function value$$1($store) {
             var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
@@ -11629,7 +11662,7 @@ var LayerManager = function (_BaseModule) {
             var css = {};
 
             if (withStyle) {
-                css = Object.assign(css, $store.read(LAYER_BOUND_TOCSS, layer));
+                css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
             }
 
             if (layer.backgroundColor) {
@@ -11654,14 +11687,14 @@ var LayerManager = function (_BaseModule) {
             return cleanObject(results);
         }
     }, {
-        key: GETTER(LAYER_CACHE_TOCSS),
+        key: GETTER(LAYER_CACHE_TO_CSS),
         value: function value$$1($store) {
             var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
             var layer = Object.assign({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
             var css = {};
 
-            css = Object.assign(css, $store.read(LAYER_BOUND_TOCSS, layer));
+            css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
 
             if (layer.backgroundColor) {
                 css['background-color'] = layer.backgroundColor;
@@ -11688,6 +11721,14 @@ var LayerManager = function (_BaseModule) {
     return LayerManager;
 }(BaseModule);
 
+var CLONE = 'clone';
+var TOOL_COLOR_SOURCE = 'tool/colorSource';
+var TOOL_GET = 'tool/get';
+var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
+var TOOL_CHANGE_COLOR = 'tool/changeColor';
+var TOOL_SET = 'tool/set';
+var TOOL_TOGGLE = 'tool/toggle';
+
 var ToolManager = function (_BaseModule) {
     inherits(ToolManager, _BaseModule);
 
@@ -11712,41 +11753,41 @@ var ToolManager = function (_BaseModule) {
             };
         }
     }, {
-        key: GETTER('clone'),
+        key: GETTER(CLONE),
         value: function value$$1($store, object) {
             return JSON.parse(JSON.stringify(object));
         }
     }, {
-        key: GETTER('tool/colorSource'),
+        key: GETTER(TOOL_COLOR_SOURCE),
         value: function value$$1($store) {
             return $store.tool.colorSource;
         }
     }, {
-        key: GETTER('tool/get'),
+        key: GETTER(TOOL_GET),
         value: function value$$1($store, key, defaultValue$$1) {
             return isUndefined($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
         }
     }, {
-        key: ACTION('tool/setColorSource'),
+        key: ACTION(TOOL_SET_COLOR_SOURCE),
         value: function value$$1($store, colorSource) {
             $store.tool.colorSource = colorSource;
         }
     }, {
-        key: ACTION('tool/changeColor'),
+        key: ACTION(TOOL_CHANGE_COLOR),
         value: function value$$1($store, color$$1) {
             $store.tool.color = color$$1;
 
             $store.emit('changeColor');
         }
     }, {
-        key: ACTION('tool/set'),
+        key: ACTION(TOOL_SET),
         value: function value$$1($store, key, _value) {
             $store.tool[key] = _value;
 
             $store.emit('changeTool');
         }
     }, {
-        key: ACTION('tool/toggle'),
+        key: ACTION(TOOL_TOGGLE),
         value: function value$$1($store, key, isForce) {
             if (isFunction(isForce)) {
                 $store.tool[key] = !$store.tool[key];
@@ -11760,10 +11801,10 @@ var ToolManager = function (_BaseModule) {
     return ToolManager;
 }(BaseModule);
 
-var BLEND_LAYER_TOSTRING = 'blend/layer/toString';
-var BLEND_IMAGE_TOSTRING = 'blend/image/toString';
-var BLEND_TOSTRING_WITHOUT_DIMENSION = 'blend/toStringWithoutDimension';
-var BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE = 'blend/toStringWithoutDimensionForImage';
+var BLEND_LAYER_TO_STRING = 'blend/layer/toString';
+var BLEND_IMAGE_TO_STRING = 'blend/image/toString';
+var BLEND_TO_STRING_WITHOUT_DIMENSION = 'blend/toStringWithoutDimension';
+var BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE = 'blend/toStringWithoutDimensionForImage';
 var BLEND_LIST = 'blend/list';
 
 var blend_list = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
@@ -11784,7 +11825,7 @@ var BlendManager = function (_BaseModule) {
             this.$store.blendMode = EMPTY_STRING;
         }
     }, {
-        key: GETTER(BLEND_LAYER_TOSTRING),
+        key: GETTER(BLEND_LAYER_TO_STRING),
         value: function value$$1($store, item) {
             var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
             var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
@@ -11794,10 +11835,10 @@ var BlendManager = function (_BaseModule) {
 
             item.mixBlendMode = mixBlend;
 
-            return $store.read(LAYER_TOSTRING, item, withStyle);
+            return $store.read(LAYER_TO_STRING, item, withStyle);
         }
     }, {
-        key: GETTER(BLEND_IMAGE_TOSTRING),
+        key: GETTER(BLEND_IMAGE_TO_STRING),
         value: function value$$1($store, item) {
             var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
             var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
@@ -11810,19 +11851,19 @@ var BlendManager = function (_BaseModule) {
             return $store.read(IMAGE_TO_STRING, item, withStyle);
         }
     }, {
-        key: GETTER(BLEND_TOSTRING_WITHOUT_DIMENSION),
+        key: GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION),
         value: function value$$1($store, item) {
             var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
 
-            return $store.read(BLEND_LAYER_TOSTRING, item, mixBlend, false);
+            return $store.read(BLEND_LAYER_TO_STRING, item, mixBlend, false);
         }
     }, {
-        key: GETTER(BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE),
+        key: GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE),
         value: function value$$1($store, item) {
             var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
 
             // console.log(item, blend);
-            var cssText = $store.read(BLEND_IMAGE_TOSTRING, item, blend, false);
+            var cssText = $store.read(BLEND_IMAGE_TO_STRING, item, blend, false);
 
             cssText = cssText.split(';').map(function (it) {
                 return it.split(':').map(function (it) {
@@ -11976,6 +12017,29 @@ var ColorList = {
     types: types
 };
 
+var ITEM_MOVE_TO = 'item/move/to';
+var ITEM_MOVE_NEXT = 'item/move/next';
+var ITEM_MOVE_LAST = 'item/move/last';
+var ITEM_MOVE_FIRST = 'item/move/first';
+var ITEM_MOVE_IN = 'item/move/in';
+var ITEM_MOVE_IN_LAYER = 'item/move/in/layer';
+var ITEM_MOVE_PREV = 'item/move/prev';
+var ITEM_ADD_INDEX = 'item/add/index';
+var ITEM_NEXT_INDEX = 'item/next/index';
+var ITEM_PREV_INDEX = 'item/prev/index';
+
+var ITEM_RECOVER = 'item/recover';
+var ITEM_RECOVER_IMAGE = 'item/recover/image';
+var ITEM_RECOVER_COLORSTEP = 'item/recover/colorstep';
+var ITEM_RECOVER_BOXSHADOW = 'item/recover/boxshadow';
+var ITEM_RECOVER_TEXTSHADOW = 'item/recover/textshadow';
+var ITEM_RECOVER_LAYER = 'item/recover/layer';
+var ITEM_RECOVER_PAGE = 'item/recover/page';
+var ITEM_ADD_CACHE = 'item/addCache';
+var ITEM_ADD_COPY = 'item/addCopy';
+var ITEM_COPY_IN = 'item/copy/in';
+var ITEM_COPY_IN_LAYER = 'item/copy/in/layer';
+
 var GradientManager = function (_BaseModule) {
     inherits(GradientManager, _BaseModule);
 
@@ -12025,12 +12089,12 @@ var GradientManager = function (_BaseModule) {
             var image = this.getFirstImage($store);
 
             if (image) {
-                var newImageId = $store.read('item/recover/image', obj, $store.read(SELECTION_CURRENT_LAYER_ID));
-                $store.run('item/move/in', image.id, newImageId);
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
+                $store.run(ITEM_MOVE_IN, image.id, newImageId);
                 $store.run(ITEM_REMOVE_CHILDREN, image.id);
                 $store.run(ITEM_REMOVE, image.id);
             } else {
-                var newImageId = $store.read('item/recover/image', obj, $store.read(SELECTION_CURRENT_LAYER_ID));
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
                 var newImage = $store.read(ITEM_GET, newImageId);
                 $store.run(ITEM_SET, newImage);
             }
@@ -12047,7 +12111,7 @@ var GradientManager = function (_BaseModule) {
                     return;
                 }
 
-                var images = $store.read('item/map/image/children', layer.id);
+                var images = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id);
 
                 if (images.length) {
                     image = images[0];
@@ -12062,10 +12126,10 @@ var GradientManager = function (_BaseModule) {
             var image = this.getFirstImage($store);
             var layerId = $store.read(SELECTION_CURRENT_LAYER_ID);
             if (image) {
-                var newImageId = $store.read('item/recover/image', obj, layerId);
-                $store.run('item/move/in', image.id, newImageId);
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
+                $store.run(ITEM_MOVE_IN, image.id, newImageId);
             } else {
-                var newImageId = $store.read('item/recover/image', obj, layerId);
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
                 var newImage = $store.read(ITEM_GET, newImageId);
                 $store.run(ITEM_SET, newImage);
             }
@@ -12091,6 +12155,11 @@ var GradientManager = function (_BaseModule) {
     }]);
     return GradientManager;
 }(BaseModule);
+
+var HISTORY_INITIALIZE = 'history/initialize';
+var HISTORY_PUSH = 'history/push';
+var HISTORY_UNDO = 'history/undo';
+var HISTORY_REDO = 'history/redo';
 
 var _updateUnitField;
 
@@ -12194,14 +12263,14 @@ var ItemManager = function (_BaseModule) {
             var isRemove = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
             if (isRemove) {
-                $store.run('item/remove/all', parentId);
+                $store.run(ITEM_REMOVE_ALL, parentId);
             }
             Object.assign($store.items, items);
         }
     }, {
-        key: ACTION('item/focus'),
+        key: ACTION(ITEM_FOCUS),
         value: function value$$1($store, id) {
-            var $el = $store.read('item/dom', id);
+            var $el = $store.read(ITEM_DOM, id);
 
             if ($el && $el.el) {
                 $el.el.focus();
@@ -12216,9 +12285,9 @@ var ItemManager = function (_BaseModule) {
                 var itemType = item.itemType;
 
                 if (item.parentId) {
-                    var list = $store.read('item/list/children', item.parentId, itemType);
+                    var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
                 } else {
-                    var list = $store.read('item/list/page');
+                    var list = $store.read(ITEM_LIST_PAGE);
                 }
 
                 var nextSelectedId = EMPTY_STRING;
@@ -12260,11 +12329,11 @@ var ItemManager = function (_BaseModule) {
             }
         }
     }, {
-        key: ACTION('item/remove/all'),
+        key: ACTION(ITEM_REMOVE_ALL),
         value: function value$$1($store, parentId) {
-            $store.read('item/each/children', parentId, function (item) {
+            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
 
-                $store.run('item/remove/all', item.id);
+                $store.run(ITEM_REMOVE_ALL, item.id);
 
                 $store.run(ITEM_INITIALIZE, item.id);
             });
@@ -12272,7 +12341,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_REMOVE_CHILDREN),
         value: function value$$1($store, parentId) {
-            $store.read('item/each/children', parentId, function (item) {
+            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
                 $store.run(ITEM_REMOVE, item.id);
             });
         }
@@ -12292,13 +12361,13 @@ var ItemManager = function (_BaseModule) {
         // initialize items 
 
     }, {
-        key: ACTION('item/load'),
+        key: ACTION(ITEM_LOAD),
         value: function value$$1($store) {
             $store.read(ITEM_KEYS).forEach(function (id) {
                 $store.items[id] = convertStyle($store.items[id]);
             });
 
-            $store.run('history/initialize');
+            $store.run(HISTORY_INITIALIZE);
         }
     }, {
         key: ACTION(ITEM_SORT),
@@ -12307,9 +12376,9 @@ var ItemManager = function (_BaseModule) {
             var itemType = item.itemType;
 
             if (item.parentId) {
-                var list = $store.read('item/list/children', item.parentId, itemType);
+                var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
             } else {
-                var list = $store.read('item/list/page');
+                var list = $store.read(ITEM_LIST_PAGE);
             }
 
             // 필요 없는 index 를 가진 객체는 지운다. 
@@ -12467,7 +12536,7 @@ var GuideManager = function (_BaseModule) {
             });
 
             var layers = [];
-            $store.read('item/each/children', page.id, function (item) {
+            $store.read(ITEM_EACH_CHILDREN, page.id, function (item) {
                 if ($store.read(SELECTION_CHECK, item.id) == false) {
                     layers.push($store.read('guide/rect/point', item));
                 }
@@ -12598,6 +12667,30 @@ var GuideManager = function (_BaseModule) {
     return GuideManager;
 }(BaseModule);
 
+var STORAGE_GET = 'storage/get';
+var STORAGE_SET = 'storage/set';
+var STORAGE_PAGES = 'storage/pages';
+var STORAGE_LAYERS = 'storage/layers';
+var STORAGE_IMAGES = 'storage/images';
+var STORAGE_UNSHIFT_LAYER = 'storage/unshift/layer';
+
+var STORAGE_REMOVE_LAYER = 'storage/remove/layer';
+var STORAGE_REMOVE_PAGE = 'storage/remove/page';
+var STORAGE_UNSHIFT_PAGE = 'storage/unshift/page';
+var STORAGE_ADD_PAGE = 'storage/add/page';
+var STORAGE_ADD_LAYER = 'storage/add/layer';
+var STORAGE_ADD_IMAGE = 'storage/add/image';
+var STORAGE_DELETE_PAGE = 'storage/delete/page';
+var STORAGE_DELETE_IMAGE = 'storage/delete/image';
+var STORAGE_SAVE = 'storage/save';
+var STORAGE_SAVE_LAYER = 'storage/save/layer';
+var STORAGE_SAVE_PAGE = 'storage/save/page';
+var STORAGE_SAVE_IMAGE = 'storage/save/image';
+var STORAGE_LOAD_LAYER = 'storage/load/layer';
+var STORAGE_LOAD_PAGE = 'storage/load/page';
+var STORAGE_LOAD_IMAGE = 'storage/load/image';
+var STORAGE_LOAD = 'storage/load';
+
 var SAVE_ID = 'css-imageeditor';
 var CACHED_PAGE_SAVE_ID = 'css-imageeditor-cached-pages';
 var CACHED_LAYER_SAVE_ID = 'css-imageeditor-cached-layers';
@@ -12626,17 +12719,17 @@ var StorageManager = function (_BaseModule) {
             this.$store.emit('changeStorage');
         }
     }, {
-        key: GETTER('storage/get'),
+        key: GETTER(STORAGE_GET),
         value: function value($store, key) {
             return JSON.parse(localStorage.getItem(SAVE_ID + "-" + key));
         }
     }, {
-        key: ACTION('storage/set'),
+        key: ACTION(STORAGE_SET),
         value: function value($store, key, _value) {
             localStorage.setItem(SAVE_ID + "-" + key, JSON.stringify(_value));
         }
     }, {
-        key: GETTER('storage/pages'),
+        key: GETTER(STORAGE_PAGES),
         value: function value($store) {
             var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
@@ -12654,7 +12747,7 @@ var StorageManager = function (_BaseModule) {
             return $store.cachedPages;
         }
     }, {
-        key: GETTER('storage/layers'),
+        key: GETTER(STORAGE_LAYERS),
         value: function value($store) {
             var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
@@ -12672,7 +12765,7 @@ var StorageManager = function (_BaseModule) {
             return $store.cachedLayers;
         }
     }, {
-        key: GETTER('storage/images'),
+        key: GETTER(STORAGE_IMAGES),
         value: function value($store) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
 
@@ -12682,92 +12775,92 @@ var StorageManager = function (_BaseModule) {
             return $store.cachedImages;
         }
     }, {
-        key: ACTION('storage/unshift/layer'),
+        key: ACTION(STORAGE_UNSHIFT_LAYER),
         value: function value($store, layer) {
             var item = clone(layer);
             item.id = uuid();
             $store.cachedLayers.unshift(item);
 
-            $store.run('storage/save/layer');
+            $store.run(STORAGE_SAVE_LAYER);
         }
     }, {
-        key: ACTION('storage/add/layer'),
+        key: ACTION(STORAGE_ADD_LAYER),
         value: function value($store, layer) {
             var item = clone(layer);
             item.id = uuid();
             $store.cachedLayers.push(item);
 
-            $store.run('storage/save/layer');
+            $store.run(STORAGE_SAVE_LAYER);
         }
     }, {
-        key: ACTION('storage/remove/layer'),
+        key: ACTION(STORAGE_REMOVE_LAYER),
         value: function value($store, id) {
 
             $store.cachedLayers = $store.cachedLayers.filter(function (item) {
                 return item.id != id;
             });
 
-            $store.run('storage/save/layer');
+            $store.run(STORAGE_SAVE_LAYER);
         }
     }, {
-        key: ACTION('storage/remove/page'),
+        key: ACTION(STORAGE_REMOVE_PAGE),
         value: function value($store, id) {
 
             $store.cachedLayers = $store.cachedPages.filter(function (item) {
                 return item.id != id;
             });
 
-            $store.run('storage/save/page');
+            $store.run(STORAGE_SAVE_PAGE);
         }
     }, {
-        key: ACTION('storage/unshift/page'),
+        key: ACTION(STORAGE_UNSHIFT_PAGE),
         value: function value($store, page) {
             var item = clone(page);
             item.id = uuid();
             $store.cachedPages.unshift(item);
 
-            $store.run('storage/save/page');
+            $store.run(STORAGE_SAVE_PAGE);
         }
     }, {
-        key: ACTION('storage/add/page'),
+        key: ACTION(STORAGE_ADD_PAGE),
         value: function value($store, page) {
             var item = clone(page);
             item.id = uuid();
             $store.cachedPages.push(item);
 
-            $store.run('storage/save/page');
+            $store.run(STORAGE_SAVE_PAGE);
         }
     }, {
-        key: ACTION('storage/delete/page'),
+        key: ACTION(STORAGE_DELETE_PAGE),
         value: function value($store, id) {
 
             $store.cachedPages = $store.cachedPages.filter(function (item) {
                 return item.id != id;
             });
 
-            $store.run('storage/save/page');
+            $store.run(STORAGE_SAVE_PAGE);
         }
     }, {
-        key: ACTION('storage/delete/image'),
+        key: ACTION(STORAGE_DELETE_IMAGE),
         value: function value($store, id) {
 
             $store.cachedImages = $store.cachedImages.filter(function (item) {
                 return item.id != id;
             });
 
-            $store.run('storage/save/image');
+            $store.run(STORAGE_SAVE_IMAGE);
         }
     }, {
-        key: ACTION('storage/add/image'),
+        key: ACTION(STORAGE_ADD_IMAGE),
         value: function value($store, image) {
             var item = clone(image);
             item.id = uuid();
             $store.cachedImages.push(item);
 
-            $store.run('storage/save/image');
+            $store.run(STORAGE_SAVE_IMAGE);
         }
     }, {
-        key: ACTION('storage/save'),
+        key: ACTION(STORAGE_SAVE),
         value: function value($store) {
             localStorage.setItem(SAVE_ID, JSON.stringify({
                 items: $store.items,
@@ -12775,22 +12868,22 @@ var StorageManager = function (_BaseModule) {
             }));
         }
     }, {
-        key: ACTION('storage/save/layer'),
+        key: ACTION(STORAGE_SAVE_LAYER),
         value: function value($store) {
             localStorage.setItem(CACHED_LAYER_SAVE_ID, JSON.stringify($store.cachedLayers));
         }
     }, {
-        key: ACTION('storage/save/page'),
+        key: ACTION(STORAGE_SAVE_PAGE),
         value: function value($store) {
             localStorage.setItem(CACHED_PAGE_SAVE_ID, JSON.stringify($store.cachedPages));
         }
     }, {
-        key: ACTION('storage/save/image'),
+        key: ACTION(STORAGE_SAVE_IMAGE),
         value: function value($store) {
             localStorage.setItem(CACHED_IMAGE_SAVE_ID, JSON.stringify($store.cachedImages));
         }
     }, {
-        key: ACTION('storage/load/layer'),
+        key: ACTION(STORAGE_LOAD_LAYER),
         value: function value($store) {
             $store.cachedLayers = JSON.parse(localStorage.getItem(CACHED_LAYER_SAVE_ID) || "[]");
 
@@ -12800,7 +12893,7 @@ var StorageManager = function (_BaseModule) {
             });
         }
     }, {
-        key: ACTION('storage/load/page'),
+        key: ACTION(STORAGE_LOAD_PAGE),
         value: function value($store) {
             $store.cachedPages = JSON.parse(localStorage.getItem(CACHED_PAGE_SAVE_ID) || "[]");
 
@@ -12810,7 +12903,7 @@ var StorageManager = function (_BaseModule) {
             });
         }
     }, {
-        key: ACTION('storage/load/image'),
+        key: ACTION(STORAGE_LOAD_IMAGE),
         value: function value($store) {
             $store.cachedImages = JSON.parse(localStorage.getItem(CACHED_IMAGE_SAVE_ID) || "[]");
 
@@ -12820,7 +12913,7 @@ var StorageManager = function (_BaseModule) {
             });
         }
     }, {
-        key: ACTION('storage/load'),
+        key: ACTION(STORAGE_LOAD),
         value: function value($store, callback) {
             var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
 
@@ -12945,7 +13038,7 @@ var CssManager = function (_BaseModule) {
             return newStyle;
         }
     }, {
-        key: GETTER(CSS_TOSTRING),
+        key: GETTER(CSS_TO_STRING),
         value: function value($store, style) {
             var newStyle = $store.read(CSS_SORTING, style);
 
@@ -13032,6 +13125,12 @@ var cloud = "<svg version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/s
 
 var SVGList = [sample1$1, cloud];
 
+var SVG_LIST = 'svg/list';
+var SVG_LIST_LOAD = 'svg/list/load';
+var SVG_GET_CLIPPATH = 'svg/get/clipPath';
+var SVG_GET_BLOB = 'svg/get/blob';
+var SVG_GET = 'svg/get';
+
 var SVGManager = function (_BaseModule) {
     inherits(SVGManager, _BaseModule);
 
@@ -13053,19 +13152,18 @@ var SVGManager = function (_BaseModule) {
             this.$store.emit('changeSvgList');
         }
     }, {
-        key: GETTER('svg/list'),
+        key: GETTER(SVG_LIST),
         value: function value$$1($store) {
             return [].concat(toConsumableArray(SVGList), toConsumableArray($store.svgList));
         }
     }, {
-        key: ACTION('svg/list/load'),
+        key: ACTION(SVG_LIST_LOAD),
         value: function value$$1($store) {
             var loadList = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
             $store.svgList = clone(loadList);
         }
     }, {
-        key: GETTER('svg/get/clipPath'),
+        key: GETTER(SVG_GET_CLIPPATH),
         value: function value$$1($store, svg, id, callback) {
             var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "";
 
@@ -13078,7 +13176,7 @@ var SVGManager = function (_BaseModule) {
             callback && callback(svg, id);
         }
     }, {
-        key: GETTER('svg/get/blob'),
+        key: GETTER(SVG_GET_BLOB),
         value: function value$$1($store, index, key) {
             if (SVGList[index]) {
                 var svg = "" + SVGList[index];
@@ -13097,7 +13195,7 @@ var SVGManager = function (_BaseModule) {
             return EMPTY_STRING;
         }
     }, {
-        key: GETTER('svg/get'),
+        key: GETTER(SVG_GET),
         value: function value$$1($store, index, key) {
             if (SVGList[index]) {
                 return SVGList[index];
@@ -13140,7 +13238,7 @@ var CollectManager = function (_BaseModule) {
     createClass(CollectManager, [{
         key: GETTER(COLLECT_COLORSTEPS),
         value: function value($store, imageId) {
-            return $store.read('item/map/children', imageId, function (colorstep) {
+            return $store.read(ITEM_MAP_CHILDREN, imageId, function (colorstep) {
                 var colorstep = clone($store.items[colorstep.id]);
                 delete colorstep.id;
                 delete colorstep.parentId;
@@ -13201,21 +13299,21 @@ var CollectManager = function (_BaseModule) {
     }, {
         key: GETTER(COLLECT_IMAGES),
         value: function value($store, layerId) {
-            return $store.read('item/map/image/children', layerId, function (image) {
+            return $store.read(ITEM_MAP_IMAGE_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_IMAGE_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_BOXSHADOWS),
         value: function value($store, layerId) {
-            return $store.read('item/map/boxshadow/children', layerId, function (image) {
+            return $store.read(ITEM_MAP_BOXSHADOW_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_BOXSHADOW_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_TEXTSHADOWS),
         value: function value($store, layerId) {
-            return $store.read('item/map/textshadow/children', layerId, function (image) {
+            return $store.read(ITEM_MAP_TEXTSHADOW_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_TEXTSHADOW_ONE, image.id);
             });
         }
@@ -13242,7 +13340,7 @@ var CollectManager = function (_BaseModule) {
     }, {
         key: GETTER(COLLECT_LAYERS),
         value: function value($store, pageId) {
-            return $store.read('item/map/children', pageId, function (layer) {
+            return $store.read(ITEM_MAP_CHILDREN, pageId, function (layer) {
                 return $store.read(COLLECT_LAYER_ONE, layer.id);
             });
         }
@@ -13268,6 +13366,12 @@ var CollectManager = function (_BaseModule) {
     return CollectManager;
 }(BaseModule);
 
+var PAGE_TO_STRING = 'page/toString';
+var PAGE_TO_CSS = 'page/toCSS';
+var PAGE_COLORVIEW_TO_CSS = 'page/colorview/toCSS';
+var PAGE_CACHE_TO_CSS = 'page/cache/toCSS';
+var PAGE_CACHE_TO_STRING = 'page/cache/toString';
+
 var PageManager = function (_BaseModule) {
     inherits(PageManager, _BaseModule);
 
@@ -13277,18 +13381,18 @@ var PageManager = function (_BaseModule) {
     }
 
     createClass(PageManager, [{
-        key: GETTER('page/toString'),
+        key: GETTER(PAGE_TO_STRING),
         value: function value$$1($store, id) {
 
             var page = $store.read(ITEM_GET, id);
-            var obj = $store.read('page/toCSS', page) || {};
+            var obj = $store.read(PAGE_TO_CSS, page) || {};
 
             return Object.keys(obj).map(function (key) {
                 return key + ": " + obj[key] + ";";
             }).join(' ');
         }
     }, {
-        key: GETTER('page/toCSS'),
+        key: GETTER(PAGE_TO_CSS),
         value: function value$$1($store) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -13312,7 +13416,7 @@ var PageManager = function (_BaseModule) {
             return $store.read('css/sorting', css);
         }
     }, {
-        key: GETTER('page/colorview/toCSS'),
+        key: GETTER(PAGE_COLORVIEW_TO_CSS),
         value: function value$$1($store) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -13333,7 +13437,7 @@ var PageManager = function (_BaseModule) {
             return $store.read('css/sorting', css);
         }
     }, {
-        key: GETTER('page/cache/toCSS'),
+        key: GETTER(PAGE_CACHE_TO_CSS),
         value: function value$$1($store) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -13357,12 +13461,12 @@ var PageManager = function (_BaseModule) {
             return $store.read('css/sorting', css);
         }
     }, {
-        key: GETTER('page/cache/toString'),
+        key: GETTER(PAGE_CACHE_TO_STRING),
         value: function value$$1($store, page) {
-            var obj = $store.read('page/cache/toCSS', page) || {};
+            var obj = $store.read(PAGE_CACHE_TO_CSS, page) || {};
 
             return {
-                css: $store.read(CSS_TOSTRING, obj),
+                css: $store.read(CSS_TO_STRING, obj),
                 obj: obj
             };
         }
@@ -13629,7 +13733,7 @@ var SelectionManager = function (_BaseModule) {
         value: function value$$1($store, callback) {
 
             var pages = $store.read(SELECTION_CURRENT).map(function (it) {
-                var path = $store.read('item/path', it.id);
+                var path = $store.read(ITEM_PATH, it.id);
                 return $store.read(ITEM_GET, path[path.length - 1]);
             });
 
@@ -13645,7 +13749,7 @@ var SelectionManager = function (_BaseModule) {
         value: function value$$1($store, callback) {
 
             var pages = $store.read(SELECTION_CURRENT).map(function (it) {
-                var path = $store.read('item/path', it.id);
+                var path = $store.read(ITEM_PATH, it.id);
                 return $store.read(ITEM_GET, path[path.length - 1]);
             });
 
@@ -13736,7 +13840,7 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_LAYERS),
         value: function value$$1($store) {
-            return $store.read('item/filter', function (id) {
+            return $store.read(ITEM_FILTER, function (id) {
                 return $store.items[id].itemType == ITEM_TYPE_LAYER;
             }).map(function (id) {
                 var _$store$items$id = $store.items[id],
@@ -13867,11 +13971,6 @@ var SelectionManager = function (_BaseModule) {
     return SelectionManager;
 }(BaseModule);
 
-var HISTORY_INITIALIZE = 'history/initialize';
-var HISTORY_PUSH = 'history/push';
-var HISTORY_UNDO = 'history/undo';
-var HISTORY_REDO = 'history/redo';
-
 var HISTORY_MAX = 200;
 
 var HistoryManager = function (_BaseModule) {
@@ -13929,7 +14028,7 @@ var HistoryManager = function (_BaseModule) {
         value: function setHistory($store, page) {
             if (page && !$store.historyOriginal[page.id]) {
                 $store.historyOriginal[page.id] = {
-                    items: clone($store.read('item/get/all', page.id)),
+                    items: clone($store.read(ITEM_GET_ALL, page.id)),
                     selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
                 };
                 $store.histories[page.id] = [];
@@ -13951,7 +14050,7 @@ var HistoryManager = function (_BaseModule) {
 
                 histories.push({
                     title: title,
-                    items: clone($store.read('item/get/all', page.id)),
+                    items: clone($store.read(ITEM_GET_ALL, page.id)),
                     selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
                 });
 
@@ -13996,6 +14095,9 @@ var HistoryManager = function (_BaseModule) {
     }]);
     return HistoryManager;
 }(BaseModule);
+
+var ORDERING_TYPE = 'ordering/type';
+var ORDERING_INDEX = 'ordering/index';
 
 var OrderingManager = function (_BaseModule) {
     inherits(OrderingManager, _BaseModule);
@@ -14197,8 +14299,8 @@ var OrderingManager = function (_BaseModule) {
             });
         }
     }, {
-        key: '/ordering/type',
-        value: function orderingType($store, type) {
+        key: ACTION(ORDERING_TYPE),
+        value: function value$$1($store, type) {
             if (this[type]) {
                 this[type].call(this, $store);
             }
@@ -14207,32 +14309,32 @@ var OrderingManager = function (_BaseModule) {
         key: "forward",
         value: function forward($store) {
             $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run('item/move/next', id);
+                $store.run(ITEM_MOVE_NEXT, id);
             });
         }
     }, {
         key: "backward",
         value: function backward($store) {
             $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run('item/move/prev', id);
+                $store.run(ITEM_MOVE_PREV, id);
             });
         }
     }, {
         key: "front",
         value: function front($store) {
             $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run('item/move/last', id);
+                $store.run(ITEM_MOVE_LAST, id);
             });
         }
     }, {
         key: "back",
         value: function back($store) {
             $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run('item/move/first', id);
+                $store.run(ITEM_MOVE_FIRST, id);
             });
         }
     }, {
-        key: ACTION('ordering/index'),
+        key: ACTION(ORDERING_INDEX),
         value: function value$$1($store, type) {
             if (this[type]) {
                 this[type].call(this, $store);
@@ -14442,12 +14544,12 @@ var FilterManager = function (_BaseModule) {
     }
 
     createClass(FilterManager, [{
-        key: GETTER('filter/get'),
+        key: GETTER(FILTER_GET),
         value: function value$$1($store, id) {
             return filterInfo[id];
         }
     }, {
-        key: GETTER('filter/list'),
+        key: GETTER(FILTER_LIST),
         value: function value$$1($store, layerId) {
             var layer = $store.read(ITEM_GET, layerId);
             var realFilters = {};
@@ -14473,7 +14575,7 @@ var FilterManager = function (_BaseModule) {
             });
         }
     }, {
-        key: GETTER('filter/toCSS'),
+        key: GETTER(FILTER_TO_CSS),
         value: function value$$1($store, layer) {
             var realFilters = {};
 
@@ -14577,7 +14679,7 @@ var BackdropManager = function (_BaseModule) {
             });
         }
     }, {
-        key: GETTER(BACKDROP_TOCSS),
+        key: GETTER(BACKDROP_TO_CSS),
         value: function value$$1($store, layer) {
             var realFilters = {};
 
@@ -14888,7 +14990,7 @@ var ClipPathManager = function (_BaseModule) {
             }
         }
     }, {
-        key: GETTER(CLIPPATH_TOCSS),
+        key: GETTER(CLIPPATH_TO_CSS),
         value: function value$$1($store, layer) {
             var clipPath = null;
             if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
@@ -14915,9 +15017,13 @@ var ClipPathManager = function (_BaseModule) {
     return ClipPathManager;
 }(BaseModule);
 
+var _itemCreateActions;
+
 var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
 var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+
+var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
 
 var ItemCreateManager = function (_BaseModule) {
     inherits(ItemCreateManager, _BaseModule);
@@ -15014,13 +15120,6 @@ var ItemCreateManager = function (_BaseModule) {
             return $store.read(ITEM_CREATE_OBJECT, obj, TEXTSHADOW_DEFAULT_OBJECT);
         }
     }, {
-        key: GETTER('item/create/backdrop-filter'),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, BACKDROPFILTER_DEFAULT_OBJECT);
-        }
-    }, {
         key: GETTER(ITEM_CREATE_IMAGE),
         value: function value$$1($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -15034,22 +15133,23 @@ var ItemCreateManager = function (_BaseModule) {
 
 
             var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
-
+            var color_0 = 'rgba(216,216,216, 0)';
+            var color_1 = 'rgba(216,216,216, 1)';
             if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
 
                 if (conicList.includes(obj.type)) {
                     $store.items[imageId].angle = 0;
                 }
 
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 100, index: 100 });
             } else if (repeatingGradientTypeList.includes(obj.type)) {
                 if (conicList.includes(obj.type)) {
                     $store.items[imageId].angle = 0;
                 }
 
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: 'rgba(216,216,216, 0)', percent: 0, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: 'rgba(216,216,216, 1)', percent: 10, index: 100 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 10, index: 100 });
             }
 
             return imageId;
@@ -15061,15 +15161,12 @@ var ItemCreateManager = function (_BaseModule) {
 
             return $store.read(ITEM_CREATE_OBJECT, obj, COLORSTEP_DEFAULT_OBJECT);
         }
-
-        // 객체를 생성하면 id 만 리턴한다. 
-
     }, {
         key: GETTER(ITEM_CREATE),
         value: function value$$1($store, itemType) {
             var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-            return $store.read('item/create/' + itemType, obj);
+            return $store.read(itemCreateActions[itemType], obj);
         }
     }, {
         key: GETTER(ITEM_COPY),
@@ -15229,7 +15326,7 @@ var ItemCreateManager = function (_BaseModule) {
             image.parentId = layerId;
             $store.run(ITEM_SET$1, image, isSelected);
 
-            $store.run('history/initialize');
+            $store.run(HISTORY_INITIALIZE);
         }
     }]);
     return ItemCreateManager;
@@ -15254,7 +15351,7 @@ var ItemMoveManager = function (_BaseModule) {
             this.$store.emit(CHANGE_EDITOR);
         }
     }, {
-        key: ACTION('item/move/to'),
+        key: ACTION(ITEM_MOVE_TO),
         value: function value($store, sourceId, newItemId) {
 
             var currentItem = $store.read(ITEM_GET, sourceId);
@@ -15266,16 +15363,16 @@ var ItemMoveManager = function (_BaseModule) {
             $store.run(ITEM_SORT, newItemId);
         }
     }, {
-        key: ACTION('item/move/next'),
+        key: ACTION(ITEM_MOVE_NEXT),
         value: function value($store, id) {
             var item = $store.read(ITEM_GET, id);
-            item.index = $store.read('item/next/index', id);
+            item.index = $store.read(ITEM_NEXT_INDEX, id);
 
             $store.run(ITEM_SET$1, item, item.selected);
             $store.run(ITEM_SORT, id);
         }
     }, {
-        key: ACTION('item/move/last'),
+        key: ACTION(ITEM_MOVE_LAST),
         value: function value($store, id) {
             var item = $store.read(ITEM_GET, id);
             item.index = Number.MAX_SAFE_INTEGER;
@@ -15284,7 +15381,7 @@ var ItemMoveManager = function (_BaseModule) {
             $store.run(ITEM_SORT, id);
         }
     }, {
-        key: ACTION('item/move/first'),
+        key: ACTION(ITEM_MOVE_FIRST),
         value: function value($store, id) {
             var item = $store.read(ITEM_GET, id);
             item.index = -1 * COPY_INDEX_DIST;
@@ -15293,7 +15390,7 @@ var ItemMoveManager = function (_BaseModule) {
             $store.run(ITEM_SORT, id);
         }
     }, {
-        key: ACTION('item/move/in'),
+        key: ACTION(ITEM_MOVE_IN),
         value: function value($store, destId, sourceId) {
             var destItem = $store.read(ITEM_GET, destId);
             var sourceItem = $store.read(ITEM_GET, sourceId);
@@ -15304,7 +15401,7 @@ var ItemMoveManager = function (_BaseModule) {
             $store.run(ITEM_SORT, sourceId);
         }
     }, {
-        key: ACTION('item/move/in/layer'),
+        key: ACTION(ITEM_MOVE_IN_LAYER),
         value: function value($store, destId, sourceId) {
             var destItem = $store.read(ITEM_GET, destId); /* layer */
             var sourceItem = $store.read(ITEM_GET, sourceId);
@@ -15316,30 +15413,30 @@ var ItemMoveManager = function (_BaseModule) {
             $store.run(ITEM_SORT, sourceId);
         }
     }, {
-        key: ACTION('item/move/prev'),
+        key: ACTION(ITEM_MOVE_PREV),
         value: function value($store, id) {
             var item = $store.read(ITEM_GET, id);
-            item.index = $store.read('item/prev/index', id);
+            item.index = $store.read(ITEM_PREV_INDEX, id);
 
             $store.run(ITEM_SET$1, item, item.selected);
             $store.run(ITEM_SORT, id);
         }
     }, {
-        key: GETTER('item/add/index'),
+        key: GETTER(ITEM_ADD_INDEX),
         value: function value($store, id) {
             var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST$1;
 
             return $store.items[id].index + dist;
         }
     }, {
-        key: GETTER('item/next/index'),
+        key: GETTER(ITEM_NEXT_INDEX),
         value: function value($store, id) {
-            return $store.read('item/add/index', id, INDEX_DIST$1 + COPY_INDEX_DIST);
+            return $store.read(ITEM_ADD_INDEX, id, INDEX_DIST$1 + COPY_INDEX_DIST);
         }
     }, {
-        key: GETTER('item/prev/index'),
+        key: GETTER(ITEM_PREV_INDEX),
         value: function value($store, id) {
-            return $store.read('item/add/index', id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
+            return $store.read(ITEM_ADD_INDEX, id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
         }
     }]);
     return ItemMoveManager;
@@ -15361,97 +15458,97 @@ var ItemRecoverManager = function (_BaseModule) {
             this.$store.emit(CHANGE_EDITOR);
         }
     }, {
-        key: GETTER('item/recover'),
+        key: GETTER(ITEM_RECOVER),
         value: function value($store, item, parentId) {
 
             if (item.page) {
-                return $store.read('item/recover/page', item, parentId);
+                return $store.read(ITEM_RECOVER_PAGE, item, parentId);
             } else if (item.layer) {
-                return $store.read('item/recover/layer', item, parentId);
+                return $store.read(ITEM_RECOVER_LAYER, item, parentId);
             } else if (item.image) {
-                return $store.read('item/recover/image', item, parentId);
+                return $store.read(ITEM_RECOVER_IMAGE, item, parentId);
             } else if (item.boxshadow) {
-                return $store.read('item/recover/boxshadow', item, parentId);
+                return $store.read(ITEM_RECOVER_BOXSHADOW, item, parentId);
             } else if (item.textshadow) {
-                return $store.read('item/recover/textshadow', item, parentId);
+                return $store.read(ITEM_RECOVER_TEXTSHADOW, item, parentId);
             }
         }
     }, {
-        key: GETTER('item/recover/image'),
+        key: GETTER(ITEM_RECOVER_IMAGE),
         value: function value($store, image, parentId) {
-            var newImageId = $store.read('item/create/image', Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, image.image)));
+            var newImageId = $store.read(ITEM_CREATE_IMAGE, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, image.image)));
             var colorsteps = image.colorsteps || [];
 
             colorsteps.forEach(function (step) {
-                $store.read('item/recover/colorstep', step, newImageId);
+                $store.read(ITEM_RECOVER_COLORSTEP, step, newImageId);
             });
 
             return newImageId;
         }
     }, {
-        key: GETTER('item/recover/colorstep'),
+        key: GETTER(ITEM_RECOVER_COLORSTEP),
         value: function value($store, colorstep, parentId) {
-            return $store.read('item/create/colorstep', Object.assign({ parentId: parentId }, colorstep));
+            return $store.read(ITEM_CREATE_COLORSTEP, Object.assign({ parentId: parentId }, colorstep));
         }
     }, {
-        key: GETTER('item/recover/boxshadow'),
+        key: GETTER(ITEM_RECOVER_BOXSHADOW),
         value: function value($store, boxshadow, parentId) {
-            return $store.read('item/create/boxshadow', Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow)));
+            return $store.read(ITEM_CREATE_BOXSHADOW, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow)));
         }
     }, {
-        key: GETTER('item/recover/textshadow'),
+        key: GETTER(ITEM_RECOVER_TEXTSHADOW),
         value: function value($store, textshadow, parentId) {
-            return $store.read('item/create/textshadow', Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow)));
+            return $store.read(ITEM_CREATE_TEXTSHADOW, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow)));
         }
     }, {
-        key: GETTER('item/recover/layer'),
+        key: GETTER(ITEM_RECOVER_LAYER),
         value: function value($store, layer, parentId) {
             var newLayerId = $store.read(ITEM_CREATE_LAYER, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, layer.layer)));
 
             var images = layer.images || [];
             images.forEach(function (image) {
-                $store.read('item/recover/image', image, newLayerId);
+                $store.read(ITEM_RECOVER_IMAGE, image, newLayerId);
             });
 
             var boxshadows = layer.boxshadows || [];
             boxshadows.forEach(function (boxshadow) {
-                $store.read('item/recover/boxshadow', boxshadow, newLayerId);
+                $store.read(ITEM_RECOVER_BOXSHADOW, boxshadow, newLayerId);
             });
 
             var textshadows = layer.textshadows || [];
             textshadows.forEach(function (textshadow) {
-                $store.read('item/recover/textshadow', textshadow, newLayerId);
+                $store.read(ITEM_RECOVER_TEXTSHADOW, textshadow, newLayerId);
             });
 
             return newLayerId;
         }
     }, {
-        key: GETTER('item/recover/page'),
+        key: GETTER(ITEM_RECOVER_PAGE),
         value: function value($store, page) {
             var newPageId = $store.read(ITEM_CREATE_PAGE, $store.read(ITEM_CONVERT_STYLE, page.page));
             page.layers.forEach(function (layer) {
-                $store.read('item/recover/layer', layer, newPageId);
+                $store.read(ITEM_RECOVER_LAYER, layer, newPageId);
             });
 
             return newPageId;
         }
     }, {
-        key: ACTION('item/addCache'),
+        key: ACTION(ITEM_ADD_CACHE),
         value: function value($store, item, sourceId) {
             var currentItem = $store.read(ITEM_GET, sourceId);
-            $store.run('item/move/to', sourceId, $store.read('item/recover', item, currentItem.parentId));
+            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, item, currentItem.parentId));
         }
     }, {
-        key: ACTION('item/addCopy'),
+        key: ACTION(ITEM_ADD_COPY),
         value: function value($store, sourceId) {
             var currentItem = $store.read(ITEM_GET, sourceId);
-            $store.run('item/move/to', sourceId, $store.read('item/recover', $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
+            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
         }
     }, {
-        key: ACTION('item/copy/in'),
+        key: ACTION(ITEM_COPY_IN),
         value: function value($store, destId, sourceId) {
             var destItem = $store.read(ITEM_GET, destId);
-            var newImageId = $store.read('item/recover', $store.read(COLLECT_ONE, sourceId), destItem.parentId);
+            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
 
             var newImageItem = $store.read(ITEM_GET, newImageId);
             newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
@@ -15460,10 +15557,10 @@ var ItemRecoverManager = function (_BaseModule) {
             $store.run(ITEM_SORT, sourceId);
         }
     }, {
-        key: ACTION('item/copy/in/layer'),
+        key: ACTION(ITEM_COPY_IN_LAYER),
         value: function value($store, destId, sourceId) {
             var destItem = $store.read(ITEM_GET, destId); /* layer */
-            var newImageId = $store.read('item/recover', $store.read(COLLECT_ONE, sourceId), destItem.parentId);
+            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
 
             var newImageItem = $store.read(ITEM_GET, newImageId);
             newImageItem.index = Number.MAX_SAFE_INTEGER;
@@ -15488,14 +15585,14 @@ var ItemSearchManager = function (_BaseModule) {
     }
 
     createClass(ItemSearchManager, [{
-        key: GETTER('item/get/all'),
+        key: GETTER(ITEM_GET_ALL),
         value: function value$$1($store, parentId) {
             var items = {};
 
-            $store.read('item/each/children', parentId, function (item) {
+            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
                 items[item.id] = clone(item);
 
-                var children = $store.read('item/get/all', item.id);
+                var children = $store.read(ITEM_GET_ALL, item.id);
                 Object.keys(children).forEach(function (key) {
                     items[key] = children[key];
                 });
@@ -15504,7 +15601,7 @@ var ItemSearchManager = function (_BaseModule) {
             return items;
         }
     }, {
-        key: GETTER('item/list'),
+        key: GETTER(ITEM_LIST),
         value: function value$$1($store, filterCallback) {
             var list = $store.itemKeys.filter(filterCallback);
 
@@ -15515,19 +15612,19 @@ var ItemSearchManager = function (_BaseModule) {
             return list;
         }
     }, {
-        key: GETTER('item/filter'),
+        key: GETTER(ITEM_FILTER),
         value: function value$$1($store, filterCallback) {
-            return $store.read('item/list', filterCallback);
+            return $store.read(ITEM_LIST, filterCallback);
         }
     }, {
-        key: GETTER('item/list/page'),
+        key: GETTER(ITEM_LIST_PAGE),
         value: function value$$1($store) {
-            return $store.read('item/list', this.checkOnlyItemTypeCallback($store, 'page'));
+            return $store.read(ITEM_LIST, this.checkOnlyItemTypeCallback($store, ITEM_TYPE_PAGE));
         }
     }, {
-        key: GETTER('item/map/page'),
+        key: GETTER(ITEM_MAP_PAGE),
         value: function value$$1($store, callback) {
-            return $store.read('item/list/page').map(function (id, index) {
+            return $store.read(ITEM_LIST_PAGE).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
@@ -15555,107 +15652,107 @@ var ItemSearchManager = function (_BaseModule) {
             };
         }
     }, {
-        key: GETTER('item/list/children'),
+        key: GETTER(ITEM_LIST_CHILDREN),
         value: function value$$1($store, parentId, itemType) {
             if (isUndefined(itemType)) {
-                return $store.read('item/list', this.checkParentItemCallback($store, parentId));
+                return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
             } else {
-                return $store.read('item/list', this.checkItemTypeCallback($store, parentId, itemType));
+                return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
             }
         }
     }, {
-        key: GETTER('item/count/children'),
+        key: GETTER(ITEM_COUNT_CHILDREN),
         value: function value$$1($store, parentId) {
-            return $store.read('item/list', this.checkParentItemCallback($store, parentId)).length;
+            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).length;
         }
     }, {
-        key: GETTER('item/map/children'),
+        key: GETTER(ITEM_MAP_CHILDREN),
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkParentItemCallback($store, parentId)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/map/type/children'),
+        key: GETTER(ITEM_MAP_TYPE_CHILDREN),
         value: function value$$1($store, parentId, itemType) {
             var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, itemType)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/map/layer/children'),
+        key: GETTER(ITEM_MAP_LAYER_CHILDREN),
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_LAYER)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_LAYER)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/map/image/children'),
+        key: GETTER(ITEM_MAP_IMAGE_CHILDREN),
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/map/colorstep/children'),
+        key: GETTER(ITEM_MAP_COLORSTEP_CHILDREN),
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_COLORSTEP)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_COLORSTEP)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/map/boxshadow/children'),
+        key: GETTER(ITEM_MAP_BOXSHADOW_CHILDREN),
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_BOXSHADOW)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_BOXSHADOW)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/map/textshadow/children'),
+        key: GETTER(ITEM_MAP_TEXTSHADOW_CHILDREN),
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return $store.read('item/list', this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TEXTSHADOW$1)).map(function (id, index) {
+            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TEXTSHADOW$1)).map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/filter/children'),
+        key: GETTER(ITEM_FILTER_CHILDREN),
         value: function value$$1($store, parentId, callback) {
-            return $store.read('item/list/children', parentId).filter(function (id, index) {
+            return $store.read(ITEM_LIST_CHILDREN, parentId).filter(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/each/children'),
+        key: GETTER(ITEM_EACH_CHILDREN),
         value: function value$$1($store, parentId, callback) {
-            return $store.read('item/list/children', parentId).forEach(function (id, index) {
+            return $store.read(ITEM_LIST_CHILDREN, parentId).forEach(function (id, index) {
                 callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/each/type/children'),
+        key: GETTER(ITEM_EACH_TYPE_CHILDREN),
         value: function value$$1($store, parentId, itemType, callback) {
-            return $store.read('item/list/children', parentId, itemType).forEach(function (id, index) {
+            return $store.read(ITEM_LIST_CHILDREN, parentId, itemType).forEach(function (id, index) {
                 callback($store.items[id], index);
             });
         }
     }, {
-        key: GETTER('item/traverse'),
+        key: GETTER(ITEM_TRAVERSE),
         value: function value$$1($store, parentId) {
-            var list = $store.read('item/list/children', parentId);
+            var list = $store.read(ITEM_LIST_CHILDREN, parentId);
 
             list.sort(function (a, b) {
                 var $a = $store.items[a];
@@ -15672,16 +15769,16 @@ var ItemSearchManager = function (_BaseModule) {
             });
 
             return list.map(function (childId) {
-                return { id: childId, children: $store.read('item/traverse', childId) };
+                return { id: childId, children: $store.read(ITEM_TRAVERSE, childId) };
             });
         }
     }, {
-        key: GETTER('item/tree'),
+        key: GETTER(ITEM_TREE),
         value: function value$$1($store) {
-            return $store.read('item/traverse', EMPTY_STRING);
+            return $store.read(ITEM_TRAVERSE, EMPTY_STRING);
         }
     }, {
-        key: GETTER('item/tree/normalize'),
+        key: GETTER(ITEM_TREE_NORMALIZE),
         value: function value$$1($store) {
             var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
             var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
@@ -15689,16 +15786,16 @@ var ItemSearchManager = function (_BaseModule) {
 
             var results = [];
 
-            var list = root != null ? $store.read('item/tree') : children;
+            var list = root != null ? $store.read(ITEM_TREE) : children;
             list.forEach(function (item) {
                 results.push({ id: item.id, depth: depth });
-                results.push.apply(results, toConsumableArray($store.read('item/tree/normalize', null, item.children, depth + 1)));
+                results.push.apply(results, toConsumableArray($store.read(ITEM_TREE_NORMALIZE, null, item.children, depth + 1)));
             });
 
             return results;
         }
     }, {
-        key: GETTER('item/path'),
+        key: GETTER(ITEM_PATH),
         value: function value$$1($store, id) {
             var results = [id];
             var targetId = id;
@@ -15718,7 +15815,7 @@ var ItemSearchManager = function (_BaseModule) {
             return results;
         }
     }, {
-        key: GETTER('item/dom'),
+        key: GETTER(ITEM_DOM),
         value: function value$$1($store, id) {
             var element = document.querySelector('[item-layer-id="' + id + '"]');
 
@@ -15747,9 +15844,9 @@ var ExportManager = function (_BaseModule) {
 
             var css = Object.assign({
                 position: 'relative'
-            }, $store.read('page/toCSS', page));
+            }, $store.read(PAGE_TO_CSS, page));
 
-            return $store.read(CSS_TOSTRING, css);
+            return $store.read(CSS_TO_STRING, css);
         }
     }, {
         key: "getClassName",
@@ -15770,7 +15867,7 @@ var ExportManager = function (_BaseModule) {
     }, {
         key: "getPageHtml",
         value: function getPageHtml($store, page) {
-            var html = "<div id=\"page-1\">\n" + $store.read('item/map/children', page.id, function (item, index) {
+            var html = "<div id=\"page-1\">\n" + $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
 
                 var idString = item.idString || 'layer-' + (index + 1);
                 var className = item.className;
@@ -15787,7 +15884,7 @@ var ExportManager = function (_BaseModule) {
                     selector.push("id=\"layer-" + (index + 1) + "\"");
                 }
 
-                var clipPath = $store.read(LAYER_TOSTRING_CLIPPATH, item);
+                var clipPath = $store.read(LAYER_TO_STRING_CLIPPATH, item);
 
                 if (clipPath) {
                     clipPath = "\t\t\n" + clipPath;
@@ -15805,7 +15902,7 @@ var ExportManager = function (_BaseModule) {
         value: function getLayerStyle($store, page) {
             var _this2 = this;
 
-            var layerStyle = $store.read('item/map/children', page.id, function (item, index) {
+            var layerStyle = $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
 
                 var idString = item.idString || 'layer-' + (index + 1);
                 var className = item.className;
@@ -16403,7 +16500,7 @@ var GradientSteps = function (_UIElement) {
 
             if (!item) return EMPTY_STRING;
 
-            return this.read('item/map/children', item.id, function (step) {
+            return this.read(ITEM_MAP_CHILDREN, item.id, function (step) {
 
                 var cut = step.cut ? 'cut' : EMPTY_STRING;
                 var unitValue$$1 = _this2.read('colorstep/unit/value', step, _this2.getMaxValue());
@@ -16631,7 +16728,7 @@ var GradientSteps = function (_UIElement) {
             var parent = e.$delegateTarget.parent();
             var item = this.read(ITEM_GET, parent.attr('id'));
 
-            this.read('item/each/children', item.parentId, function (step) {
+            this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
                     step.selected = false;
                     _this4.run(ITEM_SET$1, step);
@@ -16994,7 +17091,7 @@ var GradientInfo = function (_UIElement) {
 
             var item = this.read(ITEM_GET, e.$delegateTarget.attr('colorstep-id'));
 
-            this.read('item/each/children', item.parentId, function (step) {
+            this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
                     step.selected = false;
                     _this3.run(ITEM_SET$1, step);
@@ -17238,7 +17335,7 @@ var ColorPickerLayer = function (_UIElement) {
                     this.commit(CHANGE_IMAGE_COLOR, { id: item.id, color: color });
                 } else if (this.read(IMAGE_TYPE_IS_GRADIENT, item.type)) {
 
-                    this.read('item/each/children', item.id, function (step) {
+                    this.read(ITEM_EACH_CHILDREN, item.id, function (step) {
                         if (step.selected) {
                             _this3.commit(CHANGE_COLOR_STEP, { id: step.id, color: color });
                         }
@@ -18021,7 +18118,7 @@ var BlendList = function (_BasePropertyItem) {
             return '<div>' + list.map(function (blend) {
 
                 var selected = blend == item.backgroundBlendMode ? 'selected' : EMPTY_STRING;
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ' + blend + ';">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read(BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE, item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ' + blend + ';">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE, item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join(EMPTY_STRING) + '</div>';
         }
     }, {
@@ -18094,7 +18191,7 @@ var MixBlendList = function (_BasePropertyItem) {
             return '<div>' + list.map(function (blend) {
 
                 var selected = blend == item.mixBlendMode ? 'selected' : EMPTY_STRING;
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read(BLEND_TOSTRING_WITHOUT_DIMENSION, item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
+                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read(BLEND_TO_STRING_WITHOUT_DIMENSION, item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
             }).join(EMPTY_STRING) + '</div>';
         }
     }, {
@@ -18178,7 +18275,7 @@ var FilterList$1 = function (_BasePropertyItem) {
             } else if (viewObject.type == 'multi') {
                 return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS.map(function (subkey) {
 
-                    var it = _this2.read('filter/get', subkey);
+                    var it = _this2.read(FILTER_GET, subkey);
                     var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
@@ -18201,11 +18298,11 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             if (!layer) return EMPTY_STRING;
 
-            var filterKeys = this.read('filter/list', layer.id);
+            var filterKeys = this.read(FILTER_LIST, layer.id);
 
             return filterKeys.map(function (key) {
                 var realKey = key;
-                var viewObject = _this3.read('filter/get', realKey);
+                var viewObject = _this3.read(FILTER_GET, realKey);
                 var dataObject = layer || {};
                 return "\n                <div class='filter-item'>\n                    <div class=\"filter-item-input\">\n                        " + _this3.makeInputItem(realKey, viewObject, dataObject) + "\n                    </div>\n                </div>";
             });
@@ -18443,7 +18540,7 @@ var ImageResource = function (_BasePropertyItem) {
     }, {
         key: LOAD('$imageList'),
         value: function value() {
-            return this.read('svg/list').map(function (svg, index) {
+            return this.read(SVG_LIST).map(function (svg, index) {
                 if (isObject(svg)) {
                     return "<div class='svg-item' data-key=\"" + svg.key + "\">" + svg.svg + "</div>";
                 } else {
@@ -18493,17 +18590,17 @@ var ImageResource = function (_BasePropertyItem) {
 
             if (index) {
                 this.read(SELECTION_CURRENT_IMAGE, function (image) {
-                    var file = _this2.read('svg/get/blob', +index);
+                    var file = _this2.read(SVG_GET_BLOB, +index);
                     _this2.read(IMAGE_GET_BLOB, [file], function (newImage) {
-                        _this2.dispatch('item/set/image/file', image.id, newImage);
+                        _this2.dispatch(ITEM_SET_IMAGE_FILE, image.id, newImage);
                     });
                 });
             } else if (key) {
 
                 this.read(SELECTION_CURRENT_IMAGE, function (image) {
-                    var file = _this2.read('svg/get/blob', Number.MAX_SAFE_INTEGER, key);
+                    var file = _this2.read(SVG_GET_BLOB, Number.MAX_SAFE_INTEGER, key);
                     _this2.read(IMAGE_GET_BLOB, [file], function (newImage) {
-                        _this2.dispatch('item/set/image/file', image.id, newImage);
+                        _this2.dispatch(ITEM_SET_IMAGE_FILE, image.id, newImage);
                     });
                 });
             }
@@ -18634,7 +18731,7 @@ var GroupAlign = function (_BasePropertyItem) {
     }, {
         key: CLICK('$el button'),
         value: function value(e) {
-            this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'));
+            this.dispatch(ORDERING_TYPE, e.$delegateTarget.attr('data-value'));
         }
     }]);
     return GroupAlign;
@@ -18962,7 +19059,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     }, {
         key: LOAD('$imageList'),
         value: function value$$1() {
-            return this.read('svg/list').map(function (svg, index) {
+            return this.read(SVG_LIST).map(function (svg, index) {
                 if (isObject(svg)) {
                     return "<div class='svg-item' data-key=\"" + svg.key + "\">" + svg.svg + "</div>";
                 } else {
@@ -19094,7 +19191,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
 
             if (index) {
                 this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                    var svg = _this4.read('svg/get', +index);
+                    var svg = _this4.read(SVG_GET, +index);
 
                     _this4.setClipPathSvg(id, svg, function (newValue) {
                         _this4.commit(CHANGE_LAYER, newValue);
@@ -19104,7 +19201,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
             } else if (key) {
 
                 this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                    var svg = _this4.read('svg/get', Number.MAX_SAFE_INTEGER, key);
+                    var svg = _this4.read(SVG_GET, Number.MAX_SAFE_INTEGER, key);
 
                     _this4.setClipPathSvg(id, svg, function (newValue) {
                         _this4.commit(CHANGE_LAYER, newValue);
@@ -19400,7 +19497,7 @@ var BoxShadow = function (_BasePropertyItem) {
                 return EMPTY_STRING;
             }
 
-            var results = this.read('item/map/boxshadow/children', item.id, function (item) {
+            var results = this.read(ITEM_MAP_BOXSHADOW_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeBoxShadow(item);
             });
 
@@ -19537,7 +19634,7 @@ var TextShadow = function (_BasePropertyItem) {
                 return EMPTY_STRING;
             }
 
-            var results = this.read('item/map/textshadow/children', item.id, function (item) {
+            var results = this.read(ITEM_MAP_TEXTSHADOW_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodetextShadow(item);
             });
 
@@ -21049,7 +21146,7 @@ var ImageListView = function (_UIElement) {
                 return EMPTY_STRING;
             }
 
-            return this.read('item/map/image/children', id, function (item) {
+            return this.read(ITEM_MAP_IMAGE_CHILDREN, id, function (item) {
                 return _this2.makeItemNodeImage(item);
             });
         }
@@ -21105,7 +21202,7 @@ var ImageListView = function (_UIElement) {
             var sourceId = this.draggedImage.attr('data-id');
 
             this.draggedImage = null;
-            this.dispatch('item/move/in', destId, sourceId);
+            this.dispatch(ITEM_MOVE_IN, destId, sourceId);
             this.refresh();
         }
     }, {
@@ -21117,7 +21214,7 @@ var ImageListView = function (_UIElement) {
                 var sourceId = this.draggedImage.attr('data-id');
 
                 this.draggedImage = null;
-                this.dispatch('item/move/last', sourceId);
+                this.dispatch(ITEM_MOVE_LAST, sourceId);
                 this.refresh();
             }
         }
@@ -21142,26 +21239,6 @@ var LayerToolbar = function (_UIElement) {
         key: 'components',
         value: function components() {
             return { ImageListView: ImageListView };
-        }
-    }, {
-        key: CLICK('$groupAlign button'),
-        value: function value(e) {
-            this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'));
-        }
-    }, {
-        key: CLICK('$groupOrdering button'),
-        value: function value(e) {
-            this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'));
-        }
-    }, {
-        key: CLICK('$togglePagePanel'),
-        value: function value() {
-            this.emit('togglePagePanel');
-        }
-    }, {
-        key: CLICK('$toggleLayerPanel'),
-        value: function value() {
-            this.emit('toggleLayerPanel');
         }
     }]);
     return LayerToolbar;
@@ -23221,7 +23298,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
     }, {
         key: LOAD('$imageList'),
         value: function value() {
-            return this.read('svg/list').map(function (svg, index) {
+            return this.read(SVG_LIST).map(function (svg, index) {
                 if (isObject(svg)) {
                     return "<div class='svg-item' data-key=\"" + svg.key + "\">" + svg.svg + "</div>";
                 } else {
@@ -23301,7 +23378,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
 
             if (index) {
                 this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                    var svg = _this2.read('svg/get', +index);
+                    var svg = _this2.read(SVG_GET, +index);
 
                     _this2.setClipPathSvg(id, svg, function (newValue) {
                         _this2.commit(CHANGE_LAYER_CLIPPATH, newValue);
@@ -23310,7 +23387,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
                 });
             } else if (key) {
                 this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                    var svg = _this2.read('svg/get', Number.MAX_SAFE_INTEGER, key);
+                    var svg = _this2.read(SVG_GET, Number.MAX_SAFE_INTEGER, key);
 
                     _this2.setClipPathSvg(id, svg, function (newValue) {
                         _this2.commit(CHANGE_LAYER_CLIPPATH, newValue);
@@ -23579,7 +23656,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
                     backgroundCSS = _this2.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
                 }
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TOSTRING, css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TOSTRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TO_STRING, css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TO_STRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
             });
         }
     }, {
@@ -23743,7 +23820,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.$el.children().forEach(function ($el) {
                 var item = _this3.read(ITEM_GET, $el.attr('predefined-layer-id'));
 
-                $el.cssText(_this3.read(CSS_TOSTRING, _this3.setRectangle(item)));
+                $el.cssText(_this3.read(CSS_TO_STRING, _this3.setRectangle(item)));
             });
         }
     }, {
@@ -23915,7 +23992,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var type = e.$delegateTarget.attr('data-value');
             this.currentType = type;
             var layerId = e.$delegateTarget.parent().attr('predefined-layer-id');
-            this.$dom = this.read('item/dom', layerId);
+            this.$dom = this.read(ITEM_DOM, layerId);
             this.$selectLayer = this.read(ITEM_GET, layerId);
 
             if (this.$dom) {
@@ -24995,9 +25072,9 @@ var GradientView = function (_UIElement) {
 
             this.initializeLayerCache();
 
-            var list = this.read('item/map/children', page.id, function (item, index) {
+            var list = this.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
                 var content = item.content || EMPTY_STRING;
-                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                    style=\'' + _this2.read(LAYER_TOSTRING, item, true) + '\'>' + content + _this2.read(LAYER_TOSTRING_CLIPPATH, item) + '</div>';
+                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                    style=\'' + _this2.read(LAYER_TO_STRING, item, true) + '\'>' + content + _this2.read(LAYER_TO_STRING_CLIPPATH, item) + '</div>';
             });
 
             return list;
@@ -25035,10 +25112,10 @@ var GradientView = function (_UIElement) {
                         _this3.layerItems[item.id] = $el;
                     }
 
-                    _this3.layerItems[item.id].cssText(_this3.read(LAYER_TOSTRING, item, true));
+                    _this3.layerItems[item.id].cssText(_this3.read(LAYER_TO_STRING, item, true));
 
                     var content = item.content || EMPTY_STRING;
-                    _this3.layerItems[item.id].html(content + _this3.read(LAYER_TOSTRING_CLIPPATH, item));
+                    _this3.layerItems[item.id].html(content + _this3.read(LAYER_TO_STRING_CLIPPATH, item));
                 });
             });
         }
@@ -25060,7 +25137,7 @@ var GradientView = function (_UIElement) {
                         _this4.layerItems[item.id] = $el;
                     }
 
-                    _this4.layerItems[item.id].css(_this4.read(LAYER_BOUND_TOCSS, item));
+                    _this4.layerItems[item.id].css(_this4.read(LAYER_BOUND_TO_CSS, item));
                 });
             });
         }
@@ -25070,14 +25147,14 @@ var GradientView = function (_UIElement) {
 
             var page = this.read(SELECTION_CURRENT_PAGE);
 
-            var pageCSS = this.read('page/toCSS', page || { clip: false });
+            var pageCSS = this.read(PAGE_TO_CSS, page || { clip: false });
 
             var canvasCSS = {
                 width: px$1(2000),
                 height: px$1(2000)
             };
 
-            var colorviewCSS = this.read('page/colorview/toCSS', page || { clip: false });
+            var colorviewCSS = this.read(PAGE_COLORVIEW_TO_CSS, page || { clip: false });
             this.refs.$canvas.css(canvasCSS);
             this.refs.$page.attr('title', page.name || 'page');
             this.refs.$page.css(pageCSS);
@@ -25113,8 +25190,8 @@ var GradientView = function (_UIElement) {
             this.refs.$page.toggle(item);
 
             if (item) {
-                if (item.itemType == 'page') {
-                    var count = this.read('item/count/children', item.id);
+                if (item.itemType == ITEM_TYPE_PAGE) {
+                    var count = this.read(ITEM_COUNT_CHILDREN, item.id);
                     this.refs.$colorview.toggle(count);
                 }
             }
@@ -25188,7 +25265,7 @@ var HandleView = function (_GradientView) {
             var id = e.$delegateTarget.attr('item-layer-id');
             if (id) {
                 this.dispatch(SELECTION_ONE, id);
-                this.run('item/focus', id);
+                this.run(ITEM_FOCUS, id);
             }
         }
     }, {
@@ -25340,7 +25417,7 @@ var HandleView = function (_GradientView) {
 
             if (this.read(SELECTION_IS_LAYER$1)) {
                 var items = this.read(SELECTION_CURRENT);
-                this.run('item/focus', items[0].id);
+                this.run(ITEM_FOCUS, items[0].id);
             }
 
             this.targetXY = null;
@@ -25483,9 +25560,9 @@ var Save = function (_MenuItem) {
     }
 
     createClass(Save, [{
-        key: 'clickButton',
+        key: "clickButton",
         value: function clickButton(e) {
-            this.run('storage/save');
+            this.run(STORAGE_SAVE);
         }
     }]);
     return Save;
@@ -25793,7 +25870,7 @@ var BasicGradient = function (_UIElement) {
             this.read(SELECTION_CURRENT_LAYER, function (item) {
                 var type = e.$delegateTarget.attr('data-type');
 
-                _this2.dispatch('item/prepend/image', type, true, item.id);
+                _this2.dispatch(ITEM_PREPEND_IMAGE, type, true, item.id);
                 _this2.dispatch(HISTORY_PUSH, "Add " + type + " gradient");
             });
         }
@@ -25815,7 +25892,7 @@ var GradientSampleList = function (_UIElement) {
             get$1(GradientSampleList.prototype.__proto__ || Object.getPrototypeOf(GradientSampleList.prototype), "initialize", this).call(this);
 
             this.list = this.read('gradient/list/sample', this.props.type);
-            this.dispatch('storage/load/image');
+            this.dispatch(STORAGE_LOAD_IMAGE);
         }
     }, {
         key: "template",
@@ -25833,7 +25910,7 @@ var GradientSampleList = function (_UIElement) {
                 return "\n            <div class='gradient-sample-item' data-index=\"" + index + "\">\n                <div class='preview' style='" + _this2.read(IMAGE_TO_STRING, newImage) + "'></div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                    <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                </div>          \n            </div>";
             });
 
-            var storageList = this.read('storage/images').map(function (item, index) {
+            var storageList = this.read(STORAGE_IMAGES).map(function (item, index) {
                 var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
                 return "\n                <div class='gradient-cached-item' data-index=\"" + index + "\">\n                    <div class='preview' style='" + _this2.read(IMAGE_TO_STRING, newImage) + "'></div>                \n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                    </div>          \n                </div>\n            ";
             });
@@ -25878,7 +25955,7 @@ var GradientSampleList = function (_UIElement) {
         key: CLICK('$el .gradient-cached-item .add-item'),
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
-            var image = this.read('storage/images', index);
+            var image = this.read(STORAGE_IMAGES, index);
             var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
 
             this.dispatch('gradient/image/add', this.read(ITEM_CONVERT_STYLE, newImage));
@@ -25887,7 +25964,7 @@ var GradientSampleList = function (_UIElement) {
         key: CLICK('$el .gradient-cached-item .change-item'),
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
-            var image = this.read('storage/images', index);
+            var image = this.read(STORAGE_IMAGES, index);
             var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
 
             this.dispatch('gradient/image/select', this.read(ITEM_CONVERT_STYLE, newImage));
@@ -25900,7 +25977,7 @@ var GradientSampleList = function (_UIElement) {
             this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
                 var newImage = _this3.read(COLLECT_IMAGE_ONE, id);
 
-                _this3.dispatch('storage/add/image', newImage);
+                _this3.dispatch(STORAGE_ADD_IMAGE, newImage);
                 _this3.refresh();
             });
         }
@@ -25922,7 +25999,7 @@ var LayerSampleList = function (_UIElement) {
             get$1(LayerSampleList.prototype.__proto__ || Object.getPrototypeOf(LayerSampleList.prototype), "initialize", this).call(this);
 
             this.list = this.read(LAYER_LIST_SAMPLE, this.props.type);
-            this.dispatch('storage/load/layer');
+            this.dispatch(STORAGE_LOAD_LAYER);
         }
     }, {
         key: "template",
@@ -25937,7 +26014,7 @@ var LayerSampleList = function (_UIElement) {
 
             var list = this.list.map(function (item, index) {
 
-                var data = _this2.read(LAYER_CACHE_TOSTRING, item);
+                var data = _this2.read(LAYER_CACHE_TO_STRING, item);
 
                 var rateX = 60 / unitValue(data.obj.width);
                 var rateY = 62 / unitValue(data.obj.height);
@@ -25947,8 +26024,8 @@ var LayerSampleList = function (_UIElement) {
                 return "\n            <div class='layer-sample-item'  data-sample-id=\"" + item.id + "\">\n                <div class=\"layer-view\" style=\"" + data.css + "; " + transform + "\"></div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>          \n            </div>";
             });
 
-            var storageList = this.read('storage/layers').map(function (item) {
-                var data = _this2.read(LAYER_CACHE_TOSTRING, item);
+            var storageList = this.read(STORAGE_LAYERS).map(function (item) {
+                var data = _this2.read(LAYER_CACHE_TO_STRING, item);
 
                 var rateX = 60 / unitValue(item.layer.width);
                 var rateY = 62 / unitValue(item.layer.height);
@@ -25993,7 +26070,7 @@ var LayerSampleList = function (_UIElement) {
 
             if (newLayer) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    _this3.dispatch('item/addCache', newLayer, layer.id);
+                    _this3.dispatch(ITEM_ADD_CACHE, newLayer, layer.id);
                 });
             }
         }
@@ -26002,18 +26079,18 @@ var LayerSampleList = function (_UIElement) {
         value: function value$$1(e) {
             var _this4 = this;
 
-            var newLayer = this.read('storage/layers', e.$delegateTarget.attr('data-sample-id'));
+            var newLayer = this.read(STORAGE_LAYERS, e.$delegateTarget.attr('data-sample-id'));
 
             if (newLayer) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    _this4.dispatch('item/addCache', newLayer, layer.id);
+                    _this4.dispatch(ITEM_ADD_CACHE, newLayer, layer.id);
                 });
             }
         }
     }, {
         key: CLICK('$el .layer-cached-item .delete-item'),
         value: function value$$1(e) {
-            this.dispatch('storage/remove/layer', e.$delegateTarget.attr('data-sample-id'));
+            this.dispatch(STORAGE_REMOVE_LAYER, e.$delegateTarget.attr('data-sample-id'));
             this.refresh();
         }
     }, {
@@ -26024,7 +26101,7 @@ var LayerSampleList = function (_UIElement) {
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
                 var newLayer = _this5.read(COLLECT_LAYER_ONE, layer.id);
 
-                _this5.dispatch('storage/add/layer', newLayer);
+                _this5.dispatch(STORAGE_ADD_LAYER, newLayer);
                 _this5.refresh();
             });
         }
@@ -26083,7 +26160,7 @@ var PageSampleList = function (_UIElement) {
             get$1(PageSampleList.prototype.__proto__ || Object.getPrototypeOf(PageSampleList.prototype), "initialize", this).call(this);
 
             this.list = [];
-            this.dispatch('storage/load/page');
+            this.dispatch(STORAGE_LOAD_PAGE);
         }
     }, {
         key: "template",
@@ -26097,7 +26174,7 @@ var PageSampleList = function (_UIElement) {
             var _this2 = this;
 
             var list = this.list.map(function (page, index) {
-                var data = _this2.read('page/cache/toString', page);
+                var data = _this2.read(PAGE_CACHE_TO_STRING, page);
 
                 var rateX = 72 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
                 var rateY = 70 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
@@ -26105,15 +26182,15 @@ var PageSampleList = function (_UIElement) {
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
                 return "\n            <div class='page-sample-item'  data-sample-id=\"" + page.id + "\">\n                <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                " + page.layers.map(function (layer) {
-                    var data = _this2.read(LAYER_CACHE_TOSTRING, layer);
+                    var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "\n                        <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                    ";
                 }).join(EMPTY_STRING) + "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>";
             });
 
-            var storageList = this.read('storage/pages').map(function (page) {
+            var storageList = this.read(STORAGE_PAGES).map(function (page) {
                 var samplePage = _this2.read(ITEM_CONVERT_STYLE, page.page);
 
-                var data = _this2.read('page/cache/toString', samplePage);
+                var data = _this2.read(PAGE_CACHE_TO_STRING, samplePage);
                 var rateX = 72 / unitValue(defaultValue(samplePage.width, pxUnit(400)));
                 var rateY = 70 / unitValue(defaultValue(samplePage.height, pxUnit(300)));
 
@@ -26122,7 +26199,7 @@ var PageSampleList = function (_UIElement) {
                 var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
 
                 return "\n                <div class='page-cached-item' data-sample-id=\"" + page.id + "\">\n                    <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                    " + page.layers.map(function (layer) {
-                    var data = _this2.read(LAYER_CACHE_TOSTRING, layer);
+                    var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "\n                            <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                        ";
                 }).join(EMPTY_STRING) + "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"" + page.id + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"" + page.id + "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            ";
             });
@@ -26160,8 +26237,8 @@ var PageSampleList = function (_UIElement) {
 
             if (newPage) {
                 this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    _this3.dispatch('item/addCache', newPage, id);
-                    _this3.emit('changePage');
+                    _this3.dispatch(ITEM_ADD_CACHE, newPage, id);
+                    _this3.emit(CHANGE_PAGE);
                 });
             }
         }
@@ -26170,18 +26247,18 @@ var PageSampleList = function (_UIElement) {
         value: function value$$1(e) {
             var _this4 = this;
 
-            var newPage = this.read('storage/pages', e.$delegateTarget.attr('data-sample-id'));
+            var newPage = this.read(STORAGE_PAGES, e.$delegateTarget.attr('data-sample-id'));
             if (newPage) {
                 this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    _this4.dispatch('item/addCache', newPage, id);
-                    _this4.emit('changePage');
+                    _this4.dispatch(ITEM_ADD_CACHE, newPage, id);
+                    _this4.emit(CHANGE_PAGE);
                 });
             }
         }
     }, {
         key: CLICK('$el .page-cached-item .delete-item'),
         value: function value$$1(e) {
-            this.dispatch('storage/remove/page', e.$delegateTarget.attr('data-sample-id'));
+            this.dispatch(STORAGE_REMOVE_PAGE, e.$delegateTarget.attr('data-sample-id'));
             this.refresh();
         }
     }, {
@@ -26192,7 +26269,7 @@ var PageSampleList = function (_UIElement) {
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
                 var newPage = _this5.read(COLLECT_PAGE_ONE, id);
 
-                _this5.dispatch('storage/add/page', newPage);
+                _this5.dispatch(STORAGE_ADD_PAGE, newPage);
                 _this5.refresh();
             });
         }
@@ -26244,7 +26321,7 @@ var PageListView = function (_UIElement) {
         value: function value$$1() {
             var _this2 = this;
 
-            var str = this.read('item/map/page', function (item, index) {
+            var str = this.read(ITEM_MAP_PAGE, function (item, index) {
                 return _this2.makeItemNode(item, index);
             }).join(EMPTY_STRING);
 
@@ -26280,7 +26357,7 @@ var PageListView = function (_UIElement) {
     }, {
         key: CLICK('$saveButton'),
         value: function value$$1(e) {
-            this.run('storage/save');
+            this.run(STORAGE_SAVE);
         }
     }, {
         key: CLICK('$viewSample'),
@@ -26332,7 +26409,7 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return "\n            <div class='tree-item " + selected + "' id=\"" + item.id + "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> \n                    " + (index + 1) + ". " + (item.name || "Layer ") + " \n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                </div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='copy-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>                            \n            </div>\n            <div class=\"gradient-list-group\" >\n                <!-- <div class='gradient-collapse-button' item-id=\"" + item.id + "\"></div> -->\n                <div class=\"tree-item-children\">\n                    " + this.read('item/map/image/children', item.id, function (item) {
+            return "\n            <div class='tree-item " + selected + "' id=\"" + item.id + "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> \n                    " + (index + 1) + ". " + (item.name || "Layer ") + " \n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                </div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='copy-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>                            \n            </div>\n            <div class=\"gradient-list-group\" >\n                <!-- <div class='gradient-collapse-button' item-id=\"" + item.id + "\"></div> -->\n                <div class=\"tree-item-children\">\n                    " + this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }).join(EMPTY_STRING) + "\n                </div>\n            </div>       \n            ";
         }
@@ -26347,7 +26424,7 @@ var LayerListView = function (_UIElement) {
                 return EMPTY_STRING;
             }
 
-            return this.read('item/map/children', page.id, function (item, index) {
+            return this.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
                 return _this3.makeItemNode(item, index);
             }).reverse();
         }
@@ -26383,7 +26460,7 @@ var LayerListView = function (_UIElement) {
         value: function value$$1(e) {
             var id = e.$delegateTarget.attr('id');
             this.dispatch(SELECTION_ONE, id);
-            this.run('item/focus', id);
+            this.run(ITEM_FOCUS, id);
             this.refreshSelection(id);
         }
     }, {
@@ -26420,18 +26497,18 @@ var LayerListView = function (_UIElement) {
             this.draggedLayer = null;
             if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
                 if (e.ctrlKey) {
-                    this.dispatch('item/copy/in/layer', destId, sourceId);
+                    this.dispatch(ITEM_COPY_IN_LAYER, destId, sourceId);
                 } else {
-                    this.dispatch('item/move/in/layer', destId, sourceId);
+                    this.dispatch(ITEM_MOVE_IN_LAYER, destId, sourceId);
                 }
 
                 this.dispatch(HISTORY_PUSH, "Change gradient position ");
                 this.refresh();
             } else if (destItem.itemType == sourceItem.itemType) {
                 if (e.ctrlKey) {
-                    this.dispatch('item/copy/in', destId, sourceId);
+                    this.dispatch(ITEM_COPY_IN, destId, sourceId);
                 } else {
-                    this.dispatch('item/move/in', destId, sourceId);
+                    this.dispatch(ITEM_MOVE_IN, destId, sourceId);
                 }
                 this.dispatch(HISTORY_PUSH, "Change item position ");
                 this.refresh();
@@ -26446,7 +26523,7 @@ var LayerListView = function (_UIElement) {
                 var sourceId = this.draggedLayer.attr('id');
 
                 this.draggedLayer = null;
-                this.dispatch('item/move/last', sourceId);
+                this.dispatch(ITEM_MOVE_LAST, sourceId);
                 this.dispatch(HISTORY_PUSH, "Change layer position ");
                 this.refresh();
             }
@@ -26454,14 +26531,14 @@ var LayerListView = function (_UIElement) {
     }, {
         key: CLICK('$layerList .copy-image-item'),
         value: function value$$1(e) {
-            this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.dispatch(ITEM_ADD_COPY, e.$delegateTarget.attr('item-id'));
             this.dispatch(HISTORY_PUSH, "Add a gradient");
             this.refresh();
         }
     }, {
         key: CLICK('$layerList .copy-item'),
         value: function value$$1(e) {
-            this.dispatch('item/addCopy', e.$delegateTarget.attr('item-id'));
+            this.dispatch(ITEM_ADD_COPY, e.$delegateTarget.attr('item-id'));
             this.dispatch(HISTORY_PUSH, "Copy a layer");
             this.refresh();
         }
@@ -26537,12 +26614,12 @@ var Alignment = function (_UIElement) {
     }, {
         key: CLICK('$groupAlign button'),
         value: function value(e) {
-            this.dispatch('ordering/type', e.$delegateTarget.attr('data-value'));
+            this.dispatch(ORDERING_TYPE, e.$delegateTarget.attr('data-value'));
         }
     }, {
         key: CLICK('$groupOrdering button'),
         value: function value(e) {
-            this.dispatch('ordering/index', e.$delegateTarget.attr('data-value'));
+            this.dispatch(ORDERING_INDEX, e.$delegateTarget.attr('data-value'));
         }
     }]);
     return Alignment;
@@ -26627,11 +26704,11 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
         value: function loadStart(isAdd) {
             var _this3 = this;
 
-            this.dispatch('storage/load', function (isLoaded) {
+            this.dispatch(STORAGE_LOAD, function (isLoaded) {
                 if (!isLoaded && isAdd) {
                     _this3.dispatch(ITEM_ADD_PAGE, true);
                 } else {
-                    _this3.dispatch('item/load');
+                    _this3.dispatch(ITEM_LOAD);
                 }
                 _this3.emit(CHANGE_PAGE);
             });

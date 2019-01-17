@@ -7,11 +7,12 @@ import {
     ITEM_TYPE_TEXTSHADOW, 
     ITEM_TYPE_PAGE, 
     ITEM_GET
-} from "./ItemTypes";
+} from "../types/ItemTypes";
 import { unitValue, pxUnit, EMPTY_STRING } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
-import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "./SelectionTypes";
+import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "../types/SelectionTypes";
+import { ITEM_FILTER, ITEM_PATH } from "../types/ItemSearchTypes";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -233,7 +234,7 @@ export default class SelectionManager extends BaseModule {
     [GETTER(SELECTION_CURRENT_PAGE)] ($store, callback) {
 
         var pages = $store.read(SELECTION_CURRENT).map(it => {
-            var path = $store.read('item/path', it.id)
+            var path = $store.read(ITEM_PATH, it.id)
             return $store.read(ITEM_GET, path[path.length-1])
         });
 
@@ -249,7 +250,7 @@ export default class SelectionManager extends BaseModule {
     [GETTER(SELECTION_CURRENT_PAGE_ID)] ($store, callback) {
        
         var pages = $store.read(SELECTION_CURRENT).map(it => {
-            var path = $store.read('item/path', it.id)
+            var path = $store.read(ITEM_PATH, it.id)
             return $store.read(ITEM_GET, path[path.length-1])
         });
 
@@ -328,7 +329,7 @@ export default class SelectionManager extends BaseModule {
     }        
 
     [GETTER(SELECTION_LAYERS)] ($store) {
-        return $store.read('item/filter', (id) => {
+        return $store.read(ITEM_FILTER, (id) => {
             return $store.items[id].itemType == ITEM_TYPE_LAYER
         }).map(id => {
             var {x, y, width, height} = $store.items[id]

@@ -9,8 +9,9 @@ import {
     CHANGE_SELECTION
 } from '../../../../../types/event';
 import { isNotUndefined } from '../../../../../../util/functions/func';
-import { SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../../module/SelectionTypes';
-import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_GRADIENT } from '../../../../../module/ImageTypes';
+import { SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../../types/SelectionTypes';
+import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_GRADIENT } from '../../../../../types/ImageTypes';
+import { ITEM_EACH_CHILDREN } from '../../../../../types/ItemSearchTypes';
 
 export default class ColorPickerLayer extends UIElement {
 
@@ -50,7 +51,7 @@ export default class ColorPickerLayer extends UIElement {
                 this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
             } else if (this.read(IMAGE_TYPE_IS_GRADIENT,item.type)) {
 
-                this.read('item/each/children', item.id, (step) => {
+                this.read(ITEM_EACH_CHILDREN, item.id, (step) => {
                     if (step.selected) {
                         this.commit(CHANGE_COLOR_STEP, {id: step.id, color})
                     }

@@ -2,7 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_LAYER_POSITION } from "../types/event";
 import { pxUnit, unitValue } from "../../util/css/types";
 import { ACTION } from "../../util/Store";
-import { ITEM_SET, ITEM_GET } from "./ItemTypes";
+import { ITEM_SET, ITEM_GET } from "../types/ItemTypes";
 
 
 export default class MatrixManager extends BaseModule {

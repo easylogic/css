@@ -3,7 +3,7 @@ import { CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM } f
 import { UNIT_PERCENT, unitString, unitValue, percentUnit, pxUnit, UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../types/SelectionTypes";
 
 export default class Page3D extends UIElement {
     template () {

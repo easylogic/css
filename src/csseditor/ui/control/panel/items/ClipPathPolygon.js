@@ -8,11 +8,11 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
-import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
+import { CLIP_PATH_TYPE_POLYGON } from "../../../../types/ItemTypes";
 import { defaultValue, isUndefined } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
-import { CLIPPATH_SAMPLE_LIST, CLIPPATH_SAMPLE_GET } from "../../../../module/ClipPathTypes";
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { CLIPPATH_SAMPLE_LIST, CLIPPATH_SAMPLE_GET } from "../../../../types/ClipPathTypes";
 
 export default class ClipPathPolygon extends BasePropertyItem {
     template () {

@@ -2,10 +2,11 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_FILTER } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
-import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
+import { FILTER_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { isUndefined, clone } from "../../../../../util/functions/func";
-import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { FILTER_GET, FILTER_LIST } from "../../../../types/FilterTypes";
 
 const DROPSHADOW_FILTER_KEYS = [
     'filterDropshadowOffsetX',
@@ -63,7 +64,7 @@ export default class FilterList extends BasePropertyItem {
             <div class='items'>
                 ${DROPSHADOW_FILTER_KEYS.map(subkey => {
                     
-                    var it = this.read('filter/get', subkey);
+                    var it = this.read(FILTER_GET, subkey);
                     var value = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
@@ -102,11 +103,11 @@ export default class FilterList extends BasePropertyItem {
 
         if (!layer) return EMPTY_STRING 
 
-        var filterKeys = this.read('filter/list', layer.id) 
+        var filterKeys = this.read(FILTER_LIST, layer.id) 
 
         return filterKeys.map(key => {
             var realKey = key
-            var viewObject = this.read('filter/get', realKey);
+            var viewObject = this.read(FILTER_GET, realKey);
             var dataObject = layer || {}
              return `
                 <div class='filter-item'>

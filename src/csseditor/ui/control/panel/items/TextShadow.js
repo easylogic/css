@@ -8,12 +8,13 @@ import {
     TEXT_FILL_COLOR
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
+import { ITEM_TYPE_TEXTSHADOW } from '../../../../types/ItemTypes';
 import { px, unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
-import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../module/SelectionTypes';
-import { HISTORY_PUSH } from '../../../../module/HistoryTypes';
+import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../types/ItemCreateTypes';
+import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../types/SelectionTypes';
+import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
+import { ITEM_MAP_TEXTSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -80,7 +81,7 @@ export default class TextShadow extends BasePropertyItem {
         var item = this.read(SELECTION_CURRENT_LAYER)
         if (!item) { return EMPTY_STRING; }
 
-        var results =  this.read('item/map/textshadow/children', item.id, (item) => {
+        var results =  this.read(ITEM_MAP_TEXTSHADOW_CHILDREN, item.id, (item) => {
             return this.makeItemNodetextShadow(item)
         })
 

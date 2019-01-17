@@ -3,8 +3,9 @@ import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "..
 import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 import { UNIT_PX, UNIT_EM, UNIT_PERCENT, isPercent, isPX, isEM, EMPTY_STRING } from "../../../../util/css/types";
 import { CLICK, INPUT, CHANGE, LOAD } from "../../../../util/Event";
-import { ITEM_SET, ITEM_GET } from "../../../module/ItemTypes";
-import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "../../../module/SelectionTypes";
+import { ITEM_SET, ITEM_GET } from "../../../types/ItemTypes";
+import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";
+import { ITEM_EACH_CHILDREN } from "../../../types/ItemSearchTypes";
 
 function checkPxEm(unit) {
     return [UNIT_PX, UNIT_EM].includes(unit);
@@ -126,7 +127,7 @@ export default class GradientInfo extends UIElement {
     selectStep (e) {
         var item = this.read(ITEM_GET, e.$delegateTarget.attr('colorstep-id'));
             
-        this.read('item/each/children', item.parentId, (step) => {
+        this.read(ITEM_EACH_CHILDREN, item.parentId, (step) => {
             if (step.selected) {
                 step.selected = false; 
                 this.run(ITEM_SET, step);

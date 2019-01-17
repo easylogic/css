@@ -1,10 +1,12 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
-import { SELECTION_CURRENT_PAGE } from "./SelectionTypes";
-import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "./ExportTpyes";
-import { CSS_TOSTRING } from "./CssTypes";
-import { LAYER_TOSTRING_CLIPPATH, LAYER_TOEXPORT } from "./LayerTypes";
+import { SELECTION_CURRENT_PAGE } from "../types/SelectionTypes";
+import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "../types/ExportTpyes";
+import { CSS_TO_STRING } from "../types/CssTypes";
+import { LAYER_TO_STRING_CLIPPATH, LAYER_TOEXPORT } from "../types/LayerTypes";
 import { EMPTY_STRING } from "../../util/css/types";
+import { ITEM_MAP_CHILDREN } from "../types/ItemSearchTypes";
+import { PAGE_TO_CSS } from "../types/PageTypes";
 
 
 export default class ExportManager extends BaseModule {
@@ -14,10 +16,10 @@ export default class ExportManager extends BaseModule {
         var css = Object.assign({ 
                 position: 'relative' 
             },
-            $store.read('page/toCSS', page) 
+            $store.read(PAGE_TO_CSS, page) 
         )
 
-        return $store.read(CSS_TOSTRING, css);
+        return $store.read(CSS_TO_STRING, css);
     }
 
     getClassName (className) {
@@ -33,7 +35,7 @@ export default class ExportManager extends BaseModule {
     }
 
     getPageHtml ($store, page) {
-        var html = `<div id="page-1">\n${$store.read('item/map/children', page.id, (item, index) => {
+        var html = `<div id="page-1">\n${$store.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
 
             var idString = item.idString || 'layer-' + (index+1)
             var className = item.className
@@ -51,7 +53,7 @@ export default class ExportManager extends BaseModule {
             }
 
 
-            var clipPath = $store.read(LAYER_TOSTRING_CLIPPATH, item);
+            var clipPath = $store.read(LAYER_TO_STRING_CLIPPATH, item);
 
             if (clipPath) {
                 clipPath = `\t\t\n${clipPath}`
@@ -67,7 +69,7 @@ export default class ExportManager extends BaseModule {
     }
 
     getLayerStyle ($store, page) {
-        var layerStyle = $store.read('item/map/children', page.id, (item, index) => {
+        var layerStyle = $store.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
 
             var idString = item.idString || 'layer-' + (index+1)
             var className = item.className

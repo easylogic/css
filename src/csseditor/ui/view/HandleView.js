@@ -1,9 +1,9 @@
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
-import { ITEM_TYPE_PAGE } from '../../module/ItemTypes';
+import { ITEM_TYPE_PAGE, ITEM_FOCUS } from '../../types/ItemTypes';
 import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, KEYDOWN, SELF, CHECKER } from '../../../util/Event';
 import { ARROW_DOWN, ARROW_UP, ARROW_LEFT, ARROW_RIGHT } from '../../../util/Key';
-import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER } from '../../module/SelectionTypes';
+import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER } from '../../types/SelectionTypes';
 
 export default class HandleView extends GradientView {
 
@@ -16,7 +16,7 @@ export default class HandleView extends GradientView {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
             this.dispatch(SELECTION_ONE, id);
-            this.run('item/focus', id);
+            this.run(ITEM_FOCUS, id);
         }
     }
 
@@ -154,7 +154,7 @@ export default class HandleView extends GradientView {
         
         if (this.read(SELECTION_IS_LAYER)) {
             var items = this.read(SELECTION_CURRENT);
-            this.run('item/focus', items[0].id);                 
+            this.run(ITEM_FOCUS, items[0].id);                 
         }
 
 

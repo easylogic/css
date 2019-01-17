@@ -6,7 +6,7 @@ import {
     CHANGE_SELECTION,
     TEXT_FILL_COLOR
 } from '../../../../../types/event';
-import { ITEM_GET } from '../../../../../module/ItemTypes';
+import { ITEM_GET } from '../../../../../types/ItemTypes';
 
 export default class TextFillColorPicker extends UIElement {
  

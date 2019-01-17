@@ -7,7 +7,7 @@ import {
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
 import { percentUnit, EMPTY_STRING } from '../../../../util/css/types';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
+import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
 
 export default class BackgroundResizer extends UIElement {
 

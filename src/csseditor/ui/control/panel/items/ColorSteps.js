@@ -2,7 +2,7 @@ import GradientSteps from "../../colorsteps/GradientSteps";
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { IMAGE_TYPE_IS_GRADIENT } from "../../../../module/ImageTypes";
+import { IMAGE_TYPE_IS_GRADIENT } from "../../../../types/ImageTypes";
 
 export default class ColorSteps extends BasePropertyItem {
     template () {

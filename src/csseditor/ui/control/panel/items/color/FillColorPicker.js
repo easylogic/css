@@ -5,7 +5,7 @@ import {
     CHANGE_EDITOR,
     CHANGE_SELECTION
 } from '../../../../../types/event';
-import { ITEM_GET } from '../../../../../module/ItemTypes';
+import { ITEM_GET } from '../../../../../types/ItemTypes';
 
 export default class FillColorPicker extends UIElement {
 

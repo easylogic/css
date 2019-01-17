@@ -41,8 +41,11 @@ import {
 } from '../../types/event';
 import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD } from '../../../util/Event';
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../module/SelectionTypes';
-import { LAYER_TOSTRING, LAYER_TOSTRING_CLIPPATH, LAYER_BOUND_TOCSS } from '../../module/LayerTypes';
+import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../types/SelectionTypes';
+import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH, LAYER_BOUND_TO_CSS } from '../../types/LayerTypes';
+import { ITEM_MAP_CHILDREN, ITEM_COUNT_CHILDREN } from '../../types/ItemSearchTypes';
+import { PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS } from '../../types/PageTypes';
+import { ITEM_TYPE_PAGE } from '../../types/ItemTypes';
 
 
 
@@ -99,14 +102,14 @@ export default class GradientView extends UIElement {
 
         this.initializeLayerCache();
 
-        var list = this.read('item/map/children', page.id, (item, index) => {
+        var list = this.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
             var content = item.content || EMPTY_STRING;
             return `<div 
                     tabindex='${index}'
                     class='layer' 
                     item-layer-id="${item.id}" 
                     title="${index+1}. ${item.name || 'Layer'}" 
-                    style='${this.read(LAYER_TOSTRING, item, true)}'>${content}${this.read(LAYER_TOSTRING_CLIPPATH, item)}</div>`
+                    style='${this.read(LAYER_TO_STRING, item, true)}'>${content}${this.read(LAYER_TO_STRING_CLIPPATH, item)}</div>`
         });
 
         return list; 
@@ -141,10 +144,10 @@ export default class GradientView extends UIElement {
                     this.layerItems[item.id] = $el; 
                 }
 
-                this.layerItems[item.id].cssText(this.read(LAYER_TOSTRING, item, true))
+                this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
                 var content = item.content || EMPTY_STRING;
-                this.layerItems[item.id].html(content + this.read(LAYER_TOSTRING_CLIPPATH, item))
+                this.layerItems[item.id].html(content + this.read(LAYER_TO_STRING_CLIPPATH, item))
             })
         })
     }
@@ -163,7 +166,7 @@ export default class GradientView extends UIElement {
                     this.layerItems[item.id] = $el; 
                 }
 
-                this.layerItems[item.id].css(this.read(LAYER_BOUND_TOCSS, item))            
+                this.layerItems[item.id].css(this.read(LAYER_BOUND_TO_CSS, item))            
             })
         })
     }    
@@ -172,14 +175,14 @@ export default class GradientView extends UIElement {
 
         var page = this.read(SELECTION_CURRENT_PAGE);
 
-        var pageCSS = this.read('page/toCSS', page || {clip: false});
+        var pageCSS = this.read(PAGE_TO_CSS, page || {clip: false});
 
         var canvasCSS = {
             width: px( 2000 ),
             height: px( 2000 )
         }
 
-        var colorviewCSS = this.read('page/colorview/toCSS', page || {clip: false});
+        var colorviewCSS = this.read(PAGE_COLORVIEW_TO_CSS, page || {clip: false});
         this.refs.$canvas.css(canvasCSS)
         this.refs.$page.attr('title', page.name || 'page');
         this.refs.$page.css(pageCSS)
@@ -216,8 +219,8 @@ export default class GradientView extends UIElement {
 
 
         if (item) {
-            if (item.itemType == 'page') {
-                var count = this.read('item/count/children', item.id);
+            if (item.itemType == ITEM_TYPE_PAGE) {
+                var count = this.read(ITEM_COUNT_CHILDREN, item.id);
                 this.refs.$colorview.toggle(count)
             }
         }

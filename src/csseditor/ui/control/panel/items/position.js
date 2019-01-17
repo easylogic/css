@@ -3,8 +3,8 @@ import { CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, unitValue, pxUnit } from "../../../../../util/css/types";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { ITEM_SET } from "../../../../module/ItemTypes";
-import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { ITEM_SET } from "../../../../types/ItemTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class Position extends BasePropertyItem {
     template () {

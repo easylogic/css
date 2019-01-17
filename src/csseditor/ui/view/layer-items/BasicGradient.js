@@ -1,7 +1,8 @@
 import UIElement from "../../../../colorpicker/UIElement";
 import { CLICK } from "../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../module/SelectionTypes";
-import { HISTORY_PUSH } from "../../../module/HistoryTypes";
+import { SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";
+import { HISTORY_PUSH } from "../../../types/HistoryTypes";
+import { ITEM_PREPEND_IMAGE } from "../../../types/ItemCreateTypes";
 
 export default class BasicGradient extends UIElement  {
 
@@ -39,7 +40,7 @@ export default class BasicGradient extends UIElement  {
         this.read(SELECTION_CURRENT_LAYER, (item) => {
             var type = e.$delegateTarget.attr('data-type')
 
-            this.dispatch('item/prepend/image', type, true, item.id)
+            this.dispatch(ITEM_PREPEND_IMAGE, type, true, item.id)
             this.dispatch(HISTORY_PUSH, `Add ${type} gradient` );        
         }); 
     }     

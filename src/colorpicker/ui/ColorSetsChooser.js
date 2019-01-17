@@ -79,7 +79,7 @@ export default class ColorSetsChooser extends UIElement {
     [CLICK('$colorsetsList .colorsets-item')] (e, $dt) {
         if ($dt) {
 
-            const index = parseInt($item.attr(DATA_COLORSETS_INDEX));
+            const index = parseInt($dt.attr(DATA_COLORSETS_INDEX));
 
             this.dispatch('setCurrentColorSets', index);
 

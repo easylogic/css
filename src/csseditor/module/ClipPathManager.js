@@ -9,12 +9,12 @@ import {
     CLIP_PATH_SIDE_TYPE_FARTHEST,
     CLIP_PATH_SIDE_TYPE_NONE,
     CLIP_PATH_TYPE_INSET
-} from "./ItemTypes";
+} from "../types/ItemTypes";
 import { percent, stringUnit, percentUnit, value2px, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
 import clipPathList from './clip-path/index'
 import { GETTER } from "../../util/Store";
-import { CLIPPATH_MAKE_CIRCLE, CLIPPATH_SAMPLE_LIST, CLIPPATH_SAMPLE_GET, CLIPPATH_MAKE_ELLIPSE, CLIPPATH_MAKE_INSET, CLIPPATH_MAKE_POLYGON, CLIPPATH_MAKE_SVG, CLIPPATH_TOCSS } from "./ClipPathTypes";
+import { CLIPPATH_MAKE_CIRCLE, CLIPPATH_SAMPLE_LIST, CLIPPATH_SAMPLE_GET, CLIPPATH_MAKE_ELLIPSE, CLIPPATH_MAKE_INSET, CLIPPATH_MAKE_POLYGON, CLIPPATH_MAKE_SVG, CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
 
 const SQRT_2 = Math.sqrt(2);
 
@@ -175,7 +175,7 @@ export default class ClipPathManager extends BaseModule {
         }
     }
 
-    [GETTER(CLIPPATH_TOCSS)] ($store, layer) {
+    [GETTER(CLIPPATH_TO_CSS)] ($store, layer) {
         var clipPath = null;
         if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
             clipPath = CLIP_PATH_TYPE_NONE;

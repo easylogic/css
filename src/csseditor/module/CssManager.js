@@ -1,7 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { parseParamNumber } from "../../util/gl/filter/util";
 import { GETTER } from "../../util/Store";
-import { CSS_SORTING, CSS_FILTERING, CSS_TOSTRING, CSS_GENERATE } from "./CssTypes";
+import { CSS_SORTING, CSS_FILTERING, CSS_TO_STRING, CSS_GENERATE } from "../types/CssTypes";
 
 var ordering = {
     'position': 1,
@@ -96,7 +96,7 @@ export default class CssManager extends BaseModule {
         return newStyle;
     }    
 
-    [GETTER(CSS_TOSTRING)] ($store, style) {
+    [GETTER(CSS_TO_STRING)] ($store, style) {
         var newStyle = $store.read(CSS_SORTING, style);        
 
         return Object.keys(newStyle).filter(key => {
