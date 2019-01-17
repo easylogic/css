@@ -60,7 +60,7 @@ export default class MoveGuide extends UIElement {
     }
 
     isShow() {
-        return  this.read('tool/get', 'moving');
+        return  this.config('moving');
     }
 
     [EVENT(

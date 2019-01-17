@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_SELECTION } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_SELECTION, CHANGE_TOOL } from '../../../types/event';
 import { CLICK } from '../../../../util/Event';
 import { SELECTION_CURRENT_IMAGE_ID, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../types/SelectionTypes';
 import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../types/ImageTypes';
@@ -37,14 +37,14 @@ export default class PredefinedRadialGradientPosition extends UIElement {
         var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, image.type);
         var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
 
-        return this.read('tool/get', 'guide.angle') && (isRadial || isConic);
+        return this.config('guide.angle') && (isRadial || isConic);
     }
 
     [EVENT(
         CHANGE_IMAGE_RADIAL_POSITION,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        'changeTool'
+        CHANGE_TOOL
     )] () { 
         this.refresh() 
     }

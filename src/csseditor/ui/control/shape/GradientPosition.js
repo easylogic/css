@@ -54,7 +54,7 @@ export default class GradientPosition extends UIElement {
             return false; 
         }
 
-        return this.read('tool/get', 'guide.angle')
+        return this.config('guide.angle')
     }
 
     getCurrentXY(e, position) {

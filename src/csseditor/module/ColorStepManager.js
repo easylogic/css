@@ -10,6 +10,7 @@ import { SELECTION_CURRENT_IMAGE } from "../types/SelectionTypes";
 import { COLORSTEP_COLOR_SOURCE, COLORSTEP_CURRENT, COLORSTEP_LIST, COLORSTEP_INIT_COLOR, COLORSTEP_ADD, COLORSTEP_REMOVE, COLORSTEP_SORT, COLORSTEP_SORT_LIST, COLORSTEP_CURRENT_INDEX, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON, COLORSTEP_UNIT_VALUE, COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT } from "../types/ColorStepTypes";
 import { ITEM_CREATE_COLORSTEP } from "../types/ItemCreateTypes";
 import { ITEM_MAP_CHILDREN, ITEM_LIST_CHILDREN } from "../types/ItemSearchTypes";
+import { TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR } from "../types/ToolTypes";
 
 const INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP
 
@@ -41,8 +42,8 @@ export default class ColorStepManager extends BaseModule {
     }
 
     [ACTION(COLORSTEP_INIT_COLOR)] ($store, color) {
-        $store.run('tool/setColorSource',INIT_COLOR_SOURCE);
-        $store.run('tool/changeColor', color);
+        $store.run(TOOL_SET_COLOR_SOURCE,INIT_COLOR_SOURCE);
+        $store.run(TOOL_CHANGE_COLOR, color);
     }    
 
     [ACTION(COLORSTEP_ADD)] ($store, item, percent) {

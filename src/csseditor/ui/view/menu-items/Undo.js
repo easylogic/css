@@ -1,4 +1,5 @@
 import MenuItem from "./MenuItem";
+import { HISTORY_UNDO } from "../../../types/HistoryTypes";
 
 export default class Undo extends MenuItem {
     constructor(opt = {}, props = {}, parent = null) {
@@ -9,6 +10,6 @@ export default class Undo extends MenuItem {
     }
 
     clickButton (e) {
-        this.dispatch('history/undo')
+        this.dispatch(HISTORY_UNDO)
     }
 }

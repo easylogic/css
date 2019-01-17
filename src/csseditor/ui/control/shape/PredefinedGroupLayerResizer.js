@@ -32,7 +32,7 @@ import { CSS_TO_STRING } from '../../../types/CssTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../types/SelectionTypes';
 import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../types/LayerTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
-import { IMAGE_TO_BACKGROUND_SIZE_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../types/ImageTypes';
+import { IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../types/ImageTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
 
 const SNAP_GRID = 20; 
@@ -406,7 +406,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             this.angle = caculateAngle (e.xy.x - this.layerCenterX,  e.xy.y - this.layerCenterY);
         }
 
-        if (this.read('tool/get', 'snap.grid')) {
+        if (this.config('snap.grid')) {
 
             if (this.currentType == 'move') {
                 var moveX = this.layerX + this.dx
@@ -436,6 +436,19 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
     [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
+
+        switch (this.currentType)  {
+        case SEGMENT_TYPE_MOVE:  
+            this.dispatch(HISTORY_PUSH, 'Move layer');
+            break; 
+        case SEGMENT_TYPE_ROTATE:  
+            this.dispatch(HISTORY_PUSH, 'Rotate layer');
+            break;             
+        default: 
+            this.dispatch(HISTORY_PUSH, 'Resize layer');
+            break; 
+        }
+
         this.currentType = null; 
         this.xy = null 
         this.moveX = null;
@@ -443,7 +456,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.rectItems = null 
         this.currentId = null; 
         this.run('tool/set', 'moving', false);
-        this.dispatch(HISTORY_PUSH, 'Resize a layer');
+        
     }
 
     [RESIZE('window') + DEBOUNCE(300)] (e) {

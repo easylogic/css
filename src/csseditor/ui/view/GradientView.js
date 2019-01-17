@@ -37,7 +37,8 @@ import {
     CHANGE_LAYER_CLIPPATH_POLYGON,
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
     CHANGE_PAGE_TRANSFORM,
-    CHANGE_PAGE_NAME
+    CHANGE_PAGE_NAME,
+    CHANGE_TOOL
 } from '../../types/event';
 import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD } from '../../../util/Event';
@@ -287,8 +288,8 @@ export default class GradientView extends UIElement {
         // this.refresh();
     }
 
-    [EVENT('changeTool')] () {
+    [EVENT(CHANGE_TOOL)] () {
         // this.refresh()
-        this.refs.$colorview.toggleClass('showGrid', this.read('tool/get', 'show.grid'))
+        this.refs.$colorview.toggleClass('showGrid', this.config('show.grid'))
     }
 }

@@ -7733,6 +7733,14 @@ var EventMachin = function () {
   return EventMachin;
 }();
 
+var CLONE = 'clone';
+var TOOL_COLOR_SOURCE = 'tool/colorSource';
+var TOOL_GET = 'tool/get';
+var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
+var TOOL_CHANGE_COLOR = 'tool/changeColor';
+var TOOL_SET = 'tool/set';
+var TOOL_TOGGLE = 'tool/toggle';
+
 // const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
@@ -7806,13 +7814,6 @@ var UIElement = function (_EventMachin) {
 
             this.storeEvents = {};
 
-            /*
-            this.filterProps(CHECK_STORE_PATTERN).forEach((key) => {
-                const event = this.getRealEventName(key);
-                 this.storeEvents[event] = this[key].bind(this)
-                this.$store.on(event, this.storeEvents[event], this);
-            }); */
-
             this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach(function (key) {
                 var events = _this2.getRealEventName(key, MULTI_PREFIX);
 
@@ -7852,6 +7853,19 @@ var UIElement = function (_EventMachin) {
             return this.read.apply(this, ['i18n/get'].concat(args));
         }
     }, {
+        key: "config",
+        value: function config() {
+            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+                args[_key3] = arguments[_key3];
+            }
+
+            if (args.length == 1) {
+                return this.read(TOOL_GET, args[0]);
+            }
+
+            this.dispatch.apply(this, [TOOL_SET].concat(args));
+        }
+    }, {
         key: "run",
         value: function run() {
             var _$store2;
@@ -7877,8 +7891,8 @@ var UIElement = function (_EventMachin) {
     }, {
         key: "commit",
         value: function commit(eventType) {
-            for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-                args[_key3 - 1] = arguments[_key3];
+            for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+                args[_key4 - 1] = arguments[_key4];
             }
 
             this.run.apply(this, [ITEM_SET$1].concat(args));
@@ -10250,7 +10264,8 @@ var ColorPicker = {
 
 /* event trigger */
 
-
+var CHANGE_TOOL = 'CHANGE_TOOL';
+var CHANGE_HISTORY = 'CHANGE_HISTORY';
 
 var CHANGE_EDITOR = 'CHANGE_EDITOR';
 var CHANGE_SELECTION = 'CHANGE_SELECTION';
@@ -10446,8 +10461,8 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: ACTION(COLORSTEP_INIT_COLOR),
         value: function value$$1($store, color$$1) {
-            $store.run('tool/setColorSource', INIT_COLOR_SOURCE);
-            $store.run('tool/changeColor', color$$1);
+            $store.run(TOOL_SET_COLOR_SOURCE, INIT_COLOR_SOURCE);
+            $store.run(TOOL_CHANGE_COLOR, color$$1);
         }
     }, {
         key: ACTION(COLORSTEP_ADD),
@@ -11721,14 +11736,6 @@ var LayerManager = function (_BaseModule) {
     return LayerManager;
 }(BaseModule);
 
-var CLONE = 'clone';
-var TOOL_COLOR_SOURCE = 'tool/colorSource';
-var TOOL_GET = 'tool/get';
-var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
-var TOOL_CHANGE_COLOR = 'tool/changeColor';
-var TOOL_SET = 'tool/set';
-var TOOL_TOGGLE = 'tool/toggle';
-
 var ToolManager = function (_BaseModule) {
     inherits(ToolManager, _BaseModule);
 
@@ -12160,6 +12167,8 @@ var HISTORY_INITIALIZE = 'history/initialize';
 var HISTORY_PUSH = 'history/push';
 var HISTORY_UNDO = 'history/undo';
 var HISTORY_REDO = 'history/redo';
+var HISTORY_LIST = 'history/list';
+var HISTORY_SELECTED_CHECK = 'history/selected/check';
 
 var _updateUnitField;
 
@@ -13474,6 +13483,130 @@ var PageManager = function (_BaseModule) {
     return PageManager;
 }(BaseModule);
 
+var HISTORY_MAX = 200;
+
+var HistoryManager = function (_BaseModule) {
+    inherits(HistoryManager, _BaseModule);
+
+    function HistoryManager() {
+        classCallCheck(this, HistoryManager);
+        return possibleConstructorReturn(this, (HistoryManager.__proto__ || Object.getPrototypeOf(HistoryManager)).apply(this, arguments));
+    }
+
+    createClass(HistoryManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(HistoryManager.prototype.__proto__ || Object.getPrototypeOf(HistoryManager.prototype), "initialize", this).call(this);
+
+            this.$store.historyOriginal = null;
+            this.$store.histories = [];
+            this.$store.historyIndex = -1;
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_HISTORY);
+        }
+    }, {
+        key: GETTER(HISTORY_LIST),
+        value: function value($store) {
+            return $store.histories || [];
+        }
+    }, {
+        key: GETTER(HISTORY_SELECTED_CHECK),
+        value: function value($store, index) {
+            return $store.historyIndex == index;
+        }
+    }, {
+        key: "changeHistory",
+        value: function changeHistory($store) {
+
+            if ($store.historyIndex < 0) {
+                var command = $store.historyOriginal;
+            } else {
+                var index = $store.historyIndex;
+                var command = $store.histories[index];
+            }
+
+            if (command) {
+                var items = command.items,
+                    selection = command.selection;
+
+                $store.selection = selection || $store.read(SELECTION_INITIALIZE_DATA);
+                $store.items = clone(items);
+                $store.emit(CHANGE_EDITOR);
+            }
+        }
+    }, {
+        key: ACTION(HISTORY_INITIALIZE),
+        value: function value($store) {
+            var _this2 = this;
+
+            $store.read(SELECTION_CURRENT_PAGE, function (page) {
+                _this2.setHistory($store, page);
+            });
+        }
+    }, {
+        key: "setHistory",
+        value: function setHistory($store) {
+            if (!$store.historyOriginal) {
+                $store.historyOriginal = {
+                    items: clone($store.items),
+                    selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
+                };
+                $store.histories = [];
+                $store.historyIndex = 0;
+            }
+        }
+    }, {
+        key: ACTION(HISTORY_PUSH),
+        value: function value($store, title) {
+
+            this.setHistory($store);
+
+            var index = $store.historyIndex;
+            if (index < 0) index = -1;
+            var histories = index < 0 ? [] : $store.histories.slice(0, index + 1);
+
+            histories.push({
+                title: title,
+                items: clone($store.items),
+                selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
+            });
+
+            $store.histories = histories;
+
+            if ($store.histories.length > HISTORY_MAX) {
+                $store.histories.shift();
+            }
+
+            $store.historyIndex = $store.histories.length - 1;
+        }
+    }, {
+        key: ACTION(HISTORY_UNDO),
+        value: function value($store) {
+            if ($store.historyIndex < 0) {
+                return;
+            }
+
+            $store.historyIndex--;
+            this.changeHistory($store);
+        }
+    }, {
+        key: ACTION(HISTORY_REDO),
+        value: function value($store) {
+
+            if ($store.historyIndex > $store.histories.length - 1) {
+                return;
+            }
+
+            $store.historyIndex++;
+            this.changeHistory($store);
+        }
+    }]);
+    return HistoryManager;
+}(BaseModule);
+
 var SELECT_MODE_ONE = "SELECT_MODE_ONE";
 var SELECT_MODE_AREA = "SELECT_MODE_AREA";
 var SELECT_MODE_GROUP = "SELECT_MODE_GROUP";
@@ -13969,131 +14102,6 @@ var SelectionManager = function (_BaseModule) {
         }
     }]);
     return SelectionManager;
-}(BaseModule);
-
-var HISTORY_MAX = 200;
-
-var HistoryManager = function (_BaseModule) {
-    inherits(HistoryManager, _BaseModule);
-
-    function HistoryManager() {
-        classCallCheck(this, HistoryManager);
-        return possibleConstructorReturn(this, (HistoryManager.__proto__ || Object.getPrototypeOf(HistoryManager)).apply(this, arguments));
-    }
-
-    createClass(HistoryManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(HistoryManager.prototype.__proto__ || Object.getPrototypeOf(HistoryManager.prototype), "initialize", this).call(this);
-
-            this.$store.historyOriginal = {};
-            this.$store.histories = {};
-            this.$store.historyIndex = {};
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit('changeHistory');
-        }
-    }, {
-        key: "changeHistory",
-        value: function changeHistory($store, page) {
-
-            if ($store.historyIndex[page.id] < 0) {
-                var command = $store.historyOriginal[page.id];
-            } else {
-                var index = $store.historyIndex[page.id];
-                var command = $store.histories[page.id][index];
-            }
-
-            if (command) {
-                var items = command.items,
-                    selection = command.selection;
-
-                $store.selection = selection || $store.read(SELECTION_INITIALIZE_DATA);
-                $store.dispatch(ITEM_SET_ALL, page.id, clone(items));
-            }
-        }
-    }, {
-        key: ACTION(HISTORY_INITIALIZE),
-        value: function value($store) {
-            var _this2 = this;
-
-            $store.read(SELECTION_CURRENT_PAGE, function (page) {
-                _this2.setHistory($store, page);
-            });
-        }
-    }, {
-        key: "setHistory",
-        value: function setHistory($store, page) {
-            if (page && !$store.historyOriginal[page.id]) {
-                $store.historyOriginal[page.id] = {
-                    items: clone($store.read(ITEM_GET_ALL, page.id)),
-                    selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
-                };
-                $store.histories[page.id] = [];
-                $store.historyIndex[page.id] = 0;
-            }
-        }
-    }, {
-        key: ACTION(HISTORY_PUSH),
-        value: function value($store, title) {
-            var _this3 = this;
-
-            $store.read(SELECTION_CURRENT_PAGE, function (page) {
-
-                _this3.setHistory($store, page);
-
-                var index = $store.historyIndex[page.id];
-                if (index < 0) index = -1;
-                var histories = index < 0 ? [] : $store.histories[page.id].slice(0, index + 1);
-
-                histories.push({
-                    title: title,
-                    items: clone($store.read(ITEM_GET_ALL, page.id)),
-                    selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
-                });
-
-                $store.histories[page.id] = histories;
-
-                if ($store.histories[page.id].length > HISTORY_MAX) {
-                    $store.histories[page.id].shift();
-                }
-
-                $store.historyIndex[page.id] = $store.histories[page.id].length - 1;
-            });
-        }
-    }, {
-        key: ACTION(HISTORY_UNDO),
-        value: function value($store) {
-            var _this4 = this;
-
-            $store.read(SELECTION_CURRENT_PAGE, function (page) {
-
-                if ($store.historyIndex[page.id] < 0) {
-                    return;
-                }
-
-                $store.historyIndex[page.id]--;
-                _this4.changeHistory($store, page);
-            });
-        }
-    }, {
-        key: ACTION(HISTORY_REDO),
-        value: function value($store) {
-            var _this5 = this;
-
-            $store.read(SELECTION_CURRENT_PAGE, function (page) {
-                if ($store.historyIndex[page.id] > $store.histories[page.id].length - 1) {
-                    return;
-                }
-
-                $store.historyIndex[page.id]++;
-                _this5.changeHistory($store, page);
-            });
-        }
-    }]);
-    return HistoryManager;
 }(BaseModule);
 
 var ORDERING_TYPE = 'ordering/type';
@@ -16634,14 +16642,14 @@ var GradientSteps = function (_UIElement) {
         value: function value$$1() {
 
             if (this.read(IMAGE_TYPE_IS_NOT_GRADIENT, this.read(SELECTION_CURRENT_IMAGE$1))) return;
-            if (this.read('tool/colorSource') != this.read('colorstep/colorSource')) return;
+            if (this.read(TOOL_COLOR_SOURCE) != this.read(COLORSTEP_COLOR_SOURCE)) return;
 
             if (this.currentStep) {
 
                 var item = this.read(ITEM_GET, this.currentStep.attr('id'));
 
                 if (item) {
-                    var color$$1 = this.read('tool/get', 'color');
+                    var color$$1 = this.config('color');
                     var newValue = { id: item.id, color: color$$1 };
 
                     this.commit(CHANGE_COLOR_STEP, newValue);
@@ -16674,7 +16682,7 @@ var GradientSteps = function (_UIElement) {
 
             var id = e.$delegateTarget.attr('id');
 
-            this.run('colorstep/remove', id);
+            this.run(COLORSTEP_REMOVE, id);
             this.emit(REMOVE_COLOR_STEP, id);
             this.run(HISTORY_PUSH, 'Remove colorstep');
             this.refresh();
@@ -16694,7 +16702,7 @@ var GradientSteps = function (_UIElement) {
 
             if (!item) return;
 
-            this.dispatch('colorstep/add', item, percent$$1);
+            this.dispatch(COLORSTEP_ADD, item, percent$$1);
             this.emit(ADD_COLOR_STEP, item, percent$$1);
             this.run(HISTORY_PUSH, 'Add colorstep');
             this.refresh();
@@ -16702,7 +16710,7 @@ var GradientSteps = function (_UIElement) {
     }, {
         key: 'initColor',
         value: function initColor(color$$1) {
-            this.dispatch('colorstep/initColor', color$$1);
+            this.dispatch(COLORSTEP_INIT_COLOR, color$$1);
         }
     }, {
         key: 'getSortedStepList',
@@ -16747,7 +16755,7 @@ var GradientSteps = function (_UIElement) {
 
             this.currentStepBox.addClass('selected');
             this.run(ITEM_SET$1, item);
-            this.dispatch('colorstep/sort', item.id, this.getSortedStepList());
+            this.dispatch(COLORSTEP_SORT, item.id, this.getSortedStepList());
             this.setBackgroundColor();
         }
     }, {
@@ -16787,7 +16795,7 @@ var GradientSteps = function (_UIElement) {
             if (step) {
                 step.unit = unit$$1;
 
-                var unitValue$$1 = this.read('colorstep/unit/value', step, this.getMaxValue());
+                var unitValue$$1 = this.read(COLORSTEP_UNIT_VALUE, step, this.getMaxValue());
                 var newValue = _extends({ id: step.id, unit: unit$$1 }, unitValue$$1);
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
@@ -17347,13 +17355,13 @@ var ColorPickerLayer = function (_UIElement) {
         key: EVENT(CHANGE_COLOR_STEP),
         value: function value(newValue) {
             if (isNotUndefined(newValue.color)) {
-                this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
+                this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
             }
         }
     }, {
         key: EVENT('changeColor'),
         value: function value() {
-            this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
+            this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
         }
     }, {
         key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -18698,7 +18706,7 @@ var PageShowGrid = function (_UIElement) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_PAGE, function (item) {
-                _this2.refs.$check.checked(_this2.read('tool/get', 'show.grid'));
+                _this2.refs.$check.checked(_this2.config('show.grid'));
             });
         }
     }, {
@@ -18707,8 +18715,8 @@ var PageShowGrid = function (_UIElement) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_PAGE, function (item) {
-                _this3.run('tool/set', 'show.grid', _this3.refs.$check.checked());
-                _this3.dispatch('tool/set', 'snap.grid', _this3.refs.$check.checked());
+                _this3.config('show.grid', _this3.refs.$check.checked());
+                _this3.config('snap.grid', _this3.refs.$check.checked());
             });
         }
     }]);
@@ -21285,7 +21293,7 @@ var GradientAngle = function (_UIElement) {
                 return false;
             }
 
-            return this.read('tool/get', 'guide.angle');
+            return this.config('guide.angle');
         }
     }, {
         key: 'getCurrentXY',
@@ -21464,7 +21472,7 @@ var GradientPosition = function (_UIElement) {
                 return false;
             }
 
-            return this.read('tool/get', 'guide.angle');
+            return this.config('guide.angle');
         }
     }, {
         key: 'getCurrentXY',
@@ -21659,7 +21667,7 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
             var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, image.type);
             var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
 
-            return this.read('tool/get', 'guide.angle') && (isLinear || isConic);
+            return this.config('guide.angle') && (isLinear || isConic);
         }
     }, {
         key: CLICK('$el button') + SELF,
@@ -21725,10 +21733,10 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
             var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, image.type);
             var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
 
-            return this.read('tool/get', 'guide.angle') && (isRadial || isConic);
+            return this.config('guide.angle') && (isRadial || isConic);
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, 'changeTool'),
+        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL),
         value: function value() {
             this.refresh();
         }
@@ -22394,7 +22402,7 @@ var SubFeatureControl = function (_UIElement) {
                 return false;
             }
 
-            return this.read('tool/get', 'guide.angle');
+            return this.config('guide.angle');
         }
     }, {
         key: "isRadialShow",
@@ -22411,7 +22419,7 @@ var SubFeatureControl = function (_UIElement) {
                 return false;
             }
 
-            return this.read('tool/get', 'guide.angle');
+            return this.config('guide.angle');
         }
     }, {
         key: EVENT(CHANGE_PAGE, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -24035,7 +24043,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 this.angle = caculateAngle(e.xy.x - this.layerCenterX, e.xy.y - this.layerCenterY);
             }
 
-            if (this.read('tool/get', 'snap.grid')) {
+            if (this.config('snap.grid')) {
 
                 if (this.currentType == 'move') {
                     var moveX = this.layerX + this.dx;
@@ -24066,6 +24074,19 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: POINTEREND('document') + CHECKER('isDownCheck'),
         value: function value$$1(e) {
+
+            switch (this.currentType) {
+                case SEGMENT_TYPE_MOVE:
+                    this.dispatch(HISTORY_PUSH, 'Move layer');
+                    break;
+                case SEGMENT_TYPE_ROTATE:
+                    this.dispatch(HISTORY_PUSH, 'Rotate layer');
+                    break;
+                default:
+                    this.dispatch(HISTORY_PUSH, 'Resize layer');
+                    break;
+            }
+
             this.currentType = null;
             this.xy = null;
             this.moveX = null;
@@ -24073,7 +24094,6 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.rectItems = null;
             this.currentId = null;
             this.run('tool/set', 'moving', false);
-            this.dispatch(HISTORY_PUSH, 'Resize a layer');
         }
     }, {
         key: RESIZE('window') + DEBOUNCE(300),
@@ -25005,7 +25025,7 @@ var MoveGuide = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('tool/get', 'moving');
+            return this.config('moving');
         }
     }, {
         key: EVENT(CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -25237,10 +25257,10 @@ var GradientView = function (_UIElement) {
             // this.refresh();
         }
     }, {
-        key: EVENT('changeTool'),
+        key: EVENT(CHANGE_TOOL),
         value: function value$$1() {
             // this.refresh()
-            this.refs.$colorview.toggleClass('showGrid', this.read('tool/get', 'show.grid'));
+            this.refs.$colorview.toggleClass('showGrid', this.config('show.grid'));
         }
     }]);
     return GradientView;
@@ -25510,9 +25530,9 @@ var Redo = function (_MenuItem) {
     }
 
     createClass(Redo, [{
-        key: 'clickButton',
+        key: "clickButton",
         value: function clickButton(e) {
-            this.dispatch('history/redo');
+            this.dispatch(HISTORY_REDO);
         }
     }]);
     return Redo;
@@ -25535,9 +25555,9 @@ var Undo = function (_MenuItem) {
     }
 
     createClass(Undo, [{
-        key: 'clickButton',
+        key: "clickButton",
         value: function clickButton(e) {
-            this.dispatch('history/undo');
+            this.dispatch(HISTORY_UNDO);
         }
     }]);
     return Undo;
@@ -25581,7 +25601,7 @@ var ShowGrid = function (_MenuItem) {
 
         _this.title = props.title || 'Show Grid';
         _this.icon = 'show-grid';
-        _this.checked = _this.read('tool/get', 'show.grid');
+        _this.checked = _this.config('show.grid');
         return _this;
     }
 
@@ -26567,7 +26587,48 @@ var LayerListView = function (_UIElement) {
     return LayerListView;
 }(UIElement);
 
+var HistoryListView = function (_UIElement) {
+    inherits(HistoryListView, _UIElement);
+
+    function HistoryListView() {
+        classCallCheck(this, HistoryListView);
+        return possibleConstructorReturn(this, (HistoryListView.__proto__ || Object.getPrototypeOf(HistoryListView)).apply(this, arguments));
+    }
+
+    createClass(HistoryListView, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='history-list-view show-mini-view'>\n                <div class=\"history-list\" ref=\"$historyList\"></div>\n            </div>\n        ";
+        }
+    }, {
+        key: LOAD('$historyList'),
+        value: function value$$1() {
+            var _this2 = this;
+
+            return this.read(HISTORY_LIST).map(function (h, index) {
+                var selected = _this2.read(HISTORY_SELECTED_CHECK, index);
+                return "<div>" + h.title + " " + (selected ? 'selected' : EMPTY_STRING) + "</div>";
+            });
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+
+        // all effect 
+
+    }, {
+        key: EVENT(CHANGE_PAGE, CHANGE_SELECTION, CHANGE_HISTORY),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }]);
+    return HistoryListView;
+}(UIElement);
+
 var layerItems = {
+    HistoryListView: HistoryListView,
     LayerListView: LayerListView,
     PageListView: PageListView,
     ShapeListView: ShapeListView,
@@ -26587,7 +26648,7 @@ var SelectLayerView = function (_BaseTab) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradients\">Gradient</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageListView></PageListView>                            \n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <LayerListView></LayerListView>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView></ShapeListView>                    \n                        <LayerSampleList></LayerSampleList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradients\">\n                        <BasicGradient></BasicGradient>\n                        <GradientSampleList></GradientSampleList>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item small-font\" data-id=\"history\">History</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageListView></PageListView>                            \n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <LayerListView></LayerListView>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView></ShapeListView>                    \n                        <LayerSampleList></LayerSampleList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradient\">\n                        <BasicGradient></BasicGradient>\n                        <GradientSampleList></GradientSampleList>\n                    </div> \n                    <div class=\"tab-content\" data-id=\"history\">\n                        <HistoryListView></HistoryListView>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",

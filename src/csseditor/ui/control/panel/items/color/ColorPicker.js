@@ -63,12 +63,12 @@ export default class ColorPickerLayer extends UIElement {
 
     [EVENT(CHANGE_COLOR_STEP)] (newValue) {
         if (isNotUndefined(newValue.color)) {
-            this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
+            this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
         }
     }
 
     [EVENT('changeColor')] () {
-        this.colorPicker.initColorWithoutChangeEvent(this.read('tool/get', 'color'));
+        this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
     } 
 
     [EVENT(

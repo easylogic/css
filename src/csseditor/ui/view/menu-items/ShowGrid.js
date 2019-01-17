@@ -11,7 +11,7 @@ export default class ShowGrid extends MenuItem {
 
         this.title = props.title || 'Show Grid';
         this.icon = 'show-grid';
-        this.checked = this.read('tool/get', 'show.grid');
+        this.checked = this.config('show.grid');
     }
 
     clickButton (e) {

@@ -99,7 +99,7 @@ export default class SubFeatureControl extends UIElement {
             return false; 
         }
 
-        return this.read('tool/get', 'guide.angle')
+        return this.config('guide.angle')
     }
 
     isRadialShow () {
@@ -115,7 +115,7 @@ export default class SubFeatureControl extends UIElement {
             return false; 
         }
 
-        return this.read('tool/get', 'guide.angle')
+        return this.config('guide.angle')
     }
 
     [EVENT(

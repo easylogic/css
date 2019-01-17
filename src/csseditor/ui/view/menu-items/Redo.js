@@ -1,4 +1,5 @@
 import MenuItem from "./MenuItem";
+import { HISTORY_REDO } from "../../../types/HistoryTypes";
 
 export default class Redo extends MenuItem {
     constructor(opt = {}, props = {}, parent = null) {
@@ -9,6 +10,6 @@ export default class Redo extends MenuItem {
     }
 
     clickButton (e) {
-        this.dispatch('history/redo')
+        this.dispatch(HISTORY_REDO)
     }
 }

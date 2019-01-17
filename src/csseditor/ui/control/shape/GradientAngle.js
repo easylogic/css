@@ -43,7 +43,7 @@ export default class GradientAngle extends UIElement {
             return false; 
         }
 
-        return this.read('tool/get', 'guide.angle')
+        return this.config('guide.angle')
     }
 
     getCurrentXY(e, angle, radius, centerX, centerY) {

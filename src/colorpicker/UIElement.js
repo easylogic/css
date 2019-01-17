@@ -1,6 +1,7 @@
 import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
 import { ITEM_SET } from "../csseditor/types/ItemTypes";
+import { TOOL_GET, TOOL_SET } from "../csseditor/types/ToolTypes";
 
 // const CHECK_STORE_PATTERN = /^@/
 const CHECK_STORE_MULTI_PATTERN = /^ME@/
@@ -58,14 +59,6 @@ class UIElement extends EventMachin {
     initializeStoreEvent () {
         this.storeEvents = {}
 
-        /*
-        this.filterProps(CHECK_STORE_PATTERN).forEach((key) => {
-            const event = this.getRealEventName(key);
-
-            this.storeEvents[event] = this[key].bind(this)
-            this.$store.on(event, this.storeEvents[event], this);
-        }); */
-
         this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach((key) => {
             const events = this.getRealEventName(key, MULTI_PREFIX);
 
@@ -93,6 +86,14 @@ class UIElement extends EventMachin {
 
     i18n (...args) {
         return this.read('i18n/get', ...args);
+    }
+
+    config (...args) {
+        if (args.length == 1) {
+            return this.read(TOOL_GET, args[0]);
+        }
+
+        this.dispatch(TOOL_SET, ...args);
     }
 
     run (...args) {

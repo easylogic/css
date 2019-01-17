@@ -15,6 +15,8 @@ import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTI
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TO_LINEAR_RIGHT, IMAGE_TYPE_IS_NOT_GRADIENT } from '../../../types/ImageTypes';
 import { ITEM_MAP_CHILDREN, ITEM_EACH_CHILDREN } from '../../../types/ItemSearchTypes';
+import { TOOL_COLOR_SOURCE } from '../../../types/ToolTypes';
+import { COLORSTEP_COLOR_SOURCE, COLORSTEP_REMOVE, COLORSTEP_ADD, COLORSTEP_INIT_COLOR, COLORSTEP_SORT, COLORSTEP_UNIT_VALUE } from '../../../types/ColorStepTypes';
 
 export default class GradientSteps extends UIElement {
 
@@ -219,14 +221,14 @@ export default class GradientSteps extends UIElement {
     [EVENT('changeColor')] () {
 
         if (this.read(IMAGE_TYPE_IS_NOT_GRADIENT, this.read(SELECTION_CURRENT_IMAGE))) return;
-        if (this.read('tool/colorSource') !=  this.read('colorstep/colorSource')) return; 
+        if (this.read(TOOL_COLOR_SOURCE) !=  this.read(COLORSTEP_COLOR_SOURCE)) return; 
 
         if (this.currentStep) {
 
             var item = this.read(ITEM_GET, this.currentStep.attr('id'))
 
             if (item) {
-                var color = this.read('tool/get', 'color');
+                var color = this.config('color');
                 var newValue = {id: item.id, color} ;
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
@@ -256,7 +258,7 @@ export default class GradientSteps extends UIElement {
 
         var id = e.$delegateTarget.attr('id')
 
-        this.run('colorstep/remove', id);
+        this.run(COLORSTEP_REMOVE, id);
         this.emit(REMOVE_COLOR_STEP, id);
         this.run(HISTORY_PUSH, 'Remove colorstep');        
         this.refresh();
@@ -273,14 +275,14 @@ export default class GradientSteps extends UIElement {
 
         if (!item) return; 
 
-        this.dispatch('colorstep/add', item, percent);
+        this.dispatch(COLORSTEP_ADD, item, percent);
         this.emit(ADD_COLOR_STEP, item, percent);
         this.run(HISTORY_PUSH, 'Add colorstep');
         this.refresh()
     }
 
     initColor (color) {
-        this.dispatch('colorstep/initColor', color)        
+        this.dispatch(COLORSTEP_INIT_COLOR, color)        
     }
 
     getSortedStepList () {
@@ -319,7 +321,7 @@ export default class GradientSteps extends UIElement {
 
         this.currentStepBox.addClass('selected')
         this.run (ITEM_SET, item); 
-        this.dispatch('colorstep/sort', item.id, this.getSortedStepList());
+        this.dispatch(COLORSTEP_SORT, item.id, this.getSortedStepList());
         this.setBackgroundColor();
     }
 
@@ -356,7 +358,7 @@ export default class GradientSteps extends UIElement {
         if (step) {
             step.unit = unit;
 
-            var unitValue = this.read('colorstep/unit/value',step, this.getMaxValue());
+            var unitValue = this.read(COLORSTEP_UNIT_VALUE,step, this.getMaxValue());
             var newValue = {id: step.id, unit, ...unitValue}
   
             this.commit(CHANGE_COLOR_STEP, newValue);
