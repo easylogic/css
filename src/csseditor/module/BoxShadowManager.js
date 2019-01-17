@@ -1,6 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
-import { stringUnit } from "../../util/css/types";
+import { stringUnit, EMPTY_STRING } from "../../util/css/types";
 
 export default class BoxShadowManager extends BaseModule { 
 
@@ -41,9 +41,9 @@ export default class BoxShadowManager extends BaseModule {
 
     [GETTER('boxshadow/toBoxShadowString')] ($store, item = undefined ) {
 
-        if (!item) return '';
+        if (!item) return EMPTY_STRING;
 
-        var results = ['']
+        var results = [EMPTY_STRING]
 
         if (item.inset) {
             results.push('inset')

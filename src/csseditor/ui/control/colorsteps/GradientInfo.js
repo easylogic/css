@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { percent2px, px2percent, px2em, em2percent, percent2em, em2px } from "../../../../util/filter/functions";
 import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
-import { UNIT_PX, UNIT_EM, UNIT_PERCENT, isPercent, isPX, isEM } from "../../../../util/css/types";
+import { UNIT_PX, UNIT_EM, UNIT_PERCENT, isPercent, isPX, isEM, EMPTY_STRING } from "../../../../util/css/types";
 import { CLICK, INPUT, CHANGE, LOAD } from "../../../../util/Event";
 import { ITEM_SET, ITEM_GET } from "../../../module/ItemTypes";
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "../../../module/SelectionTypes";
@@ -40,9 +40,9 @@ export default class GradientInfo extends UIElement {
 
         return `
         <select class='unit' colorstep-id="${step.id}">
-            <option value='${UNIT_PERCENT}' ${isPercent (unit) ? 'selected' : ''}>%</option>
-            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : ''}>px</option>
-            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : ''}>em</option>
+            <option value='${UNIT_PERCENT}' ${isPercent (unit) ? 'selected' : EMPTY_STRING}>%</option>
+            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : EMPTY_STRING}>px</option>
+            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : EMPTY_STRING}>em</option>
         </select>
         `
     }
@@ -74,17 +74,17 @@ export default class GradientInfo extends UIElement {
 
         var item = this.read(SELECTION_CURRENT_IMAGE)
 
-        if (!item) return '';
+        if (!item) return EMPTY_STRING;
 
         var colorsteps = this.read('colorstep/sort/list', item.id);
 
 
         return `<div class='step-list' ref="$stepList">
                     ${colorsteps.map( step => {
-                        var cut = step.cut ? 'cut' : '';      
+                        var cut = step.cut ? 'cut' : EMPTY_STRING;      
                         var unitValue = this.getUnitValue(step);
                         return `
-                            <div class='color-step ${step.selected ? 'selected' : ''}' colorstep-id="${step.id}" >
+                            <div class='color-step ${step.selected ? 'selected' : EMPTY_STRING}' colorstep-id="${step.id}" >
                                 <div class="color-cut">
                                     <div class="guide-change ${cut}" colorstep-id="${step.id}"></div>
                                 </div>                                
@@ -105,7 +105,7 @@ export default class GradientInfo extends UIElement {
                                 </div>
                             </div>
                         `
-                    }).join('')}
+                    }).join(EMPTY_STRING)}
                 </div>`
     }
 

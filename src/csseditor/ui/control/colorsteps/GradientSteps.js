@@ -8,11 +8,12 @@ import {
     CHANGE_EDITOR,
     CHANGE_SELECTION
 } from '../../../types/event';
-import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT } from '../../../../util/css/types';
+import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT, EMPTY_STRING } from '../../../../util/css/types';
 import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, CHECKER, DEBOUNCE, LOAD } from '../../../../util/Event';
 import { ITEM_SET, ITEM_GET } from '../../../module/ItemTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../module/SelectionTypes';
 import { HISTORY_PUSH } from '../../../module/HistoryTypes';
+import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TO_LINEAR_RIGHT, IMAGE_TYPE_IS_NOT_GRADIENT } from '../../../module/ImageTypes';
 
 export default class GradientSteps extends UIElement {
 
@@ -63,9 +64,9 @@ export default class GradientSteps extends UIElement {
 
         return `
         <select class='unit' data-colorstep-id="${step.id}">
-            <option value='${UNIT_PERCENT}' ${isPercent(unit) ? 'selected' : ''}>%</option>
-            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : ''}>px</option>
-            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : ''}>em</option>
+            <option value='${UNIT_PERCENT}' ${isPercent(unit) ? 'selected' : EMPTY_STRING}>%</option>
+            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : EMPTY_STRING}>px</option>
+            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : EMPTY_STRING}>em</option>
         </select>
         `
     }
@@ -78,15 +79,15 @@ export default class GradientSteps extends UIElement {
     [LOAD('$stepList')] () {
         var item = this.read(SELECTION_CURRENT_IMAGE)
 
-        if (!item) return '';
+        if (!item) return EMPTY_STRING;
 
         return this.read('item/map/children', item.id, (step) => {
 
-            var cut = step.cut ? 'cut' : ''; 
+            var cut = step.cut ? 'cut' : EMPTY_STRING; 
             var unitValue = this.read('colorstep/unit/value', step, this.getMaxValue());
             return `
                 <div 
-                    class='drag-bar ${step.selected ? 'selected' : ''}' 
+                    class='drag-bar ${step.selected ? 'selected' : EMPTY_STRING}' 
                     id="${step.id}"
                     style="left: ${this.getStepPosition(step)}px;"
                 >   
@@ -113,7 +114,7 @@ export default class GradientSteps extends UIElement {
 
         item = item[0];
 
-        if (!this.read('image/type/isGradient', item.type)) {
+        if (!this.read(IMAGE_TYPE_IS_GRADIENT, item.type)) {
             return false; 
         }
 
@@ -130,9 +131,9 @@ export default class GradientSteps extends UIElement {
 
 
         this.read(SELECTION_CURRENT_IMAGE, item => {
-            var type = item ? item.type : '' 
+            var type = item ? item.type : EMPTY_STRING 
     
-            if (this.read('image/type/isGradient', type)) {
+            if (this.read(IMAGE_TYPE_IS_GRADIENT, type)) {
                 this.load()
                 this.setColorUI()
             }
@@ -148,7 +149,7 @@ export default class GradientSteps extends UIElement {
 
         this.refs.$stepList.css(
             'background-image', 
-            this.read('image/toLinearRight', this.read(SELECTION_CURRENT_IMAGE))
+            this.read(IMAGE_TO_LINEAR_RIGHT, this.read(SELECTION_CURRENT_IMAGE))
         )
 
     }
@@ -216,7 +217,7 @@ export default class GradientSteps extends UIElement {
 
     [EVENT('changeColor')] () {
 
-        if (this.read('image/isNotGradientType', this.read(SELECTION_CURRENT_IMAGE))) return;
+        if (this.read(IMAGE_TYPE_IS_NOT_GRADIENT, this.read(SELECTION_CURRENT_IMAGE))) return;
         if (this.read('tool/colorSource') !=  this.read('colorstep/colorSource')) return; 
 
         if (this.currentStep) {

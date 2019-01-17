@@ -1,6 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
-import { stringUnit } from "../../util/css/types";
+import { stringUnit, EMPTY_STRING } from "../../util/css/types";
 
 export default class TextShadowManager extends BaseModule { 
 
@@ -41,7 +41,7 @@ export default class TextShadowManager extends BaseModule {
 
     [GETTER('textshadow/toTextShadowString')] ($store, item = undefined ) {
 
-        if (!item) return '';
+        if (!item) return EMPTY_STRING;
 
         var results = []
 

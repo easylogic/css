@@ -2,6 +2,7 @@ import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 import { SELECTION_CURRENT_PAGE } from "../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../util/css/types";
 
 
 export default class ShowGrid extends MenuItem {
@@ -31,6 +32,6 @@ export default class ShowGrid extends MenuItem {
     }
 
     refresh () {
-        this.$el.attr('checked', this.checked ? 'checked' : '');
+        this.$el.attr('checked', this.checked ? 'checked' : EMPTY_STRING);
     }
 }

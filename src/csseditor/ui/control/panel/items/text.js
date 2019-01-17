@@ -8,6 +8,7 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class Text extends BasePropertyItem {
     template () {
@@ -59,8 +60,8 @@ export default class Text extends BasePropertyItem {
     refresh () {
         this.read(SELECTION_CURRENT_LAYER, layer => {
             this.refs.$color.css('background-color', layer.color);
-            this.refs.$colorText.val(layer.color || '');
-            this.refs.$content.val(layer.content || '');
+            this.refs.$colorText.val(layer.color || EMPTY_STRING);
+            this.refs.$content.val(layer.content || EMPTY_STRING);
             this.refs.$clip.val(layer.backgroundClip)
             this.refs.$clipText.checked(layer.clipText || false); 
             

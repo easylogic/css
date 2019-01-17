@@ -4,6 +4,7 @@ import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 import { ITEM_SET, ITEM_GET, ITEM_REMOVE } from "../../../module/ItemTypes";
 import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../module/SelectionTypes";
 import { HISTORY_PUSH } from "../../../module/HistoryTypes";
+import { EMPTY_STRING } from "../../../../util/css/types";
 
 export default class LayerListView extends UIElement {
 
@@ -26,7 +27,7 @@ export default class LayerListView extends UIElement {
 
    
     makeItemNodeImage (item) {
-        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : ''; 
+        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING; 
         return `
             <div class='tree-item image ${selected}' id="${item.id}" draggable="true" >
                 <div class="item-title"> 
@@ -42,7 +43,7 @@ export default class LayerListView extends UIElement {
  
     
     makeItemNodeLayer (item, index = 0) {
-        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : ''; 
+        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-title"> 
@@ -58,7 +59,7 @@ export default class LayerListView extends UIElement {
                 <div class="tree-item-children">
                     ${this.read('item/map/image/children', item.id, (item) => {
                         return this.makeItemNodeImage(item)
-                    }).join('')}
+                    }).join(EMPTY_STRING)}
                 </div>
             </div>       
             `
@@ -68,7 +69,7 @@ export default class LayerListView extends UIElement {
         var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
-            return '';
+            return EMPTY_STRING;
         }
 
         return this.read('item/map/children', page.id, (item, index) => {

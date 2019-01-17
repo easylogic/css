@@ -2,6 +2,7 @@ import GradientSteps from "../../colorsteps/GradientSteps";
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
+import { IMAGE_TYPE_IS_GRADIENT } from "../../../../module/ImageTypes";
 
 export default class ColorSteps extends BasePropertyItem {
     template () {
@@ -32,7 +33,7 @@ export default class ColorSteps extends BasePropertyItem {
 
         if (!item) return false; 
 
-        return this.read('image/type/isGradient', item.type)
+        return this.read(IMAGE_TYPE_IS_GRADIENT, item.type)
     }
 
 }

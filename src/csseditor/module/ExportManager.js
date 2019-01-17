@@ -4,6 +4,7 @@ import { SELECTION_CURRENT_PAGE } from "./SelectionTypes";
 import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "./ExportTpyes";
 import { CSS_TOSTRING } from "./CssTypes";
 import { LAYER_TOSTRING_CLIPPATH, LAYER_TOEXPORT } from "./LayerTypes";
+import { EMPTY_STRING } from "../../util/css/types";
 
 
 export default class ExportManager extends BaseModule {
@@ -20,7 +21,7 @@ export default class ExportManager extends BaseModule {
     }
 
     getClassName (className) {
-        return (className || '').split(' ').map(it => '.' + it).join('')
+        return (className || EMPTY_STRING).split(' ').map(it => '.' + it).join(EMPTY_STRING)
     }
 
     getPageStyle ($store, page) {
@@ -56,7 +57,7 @@ export default class ExportManager extends BaseModule {
                 clipPath = `\t\t\n${clipPath}`
             }
 
-            var content = item.content || ''
+            var content = item.content || EMPTY_STRING
 
             return `\t<div ${selector.join(' ')}>${content}${clipPath}</div>`
         }).join('\n')}
@@ -95,7 +96,7 @@ export default class ExportManager extends BaseModule {
         var page = $store.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
-            return '';  
+            return EMPTY_STRING;  
         }
 
         var pageStyle = this.getPageStyle($store, page);

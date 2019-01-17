@@ -25,6 +25,7 @@ import { convertMatches, reverseMatches } from "../../../../../util/functions/pa
 import { LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 import { LAYER_TOEXPORT } from "../../../../module/LayerTypes";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class LayerCode extends BasePropertyItem {
     template () {
@@ -43,7 +44,7 @@ export default class LayerCode extends BasePropertyItem {
     [LOAD('$keys')] () {
         var layer = this.read(SELECTION_CURRENT_LAYER);
 
-        if (!layer) return ''; 
+        if (!layer) return EMPTY_STRING; 
 
         return this.read(LAYER_TOEXPORT, layer, true).split(';').map(it => {
             var [key, value] = it.split(':');

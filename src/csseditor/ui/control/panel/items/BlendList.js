@@ -4,6 +4,7 @@ import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
 import { BLEND_LIST, BLEND_TOSTRING_WITHOUT_DIMENSION_FOR_IMAGE } from '../../../../module/BlendTypes';
+import { EMPTY_STRING } from '../../../../../util/css/types';
 
 export default class BlendList extends BasePropertyItem {
 
@@ -26,11 +27,11 @@ export default class BlendList extends BasePropertyItem {
         var list = this.read(BLEND_LIST)
 
         var item = this.read(SELECTION_CURRENT_IMAGE)
-        if (!item) { return ''; }
+        if (!item) { return EMPTY_STRING; }
 
         return  `<div>${list.map((blend) => {
 
-                    var selected = blend == item.backgroundBlendMode ? 'selected' : '' 
+                    var selected = blend == item.backgroundBlendMode ? 'selected' : EMPTY_STRING 
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ${blend};">
@@ -38,7 +39,7 @@ export default class BlendList extends BasePropertyItem {
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>` 
-                }).join('')}</div>`
+                }).join(EMPTY_STRING)}</div>`
     }
 
 

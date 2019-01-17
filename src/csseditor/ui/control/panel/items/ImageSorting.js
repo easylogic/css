@@ -5,6 +5,7 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../module/SelectionTypes';
 import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../../../module/ColorStepTypes';
 import { HISTORY_PUSH } from '../../../../module/HistoryTypes';
+import { IMAGE_TYPE_IS_IMAGE } from '../../../../module/ImageTypes';
 
 export default class ImageSorting extends BasePropertyItem {
 
@@ -45,8 +46,6 @@ export default class ImageSorting extends BasePropertyItem {
 
     isShow() {
         
-        this.read('image/type/isImage');
-
         var isImage = this.read(SELECTION_IS_IMAGE);
 
         if (!isImage) return false; 
@@ -55,7 +54,7 @@ export default class ImageSorting extends BasePropertyItem {
 
         if (!image) return false;
 
-        if (this.read('image/type/isImage', image.type)) {
+        if (this.read(IMAGE_TYPE_IS_IMAGE, image.type)) {
             return false; 
         }
 

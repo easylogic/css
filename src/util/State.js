@@ -1,4 +1,5 @@
 import { debounce } from "./functions/func";
+import { EMPTY_STRING } from "./css/types";
 
 const DELEGATE_SPLIT = '.';
 
@@ -39,7 +40,7 @@ export default class State {
     }
   }
 
-  get (key, defaultValue = '') {
+  get (key, defaultValue = EMPTY_STRING) {
 
     this.init(key, defaultValue);
 

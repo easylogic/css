@@ -12,7 +12,7 @@ import {
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
-import { percentUnit, stringUnit } from "../../../../../util/css/types";
+import { percentUnit, stringUnit, EMPTY_STRING } from "../../../../../util/css/types";
 import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CHECKER, CAPTURE, LOAD } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
 import { SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
@@ -29,17 +29,17 @@ export default class PolygonEditor extends UIElement {
 
     [LOAD()] () {
         var layer = this.read(SELECTION_CURRENT_LAYER);
-        if (!layer) return '';
+        if (!layer) return EMPTY_STRING;
         var points =  defaultValue( layer.clipPathPolygonPoints, [])
-        if (!points.length) return '';
+        if (!points.length) return EMPTY_STRING;
 
         var startIndex = 0;
         var lastIndex = points.length - 1; 
 
         return points.map((p, index) => {
 
-            var start = index == startIndex ? 'start' : '';
-            var end = index == lastIndex ? 'end' : '';
+            var start = index == startIndex ? 'start' : EMPTY_STRING;
+            var end = index == lastIndex ? 'end' : EMPTY_STRING;
 
             return `<div class="drag-item ${start} ${end}" data-point-index="${index}" style='left: ${stringUnit(p.x)};top: ${stringUnit(p.y)}'></div>`
         })

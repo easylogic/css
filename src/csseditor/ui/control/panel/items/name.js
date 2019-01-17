@@ -3,6 +3,7 @@ import { CHANGE_LAYER_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT } from "../../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class Name extends BasePropertyItem {
     template () {
@@ -44,13 +45,13 @@ export default class Name extends BasePropertyItem {
 
         item = item[0];
         
-        var name = '';
-        var idString = '';
-        var className = ''; 
+        var name = EMPTY_STRING;
+        var idString = EMPTY_STRING;
+        var className = EMPTY_STRING; 
         if (item) {
             name = item.name ; 
-            idString = item.idString || '';
-            className = item.className || '';
+            idString = item.idString || EMPTY_STRING;
+            className = item.className || EMPTY_STRING;
         }
 
         this.refs.$name.val(name)

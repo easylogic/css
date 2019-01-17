@@ -4,7 +4,7 @@ import {
     CHANGE_SELECTION,
     CHANGE_LAYER_TRANSFORM
 } from "../../../../types/event";
-import { UNIT_DEG, UNIT_PX } from "../../../../../util/css/types";
+import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
@@ -137,10 +137,10 @@ export default class Transform3d extends BasePropertyItem {
         
     }
 
-    updateTransform (key, postfix = '') {
+    updateTransform (key, postfix = EMPTY_STRING) {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
             var value = this.refs['$' + key + postfix].val();
-            if (postfix == '') {
+            if (postfix == EMPTY_STRING) {
                 this.refs['$' + key + 'Range'].val(value);
             } else {
                 this.refs['$' + key].val(value);

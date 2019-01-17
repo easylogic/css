@@ -4,6 +4,7 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CLICK, SELF, LOAD } from '../../../../../util/Event';
 import { BLEND_LIST, BLEND_TOSTRING_WITHOUT_DIMENSION } from '../../../../module/BlendTypes';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../../module/SelectionTypes';
+import { EMPTY_STRING } from '../../../../../util/css/types';
 
 export default class MixBlendList extends BasePropertyItem {
 
@@ -23,11 +24,11 @@ export default class MixBlendList extends BasePropertyItem {
     [LOAD('$mixBlendList')] () {
         var list = this.read(BLEND_LIST)
         var item = this.read(SELECTION_CURRENT_LAYER)
-        if (!item) { return ''; }
+        if (!item) { return EMPTY_STRING; }
 
         return  `<div>${list.map((blend) => {
 
-                    var selected = blend == item.mixBlendMode ? 'selected' : '' 
+                    var selected = blend == item.mixBlendMode ? 'selected' : EMPTY_STRING 
                     return `
                         <div class='blend-item ${selected}' data-mode="${blend}">
                             <div class="blend-item-view-container">
@@ -35,7 +36,7 @@ export default class MixBlendList extends BasePropertyItem {
                                 <div class="blend-item-text">${blend}</div>
                             </div>
                         </div>`
-                }).join('')}</div>`
+                }).join(EMPTY_STRING)}</div>`
     }
 
 

@@ -2,13 +2,14 @@ import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE, ITEM_CONVERT_STYLE } from "./ItemTypes";
-import { stringUnit } from "../../util/css/types";
+import { stringUnit, EMPTY_STRING } from "../../util/css/types";
 import { isNotUndefined, isArray, cleanObject, combineKeyArray } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TOCSS } from "./BackdropTypes";
 import { CSS_TOSTRING } from "./CssTypes";
 import { CLIPPATH_TOCSS } from "./ClipPathTypes";
 import { LAYER_LIST_SAMPLE, LAYER_TOSTRING, LAYER_TOCSS, LAYER_CACHE_TOSTRING, LAYER_CACHE_TOCSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TOIMAGECSS, LAYER_CACHE_TOIMAGECSS, LAYER_IMAGE_TOIMAGECSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TOSTRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TOCSS } from "./LayerTypes";
+import { IMAGE_TO_CSS } from "./ImageTypes";
 
 export default class LayerManager extends BaseModule {
    
@@ -66,7 +67,7 @@ export default class LayerManager extends BaseModule {
     [GETTER(LAYER_TOIMAGECSS)] ($store, layer, isExport = false) {    
         var results = {}
         $store.read('item/each/children', layer.id, (item)  => {
-            var css = $store.read('image/toCSS', item, isExport);
+            var css = $store.read(IMAGE_TO_CSS, item, isExport);
 
             Object.keys(css).forEach(key => {
                 if (!results[key]) {
@@ -86,7 +87,7 @@ export default class LayerManager extends BaseModule {
 
         images.forEach(item => {
             var image = Object.assign({}, item.image, {colorsteps: item.colorsteps})
-            var css = $store.read('image/toCSS', image);
+            var css = $store.read(IMAGE_TO_CSS, image);
 
             Object.keys(css).forEach(key => {
                 if (!results[key]) {
@@ -101,7 +102,7 @@ export default class LayerManager extends BaseModule {
     }    
 
     [GETTER(LAYER_IMAGE_TOIMAGECSS)] ($store, image) {    
-        return $store.read('css/generate', $store.read('image/toCSS', image));
+        return $store.read('css/generate', $store.read(IMAGE_TO_CSS, image));
     }    
 
     [GETTER(LAYER_MAKE_MAP)] ($store, layer, itemType, isExport) {
@@ -254,10 +255,10 @@ export default class LayerManager extends BaseModule {
 
     [GETTER(LAYER_TOSTRING_CLIPPATH)] ($store, layer) {
         
-        if (['circle'].includes(layer.clipPathType)) return ''; 
-        if (!layer.clipPathSvg) return ''; 
+        if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING; 
+        if (!layer.clipPathSvg) return EMPTY_STRING; 
 
-        let transform = '';
+        let transform = EMPTY_STRING;
 
         if (layer.fitClipPathSize) {
             const widthScale = layer.width.value / layer.clipPathSvgWidth;

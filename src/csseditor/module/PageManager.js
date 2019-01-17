@@ -1,5 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { stringUnit, isPercentUnit } from "../../util/css/types";
+import { stringUnit, isPercentUnit, EMPTY_STRING } from "../../util/css/types";
 import { GETTER } from "../../util/Store";
 import { ITEM_GET, ITEM_CONVERT_STYLE } from "./ItemTypes";
 import { CSS_TOSTRING } from "./CssTypes";
@@ -20,7 +20,7 @@ export default class PageManager extends BaseModule {
         var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
-            overflow: sample.clip ? 'hidden' : '',
+            overflow: sample.clip ? 'hidden' : EMPTY_STRING,
             'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
             width: stringUnit(sample.width),
             height: stringUnit(sample.height)
@@ -61,7 +61,7 @@ export default class PageManager extends BaseModule {
         var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
 
         var css ={
-            overflow: sample.clip ? 'hidden' : '',
+            overflow: sample.clip ? 'hidden' : EMPTY_STRING,
             'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
             width: stringUnit(sample.width),
             height: stringUnit(sample.height)

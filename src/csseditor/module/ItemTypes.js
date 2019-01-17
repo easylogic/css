@@ -1,4 +1,4 @@
-import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit } from "../../util/css/types";
+import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit, EMPTY_STRING } from "../../util/css/types";
 import { isNotUndefined } from "../../util/functions/func";
 
 export const ITEM_TYPE_PAGE = 'page';
@@ -17,8 +17,8 @@ export const IS_ATTRIBUTE = 'attribute';
 export const PAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_PAGE,
     is: IS_OBJECT,
-    name: '',
-    parentId: '',
+    name: EMPTY_STRING,
+    parentId: EMPTY_STRING,
     index: 0,
     width: pxUnit(400),
     height: pxUnit(300)
@@ -69,7 +69,7 @@ export const BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT)
 export const CLIP_PATH_DEFAULT_OBJECT = {
     clipPathType: 'none',
     clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
-    clipPathSvg: '',
+    clipPathSvg: EMPTY_STRING,
     fitClipPathSize: false,   
     clipText: false,
     clipPathRadiusX: undefined,
@@ -83,10 +83,10 @@ export const LAYER_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_LAYER,
     is: IS_OBJECT,
     type: SHAPE_TYPE_RECT,
-    name: '',
+    name: EMPTY_STRING,
     index: 0,    
     backgroundColor: 'rgba(0, 0, 0, 1)',
-    parentId: '',
+    parentId: EMPTY_STRING,
     mixBlendMode: 'normal',
     selected: true,
     visible: true,
@@ -102,7 +102,7 @@ export const LAYER_DEFAULT_OBJECT = {
     wordBreak: 'break-word',
     wordWrap: 'break-word',
     lineHeight: 1.6,
-    content: '',
+    content: EMPTY_STRING,
     ...CLIP_PATH_DEFAULT_OBJECT,
     ...FILTER_DEFAULT_OBJECT,
     ...BACKDROP_DEFAULT_OBJECT
@@ -118,9 +118,9 @@ export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
 export const GROUP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_GROUP,
     is: IS_OBJECT,
-    name: '',
+    name: EMPTY_STRING,
     index: 0,    
-    parentId: '',
+    parentId: EMPTY_STRING,
     selected: true,
     visible: true,
     x: pxUnit(0),
@@ -131,9 +131,9 @@ export const IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
     is: IS_ATTRIBUTE,
     type: 'static',
-    fileType: '',       // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    fileType: EMPTY_STRING,       // select file type as imagefile,  png, gif, jpg, svg if type is image 
     index: 0,    
-    parentId: '',    
+    parentId: EMPTY_STRING,    
     angle: 90,
     color: 'red',
     radialType: 'ellipse',
@@ -179,7 +179,7 @@ export const TEXTSHADOW_DEFAULT_OBJECT = {
 export const COLORSTEP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_COLORSTEP,
     is: IS_ATTRIBUTE,
-    parentId: '',
+    parentId: EMPTY_STRING,
     percent: 0,
     color: 'rgba(0, 0, 0, 0)'
 }

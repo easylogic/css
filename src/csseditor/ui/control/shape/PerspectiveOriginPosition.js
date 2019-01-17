@@ -4,7 +4,7 @@ import {
     CHANGE_SELECTION, 
     CHANGE_PAGE_TRANSFORM 
 } from '../../../types/event';
-import { percentUnit, unitValue, valueUnit } from '../../../../util/css/types';
+import { percentUnit, unitValue, valueUnit, EMPTY_STRING } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
@@ -110,12 +110,12 @@ export default class PerspectiveOriginPosition extends UIElement {
 
         var item = this.read(SELECTION_CURRENT_PAGE);
 
-        if (!item) return ''; 
+        if (!item) return EMPTY_STRING; 
 
         return {
             perspectiveOriginPositionX: defaultValue(item.perspectiveOriginPositionX, percentUnit(0)),
             perspectiveOriginPositionY: defaultValue(item.perspectiveOriginPositionY, percentUnit(0))
-         } || ''
+         } || EMPTY_STRING
 
     }
 

@@ -4,6 +4,7 @@ import { CLICK } from "../../../util/Event";
 import ExportCodePenButton from "../view/export/ExportCodPenButton";
 import ExportJSFiddleButton from "../view/export/ExportJSFiddleButton";
 import { SELECTION_CURRENT_PAGE } from "../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../util/css/types";
 
 
 
@@ -96,7 +97,7 @@ export default class ExportWindow extends UIElement {
         var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
-            return '';  
+            return EMPTY_STRING;  
         }
 
         var generateCode = this.read('export/generate/code')

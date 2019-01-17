@@ -11,7 +11,7 @@ import {
     CHANGE_IMAGE
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
-import { UNIT_PX, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
+import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER, LOAD } from '../../../../util/Event';
 import { defaultValue, isNotUndefined, clone } from '../../../../util/functions/func';
 import { 
@@ -32,6 +32,7 @@ import { CSS_TOSTRING } from '../../../module/CssTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../module/SelectionTypes';
 import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../module/LayerTypes';
 import { HISTORY_PUSH } from '../../../module/HistoryTypes';
+import { IMAGE_TO_BACKGROUND_SIZE_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../module/ImageTypes';
 
 const SNAP_GRID = 20; 
 
@@ -55,7 +56,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var layers = this.read(SELECTION_CURRENT_LAYER);
         var isImage = this.read(SELECTION_IS_IMAGE);
 
-        if (!layers) return '';
+        if (!layers) return EMPTY_STRING;
 
         if (Array.isArray(layers) == false) {
             layers = [layers]
@@ -63,14 +64,14 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         return layers.map(item => { 
             var css = this.setRectangle(item);
-            var image = isImage ? 'image' : ''; 
+            var image = isImage ? 'image' : EMPTY_STRING; 
 
             var backgroundCSS = {} 
 
             if (image == 'image') {
                 var backgroundImage = this.read(SELECTION_CURRENT_IMAGE);
 
-                backgroundCSS = this.read('image/backgroundSize/toCSS', backgroundImage);
+                backgroundCSS = this.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
             }
             return ` 
                 <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read(CSS_TOSTRING, css)}" >

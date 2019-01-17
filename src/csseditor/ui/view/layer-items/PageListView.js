@@ -5,6 +5,7 @@ import { CHANGE_PAGE, CHANGE_EDITOR } from "../../../types/event";
 import { ITEM_GET } from "../../../module/ItemTypes";
 import { ITEM_ADD_PAGE } from "../../../module/ItemCreateTypes";
 import { SELECTION_ONE, SELECTION_CURRENT_PAGE } from "../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../util/css/types";
 
 export default class PageListView extends UIElement {
 
@@ -28,7 +29,7 @@ export default class PageListView extends UIElement {
 
         var page = this.read(SELECTION_CURRENT_PAGE)
 
-        var selectedId = '' 
+        var selectedId = EMPTY_STRING 
 
         if (page) selectedId = page.id; 
 
@@ -39,7 +40,7 @@ export default class PageListView extends UIElement {
     }
 
     makeItemNodePage (item, index, selectedId) {
-        var selected = item.id == selectedId ? 'selected' : ''; 
+        var selected = item.id == selectedId ? 'selected' : EMPTY_STRING; 
         return `
             <div class='tree-item ${selected}' id="${item.id}" type='page'>
                 <div class="item-preview"></div>
@@ -53,7 +54,7 @@ export default class PageListView extends UIElement {
     [LOAD('$pageList')] () {
         var str = this.read('item/map/page', (item, index) => {
             return this.makeItemNode(item, index); 
-        }).join('');
+        }).join(EMPTY_STRING);
 
         str += `<button type="button" class='add-page' title="Add a page"></button>`
 

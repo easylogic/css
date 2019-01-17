@@ -1,7 +1,7 @@
 import { parseParamNumber } from "../filter/functions";
 import Scale from "./Scale";
 import ValueGenerator from "./ValueGenerator";
-import { UNIT_PX } from "../css/types";
+import { UNIT_PX, EMPTY_STRING } from "../css/types";
 
 const KeyFrames = {
     parse (obj, ani) {
@@ -20,7 +20,7 @@ const KeyFrames = {
             } else {
                 var newKey = +key; 
 
-                if (newKey + '' == key) {
+                if (newKey + EMPTY_STRING == key) {
                     // 시간 초 단위 
                     percent = (newKey / ani.duration )
                 }

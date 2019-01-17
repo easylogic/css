@@ -1,6 +1,7 @@
 import UIElement from "../../colorpicker/UIElement";
 import Dom from "../../util/Dom";
 import { CLICK, CHECKER } from "../../util/Event";
+import { EMPTY_STRING } from "../../util/css/types";
 
 export default class BaseTab extends UIElement {
 
@@ -62,7 +63,7 @@ export default class BaseTab extends UIElement {
             return { $dom, isElementInViewport: false}
         })
 
-        var title = '';
+        var title = EMPTY_STRING;
         if (elementsInViewport.length) {
 
             var viewElement = elementsInViewport.filter(it => {

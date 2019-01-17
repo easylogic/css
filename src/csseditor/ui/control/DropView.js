@@ -2,6 +2,7 @@ import UIElement from "../../../colorpicker/UIElement";
 import { DROP, DRAGOUT, DRAGOVER, PASTE } from "../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../module/SelectionTypes";
 import { ITEM_PREPEND_IMAGE_URL, ITEM_PREPEND_IMAGE_FILE } from "../../module/ItemCreateTypes";
+import { IMAGE_GET_URL, IMAGE_GET_FILE } from "../../module/ImageTypes";
 
 export default class DropView extends UIElement {
 
@@ -37,7 +38,7 @@ export default class DropView extends UIElement {
 
         if (dataList.length) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read('image/get/url', dataList, (img) => {
+                this.read(IMAGE_GET_URL, dataList, (img) => {
                     this.dispatch(ITEM_PREPEND_IMAGE_URL, img, true, layer.id);
                 })
             })            
@@ -46,7 +47,7 @@ export default class DropView extends UIElement {
         var files = [...dataTransfer.files]; 
         if (files.length) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read('image/get/file', files, (img) => {
+                this.read(IMAGE_GET_FILE, files, (img) => {
                     this.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layer.id);
                 })
             })
@@ -68,7 +69,7 @@ export default class DropView extends UIElement {
 
         if (dataList.length) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read('image/get/url', dataList, (url) => {
+                this.read(IMAGE_GET_URL, dataList, (url) => {
                     this.dispatch(ITEM_PREPEND_IMAGE_URL, url, true, layer.id);
                 })
             })            
@@ -77,7 +78,7 @@ export default class DropView extends UIElement {
         var files = [...dataTransfer.files]; 
         if (files.length) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read('image/get/file', files, (img) => {
+                this.read(IMAGE_GET_FILE, files, (img) => {
                     this.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layer.id);
                     this.refresh();
                 })

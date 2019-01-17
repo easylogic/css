@@ -1,7 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_FILTER } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, isColorUnit, unitValue } from "../../../../../util/css/types";
+import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../module/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { isUndefined, clone } from "../../../../../util/functions/func";
@@ -43,7 +43,7 @@ export default class FilterList extends BasePropertyItem {
                 <div class='filter'>
                     <span class="area"></span>                
                     <span class="checkbox">
-                        <input type="checkbox" ${dataObject.checked ? `checked="checked"` : ''} data-key="${key}" />
+                        <input type="checkbox" ${dataObject.checked ? `checked="checked"` : EMPTY_STRING} data-key="${key}" />
                     </span>
                     <span class='title' draggable="true">${viewObject.title}</span>
                     <span class='range'><input type="range" min="${viewObject.min}" max="${viewObject.max}" step="${viewObject.step}" value="${value}" ref="${key}Range" data-key="${key}"/></span>
@@ -56,7 +56,7 @@ export default class FilterList extends BasePropertyItem {
             <div class='filter'>
                 <span class="area"></span>
                 <span class="checkbox">
-                    <input type="checkbox" ${dataObject.checked ? `checked="checked"` : ''} data-key="${key}" />
+                    <input type="checkbox" ${dataObject.checked ? `checked="checked"` : EMPTY_STRING} data-key="${key}" />
                 </span>
                 <span class='title long' draggable="true">${viewObject.title}</span>
             </div>
@@ -88,7 +88,7 @@ export default class FilterList extends BasePropertyItem {
                         `
                     }
 
-                }).join('')}
+                }).join(EMPTY_STRING)}
             </div>
             `
         }
@@ -100,7 +100,7 @@ export default class FilterList extends BasePropertyItem {
 
         var layer = this.read(SELECTION_CURRENT_LAYER);
 
-        if (!layer) return '' 
+        if (!layer) return EMPTY_STRING 
 
         var filterKeys = this.read('filter/list', layer.id) 
 

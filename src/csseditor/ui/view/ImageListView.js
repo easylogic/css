@@ -12,6 +12,8 @@ import {
 } from '../../types/event';
 import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CHECK, SELECTION_ONE } from '../../module/SelectionTypes';
+import { IMAGE_TO_STRING } from '../../module/ImageTypes';
+import { EMPTY_STRING } from '../../../util/css/types';
 
 export default class ImageListView extends UIElement {
 
@@ -20,11 +22,11 @@ export default class ImageListView extends UIElement {
     }
 
     makeItemNodeImage (item) {
-        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : '' 
+        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING
         return `
             <div class='tree-item ${selected}' data-id="${item.id}" draggable="true" title="${item.type}" >
                 <div class="item-view-container">
-                    <div class="item-view"  style='${this.read('image/toString', item)}'></div>
+                    <div class="item-view"  style='${this.read(IMAGE_TO_STRING, item)}'></div>
                 </div>
             </div>
             ` 
@@ -34,7 +36,7 @@ export default class ImageListView extends UIElement {
         var id = this.read(SELECTION_CURRENT_LAYER_ID);
 
         if (!id) {
-            return '';
+            return EMPTY_STRING;
         }
 
         return this.read('item/map/image/children', id, (item) => {

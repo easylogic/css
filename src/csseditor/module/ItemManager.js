@@ -1,6 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
-import { string2unit, UNIT_PX} from "../../util/css/types";
+import { string2unit, UNIT_PX, EMPTY_STRING} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
 import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE } from "./ItemTypes";
 import { ITEM_KEYS, ITEM_INITIALIZE } from "./ItemCreateTypes";
@@ -134,7 +134,7 @@ export default class ItemManager extends BaseModule {
                 var list = $store.read('item/list/page');
             }
 
-            var nextSelectedId = '' 
+            var nextSelectedId = EMPTY_STRING
             for(var i = 0, len = list.length; i < len; i++) {
                 var nodeId = list[i]
                 if ($store.items[id].index > item.index) {

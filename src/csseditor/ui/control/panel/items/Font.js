@@ -6,7 +6,7 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import UnitRange from "./element/UnitRange";
-import { UNIT_PX } from "../../../../../util/css/types";
+import { UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { CHANGE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
 
@@ -47,7 +47,7 @@ export default class Font extends BasePropertyItem {
                             <select ref="$fontFamily">
                                 ${fontFamilyList.map(f => {
                                     return `<option value="${f}">${f}</option>`
-                                }).join('')}
+                                }).join(EMPTY_STRING)}
                             </select>
                         </div>
                     </div>   
@@ -57,7 +57,7 @@ export default class Font extends BasePropertyItem {
                             <select ref="$fontWeight">
                                 ${fontWeightList.map(f => {
                                     return `<option value="${f}">${f}</option>`
-                                }).join('')}
+                                }).join(EMPTY_STRING)}
                             </select>
                         </div>
                     </div>                       

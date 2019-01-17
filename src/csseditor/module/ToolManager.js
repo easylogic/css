@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { isFunction, isUndefined } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
+import { EMPTY_STRING } from "../../util/css/types";
 
 export default class ToolManager extends BaseModule {
 
@@ -8,8 +9,8 @@ export default class ToolManager extends BaseModule {
         super.initialize()
 
         this.$store.tool = {
-            color : '',
-            colorSource : '',
+            color : EMPTY_STRING,
+            colorSource : EMPTY_STRING,
             'show.grid': false,
             'snap.grid': false,
             'guide.only': false,            

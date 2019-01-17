@@ -3,6 +3,7 @@ import { LOAD, CLICK } from "../../../../util/Event";
 import { ITEM_CONVERT_STYLE } from "../../../module/ItemTypes";
 import { COLLECT_IMAGE_ONE } from "../../../module/CollectTypes";
 import { SELECTION_CURRENT_IMAGE_ID } from "../../../module/SelectionTypes";
+import { IMAGE_TO_STRING } from "../../../module/ImageTypes";
 
 
 export default class GradientSampleList extends UIElement  {
@@ -31,7 +32,7 @@ export default class GradientSampleList extends UIElement  {
             var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps })
             return `
             <div class='gradient-sample-item' data-index="${index}">
-                <div class='preview' style='${this.read('image/toString', newImage)}'></div>                
+                <div class='preview' style='${this.read(IMAGE_TO_STRING, newImage)}'></div>                
                 <div class='item-tools'>
                     <button type="button" class='add-item'  data-index="${index}" title="Addd">&times;</button>                
                     <button type="button" class='change-item'  data-index="${index}" title="Change"></button>
@@ -43,7 +44,7 @@ export default class GradientSampleList extends UIElement  {
             var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps })
             return `
                 <div class='gradient-cached-item' data-index="${index}">
-                    <div class='preview' style='${this.read('image/toString', newImage)}'></div>                
+                    <div class='preview' style='${this.read(IMAGE_TO_STRING, newImage)}'></div>                
                     <div class='item-tools'>
                         <button type="button" class='add-item'  data-index="${index}" title="Add">&times;</button>                
                         <button type="button" class='change-item'  data-index="${index}" title="Change"></button>

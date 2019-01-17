@@ -22,7 +22,7 @@ import {
     ITEM_GET,
     ITEM_SORT
 } from "./ItemTypes";
-import { percentUnit, pxUnit, unitValue } from "../../util/css/types";
+import { percentUnit, pxUnit, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
 import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER } from "./ItemCreateTypes";
 import { clone } from "../../util/functions/func";
@@ -157,7 +157,7 @@ export default class ItemCreateManager extends BaseModule {
     }    
 
 
-    [ACTION(ITEM_ADD)] ($store, itemType, isSelected = false, parentId = '') {
+    [ACTION(ITEM_ADD)] ($store, itemType, isSelected = false, parentId = EMPTY_STRING) {
         var id = $store.read(ITEM_CREATE, itemType);
         var item = $store.read(ITEM_GET, id);
         item.parentId = parentId; 
@@ -168,7 +168,7 @@ export default class ItemCreateManager extends BaseModule {
         $store.run(ITEM_SORT, item.id)
     }
 
-    [ACTION(ITEM_ADD_LAYER)] ($store, itemType, isSelected = false, parentId = '') {
+    [ACTION(ITEM_ADD_LAYER)] ($store, itemType, isSelected = false, parentId = EMPTY_STRING) {
         var rect = $store.read(SELECTION_RECT);
 
         var id = $store.read(ITEM_CREATE, itemType);
@@ -184,11 +184,11 @@ export default class ItemCreateManager extends BaseModule {
         $store.run(ITEM_SORT, item.id)
     }
 
-    [ACTION(ITEM_PREPEND_IMAGE)] ($store, imageType, isSelected = false, parentId = '') {
+    [ACTION(ITEM_PREPEND_IMAGE)] ($store, imageType, isSelected = false, parentId = EMPTY_STRING) {
         $store.run(ITEM_ADD_IMAGE, imageType, isSelected, parentId, -1);
     }        
 
-    [ACTION(ITEM_ADD_IMAGE)] ($store, imageType, isSelected = false, parentId = '', index = Number.MAX_SAFE_INTEGER) {
+    [ACTION(ITEM_ADD_IMAGE)] ($store, imageType, isSelected = false, parentId = EMPTY_STRING, index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read(ITEM_CREATE_IMAGE_WITH_COLORSTEP, { type : imageType });
         var item = $store.read(ITEM_GET, id);
         item.type = imageType; 
@@ -199,11 +199,11 @@ export default class ItemCreateManager extends BaseModule {
         $store.run(ITEM_SORT, id); 
     }    
 
-    [ACTION(ITEM_PREPEND_IMAGE_FILE)] ($store, img, isSelected = false, parentId = '') {
+    [ACTION(ITEM_PREPEND_IMAGE_FILE)] ($store, img, isSelected = false, parentId = EMPTY_STRING) {
         $store.run(ITEM_ADD_IMAGE_FILE, img, isSelected, parentId, -1);
     }     
 
-    [ACTION(ITEM_ADD_IMAGE_FILE)] ($store, img, isSelected = false, parentId = '', index = Number.MAX_SAFE_INTEGER) {
+    [ACTION(ITEM_ADD_IMAGE_FILE)] ($store, img, isSelected = false, parentId = EMPTY_STRING, index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read(ITEM_CREATE_IMAGE, {type: IMAGE_ITEM_TYPE_IMAGE});
         var item = $store.read(ITEM_GET, id);
         item.parentId = parentId; 
@@ -229,11 +229,11 @@ export default class ItemCreateManager extends BaseModule {
         $store.run(ITEM_SET, item);
     }
 
-    [ACTION(ITEM_PREPEND_IMAGE_URL)] ($store, img, isSelected = false, parentId = '') {
+    [ACTION(ITEM_PREPEND_IMAGE_URL)] ($store, img, isSelected = false, parentId = EMPTY_STRING) {
         $store.run(ITEM_ADD_IMAGE_URL, img, isSelected, parentId, -1);
     }         
 
-    [ACTION(ITEM_ADD_IMAGE_URL)] ($store, img, isSelected = false, parentId = '', index = Number.MAX_SAFE_INTEGER) {
+    [ACTION(ITEM_ADD_IMAGE_URL)] ($store, img, isSelected = false, parentId = EMPTY_STRING, index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read(ITEM_CREATE_IMAGE, {type: IMAGE_ITEM_TYPE_IMAGE});
         var item = $store.read(ITEM_GET, id);
         item.parentId = parentId; 

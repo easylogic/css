@@ -10,7 +10,7 @@ import {
     CLIP_PATH_SIDE_TYPE_NONE,
     CLIP_PATH_TYPE_INSET
 } from "./ItemTypes";
-import { percent, stringUnit, percentUnit, value2px, unitValue } from "../../util/css/types";
+import { percent, stringUnit, percentUnit, value2px, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
 import clipPathList from './clip-path/index'
 import { GETTER } from "../../util/Store";
@@ -153,10 +153,10 @@ export default class ClipPathManager extends BaseModule {
     
     [GETTER(CLIPPATH_MAKE_POLYGON)] ($store, layer) {
 
-        var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || ''; 
+        var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || EMPTY_STRING; 
 
-        var fillRule = ''; 
-        if (clipPathPolygonFillRule != '') {
+        var fillRule = EMPTY_STRING; 
+        if (clipPathPolygonFillRule != EMPTY_STRING) {
             fillRule = clipPathPolygonFillRule + ',';
         }
 

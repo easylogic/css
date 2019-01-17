@@ -8,7 +8,7 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../module/ItemTypes';
-import { pxUnit, unitValue } from '../../../../../util/css/types';
+import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../module/SelectionTypes';
@@ -63,13 +63,13 @@ export default class BoxShadow extends BasePropertyItem {
         var blurRadius = unitValue(item.blurRadius);
         var spreadRadius = unitValue(item.spreadRadius);
 
-        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': '';
+        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': EMPTY_STRING;
 
         return `
             <div class='box-shadow-item ${checked}' box-shadow-id="${item.id}">  
                 <div class="color" style="background-color: ${item.color};"></div>
                 <div class="select">
-                    <label><input type="checkbox" ${item.inset ? 'checked="checked"' : ''}/></label>
+                    <label><input type="checkbox" ${item.inset ? 'checked="checked"' : EMPTY_STRING}/></label>
                 </div>                          
                 <div class="input">
                     <input type="number" min="-100" max="100" data-type='offsetX' value="${offsetX}" />
@@ -91,7 +91,7 @@ export default class BoxShadow extends BasePropertyItem {
 
     [LOAD('$boxShadowList')] () {
         var item = this.read(SELECTION_CURRENT_LAYER)
-        if (!item) { return ''; }
+        if (!item) { return EMPTY_STRING; }
 
         var results =  this.read('item/map/boxshadow/children', item.id, (item) => {
             return this.makeItemNodeBoxShadow(item)

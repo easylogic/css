@@ -16,6 +16,7 @@ import {
 } from "../../../../module/ItemTypes";
 import { CHANGE, CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 const CLIP_PATH_TYPES = [
     CLIP_PATH_TYPE_NONE,
@@ -45,7 +46,7 @@ export default class ClipPath extends BasePropertyItem {
                             <select ref="$clipType">
                                 ${CLIP_PATH_TYPES.map(type => {
                                     return `<option value="${type}">${type}</option>`
-                                }).join('')}
+                                }).join(EMPTY_STRING)}
                             </select>
                         </div>
                     </div>                       

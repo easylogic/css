@@ -5,7 +5,7 @@ import {
     em2percent, em2px 
 } from "../../../../../../util/filter/functions";
 import { parseParamNumber } from "../../../../../../util/gl/filter/util";
-import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject, isPxUnit, isPercentUnit, isEmUnit } from "../../../../../../util/css/types";
+import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject, isPxUnit, isPercentUnit, isEmUnit, EMPTY_STRING } from "../../../../../../util/css/types";
 import { INPUT, CLICK } from "../../../../../../util/Event";
 import { POSITION_LEFT, POSITION_TOP, POSITION_RIGHT, POSITION_BOTTOM, POSITION_CENTER } from "../../../../../module/ItemTypes";
 
@@ -62,7 +62,7 @@ export default class UnitRange extends UIElement {
         this.selectUnit(unit, value);
     }
 
-    refresh (value = '') {
+    refresh (value = EMPTY_STRING) {
 
         if (isPxUnit(value) || isPercentUnit(value) || isEmUnit(value)) {
             this.selectUnit(value.unit, value.value);
@@ -70,7 +70,7 @@ export default class UnitRange extends UIElement {
         }
 
         //TODO: remove legacy code 
-        value = (value || '') + '' 
+        value = (value || EMPTY_STRING) + EMPTY_STRING 
         var unit = UNIT_PX
         if (value.includes(UNIT_PERCENT)) {
             unit = UNIT_PERCENT

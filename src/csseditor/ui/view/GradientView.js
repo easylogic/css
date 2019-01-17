@@ -39,7 +39,7 @@ import {
     CHANGE_PAGE_TRANSFORM,
     CHANGE_PAGE_NAME
 } from '../../types/event';
-import { px } from '../../../util/css/types';
+import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD } from '../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../module/SelectionTypes';
 import { LAYER_TOSTRING, LAYER_TOSTRING_CLIPPATH, LAYER_BOUND_TOCSS } from '../../module/LayerTypes';
@@ -94,13 +94,13 @@ export default class GradientView extends UIElement {
         var page = this.read(SELECTION_CURRENT_PAGE)
 
         if (!page) {
-            return ''; 
+            return EMPTY_STRING; 
         }
 
         this.initializeLayerCache();
 
         var list = this.read('item/map/children', page.id, (item, index) => {
-            var content = item.content || '';
+            var content = item.content || EMPTY_STRING;
             return `<div 
                     tabindex='${index}'
                     class='layer' 
@@ -143,7 +143,7 @@ export default class GradientView extends UIElement {
 
                 this.layerItems[item.id].cssText(this.read(LAYER_TOSTRING, item, true))
 
-                var content = item.content || '';
+                var content = item.content || EMPTY_STRING;
                 this.layerItems[item.id].html(content + this.read(LAYER_TOSTRING_CLIPPATH, item))
             })
         })
@@ -235,13 +235,13 @@ export default class GradientView extends UIElement {
         this.setBackgroundColor();
     }
 
-    // [EVENT(
-    //     CHANGE_LAYER_POSITION,
-    //     CHANGE_LAYER_SIZE,
-    //     CHANGE_LAYER_MOVE,        
-    // )] () {
-    //     this.refreshLayerPosition();
-    // }
+    [EVENT(
+        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER_MOVE,        
+    )] () {
+        this.refreshLayerPosition();
+    }
 
     // indivisual layer effect 
     [EVENT(
@@ -256,9 +256,9 @@ export default class GradientView extends UIElement {
         CHANGE_LAYER_TRANSFORM,
         CHANGE_LAYER_TRANSFORM_3D,
         CHANGE_LAYER_TEXT,
-        CHANGE_LAYER_POSITION,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_MOVE,    
+        // CHANGE_LAYER_POSITION,
+        // CHANGE_LAYER_SIZE,
+        // CHANGE_LAYER_MOVE,    
         CHANGE_LAYER_CLIPPATH_POLYGON,
         CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
         CHANGE_BOXSHADOW,

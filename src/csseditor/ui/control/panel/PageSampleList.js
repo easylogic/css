@@ -1,6 +1,6 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CLICK, LOAD } from "../../../../util/Event";
-import { unitValue, pxUnit } from "../../../../util/css/types";
+import { unitValue, pxUnit, EMPTY_STRING } from "../../../../util/css/types";
 import { defaultValue } from "../../../../util/functions/func";
 import { ITEM_CONVERT_STYLE } from "../../../module/ItemTypes";
 import { SELECTION_CURRENT_PAGE_ID } from "../../../module/SelectionTypes";
@@ -46,7 +46,7 @@ export default class PageSampleList extends UIElement {
                     return `
                         <div class="layer-view" style="${data.css}"></div>
                     `
-                }).join('')}
+                }).join(EMPTY_STRING)}
                 </div>
 
                 <div class='item-tools'>
@@ -74,7 +74,7 @@ export default class PageSampleList extends UIElement {
                         return `
                             <div class="layer-view" style="${data.css}"></div>
                         `
-                    }).join('')}
+                    }).join(EMPTY_STRING)}
                     </div>
                     <div class='item-tools'>
                         <button type="button" class='add-item'  data-sample-id="${page.id}" title="Add">&times;</button>                

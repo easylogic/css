@@ -5,6 +5,7 @@ import { CHANGE } from '../../../../../util/Event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { BLEND_LIST } from '../../../../module/BlendTypes';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../module/SelectionTypes';
+import { EMPTY_STRING } from '../../../../../util/css/types';
 
 export default class LayerBlend extends BasePropertyItem {
 
@@ -18,7 +19,7 @@ export default class LayerBlend extends BasePropertyItem {
                         <select ref="$blend">
                         ${this.read(BLEND_LIST).map(blend => {
                             return `<option value="${blend}">${blend}</option>`
-                        }).join('')}
+                        }).join(EMPTY_STRING)}
                         </select>
                     </div>
                 </div>

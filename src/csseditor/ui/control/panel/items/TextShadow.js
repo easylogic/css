@@ -9,7 +9,7 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_TEXTSHADOW } from '../../../../module/ItemTypes';
-import { px, unitValue, pxUnit } from '../../../../../util/css/types';
+import { px, unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
 import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../module/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../module/SelectionTypes';
@@ -56,7 +56,7 @@ export default class TextShadow extends BasePropertyItem {
         var offsetX = unitValue(item.offsetX);
         var offsetY = unitValue(item.offsetY);
         var blurRadius = unitValue(item.blurRadius);
-        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': '';
+        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': EMPTY_STRING;
 
         return `
             <div class='text-shadow-item ${checked}' text-shadow-id="${item.id}">  
@@ -78,7 +78,7 @@ export default class TextShadow extends BasePropertyItem {
 
     [LOAD('$textShadowList')] () {
         var item = this.read(SELECTION_CURRENT_LAYER)
-        if (!item) { return ''; }
+        if (!item) { return EMPTY_STRING; }
 
         var results =  this.read('item/map/textshadow/children', item.id, (item) => {
             return this.makeItemNodetextShadow(item)

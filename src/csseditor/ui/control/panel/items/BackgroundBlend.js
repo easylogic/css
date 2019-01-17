@@ -5,6 +5,7 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 import { BLEND_LIST } from '../../../../module/BlendTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../../module/SelectionTypes';
+import { EMPTY_STRING } from '../../../../../util/css/types';
 
 export default class BackgroundBlend extends BasePropertyItem {
 
@@ -18,7 +19,7 @@ export default class BackgroundBlend extends BasePropertyItem {
                         <select ref="$blend">
                         ${this.read(BLEND_LIST).map(blend => {
                             return `<option value="${blend}">${blend}</option>`
-                        }).join('')}
+                        }).join(EMPTY_STRING)}
                         </select>
                     </div>
                 </div>

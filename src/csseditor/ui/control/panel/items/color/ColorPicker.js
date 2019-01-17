@@ -10,6 +10,7 @@ import {
 } from '../../../../../types/event';
 import { isNotUndefined } from '../../../../../../util/functions/func';
 import { SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../../module/SelectionTypes';
+import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_GRADIENT } from '../../../../../module/ImageTypes';
 
 export default class ColorPickerLayer extends UIElement {
 
@@ -45,9 +46,9 @@ export default class ColorPickerLayer extends UIElement {
 
         if (this.read(SELECTION_IS_IMAGE)) {
             
-            if (this.read('image/type/isStatic', item.type)) {
+            if (this.read(IMAGE_TYPE_IS_STATIC, item.type)) {
                 this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
-            } else if (this.read('image/type/isGradient',item.type)) {
+            } else if (this.read(IMAGE_TYPE_IS_GRADIENT,item.type)) {
 
                 this.read('item/each/children', item.id, (step) => {
                     if (step.selected) {
@@ -78,9 +79,9 @@ export default class ColorPickerLayer extends UIElement {
     refresh() {
         if (this.read(SELECTION_IS_IMAGE)) {
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
-                if (this.read('image/type/isStatic', image.type)) {
+                if (this.read(IMAGE_TYPE_IS_STATIC, image.type)) {
                     this.colorPicker.initColorWithoutChangeEvent(image.color);
-                } else if (this.read('image/type/isGradient', image.type)) {
+                } else if (this.read(IMAGE_TYPE_IS_GRADIENT, image.type)) {
                     
                 }
             })

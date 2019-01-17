@@ -1,6 +1,7 @@
 import Dom from '../../util/Dom'
 import UIElement, { EVENT } from '../UIElement';
 import { CLICK, CONTEXTMENU, LOAD } from '../../util/Event';
+import { EMPTY_STRING } from '../../util/css/types';
 
 export default class CurrentColorSets extends UIElement {
 
@@ -26,8 +27,8 @@ export default class CurrentColorSets extends UIElement {
                     <div class="empty"></div>
                     <div class="color-view" style="background-color: ${color}"></div>
                 </div>`
-            }).join('')}   
-            ${currentColorSets.edit ? `<div class="add-color-item">+</div>` : ''}         
+            }).join(EMPTY_STRING)}   
+            ${currentColorSets.edit ? `<div class="add-color-item">+</div>` : EMPTY_STRING}         
             </div>
         `
     }    

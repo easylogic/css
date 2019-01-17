@@ -2,6 +2,7 @@ import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../module/SelectionTypes";
+import { IMAGE_TYPE_IS_GRADIENT } from "../../module/ImageTypes";
 
 export default class VerticalColorStep extends UIElement {
 
@@ -36,7 +37,7 @@ export default class VerticalColorStep extends UIElement {
 
         if (!item) return false; 
 
-        return this.read('image/type/isGradient', item.type)
+        return this.read(IMAGE_TYPE_IS_GRADIENT, item.type)
     }    
 
 }

@@ -10,6 +10,7 @@ import {
 } from "./ItemTypes";
 import { GETTER } from "../../util/Store";
 import { isUndefined, clone } from "../../util/functions/func";
+import { EMPTY_STRING } from "../../util/css/types";
 export const DEFAULT_FUNCTION = (item) => item; 
 
 export default class ItemSearchManager extends BaseModule {
@@ -168,7 +169,7 @@ export default class ItemSearchManager extends BaseModule {
     }
 
     [GETTER('item/tree')] ($store) {
-        return $store.read('item/traverse', '');
+        return $store.read('item/traverse', EMPTY_STRING);
     }
 
     [GETTER('item/tree/normalize')] ($store, root = [], children = [], depth = 0) {
@@ -190,7 +191,7 @@ export default class ItemSearchManager extends BaseModule {
         do {
             var item = $store.read(ITEM_GET, targetId);
 
-            if (item.parentId == '') {
+            if (item.parentId == EMPTY_STRING) {
                 results.push(item.id);
                 break; 
             } else {

@@ -4,11 +4,12 @@ import {
     CHANGE_IMAGE_RADIAL_POSITION, 
     CHANGE_SELECTION 
 } from '../../../types/event';
-import { percent } from '../../../../util/css/types';
+import { percent, EMPTY_STRING } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../module/ItemTypes';
 import { isString } from '../../../../util/functions/func';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
+import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../module/ImageTypes';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
@@ -46,8 +47,8 @@ export default class GradientPosition extends UIElement {
         if (!item) return false; 
 
 
-        var isRadial = this.read('image/type/isRadial', item.type);
-        var isConic = this.read('image/type/isConic', item.type);
+        var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, item.type);
+        var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type);
 
         if (isRadial == false && isConic == false) {    // radial , conic 만 보여주기 
             return false; 
@@ -116,9 +117,9 @@ export default class GradientPosition extends UIElement {
 
         var item = this.read(SELECTION_CURRENT_IMAGE);
 
-        if (!item) return ''; 
+        if (!item) return EMPTY_STRING; 
 
-        return item.radialPosition || ''
+        return item.radialPosition || EMPTY_STRING
 
     }
 

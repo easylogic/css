@@ -3,6 +3,7 @@ import SVGList from "./svg/index";
 import Dom from "../../util/Dom";
 import { GETTER, ACTION } from "../../util/Store";
 import { clone } from "../../util/functions/func";
+import { EMPTY_STRING } from "../../util/css/types";
 
 export default class SVGManager extends BaseModule {
 
@@ -47,7 +48,7 @@ export default class SVGManager extends BaseModule {
             }
         }
 
-        return ''; 
+        return EMPTY_STRING; 
     }
 
     [GETTER('svg/get')] ($store, index, key) {
@@ -61,7 +62,7 @@ export default class SVGManager extends BaseModule {
             }
         }
 
-        return ''; 
+        return EMPTY_STRING; 
     }    
 
 }

@@ -2,6 +2,7 @@ import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH } from "../../../types/event";
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from "../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../util/css/types";
 
 
 export default class ShowClipPath extends MenuItem {
@@ -41,7 +42,7 @@ export default class ShowClipPath extends MenuItem {
 
         if (isShow) {
             this.read(SELECTION_CURRENT_LAYER, item => {
-                this.$el.attr('checked', item.showClipPathEditor ? 'checked' : '');
+                this.$el.attr('checked', item.showClipPathEditor ? 'checked' : EMPTY_STRING);
             })
         }
 

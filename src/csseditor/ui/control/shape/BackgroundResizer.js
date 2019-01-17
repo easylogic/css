@@ -6,7 +6,7 @@ import {
 } from '../../../types/event';
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
-import { percentUnit } from '../../../../util/css/types';
+import { percentUnit, EMPTY_STRING } from '../../../../util/css/types';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../module/SelectionTypes';
 
 export default class BackgroundResizer extends UIElement {
@@ -62,7 +62,7 @@ export default class BackgroundResizer extends UIElement {
 
         var item = this.read(SELECTION_CURRENT_IMAGE);
 
-        if (!item) return ''; 
+        if (!item) return EMPTY_STRING; 
 
         var x = defaultValue(item.backgroundPositionX, percentUnit(0)).value;
         var y = defaultValue(item.backgroundPositionY, percentUnit(0)).value;

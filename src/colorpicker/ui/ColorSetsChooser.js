@@ -1,5 +1,6 @@
 import UIElement, { EVENT } from '../UIElement';
 import { CLICK, LOAD } from '../../util/Event';
+import { EMPTY_STRING } from '../../util/css/types';
 
 const DATA_COLORSETS_INDEX = 'data-colorsets-index';
 
@@ -49,11 +50,11 @@ export default class ColorSetsChooser extends UIElement {
                                         return  `<div class="color-item" title="${color}">
                                                 <div class="color-view" style="background-color: ${color}"></div>
                                             </div>`
-                                    }).join('')}
+                                    }).join(EMPTY_STRING)}
                                 </div>
                             </div>
                         </div>`
-                }).join('')}
+                }).join(EMPTY_STRING)}
             </div>
         `
     }

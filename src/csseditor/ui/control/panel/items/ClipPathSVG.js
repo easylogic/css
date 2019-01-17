@@ -7,6 +7,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../module/SelectionTypes";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class ClipPathSVG extends BasePropertyItem {
 
@@ -100,7 +101,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
     updateView () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            this.refs.$clipPath.html(defaultValue(layer.clipPathSvg, ''))
+            this.refs.$clipPath.html(defaultValue(layer.clipPathSvg, EMPTY_STRING))
             this.refs.$fit.checked(defaultValue(layer.fitClipPathSize, false))
         });
     }

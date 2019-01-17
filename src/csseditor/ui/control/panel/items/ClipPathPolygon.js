@@ -7,7 +7,7 @@ import {
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, percentUnit, stringUnit, unitValue } from "../../../../../util/css/types";
+import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../module/ItemTypes";
 import { defaultValue, isUndefined } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
@@ -33,7 +33,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
                         return `${stringUnit(point.x)} ${stringUnit(point.y)}`
                     }).join(', ');
                     return `<div class='clip-path-item' data-index='${index}' style='clip-path: polygon(${values})'></div>`
-                }).join('')}</div> 
+                }).join(EMPTY_STRING)}</div> 
                 <div class='items' ref='$polygonList'></div>
             </div>
         `
@@ -41,17 +41,17 @@ export default class ClipPathPolygon extends BasePropertyItem {
 
     [LOAD('$polygonList')] () {
         var layer = this.read(SELECTION_CURRENT_LAYER);
-        if (!layer) return '';
+        if (!layer) return EMPTY_STRING;
         var points =  defaultValue ( layer.clipPathPolygonPoints, [])
-        if (!points.length) return '';
+        if (!points.length) return EMPTY_STRING;
 
         var startIndex = 0;
         var lastIndex = points.length - 1; 
 
         return points.map((p, index) => {
 
-            var start = index == startIndex ? 'start' : '';
-            var end = index == lastIndex ? 'end' : '';
+            var start = index == startIndex ? 'start' : EMPTY_STRING;
+            var end = index == lastIndex ? 'end' : EMPTY_STRING;
 
             return `
                 <div class="polygon-item ${start} ${end}" data-index="${index}" >

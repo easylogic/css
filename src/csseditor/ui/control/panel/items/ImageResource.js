@@ -3,6 +3,7 @@ import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { isObject } from "../../../../../util/functions/func";
 import { EVENT } from "../../../../../colorpicker/UIElement";
+import { IMAGE_TYPE_IS_IMAGE, IMAGE_GET_BLOB } from "../../../../module/ImageTypes";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -49,7 +50,7 @@ export default class ImageResource extends BasePropertyItem {
 
         if (!item) return false; 
 
-        return this.read('image/type/isImage', item.type); 
+        return this.read(IMAGE_TYPE_IS_IMAGE, item.type); 
     }
 
     [CLICK('$imageList .svg-item')] (e) {
@@ -58,7 +59,7 @@ export default class ImageResource extends BasePropertyItem {
         if (index) {
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 var file = this.read('svg/get/blob', +index);
-                this.read('image/get/blob', [file], (newImage) => {
+                this.read(IMAGE_GET_BLOB, [file], (newImage) => {
                     this.dispatch('item/set/image/file', image.id, newImage)
                 });
             })
@@ -66,7 +67,7 @@ export default class ImageResource extends BasePropertyItem {
 
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 var file = this.read('svg/get/blob', Number.MAX_SAFE_INTEGER, key);
-                this.read('image/get/blob', [file], (newImage) => {
+                this.read(IMAGE_GET_BLOB, [file], (newImage) => {
                     this.dispatch('item/set/image/file', image.id, newImage)
                 });
             })

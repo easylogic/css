@@ -1,4 +1,4 @@
-import { px } from "./css/types";
+import { px, EMPTY_STRING } from "./css/types";
 import { isString, isUndefined, isNotString } from "./functions/func";
 
 let counter = 0;
@@ -176,7 +176,7 @@ export default class Dom {
 
     
     empty () {
-        return this.html('');
+        return this.html(EMPTY_STRING);
     }
     
     append (el) {
@@ -425,7 +425,7 @@ export default class Dom {
         return this.el;
     }
 
-    createChild (tag, className = '', attrs = {}, css = {}) {
+    createChild (tag, className = EMPTY_STRING, attrs = {}, css = {}) {
         let $element = new Dom(tag, className, attrs);
         $element.css(css);
 

@@ -1,6 +1,8 @@
 import { percent2px, em2px, px2percent, em2percent, percent2em, px2em, parseParamNumber } from "../filter/functions";
 import { isString, isNotString, isNumber } from "../functions/func";
 
+export const EMPTY_STRING = '' 
+
 export const UNIT_VALUE = 'value';
 export const UNIT_PX = 'px';
 export const UNIT_EM = 'em';
@@ -8,12 +10,12 @@ export const UNIT_PERCENT = 'percent';
 export const UNIT_DEG = 'deg';
 export const UNIT_COLOR = 'color'
 
-export const UNIT_VALUE_STRING = '';
+export const UNIT_VALUE_STRING = EMPTY_STRING;
 export const UNIT_PX_STRING = 'px';
 export const UNIT_EM_STRING = 'em';
 export const UNIT_PERCENT_STRING = '%';
 export const UNIT_DEG_STRING = '°';
-export const UNIT_COLOR_STRING = '';
+export const UNIT_COLOR_STRING = EMPTY_STRING;
 
 export const UNIT_STRINGS = {
     [UNIT_VALUE]: UNIT_VALUE_STRING,
@@ -37,7 +39,7 @@ export function isPercent(unit) { return unit === UNIT_PERCENT; }
 export function isDeg(unit) { return unit === UNIT_DEG; }
 export function isColor(unit) { return unit === UNIT_COLOR; }
 
-export function unitString(unit, defaultString = '') {
+export function unitString(unit, defaultString = EMPTY_STRING) {
     return UNIT_STRINGS[unit] || defaultString
 }
 

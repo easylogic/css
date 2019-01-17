@@ -3,6 +3,7 @@ import Dom from './Dom'
 import State from './State'
 import { debounce, isFunction } from './functions/func';
 import { CONTROL, ALT, SHIFT, META } from './Key';
+import { EMPTY_STRING } from './css/types';
 
 
 const checkGroup = /\>(\W*)\</g
@@ -40,7 +41,7 @@ export default class EventMachin {
   parseTemplate (html, isLoad) {
 
     if (Array.isArray(html)) {
-      html = html.join('')
+      html = html.join(EMPTY_STRING)
     }
 
     html = html.trim();
@@ -274,7 +275,7 @@ export default class EventMachin {
 
     let debounceTime = 0; 
     if (delay.length) {
-      debounceTime = delay[0].replace('debounce(', '').replace(')', '');
+      debounceTime = delay[0].replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING);
     }
 
     // capture 

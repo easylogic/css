@@ -16,6 +16,7 @@ import { convertMatches, reverseMatches } from "../../../../../util/functions/pa
 import { LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../module/SelectionTypes";
 import { LAYER_IMAGE_TOIMAGECSS } from "../../../../module/LayerTypes";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class BackgroundCode extends BasePropertyItem {
     template () {
@@ -34,7 +35,7 @@ export default class BackgroundCode extends BasePropertyItem {
     [LOAD('$keys')] () {
         var image = this.read(SELECTION_CURRENT_IMAGE);
 
-        if (!image) return ''; 
+        if (!image) return EMPTY_STRING; 
 
         var obj = this.read(LAYER_IMAGE_TOIMAGECSS, image)
 
