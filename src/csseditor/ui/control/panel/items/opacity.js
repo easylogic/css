@@ -19,7 +19,7 @@ export default class Opacity extends BasePropertyItem {
                         <label>Opacity</label>
                         <div>
                             <input type='range' ref="$opacityRange" min="0" max="1" step="0.01">
-                            <input type='number' ref="$opacity" min="0" max="1" step="0.01">
+                            <input type='number' class='middle' ref="$opacity" min="0" max="1" step="0.01">
                         </div>
                     </div>                                                                           
                 </div>

@@ -42,7 +42,7 @@ export default class ClipPath extends BasePropertyItem {
 
                     <div>
                         <label>Type</label>
-                        <div >
+                        <div class='full-size'>
                             <select ref="$clipType">
                                 ${CLIP_PATH_TYPES.map(type => {
                                     return `<option value="${type}">${type}</option>`

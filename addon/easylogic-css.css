@@ -2542,7 +2542,7 @@ html, body {
       .csseditor .sub-feature-control > .feature > .property-view {
         position: relative;
         height: 150px;
-        width: 240px;
+        width: 150px;
         background-color: rgba(0, 0, 0, 0.2);
         display: inline-block;
         vertical-align: middle; }
@@ -4140,10 +4140,10 @@ html, body {
   .csseditor .background-resizer {
     position: absolute;
     display: none;
-    bottom: 30px;
-    top: 30px;
-    right: 30px;
-    left: 30px;
+    bottom: 24px;
+    top: 24px;
+    right: 24px;
+    left: 24px;
     background-color: rgba(255, 255, 255, 0.1); }
     .csseditor .background-resizer .drag-pointer {
       position: absolute;
@@ -4750,6 +4750,19 @@ html, body {
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex; }
+          .csseditor .property-view .property-item > .items > div > div.full-size {
+            width: 160px; }
+            .csseditor .property-view .property-item > .items > div > div.full-size select {
+              width: 100%;
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              display: inline-block;
+              background-color: transparent;
+              border: 1px solid #cccccc;
+              border-radius: 0px;
+              padding: 0px 5px;
+              vertical-align: middle; }
           .csseditor .property-view .property-item > .items > div > div input[type=range] {
             width: 90px;
             vertical-align: middle;
@@ -4759,6 +4772,8 @@ html, body {
             vertical-align: middle;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box; }
+            .csseditor .property-view .property-item > .items > div > div input[type=number].middle, .csseditor .property-view .property-item > .items > div > div input[type=text].middle {
+              width: 50px; }
             .csseditor .property-view .property-item > .items > div > div input[type=number].full, .csseditor .property-view .property-item > .items > div > div input[type=text].full {
               width: 160px;
               height: 20px; }

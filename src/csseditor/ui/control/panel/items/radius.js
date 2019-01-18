@@ -16,28 +16,28 @@ export default class Radius extends BasePropertyItem {
                         <label >Top Left</label>
                         <div>
                             <input type='range' ref="$topLeftRadiusRange" min="0" max="500">                        
-                            <input type='number' min="0" max="500" ref="$topLeftRadius"> <span>px</span>
+                            <input type='number' class='middle' min="0" max="500" ref="$topLeftRadius"> <span>px</span>
                         </div>
                     </div>
                     <div>
                         <label>Top Right</label>
                         <div>
                             <input type='range' ref="$topRightRadiusRange" min="0" max="500">                                                
-                            <input type='number' min="0" max="500" ref="$topRightRadius"> <span>px</span>
+                            <input type='number' class='middle' min="0" max="500" ref="$topRightRadius"> <span>px</span>
                         </div>
                     </div>          
                     <div>
                         <label>Btm Left</label>
                         <div>
                             <input type='range' ref="$bottomLeftRadiusRange" min="0" max="500">                                                
-                            <input type='number' min="0" max="500" ref="$bottomLeftRadius"> <span>px</span>
+                            <input type='number' class='middle' min="0" max="500" ref="$bottomLeftRadius"> <span>px</span>
                         </div>
                     </div>
                     <div>
                         <label>Btm Right</label>
                         <div>
                             <input type='range' ref="$bottomRightRadiusRange" min="0" max="500">                                                
-                            <input type='number' min="0" max="500" ref="$bottomRightRadius"> <span>px</span>
+                            <input type='number' class='middle' min="0" max="500" ref="$bottomRightRadius"> <span>px</span>
                         </div>
                     </div>
                 </div>

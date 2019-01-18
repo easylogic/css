@@ -13,7 +13,7 @@ export default class Rotate extends BasePropertyItem {
                         <label>Rotate</label>
                         <div>
                             <input type='range' ref="$rotateRange" min="-360" max="360" step="0.1">
-                            <input type='number' ref="$rotate" min="-360" max="360" step="0.1"> <span>°</span>
+                            <input type='number' class='middle' ref="$rotate" min="-360" max="360" step="0.1"> <span>°</span>
                         </div>
                     </div>                                                                           
                 </div>

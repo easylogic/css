@@ -10197,7 +10197,7 @@ var SELECTION_MODE = 'selection/mode';
 var SELECTION_IS = 'selection/is';
 var SELECTION_IS_ITEM = 'selection/is/item';
 var SELECTION_IS_LAYER$1 = 'selection/is/layer';
-var SELECTION_IS_IMAGE$1 = 'selection/is/image';
+var SELECTION_IS_IMAGE = 'selection/is/image';
 var SELECTION_IS_PAGE = 'selection/is/page';
 var SELECTION_IS_BOXSHADOW = 'selection/is/boxshadow';
 var SELECTION_IS_TEXTSHADOW = 'selection/is/textshadow';
@@ -13775,7 +13775,7 @@ var SelectionManager = function (_BaseModule) {
             return $store.selection.itemType == ITEM_TYPE_LAYER;
         }
     }, {
-        key: GETTER(SELECTION_IS_IMAGE$1),
+        key: GETTER(SELECTION_IS_IMAGE),
         value: function value$$1($store, type) {
 
             var isImage = $store.selection.itemType == ITEM_TYPE_IMAGE;
@@ -15932,7 +15932,7 @@ var Size = function (_BasePropertyItem) {
             if (!item.length) return;
 
             item = item[0];
-            if (this.read(SELECTION_IS_IMAGE$1)) return;
+            if (this.read(SELECTION_IS_IMAGE)) return;
             if (item.width) {
                 this.refs.$width.val(unitValue(item.width));
             }
@@ -16068,7 +16068,7 @@ var Radius = function (_BasePropertyItem) {
     createClass(Radius, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item radius'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item radius'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -16390,7 +16390,7 @@ var GradientSteps = function (_UIElement) {
                 return false;
             }
 
-            if (!this.read(SELECTION_IS_IMAGE$1)) {
+            if (!this.read(SELECTION_IS_IMAGE)) {
                 return false;
             }
 
@@ -17198,7 +17198,7 @@ var ColorPickerLayer = function (_UIElement) {
 
             item = item[0];
 
-            if (this.read(SELECTION_IS_IMAGE$1)) {
+            if (this.read(SELECTION_IS_IMAGE)) {
 
                 if (this.read(IMAGE_TYPE_IS_STATIC, item.type)) {
                     this.commit(CHANGE_IMAGE_COLOR, { id: item.id, color: color });
@@ -17234,7 +17234,7 @@ var ColorPickerLayer = function (_UIElement) {
         value: function refresh() {
             var _this4 = this;
 
-            if (this.read(SELECTION_IS_IMAGE$1)) {
+            if (this.read(SELECTION_IS_IMAGE)) {
                 this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
                     if (_this4.read(IMAGE_TYPE_IS_STATIC, image.type)) {
                         _this4.colorPicker.initColorWithoutChangeEvent(image.color);
@@ -17954,165 +17954,6 @@ var PageExport = function (_UIElement) {
     return PageExport;
 }(UIElement);
 
-var BlendList = function (_BasePropertyItem) {
-    inherits(BlendList, _BasePropertyItem);
-
-    function BlendList() {
-        classCallCheck(this, BlendList);
-        return possibleConstructorReturn(this, (BlendList.__proto__ || Object.getPrototypeOf(BlendList)).apply(this, arguments));
-    }
-
-    createClass(BlendList, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class=\'property-item blend\'>\n            <div class=\'title\' ref="$title">Blend Mode - <span class=\'description\' ref="$desc"></span></div>\n            <div class=\'items max-height\'>         \n                <div class="blend-list" ref="$blendList"></div>\n            </div>\n        </div>\n        ';
-        }
-    }, {
-        key: 'onToggleShow',
-        value: function onToggleShow() {
-            this.refresh();
-        }
-    }, {
-        key: LOAD('$blendList'),
-        value: function value$$1() {
-            var _this2 = this;
-
-            var list = this.read(BLEND_LIST);
-
-            var item = this.read(SELECTION_CURRENT_IMAGE);
-            if (!item) {
-                return EMPTY_STRING;
-            }
-
-            return '<div>' + list.map(function (blend) {
-
-                var selected = blend == item.backgroundBlendMode ? 'selected' : EMPTY_STRING;
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container" style="background-image: url(/resources/image/grapes.jpg);background-blend-mode: ' + blend + ';">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE, item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
-            }).join(EMPTY_STRING) + '</div>';
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE);
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this3 = this;
-
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            this.read(SELECTION_CURRENT_IMAGE, function (image) {
-                _this3.refs.$desc.text(image.backgroundBlendMode || 'normal');
-            });
-
-            if (isShow && this.$el.hasClass('show')) {
-                this.load();
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_SELECTION),
-        value: function value$$1() {
-            if (this.isPropertyShow()) {
-                this.refresh();
-            }
-        }
-    }, {
-        key: CLICK('$blendList .blend-item') + SELF,
-        value: function value$$1(e) {
-            var _this4 = this;
-
-            this.read(SELECTION_CURRENT_IMAGE_ID, function (id) {
-                _this4.commit(CHANGE_IMAGE, { id: id, backgroundBlendMode: e.$delegateTarget.attr('data-mode') }, true);
-                _this4.refresh();
-            });
-        }
-    }]);
-    return BlendList;
-}(BasePropertyItem);
-
-var MixBlendList = function (_BasePropertyItem) {
-    inherits(MixBlendList, _BasePropertyItem);
-
-    function MixBlendList() {
-        classCallCheck(this, MixBlendList);
-        return possibleConstructorReturn(this, (MixBlendList.__proto__ || Object.getPrototypeOf(MixBlendList)).apply(this, arguments));
-    }
-
-    createClass(MixBlendList, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'property-item mix-blend-list\'>\n                <div class=\'title\' ref="$title">Mix Blend - <span class=\'description\' ref="$desc"></span></div>\n                <div class=\'items max-height\'>                    \n                    <div class=\'mix-blend-list blend-list-tab\'>\n                        <div class="blend-list" ref="$mixBlendList"></div>            \n                    </div>   \n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: LOAD('$mixBlendList'),
-        value: function value$$1() {
-            var _this2 = this;
-
-            var list = this.read(BLEND_LIST);
-            var item = this.read(SELECTION_CURRENT_LAYER);
-            if (!item) {
-                return EMPTY_STRING;
-            }
-
-            return '<div>' + list.map(function (blend) {
-
-                var selected = blend == item.mixBlendMode ? 'selected' : EMPTY_STRING;
-                return '\n                        <div class=\'blend-item ' + selected + '\' data-mode="' + blend + '">\n                            <div class="blend-item-view-container">\n                                <div class="blend-item-blend-view"  style=\'' + _this2.read(BLEND_TO_STRING_WITHOUT_DIMENSION, item, blend) + '\'></div>\n                                <div class="blend-item-text">' + blend + '</div>\n                            </div>\n                        </div>';
-            }).join(EMPTY_STRING) + '</div>';
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var image = this.read(SELECTION_CURRENT_IMAGE);
-
-            if (image) return false;
-
-            return true;
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this3 = this;
-
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow && this.parent.selectedTabId == 'mix') {
-                this.load();
-
-                this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    _this3.refs.$desc.text(layer.mixBlendMode);
-                });
-            }
-        }
-    }, {
-        key: 'show',
-        value: function show() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$mixBlendList .blend-item') + SELF,
-        value: function value$$1(e) {
-            var _this4 = this;
-
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this4.commit(CHANGE_LAYER, { id: id, mixBlendMode: e.$delegateTarget.attr('data-mode') }, true);
-                _this4.refresh();
-            });
-        }
-    }]);
-    return MixBlendList;
-}(BasePropertyItem);
-
 var DROPSHADOW_FILTER_KEYS = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
 
 var FilterList$1 = function (_BasePropertyItem) {
@@ -18491,7 +18332,7 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n\n                    <div>\n                        <label>Type</label>\n                        <div >\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
+            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n\n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        ";
         }
@@ -18617,14 +18458,14 @@ var BackgroundBlend = function (_BasePropertyItem) {
     createClass(BackgroundBlend, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
+            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }).join(EMPTY_STRING) + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE$1);
+            return this.read(SELECTION_IS_IMAGE);
         }
     }, {
         key: 'refresh',
@@ -18664,7 +18505,7 @@ var LayerBlend = function (_BasePropertyItem) {
     createClass(LayerBlend, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
+            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }).join(EMPTY_STRING) + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
@@ -18711,7 +18552,7 @@ var Rotate = function (_BasePropertyItem) {
     createClass(Rotate, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item rotate show'>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$rotate\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>\xB0</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item rotate show'>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' class='middle' ref=\"$rotate\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>\xB0</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -18769,7 +18610,7 @@ var RadiusFixed = function (_BasePropertyItem) {
     createClass(RadiusFixed, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item fixed-radius'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item fixed-radius'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -18858,7 +18699,7 @@ var Opacity$3 = function (_BasePropertyItem) {
     createClass(Opacity, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item opacity show'>\n                <div class='items'>            \n                    <div>\n                        <label>Opacity</label>\n                        <div>\n                            <input type='range' ref=\"$opacityRange\" min=\"0\" max=\"1\" step=\"0.01\">\n                            <input type='number' ref=\"$opacity\" min=\"0\" max=\"1\" step=\"0.01\">\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item opacity show'>\n                <div class='items'>            \n                    <div>\n                        <label>Opacity</label>\n                        <div>\n                            <input type='range' ref=\"$opacityRange\" min=\"0\" max=\"1\" step=\"0.01\">\n                            <input type='number' class='middle' ref=\"$opacity\" min=\"0\" max=\"1\" step=\"0.01\">\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_OPACITY, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -19096,7 +18937,7 @@ var ClipPathSide = function (_BasePropertyItem) {
     createClass(ClipPathSide, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div >\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES.map(function (type) {
+            return "\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        ";
         }
@@ -19719,7 +19560,7 @@ var BackgroundInfo = function (_BasePropertyItem) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE$1);
+            return this.read(SELECTION_IS_IMAGE);
         }
     }, {
         key: 'refresh',
@@ -19751,7 +19592,7 @@ var Text = function (_BasePropertyItem) {
     createClass(Text, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Content</div>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Content</div>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list full-size'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_TEXT),
@@ -20034,9 +19875,9 @@ var Font = function (_BasePropertyItem) {
     createClass(Font, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item font show'>\n                <div class='title' ref=\"$title\">Font</div>            \n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div>\n                            <select ref=\"$fontFamily\">\n                                " + fontFamilyList.map(function (f) {
+            return "\n            <div class='property-item font show'>\n                <div class='title' ref=\"$title\">Font</div>            \n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                " + fontFamilyList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
+            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
             }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
         }
@@ -20133,7 +19974,7 @@ var BackgroundClip = function (_BasePropertyItem) {
     createClass(BackgroundClip, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Clip Area</label>\n                    <div class=\'size-list\'>\n                        <select ref="$clip">\n                            <option value="content-box">content-box</option>\n                            <option value="border-box">border-box</option>\n                            <option value="padding-box">padding-box</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Clip Area</label>\n                    <div class=\'size-list full-size\'>\n                        <select ref="$clip">\n                            <option value="content-box">content-box</option>\n                            <option value="border-box">border-box</option>\n                            <option value="padding-box">padding-box</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'isShow',
@@ -20595,7 +20436,7 @@ var ImageSorting = function (_BasePropertyItem) {
         key: 'isShow',
         value: function isShow() {
 
-            var isImage = this.read(SELECTION_IS_IMAGE$1);
+            var isImage = this.read(SELECTION_IS_IMAGE);
 
             if (!isImage) return false;
 
@@ -20725,7 +20566,7 @@ var items = (_BackgroundImage$Imag = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_BackgroundImage$Imag, "ClipPathSVG", ClipPathSVG), defineProperty(_BackgroundImage$Imag, "Opacity", Opacity$3), defineProperty(_BackgroundImage$Imag, "RadiusFixed", RadiusFixed), defineProperty(_BackgroundImage$Imag, "Rotate", Rotate), defineProperty(_BackgroundImage$Imag, "LayerBlend", LayerBlend), defineProperty(_BackgroundImage$Imag, "GroupAlign", GroupAlign), defineProperty(_BackgroundImage$Imag, "PageShowGrid", PageShowGrid), defineProperty(_BackgroundImage$Imag, "ClipPath", ClipPath), defineProperty(_BackgroundImage$Imag, "ImageResource", ImageResource), defineProperty(_BackgroundImage$Imag, "BackgroundColor", BackgroundColor), defineProperty(_BackgroundImage$Imag, "BackgroundBlend", BackgroundBlend), defineProperty(_BackgroundImage$Imag, "BlendList", BlendList), defineProperty(_BackgroundImage$Imag, "MixBlendList", MixBlendList), defineProperty(_BackgroundImage$Imag, "FilterList", FilterList$1), defineProperty(_BackgroundImage$Imag, "PageExport", PageExport), defineProperty(_BackgroundImage$Imag, "PageSize", PageSize), defineProperty(_BackgroundImage$Imag, "PageName", PageName), defineProperty(_BackgroundImage$Imag, "BackgroundSize", BackgroundSize), defineProperty(_BackgroundImage$Imag, "Transform3d", Transform3d), defineProperty(_BackgroundImage$Imag, "Transform", Transform), defineProperty(_BackgroundImage$Imag, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_BackgroundImage$Imag, "ColorPickerPanel", ColorPickerPanel), defineProperty(_BackgroundImage$Imag, "ColorStepsInfo", ColorStepsInfo), defineProperty(_BackgroundImage$Imag, "ColorSteps", ColorSteps), defineProperty(_BackgroundImage$Imag, "Name", Name), defineProperty(_BackgroundImage$Imag, "Size", Size), defineProperty(_BackgroundImage$Imag, "Position", Position), defineProperty(_BackgroundImage$Imag, "Radius", Radius), defineProperty(_BackgroundImage$Imag, "Clip", Clip), _BackgroundImage$Imag);
+}, defineProperty(_BackgroundImage$Imag, "ClipPathSVG", ClipPathSVG), defineProperty(_BackgroundImage$Imag, "Opacity", Opacity$3), defineProperty(_BackgroundImage$Imag, "RadiusFixed", RadiusFixed), defineProperty(_BackgroundImage$Imag, "Rotate", Rotate), defineProperty(_BackgroundImage$Imag, "LayerBlend", LayerBlend), defineProperty(_BackgroundImage$Imag, "GroupAlign", GroupAlign), defineProperty(_BackgroundImage$Imag, "PageShowGrid", PageShowGrid), defineProperty(_BackgroundImage$Imag, "ClipPath", ClipPath), defineProperty(_BackgroundImage$Imag, "ImageResource", ImageResource), defineProperty(_BackgroundImage$Imag, "BackgroundColor", BackgroundColor), defineProperty(_BackgroundImage$Imag, "BackgroundBlend", BackgroundBlend), defineProperty(_BackgroundImage$Imag, "FilterList", FilterList$1), defineProperty(_BackgroundImage$Imag, "PageExport", PageExport), defineProperty(_BackgroundImage$Imag, "PageSize", PageSize), defineProperty(_BackgroundImage$Imag, "PageName", PageName), defineProperty(_BackgroundImage$Imag, "BackgroundSize", BackgroundSize), defineProperty(_BackgroundImage$Imag, "Transform3d", Transform3d), defineProperty(_BackgroundImage$Imag, "Transform", Transform), defineProperty(_BackgroundImage$Imag, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_BackgroundImage$Imag, "ColorPickerPanel", ColorPickerPanel), defineProperty(_BackgroundImage$Imag, "ColorStepsInfo", ColorStepsInfo), defineProperty(_BackgroundImage$Imag, "ColorSteps", ColorSteps), defineProperty(_BackgroundImage$Imag, "Name", Name), defineProperty(_BackgroundImage$Imag, "Size", Size), defineProperty(_BackgroundImage$Imag, "Position", Position), defineProperty(_BackgroundImage$Imag, "Radius", Radius), defineProperty(_BackgroundImage$Imag, "Clip", Clip), _BackgroundImage$Imag);
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -20970,7 +20811,7 @@ var FeatureControl = function (_UIElement) {
 
             if (this.read(SELECTION_IS_LAYER$1) || this.read(SELECTION_IS_GROUP)) {
                 selectType = 'layer';
-            } else if (this.read(SELECTION_IS_IMAGE$1)) {
+            } else if (this.read(SELECTION_IS_IMAGE)) {
                 selectType = 'image';
             }
 
@@ -21141,7 +20982,7 @@ var GradientAngle = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (!this.read(SELECTION_IS_IMAGE$1)) return false;
+            if (!this.read(SELECTION_IS_IMAGE)) return false;
 
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
 
@@ -21320,7 +21161,7 @@ var GradientPosition = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (!this.read(SELECTION_IS_IMAGE$1)) return false;
+            if (!this.read(SELECTION_IS_IMAGE)) return false;
 
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
             if (!item) return false;
@@ -21518,7 +21359,7 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (!this.read(SELECTION_IS_IMAGE$1)) return false;
+            if (!this.read(SELECTION_IS_IMAGE)) return false;
             var image = this.read(SELECTION_CURRENT_IMAGE$1);
 
             if (!image) {
@@ -21583,7 +21424,7 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (!this.read(SELECTION_IS_IMAGE$1)) return false;
+            if (!this.read(SELECTION_IS_IMAGE)) return false;
 
             var image = this.read(SELECTION_CURRENT_IMAGE$1);
 
@@ -21682,7 +21523,7 @@ var BackgroundResizer = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE$1);
+            return this.read(SELECTION_IS_IMAGE);
         }
     }, {
         key: 'getCurrentXY',
@@ -21869,7 +21710,7 @@ var PredefinedBackgroundPosition = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE$1);
+            return this.read(SELECTION_IS_IMAGE);
         }
     }, {
         key: 'getPosition',
@@ -22189,6 +22030,231 @@ var PerspectiveOriginPosition = function (_UIElement) {
     return PerspectiveOriginPosition;
 }(UIElement);
 
+var LayerAngle = function (_UIElement) {
+    inherits(LayerAngle, _UIElement);
+
+    function LayerAngle() {
+        classCallCheck(this, LayerAngle);
+        return possibleConstructorReturn(this, (LayerAngle.__proto__ || Object.getPrototypeOf(LayerAngle)).apply(this, arguments));
+    }
+
+    createClass(LayerAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            if (this.isShow()) {
+                this.$el.show();
+
+                this.refreshUI();
+            } else {
+                this.$el.hide();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read(SELECTION_IS_LAYER$1)) return false;
+
+            return this.config('guide.angle');
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
+            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.refs.$dragAngle.width();
+            var height = this.refs.$dragAngle.height();
+            var radius = Math.floor(width / 2 * 0.7);
+
+            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
+                left = _refs$$dragAngle$offs.left,
+                top = _refs$$dragAngle$offs.top;
+
+            var minX = left;
+            var minY = top;
+            var centerX = minX + width / 2;
+            var centerY = minY + height / 2;
+
+            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+            if (!layer) return 0;
+            if (!layer.rotate) return 0;
+
+            return layer.rotate - 90;
+        }
+    }, {
+        key: 'refreshAngleText',
+        value: function refreshAngleText(angleText) {
+            this.refs.$angleText.text(angleText + ' °');
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                radius = _getRectangle.radius,
+                centerX = _getRectangle.centerX,
+                centerY = _getRectangle.centerY;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
+                x = _getCurrentXY.x,
+                y = _getCurrentXY.y;
+
+            var rx = x - centerX,
+                ry = y - centerY,
+                angle = caculateAngle(rx, ry);
+
+            {
+                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
+                    x = _getCurrentXY2.x,
+                    y = _getCurrentXY2.y;
+            }
+
+            // set drag pointer position 
+            this.refs.$dragPointer.px('left', x - minX);
+            this.refs.$dragPointer.px('top', y - minY);
+
+            var lastAngle = Math.round(angle + 90) % 360;
+
+            this.refreshAngleText(lastAngle);
+
+            if (e) {
+
+                this.setAngle(lastAngle);
+            }
+        }
+    }, {
+        key: 'setAngle',
+        value: function setAngle(rotate) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_TOOL),
+        value: function value() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isDownCheck',
+        value: function isDownCheck() {
+            return this.isDown;
+        }
+    }, {
+        key: 'isNotDownCheck',
+        value: function isNotDownCheck() {
+            return !this.isDown;
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        value: function value(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
+        value: function value(e) {
+            this.refreshUI(e);
+        }
+    }, {
+        key: POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck'),
+        value: function value(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck'),
+        value: function value(e) {
+            this.isDown = true;
+            this.refreshUI(e);
+        }
+    }]);
+    return LayerAngle;
+}(UIElement);
+
+var DEFINED_ANGLES$1 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var PredefinedLayerAngle = function (_UIElement) {
+    inherits(PredefinedLayerAngle, _UIElement);
+
+    function PredefinedLayerAngle() {
+        classCallCheck(this, PredefinedLayerAngle);
+        return possibleConstructorReturn(this, (PredefinedLayerAngle.__proto__ || Object.getPrototypeOf(PredefinedLayerAngle)).apply(this, arguments));
+    }
+
+    createClass(PredefinedLayerAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read(SELECTION_IS_LAYER$1)) return false;
+
+            return this.config('guide.angle');
+        }
+    }, {
+        key: CLICK('$el button') + SELF,
+        value: function value(e) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                var rotate = DEFINED_ANGLES$1[e.$delegateTarget.attr('data-value')];
+                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_TOOL),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedLayerAngle;
+}(UIElement);
+
 var SubFeatureControl = function (_UIElement) {
     inherits(SubFeatureControl, _UIElement);
 
@@ -22200,12 +22266,14 @@ var SubFeatureControl = function (_UIElement) {
     createClass(SubFeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$perspective\">\n                        <PredefinedPerspectiveOriginPosition></PredefinedPerspectiveOriginPosition>\n                        <PerspectiveOriginPosition></PerspectiveOriginPosition>\n                    </div>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                        <BackgroundResizer></BackgroundResizer>\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$perspective\">\n                        <PredefinedPerspectiveOriginPosition></PredefinedPerspectiveOriginPosition>\n                        <PerspectiveOriginPosition></PerspectiveOriginPosition>\n                    </div>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                        <BackgroundResizer></BackgroundResizer>\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                    <div class=\"property-view layer\" ref=\"$layer\">\n                        <PredefinedLayerAngle></PredefinedLayerAngle>\n                        <LayerAngle></LayerAngle>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
             return _extends({
+                PredefinedLayerAngle: PredefinedLayerAngle,
+                LayerAngle: LayerAngle,
                 PerspectiveOriginPosition: PerspectiveOriginPosition,
                 PredefinedPerspectiveOriginPosition: PredefinedPerspectiveOriginPosition,
                 PredefinedRadialGradientAngle: PredefinedRadialGradientAngle,
@@ -22225,6 +22293,7 @@ var SubFeatureControl = function (_UIElement) {
             this.refs.$backgroundSize.toggleClass('hide', this.isNotImage());
             this.refs.$linear.toggleClass('hide', !this.isLinearShow());
             this.refs.$radial.toggleClass('hide', !this.isRadialShow());
+            this.refs.$layer.toggleClass('hide', this.isNotLayer());
         }
     }, {
         key: "isShow",
@@ -22235,7 +22304,12 @@ var SubFeatureControl = function (_UIElement) {
     }, {
         key: "isNotImage",
         value: function isNotImage() {
-            return this.read(SELECTION_IS_IMAGE$1) == false;
+            return this.read(SELECTION_IS_IMAGE) == false;
+        }
+    }, {
+        key: "isNotLayer",
+        value: function isNotLayer() {
+            return this.read(SELECTION_IS_LAYER$1) == false;
         }
     }, {
         key: "isNotPage",
@@ -22250,7 +22324,7 @@ var SubFeatureControl = function (_UIElement) {
     }, {
         key: "isLinearShow",
         value: function isLinearShow() {
-            if (!this.read(SELECTION_IS_IMAGE$1)) return false;
+            if (!this.read(SELECTION_IS_IMAGE)) return false;
 
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
 
@@ -22268,7 +22342,7 @@ var SubFeatureControl = function (_UIElement) {
     }, {
         key: "isRadialShow",
         value: function isRadialShow() {
-            if (!this.read(SELECTION_IS_IMAGE$1)) return false;
+            if (!this.read(SELECTION_IS_IMAGE)) return false;
 
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
             if (!item) return false;
@@ -23507,7 +23581,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var _this2 = this;
 
             var layers = this.read(SELECTION_CURRENT_LAYER);
-            var isImage = this.read(SELECTION_IS_IMAGE$1);
+            var isImage = this.read(SELECTION_IS_IMAGE);
 
             if (!layers) return EMPTY_STRING;
 
@@ -23526,7 +23600,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
                     backgroundCSS = _this2.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
                 }
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TO_STRING, css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TO_STRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         \n                    \n                    \n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TO_STRING, css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TO_STRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <!-- <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         -->\n                    \n                    \n                </div> \n            ';
             });
         }
     }, {
@@ -23552,10 +23626,6 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             height = stringUnit(height);
 
             var transform = "none";
-
-            if (id) {
-                transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
-            }
 
             return _extends({
                 width: width, height: height,
@@ -23923,7 +23993,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 }
             }
 
-            this.run('tool/set', 'moving', true);
+            this.initConfig('moving', true);
 
             this.resizeComponent(e);
         }
@@ -24819,7 +24889,7 @@ var LayerShapeEditor = function (_UIElement) {
         key: 'isShow',
         value: function isShow() {
             // console.log(this.read(SELECTION_CURRENT));
-            return this.read(SELECTION_IS_LAYER$1) || this.read(SELECTION_IS_IMAGE$1) || this.read(SELECTION_IS_BOXSHADOW) || this.read(SELECTION_IS_TEXTSHADOW);
+            return this.read(SELECTION_IS_LAYER$1) || this.read(SELECTION_IS_IMAGE) || this.read(SELECTION_IS_BOXSHADOW) || this.read(SELECTION_IS_TEXTSHADOW);
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),

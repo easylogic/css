@@ -25,7 +25,7 @@ export default class Text extends BasePropertyItem {
                     </div>
                     <div class="not-clip">
                         <label>Clip Area</label>
-                        <div class='size-list'>
+                        <div class='size-list full-size'>
                             <select ref="$clip">
                                 <option value="content-box">content-box</option>
                                 <option value="border-box">border-box</option>

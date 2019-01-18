@@ -10,8 +10,10 @@ import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
 import PerspectiveOriginPosition from "./shape/PerspectiveOriginPosition";
-import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from "../../types/SelectionTypes";
+import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_IS_LAYER } from "../../types/SelectionTypes";
 import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_RADIAL } from "../../types/ImageTypes";
+import LayerAngle from "./shape/LayerAngle";
+import PredefinedLayerAngle from "./shape/PredefinedLayerAngle";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -37,6 +39,10 @@ export default class SubFeatureControl extends UIElement {
                         <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>
                         <GradientPosition></GradientPosition>
                     </div>
+                    <div class="property-view layer" ref="$layer">
+                        <PredefinedLayerAngle></PredefinedLayerAngle>
+                        <LayerAngle></LayerAngle>
+                    </div>                    
                 </div>
             </div>
         `
@@ -44,6 +50,8 @@ export default class SubFeatureControl extends UIElement {
 
     components () {
         return { 
+            PredefinedLayerAngle,
+            LayerAngle,
             PerspectiveOriginPosition,
             PredefinedPerspectiveOriginPosition,
             PredefinedRadialGradientAngle,
@@ -64,6 +72,7 @@ export default class SubFeatureControl extends UIElement {
         this.refs.$backgroundSize.toggleClass('hide', this.isNotImage() )
         this.refs.$linear.toggleClass('hide', !this.isLinearShow())
         this.refs.$radial.toggleClass('hide', !this.isRadialShow())
+        this.refs.$layer.toggleClass('hide', this.isNotLayer())
     }
 
 
@@ -74,6 +83,10 @@ export default class SubFeatureControl extends UIElement {
 
     isNotImage () {
         return this.read(SELECTION_IS_IMAGE) == false;
+    }
+
+    isNotLayer () {
+        return this.read(SELECTION_IS_LAYER) == false;
     }
 
     isNotPage () {

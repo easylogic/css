@@ -15,7 +15,7 @@ export default class BackgroundBlend extends BasePropertyItem {
             <div class='items max-height'>         
                 <div>
                     <label>Blend</label>
-                    <div class='size-list' ref="$size">
+                    <div class='size-list full-size' ref="$size">
                         <select ref="$blend">
                         ${this.read(BLEND_LIST).map(blend => {
                             return `<option value="${blend}">${blend}</option>`

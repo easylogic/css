@@ -31,7 +31,7 @@ export default class ClipPathSide extends BasePropertyItem {
                 <div class='items'>            
                     <div>
                         <label>Side</label>
-                        <div >
+                        <div class='full-size'>
                             <select ref="$clipSideType">
                                 ${CLIP_PATH_SIDE_TYPES.map(type => {
                                     return `<option value="${type}">${type}</option>`

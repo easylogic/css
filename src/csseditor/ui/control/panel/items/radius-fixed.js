@@ -21,7 +21,7 @@ export default class RadiusFixed extends BasePropertyItem {
                         <label > <button type="button" ref="$radiusLabel">*</button> Radius</label>
                         <div>
                             <input type='range' ref="$radiusRange" min="0" max="360">
-                            <input type='number' ref="$radius" min="0" max="360"> <span>px</span>
+                            <input type='number' class='middle' ref="$radius" min="0" max="360"> <span>px</span>
                         </div>
                     </div>                                                                           
                 </div>

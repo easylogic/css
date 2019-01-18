@@ -205,6 +205,21 @@
             > div {
                 display: flex; 
 
+                &.full-size {
+                    width: 160px;
+
+                    select {
+                        width: 100%;
+                        appearance: none;
+                        display:inline-block;
+                        background-color: transparent;
+                        border:1px solid $border-color;
+                        border-radius: 0px;
+                        padding:0px 5px;
+                        vertical-align: middle;
+                    }
+                }
+
                 input[type=range] {
                     width: 90px;
                     vertical-align: middle;
@@ -215,6 +230,10 @@
                     width: 40px;
                     vertical-align: middle;        
                     box-sizing: border-box;            
+
+                    &.middle {
+                        width: 50px;
+                    }
 
                     &.full {
                         width: 160px;

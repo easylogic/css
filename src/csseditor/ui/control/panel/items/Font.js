@@ -43,7 +43,7 @@ export default class Font extends BasePropertyItem {
                 <div class='items'>
                     <div>
                         <label>Family</label>   
-                        <div>
+                        <div class='full-size'>
                             <select ref="$fontFamily">
                                 ${fontFamilyList.map(f => {
                                     return `<option value="${f}">${f}</option>`
@@ -53,7 +53,7 @@ export default class Font extends BasePropertyItem {
                     </div>   
                     <div>
                         <label>Weight</label>   
-                        <div>
+                        <div class='full-size'>
                             <select ref="$fontWeight">
                                 ${fontWeightList.map(f => {
                                     return `<option value="${f}">${f}</option>`

@@ -88,7 +88,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                         <button type="button" data-value="${SEGMENT_TYPE_BOTTOM_LEFT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_TOP_LEFT}"></button>
                     </div>
-                    <button type='button' data-value='${SEGMENT_TYPE_ROTATE}'></button>         
+                    <!-- <button type='button' data-value='${SEGMENT_TYPE_ROTATE}'></button>         -->
                     
                     
                 </div> 
@@ -114,7 +114,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         var transform = "none"; 
         
         if (id) {
-            transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
+            // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
         }
 
         return { 
@@ -425,7 +425,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         }
 
-        this.run('tool/set', 'moving', true);
+        this.initConfig('moving', true);
 
         this.resizeComponent(e);
     }
