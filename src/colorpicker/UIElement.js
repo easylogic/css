@@ -96,6 +96,14 @@ class UIElement extends EventMachin {
         this.dispatch(TOOL_SET, ...args);
     }
 
+    initConfig (...args) {
+        if (args.length == 1) {
+            return this.read(TOOL_GET, args[0]);
+        }
+
+        this.run(TOOL_SET, ...args);
+    }    
+
     run (...args) {
         return this.$store.run(...args);
     }

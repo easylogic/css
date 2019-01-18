@@ -1,6 +1,6 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../colorpicker/UIElement";
-import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL } from "../../../types/event";
 import { SELECTION_CURRENT_PAGE } from "../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
 
@@ -17,14 +17,15 @@ export default class ShowGrid extends MenuItem {
     clickButton (e) {
         this.read(SELECTION_CURRENT_PAGE, (item) => {
             this.checked = !this.checked; 
-            this.run('tool/set', 'show.grid', this.checked)
-            this.dispatch('tool/set', 'snap.grid', this.checked)
+            this.initConfig('show.grid', this.checked)
+            this.config('snap.grid', this.checked)
         });
 
         this.refresh();
     }
 
     [EVENT(
+        CHANGE_TOOL,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () {

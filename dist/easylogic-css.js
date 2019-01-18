@@ -7866,6 +7866,19 @@ var UIElement = function (_EventMachin) {
             this.dispatch.apply(this, [TOOL_SET].concat(args));
         }
     }, {
+        key: "initConfig",
+        value: function initConfig() {
+            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+                args[_key4] = arguments[_key4];
+            }
+
+            if (args.length == 1) {
+                return this.read(TOOL_GET, args[0]);
+            }
+
+            this.run.apply(this, [TOOL_SET].concat(args));
+        }
+    }, {
         key: "run",
         value: function run() {
             var _$store2;
@@ -7891,8 +7904,8 @@ var UIElement = function (_EventMachin) {
     }, {
         key: "commit",
         value: function commit(eventType) {
-            for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-                args[_key4 - 1] = arguments[_key4];
+            for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+                args[_key5 - 1] = arguments[_key5];
             }
 
             this.run.apply(this, [ITEM_SET$1].concat(args));
@@ -11791,7 +11804,7 @@ var ToolManager = function (_BaseModule) {
         value: function value$$1($store, key, _value) {
             $store.tool[key] = _value;
 
-            $store.emit('changeTool');
+            $store.emit(CHANGE_TOOL);
         }
     }, {
         key: ACTION(TOOL_TOGGLE),
@@ -11802,7 +11815,7 @@ var ToolManager = function (_BaseModule) {
                 $store.tool[key] = isForce;
             }
 
-            $store.emit('changeTool');
+            $store.emit(CHANGE_TOOL);
         }
     }]);
     return ToolManager;
@@ -25259,7 +25272,6 @@ var GradientView = function (_UIElement) {
     }, {
         key: EVENT(CHANGE_TOOL),
         value: function value$$1() {
-            // this.refresh()
             this.refs.$colorview.toggleClass('showGrid', this.config('show.grid'));
         }
     }]);
@@ -25612,14 +25624,14 @@ var ShowGrid = function (_MenuItem) {
 
             this.read(SELECTION_CURRENT_PAGE, function (item) {
                 _this2.checked = !_this2.checked;
-                _this2.run('tool/set', 'show.grid', _this2.checked);
-                _this2.dispatch('tool/set', 'snap.grid', _this2.checked);
+                _this2.initConfig('show.grid', _this2.checked);
+                _this2.config('snap.grid', _this2.checked);
             });
 
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_TOOL, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }

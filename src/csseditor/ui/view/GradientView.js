@@ -289,7 +289,6 @@ export default class GradientView extends UIElement {
     }
 
     [EVENT(CHANGE_TOOL)] () {
-        // this.refresh()
         this.refs.$colorview.toggleClass('showGrid', this.config('show.grid'))
     }
 }

@@ -3,6 +3,7 @@ import { isFunction, isUndefined } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
 import { CLONE, TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE } from "../types/ToolTypes";
+import { CHANGE_TOOL } from "../types/event";
 
 export default class ToolManager extends BaseModule {
 
@@ -46,7 +47,7 @@ export default class ToolManager extends BaseModule {
     [ACTION(TOOL_SET)] ($store, key, value) {
         $store.tool[key] = value
 
-        $store.emit('changeTool')
+        $store.emit(CHANGE_TOOL)
     }
 
 
@@ -57,7 +58,7 @@ export default class ToolManager extends BaseModule {
             $store.tool[key] = isForce
         }
 
-        $store.emit('changeTool')
+        $store.emit(CHANGE_TOOL)
     }
 
 }
