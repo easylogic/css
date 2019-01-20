@@ -2502,6 +2502,7 @@ var IMAGE_DEFAULT_OBJECT = {
     radialPosition: POSITION_CENTER,
     visible: true,
     isClipPath: false,
+    pattern: {},
     backgroundRepeat: null,
     backgroundSize: null,
     backgroundSizeWidth: 0,
@@ -2556,6 +2557,7 @@ var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
 var IMAGE_ITEM_TYPE_CONIC = 'conic';
 var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
 var IMAGE_ITEM_TYPE_STATIC = 'static';
+
 var IMAGE_ITEM_TYPE_IMAGE = 'image';
 
 var CLIP_PATH_TYPE_NONE = 'none';
@@ -11306,10 +11308,11 @@ var LAYER_TOEXPORT = 'layer/toExport';
 var LAYER_MAKE_CLIPPATH = 'layer/make/clip-path';
 var LAYER_MAKE_FILTER = 'layer/make/filter';
 var LAYER_MAKE_BACKDROP = 'layer/make/backdrop';
-var LAYER_TOIMAGECSS = 'layer/toImageCSS';
-var LAYER_CACHE_TOIMAGECSS = 'layer/cache/toImageCSS';
-var LAYER_IMAGE_TOIMAGECSS = 'layer/image/toImageCSS';
+var LAYER_TO_IMAGE_CSS = 'layer/TO_IMAGE_CSS';
+var LAYER_CACHE_TO_IMAGE_CSS = 'layer/cache/TO_IMAGE_CSS';
+var LAYER_IMAGE_TO_IMAGE_CSS = 'layer/image/TO_IMAGE_CSS';
 var LAYER_MAKE_MAP = 'layer/make/map';
+var LAYER_MAKE_MAP_IMAGE = 'layer/make/map/image';
 var LAYER_MAKE_BOXSHADOW = 'layer/make/box-shadow';
 var LAYER_MAKE_FONT = 'layer/make/font';
 var LAYER_MAKE_IMAGE = 'layer/make/image';
@@ -11326,6 +11329,10 @@ var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
 var FILTER_GET = 'filter/get';
 var FILTER_LIST = 'filter/list';
 var FILTER_TO_CSS = 'filter/toCSS';
+
+var PATTERN_MAKE = 'pattern/make';
+var PATTERN_GET = 'pattern/get';
+var PATTERN_SET = 'pattern/set';
 
 var LayerManager = function (_BaseModule) {
     inherits(LayerManager, _BaseModule);
@@ -11400,7 +11407,7 @@ var LayerManager = function (_BaseModule) {
             return $store.read(BACKDROP_TO_CSS, layer);
         }
     }, {
-        key: GETTER(LAYER_TOIMAGECSS),
+        key: GETTER(LAYER_TO_IMAGE_CSS),
         value: function value$$1($store, layer) {
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
@@ -11420,7 +11427,7 @@ var LayerManager = function (_BaseModule) {
             return combineKeyArray(results);
         }
     }, {
-        key: GETTER(LAYER_CACHE_TOIMAGECSS),
+        key: GETTER(LAYER_CACHE_TO_IMAGE_CSS),
         value: function value$$1($store, images) {
             var results = {};
 
@@ -11440,7 +11447,7 @@ var LayerManager = function (_BaseModule) {
             return combineKeyArray(results);
         }
     }, {
-        key: GETTER(LAYER_IMAGE_TOIMAGECSS),
+        key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
         value: function value$$1($store, image) {
             return $store.read('css/generate', $store.read(IMAGE_TO_CSS, image));
         }
@@ -11450,6 +11457,42 @@ var LayerManager = function (_BaseModule) {
             var results = {};
             $store.read("item/map/" + itemType + "/children", layer.id, function (item) {
                 var css = $store.read(itemType + "/toCSS", item, isExport);
+
+                Object.keys(css).forEach(function (key) {
+                    if (!results[key]) {
+                        results[key] = [];
+                    }
+
+                    results[key].push(css[key]);
+                });
+            });
+
+            Object.keys(results).forEach(function (key) {
+                if (isArray(results[key])) {
+                    results[key] = results[key].join(', ');
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_MAP_IMAGE),
+        value: function value$$1($store, layer, isExport) {
+            var results = {};
+            var images = [];
+
+            $store.read(ITEM_EACH_TYPE_CHILDREN, layer.id, ITEM_TYPE_IMAGE, function (item) {
+                var patternedItems = $store.read(PATTERN_MAKE, item);
+                if (patternedItems) {
+                    images.push.apply(images, toConsumableArray(patternedItems));
+                } else {
+                    images.push(item);
+                }
+            });
+
+            images.forEach(function (item) {
+
+                var css = $store.read(IMAGE_TO_CSS, item, isExport);
 
                 Object.keys(css).forEach(function (key) {
                     if (!results[key]) {
@@ -11512,7 +11555,7 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_MAKE_IMAGE),
         value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_IMAGE, isExport);
+            return $store.read(LAYER_MAKE_MAP_IMAGE, layer, isExport);
         }
     }, {
         key: GETTER(LAYER_MAKE_TEXTSHADOW),
@@ -11710,7 +11753,7 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), image ? $store.read(LAYER_IMAGE_TOIMAGECSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport));
+            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport));
 
             return cleanObject(results);
         }
@@ -11741,7 +11784,7 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TOIMAGECSS, layer.images));
+            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
 
             return cleanObject(results);
         }
@@ -15985,7 +16028,132 @@ var ExportManager = function (_BaseModule) {
     return ExportManager;
 }(BaseModule);
 
-var ModuleList = [ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var DEFINED_ANGLES$1 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var rotate$1 = function () {
+    function rotate() {
+        classCallCheck(this, rotate);
+    }
+
+    createClass(rotate, [{
+        key: "make",
+        value: function make(item) {
+            var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            // return always array 
+
+            var results = [];
+
+            if (item.type == IMAGE_ITEM_TYPE_LINEAR || item.type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
+                results.push.apply(results, toConsumableArray(this.makeClone(item, opt)));
+            }
+
+            return results;
+        }
+    }, {
+        key: "makeClone",
+        value: function makeClone(image, opt) {
+            var _this = this;
+
+            var results = [];
+            opt = opt || { clone: 1, blend: 'normal' };
+
+            var count = opt.clone || 1;
+            var blend = opt.blend || 'normal';
+
+            if (count < 2) return results;
+
+            var degree = 360 / count;
+
+            return [].concat(toConsumableArray(Array(count - 1))).map(function (_, index) {
+                var newItem = clone(image);
+                newItem.angle = _this.caculateAngle(newItem, (index + 1) * degree);
+                newItem.backgroundBlendMode = blend;
+
+                return newItem;
+            });
+        }
+    }, {
+        key: "caculateAngle",
+        value: function caculateAngle(image) {
+            var plusAngle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+            var angle = isNotUndefined(DEFINED_ANGLES$1[image.angle]) ? DEFINED_ANGLES$1[image.angle] : image.angle;
+
+            angle = angle || 0;
+
+            return (angle + plusAngle) % 360;
+        }
+    }]);
+    return rotate;
+}();
+
+var patterns = {
+    rotate: new rotate$1()
+};
+
+var PatternManager = function (_BaseModule) {
+    inherits(PatternManager, _BaseModule);
+
+    function PatternManager() {
+        classCallCheck(this, PatternManager);
+        return possibleConstructorReturn(this, (PatternManager.__proto__ || Object.getPrototypeOf(PatternManager)).apply(this, arguments));
+    }
+
+    createClass(PatternManager, [{
+        key: GETTER(PATTERN_MAKE),
+        value: function value($store, item) {
+            var patternOption = item.pattern || {};
+            var patternList = Object.keys(patternOption);
+
+            if (!patternList.length) {
+                return null;
+            }
+
+            var results = [];
+            patternList.filter(function (name) {
+                return patterns[name];
+            }).forEach(function (patternName) {
+
+                if (patternOption[patternName].enable) {
+                    results.push.apply(results, toConsumableArray(patterns[patternName].make(item, patternOption[patternName])));
+                }
+            });
+
+            results.push(item);
+
+            return results;
+        }
+    }, {
+        key: GETTER(PATTERN_GET),
+        value: function value($store, item, patternName) {
+            var pattern = item.pattern || {};
+
+            return pattern[patternName] || {};
+        }
+    }, {
+        key: ACTION(PATTERN_SET),
+        value: function value($store, item, patternName, patternOption) {
+            var pattern = item.pattern || {};
+
+            pattern[patternName] = patternOption || {};
+
+            $store.run(ITEM_SET$1, { id: item.id, pattern: pattern });
+        }
+    }]);
+    return PatternManager;
+}(BaseModule);
+
+var ModuleList = [PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -19883,7 +20051,7 @@ var BackgroundCode = function (_BasePropertyItem) {
 
             if (!image) return EMPTY_STRING;
 
-            var obj = this.read(LAYER_IMAGE_TOIMAGECSS, image);
+            var obj = this.read(LAYER_IMAGE_TO_IMAGE_CSS, image);
 
             return Object.keys(obj).map(function (key) {
                 var value$$1 = obj[key];
@@ -20696,9 +20864,89 @@ var BackgroundImage = function (_BasePropertyItem) {
     return BackgroundImage;
 }(BasePropertyItem);
 
-var _BackgroundImage$Imag;
+var RotatePattern = function (_BasePropertyItem) {
+    inherits(RotatePattern, _BasePropertyItem);
 
-var items = (_BackgroundImage$Imag = {
+    function RotatePattern() {
+        classCallCheck(this, RotatePattern);
+        return possibleConstructorReturn(this, (RotatePattern.__proto__ || Object.getPrototypeOf(RotatePattern)).apply(this, arguments));
+    }
+
+    createClass(RotatePattern, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item background-color show'>\n                <div class='title' ref=\"$title\">Rotate Pattern</div>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone Count</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            " + this.read(BLEND_LIST).map(function (blend) {
+                return "<option value=\"" + blend + "\">" + blend + "</option>";
+            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
+                var rotate = _this2.read(PATTERN_GET, image, 'rotate');
+                if (rotate) {
+                    _this2.refs.$enable.checked(rotate.enable || false);
+                    _this2.refs.$cloneCountRange.val(rotate.clone || 1);
+                    _this2.refs.$cloneCount.val(rotate.clone || 1);
+                    _this2.refs.$blend.val(rotate.blend || 'normal');
+                }
+            });
+        }
+    }, {
+        key: "changePatternValue",
+        value: function changePatternValue() {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
+                _this3.run(PATTERN_SET, image, 'rotate', {
+                    enable: _this3.refs.$enable.checked(),
+                    clone: _this3.refs.$cloneCount.int(),
+                    blend: _this3.refs.$blend.val()
+                });
+
+                _this3.emit(CHANGE_IMAGE);
+            });
+        }
+    }, {
+        key: CLICK('$enable'),
+        value: function value$$1() {
+            this.changePatternValue();
+        }
+    }, {
+        key: INPUT('$cloneCount'),
+        value: function value$$1() {
+            this.refs.$cloneCountRange.val(this.refs.$cloneCount.val());
+            this.changePatternValue();
+        }
+    }, {
+        key: INPUT('$cloneCountRange'),
+        value: function value$$1() {
+            this.refs.$cloneCount.val(this.refs.$cloneCountRange.val());
+            this.changePatternValue();
+        }
+    }, {
+        key: CHANGE('$blend'),
+        value: function value$$1() {
+            this.changePatternValue();
+        }
+    }]);
+    return RotatePattern;
+}(BasePropertyItem);
+
+var _babelHelpers$extends;
+
+var patterns$1 = {
+    RotatePattern: RotatePattern
+};
+
+var items = _extends({}, patterns$1, (_babelHelpers$extends = {
     BackgroundImage: BackgroundImage,
     ImageSorting: ImageSorting,
     Page3D: Page3D,
@@ -20718,7 +20966,7 @@ var items = (_BackgroundImage$Imag = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_BackgroundImage$Imag, "ClipPathSVG", ClipPathSVG), defineProperty(_BackgroundImage$Imag, "Opacity", Opacity$3), defineProperty(_BackgroundImage$Imag, "RadiusFixed", RadiusFixed), defineProperty(_BackgroundImage$Imag, "Rotate", Rotate), defineProperty(_BackgroundImage$Imag, "LayerBlend", LayerBlend), defineProperty(_BackgroundImage$Imag, "GroupAlign", GroupAlign), defineProperty(_BackgroundImage$Imag, "PageShowGrid", PageShowGrid), defineProperty(_BackgroundImage$Imag, "ClipPath", ClipPath), defineProperty(_BackgroundImage$Imag, "ImageResource", ImageResource), defineProperty(_BackgroundImage$Imag, "BackgroundColor", BackgroundColor), defineProperty(_BackgroundImage$Imag, "BackgroundBlend", BackgroundBlend), defineProperty(_BackgroundImage$Imag, "FilterList", FilterList$1), defineProperty(_BackgroundImage$Imag, "PageExport", PageExport), defineProperty(_BackgroundImage$Imag, "PageSize", PageSize), defineProperty(_BackgroundImage$Imag, "PageName", PageName), defineProperty(_BackgroundImage$Imag, "BackgroundSize", BackgroundSize), defineProperty(_BackgroundImage$Imag, "Transform3d", Transform3d), defineProperty(_BackgroundImage$Imag, "Transform", Transform), defineProperty(_BackgroundImage$Imag, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_BackgroundImage$Imag, "ColorPickerPanel", ColorPickerPanel), defineProperty(_BackgroundImage$Imag, "ColorStepsInfo", ColorStepsInfo), defineProperty(_BackgroundImage$Imag, "ColorSteps", ColorSteps), defineProperty(_BackgroundImage$Imag, "Name", Name), defineProperty(_BackgroundImage$Imag, "Size", Size), defineProperty(_BackgroundImage$Imag, "Position", Position), defineProperty(_BackgroundImage$Imag, "Radius", Radius), defineProperty(_BackgroundImage$Imag, "Clip", Clip), _BackgroundImage$Imag);
+}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundColor", BackgroundColor), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -20886,7 +21134,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ImageSorting></ImageSorting>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundImage></BackgroundImage>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ImageSorting></ImageSorting>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <BackgroundImage></BackgroundImage>\n                        </div>    \n\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>\n                        <div class=\'scroll\'>\n                            <RotatePattern></RotatePattern>\n                        </div>    \n\n                    </div>                    \n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
@@ -22346,7 +22594,7 @@ var LayerAngle = function (_UIElement) {
     return LayerAngle;
 }(UIElement);
 
-var DEFINED_ANGLES$1 = {
+var DEFINED_ANGLES$2 = {
     'to top': 0,
     'to top right': 45,
     'to right': 90,
@@ -22389,7 +22637,7 @@ var PredefinedLayerAngle = function (_UIElement) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                var rotate = DEFINED_ANGLES$1[e.$delegateTarget.attr('data-value')];
+                var rotate = DEFINED_ANGLES$2[e.$delegateTarget.attr('data-value')];
                 _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
             });
         }

@@ -140,6 +140,7 @@ export const IMAGE_DEFAULT_OBJECT = {
     radialPosition: POSITION_CENTER,
     visible: true,
     isClipPath: false, 
+    pattern: {},
     backgroundRepeat: null,
     backgroundSize: null,
     backgroundSizeWidth: 0,
@@ -195,6 +196,7 @@ export const IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
 export const IMAGE_ITEM_TYPE_CONIC = 'conic';
 export const IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
 export const IMAGE_ITEM_TYPE_STATIC = 'static';
+export const IMAGE_ITEM_TYPE_DIAMOND = 'diamond';
 export const IMAGE_ITEM_TYPE_IMAGE = 'image';
 
 export const CLIP_PATH_TYPE_NONE = 'none';

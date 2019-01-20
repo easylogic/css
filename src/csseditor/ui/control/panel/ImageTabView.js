@@ -10,6 +10,7 @@ export default class ImageTabView extends BaseTab {
             <div class="tab horizontal">
                 <div class="tab-header no-border" ref="$header">
                     <div class="tab-item selected" data-id="gradient">Gradient</div>
+                    <div class="tab-item" data-id="pattern">Pattern</div>
                     <div class="tab-item" data-id="css">CSS</div>
                 </div>
                 <div class="tab-body" ref="$body">
@@ -21,14 +22,22 @@ export default class ImageTabView extends BaseTab {
                         </div>
                         <div class='scroll'>
                             <BackgroundImage></BackgroundImage>
+                        </div>    
+
+                    </div>
+                    <div class="tab-content flex" data-id="pattern">
+                        <div class='fixed'>
                             <BackgroundInfo></BackgroundInfo>
                             <BackgroundBlend></BackgroundBlend>
                             <div class='sub-feature'>
                                 <BackgroundSize></BackgroundSize>
                             </div>
+                        </div>
+                        <div class='scroll'>
+                            <RotatePattern></RotatePattern>
                         </div>    
 
-                    </div>
+                    </div>                    
                     <div class="tab-content" data-id="css">
                         <BackgroundCode></BackgroundCode>
                     </div>

@@ -1,7 +1,7 @@
 import ImageLoader from '../../util/ImageLoader'
 import BaseModule from "../../colorpicker/BaseModule";
 import { ImageToRGB, palette } from '../../util/functions/image';
-import { get, defaultValue, isFunction, isUndefined, isNumber, isNotUndefined } from '../../util/functions/func';
+import { get, defaultValue, isFunction, isUndefined, isNumber, isNotUndefined, clone } from '../../util/functions/func';
 import { 
     IMAGE_ITEM_TYPE_LINEAR, 
     IMAGE_ITEM_TYPE_REPEATING_LINEAR, 
@@ -23,7 +23,39 @@ import {
 } from '../types/ItemTypes';
 import { px, isPX, isEM, em, percent, stringUnit, valueUnit, unitObject, percentUnit, EMPTY_STRING } from '../../util/css/types';
 import { GETTER } from '../../util/Store';
-import { IMAGE_GET_FILE, IMAGE_GET_URL, IMAGE_GET_BLOB, IMAGE_TYPE_IS_GRADIENT, IMAGE_TYPE_IS_NOT_GRADIENT, IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_IMAGE, IMAGE_TYPE_IS_STATIC, IMAGE_ANGLE, IMAGE_RADIAL_POSITION, IMAGE_BACKGROUND_SIZE_TO_CSS, IMAGE_TO_BACKGROUND_POSITION_STRING, IMAGE_TO_BACKGROUND_SIZE_STRING, IMAGE_TO_CSS, IMAGE_TO_IMAGE_STRING, IMAGE_TO_BACKGROUND_REPEAT_STRING, IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, IMAGE_TO_STRING, IMAGE_TO_LINEAR, IMAGE_TO_RADIAL, IMAGE_TO_CONIC, IMAGE_TO_IMAGE, IMAGE_TO_STATIC, IMAGE_GET_UNIT_VALUE, IMAGE_GET_STEP_VALUE, IMAGE_TO_ITEM_STRING, IMAGE_TO_CONIC_ITEM_STRING, IMAGE_CACHE_TO_CSS, IMAGE_TO_LINEAR_RIGHT } from '../types/ImageTypes';
+import { 
+    IMAGE_GET_FILE, 
+    IMAGE_GET_URL, 
+    IMAGE_GET_BLOB, 
+    IMAGE_TYPE_IS_GRADIENT, 
+    IMAGE_TYPE_IS_NOT_GRADIENT, 
+    IMAGE_TYPE_IS_LINEAR, 
+    IMAGE_TYPE_IS_RADIAL, 
+    IMAGE_TYPE_IS_CONIC, 
+    IMAGE_TYPE_IS_IMAGE, 
+    IMAGE_TYPE_IS_STATIC, 
+    IMAGE_ANGLE, 
+    IMAGE_RADIAL_POSITION, 
+    IMAGE_BACKGROUND_SIZE_TO_CSS, 
+    IMAGE_TO_BACKGROUND_POSITION_STRING, 
+    IMAGE_TO_BACKGROUND_SIZE_STRING, 
+    IMAGE_TO_CSS, 
+    IMAGE_TO_IMAGE_STRING, 
+    IMAGE_TO_BACKGROUND_REPEAT_STRING, 
+    IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, 
+    IMAGE_TO_STRING, 
+    IMAGE_TO_LINEAR, 
+    IMAGE_TO_RADIAL, 
+    IMAGE_TO_CONIC, 
+    IMAGE_TO_IMAGE, 
+    IMAGE_TO_STATIC, 
+    IMAGE_GET_UNIT_VALUE, 
+    IMAGE_GET_STEP_VALUE, 
+    IMAGE_TO_ITEM_STRING, 
+    IMAGE_TO_CONIC_ITEM_STRING, 
+    IMAGE_CACHE_TO_CSS, 
+    IMAGE_TO_LINEAR_RIGHT
+} from '../types/ImageTypes';
 import { ITEM_MAP_CHILDREN } from '../types/ItemSearchTypes';
 
 const DEFINED_ANGLES = {

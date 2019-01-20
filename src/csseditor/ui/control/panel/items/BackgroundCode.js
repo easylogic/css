@@ -15,7 +15,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
-import { LAYER_IMAGE_TOIMAGECSS } from "../../../../types/LayerTypes";
+import { LAYER_IMAGE_TO_IMAGE_CSS } from "../../../../types/LayerTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class BackgroundCode extends BasePropertyItem {
@@ -37,7 +37,7 @@ export default class BackgroundCode extends BasePropertyItem {
 
         if (!image) return EMPTY_STRING; 
 
-        var obj = this.read(LAYER_IMAGE_TOIMAGECSS, image)
+        var obj = this.read(LAYER_IMAGE_TO_IMAGE_CSS, image)
 
         return Object.keys(obj).map(key => {
             var value = obj[key]

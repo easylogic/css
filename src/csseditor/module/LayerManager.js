@@ -1,17 +1,18 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
-import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE, ITEM_CONVERT_STYLE } from "../types/ItemTypes";
+import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_IMAGE, ITEM_CONVERT_STYLE, IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR } from "../types/ItemTypes";
 import { stringUnit, EMPTY_STRING } from "../../util/css/types";
-import { isNotUndefined, isArray, cleanObject, combineKeyArray } from "../../util/functions/func";
+import { isNotUndefined, isArray, cleanObject, combineKeyArray, clone } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CSS_TO_STRING } from "../types/CssTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TOIMAGECSS, LAYER_CACHE_TOIMAGECSS, LAYER_IMAGE_TOIMAGECSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS } from "../types/LayerTypes";
-import { IMAGE_TO_CSS } from "../types/ImageTypes";
-import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS, LAYER_MAKE_MAP_IMAGE } from "../types/LayerTypes";
+import { IMAGE_TO_CSS} from "../types/ImageTypes";
+import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN, ITEM_EACH_TYPE_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
+import { PATTERN_MAKE } from "../types/PatternTypes";
 
 export default class LayerManager extends BaseModule {
    
@@ -66,7 +67,7 @@ export default class LayerManager extends BaseModule {
         return $store.read(BACKDROP_TO_CSS, layer);
     }    
 
-    [GETTER(LAYER_TOIMAGECSS)] ($store, layer, isExport = false) {    
+    [GETTER(LAYER_TO_IMAGE_CSS)] ($store, layer, isExport = false) {    
         var results = {}
         $store.read(ITEM_EACH_CHILDREN, layer.id, (item)  => {
             var css = $store.read(IMAGE_TO_CSS, item, isExport);
@@ -84,7 +85,7 @@ export default class LayerManager extends BaseModule {
     }
 
 
-    [GETTER(LAYER_CACHE_TOIMAGECSS)] ($store, images) {    
+    [GETTER(LAYER_CACHE_TO_IMAGE_CSS)] ($store, images) {    
         var results = {}
 
         images.forEach(item => {
@@ -103,7 +104,7 @@ export default class LayerManager extends BaseModule {
         return combineKeyArray(results);
     }    
 
-    [GETTER(LAYER_IMAGE_TOIMAGECSS)] ($store, image) {    
+    [GETTER(LAYER_IMAGE_TO_IMAGE_CSS)] ($store, image) {    
         return $store.read('css/generate', $store.read(IMAGE_TO_CSS, image));
     }    
 
@@ -111,6 +112,43 @@ export default class LayerManager extends BaseModule {
         var results = {}
         $store.read(`item/map/${itemType}/children`, layer.id, (item)  => {
             var css = $store.read(`${itemType}/toCSS`, item, isExport);
+
+            Object.keys(css).forEach(key => {
+                if (!results[key]) {
+                    results[key] = [] 
+                }
+
+                results[key].push(css[key]);
+            })
+        })
+
+        Object.keys(results).forEach(key => {
+            if (isArray(results[key])) {
+                results[key] = results[key].join(', ')
+            }
+        })
+
+        return results;
+    }
+
+
+
+    [GETTER(LAYER_MAKE_MAP_IMAGE)] ($store, layer, isExport) {
+        var results = {}
+        var images = [] 
+
+        $store.read(ITEM_EACH_TYPE_CHILDREN, layer.id, ITEM_TYPE_IMAGE, (item) => {
+            var patternedItems = $store.read(PATTERN_MAKE, item);
+            if (patternedItems) {
+                images.push(...patternedItems);
+            } else {
+                images.push(item);
+            }
+        });
+
+        images.forEach(item  => {
+
+            var css = $store.read(IMAGE_TO_CSS, item, isExport);
 
             Object.keys(css).forEach(key => {
                 if (!results[key]) {
@@ -170,7 +208,7 @@ export default class LayerManager extends BaseModule {
     }
 
     [GETTER(LAYER_MAKE_IMAGE)] ($store, layer, isExport) {
-        return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_IMAGE, isExport);
+        return $store.read(LAYER_MAKE_MAP_IMAGE, layer, isExport);
     }    
 
     [GETTER(LAYER_MAKE_TEXTSHADOW)] ($store, layer, isExport) {
@@ -367,7 +405,7 @@ export default class LayerManager extends BaseModule {
             $store.read(LAYER_MAKE_FONT, layer),            
             $store.read(LAYER_MAKE_BOXSHADOW, layer),
             $store.read(LAYER_MAKE_TEXTSHADOW, layer),
-            (image) ? $store.read(LAYER_IMAGE_TOIMAGECSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport)
+            (image) ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport)
         )
 
         return cleanObject(results);
@@ -406,7 +444,7 @@ export default class LayerManager extends BaseModule {
             $store.read(LAYER_MAKE_FONT, layer),            
             $store.read(LAYER_MAKE_BOXSHADOW, layer),
             $store.read(LAYER_MAKE_TEXTSHADOW, layer),
-            $store.read(LAYER_CACHE_TOIMAGECSS, layer.images)
+            $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images)
         )
 
         return cleanObject(results);

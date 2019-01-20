@@ -45,8 +45,15 @@ import ImageSorting from "./ImageSorting";
 import BackgroundImage from "./BackgroundImage";
 
 
+import RotatePattern from "./pattern/RotatePattern";
+
+
+var patterns = {
+    RotatePattern
+}
 
 export default {
+    ...patterns,
     BackgroundImage,
     ImageSorting, 
     Page3D,
