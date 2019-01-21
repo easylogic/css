@@ -14940,7 +14940,7 @@ var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_IT
 var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 
-var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
+var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
 
 var ItemCreateManager = function (_BaseModule) {
     inherits(ItemCreateManager, _BaseModule);

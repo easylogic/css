@@ -26,7 +26,8 @@ import {
     ITEM_TYPE_IMAGE,
     ITEM_TYPE_BOXSHADOW,
     ITEM_TYPE_TEXTSHADOW,
-    ITEM_TYPE_COLORSTEP
+    ITEM_TYPE_COLORSTEP,
+    ITEM_TYPE_CIRCLE
 } from "../types/ItemTypes";
 import { percentUnit, pxUnit, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
@@ -53,6 +54,7 @@ const conicList = [
 const itemCreateActions = {
     [ITEM_TYPE_PAGE] : ITEM_CREATE_PAGE,
     [ITEM_TYPE_LAYER] : ITEM_CREATE_LAYER,
+    [ITEM_TYPE_CIRCLE] : ITEM_CREATE_CIRCLE,
     [ITEM_TYPE_IMAGE] : ITEM_CREATE_IMAGE,
     [ITEM_TYPE_BOXSHADOW] : ITEM_CREATE_BOXSHADOW,
     [ITEM_TYPE_TEXTSHADOW] : ITEM_CREATE_TEXTSHADOW,
