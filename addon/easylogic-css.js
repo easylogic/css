@@ -2544,7 +2544,7 @@ var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
 
 var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
 
-var ITEM_SET$1 = 'item/set';
+var ITEM_SET = 'item/set';
 var ITEM_GET = 'ITEM_GET';
 var ITEM_CONVERT_STYLE = 'item/convert/style';
 var ITEM_SET_ALL = 'item/set/all';
@@ -7758,7 +7758,7 @@ var UIElement = function (_EventMachin) {
                 args[_key5 - 1] = arguments[_key5];
             }
 
-            this.run.apply(this, [ITEM_SET$1].concat(args));
+            this.run.apply(this, [ITEM_SET].concat(args));
             this.emit.apply(this, [eventType].concat(args));
         }
     }]);
@@ -10338,7 +10338,7 @@ var ColorStepManager = function (_BaseModule) {
                 $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
                 $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
 
-                $store.run(ITEM_SET$1, item);
+                $store.run(ITEM_SET, item);
                 return;
             }
 
@@ -10351,8 +10351,8 @@ var ColorStepManager = function (_BaseModule) {
                 colorsteps[0].index = 1;
 
                 $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent$$1 });
-                $store.run(ITEM_SET$1, colorsteps[0]);
-                $store.run(ITEM_SET$1, item);
+                $store.run(ITEM_SET, colorsteps[0]);
+                $store.run(ITEM_SET, item);
                 return;
             }
 
@@ -10361,7 +10361,7 @@ var ColorStepManager = function (_BaseModule) {
                 var index = colorsteps[colorsteps.length - 1].index;
 
                 $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: index + 1, color: color$$1, percent: percent$$1 });
-                $store.run(ITEM_SET$1, item);
+                $store.run(ITEM_SET, item);
                 return;
             }
 
@@ -10373,7 +10373,7 @@ var ColorStepManager = function (_BaseModule) {
                     var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
 
                     $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: step.index + 1, color: color$$1, percent: percent$$1 });
-                    $store.run(ITEM_SET$1, item);
+                    $store.run(ITEM_SET, item);
                     return;
                 }
             }
@@ -10391,7 +10391,7 @@ var ColorStepManager = function (_BaseModule) {
                 var item = $store.read(ITEM_GET, stepId);
                 item.index = index * 100;
 
-                $store.run(ITEM_SET$1, item);
+                $store.run(ITEM_SET, item);
             });
 
             $store.run(ITEM_SORT, id);
@@ -10446,7 +10446,7 @@ var ColorStepManager = function (_BaseModule) {
             }
             list.forEach(function (item) {
                 item.cut = false;
-                $store.run(ITEM_SET$1, item);
+                $store.run(ITEM_SET, item);
             });
         }
     }, {
@@ -10460,7 +10460,7 @@ var ColorStepManager = function (_BaseModule) {
             }
             list.forEach(function (item) {
                 item.cut = true;
-                $store.run(ITEM_SET$1, item);
+                $store.run(ITEM_SET, item);
             });
         }
     }, {
@@ -10530,7 +10530,7 @@ var ColorStepManager = function (_BaseModule) {
                 step.px = firstValue + start * dist;
                 step.percent = px2percent(step.px, this.getMaxValue());
                 step.em = px2em(step.px, this.getMaxValue());
-                $store.run(ITEM_SET$1, step);
+                $store.run(ITEM_SET, step);
             }
         }
     }, {
@@ -12259,7 +12259,7 @@ var ItemManager = function (_BaseModule) {
             });
         }
     }, {
-        key: ACTION(ITEM_SET$1),
+        key: ACTION(ITEM_SET),
         value: function value$$1($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
             var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -12525,7 +12525,7 @@ var GuideManager = function (_BaseModule) {
                 }
             }
             if (isNotUndefined(positionObject)) {
-                $store.run(ITEM_SET$1, positionObject);
+                $store.run(ITEM_SET, positionObject);
             }
         }
     }, {
@@ -12578,7 +12578,7 @@ var GuideManager = function (_BaseModule) {
                 positionObject = { id: rect.sourceId, x: pxUnit(x) };
             }
             if (isNotUndefined(positionObject)) {
-                $store.run(ITEM_SET$1, positionObject);
+                $store.run(ITEM_SET, positionObject);
             }
         }
     }]);
@@ -14072,7 +14072,7 @@ var OrderingManager = function (_BaseModule) {
                     item.centerX = startX + (index + 1) * unitWidth;
                     item.x = item.centerX - item.width / 2;
 
-                    $store.run(ITEM_SET$1, { id: item.id, x: pxUnit(item.x) });
+                    $store.run(ITEM_SET, { id: item.id, x: pxUnit(item.x) });
                 });
             }
         }
@@ -14119,7 +14119,7 @@ var OrderingManager = function (_BaseModule) {
                     item.centerY = startY + (index + 1) * unitHeight;
                     item.y = item.centerY - item.height / 2;
 
-                    $store.run(ITEM_SET$1, { id: item.id, y: pxUnit(item.y) });
+                    $store.run(ITEM_SET, { id: item.id, y: pxUnit(item.y) });
                 });
             }
         }
@@ -14132,7 +14132,7 @@ var OrderingManager = function (_BaseModule) {
             })));
 
             items.forEach(function (item) {
-                $store.run(ITEM_SET$1, { id: item.id, x: pxUnit(x) });
+                $store.run(ITEM_SET, { id: item.id, x: pxUnit(x) });
             });
         }
     }, {
@@ -14152,7 +14152,7 @@ var OrderingManager = function (_BaseModule) {
 
             items.forEach(function (item) {
                 var newX = pxUnit(Math.floor(centerX - unitValue(item.width) / 2));
-                $store.run(ITEM_SET$1, { id: item.id, x: newX });
+                $store.run(ITEM_SET, { id: item.id, x: newX });
             });
         }
     }, {
@@ -14166,7 +14166,7 @@ var OrderingManager = function (_BaseModule) {
 
             items.forEach(function (item) {
                 var newX = pxUnit(x2 - unitValue(item.width));
-                $store.run(ITEM_SET$1, { id: item.id, x: newX });
+                $store.run(ITEM_SET, { id: item.id, x: newX });
             });
         }
     }, {
@@ -14178,7 +14178,7 @@ var OrderingManager = function (_BaseModule) {
             })));
 
             items.forEach(function (item) {
-                $store.run(ITEM_SET$1, { id: item.id, y: pxUnit(y) });
+                $store.run(ITEM_SET, { id: item.id, y: pxUnit(y) });
             });
         }
     }, {
@@ -14198,7 +14198,7 @@ var OrderingManager = function (_BaseModule) {
 
             items.forEach(function (item) {
                 var newY = pxUnit(Math.floor(centerY - unitValue(item.height) / 2));
-                $store.run(ITEM_SET$1, { id: item.id, y: newY });
+                $store.run(ITEM_SET, { id: item.id, y: newY });
             });
         }
     }, {
@@ -14212,7 +14212,7 @@ var OrderingManager = function (_BaseModule) {
 
             items.forEach(function (item) {
                 var newY = pxUnit(y2 - unitValue(item.height));
-                $store.run(ITEM_SET$1, { id: item.id, y: newY });
+                $store.run(ITEM_SET, { id: item.id, y: newY });
             });
         }
     }, {
@@ -14285,7 +14285,7 @@ var MatrixManager = function (_BaseModule) {
                 item[key] = pxUnit(unitValue(item[key]) + newValue[key]);
             });
 
-            $store.run(ITEM_SET$1, item);
+            $store.run(ITEM_SET, item);
         }
     }]);
     return MatrixManager;
@@ -15104,7 +15104,7 @@ var ItemCreateManager = function (_BaseModule) {
 
             item.index = Number.MAX_SAFE_INTEGER;
 
-            $store.run(ITEM_SET$1, item, isSelected);
+            $store.run(ITEM_SET, item, isSelected);
             $store.run(ITEM_SORT, item.id);
         }
     }, {
@@ -15124,7 +15124,7 @@ var ItemCreateManager = function (_BaseModule) {
 
             item.index = Number.MAX_SAFE_INTEGER;
 
-            $store.run(ITEM_SET$1, item, isSelected);
+            $store.run(ITEM_SET, item, isSelected);
             $store.run(ITEM_SORT, item.id);
         }
     }, {
@@ -15148,7 +15148,7 @@ var ItemCreateManager = function (_BaseModule) {
             item.parentId = parentId;
             item.index = index;
 
-            $store.run(ITEM_SET$1, item, isSelected);
+            $store.run(ITEM_SET, item, isSelected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15175,7 +15175,7 @@ var ItemCreateManager = function (_BaseModule) {
             item.backgroundImageDataURI = img.datauri;
             item.backgroundSizeWidth = percentUnit(100);
 
-            $store.run(ITEM_SET$1, item, isSelected);
+            $store.run(ITEM_SET, item, isSelected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15189,7 +15189,7 @@ var ItemCreateManager = function (_BaseModule) {
             item.backgroundImageDataURI = img.datauri;
             item.backgroundSizeWidth = percentUnit(100);
 
-            $store.run(ITEM_SET$1, item);
+            $store.run(ITEM_SET, item);
         }
     }, {
         key: ACTION(ITEM_PREPEND_IMAGE_URL$1),
@@ -15214,7 +15214,7 @@ var ItemCreateManager = function (_BaseModule) {
             item.backgroundImage = img.url;
             item.backgroundSizeWidth = percentUnit(100);
 
-            $store.run(ITEM_SET$1, item, isSelected);
+            $store.run(ITEM_SET, item, isSelected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15229,19 +15229,19 @@ var ItemCreateManager = function (_BaseModule) {
             // 페이지 생성 
             var page = $store.read(ITEM_GET, pageId);
             page.index = Number.MAX_SAFE_INTEGER;
-            $store.run(ITEM_SET$1, page);
+            $store.run(ITEM_SET, page);
 
             // 레이어 생성 
             var layer = $store.read(ITEM_GET, layerId);
             layer.parentId = pageId;
             layer.width = clone(page.width);
             layer.height = clone(page.height);
-            $store.run(ITEM_SET$1, layer);
+            $store.run(ITEM_SET, layer);
 
             // 이미지 생성 
             var image = $store.read(ITEM_GET, imageId);
             image.parentId = layerId;
-            $store.run(ITEM_SET$1, image, isSelected);
+            $store.run(ITEM_SET, image, isSelected);
 
             $store.run(HISTORY_INITIALIZE);
         }
@@ -15276,7 +15276,7 @@ var ItemMoveManager = function (_BaseModule) {
             var newItem = $store.read(ITEM_GET, newItemId);
             newItem.index = currentItem.index + COPY_INDEX_DIST;
 
-            $store.run(ITEM_SET$1, newItem, true);
+            $store.run(ITEM_SET, newItem, true);
             $store.run(ITEM_SORT, newItemId);
         }
     }, {
@@ -15285,7 +15285,7 @@ var ItemMoveManager = function (_BaseModule) {
             var item = $store.read(ITEM_GET, id);
             item.index = $store.read(ITEM_NEXT_INDEX, id);
 
-            $store.run(ITEM_SET$1, item, item.selected);
+            $store.run(ITEM_SET, item, item.selected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15294,7 +15294,7 @@ var ItemMoveManager = function (_BaseModule) {
             var item = $store.read(ITEM_GET, id);
             item.index = Number.MAX_SAFE_INTEGER;
 
-            $store.run(ITEM_SET$1, item, item.selected);
+            $store.run(ITEM_SET, item, item.selected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15303,7 +15303,7 @@ var ItemMoveManager = function (_BaseModule) {
             var item = $store.read(ITEM_GET, id);
             item.index = -1 * COPY_INDEX_DIST;
 
-            $store.run(ITEM_SET$1, item, item.selected);
+            $store.run(ITEM_SET, item, item.selected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15314,7 +15314,7 @@ var ItemMoveManager = function (_BaseModule) {
             sourceItem.parentId = destItem.parentId;
             sourceItem.index = destItem.index - COPY_INDEX_DIST;
 
-            $store.run(ITEM_SET$1, sourceItem, true);
+            $store.run(ITEM_SET, sourceItem, true);
             $store.run(ITEM_SORT, sourceId);
         }
     }, {
@@ -15326,7 +15326,7 @@ var ItemMoveManager = function (_BaseModule) {
             sourceItem.parentId = destItem.id;
             sourceItem.index = Number.MAX_SAFE_INTEGER;
 
-            $store.run(ITEM_SET$1, sourceItem, true);
+            $store.run(ITEM_SET, sourceItem, true);
             $store.run(ITEM_SORT, sourceId);
         }
     }, {
@@ -15335,7 +15335,7 @@ var ItemMoveManager = function (_BaseModule) {
             var item = $store.read(ITEM_GET, id);
             item.index = $store.read(ITEM_PREV_INDEX, id);
 
-            $store.run(ITEM_SET$1, item, item.selected);
+            $store.run(ITEM_SET, item, item.selected);
             $store.run(ITEM_SORT, id);
         }
     }, {
@@ -15470,7 +15470,7 @@ var ItemRecoverManager = function (_BaseModule) {
             var newImageItem = $store.read(ITEM_GET, newImageId);
             newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
 
-            $store.run(ITEM_SET$1, sourceItem, true);
+            $store.run(ITEM_SET, sourceItem, true);
             $store.run(ITEM_SORT, sourceId);
         }
     }, {
@@ -15482,7 +15482,7 @@ var ItemRecoverManager = function (_BaseModule) {
             var newImageItem = $store.read(ITEM_GET, newImageId);
             newImageItem.index = Number.MAX_SAFE_INTEGER;
 
-            $store.run(ITEM_SET$1, newImageItem, true);
+            $store.run(ITEM_SET, newImageItem, true);
             $store.run(ITEM_SORT, newImageId);
         }
     }]);
@@ -16000,7 +16000,7 @@ var PatternManager = function (_BaseModule) {
 
             pattern[patternName] = patternOption || {};
 
-            $store.run(ITEM_SET$1, { id: item.id, pattern: pattern });
+            $store.run(ITEM_SET, { id: item.id, pattern: pattern });
         }
     }]);
     return PatternManager;
@@ -16213,7 +16213,7 @@ var Position = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER, function (item) {
                 item.x = pxUnit(_this3.refs.$x.int());
-                _this3.dispatch(ITEM_SET$1, item);
+                _this3.dispatch(ITEM_SET, item);
             });
         }
     }, {
@@ -16223,7 +16223,7 @@ var Position = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER, function (item) {
                 item.y = pxUnit(_this4.refs.$y.int());
-                _this4.dispatch(ITEM_SET$1, item);
+                _this4.dispatch(ITEM_SET, item);
             });
         }
     }]);
@@ -16664,7 +16664,7 @@ var GradientSteps = function (_UIElement) {
                     this.currentUnitPx.val(px);
                     this.currentUnitEm.val(em$$1);
 
-                    this.run(ITEM_SET$1, newValue);
+                    this.run(ITEM_SET, newValue);
                     this.run('colorstep/sort', newValue.id, this.getSortedStepList());
                     this.commit(CHANGE_COLOR_STEP, newValue);
                     this.setBackgroundColor();
@@ -16773,7 +16773,7 @@ var GradientSteps = function (_UIElement) {
             this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
                     step.selected = false;
-                    _this4.run(ITEM_SET$1, step);
+                    _this4.run(ITEM_SET, step);
                 }
             });
 
@@ -16788,7 +16788,7 @@ var GradientSteps = function (_UIElement) {
             }
 
             this.currentStepBox.addClass('selected');
-            this.run(ITEM_SET$1, item);
+            this.run(ITEM_SET, item);
             this.dispatch(COLORSTEP_SORT, item.id, this.getSortedStepList());
             this.setBackgroundColor();
         }
@@ -17136,7 +17136,7 @@ var GradientInfo = function (_UIElement) {
             this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
                     step.selected = false;
-                    _this3.run(ITEM_SET$1, step);
+                    _this3.run(ITEM_SET, step);
                 }
             });
 
@@ -24028,7 +24028,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var dx = this.dx;
 
 
-            this.run(ITEM_SET$1, {
+            this.run(ITEM_SET, {
                 id: item.id,
                 width: pxUnit(item.width + dx)
             });
@@ -24039,7 +24039,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var dx = this.dx;
 
 
-            this.run(ITEM_SET$1, {
+            this.run(ITEM_SET, {
                 id: item.id,
                 width: pxUnit(item.width - dx),
                 x: pxUnit(item.x + dx)
@@ -24051,7 +24051,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var dy = this.dy;
 
 
-            this.run(ITEM_SET$1, {
+            this.run(ITEM_SET, {
                 id: item.id,
                 height: pxUnit(item.height + dy)
             });
@@ -24062,7 +24062,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var dy = this.dy;
 
 
-            this.run(ITEM_SET$1, {
+            this.run(ITEM_SET, {
                 id: item.id,
                 height: pxUnit(item.height - dy),
                 y: pxUnit(item.y + dy)
@@ -24075,7 +24075,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 dy = this.dy;
 
 
-            this.run(ITEM_SET$1, {
+            this.run(ITEM_SET, {
                 id: item.id,
                 x: pxUnit(item.x + dx),
                 y: pxUnit(item.y + dy)
@@ -24090,7 +24090,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             rotate = defaultValue(rotate, 0);
 
-            this.run(ITEM_SET$1, {
+            this.run(ITEM_SET, {
                 id: item.id,
                 rotate: rotate + Math.floor(angle) - 270
             });
@@ -26765,7 +26765,7 @@ var LayerListView = function (_UIElement) {
             var item = this.read(ITEM_GET, e.$delegateTarget.attr('item-id'));
 
             item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
-            this.run(ITEM_SET$1, item);
+            this.run(ITEM_SET, item);
         }
     }]);
     return LayerListView;

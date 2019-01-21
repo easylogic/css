@@ -3,7 +3,7 @@ import gradientList from './gradients/index';
 import ColorList from "./color-list/index";
 import { GETTER, ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
-import { ITEM_GET, ITEM_REMOVE_CHILDREN, ITEM_REMOVE } from "../types/ItemTypes";
+import { ITEM_GET, ITEM_REMOVE_CHILDREN, ITEM_REMOVE, ITEM_SET } from "../types/ItemTypes";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "../types/SelectionTypes";
 import { clone } from "../../util/functions/func";
 import { ITEM_MOVE_IN } from "../types/ItemMoveTypes";
