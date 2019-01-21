@@ -12464,6 +12464,7 @@ var ItemManager = function (_BaseModule) {
 }(BaseModule);
 
 var MAX_DIST = 1;
+var ZERO_DIST = 0;
 
 var GuideManager = function (_BaseModule) {
     inherits(GuideManager, _BaseModule);
@@ -12503,21 +12504,21 @@ var GuideManager = function (_BaseModule) {
 
             if (segment.move) {
                 pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
-                pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+                pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isCenter: true });
                 pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
 
                 pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
-                pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+                pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isCenter: true });
                 pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
 
                 return { pointX: pointX, pointY: pointY };
             } else {
                 if (segment.xIndex === 0) pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
-                if (segment.xIndex === 1) pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
+                if (segment.xIndex === 1) pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isCenter: true });
                 if (segment.xIndex === 2) pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
 
                 if (segment.yIndex === 0) pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
-                if (segment.yIndex === 1) pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
+                if (segment.yIndex === 1) pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isCenter: true });
                 if (segment.yIndex === 2) pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
 
                 return { pointX: pointX, pointY: pointY };
@@ -12529,12 +12530,14 @@ var GuideManager = function (_BaseModule) {
             var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
 
             // x 축 비교 , x 축이 dist 안에 있으면 합격 
-
             var results = [];
             A.pointX.forEach(function (AX, index) {
                 B.pointX.forEach(function (BX, targetIndex) {
+
+                    var tempDist = AX.isCenter || BX.isCenter ? ZERO_DIST : dist;
+
                     // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
-                    if (Math.abs(AX.x - BX.x) <= dist) {
+                    if (Math.abs(AX.x - BX.x) <= tempDist) {
 
                         results.push({
                             type: GUIDE_TYPE_VERTICAL,
@@ -12558,8 +12561,10 @@ var GuideManager = function (_BaseModule) {
             // y 축 비교,    
             A.pointY.forEach(function (AY, index) {
                 B.pointY.forEach(function (BY, targetIndex) {
-                    // console.log('y축', AY.y, BY.y, Math.abs(AY.y - BY.y),  dist)
-                    if (Math.abs(AY.y - BY.y) <= dist) {
+                    var tempDist = AY.isCenter || BY.isCenter ? ZERO_DIST : dist;
+
+                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
+                    if (Math.abs(AY.y - BY.y) <= tempDist) {
                         results.push({
                             type: GUIDE_TYPE_HORIZONTAL,
                             x: AY.x,

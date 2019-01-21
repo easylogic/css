@@ -129,7 +129,7 @@ $direction-border: 2px solid $pointer-color;
     }
 
     @import './guide/page-resizer.scss';
-    @import './guide/layer-resizer.scss';
+    // @import './guide/layer-resizer.scss';
     @import './guide/group-layer-resizer.scss';
     @import './guide/layer-shape-editor.scss';
     @import './guide/move-guide.scss';

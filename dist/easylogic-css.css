@@ -2227,7 +2227,6 @@ html, body {
     border-left: 1px solid #ececec; }
     .csseditor .image-list .tree-item {
       display: inline-block;
-      margin-bottom: 5px;
       cursor: pointer;
       position: relative;
       overflow: hidden;
@@ -3451,160 +3450,6 @@ html, body {
           top: -6px;
           left: -6px;
           cursor: nw-resize; }
-    .csseditor .page-view .predefined-layer-resizer {
-      display: none;
-      text-align: center;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 100;
-      -webkit-box-shadow: inset 0 0 0 1px rgba(95, 128, 222, 0.3);
-              box-shadow: inset 0 0 0 1px rgba(95, 128, 222, 0.3);
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
-      .csseditor .page-view .predefined-layer-resizer .event-panel {
-        pointer-events: all;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        right: 0px;
-        bottom: 0px;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box; }
-      .csseditor .page-view .predefined-layer-resizer .guide-horizontal {
-        position: absolute;
-        width: 1px;
-        left: 50%;
-        -webkit-transform: translateX(-50%);
-                transform: translateX(-50%);
-        top: -10px;
-        bottom: -10px;
-        background-color: rgba(95, 128, 222, 0.3);
-        display: none; }
-      .csseditor .page-view .predefined-layer-resizer .guide-vertical {
-        position: absolute;
-        height: 1px;
-        top: 50%;
-        -webkit-transform: translateY(-50%);
-                transform: translateY(-50%);
-        left: -10px;
-        right: -10px;
-        background-color: rgba(95, 128, 222, 0.3);
-        display: none; }
-      .csseditor .page-view .predefined-layer-resizer button {
-        pointer-events: all;
-        padding: 0px;
-        background-color: white;
-        border: 1px solid #5f80de;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        outline: none;
-        cursor: pointer;
-        position: absolute;
-        display: inline-block;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        width: 10px;
-        height: 10px;
-        -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
-                box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
-        /* linear */ }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to top'] {
-          top: -6px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
-          cursor: n-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to top right'] {
-          top: -6px;
-          right: -6px;
-          cursor: ne-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to right'] {
-          top: 50%;
-          right: -6px;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%);
-          cursor: e-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to bottom right'] {
-          bottom: -6px;
-          right: -6px;
-          cursor: se-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to bottom'] {
-          bottom: -6px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
-          cursor: s-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to bottom left'] {
-          left: -6px;
-          bottom: -6px;
-          cursor: sw-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to left'] {
-          top: 50%;
-          left: -6px;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%);
-          cursor: w-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to top left'] {
-          top: -6px;
-          left: -6px;
-          cursor: nw-resize; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='to move'] {
-          left: 50%;
-          top: 50%;
-          -webkit-transform: translateX(-50%) translateY(-50%);
-                  transform: translateX(-50%) translateY(-50%);
-          cursor: move; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='layer rotate'] {
-          width: 14px;
-          height: 14px;
-          left: 50%;
-          top: -30px;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
-          background-color: rgba(255, 255, 255, 0.5);
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          border-radius: 50%; }
-          .csseditor .page-view .predefined-layer-resizer button[data-value='layer rotate']:before {
-            position: absolute;
-            content: "";
-            left: 50%;
-            top: 50%;
-            width: 7px;
-            height: 7px;
-            -webkit-transform: translateX(-50%) translateY(-50%);
-                    transform: translateX(-50%) translateY(-50%);
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            border-radius: 50%;
-            border: 1px solid rgba(0, 0, 0, 0.8); }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='radius'], .csseditor .page-view .predefined-layer-resizer button[data-value='radius top left'], .csseditor .page-view .predefined-layer-resizer button[data-value='radius top right'], .csseditor .page-view .predefined-layer-resizer button[data-value='radius bottom left'], .csseditor .page-view .predefined-layer-resizer button[data-value='radius bottom right'] {
-          background-color: rgba(255, 255, 0, 0.637);
-          border: 1px solid #83831a;
-          border-radius: 50%; }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='radius'], .csseditor .page-view .predefined-layer-resizer button[data-value='radius top left'] {
-          top: -18px;
-          left: -6px;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%); }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='radius top right'] {
-          top: -27px;
-          right: -6px;
-          -webkit-transform: translateX(50%);
-                  transform: translateX(50%); }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='radius bottom left'] {
-          bottom: -18px;
-          left: -6px;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%); }
-        .csseditor .page-view .predefined-layer-resizer button[data-value='radius bottom right'] {
-          bottom: -27px;
-          right: -6px;
-          -webkit-transform: translateX(50%);
-                  transform: translateX(50%); }
     .csseditor .page-view .predefined-group-resizer {
       display: none;
       text-align: center;
@@ -3620,6 +3465,8 @@ html, body {
         text-align: center;
         position: absolute;
         pointer-events: none;
+        -webkit-box-shadow: 0 0 0 1px rgba(95, 128, 222, 0.3);
+                box-shadow: 0 0 0 1px rgba(95, 128, 222, 0.3);
         -webkit-box-sizing: border-box;
                 box-sizing: border-box; }
         .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer.image > * {
@@ -3650,7 +3497,7 @@ html, body {
                   transform: translateX(-50%);
           top: -10px;
           bottom: -10px;
-          background-color: #5f80de;
+          background-color: rgba(95, 128, 222, 0.3);
           display: none; }
         .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer .guide-vertical {
           position: absolute;
@@ -3660,7 +3507,7 @@ html, body {
                   transform: translateY(-50%);
           left: -10px;
           right: -10px;
-          background-color: #5f80de;
+          background-color: rgba(95, 128, 222, 0.3);
           display: none; }
         .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button {
           pointer-events: all;
@@ -3678,6 +3525,7 @@ html, body {
                   box-sizing: border-box;
           width: 10px;
           height: 10px;
+          border-radius: 100%;
           -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
                   box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
           /* linear */ }

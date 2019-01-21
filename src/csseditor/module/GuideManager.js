@@ -7,6 +7,7 @@ import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "../type
 import { ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
 
 var MAX_DIST = 1; 
+const ZERO_DIST = 0; 
 
 export default class GuideManager extends BaseModule {
 
@@ -36,22 +37,22 @@ export default class GuideManager extends BaseModule {
 
         if (segment.move) {
             pointX.push({x, y: centerY, startX, endX, centerX, id, width, height });
-            pointX.push({x: centerX, y: centerY, startX, endX, centerX, id, width, height });
+            pointX.push({x: centerX, y: centerY, startX, endX, centerX, id, width, height, isCenter: true });
             pointX.push({x: x2, y: centerY, startX, endX, centerX, id, width, height });
     
     
             pointY.push({x: centerX, y, startY, endY, centerY, id, width, height })
-            pointY.push({x: centerX, y: centerY, startY, endY, centerY, id, width, height })
+            pointY.push({x: centerX, y: centerY, startY, endY, centerY, id, width, height, isCenter: true })
             pointY.push({x: centerX, y: y2, startY, endY, centerY, id, width, height })
     
             return { pointX, pointY }
         } else {
             if (segment.xIndex === 0) pointX.push({x, y: centerY, startX, endX, centerX, id, width, height });
-            if (segment.xIndex === 1) pointX.push({x: centerX, y: centerY, startX, endX, centerX, id, width, height });
+            if (segment.xIndex === 1) pointX.push({x: centerX, y: centerY, startX, endX, centerX, id, width, height, isCenter: true });
             if (segment.xIndex === 2) pointX.push({x: x2, y: centerY, startX, endX, centerX, id, width, height });
     
             if (segment.yIndex === 0) pointY.push({x: centerX, y, startY, endY, centerY, id, width, height })
-            if (segment.yIndex === 1) pointY.push({x: centerX, y: centerY, startY, endY, centerY, id, width, height })
+            if (segment.yIndex === 1) pointY.push({x: centerX, y: centerY, startY, endY, centerY, id, width, height, isCenter: true })
             if (segment.yIndex === 2) pointY.push({x: centerX, y: y2, startY, endY, centerY, id, width, height })
     
             return { pointX, pointY }
@@ -61,12 +62,14 @@ export default class GuideManager extends BaseModule {
 
     [GETTER('guide/compare')] ($store, A, B, dist = MAX_DIST) {
         // x 축 비교 , x 축이 dist 안에 있으면 합격 
-
         var results = [] 
         A.pointX.forEach((AX, index) => {
             B.pointX.forEach((BX, targetIndex) => {
+
+                var tempDist = (AX.isCenter || BX.isCenter) ? ZERO_DIST : dist; 
+
                 // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
-                if (Math.abs(AX.x - BX.x) <= dist) {
+                if (Math.abs(AX.x - BX.x) <= tempDist) {
 
                     results.push({ 
                         type: GUIDE_TYPE_VERTICAL, 
@@ -90,8 +93,10 @@ export default class GuideManager extends BaseModule {
         // y 축 비교,    
         A.pointY.forEach( (AY, index) => {
             B.pointY.forEach( (BY, targetIndex) => {
-                // console.log('y축', AY.y, BY.y, Math.abs(AY.y - BY.y),  dist)
-                if (Math.abs(AY.y - BY.y) <= dist) {
+                var tempDist = (AY.isCenter || BY.isCenter) ? ZERO_DIST : dist; 
+
+                // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
+                if (Math.abs(AY.y - BY.y) <= tempDist) {
                     results.push({ 
                         type: GUIDE_TYPE_HORIZONTAL, 
                         x: AY.x, 
