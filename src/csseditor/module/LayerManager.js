@@ -10,7 +10,7 @@ import { CSS_TO_STRING } from "../types/CssTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
 import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS, LAYER_MAKE_MAP_IMAGE } from "../types/LayerTypes";
 import { IMAGE_TO_CSS} from "../types/ImageTypes";
-import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN, ITEM_EACH_TYPE_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN, ITEM_EACH_TYPE_CHILDREN, ITEM_MAP_IMAGE_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
 import { PATTERN_MAKE } from "../types/PatternTypes";
 
@@ -105,7 +105,8 @@ export default class LayerManager extends BaseModule {
     }    
 
     [GETTER(LAYER_IMAGE_TO_IMAGE_CSS)] ($store, image) {    
-        return $store.read('css/generate', $store.read(IMAGE_TO_CSS, image));
+        var images = this.generateImagePattern($store, [image]);        
+        return $store.read('css/generate', this.generateImageCSS($store, images));
     }    
 
     [GETTER(LAYER_MAKE_MAP)] ($store, layer, itemType, isExport) {
@@ -133,18 +134,8 @@ export default class LayerManager extends BaseModule {
 
 
 
-    [GETTER(LAYER_MAKE_MAP_IMAGE)] ($store, layer, isExport) {
+    generateImageCSS ($store, images, isExport) {
         var results = {}
-        var images = [] 
-
-        $store.read(ITEM_EACH_TYPE_CHILDREN, layer.id, ITEM_TYPE_IMAGE, (item) => {
-            var patternedItems = $store.read(PATTERN_MAKE, item);
-            if (patternedItems) {
-                images.push(...patternedItems);
-            } else {
-                images.push(item);
-            }
-        });
 
         images.forEach(item  => {
 
@@ -166,6 +157,28 @@ export default class LayerManager extends BaseModule {
         })
 
         return results;
+    }
+
+    generateImagePattern ($store, images) {
+        var results = [];
+
+        images.forEach(item => {
+            var patternedItems = $store.read(PATTERN_MAKE, item);
+            if (patternedItems) {
+                results.push(...patternedItems);
+            } else {
+                results.push(item);
+            }
+        });
+
+        return results;
+    }
+
+
+    [GETTER(LAYER_MAKE_MAP_IMAGE)] ($store, layer, isExport) {
+        var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id));
+
+        return this.generateImageCSS($store, images, isExport);
     }
 
     [GETTER(LAYER_MAKE_BOXSHADOW)] ($store, layer, isExport) {

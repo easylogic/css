@@ -11449,7 +11449,8 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
         value: function value$$1($store, image) {
-            return $store.read('css/generate', $store.read(IMAGE_TO_CSS, image));
+            var images = this.generateImagePattern($store, [image]);
+            return $store.read('css/generate', this.generateImageCSS($store, images));
         }
     }, {
         key: GETTER(LAYER_MAKE_MAP),
@@ -11476,19 +11477,9 @@ var LayerManager = function (_BaseModule) {
             return results;
         }
     }, {
-        key: GETTER(LAYER_MAKE_MAP_IMAGE),
-        value: function value$$1($store, layer, isExport) {
+        key: "generateImageCSS",
+        value: function generateImageCSS($store, images, isExport) {
             var results = {};
-            var images = [];
-
-            $store.read(ITEM_EACH_TYPE_CHILDREN, layer.id, ITEM_TYPE_IMAGE, function (item) {
-                var patternedItems = $store.read(PATTERN_MAKE, item);
-                if (patternedItems) {
-                    images.push.apply(images, toConsumableArray(patternedItems));
-                } else {
-                    images.push(item);
-                }
-            });
 
             images.forEach(function (item) {
 
@@ -11510,6 +11501,29 @@ var LayerManager = function (_BaseModule) {
             });
 
             return results;
+        }
+    }, {
+        key: "generateImagePattern",
+        value: function generateImagePattern($store, images) {
+            var results = [];
+
+            images.forEach(function (item) {
+                var patternedItems = $store.read(PATTERN_MAKE, item);
+                if (patternedItems) {
+                    results.push.apply(results, toConsumableArray(patternedItems));
+                } else {
+                    results.push(item);
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_MAP_IMAGE),
+        value: function value$$1($store, layer, isExport) {
+            var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id));
+
+            return this.generateImageCSS($store, images, isExport);
         }
     }, {
         key: GETTER(LAYER_MAKE_BOXSHADOW),
