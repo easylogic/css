@@ -3,9 +3,53 @@
         display: block;
 
         .box-shadow-item {
-            // display: block;
+            position: relative;
+            display: block;
             margin-top: 2px;
             padding: 2px 0px;
+            box-sizing: border-box;
+
+            > div {
+                height: 28px;                
+                display: grid;
+                grid-template-columns: 1fr 2fr; 
+
+                .input {
+                    display: inline-block;
+                    input[type=number] {
+                        display: inline-block;
+                        width: 40px;
+                    }
+                }
+
+
+                &.drag-area {
+                    position: absolute;
+                    width: 80px;
+                    height: 80px;
+                    box-sizing: border-box;
+                    right: 30px;
+                    top: 58px;
+                    border: 1px solid #ececec;
+                    display: block;
+                    background-image: linear-gradient(to right, #ececec, #ececec),linear-gradient(to right, #ececec, #ececec);
+                    background-size: 1px 100%, 100% 1px;
+                    background-position: center 0px, 0px center;                    
+                    background-repeat: no-repeat, no-repeat;
+
+                    .drag-pointer {
+                        position: absolute;
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 100%;
+                        background-color: #00aafb;
+                        transform-origin: center center;
+                        transform: translateX(-50%) translateY(-50%);
+                        pointer-events: none;
+                        box-sizing: border-box;
+                    }
+                }
+            }
 
             &.checked {
                 background-color: #f1f1f1;
@@ -17,12 +61,12 @@
                 border:1px solid black; 
                 cursor: pointer;
                 box-sizing: border-box;
+                display: inline-block;
+                vertical-align: middle;
             }
 
             .select {
-                width: 40px;
                 vertical-align: middle;
-                text-align: center;
             }
 
             button {
@@ -31,41 +75,6 @@
                 border:0px;
                 text-align: center;
                 font-weight: 500;
-            }
-
-            &.label {
-                label {
-                    input[type='checkbox'] {
-                        visibility: hidden;
-                    }
-                }                
-
-                .color, button {
-                    visibility: hidden;
-                }
-
-                .select {
-                    label {
-                        font-size: 14px;
-                        color: #ccc;
-                        padding: 5px;
-                        box-sizing: border-box;
-                        height: 100%;
-                        vertical-align: middle;
-                        display: inline-block;
-                        margin-top: 2px;
-                    }
-                }
-                .input {
-                    input {
-                        appearance: none;
-                        border:0px;
-                        background-color: transparent;
-                        color: #ccc;
-                        pointer-events: none;
-                        text-align: center;
-                    }
-                }
             }
         }
     }

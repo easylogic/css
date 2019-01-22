@@ -9,7 +9,7 @@ import {
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { ITEM_TYPE_BOXSHADOW } from '../../../../types/ItemTypes';
 import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
-import { CLICK, INPUT, LOAD } from '../../../../../util/Event';
+import { CLICK, INPUT, LOAD, POINTEREND, POINTERMOVE, POINTERSTART } from '../../../../../util/Event';
 import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../types/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
@@ -33,30 +33,6 @@ export default class BoxShadow extends BasePropertyItem {
         `
     }
 
-    makeField () {
-        return `
-        <div class='box-shadow-item label'>  
-                <div class="color"></div>
-                <div class="select">
-                    <label>Inset</label>
-                </div>                      
-                <div class="input">
-                    <input class="x" type="text" value="X" />
-                </div>                
-                <div class="input">
-                    <input class="y" type="text" value="Y" />
-                </div>
-                <div class="input">
-                    <input class="blur" type="text" value="B" />
-                </div>
-                <div class="input">
-                    <input class="spread" type="text" value="S" />
-                </div>  
-                <button type="button">X</button>                                              
-            </div>
-    `
-    }
-
     makeItemNodeBoxShadow (item) {
 
         var offsetX = unitValue(item.offsetX);
@@ -68,24 +44,49 @@ export default class BoxShadow extends BasePropertyItem {
 
         return `
             <div class='box-shadow-item ${checked}' box-shadow-id="${item.id}">  
-                <div class="color" style="background-color: ${item.color};"></div>
-                <div class="select">
-                    <label><input type="checkbox" ${item.inset ? 'checked="checked"' : EMPTY_STRING}/></label>
-                </div>                          
-                <div class="input">
-                    <input type="number" min="-100" max="100" data-type='offsetX' value="${offsetX}" />
-                </div>                
+                <div>
+                    <label>Color</label>
+                    <div class='value-field'>
+                        <div class="color" style="background-color: ${item.color};"></div>
+                        <button type="button" class='delete-boxshadow'>&times;</button>   
+                    </div>                                          
+                </div>                            
+                <div>
+                    <label>Type</label>
+                    <div class="select">
+                        <label><input type="radio" name="${item.id}"  ${item.inset === false ? 'checked="checked"' : EMPTY_STRING} value="false" /> Outset</label>
+                        <label><input type="radio" name="${item.id}" ${item.inset ? 'checked="checked"' : EMPTY_STRING} value="true" /> Inset</label>
+                    </div> 
+                </div>
 
-                <div class="input">
-                    <input type="number" min="-100" max="100" data-type='offsetY' value="${offsetY}" />
+                <div>
+                    <label>X offset</label>
+                    <div class="input">
+                        <input type="number" min="-100" max="100" data-type='offsetX' value="${offsetX}" />
+                    </div>
                 </div>
-                <div class="input">
-                    <input type="number" min="0" max="100" data-type='blurRadius' value="${blurRadius}" />
+                <div>
+                    <label>Y Offset</label>                
+                    <div class="input">
+                        <input type="number" min="-100" max="100" data-type='offsetY' value="${offsetY}" />
+                    </div>
                 </div>
-                <div class="input">
-                    <input type="number" min="0" max="100" data-type='spreadRadius' value="${spreadRadius}" />
-                </div>  
-                <button type="button" class='delete-boxshadow'>&times;</button>                                                                                                            
+                <div class='empty'></div>
+                <div>
+                    <label>Blur Radius</label>                
+                    <div class="input">
+                        <input type="number" min="0" max="100" data-type='blurRadius' value="${blurRadius}" />                    
+                        <input type="range" min="0" max="100" data-type='blurRadiusRange' value="${blurRadius}" />
+                    </div>
+                </div>
+                <div>
+                    <label>Spread Radius</label>                
+                    <div class="input">
+                        <input type="number" min="0" max="100" data-type='spreadRadius' value="${spreadRadius}" />                    
+                        <input type="range" min="0" max="100" data-type='spreadRadiusRange' value="${spreadRadius}" />
+                    </div>  
+                </div>
+                <div class='drag-area'><div class='drag-pointer' style='left: ${offsetX + 40}px; top: ${offsetY + 40}px;'></div></div>
             </div>
         `
     }
@@ -97,8 +98,6 @@ export default class BoxShadow extends BasePropertyItem {
         var results =  this.read(ITEM_MAP_BOXSHADOW_CHILDREN, item.id, (item) => {
             return this.makeItemNodeBoxShadow(item)
         })
-
-        results.push(this.makeField());
 
         return results;
     }
@@ -120,6 +119,10 @@ export default class BoxShadow extends BasePropertyItem {
             this.load()
         }
     }
+
+    getBoxShadowId($el) {
+        return $el.closest('box-shadow-item').attr('box-shadow-id')
+    }    
 
     [EVENT(CHANGE_BOXSHADOW)] (newValue) {
         this.refreshBoxShadow(newValue);
@@ -153,34 +156,100 @@ export default class BoxShadow extends BasePropertyItem {
     [INPUT('$boxShadowList input[type=number]')] (e) {
         var $el = e.$delegateTarget;
         var field = $el.attr('data-type');
-        var id = $el.parent().parent().attr('box-shadow-id')
+        var id = this.getBoxShadowId($el)
 
+        var $range = $el.parent().$(`[data-type=${field}Range]`);
+        
+        if ($range) {
+            $range.val($el.val());
+        }
         this.commit(CHANGE_BOXSHADOW, {id, [field]: pxUnit($el.int()) })
     }
 
-    [CLICK('$boxShadowList input[type=checkbox]')] (e) {
+    [INPUT('$boxShadowList input[type=range]')] (e) {
         var $el = e.$delegateTarget;
-        var id = $el.parent().parent().parent().attr('box-shadow-id')
+        var field = $el.attr('data-type').replace('Range', '');
+        var id = this.getBoxShadowId($el)
 
-        this.commit(CHANGE_BOXSHADOW, {id, inset: $el.checked() })
+        $el.parent().$(`[data-type=${field}]`).val($el.val());
+        this.commit(CHANGE_BOXSHADOW, {id, [field]: pxUnit($el.int()) })
+    }    
+
+    [CLICK('$boxShadowList input[type=radio]')] (e) {
+        var $el = e.$delegateTarget;
+        var id = this.getBoxShadowId($el)
+
+        this.commit(CHANGE_BOXSHADOW, {id, inset: $el.val() === 'true' })
     }
 
     [CLICK('$boxShadowList .delete-boxshadow')] (e) {
         var $el = e.$delegateTarget;
-        var id = $el.parent().attr('box-shadow-id')
+        var id = this.getBoxShadowId($el)
 
         this.run(ITEM_INITIALIZE, id);
         this.emit(CHANGE_BOXSHADOW)
         this.refresh();
     }
 
+
     [CLICK('$boxShadowList .color')] (e) {
         var $el = e.$delegateTarget;
-        var id = $el.parent().attr('box-shadow-id')
-
+        var id = this.getBoxShadowId($el)
+        
         this.dispatch(SELECTION_ONE, id);
         this.emit('fillColorId', id, CHANGE_BOXSHADOW);
         this.refresh();
+    }
+
+
+    refreshUI (e) {
+        var x = e.xy.x;
+        var y = e.xy.y; 
+
+        var rect = this.selectedPointArea.rect();
+
+        if (x < rect.left) x = rect.left; 
+        if (y < rect.top) y = rect.top; 
+        if (x > rect.right) x = rect.right; 
+        if (y > rect.bottom) y = rect.bottom; 
+
+        x = x - rect.left; 
+        y = y - rect.top; 
+
+        this.refreshOffsetValue(x - 40, y - 40);
+        this.selectedDragPointer.px('left', x);
+        this.selectedDragPointer.px('top', y);
+
+    }
+
+    refreshOffsetValue(x, y) {
+        var id = this.getBoxShadowId(this.selectedPointArea)
+
+        var boxShadowItem = this.refs.$boxShadowList.$(`[box-shadow-id="${id}"]`);
+
+        boxShadowItem.$("[data-type=offsetX]").val(x);
+        boxShadowItem.$("[data-type=offsetY]").val(y);
+
+        this.commit(CHANGE_BOXSHADOW, {id, offsetX: pxUnit(x), offsetY: pxUnit(y) })
+    }
+
+    // Event Bindings 
+    [POINTEREND('document')] (e) {
+        this.isDown = false ;
+        this.selectedPointArea = false;
+    }
+
+    [POINTERMOVE('document')] (e) {
+        if (this.isDown) {
+            this.refreshUI(e);
+        }
+    }
+
+    [POINTERSTART('$boxShadowList .drag-area')] (e) {
+        e.preventDefault();
+        this.isDown = true; 
+        this.selectedPointArea = e.$delegateTarget;
+        this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer')
     }
 
 }

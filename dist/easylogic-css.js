@@ -2498,7 +2498,7 @@ var GROUP_DEFAULT_OBJECT = {
 var IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
     is: IS_ATTRIBUTE,
-    type: 'static',
+    type: IMAGE_ITEM_TYPE_STATIC,
     fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
     index: 0,
     parentId: EMPTY_STRING,
@@ -2532,7 +2532,7 @@ var BOXSHADOW_DEFAULT_OBJECT = {
     inset: false,
     blurRadius: pxUnit(0),
     spreadRadius: pxUnit(0),
-    color: 'gray'
+    color: 'rgb(0, 0, 0)'
 };
 
 var TEXTSHADOW_DEFAULT_OBJECT = {
@@ -2541,7 +2541,7 @@ var TEXTSHADOW_DEFAULT_OBJECT = {
     offsetX: pxUnit(0),
     offsetY: pxUnit(0),
     blurRadius: pxUnit(0),
-    color: 'gray'
+    color: 'rgb(0, 0, 0)'
 };
 
 var COLORSTEP_DEFAULT_OBJECT = {
@@ -19668,11 +19668,6 @@ var BoxShadow = function (_BasePropertyItem) {
             return '\n        <div class=\'property-item box-shadow show\'>\n            <div class=\'title\' ref="$title">\n                Box Shadow \n                <span style="float:right;">\n                    <button type="button" ref="$add">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="box-shadow-list" ref="$boxShadowList"></div>\n            </div>\n        </div>\n        ';
         }
     }, {
-        key: 'makeField',
-        value: function makeField() {
-            return '\n        <div class=\'box-shadow-item label\'>  \n                <div class="color"></div>\n                <div class="select">\n                    <label>Inset</label>\n                </div>                      \n                <div class="input">\n                    <input class="x" type="text" value="X" />\n                </div>                \n                <div class="input">\n                    <input class="y" type="text" value="Y" />\n                </div>\n                <div class="input">\n                    <input class="blur" type="text" value="B" />\n                </div>\n                <div class="input">\n                    <input class="spread" type="text" value="S" />\n                </div>  \n                <button type="button">X</button>                                              \n            </div>\n    ';
-        }
-    }, {
         key: 'makeItemNodeBoxShadow',
         value: function makeItemNodeBoxShadow(item) {
 
@@ -19683,7 +19678,7 @@ var BoxShadow = function (_BasePropertyItem) {
 
             var checked = this.read(SELECTION_CHECK, item.id) ? 'checked' : EMPTY_STRING;
 
-            return '\n            <div class=\'box-shadow-item ' + checked + '\' box-shadow-id="' + item.id + '">  \n                <div class="color" style="background-color: ' + item.color + ';"></div>\n                <div class="select">\n                    <label><input type="checkbox" ' + (item.inset ? 'checked="checked"' : EMPTY_STRING) + '/></label>\n                </div>                          \n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                </div>                \n\n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'spreadRadius\' value="' + spreadRadius + '" />\n                </div>  \n                <button type="button" class=\'delete-boxshadow\'>&times;</button>                                                                                                            \n            </div>\n        ';
+            return '\n            <div class=\'box-shadow-item ' + checked + '\' box-shadow-id="' + item.id + '">  \n                <div>\n                    <label>Color</label>\n                    <div class=\'value-field\'>\n                        <div class="color" style="background-color: ' + item.color + ';"></div>\n                        <button type="button" class=\'delete-boxshadow\'>&times;</button>   \n                    </div>                                          \n                </div>                            \n                <div>\n                    <label>Type</label>\n                    <div class="select">\n                        <label><input type="radio" name="' + item.id + '"  ' + (item.inset === false ? 'checked="checked"' : EMPTY_STRING) + ' value="false" /> Outset</label>\n                        <label><input type="radio" name="' + item.id + '" ' + (item.inset ? 'checked="checked"' : EMPTY_STRING) + ' value="true" /> Inset</label>\n                    </div> \n                </div>\n\n                <div>\n                    <label>X offset</label>\n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                    </div>\n                </div>\n                <div>\n                    <label>Y Offset</label>                \n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                    </div>\n                </div>\n                <div class=\'empty\'></div>\n                <div>\n                    <label>Blur Radius</label>                \n                    <div class="input">\n                        <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />                    \n                        <input type="range" min="0" max="100" data-type=\'blurRadiusRange\' value="' + blurRadius + '" />\n                    </div>\n                </div>\n                <div>\n                    <label>Spread Radius</label>                \n                    <div class="input">\n                        <input type="number" min="0" max="100" data-type=\'spreadRadius\' value="' + spreadRadius + '" />                    \n                        <input type="range" min="0" max="100" data-type=\'spreadRadiusRange\' value="' + spreadRadius + '" />\n                    </div>  \n                </div>\n                <div class=\'drag-area\'><div class=\'drag-pointer\' style=\'left: ' + (offsetX + 40) + 'px; top: ' + (offsetY + 40) + 'px;\'></div></div>\n            </div>\n        ';
         }
     }, {
         key: LOAD('$boxShadowList'),
@@ -19698,8 +19693,6 @@ var BoxShadow = function (_BasePropertyItem) {
             var results = this.read(ITEM_MAP_BOXSHADOW_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeBoxShadow(item);
             });
-
-            results.push(this.makeField());
 
             return results;
         }
@@ -19720,6 +19713,11 @@ var BoxShadow = function (_BasePropertyItem) {
             if (isShow) {
                 this.load();
             }
+        }
+    }, {
+        key: 'getBoxShadowId',
+        value: function getBoxShadowId($el) {
+            return $el.closest('box-shadow-item').attr('box-shadow-id');
         }
     }, {
         key: EVENT(CHANGE_BOXSHADOW),
@@ -19757,23 +19755,38 @@ var BoxShadow = function (_BasePropertyItem) {
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var field = $el.attr('data-type');
-            var id = $el.parent().parent().attr('box-shadow-id');
+            var id = this.getBoxShadowId($el);
 
+            var $range = $el.parent().$('[data-type=' + field + 'Range]');
+
+            if ($range) {
+                $range.val($el.val());
+            }
             this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
         }
     }, {
-        key: CLICK('$boxShadowList input[type=checkbox]'),
+        key: INPUT('$boxShadowList input[type=range]'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var id = $el.parent().parent().parent().attr('box-shadow-id');
+            var field = $el.attr('data-type').replace('Range', '');
+            var id = this.getBoxShadowId($el);
 
-            this.commit(CHANGE_BOXSHADOW, { id: id, inset: $el.checked() });
+            $el.parent().$('[data-type=' + field + ']').val($el.val());
+            this.commit(CHANGE_BOXSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
+        }
+    }, {
+        key: CLICK('$boxShadowList input[type=radio]'),
+        value: function value$$1(e) {
+            var $el = e.$delegateTarget;
+            var id = this.getBoxShadowId($el);
+
+            this.commit(CHANGE_BOXSHADOW, { id: id, inset: $el.val() === 'true' });
         }
     }, {
         key: CLICK('$boxShadowList .delete-boxshadow'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var id = $el.parent().attr('box-shadow-id');
+            var id = this.getBoxShadowId($el);
 
             this.run(ITEM_INITIALIZE, id);
             this.emit(CHANGE_BOXSHADOW);
@@ -19783,11 +19796,67 @@ var BoxShadow = function (_BasePropertyItem) {
         key: CLICK('$boxShadowList .color'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var id = $el.parent().attr('box-shadow-id');
+            var id = this.getBoxShadowId($el);
 
             this.dispatch(SELECTION_ONE, id);
             this.emit('fillColorId', id, CHANGE_BOXSHADOW);
             this.refresh();
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var x = e.xy.x;
+            var y = e.xy.y;
+
+            var rect = this.selectedPointArea.rect();
+
+            if (x < rect.left) x = rect.left;
+            if (y < rect.top) y = rect.top;
+            if (x > rect.right) x = rect.right;
+            if (y > rect.bottom) y = rect.bottom;
+
+            x = x - rect.left;
+            y = y - rect.top;
+
+            this.refreshOffsetValue(x - 40, y - 40);
+            this.selectedDragPointer.px('left', x);
+            this.selectedDragPointer.px('top', y);
+        }
+    }, {
+        key: 'refreshOffsetValue',
+        value: function refreshOffsetValue(x, y) {
+            var id = this.getBoxShadowId(this.selectedPointArea);
+
+            var boxShadowItem = this.refs.$boxShadowList.$('[box-shadow-id="' + id + '"]');
+
+            boxShadowItem.$("[data-type=offsetX]").val(x);
+            boxShadowItem.$("[data-type=offsetY]").val(y);
+
+            this.commit(CHANGE_BOXSHADOW, { id: id, offsetX: pxUnit(x), offsetY: pxUnit(y) });
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document'),
+        value: function value$$1(e) {
+            this.isDown = false;
+            this.selectedPointArea = false;
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value$$1(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: POINTERSTART('$boxShadowList .drag-area'),
+        value: function value$$1(e) {
+            e.preventDefault();
+            this.isDown = true;
+            this.selectedPointArea = e.$delegateTarget;
+            this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer');
         }
     }]);
     return BoxShadow;
@@ -19807,11 +19876,6 @@ var TextShadow = function (_BasePropertyItem) {
             return '\n        <div class=\'property-item text-shadow show\'>\n            <div class=\'title\' ref="$title">\n                Text Shadow \n                <span style="float:right;">\n                    <button type="button" ref="$add">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="text-shadow-list" ref="$textShadowList"></div>\n            </div>\n        </div>\n        ';
         }
     }, {
-        key: 'makeField',
-        value: function makeField() {
-            return '\n        <div class=\'text-shadow-item label\'>  \n                <div class="color"></div>                     \n                <div class="input">\n                    <input class="x" type="text" value="X" />\n                </div>                \n                <div class="input">\n                    <input class="y" type="text" value="Y" />\n                </div>\n                <div class="input">\n                    <input class="blur" type="text" value="B" />\n                </div>\n                <button type="button">&times;</button>                                              \n            </div>\n    ';
-        }
-    }, {
         key: 'makeItemNodetextShadow',
         value: function makeItemNodetextShadow(item) {
 
@@ -19820,7 +19884,7 @@ var TextShadow = function (_BasePropertyItem) {
             var blurRadius = unitValue(item.blurRadius);
             var checked = this.read(SELECTION_CHECK, item.id) ? 'checked' : EMPTY_STRING;
 
-            return '\n            <div class=\'text-shadow-item ' + checked + '\' text-shadow-id="' + item.id + '">  \n                <div class="color" style="background-color: ' + item.color + ';"></div>                      \n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                </div>                \n\n                <div class="input">\n                    <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                </div>\n                <div class="input">\n                    <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />\n                </div>\n                <button type="button" class=\'delete-textshadow\'>&times;</button>                                                                                                            \n            </div>\n        ';
+            return '\n            <div class=\'text-shadow-item ' + checked + '\' text-shadow-id="' + item.id + '">  \n                <div>\n                    <label>Color</label>\n                    <div class=\'value-field\'>\n                        <div class="color" style="background-color: ' + item.color + ';"></div>\n                        <button type="button" class=\'delete-boxshadow\'>&times;</button>   \n                    </div>                                          \n                </div>                            \n                <div>\n                    <label>X offset</label>\n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                    </div>\n                </div>\n                <div>\n                    <label>Y Offset</label>                \n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                    </div>\n                </div>\n                <div class=\'empty\'></div>        \n                <div>\n                    <label>Blur Radius</label>                \n                    <div class="input">\n                        <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />                    \n                        <input type="range" min="0" max="100" data-type=\'blurRadiusRange\' value="' + blurRadius + '" />\n                    </div>\n                </div>\n                <div class=\'drag-area\'><div class=\'drag-pointer\' style=\'left: ' + (offsetX + 40) + 'px; top: ' + (offsetY + 40) + 'px;\'></div></div>\n            </div>\n        ';
         }
     }, {
         key: LOAD('$textShadowList'),
@@ -19835,8 +19899,6 @@ var TextShadow = function (_BasePropertyItem) {
             var results = this.read(ITEM_MAP_TEXTSHADOW_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodetextShadow(item);
             });
-
-            results.push(this.makeField());
 
             return results;
         }
@@ -19857,6 +19919,11 @@ var TextShadow = function (_BasePropertyItem) {
             if (isShow) {
                 this.load();
             }
+        }
+    }, {
+        key: 'getTextShadowId',
+        value: function getTextShadowId($el) {
+            return $el.closest('text-shadow-item').attr('text-shadow-id');
         }
     }, {
         key: EVENT(CHANGE_TEXTSHADOW),
@@ -19885,7 +19952,7 @@ var TextShadow = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
                 _this3.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW$1, false, id);
-                _this3.dispatch(HISTORY_PUSH, 'Add text Shadow');
+                _this3.dispatch(HISTORY_PUSH, 'Add Text Shadow');
                 _this3.refresh();
             });
         }
@@ -19894,15 +19961,29 @@ var TextShadow = function (_BasePropertyItem) {
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
             var field = $el.attr('data-type');
-            var id = $el.parent().parent().attr('text-shadow-id');
+            var id = this.getTextShadowId($el);
+            var $range = $el.parent().$('[data-type=' + field + 'Range]');
 
+            if ($range) {
+                $range.val($el.val());
+            }
+            this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
+        }
+    }, {
+        key: INPUT('$textShadowList input[type=range]'),
+        value: function value$$1(e) {
+            var $el = e.$delegateTarget;
+            var field = $el.attr('data-type').replace('Range', '');
+            var id = this.getTextShadowId($el);
+
+            $el.parent().$('[data-type=' + field + ']').val($el.val());
             this.commit(CHANGE_TEXTSHADOW, defineProperty({ id: id }, field, pxUnit($el.int())));
         }
     }, {
         key: CLICK('$textShadowList .delete-textshadow'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var id = $el.parent().attr('text-shadow-id');
+            var id = this.getTextShadowId($el);
 
             this.run(ITEM_INITIALIZE, id);
             this.emit(CHANGE_TEXTSHADOW);
@@ -19912,11 +19993,67 @@ var TextShadow = function (_BasePropertyItem) {
         key: CLICK('$textShadowList .color'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var id = $el.parent().attr('text-shadow-id');
+            var id = this.getTextShadowId($el);
 
             this.dispatch(SELECTION_ONE, id);
             this.emit(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
             this.refresh();
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var x = e.xy.x;
+            var y = e.xy.y;
+
+            var rect = this.selectedPointArea.rect();
+
+            if (x < rect.left) x = rect.left;
+            if (y < rect.top) y = rect.top;
+            if (x > rect.right) x = rect.right;
+            if (y > rect.bottom) y = rect.bottom;
+
+            x = x - rect.left;
+            y = y - rect.top;
+
+            this.refreshOffsetValue(x - 40, y - 40);
+            this.selectedDragPointer.px('left', x);
+            this.selectedDragPointer.px('top', y);
+        }
+    }, {
+        key: 'refreshOffsetValue',
+        value: function refreshOffsetValue(x, y) {
+            var id = this.getTextShadowId(this.selectedPointArea);
+
+            var textShadowItem = this.refs.$textShadowList.$('[text-shadow-id="' + id + '"]');
+
+            textShadowItem.$("[data-type=offsetX]").val(x);
+            textShadowItem.$("[data-type=offsetY]").val(y);
+
+            this.commit(CHANGE_TEXTSHADOW, { id: id, offsetX: pxUnit(x), offsetY: pxUnit(y) });
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document'),
+        value: function value$$1(e) {
+            this.isDown = false;
+            this.selectedPointArea = false;
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value$$1(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: POINTERSTART('$textShadowList .drag-area'),
+        value: function value$$1(e) {
+            e.preventDefault();
+            this.isDown = true;
+            this.selectedPointArea = e.$delegateTarget;
+            this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer');
         }
     }]);
     return TextShadow;

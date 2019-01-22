@@ -136,7 +136,7 @@ export const GROUP_DEFAULT_OBJECT = {
 export const IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
     is: IS_ATTRIBUTE,
-    type: 'static',
+    type: IMAGE_ITEM_TYPE_STATIC,
     fileType: EMPTY_STRING,       // select file type as imagefile,  png, gif, jpg, svg if type is image 
     index: 0,    
     parentId: EMPTY_STRING,    
@@ -170,7 +170,7 @@ export const BOXSHADOW_DEFAULT_OBJECT = {
     inset: false,
     blurRadius: pxUnit(0),
     spreadRadius: pxUnit(0),
-    color: 'gray'
+    color: 'rgb(0, 0, 0)'
 }
 
 
@@ -180,7 +180,7 @@ export const TEXTSHADOW_DEFAULT_OBJECT = {
     offsetX: pxUnit(0),
     offsetY: pxUnit(0),
     blurRadius: pxUnit(0),
-    color: 'gray'
+    color: 'rgb(0, 0, 0)'
 }
 
 export const COLORSTEP_DEFAULT_OBJECT = {

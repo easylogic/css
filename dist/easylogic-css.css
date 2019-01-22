@@ -5298,8 +5298,49 @@ html, body {
       .csseditor .property-view .property-item.box-shadow .box-shadow-list {
         display: block; }
         .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item {
+          position: relative;
+          display: block;
           margin-top: 2px;
-          padding: 2px 0px; }
+          padding: 2px 0px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div {
+            height: 28px;
+            display: grid;
+            grid-template-columns: 1fr 2fr; }
+            .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div .input {
+              display: inline-block; }
+              .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div .input input[type=number] {
+                display: inline-block;
+                width: 40px; }
+            .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div.drag-area {
+              position: absolute;
+              width: 80px;
+              height: 80px;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              right: 30px;
+              top: 58px;
+              border: 1px solid #ececec;
+              display: block;
+              background-image: -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec)), -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec));
+              background-image: linear-gradient(to right, #ececec, #ececec), linear-gradient(to right, #ececec, #ececec);
+              background-size: 1px 100%, 100% 1px;
+              background-position: center 0px, 0px center;
+              background-repeat: no-repeat, no-repeat; }
+              .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div.drag-area .drag-pointer {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                border-radius: 100%;
+                background-color: #00aafb;
+                -webkit-transform-origin: center center;
+                        transform-origin: center center;
+                -webkit-transform: translateX(-50%) translateY(-50%);
+                        transform: translateX(-50%) translateY(-50%);
+                pointer-events: none;
+                -webkit-box-sizing: border-box;
+                        box-sizing: border-box; }
           .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.checked {
             background-color: #f1f1f1; }
           .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item .color {
@@ -5308,11 +5349,11 @@ html, body {
             border: 1px solid black;
             cursor: pointer;
             -webkit-box-sizing: border-box;
-                    box-sizing: border-box; }
+                    box-sizing: border-box;
+            display: inline-block;
+            vertical-align: middle; }
           .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item .select {
-            width: 40px;
-            vertical-align: middle;
-            text-align: center; }
+            vertical-align: middle; }
           .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item button {
             -webkit-appearance: none;
                -moz-appearance: none;
@@ -5321,34 +5362,52 @@ html, body {
             border: 0px;
             text-align: center;
             font-weight: 500; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label label input[type='checkbox'] {
-            visibility: hidden; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label .color, .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label button {
-            visibility: hidden; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label .select label {
-            font-size: 14px;
-            color: #ccc;
-            padding: 5px;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            height: 100%;
-            vertical-align: middle;
-            display: inline-block;
-            margin-top: 2px; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.label .input input {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            border: 0px;
-            background-color: transparent;
-            color: #ccc;
-            pointer-events: none;
-            text-align: center; }
       .csseditor .property-view .property-item.text-shadow .text-shadow-list {
         display: block; }
         .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item {
+          position: relative;
+          display: block;
           margin-top: 2px;
-          padding: 2px 0px; }
+          padding: 2px 0px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div {
+            height: 28px;
+            display: grid;
+            grid-template-columns: 1fr 2fr; }
+            .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input {
+              display: inline-block; }
+              .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input input[type=number] {
+                display: inline-block;
+                width: 40px; }
+            .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div.drag-area {
+              position: absolute;
+              width: 80px;
+              height: 80px;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              right: 30px;
+              top: 28px;
+              border: 1px solid #ececec;
+              display: block;
+              background-image: -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec)), -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec));
+              background-image: linear-gradient(to right, #ececec, #ececec), linear-gradient(to right, #ececec, #ececec);
+              background-size: 1px 100%, 100% 1px;
+              background-position: center 0px, 0px center;
+              background-repeat: no-repeat, no-repeat; }
+              .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div.drag-area .drag-pointer {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                border-radius: 100%;
+                background-color: #00aafb;
+                -webkit-transform-origin: center center;
+                        transform-origin: center center;
+                -webkit-transform: translateX(-50%) translateY(-50%);
+                        transform: translateX(-50%) translateY(-50%);
+                pointer-events: none;
+                -webkit-box-sizing: border-box;
+                        box-sizing: border-box; }
           .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.checked {
             background-color: #f1f1f1; }
           .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .color {
@@ -5357,7 +5416,11 @@ html, body {
             border: 1px solid black;
             cursor: pointer;
             -webkit-box-sizing: border-box;
-                    box-sizing: border-box; }
+                    box-sizing: border-box;
+            display: inline-block;
+            vertical-align: middle; }
+          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .select {
+            vertical-align: middle; }
           .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item button {
             -webkit-appearance: none;
                -moz-appearance: none;
@@ -5366,19 +5429,6 @@ html, body {
             border: 0px;
             text-align: center;
             font-weight: 500; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .input input {
-            width: 50px; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.label .color, .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.label button {
-            visibility: hidden; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.label .input input {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            border: 0px;
-            background-color: transparent;
-            color: #ccc;
-            pointer-events: none;
-            text-align: center; }
       .csseditor .property-view .property-item.background-info .gradient {
         display: inline-block;
         vertical-align: middle;
