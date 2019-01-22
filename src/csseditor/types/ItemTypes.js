@@ -4,6 +4,7 @@ import { isNotUndefined } from "../../util/functions/func";
 export const ITEM_TYPE_PAGE = 'page';
 export const ITEM_TYPE_LAYER = 'layer';
 export const ITEM_TYPE_CIRCLE = 'circle';
+export const ITEM_TYPE_SHAPE = 'shape';
 export const ITEM_TYPE_GROUP = 'group';
 export const ITEM_TYPE_IMAGE = 'image';
 export const ITEM_TYPE_BOXSHADOW = 'boxshadow';
@@ -113,6 +114,11 @@ export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
     type: SHAPE_TYPE_CIRCLE,
     borderRadius: percentUnit(100), 
     fixedRadius: true
+})
+
+export const POLYGON_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_POLYGON,
+    fixedShape: true
 })
 
 export const GROUP_DEFAULT_OBJECT = {

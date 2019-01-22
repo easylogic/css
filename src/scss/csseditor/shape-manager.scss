@@ -20,6 +20,7 @@ $layer-item-padding: 4px;
         box-sizing: border-box;
         display: grid;
         grid-template-columns:  1fr 1fr 1fr;
+        width: 100%;
         
         button {
             height: 62px;
@@ -33,17 +34,13 @@ $layer-item-padding: 4px;
             position: relative;
             pointer-events: all;
             vertical-align: middle; 
+            padding:2px;
 
-            &.rect {
-                border-color: #333; 
-                background-color: #333;
+            .shape {
+                width: 100% !important;
+                height: 100% !important;
             }
 
-            &.circle {
-                border-color: #333;                 
-                border-radius: 50%;
-                background-color: #333;                
-            }
         }      
     }
 }

@@ -4,6 +4,7 @@ import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_LAYER_ROTAT
 import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_ANGLE } from '../../../types/ImageTypes';
+import { isUndefined } from '../../../../util/functions/func';
 
 export default class LayerAngle extends UIElement {
 
@@ -55,8 +56,8 @@ export default class LayerAngle extends UIElement {
 
     getDefaultValue() {
         var layer = this.read(SELECTION_CURRENT_LAYER);
-        if (!layer) return 0 
-        if (!layer.rotate) return 0;
+        if (!layer) return -90
+        if (isUndefined(layer.rotate)) return -90;
         
         return layer.rotate - 90
     }

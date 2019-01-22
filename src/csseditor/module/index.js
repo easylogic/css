@@ -28,9 +28,10 @@ import ItemRecoverManager from "./ItemRecoverManager";
 import ItemSearchManager from "./ItemSearchManager";
 import ExportManager from "./ExportManager";
 import PatternManager from "./PatternManager";
-
+import ShapeManager from "./ShapeManager";
 
 export default [  
+    ShapeManager,
     PatternManager,
     ExportManager,
     ClipPathManager,

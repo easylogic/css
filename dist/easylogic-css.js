@@ -2371,6 +2371,7 @@ var _SEGMENT_CHECK;
 var ITEM_TYPE_PAGE = 'page';
 var ITEM_TYPE_LAYER = 'layer';
 var ITEM_TYPE_CIRCLE = 'circle';
+
 var ITEM_TYPE_GROUP = 'group';
 var ITEM_TYPE_IMAGE = 'image';
 var ITEM_TYPE_BOXSHADOW = 'boxshadow';
@@ -2477,6 +2478,11 @@ var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
     fixedRadius: true
 });
 
+var POLYGON_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_POLYGON,
+    fixedShape: true
+});
+
 var GROUP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_GROUP,
     is: IS_OBJECT,
@@ -2548,7 +2554,7 @@ var COLORSTEP_DEFAULT_OBJECT = {
 
 var SHAPE_TYPE_RECT = 'rect';
 var SHAPE_TYPE_CIRCLE = 'circle';
-
+var SHAPE_TYPE_POLYGON = 'polygon';
 
 var IMAGE_ITEM_TYPE_LINEAR = 'linear';
 var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
@@ -10393,20 +10399,22 @@ var ITEM_CREATE_IMAGE = 'item/create/image';
 var ITEM_CREATE_BOXSHADOW = 'item/create/boxshadow';
 var ITEM_CREATE_TEXTSHADOW = 'item/create/textshadow';
 var ITEM_CREATE_CIRCLE = 'item/create/circle';
+var ITEM_CREATE_POLYGON = 'item/create/polygon';
 var ITEM_CREATE_GROUP = 'item/create/group';
 var ITEM_CREATE_COLORSTEP = 'item/create/colorstep';
 var ITEM_CREATE = 'item/create';
 var ITEM_COPY = 'item/copy';
 var ITEM_ADD = 'item/add';
-var ITEM_ADD_LAYER = 'item/add/layer';
 var ITEM_CREATE_IMAGE_WITH_COLORSTEP = 'item/create/image/with/colorstep';
 var ITEM_PREPEND_IMAGE = 'item/prepend/image';
-var ITEM_ADD_IMAGE = 'item/add/image';
-
 var ITEM_PREPEND_IMAGE_FILE$1 = 'item/prepend/image/file';
-var ITEM_ADD_IMAGE_FILE = 'item/add/image/file';
 var ITEM_SET_IMAGE_FILE = 'item/set/image/file';
 var ITEM_PREPEND_IMAGE_URL$1 = 'item/prepend/image/url';
+
+var ITEM_ADD_LAYER = 'item/add/layer';
+var ITEM_ADD_SHAPE = 'item/add/shape';
+var ITEM_ADD_IMAGE = 'item/add/image';
+var ITEM_ADD_IMAGE_FILE = 'item/add/image/file';
 var ITEM_ADD_IMAGE_URL = 'item/add/image/url';
 var ITEM_ADD_PAGE = 'item/add/page';
 
@@ -15182,6 +15190,13 @@ var ItemCreateManager = function (_BaseModule) {
             return $store.read(ITEM_CREATE_OBJECT, obj, CIRCLE_DEFAULT_OBJECT);
         }
     }, {
+        key: GETTER(ITEM_CREATE_POLYGON),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, POLYGON_DEFAULT_OBJECT);
+        }
+    }, {
         key: GETTER(ITEM_CREATE_GROUP),
         value: function value$$1($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -15282,6 +15297,26 @@ var ItemCreateManager = function (_BaseModule) {
             var rect = $store.read(SELECTION_RECT);
 
             var id = $store.read(ITEM_CREATE, itemType);
+            var item = $store.read(ITEM_GET, id);
+            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
+            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
+
+            item.parentId = parentId;
+
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, item.id);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_SHAPE),
+        value: function value$$1($store, shapeObject) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            var rect = $store.read(SELECTION_RECT);
+
+            var id = $store.read(ITEM_CREATE, ITEM_TYPE_LAYER, shapeObject);
             var item = $store.read(ITEM_GET, id);
             item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
             item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
@@ -16172,7 +16207,121 @@ var PatternManager = function (_BaseModule) {
     return PatternManager;
 }(BaseModule);
 
-var ModuleList = [PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var octagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, octagon);
+
+var rect = {
+    type: SHAPE_TYPE_RECT
+};
+
+var circle$1 = {
+    type: SHAPE_TYPE_CIRCLE,
+    fixedRadius: true,
+    borderRadius: percentUnit(100)
+};
+
+var decagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, decagon);
+
+var heptagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, heptagon);
+
+var hexagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, hexagon);
+
+var nonagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, nonagon);
+
+var parallelogram$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, parallelogram);
+
+var pentagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, pentagon);
+
+var rhombus$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, rhombus);
+
+var trapezoid$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, trapezoid);
+
+var triangle$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, triangle);
+
+var shapes = {
+    rect: rect,
+    circle: circle$1,
+    triangle: triangle$1,
+    rhombus: rhombus$1,
+    hexagon: hexagon$1,
+    trapezoid: trapezoid$1,
+    pentagon: pentagon$1,
+    parallelogram: parallelogram$1,
+    octagon: octagon$1,
+    decagon: decagon$1,
+    heptagon: heptagon$1,
+    nonagon: nonagon$1
+};
+
+var SHAPE_LIST = 'shape/list';
+var SHAPE_GET = 'shape/get';
+
+
+var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
+
+var shapeKeys = Object.keys(shapes);
+
+var ShapeManager = function (_BaseModule) {
+    inherits(ShapeManager, _BaseModule);
+
+    function ShapeManager() {
+        classCallCheck(this, ShapeManager);
+        return possibleConstructorReturn(this, (ShapeManager.__proto__ || Object.getPrototypeOf(ShapeManager)).apply(this, arguments));
+    }
+
+    createClass(ShapeManager, [{
+        key: GETTER(SHAPE_LIST),
+        value: function value$$1($store) {
+            return shapeKeys;
+        }
+    }, {
+        key: GETTER(SHAPE_GET),
+        value: function value$$1($store, key) {
+            return shapes[key];
+        }
+    }, {
+        key: GETTER(SHAPE_TO_CSS_TEXT),
+        value: function value$$1($store, key) {
+            var item = Object.assign(clone(LAYER_DEFAULT_OBJECT), shapes[key]);
+
+            var cssText = $store.read(LAYER_TO_STRING, item, true);
+
+            return cssText;
+        }
+    }]);
+    return ShapeManager;
+}(BaseModule);
+
+var ModuleList = [ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -22508,8 +22657,8 @@ var LayerAngle = function (_UIElement) {
         key: 'getDefaultValue',
         value: function getDefaultValue() {
             var layer = this.read(SELECTION_CURRENT_LAYER);
-            if (!layer) return 0;
-            if (!layer.rotate) return 0;
+            if (!layer) return -90;
+            if (isUndefined(layer.rotate)) return -90;
 
             return layer.rotate - 90;
         }
@@ -26489,26 +26638,23 @@ var ShapeListView = function (_UIElement) {
     createClass(ShapeListView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='shapes'>         \n                <h1>Basic Layer</h1>            \n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    <button type=\"button\" class='add-layer rect' ref=\"$addLayer\"></button>\n                    <button type=\"button\" class='add-layer circle' ref=\"$addLayerCircle\"></button>\n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: CLICK('$addLayer'),
-        value: function value(e) {
             var _this2 = this;
 
-            this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                _this2.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_LAYER, true, id);
-                _this2.dispatch(HISTORY_PUSH, 'Add a layer');
-            });
+            return "\n            <div class='shapes'>         \n                <h1>Basic Layer</h1>            \n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    " + this.read(SHAPE_LIST).map(function (key) {
+                return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
+            }).join(EMPTY_STRING) + "\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: CLICK('$addLayerCircle'),
-        value: function value(e) {
+        key: CLICK('$shapeList .add-layer'),
+        value: function value$$1(e) {
             var _this3 = this;
 
+            var $button = e.$delegateTarget;
+            var key = $button.attr('data-shape');
+
             this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                _this3.dispatch(ITEM_ADD_LAYER, ITEM_TYPE_CIRCLE, true, id);
-                _this3.dispatch(HISTORY_PUSH, 'Add a layer');
+                _this3.dispatch(ITEM_ADD_SHAPE, _this3.read(SHAPE_GET, key), true, id);
+                _this3.dispatch(HISTORY_PUSH, 'Add a shape');
             });
         }
     }]);

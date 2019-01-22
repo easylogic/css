@@ -1741,7 +1741,8 @@ html, body {
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr; }
+      grid-template-columns: 1fr 1fr 1fr;
+      width: 100%; }
       .csseditor .shapes .shapes-list button {
         height: 62px;
         background-color: transparent;
@@ -1756,14 +1757,11 @@ html, body {
         cursor: pointer;
         position: relative;
         pointer-events: all;
-        vertical-align: middle; }
-        .csseditor .shapes .shapes-list button.rect {
-          border-color: #333;
-          background-color: #333; }
-        .csseditor .shapes .shapes-list button.circle {
-          border-color: #333;
-          border-radius: 50%;
-          background-color: #333; }
+        vertical-align: middle;
+        padding: 2px; }
+        .csseditor .shapes .shapes-list button .shape {
+          width: 100% !important;
+          height: 100% !important; }
   .csseditor .pages {
     display: none;
     position: absolute;
