@@ -125,17 +125,17 @@
     .property-item {
         padding: 0px;
         // border-bottom: 1px solid #ececec;
-        font-size: 12px;
+        font-size: 11px;
         overflow: hidden; 
         // margin-bottom: 2px;
         
         > .title {
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 11px;
+            font-weight: 400;
             padding: 8px 5px !important;
             box-sizing: border-box;
             height: 30px;
-            background-color: #f3f3f3;
+            // background-color: #f3f3f3;
             color: #333;
             cursor: pointer;
 
@@ -160,6 +160,11 @@
 
             &.no-padding { 
                 padding: 0px !important;
+            }
+
+            &.bar {
+                min-height: 0px; 
+                border-bottom: 1px solid $border-color;
             }
         }
 

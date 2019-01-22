@@ -38,6 +38,7 @@ export default class RotatePattern extends BasePropertyItem {
                         </div>
                     </div>                    
                 </div>
+                <div class='items bar'></div>
             </div>
         ` 
     }

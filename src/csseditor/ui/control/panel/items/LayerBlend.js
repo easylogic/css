@@ -24,6 +24,7 @@ export default class LayerBlend extends BasePropertyItem {
                     </div>
                 </div>
             </div>
+            <div class="items bar"></div>
         </div>
         `
     }

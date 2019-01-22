@@ -37,8 +37,7 @@ export default class LayerTabView extends BaseTab {
                         <RadiusFixed></RadiusFixed>
                         <radius></radius>      
                         <opacity></opacity>         
-                        <LayerBlend></LayerBlend>
-                        <BackgroundClip></BackgroundClip>                    
+                        <LayerBlend></LayerBlend>                  
                     </div>
                 </div>
                 <div class="tab-content flex" data-id="text">

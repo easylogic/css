@@ -41,6 +41,7 @@ export default class Page3D extends UIElement {
                         </div>
                     </div>                                                                
                 </div>
+                <div class="items bar"></div>
             </div>
         `
     }

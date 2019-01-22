@@ -8,6 +8,7 @@ export default class FillColorPickerPanel extends UIElement {
                 <div class='items'>            
                     <FillColorPicker></FillColorPicker>
                 </div>
+                <div class='items bar'></div>
             </div>
         `
     }

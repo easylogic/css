@@ -28,6 +28,7 @@ export default class FilterList extends BasePropertyItem {
                         
                     </div>
                 </div>
+                <div class='items bar'></div>                
             </div>
         `
     }

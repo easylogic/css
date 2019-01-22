@@ -7,13 +7,14 @@ $layer-item-padding: 4px;
 .shapes {
     position: relative;
     box-sizing: border-box;
+    border-bottom: 1px solid $border-color;
 
     > h1 {
-        font-size: 13px;
+        font-size: 11px;
         margin: 0 auto;
         padding: 5px;
-        background-color: #ececec;
-        font-weight: bold;
+        // background-color: #ececec;
+        font-weight: 400;
     }
     
     .shapes-list {

@@ -23,13 +23,13 @@
 
 .gradient-sample-list {
     position: relative;
-
+    border-bottom: 1px solid $border-color;
     > h1 {
-        font-size: 13px;
+        font-size: 11px;
         margin: 0 auto;
         padding: 5px; 
-        background-color: #ececec;
-        font-weight: bold;
+        // background-color: #ececec;
+        font-weight: 400;
     }
 
     .cached-list {
@@ -57,7 +57,7 @@
             text-align: center;            
 
             &:not(.empty) {
-                border: 1px solid rgba($border-color, 0.5);
+                // border: 1px solid rgba($border-color, 0.5);
             }
 
             .preview {

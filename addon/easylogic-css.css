@@ -1730,13 +1730,13 @@ html, body {
   .csseditor .shapes {
     position: relative;
     -webkit-box-sizing: border-box;
-            box-sizing: border-box; }
+            box-sizing: border-box;
+    border-bottom: 1px solid #cccccc; }
     .csseditor .shapes > h1 {
-      font-size: 13px;
+      font-size: 11px;
       margin: 0 auto;
       padding: 5px;
-      background-color: #ececec;
-      font-weight: bold; }
+      font-weight: 400; }
     .csseditor .shapes .shapes-list {
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
@@ -2598,7 +2598,6 @@ html, body {
     display: inline-block;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
-    border: 1px solid #ececec;
     cursor: pointer;
     position: relative;
     pointer-events: all;
@@ -3009,13 +3008,13 @@ html, body {
       display: inline-block;
       font-weight: 500; }
   .csseditor .gradient-sample-list {
-    position: relative; }
+    position: relative;
+    border-bottom: 1px solid #cccccc; }
     .csseditor .gradient-sample-list > h1 {
-      font-size: 13px;
+      font-size: 11px;
       margin: 0 auto;
       padding: 5px;
-      background-color: #ececec;
-      font-weight: bold; }
+      font-weight: 400; }
     .csseditor .gradient-sample-list .cached-list {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1fr; }
@@ -3040,8 +3039,6 @@ html, body {
         font-size: 11px;
         height: 60px;
         text-align: center; }
-        .csseditor .gradient-sample-list .cached-list .gradient-sample-item:not(.empty), .csseditor .gradient-sample-list .cached-list .gradient-cached-item:not(.empty), .csseditor .gradient-sample-list .cached-list .add-current-image:not(.empty), .csseditor .gradient-sample-list .cached-list .empty:not(.empty) {
-          border: 1px solid rgba(204, 204, 204, 0.5); }
         .csseditor .gradient-sample-list .cached-list .gradient-sample-item .preview, .csseditor .gradient-sample-list .cached-list .gradient-cached-item .preview, .csseditor .gradient-sample-list .cached-list .add-current-image .preview, .csseditor .gradient-sample-list .cached-list .empty .preview {
           display: inline-block;
           width: 30px;
@@ -3112,13 +3109,13 @@ html, body {
       display: inline-block;
       font-weight: 500; }
   .csseditor .layer-sample-list {
-    position: relative; }
+    position: relative;
+    border-bottom: 1px solid #cccccc; }
     .csseditor .layer-sample-list > h1 {
-      font-size: 13px;
+      font-size: 11px;
       margin: 0 auto;
       padding: 5px;
-      background-color: #ececec;
-      font-weight: bold; }
+      font-weight: 400; }
     .csseditor .layer-sample-list .cached-list {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr; }
@@ -4537,16 +4534,15 @@ html, body {
                 width: 40px; }
     .csseditor .property-view .property-item {
       padding: 0px;
-      font-size: 12px;
+      font-size: 11px;
       overflow: hidden; }
       .csseditor .property-view .property-item > .title {
-        font-size: 12px;
-        font-weight: bold;
+        font-size: 11px;
+        font-weight: 400;
         padding: 8px 5px !important;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         height: 30px;
-        background-color: #f3f3f3;
         color: #333;
         cursor: pointer; }
         .csseditor .property-view .property-item > .title > span button {
@@ -4566,6 +4562,9 @@ html, body {
         min-height: 30px; }
         .csseditor .property-view .property-item > .items.no-padding {
           padding: 0px !important; }
+        .csseditor .property-view .property-item > .items.bar {
+          min-height: 0px;
+          border-bottom: 1px solid #cccccc; }
       .csseditor .property-view .property-item.show .items {
         display: block; }
         .csseditor .property-view .property-item.show .items.max-height {

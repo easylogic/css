@@ -80,6 +80,7 @@ export default class Font extends BasePropertyItem {
                         ></UnitRange>
                     </div>                           
                 </div>
+                <div class='items bar'></div>
             </div>
         `
     }  

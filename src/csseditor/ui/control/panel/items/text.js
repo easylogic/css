@@ -45,6 +45,7 @@ export default class Text extends BasePropertyItem {
                         <textarea class='content' ref="$content"></textarea>
                     </div>
                 </div>
+                <div class='items bar'></div>                
             </div>
         `
     }  

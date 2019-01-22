@@ -107,6 +107,7 @@ export default class BackgroundSize extends UIElement {
                     </div>
 
                 </div>
+                <div class='items bar'></div>
             </div>
         `
     }

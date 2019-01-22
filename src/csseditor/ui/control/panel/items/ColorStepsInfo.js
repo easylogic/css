@@ -11,6 +11,7 @@ export default class ColorStepsInfo extends UIElement {
                 <div class='items'>            
                     <GradientInfo></GradientInfo>
                 </div>
+                <div class='items bar'></div>
             </div>
         ` 
     }

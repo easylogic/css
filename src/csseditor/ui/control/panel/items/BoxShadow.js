@@ -29,6 +29,7 @@ export default class BoxShadow extends BasePropertyItem {
             <div class='items'>         
                 <div class="box-shadow-list" ref="$boxShadowList"></div>
             </div>
+            <div class='items bar'></div>
         </div>
         `
     }

@@ -28,6 +28,7 @@ export default class BackdropList extends BasePropertyItem {
                         
                     </div>
                 </div>
+                <div class='items bar'></div>                                
             </div>
         `
     }

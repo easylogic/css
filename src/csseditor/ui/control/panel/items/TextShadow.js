@@ -30,6 +30,7 @@ export default class TextShadow extends BasePropertyItem {
             <div class='items'>         
                 <div class="text-shadow-list" ref="$textShadowList"></div>
             </div>
+            <div class='items bar'></div>            
         </div>
         `
     }
