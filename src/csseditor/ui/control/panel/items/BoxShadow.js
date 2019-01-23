@@ -20,16 +20,9 @@ export default class BoxShadow extends BasePropertyItem {
     template () { 
         return `
         <div class='property-item box-shadow show'>
-            <div class='title' ref="$title">
-                Box Shadow 
-                <span style="float:right;">
-                    <button type="button" ref="$add">+</button>
-                </span>
-            </div>
             <div class='items'>         
                 <div class="box-shadow-list" ref="$boxShadowList"></div>
             </div>
-            <div class='items bar'></div>
         </div>
         `
     }
@@ -145,15 +138,6 @@ export default class BoxShadow extends BasePropertyItem {
             this.refresh()
         }
     }
-
-    [CLICK('$add')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.dispatch(ITEM_ADD, ITEM_TYPE_BOXSHADOW, false, id)
-            this.dispatch(HISTORY_PUSH, `Add Box Shadow` );        
-            this.refresh();
-        }); 
-    }
-
     [INPUT('$boxShadowList input[type=number]')] (e) {
         var $el = e.$delegateTarget;
         var field = $el.attr('data-type');

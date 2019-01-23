@@ -19,16 +19,8 @@ export default class BackdropList extends BasePropertyItem {
 
     template () { 
         return `
-            <div class='property-item filters'>
-                <div class='title' ref="$title">
-                    Backdrop Filter
-                </div>
-                <div class='items no-padding'>                    
-                    <div class="filter-list" ref="$filterList">
-                        
-                    </div>
-                </div>
-                <div class='items bar'></div>                                
+            <div class='property-item filters show'>
+                <div class='items'> <div class="filter-list" ref="$filterList"></div></div>
             </div>
         `
     }

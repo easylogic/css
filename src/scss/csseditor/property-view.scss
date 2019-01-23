@@ -7,6 +7,48 @@
     box-sizing: border-box;
     overflow: auto;
 
+    .property {
+        padding: 0px;
+        border-bottom: 1px solid rgba($border-color, 0.5);
+
+        &.show {
+            > .property-body {
+                display: block; 
+            }
+        }
+
+        > .property-title {
+            font-size: 11px;
+            font-weight: 400;
+            padding: 8px 5px !important;
+            box-sizing: border-box;
+            height: 24px;
+            color: #333;
+            cursor: pointer;
+            position: relative;
+
+            > .tools {
+                display: inline-block;
+                position: absolute;
+                top: 3px;
+                bottom: 3px;
+                right: 3px;
+
+                button {
+                    appearance: none;
+                    border: 1px solid #ececec;
+                    box-sizing: border-box;
+                    display: inline-block;
+                    height: 100%;
+                }
+            }
+        }
+
+        > .property-body {
+            display: none;
+        }
+    }
+
     .tab:not(.horizontal) {
         .tab-body {
             border: 0px;
@@ -164,7 +206,7 @@
 
             &.bar {
                 min-height: 0px; 
-                border-bottom: 1px solid $border-color;
+                border-bottom: 1px solid rgba($border-color, 0.5);
             }
         }
 

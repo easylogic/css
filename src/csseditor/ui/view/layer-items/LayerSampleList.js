@@ -21,7 +21,7 @@ export default class LayerSampleList extends UIElement {
 
         return `
         <div class="layer-sample-list">
-            <h1>User Layer</h1>        
+            <div class='layer-title'>User Layer</div>        
             <div class='cached-list' ref="$cachedList"></div>
 
         </div>

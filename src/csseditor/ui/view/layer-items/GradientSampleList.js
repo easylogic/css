@@ -21,7 +21,7 @@ export default class GradientSampleList extends UIElement  {
 
         return `
         <div class="gradient-sample-list">
-            <h1>User gradient</h1>            
+            <div class='layer-title'>User gradient</div>
             <div class='cached-list' ref="$cachedList"></div>
         </div>
         `  

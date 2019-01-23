@@ -13,7 +13,6 @@ export default class Transform extends BasePropertyItem {
     template () {
         return `
             <div class='property-item transform show'>
-                <div class='title' ref="$title">Transform 2D</div>
                 <div class='items block'>            
                     <div>
                         <label>Rotate</label>

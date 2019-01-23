@@ -14,7 +14,6 @@ export default class Text extends BasePropertyItem {
     template () {
         return `
             <div class='property-item text show'>
-                <div class='title' ref="$title">Content</div>
                 <div class='items'>
                     <div class="not-clip">
                         <label>Text Color</label>
@@ -44,8 +43,7 @@ export default class Text extends BasePropertyItem {
                     <div>
                         <textarea class='content' ref="$content"></textarea>
                     </div>
-                </div>
-                <div class='items bar'></div>                
+                </div>            
             </div>
         `
     }  

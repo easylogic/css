@@ -13,14 +13,10 @@ export default class Transform3d extends BasePropertyItem {
     template () {
         return `
             <div class='property-item transform show'>
-                <div class='title' ref="$title">Transform 3D</div> 
                 <div class='items block'>            
                     <div>
                         <label> 3D </label>
-                        
-                        <div>
-                            <label><input type='checkbox' ref="$preserve"> preserve-3d </label>
-                        </div>
+                        <div><label><input type='checkbox' ref="$preserve"> preserve-3d </label></div>
                     </div>                    
                     <div>
                         <label>Perspective</label>

@@ -1611,6 +1611,24 @@ html, body {
     bottom: 0px;
     -webkit-box-sizing: border-box;
             box-sizing: border-box; }
+    .csseditor .select-layer-view .layer-title {
+      font-size: 13px;
+      font-weight: 400;
+      padding: 8px 5px !important;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      height: 30px;
+      color: #333;
+      cursor: pointer; }
+      .csseditor .select-layer-view .layer-title > span button {
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 1px solid #ececec;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        display: inline-block;
+        height: 100%; }
     .csseditor .select-layer-view .item-info {
       position: absolute;
       left: 0px;
@@ -4457,6 +4475,38 @@ html, body {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     overflow: auto; }
+    .csseditor .property-view .property {
+      padding: 0px;
+      border-bottom: 1px solid rgba(204, 204, 204, 0.5); }
+      .csseditor .property-view .property.show > .property-body {
+        display: block; }
+      .csseditor .property-view .property > .property-title {
+        font-size: 11px;
+        font-weight: 400;
+        padding: 8px 5px !important;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        height: 24px;
+        color: #333;
+        cursor: pointer;
+        position: relative; }
+        .csseditor .property-view .property > .property-title > .tools {
+          display: inline-block;
+          position: absolute;
+          top: 3px;
+          bottom: 3px;
+          right: 3px; }
+          .csseditor .property-view .property > .property-title > .tools button {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            border: 1px solid #ececec;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            display: inline-block;
+            height: 100%; }
+      .csseditor .property-view .property > .property-body {
+        display: none; }
     .csseditor .property-view .tab:not(.horizontal) .tab-body {
       border: 0px; }
     .csseditor .property-view .tab:not(.horizontal) .tab-item {
@@ -4564,7 +4614,7 @@ html, body {
           padding: 0px !important; }
         .csseditor .property-view .property-item > .items.bar {
           min-height: 0px;
-          border-bottom: 1px solid #cccccc; }
+          border-bottom: 1px solid rgba(204, 204, 204, 0.5); }
       .csseditor .property-view .property-item.show .items {
         display: block; }
         .csseditor .property-view .property-item.show .items.max-height {

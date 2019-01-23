@@ -39,7 +39,6 @@ export default class Font extends BasePropertyItem {
     template () {
         return `
             <div class='property-item font show'>
-                <div class='title' ref="$title">Font</div>            
                 <div class='items'>
                     <div>
                         <label>Family</label>   
@@ -80,7 +79,6 @@ export default class Font extends BasePropertyItem {
                         ></UnitRange>
                     </div>                           
                 </div>
-                <div class='items bar'></div>
             </div>
         `
     }  

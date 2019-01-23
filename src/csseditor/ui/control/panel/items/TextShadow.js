@@ -21,16 +21,9 @@ export default class TextShadow extends BasePropertyItem {
     template () { 
         return `
         <div class='property-item text-shadow show'>
-            <div class='title' ref="$title">
-                Text Shadow 
-                <span style="float:right;">
-                    <button type="button" ref="$add">+</button>
-                </span>
-            </div>
             <div class='items'>         
                 <div class="text-shadow-list" ref="$textShadowList"></div>
-            </div>
-            <div class='items bar'></div>            
+            </div>     
         </div>
         `
     }
@@ -127,14 +120,6 @@ export default class TextShadow extends BasePropertyItem {
         if (this.isPropertyShow()) {
             this.refresh()
         }
-    }
-
-    [CLICK('$add')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, false, id)
-            this.dispatch(HISTORY_PUSH, `Add Text Shadow` );        
-            this.refresh();
-        }); 
     }
 
     [INPUT('$textShadowList input[type=number]')] (e) {

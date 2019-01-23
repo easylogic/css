@@ -31,12 +31,7 @@ export default class LayerCode extends BasePropertyItem {
     template () {
         return `
             <div class='property-item layer-code show'>
-                <div class='title' ref="$title">CSS code</div>
-                <div class='items'>            
-                    <div class="key-value-view" ref="$keys">
-
-                    </div>
-                </div>
+                <div class='items'><div class="key-value-view" ref="$keys"></div></div>
             </div>
         `
     }
@@ -93,10 +88,9 @@ export default class LayerCode extends BasePropertyItem {
 
     refresh() {
 
-        if (this.parent.selectedTabId == 'css') {
+        if (this.config('tool.tabs.layer.selectedId') === 'css') {
             this.load();
         }
-
 
     }
     

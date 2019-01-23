@@ -3,6 +3,9 @@ import BaseTab from "../../BaseTab";
 import { SELECT_TAB_LAYER } from '../../../types/event';
 import { SCROLL } from '../../../../util/Event';
 
+import property from './property/index';
+
+
 export default class LayerTabView extends BaseTab {
 
     template () {
@@ -20,10 +23,7 @@ export default class LayerTabView extends BaseTab {
             </div>
             <div class="tab-body" ref="$body">
                 <div class="tab-content" data-id="page">
-                    <PageName></PageName>
-                    <PageSize></PageSize>
-                    <clip></clip>           
-                    <Page3D></Page3D>       
+                    <PageProperty></PageProperty>
                 </div>
 
                 <div class="tab-content selected flex" data-id="property">
@@ -31,13 +31,7 @@ export default class LayerTabView extends BaseTab {
                         <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    
                     </div>
                     <div class='scroll' ref="$layerInfoScroll">
-                        <Name></Name>
-                        <size></size>            
-                        <Rotate></Rotate>
-                        <RadiusFixed></RadiusFixed>
-                        <radius></radius>      
-                        <opacity></opacity>         
-                        <LayerBlend></LayerBlend>                  
+                       <LayerProperty></LayerProperty>                
                     </div>
                 </div>
                 <div class="tab-content flex" data-id="text">
@@ -45,9 +39,9 @@ export default class LayerTabView extends BaseTab {
                         <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    
                     </div>
                     <div class='scroll' ref="$layerTextScroll">
-                        <Font></Font>                    
-                        <Text></Text>                    
-                        <TextShadow></TextShadow>        
+                        <LayerFontProperty></LayerFontProperty>
+                        <LayerTextProperty></LayerTextProperty>
+                        <TextShadowProperty></TextShadowProperty>
                     </div>
                 </div>
                 <div class="tab-content flex" data-id="fill">
@@ -55,26 +49,23 @@ export default class LayerTabView extends BaseTab {
                         <FillColorPickerPanel></FillColorPickerPanel>
                     </div>
                     <div class='scroll' ref="$layerFillScroll">
-                        <BoxShadow></BoxShadow>
-                        <FilterList></FilterList>    
-                        <BackdropList></BackdropList>   
+                        <BoxShadowProperty></BoxShadowProperty>
+                        <FilterProperty></FilterProperty>    
+                        <BackdropProperty></BackdropProperty>   
                         <EmptyArea height="100px"></EmptyArea>      
                     </div>
                 </div>                
                 <div class="tab-content" data-id="shape">
-                    <ClipPath></ClipPath>   
-                    <ClipPathSide></ClipPathSide>
-                    <ClipPathPolygon></ClipPathPolygon>
-                    <ClipPathSVG></ClipPathSVG>
+                    <ClipPathProperty></ClipPathProperty>
                 </div>
                 <div class="tab-content" data-id="transform">
-                    <transform></transform>
+                    <Transform2DProperty></Transform2DProperty>
                 </div>
                 <div class="tab-content" data-id="transform3d">
-                    <transform3d></transform3d> 
+                    <Transform3DProperty></Transform3DProperty>
                 </div>               
                 <div class="tab-content" data-id="css">
-                    <LayerCode></LayerCode>
+                    <LayerCodeProperty></LayerCodeProperty>
                 </div>               
             </div>
         </div>
@@ -96,10 +87,11 @@ export default class LayerTabView extends BaseTab {
 
     
     onTabShow () {
+        this.config('tool.tabs.layer.selectedId', this.selectedTabId);
         this.emit(SELECT_TAB_LAYER, this.selectedTabId)
     }
 
     components () {
-        return items 
+        return {...property, ...items}
     }
 }

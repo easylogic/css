@@ -9,25 +9,18 @@ export default class Name extends BasePropertyItem {
     template () {
         return `
             <div class='property-item name show'>
-                <div class='title' ref="$title">Properties</div>   
                 <div class='items'>            
                     <div>
                         <label>Name</label>
-                        <div>
-                            <input type='text' ref="$name" class='full'> 
-                        </div>
+                        <div><input type='text' ref="$name" class='full'></div>
                     </div>
                     <div>
                         <label>ID</label>
-                        <div>
-                            <input type='text' ref="$id" class='full'> 
-                        </div>
+                        <div><input type='text' ref="$id" class='full'></div>
                     </div>                                        
                     <div>
                         <label>Class</label>
-                        <div>
-                            <input type='text' ref="$class" class='full'> 
-                        </div>
+                        <div><input type='text' ref="$class" class='full'></div>
                     </div>                    
                 </div>
             </div>

@@ -31,7 +31,6 @@ export default class ClipPath extends BasePropertyItem {
     template () {
         return `
             <div class='property-item clip-path show'>
-                <div class='title' ref="$title">Clip Path</div>
                 <div class='items'>            
                     <div>
                         <label>View editor</label>

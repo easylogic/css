@@ -5,6 +5,26 @@
     top: 0px;
     bottom: 0px;
     box-sizing: border-box;
+    
+    .layer-title {
+        font-size: 13px;
+        font-weight: 400;
+        padding: 8px 5px !important;
+        box-sizing: border-box;
+        height: 30px;
+        color: #333;
+        cursor: pointer;
+
+        > span {
+            button {
+                appearance: none;
+                border: 1px solid #ececec;
+                box-sizing: border-box;
+                display: inline-block;
+                height: 100%;
+            }
+        }
+    }
 
     .item-info {
         position: absolute;

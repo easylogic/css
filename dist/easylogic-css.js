@@ -16726,7 +16726,7 @@ var Name = function (_BasePropertyItem) {
     createClass(Name, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item name show'>\n                <div class='title' ref=\"$title\">Properties</div>   \n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" class='full'> \n                        </div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div>\n                            <input type='text' ref=\"$id\" class='full'> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div>\n                            <input type='text' ref=\"$class\" class='full'> \n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item name show'>\n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div><input type='text' ref=\"$name\" class='full'></div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div><input type='text' ref=\"$id\" class='full'></div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div><input type='text' ref=\"$class\" class='full'></div>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR),
@@ -17612,7 +17612,7 @@ var ColorStepsInfo = function (_UIElement) {
     createClass(ColorStepsInfo, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item gradient-steps-info show'>\n                <div class='items'>            \n                    <GradientInfo></GradientInfo>\n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
+            return "\n            <div class='property-item gradient-steps-info show'>\n                <div class='items'>            \n                    <GradientInfo></GradientInfo>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -17786,7 +17786,7 @@ var Transform = function (_BasePropertyItem) {
     createClass(Transform, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 2D</div>\n                <div class='items block'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                                   \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='items block'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                                   \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER_ROTATE),
@@ -17902,7 +17902,7 @@ var Transform3d = function (_BasePropertyItem) {
     createClass(Transform3d, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item transform show'>\n                <div class='title' ref=\"$title\">Transform 3D</div> \n                <div class='items block'>            \n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item transform show'>\n                <div class='items block'>            \n                    <div>\n                        <label> 3D </label>\n                        <div><label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label></div>\n                    </div>                    \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -18144,7 +18144,7 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
+            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "updateWidth",
@@ -18455,7 +18455,7 @@ var FilterList$1 = function (_BasePropertyItem) {
     createClass(FilterList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item filters'>\n                <div class='title' ref=\"$title\">\n                    Filter\n                </div>\n                <div class='items no-padding'>                    \n                    <div class=\"filter-list\" ref=\"$filterList\">\n                        \n                    </div>\n                </div>\n                <div class='items bar'></div>                \n            </div>\n        ";
+            return "\n            <div class='property-item filters show'>\n                <div class='items'><div class=\"filter-list\" ref=\"$filterList\"></div></div>         \n            </div>\n        ";
         }
     }, {
         key: "makeInputItem",
@@ -18820,7 +18820,7 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path show'>\n                <div class='title' ref=\"$title\">Clip Path</div>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n\n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
+            return "\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n\n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        ";
         }
@@ -18995,7 +18995,7 @@ var LayerBlend = function (_BasePropertyItem) {
         value: function template() {
             return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
-            }).join(EMPTY_STRING) + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n            <div class="items bar"></div>\n        </div>\n        ';
+            }).join(EMPTY_STRING) + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'isShow',
@@ -19665,7 +19665,7 @@ var BoxShadow = function (_BasePropertyItem) {
     createClass(BoxShadow, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item box-shadow show\'>\n            <div class=\'title\' ref="$title">\n                Box Shadow \n                <span style="float:right;">\n                    <button type="button" ref="$add">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="box-shadow-list" ref="$boxShadowList"></div>\n            </div>\n            <div class=\'items bar\'></div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item box-shadow show\'>\n            <div class=\'items\'>         \n                <div class="box-shadow-list" ref="$boxShadowList"></div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'makeItemNodeBoxShadow',
@@ -19738,17 +19738,6 @@ var BoxShadow = function (_BasePropertyItem) {
             if (this.isPropertyShow()) {
                 this.refresh();
             }
-        }
-    }, {
-        key: CLICK('$add'),
-        value: function value$$1(e) {
-            var _this3 = this;
-
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this3.dispatch(ITEM_ADD, ITEM_TYPE_BOXSHADOW, false, id);
-                _this3.dispatch(HISTORY_PUSH, 'Add Box Shadow');
-                _this3.refresh();
-            });
         }
     }, {
         key: INPUT('$boxShadowList input[type=number]'),
@@ -19873,7 +19862,7 @@ var TextShadow = function (_BasePropertyItem) {
     createClass(TextShadow, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item text-shadow show\'>\n            <div class=\'title\' ref="$title">\n                Text Shadow \n                <span style="float:right;">\n                    <button type="button" ref="$add">+</button>\n                </span>\n            </div>\n            <div class=\'items\'>         \n                <div class="text-shadow-list" ref="$textShadowList"></div>\n            </div>\n            <div class=\'items bar\'></div>            \n        </div>\n        ';
+            return '\n        <div class=\'property-item text-shadow show\'>\n            <div class=\'items\'>         \n                <div class="text-shadow-list" ref="$textShadowList"></div>\n            </div>     \n        </div>\n        ';
         }
     }, {
         key: 'makeItemNodetextShadow',
@@ -19944,17 +19933,6 @@ var TextShadow = function (_BasePropertyItem) {
             if (this.isPropertyShow()) {
                 this.refresh();
             }
-        }
-    }, {
-        key: CLICK('$add'),
-        value: function value$$1(e) {
-            var _this3 = this;
-
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this3.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW$1, false, id);
-                _this3.dispatch(HISTORY_PUSH, 'Add Text Shadow');
-                _this3.refresh();
-            });
         }
     }, {
         key: INPUT('$textShadowList input[type=number]'),
@@ -20217,7 +20195,7 @@ var Text = function (_BasePropertyItem) {
     createClass(Text, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text show'>\n                <div class='title' ref=\"$title\">Content</div>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list full-size'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>\n                <div class='items bar'></div>                \n            </div>\n        ";
+            return "\n            <div class='property-item text show'>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list full-size'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>            \n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_TEXT),
@@ -20290,7 +20268,7 @@ var LayerCode = function (_BasePropertyItem) {
     createClass(LayerCode, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item layer-code show'>\n                <div class='title' ref=\"$title\">CSS code</div>\n                <div class='items'>            \n                    <div class=\"key-value-view\" ref=\"$keys\">\n\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item layer-code show'>\n                <div class='items'><div class=\"key-value-view\" ref=\"$keys\"></div></div>\n            </div>\n        ";
         }
     }, {
         key: LOAD('$keys'),
@@ -20328,7 +20306,7 @@ var LayerCode = function (_BasePropertyItem) {
         key: "refresh",
         value: function refresh() {
 
-            if (this.parent.selectedTabId == 'css') {
+            if (this.config('tool.tabs.layer.selectedId') === 'css') {
                 this.load();
             }
         }
@@ -20500,11 +20478,11 @@ var Font = function (_BasePropertyItem) {
     createClass(Font, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item font show'>\n                <div class='title' ref=\"$title\">Font</div>            \n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                " + fontFamilyList.map(function (f) {
+            return "\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                " + fontFamilyList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
             }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
+            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -20735,7 +20713,7 @@ var BackdropList = function (_BasePropertyItem) {
     createClass(BackdropList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item filters'>\n                <div class='title' ref=\"$title\">\n                    Backdrop Filter\n                </div>\n                <div class='items no-padding'>                    \n                    <div class=\"filter-list\" ref=\"$filterList\">\n                        \n                    </div>\n                </div>\n                <div class='items bar'></div>                                \n            </div>\n        ";
+            return "\n            <div class='property-item filters show'>\n                <div class='items'> <div class=\"filter-list\" ref=\"$filterList\"></div></div>\n            </div>\n        ";
         }
     }, {
         key: "makeInputItem",
@@ -20911,7 +20889,7 @@ var Page3D = function (_UIElement) {
     createClass(Page3D, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"range\" ref=\"$perspectiveRange\" min=\"-2000\" max=\"2000\" /> \n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        \n                        <div>\n                            <input type=\"range\" ref=\"$xRange\" min=\"-100\" max=\"100\" />                         \n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        \n                        <div>\n                            <input type=\"range\" ref=\"$yRange\" min=\"-100\" max=\"100\" />                                                 \n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n                <div class=\"items bar\"></div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"range\" ref=\"$perspectiveRange\" min=\"-2000\" max=\"2000\" /> \n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        \n                        <div>\n                            <input type=\"range\" ref=\"$xRange\" min=\"-100\" max=\"100\" />                         \n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        \n                        <div>\n                            <input type=\"range\" ref=\"$yRange\" min=\"-100\" max=\"100\" />                                                 \n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM),
@@ -21182,7 +21160,7 @@ var RotatePattern = function (_BasePropertyItem) {
         value: function template() {
             return "\n            <div class='property-item background-color show'>\n                <div class='title' ref=\"$title\">Rotate Pattern</div>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone Count</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            " + this.read(BLEND_LIST).map(function (blend) {
                 return "<option value=\"" + blend + "\">" + blend + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                    \n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
+            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
@@ -21364,6 +21342,375 @@ var BaseTab = function (_UIElement) {
     return BaseTab;
 }(UIElement);
 
+var BaseProperty = function (_UIElement) {
+    inherits(BaseProperty, _UIElement);
+
+    function BaseProperty() {
+        classCallCheck(this, BaseProperty);
+        return possibleConstructorReturn(this, (BaseProperty.__proto__ || Object.getPrototypeOf(BaseProperty)).apply(this, arguments));
+    }
+
+    createClass(BaseProperty, [{
+        key: "onToggleShow",
+        value: function onToggleShow() {}
+    }, {
+        key: "template",
+        value: function template() {
+            return "\n        <div class='property " + this.getClassName() + " show'>\n            <div class='property-title' ref=\"$title\">\n                " + this.getTitle() + "\n                <span class=\"tools\">" + this.getTools() + "</span>\n            </div>\n            <div class='property-body'>\n                " + this.getBody() + "\n            </div>\n        </div>\n        ";
+        }
+    }, {
+        key: "getClassName",
+        value: function getClassName() {
+            return '';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return '';
+        }
+    }, {
+        key: "getTools",
+        value: function getTools() {
+            return '';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return '';
+        }
+    }, {
+        key: CLICK('$title'),
+        value: function value(e) {
+            var $dom = new Dom(e.target);
+
+            if ($dom.hasClass('property-title')) {
+                this.$el.toggleClass('show');
+                this.onToggleShow();
+            }
+        }
+    }, {
+        key: "isPropertyShow",
+        value: function isPropertyShow() {
+            return this.$el.hasClass('show');
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return items;
+        }
+    }]);
+    return BaseProperty;
+}(UIElement);
+
+var PageProperty = function (_BaseProperty) {
+    inherits(PageProperty, _BaseProperty);
+
+    function PageProperty() {
+        classCallCheck(this, PageProperty);
+        return possibleConstructorReturn(this, (PageProperty.__proto__ || Object.getPrototypeOf(PageProperty)).apply(this, arguments));
+    }
+
+    createClass(PageProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Page property';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <PageName></PageName>\n            <PageSize></PageSize>\n            <clip></clip>           \n            <Page3D></Page3D>       \n        ";
+        }
+    }]);
+    return PageProperty;
+}(BaseProperty);
+
+var LayerProperty = function (_BaseProperty) {
+    inherits(LayerProperty, _BaseProperty);
+
+    function LayerProperty() {
+        classCallCheck(this, LayerProperty);
+        return possibleConstructorReturn(this, (LayerProperty.__proto__ || Object.getPrototypeOf(LayerProperty)).apply(this, arguments));
+    }
+
+    createClass(LayerProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Property';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <RadiusFixed></RadiusFixed>\n            <radius></radius>      \n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>        \n        ";
+        }
+    }]);
+    return LayerProperty;
+}(BaseProperty);
+
+var LayerFontProperty = function (_BaseProperty) {
+    inherits(LayerFontProperty, _BaseProperty);
+
+    function LayerFontProperty() {
+        classCallCheck(this, LayerFontProperty);
+        return possibleConstructorReturn(this, (LayerFontProperty.__proto__ || Object.getPrototypeOf(LayerFontProperty)).apply(this, arguments));
+    }
+
+    createClass(LayerFontProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Font';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <Font></Font>\n        ";
+        }
+    }]);
+    return LayerFontProperty;
+}(BaseProperty);
+
+var LayerTextProperty = function (_BaseProperty) {
+    inherits(LayerTextProperty, _BaseProperty);
+
+    function LayerTextProperty() {
+        classCallCheck(this, LayerTextProperty);
+        return possibleConstructorReturn(this, (LayerTextProperty.__proto__ || Object.getPrototypeOf(LayerTextProperty)).apply(this, arguments));
+    }
+
+    createClass(LayerTextProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Text';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <Text></Text>\n        ";
+        }
+    }]);
+    return LayerTextProperty;
+}(BaseProperty);
+
+var TextShadowProperty = function (_BaseProperty) {
+    inherits(TextShadowProperty, _BaseProperty);
+
+    function TextShadowProperty() {
+        classCallCheck(this, TextShadowProperty);
+        return possibleConstructorReturn(this, (TextShadowProperty.__proto__ || Object.getPrototypeOf(TextShadowProperty)).apply(this, arguments));
+    }
+
+    createClass(TextShadowProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Text Shadow';
+        }
+    }, {
+        key: "getTools",
+        value: function getTools() {
+            return "<button type=\"button\" ref=\"$add\">+</button>";
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <TextShadow ref=\"$textShadow\" ></TextShadow>\n        ";
+        }
+    }, {
+        key: CLICK('$add'),
+        value: function value(e) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this2.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW$1, false, id);
+                _this2.dispatch(HISTORY_PUSH, "Add Text Shadow");
+            });
+        }
+    }]);
+    return TextShadowProperty;
+}(BaseProperty);
+
+var BoxShadowProperty = function (_BaseProperty) {
+    inherits(BoxShadowProperty, _BaseProperty);
+
+    function BoxShadowProperty() {
+        classCallCheck(this, BoxShadowProperty);
+        return possibleConstructorReturn(this, (BoxShadowProperty.__proto__ || Object.getPrototypeOf(BoxShadowProperty)).apply(this, arguments));
+    }
+
+    createClass(BoxShadowProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Box Shadow';
+        }
+    }, {
+        key: "getTools",
+        value: function getTools() {
+            return "<button type=\"button\" ref=\"$add\">+</button>";
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <BoxShadow ></BoxShadow>\n        ";
+        }
+    }, {
+        key: CLICK('$add'),
+        value: function value(e) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this2.dispatch(ITEM_ADD, ITEM_TYPE_BOXSHADOW, false, id);
+                _this2.dispatch(HISTORY_PUSH, "Add Box Shadow");
+            });
+        }
+    }]);
+    return BoxShadowProperty;
+}(BaseProperty);
+
+var FilterProperty = function (_BaseProperty) {
+    inherits(FilterProperty, _BaseProperty);
+
+    function FilterProperty() {
+        classCallCheck(this, FilterProperty);
+        return possibleConstructorReturn(this, (FilterProperty.__proto__ || Object.getPrototypeOf(FilterProperty)).apply(this, arguments));
+    }
+
+    createClass(FilterProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Filter';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <FilterList ></FilterList>\n        ";
+        }
+    }]);
+    return FilterProperty;
+}(BaseProperty);
+
+var BackdropProperty = function (_BaseProperty) {
+    inherits(BackdropProperty, _BaseProperty);
+
+    function BackdropProperty() {
+        classCallCheck(this, BackdropProperty);
+        return possibleConstructorReturn(this, (BackdropProperty.__proto__ || Object.getPrototypeOf(BackdropProperty)).apply(this, arguments));
+    }
+
+    createClass(BackdropProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Backdrop Filter';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <BackdropList ></BackdropList>\n        ";
+        }
+    }]);
+    return BackdropProperty;
+}(BaseProperty);
+
+var ClipPathProperty = function (_BaseProperty) {
+    inherits(ClipPathProperty, _BaseProperty);
+
+    function ClipPathProperty() {
+        classCallCheck(this, ClipPathProperty);
+        return possibleConstructorReturn(this, (ClipPathProperty.__proto__ || Object.getPrototypeOf(ClipPathProperty)).apply(this, arguments));
+    }
+
+    createClass(ClipPathProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Clip Path';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <ClipPath></ClipPath>   \n            <ClipPathSide></ClipPathSide>\n            <ClipPathPolygon></ClipPathPolygon>\n            <ClipPathSVG></ClipPathSVG>\n        ";
+        }
+    }]);
+    return ClipPathProperty;
+}(BaseProperty);
+
+var Transform2DProperty = function (_BaseProperty) {
+    inherits(Transform2DProperty, _BaseProperty);
+
+    function Transform2DProperty() {
+        classCallCheck(this, Transform2DProperty);
+        return possibleConstructorReturn(this, (Transform2DProperty.__proto__ || Object.getPrototypeOf(Transform2DProperty)).apply(this, arguments));
+    }
+
+    createClass(Transform2DProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Transform';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "<transform ></transform>";
+        }
+    }]);
+    return Transform2DProperty;
+}(BaseProperty);
+
+var Transform3DProperty = function (_BaseProperty) {
+    inherits(Transform3DProperty, _BaseProperty);
+
+    function Transform3DProperty() {
+        classCallCheck(this, Transform3DProperty);
+        return possibleConstructorReturn(this, (Transform3DProperty.__proto__ || Object.getPrototypeOf(Transform3DProperty)).apply(this, arguments));
+    }
+
+    createClass(Transform3DProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Transform 3D';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "<transform3d ></transform3d>";
+        }
+    }]);
+    return Transform3DProperty;
+}(BaseProperty);
+
+var LayerCodeProperty = function (_BaseProperty) {
+    inherits(LayerCodeProperty, _BaseProperty);
+
+    function LayerCodeProperty() {
+        classCallCheck(this, LayerCodeProperty);
+        return possibleConstructorReturn(this, (LayerCodeProperty.__proto__ || Object.getPrototypeOf(LayerCodeProperty)).apply(this, arguments));
+    }
+
+    createClass(LayerCodeProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'CSS Code';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <LayerCode ></LayerCode>\n        ";
+        }
+    }]);
+    return LayerCodeProperty;
+}(BaseProperty);
+
+var property = {
+    LayerCodeProperty: LayerCodeProperty,
+    Transform2DProperty: Transform2DProperty,
+    Transform3DProperty: Transform3DProperty,
+    ClipPathProperty: ClipPathProperty,
+    FilterProperty: FilterProperty,
+    BackdropProperty: BackdropProperty,
+    BoxShadowProperty: BoxShadowProperty,
+    PageProperty: PageProperty,
+    LayerProperty: LayerProperty,
+    LayerFontProperty: LayerFontProperty,
+    LayerTextProperty: LayerTextProperty,
+    TextShadowProperty: TextShadowProperty
+};
+
 var LayerTabView = function (_BaseTab) {
     inherits(LayerTabView, _BaseTab);
 
@@ -21375,7 +21722,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageName></PageName>\n                    <PageSize></PageSize>\n                    <clip></clip>           \n                    <Page3D></Page3D>       \n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <Name></Name>\n                        <size></size>            \n                        <Rotate></Rotate>\n                        <RadiusFixed></RadiusFixed>\n                        <radius></radius>      \n                        <opacity></opacity>         \n                        <LayerBlend></LayerBlend>                  \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <Font></Font>                    \n                        <Text></Text>                    \n                        <TextShadow></TextShadow>        \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadow></BoxShadow>\n                        <FilterList></FilterList>    \n                        <BackdropList></BackdropList>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPath></ClipPath>   \n                    <ClipPathSide></ClipPathSide>\n                    <ClipPathPolygon></ClipPathPolygon>\n                    <ClipPathSVG></ClipPathSVG>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <transform></transform>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <transform3d></transform3d> \n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCode></LayerCode>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty></PageProperty>\n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                       <LayerProperty></LayerProperty>                \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty></LayerFontProperty>\n                        <LayerTextProperty></LayerTextProperty>\n                        <TextShadowProperty></TextShadowProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty></BoxShadowProperty>\n                        <FilterProperty></FilterProperty>    \n                        <BackdropProperty></BackdropProperty>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPathProperty></ClipPathProperty>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty></Transform2DProperty>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty></Transform3DProperty>\n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty></LayerCodeProperty>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -21395,12 +21742,13 @@ var LayerTabView = function (_BaseTab) {
     }, {
         key: 'onTabShow',
         value: function onTabShow() {
+            this.config('tool.tabs.layer.selectedId', this.selectedTabId);
             this.emit(SELECT_TAB_LAYER, this.selectedTabId);
         }
     }, {
         key: 'components',
         value: function components() {
-            return items;
+            return _extends({}, property, items);
         }
     }]);
     return LayerTabView;
@@ -26553,7 +26901,7 @@ var GradientSampleList = function (_UIElement) {
         key: "template",
         value: function template() {
 
-            return "\n        <div class=\"gradient-sample-list\">\n            <h1>User gradient</h1>            \n            <div class='cached-list' ref=\"$cachedList\"></div>\n        </div>\n        ";
+            return "\n        <div class=\"gradient-sample-list\">\n            <div class='layer-title'>User gradient</div>\n            <div class='cached-list' ref=\"$cachedList\"></div>\n        </div>\n        ";
         }
     }, {
         key: LOAD('$cachedList'),
@@ -26660,7 +27008,7 @@ var LayerSampleList = function (_UIElement) {
         key: "template",
         value: function template() {
 
-            return "\n        <div class=\"layer-sample-list\">\n            <h1>User Layer</h1>        \n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
+            return "\n        <div class=\"layer-sample-list\">\n            <div class='layer-title'>User Layer</div>        \n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
         }
     }, {
         key: LOAD('$cachedList'),
@@ -26777,7 +27125,7 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return "\n            <div class='shapes'>         \n                <h1>Basic Layer</h1>            \n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    " + this.read(SHAPE_LIST).map(function (key) {
+            return "\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    " + this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
             }).join(EMPTY_STRING) + "\n                </div>\n            </div>\n        ";
         }

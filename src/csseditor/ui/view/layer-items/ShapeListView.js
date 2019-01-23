@@ -13,7 +13,7 @@ export default class ShapeListView extends UIElement {
     template () { 
         return `
             <div class='shapes'>         
-                <h1>Basic Layer</h1>            
+                <div class='layer-title'>Basic Layer</div>
                 <div class="shapes-list" ref="$shapeList">
                     ${this.read(SHAPE_LIST).map(key => {
                         return `<button type="button" class='add-layer' data-shape='${key}'>
