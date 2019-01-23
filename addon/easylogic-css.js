@@ -2327,6 +2327,69 @@ var ITEM_TYPE_COLORSTEP = 'colorstep';
 var IS_OBJECT = 'object';
 var IS_ATTRIBUTE = 'attribute';
 
+var SHAPE_TYPE_RECT = 'rect';
+var SHAPE_TYPE_CIRCLE = 'circle';
+var SHAPE_TYPE_POLYGON = 'polygon';
+
+var IMAGE_ITEM_TYPE_LINEAR = 'linear';
+var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
+var IMAGE_ITEM_TYPE_RADIAL = 'radial';
+var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
+var IMAGE_ITEM_TYPE_CONIC = 'conic';
+var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
+var IMAGE_ITEM_TYPE_STATIC = 'static';
+
+var IMAGE_ITEM_TYPE_IMAGE = 'image';
+
+var CLIP_PATH_TYPE_NONE = 'none';
+var CLIP_PATH_TYPE_CIRCLE = 'circle';
+var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
+var CLIP_PATH_TYPE_INSET = 'inset';
+var CLIP_PATH_TYPE_POLYGON = 'polygon';
+var CLIP_PATH_TYPE_SVG = 'svg';
+
+var CLIP_PATH_SIDE_TYPE_NONE = 'none';
+var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
+var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
+
+var POSITION_TOP = 'top';
+var POSITION_LEFT = 'left';
+var POSITION_RIGHT = 'right';
+var POSITION_BOTTOM = 'bottom';
+var POSITION_CENTER = 'center';
+
+var IMAGE_FILE_TYPE_JPG = 'jpg';
+var IMAGE_FILE_TYPE_GIF = 'gif';
+var IMAGE_FILE_TYPE_PNG = 'png';
+var IMAGE_FILE_TYPE_SVG = 'svg';
+
+var GUIDE_TYPE_VERTICAL = '|';
+var GUIDE_TYPE_HORIZONTAL = '-';
+
+var SEGMENT_TYPE_ROTATE = 'rotate';
+var SEGMENT_TYPE_MOVE = 'move';
+var SEGMENT_TYPE_TOP = 'to top';
+var SEGMENT_TYPE_LEFT = 'to left';
+var SEGMENT_TYPE_RIGHT = 'to right';
+var SEGMENT_TYPE_BOTTOM = 'to bottom';
+var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+var SEGMENT_TYPE_TOP_LEFT = 'to top left';
+var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
+var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
+
+var ITEM_SET = 'item/set';
+var ITEM_GET = 'item/get';
+var ITEM_CONVERT_STYLE = 'item/convert/style';
+var ITEM_SET_ALL = 'item/set/all';
+var ITEM_SORT = 'item/sort';
+var ITEM_REMOVE_CHILDREN = 'item/remove/children';
+var ITEM_REMOVE = 'item/remove';
+var ITEM_REMOVE_ALL = 'item/remove/all';
+var ITEM_FOCUS = 'item/focus';
+var ITEM_LOAD = 'item/load';
+
 /* page is equal to artboard */
 var PAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_PAGE,
@@ -2497,69 +2560,6 @@ var COLORSTEP_DEFAULT_OBJECT = {
     percent: 0,
     color: 'rgba(0, 0, 0, 0)'
 };
-
-var SHAPE_TYPE_RECT = 'rect';
-var SHAPE_TYPE_CIRCLE = 'circle';
-var SHAPE_TYPE_POLYGON = 'polygon';
-
-var IMAGE_ITEM_TYPE_LINEAR = 'linear';
-var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
-var IMAGE_ITEM_TYPE_RADIAL = 'radial';
-var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
-var IMAGE_ITEM_TYPE_CONIC = 'conic';
-var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
-var IMAGE_ITEM_TYPE_STATIC = 'static';
-
-var IMAGE_ITEM_TYPE_IMAGE = 'image';
-
-var CLIP_PATH_TYPE_NONE = 'none';
-var CLIP_PATH_TYPE_CIRCLE = 'circle';
-var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
-var CLIP_PATH_TYPE_INSET = 'inset';
-var CLIP_PATH_TYPE_POLYGON = 'polygon';
-var CLIP_PATH_TYPE_SVG = 'svg';
-
-var CLIP_PATH_SIDE_TYPE_NONE = 'none';
-var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
-var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
-
-var POSITION_TOP = 'top';
-var POSITION_LEFT = 'left';
-var POSITION_RIGHT = 'right';
-var POSITION_BOTTOM = 'bottom';
-var POSITION_CENTER = 'center';
-
-var IMAGE_FILE_TYPE_JPG = 'jpg';
-var IMAGE_FILE_TYPE_GIF = 'gif';
-var IMAGE_FILE_TYPE_PNG = 'png';
-var IMAGE_FILE_TYPE_SVG = 'svg';
-
-var GUIDE_TYPE_VERTICAL = '|';
-var GUIDE_TYPE_HORIZONTAL = '-';
-
-var SEGMENT_TYPE_ROTATE = 'rotate';
-var SEGMENT_TYPE_MOVE = 'move';
-var SEGMENT_TYPE_TOP = 'to top';
-var SEGMENT_TYPE_LEFT = 'to left';
-var SEGMENT_TYPE_RIGHT = 'to right';
-var SEGMENT_TYPE_BOTTOM = 'to bottom';
-var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-var SEGMENT_TYPE_TOP_LEFT = 'to top left';
-var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
-
-var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
-
-var ITEM_SET = 'item/set';
-var ITEM_GET = 'ITEM_GET';
-var ITEM_CONVERT_STYLE = 'item/convert/style';
-var ITEM_SET_ALL = 'item/set/all';
-var ITEM_SORT = 'item/sort';
-var ITEM_REMOVE_CHILDREN = 'item/remove/children';
-var ITEM_REMOVE = 'item/remove';
-var ITEM_REMOVE_ALL = 'item/remove/all';
-var ITEM_FOCUS = 'item/focus';
-var ITEM_LOAD = 'item/load';
 
 function rotateDegree(angle) {
     var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : POSITION_CENTER;

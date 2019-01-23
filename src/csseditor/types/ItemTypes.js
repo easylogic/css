@@ -14,6 +14,81 @@ export const ITEM_TYPE_COLORSTEP = 'colorstep';
 export const IS_OBJECT = 'object';
 export const IS_ATTRIBUTE = 'attribute';
 
+
+export const SHAPE_TYPE_RECT = 'rect';
+export const SHAPE_TYPE_CIRCLE = 'circle';
+export const SHAPE_TYPE_POLYGON = 'polygon';
+
+export const IMAGE_ITEM_TYPE_LINEAR = 'linear';
+export const IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
+export const IMAGE_ITEM_TYPE_RADIAL = 'radial';
+export const IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
+export const IMAGE_ITEM_TYPE_CONIC = 'conic';
+export const IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
+export const IMAGE_ITEM_TYPE_STATIC = 'static';
+export const IMAGE_ITEM_TYPE_DIAMOND = 'diamond';
+export const IMAGE_ITEM_TYPE_IMAGE = 'image';
+
+
+export const CLIP_PATH_TYPE_NONE = 'none';
+export const CLIP_PATH_TYPE_CIRCLE = 'circle';
+export const CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
+export const CLIP_PATH_TYPE_INSET = 'inset';
+export const CLIP_PATH_TYPE_POLYGON = 'polygon';
+export const CLIP_PATH_TYPE_SVG = 'svg';
+
+export const CLIP_PATH_SIDE_TYPE_NONE = 'none';
+export const CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
+export const CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
+
+export const POSITION_TOP = 'top'
+export const POSITION_LEFT = 'left'
+export const POSITION_RIGHT = 'right'
+export const POSITION_BOTTOM = 'bottom'
+export const POSITION_CENTER = 'center'
+
+export const IMAGE_FILE_TYPE_JPG = 'jpg'
+export const IMAGE_FILE_TYPE_GIF = 'gif'
+export const IMAGE_FILE_TYPE_PNG = 'png'
+export const IMAGE_FILE_TYPE_SVG = 'svg'
+
+export const GUIDE_TYPE_VERTICAL = '|';
+export const GUIDE_TYPE_HORIZONTAL = '-';
+
+export const SEGMENT_TYPE_ROTATE = 'rotate';
+export const SEGMENT_TYPE_MOVE = 'move';
+export const SEGMENT_TYPE_TOP = 'to top';
+export const SEGMENT_TYPE_LEFT = 'to left';
+export const SEGMENT_TYPE_RIGHT = 'to right';
+export const SEGMENT_TYPE_BOTTOM = 'to bottom';
+export const SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+export const SEGMENT_TYPE_TOP_LEFT = 'to top left';
+export const SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+export const SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
+export const SEGMENT_CHECK = {
+    [SEGMENT_TYPE_MOVE]: {move: true},
+    [SEGMENT_TYPE_TOP]: {yIndex : 0},
+    [SEGMENT_TYPE_TOP_LEFT]: {yIndex : 0, xIndex: 0},
+    [SEGMENT_TYPE_TOP_RIGHT]: {yIndex : 0, xIndex: 2},
+    [SEGMENT_TYPE_LEFT]: {xIndex : 0},
+    [SEGMENT_TYPE_RIGHT]: {xIndex : 2},
+    [SEGMENT_TYPE_BOTTOM]: {yIndex : 2},
+    [SEGMENT_TYPE_BOTTOM_LEFT]: {yIndex : 2, xIndex: 0},
+    [SEGMENT_TYPE_BOTTOM_RIGHT]: {yIndex : 2, xIndex: 2}
+}
+
+export const ITEM_SET = 'item/set';
+export const ITEM_GET = 'item/get';
+export const ITEM_CONVERT_STYLE = 'item/convert/style';
+export const ITEM_SET_ALL = 'item/set/all';
+export const ITEM_SORT = 'item/sort';
+export const ITEM_REMOVE_CHILDREN = 'item/remove/children';
+export const ITEM_REMOVE = 'item/remove';
+export const ITEM_REMOVE_ALL = 'item/remove/all';
+export const ITEM_FOCUS = 'item/focus';
+export const ITEM_LOAD = 'item/load';
+
 /* page is equal to artboard */ 
 export const PAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_PAGE,
@@ -191,75 +266,3 @@ export const COLORSTEP_DEFAULT_OBJECT = {
     color: 'rgba(0, 0, 0, 0)'
 }
 
-export const SHAPE_TYPE_RECT = 'rect';
-export const SHAPE_TYPE_CIRCLE = 'circle';
-export const SHAPE_TYPE_POLYGON = 'polygon';
-
-export const IMAGE_ITEM_TYPE_LINEAR = 'linear';
-export const IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
-export const IMAGE_ITEM_TYPE_RADIAL = 'radial';
-export const IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
-export const IMAGE_ITEM_TYPE_CONIC = 'conic';
-export const IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
-export const IMAGE_ITEM_TYPE_STATIC = 'static';
-export const IMAGE_ITEM_TYPE_DIAMOND = 'diamond';
-export const IMAGE_ITEM_TYPE_IMAGE = 'image';
-
-export const CLIP_PATH_TYPE_NONE = 'none';
-export const CLIP_PATH_TYPE_CIRCLE = 'circle';
-export const CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
-export const CLIP_PATH_TYPE_INSET = 'inset';
-export const CLIP_PATH_TYPE_POLYGON = 'polygon';
-export const CLIP_PATH_TYPE_SVG = 'svg';
-
-export const CLIP_PATH_SIDE_TYPE_NONE = 'none';
-export const CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
-export const CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
-
-export const POSITION_TOP = 'top'
-export const POSITION_LEFT = 'left'
-export const POSITION_RIGHT = 'right'
-export const POSITION_BOTTOM = 'bottom'
-export const POSITION_CENTER = 'center'
-
-export const IMAGE_FILE_TYPE_JPG = 'jpg'
-export const IMAGE_FILE_TYPE_GIF = 'gif'
-export const IMAGE_FILE_TYPE_PNG = 'png'
-export const IMAGE_FILE_TYPE_SVG = 'svg'
-
-export const GUIDE_TYPE_VERTICAL = '|';
-export const GUIDE_TYPE_HORIZONTAL = '-';
-
-export const SEGMENT_TYPE_ROTATE = 'rotate';
-export const SEGMENT_TYPE_MOVE = 'move';
-export const SEGMENT_TYPE_TOP = 'to top';
-export const SEGMENT_TYPE_LEFT = 'to left';
-export const SEGMENT_TYPE_RIGHT = 'to right';
-export const SEGMENT_TYPE_BOTTOM = 'to bottom';
-export const SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-export const SEGMENT_TYPE_TOP_LEFT = 'to top left';
-export const SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-export const SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
-
-export const SEGMENT_CHECK = {
-    [SEGMENT_TYPE_MOVE]: {move: true},
-    [SEGMENT_TYPE_TOP]: {yIndex : 0},
-    [SEGMENT_TYPE_TOP_LEFT]: {yIndex : 0, xIndex: 0},
-    [SEGMENT_TYPE_TOP_RIGHT]: {yIndex : 0, xIndex: 2},
-    [SEGMENT_TYPE_LEFT]: {xIndex : 0},
-    [SEGMENT_TYPE_RIGHT]: {xIndex : 2},
-    [SEGMENT_TYPE_BOTTOM]: {yIndex : 2},
-    [SEGMENT_TYPE_BOTTOM_LEFT]: {yIndex : 2, xIndex: 0},
-    [SEGMENT_TYPE_BOTTOM_RIGHT]: {yIndex : 2, xIndex: 2}
-}
-
-export const ITEM_SET = 'item/set';
-export const ITEM_GET = 'ITEM_GET';
-export const ITEM_CONVERT_STYLE = 'item/convert/style';
-export const ITEM_SET_ALL = 'item/set/all';
-export const ITEM_SORT = 'item/sort';
-export const ITEM_REMOVE_CHILDREN = 'item/remove/children';
-export const ITEM_REMOVE = 'item/remove';
-export const ITEM_REMOVE_ALL = 'item/remove/all';
-export const ITEM_FOCUS = 'item/focus';
-export const ITEM_LOAD = 'item/load';
