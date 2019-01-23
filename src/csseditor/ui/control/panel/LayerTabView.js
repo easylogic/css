@@ -31,7 +31,8 @@ export default class LayerTabView extends BaseTab {
                         <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    
                     </div>
                     <div class='scroll' ref="$layerInfoScroll">
-                       <LayerProperty></LayerProperty>                
+                       <LayerProperty></LayerProperty>
+                       <LayerBorderProperty></LayerBorderProperty>    
                     </div>
                 </div>
                 <div class="tab-content flex" data-id="text">

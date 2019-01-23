@@ -8,7 +8,8 @@ import {
     CHANGE_LAYER_MOVE,
     CHANGE_LAYER_ROTATE,
     CHANGE_PAGE_SIZE,
-    CHANGE_IMAGE
+    CHANGE_IMAGE,
+    CHANGE_LAYER_BORDER
 } from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING } from '../../../../util/css/types';
@@ -30,7 +31,6 @@ import {
 } from '../../../types/ItemTypes';
 import { CSS_TO_STRING } from '../../../types/CssTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../types/SelectionTypes';
-import { LAYER_MAKE_TRANSFORM_ROTATE } from '../../../types/LayerTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../types/ImageTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
@@ -153,6 +153,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         CHANGE_LAYER_SIZE,
         CHANGE_LAYER_ROTATE,
         CHANGE_LAYER_MOVE,
+        CHANGE_LAYER_BORDER,
         CHANGE_LAYER_POSITION,
         CHANGE_EDITOR,
         CHANGE_SELECTION,

@@ -44,8 +44,10 @@ import Page3D from "./Page3D";
 import ImageSorting from "./ImageSorting";
 import BackgroundImage from "./BackgroundImage";
 
-
 import RotatePattern from "./pattern/RotatePattern";
+import BorderFixed from "./border-fixed";
+import BoxSizing from "./BoxSizing";
+import BorderWidth from "./BorderWidth";
 
 
 var patterns = {
@@ -54,6 +56,8 @@ var patterns = {
 
 export default {
     ...patterns,
+    BoxSizing,
+    BorderWidth,
     BackgroundImage,
     ImageSorting, 
     Page3D,
@@ -75,6 +79,7 @@ export default {
     BoxShadow,
     ClipPathSVG,
     Opacity,
+    BorderFixed,
     RadiusFixed,
     Rotate,
     LayerBlend,

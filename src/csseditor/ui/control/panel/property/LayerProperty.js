@@ -8,10 +8,8 @@ export default class LayerProperty extends BaseProperty {
             <Name></Name>
             <size></size>            
             <Rotate></Rotate>
-            <RadiusFixed></RadiusFixed>
-            <radius></radius>      
             <opacity></opacity>         
-            <LayerBlend></LayerBlend>        
+            <LayerBlend></LayerBlend>     
         `
     }
 }

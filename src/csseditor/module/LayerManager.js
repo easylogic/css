@@ -8,7 +8,7 @@ import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CSS_TO_STRING } from "../types/CssTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS, LAYER_MAKE_MAP_IMAGE } from "../types/LayerTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS, LAYER_MAKE_MAP_IMAGE, LAYER_MAKE_BORDER } from "../types/LayerTypes";
 import { IMAGE_TO_CSS} from "../types/ImageTypes";
 import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN, ITEM_EACH_TYPE_CHILDREN, ITEM_MAP_IMAGE_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
@@ -354,6 +354,23 @@ export default class LayerManager extends BaseModule {
         return []
     }
 
+    isFixedBorderWidth (layer) {
+        if (layer.fixedBorderWidth && layer.borderWidth) {
+            return [ stringUnit(layer.borderWidth)]; 
+        }
+
+        if (!layer.borderTopWidth) return []
+
+        if (layer.borderLeftWidth.value == layer.borderRightWidth.value 
+            && layer.borderTopWidth.value == layer.borderBottomWidth.value
+            && layer.borderBottomWidth.value == layer.borderLeftWidth.value
+        ) {
+            return [ stringUnit(layer.borderTopWidth) ]
+        }
+
+        return []
+    }    
+
     [GETTER(LAYER_MAKE_BORDER_RADIUS)] ($store, layer) {
         var css = {};
         var isFixedRadius = this.isFixedRadius(layer);
@@ -366,6 +383,40 @@ export default class LayerManager extends BaseModule {
             if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
             if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
         }
+
+        return css;
+    }
+
+    [GETTER(LAYER_MAKE_BORDER)] ($store, layer) {
+        var css = {};
+        var isFixedBorderWidth = this.isFixedBorderWidth(layer);
+        if (isFixedBorderWidth.length) {
+            css['border-width'] = isFixedBorderWidth[0]
+            css['border-style'] = 'solid';         
+        } else {
+
+            if (layer.borderTopWidth) {
+                css['border-top-width'] = stringUnit(layer.borderTopWidth);
+                css['border-top-style'] = 'solid';
+            }
+
+            if (layer.borderRightWidth) {
+                css['border-right-width'] = stringUnit(layer.borderRightWidth);
+                css['border-right-style'] = 'solid';
+            }
+
+            if (layer.borderLeftWidth) {
+                css['border-left-width'] = stringUnit(layer.borderLeftWidth);
+                css['border-left-style'] = 'solid'
+            }
+
+            if (layer.borderBottomWidth) {
+                css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
+                css['border-bottom-style'] = 'solid'
+            }
+        }
+
+
 
         return css;
     }
@@ -391,6 +442,8 @@ export default class LayerManager extends BaseModule {
             css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
         }
 
+        css['box-sizing'] = layer.boxSizing || 'border-box';        
+
         if (layer.backgroundColor) {
             css['background-color'] = layer.backgroundColor
         }         
@@ -410,6 +463,7 @@ export default class LayerManager extends BaseModule {
         }
 
         var results = Object.assign(css, 
+            $store.read(LAYER_MAKE_BORDER, layer),
             $store.read(LAYER_MAKE_BORDER_RADIUS, layer),
             $store.read(LAYER_MAKE_TRANSFORM, layer),
             $store.read(LAYER_MAKE_CLIPPATH, layer),
@@ -431,6 +485,8 @@ export default class LayerManager extends BaseModule {
 
         css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
 
+        css['box-sizing'] = layer.boxSizing || 'border-box';
+
         if (layer.backgroundColor) {
             css['background-color'] = layer.backgroundColor
         }         
@@ -449,6 +505,7 @@ export default class LayerManager extends BaseModule {
         }
 
         var results = Object.assign(css, 
+            $store.read(LAYER_MAKE_BORDER, layer),
             $store.read(LAYER_MAKE_BORDER_RADIUS, layer),
             $store.read(LAYER_MAKE_TRANSFORM, layer),
             $store.read(LAYER_MAKE_CLIPPATH, layer),

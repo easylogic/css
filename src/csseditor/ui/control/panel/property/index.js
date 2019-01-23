@@ -15,8 +15,10 @@ import ColorStepProperty from "./ColorStepProperty";
 import BackgroundCodeProperty from "./BackgroundCodeProperty";
 import BackgroundProperty from "./BackgroundProperty";
 import RotatePatternProperty from "./RotatePatternProperty";
+import LayerBorderProperty from "./LayerBorderProperty";
 
 export default {
+    LayerBorderProperty,
     RotatePatternProperty,
     BackgroundProperty,
     BackgroundCodeProperty,

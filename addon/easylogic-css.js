@@ -10157,6 +10157,7 @@ var CHANGE_LAYER_POSITION = 'CHANGE_LAYER_POSITION';
 var CHANGE_LAYER_TRANSFORM = 'CHANGE_LAYER_TRANSFORM';
 var CHANGE_LAYER_TRANSFORM_3D = 'CHANGE_LAYER_TRANSFORM_3D';
 var CHANGE_LAYER_RADIUS = 'CHANGE_LAYER_RADIUS';
+var CHANGE_LAYER_BORDER = 'CHANGE_LAYER_BORDER';
 var CHANGE_LAYER_BACKGROUND_COLOR = 'CHANGE_LAYER_BACKGROUND_COLOR';
 var CHANGE_LAYER_CLIPPATH = 'CHANGE_LAYER_CLIPPATH';
 var CHANGE_LAYER_CLIPPATH_POLYGON = 'CHANGE_LAYER_CLIPPATH_POLYGON';
@@ -11180,6 +11181,7 @@ var LAYER_GET_CLIPPATH = 'layer/getClipPath';
 var LAYER_BOUND_TO_CSS = 'layer/bound/toCSS';
 var LAYER_TO_CSS = 'layer/toCSS';
 var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
+var LAYER_MAKE_BORDER = 'layer/make/border';
 var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
 
 var FILTER_GET = 'filter/get';
@@ -11561,6 +11563,21 @@ var LayerManager = function (_BaseModule) {
             return [];
         }
     }, {
+        key: "isFixedBorderWidth",
+        value: function isFixedBorderWidth(layer) {
+            if (layer.fixedBorderWidth && layer.borderWidth) {
+                return [stringUnit(layer.borderWidth)];
+            }
+
+            if (!layer.borderTopWidth) return [];
+
+            if (layer.borderLeftWidth.value == layer.borderRightWidth.value && layer.borderTopWidth.value == layer.borderBottomWidth.value && layer.borderBottomWidth.value == layer.borderLeftWidth.value) {
+                return [stringUnit(layer.borderTopWidth)];
+            }
+
+            return [];
+        }
+    }, {
         key: GETTER(LAYER_MAKE_BORDER_RADIUS),
         value: function value$$1($store, layer) {
             var css = {};
@@ -11573,6 +11590,39 @@ var LayerManager = function (_BaseModule) {
                 if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
                 if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
                 if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
+            }
+
+            return css;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BORDER),
+        value: function value$$1($store, layer) {
+            var css = {};
+            var isFixedBorderWidth = this.isFixedBorderWidth(layer);
+            if (isFixedBorderWidth.length) {
+                css['border-width'] = isFixedBorderWidth[0];
+                css['border-style'] = 'solid';
+            } else {
+
+                if (layer.borderTopWidth) {
+                    css['border-top-width'] = stringUnit(layer.borderTopWidth);
+                    css['border-top-style'] = 'solid';
+                }
+
+                if (layer.borderRightWidth) {
+                    css['border-right-width'] = stringUnit(layer.borderRightWidth);
+                    css['border-right-style'] = 'solid';
+                }
+
+                if (layer.borderLeftWidth) {
+                    css['border-left-width'] = stringUnit(layer.borderLeftWidth);
+                    css['border-left-style'] = 'solid';
+                }
+
+                if (layer.borderBottomWidth) {
+                    css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
+                    css['border-bottom-style'] = 'solid';
+                }
             }
 
             return css;
@@ -11606,6 +11656,8 @@ var LayerManager = function (_BaseModule) {
                 css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
             }
 
+            css['box-sizing'] = layer.boxSizing || 'border-box';
+
             if (layer.backgroundColor) {
                 css['background-color'] = layer.backgroundColor;
             }
@@ -11623,7 +11675,7 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport));
+            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport));
 
             return cleanObject(results);
         }
@@ -11636,6 +11688,8 @@ var LayerManager = function (_BaseModule) {
             var css = {};
 
             css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
+
+            css['box-sizing'] = layer.boxSizing || 'border-box';
 
             if (layer.backgroundColor) {
                 css['background-color'] = layer.backgroundColor;
@@ -11654,7 +11708,7 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
+            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
 
             return cleanObject(results);
         }
@@ -20425,7 +20479,7 @@ var BackgroundClip = function (_BasePropertyItem) {
     createClass(BackgroundClip, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Clip Area</label>\n                    <div class=\'size-list full-size\'>\n                        <select ref="$clip">\n                            <option value="content-box">content-box</option>\n                            <option value="border-box">border-box</option>\n                            <option value="padding-box">padding-box</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item clip-area show\'>\n            <div class=\'items\'>         \n                <div>\n                    <label>Clip Area</label>\n                    <div class=\'size-list full-size\'>\n                        <select ref="$clip">\n                            <option value="content-box">content-box</option>\n                            <option value="border-box">border-box</option>\n                            <option value="padding-box">padding-box</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'isShow',
@@ -21071,6 +21125,269 @@ var RotatePattern = function (_BasePropertyItem) {
     return RotatePattern;
 }(BasePropertyItem);
 
+var BorderFixed = function (_BasePropertyItem) {
+    inherits(BorderFixed, _BasePropertyItem);
+
+    function BorderFixed() {
+        classCallCheck(this, BorderFixed);
+        return possibleConstructorReturn(this, (BorderFixed.__proto__ || Object.getPrototypeOf(BorderFixed)).apply(this, arguments));
+    }
+
+    createClass(BorderFixed, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item fixed-border'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$borderLabel\">*</button> Border</label>\n                        <div>\n                            <input type='range' ref=\"$borderWidthRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$borderWidth\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            var isShow = this.isShow();
+
+            this.$el.toggleClass('show', isShow);
+
+            if (isShow) {
+
+                this.read(SELECTION_CURRENT_LAYER, function (item) {
+                    var borderWidth = defaultValue(string2unit(item.borderWidth), pxUnit(0));
+                    _this2.refs.$borderWidthRange.val(borderWidth.value);
+                    _this2.refs.$borderWidth.val(borderWidth.value);
+                });
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+
+            if (!layer) return false;
+
+            return true;
+        }
+    }, {
+        key: "updateTransform",
+        value: function updateTransform(type) {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+
+                if (type == 'border') {
+                    _this3.commit(CHANGE_LAYER_BORDER, {
+                        id: id,
+                        fixedBorderWidth: true,
+                        borderWidth: pxUnit(_this3.refs.$borderWidth.val())
+                    });
+                    _this3.refs.$borderWidthRange.val(_this3.refs.$borderWidth.val());
+                } else if (type == 'range') {
+                    _this3.commit(CHANGE_LAYER_BORDER, {
+                        id: id,
+                        fixedBorderWidth: true,
+                        borderWidth: pxUnit(_this3.refs.$borderWidthRange.val())
+                    });
+                    _this3.refs.$borderWidth.val(_this3.refs.$borderWidthRange.val());
+                }
+            });
+        }
+    }, {
+        key: INPUT('$borderWidthRange'),
+        value: function value$$1() {
+            this.updateTransform('range');
+        }
+    }, {
+        key: INPUT('$borderWidth'),
+        value: function value$$1() {
+            this.updateTransform('border');
+        }
+    }, {
+        key: CLICK('$borderLabel'),
+        value: function value$$1() {
+            this.emit('toggleBorderWidth');
+        }
+    }]);
+    return BorderFixed;
+}(BasePropertyItem);
+
+var BoxSizing = function (_BasePropertyItem) {
+    inherits(BoxSizing, _BasePropertyItem);
+
+    function BoxSizing() {
+        classCallCheck(this, BoxSizing);
+        return possibleConstructorReturn(this, (BoxSizing.__proto__ || Object.getPrototypeOf(BoxSizing)).apply(this, arguments));
+    }
+
+    createClass(BoxSizing, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class=\'property-item box-sizing show\'>\n            <div class=\'items\'>         \n                <div>\n                    <label>Box Sizing</label>\n                    <div class=\'size-list full-size\'>\n                        <select ref="$boxSizing">\n                            <option value="content-box">content-box</option>\n                            <option value="border-box">border-box</option>\n                            <option value="padding-box">padding-box</option>\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read(SELECTION_IS_LAYER$1);
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER, function (layer) {
+                _this2.refs.$boxSizing.val(layer.boxSizing);
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: CHANGE('$boxSizing'),
+        value: function value(e) {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this3.commit(CHANGE_LAYER, { id: id, boxSizing: _this3.refs.$boxSizing.val() }, true);
+            });
+        }
+    }]);
+    return BoxSizing;
+}(BasePropertyItem);
+
+var BorderWidth = function (_BasePropertyItem) {
+    inherits(BorderWidth, _BasePropertyItem);
+
+    function BorderWidth() {
+        classCallCheck(this, BorderWidth);
+        return possibleConstructorReturn(this, (BorderWidth.__proto__ || Object.getPrototypeOf(BorderWidth)).apply(this, arguments));
+    }
+
+    createClass(BorderWidth, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item border'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER, function (item) {
+                var maxWidth = unitValue(item.width);
+
+                if (item.fixedBorderWidth) {
+                    var borderWidth = defaultValue(item.borderWidth, pxUnit(0));
+                    var border = value2px(borderWidth, maxWidth);
+                    _this2.refs.$topWidthRange.val(border);
+                    _this2.refs.$rightWidthRange.val(border);
+                    _this2.refs.$leftWidthRange.val(border);
+                    _this2.refs.$bottomWidthRange.val(border);
+                    _this2.refs.$topWidth.val(border);
+                    _this2.refs.$rightWidth.val(border);
+                    _this2.refs.$leftWidth.val(border);
+                    _this2.refs.$bottomWidth.val(border);
+                } else {
+                    if (item.borderTopWidth) {
+                        _this2.refs.$topWidth.val(value2px(item.borderTopWidth, maxWidth));
+                        _this2.refs.$topWidthRange.val(value2px(item.borderTopWidth, maxWidth));
+                    }
+                    if (item.borderRightWidth) {
+                        _this2.refs.$rightWidth.val(value2px(item.borderRightWidth, maxWidth));
+                        _this2.refs.$rightWidthRange.val(value2px(item.borderRightWidth, maxWidth));
+                    }
+                    if (item.borderLeftWidth) {
+                        _this2.refs.$leftWidth.val(value2px(item.borderLeftWidth, maxWidth));
+                        _this2.refs.$leftWidthRange.val(value2px(item.borderLeftWidth, maxWidth));
+                    }
+                    if (item.borderBottomWidth) {
+                        _this2.refs.$bottomWidth.val(value2px(item.borderBottomWidth, maxWidth));
+                        _this2.refs.$bottomWidthRange.val(value2px(item.borderBottomWidth, maxWidth));
+                    }
+                }
+            });
+        }
+    }, {
+        key: "refreshValue",
+        value: function refreshValue() {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this3.commit(CHANGE_LAYER_BORDER, {
+                    id: id,
+                    borderTopWidth: pxUnit(_this3.refs.$topWidth.val()),
+                    borderRightWidth: pxUnit(_this3.refs.$rightWidth.val()),
+                    borderLeftWidth: pxUnit(_this3.refs.$leftWidth.val()),
+                    borderBottomWidth: pxUnit(_this3.refs.$bottomWidth.val()),
+                    fixedBorderWidth: false
+                });
+            });
+        }
+    }, {
+        key: CHANGEINPUT('$topWidthRange'),
+        value: function value$$1() {
+            this.refs.$topWidth.val(this.refs.$topWidthRange.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$rightWidthRange'),
+        value: function value$$1() {
+            this.refs.$rightWidth.val(this.refs.$rightWidthRange.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$leftWidthRange'),
+        value: function value$$1() {
+            this.refs.$leftWidth.val(this.refs.$leftWidthRange.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$bottomWidthRange'),
+        value: function value$$1() {
+            this.refs.$bottomWidth.val(this.refs.$bottomWidthRange.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$topWidth'),
+        value: function value$$1() {
+            this.refs.$topWidthRange.val(this.refs.$topWidth.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$rightWidth'),
+        value: function value$$1() {
+            this.refs.$rightWidthRange.val(this.refs.$rightWidth.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$leftWidth'),
+        value: function value$$1() {
+            this.refs.$leftWidthRange.val(this.refs.$leftWidth.val());
+            this.refreshValue();
+        }
+    }, {
+        key: CHANGEINPUT('$bottomWidth'),
+        value: function value$$1() {
+            this.refs.$bottomWidthRange.val(this.refs.$bottomWidth.val());
+            this.refreshValue();
+        }
+    }, {
+        key: EVENT('toggleBorderWidth'),
+        value: function value$$1() {
+            this.$el.toggleClass('show');
+        }
+    }]);
+    return BorderWidth;
+}(BasePropertyItem);
+
 var _babelHelpers$extends;
 
 var patterns$1 = {
@@ -21078,6 +21395,8 @@ var patterns$1 = {
 };
 
 var items = _extends({}, patterns$1, (_babelHelpers$extends = {
+    BoxSizing: BoxSizing,
+    BorderWidth: BorderWidth,
     BackgroundImage: BackgroundImage,
     ImageSorting: ImageSorting,
     Page3D: Page3D,
@@ -21097,7 +21416,7 @@ var items = _extends({}, patterns$1, (_babelHelpers$extends = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundColor", BackgroundColor), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
+}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "BorderFixed", BorderFixed), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundColor", BackgroundColor), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -21288,7 +21607,7 @@ var LayerProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <RadiusFixed></RadiusFixed>\n            <radius></radius>      \n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>        \n        ";
+            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>     \n        ";
         }
     }]);
     return LayerProperty;
@@ -21654,7 +21973,30 @@ var RotatePatternProperty = function (_BaseProperty) {
     return RotatePatternProperty;
 }(BaseProperty);
 
+var LayerBorderProperty = function (_BaseProperty) {
+    inherits(LayerBorderProperty, _BaseProperty);
+
+    function LayerBorderProperty() {
+        classCallCheck(this, LayerBorderProperty);
+        return possibleConstructorReturn(this, (LayerBorderProperty.__proto__ || Object.getPrototypeOf(LayerBorderProperty)).apply(this, arguments));
+    }
+
+    createClass(LayerBorderProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Border';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <BorderFixed></BorderFixed>\n            <BorderWidth></BorderWidth>\n            <RadiusFixed></RadiusFixed>\n            <radius></radius>      \n        ";
+        }
+    }]);
+    return LayerBorderProperty;
+}(BaseProperty);
+
 var property = {
+    LayerBorderProperty: LayerBorderProperty,
     RotatePatternProperty: RotatePatternProperty,
     BackgroundProperty: BackgroundProperty,
     BackgroundCodeProperty: BackgroundCodeProperty,
@@ -21685,7 +22027,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty></PageProperty>\n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                       <LayerProperty></LayerProperty>                \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty></LayerFontProperty>\n                        <LayerTextProperty></LayerTextProperty>\n                        <TextShadowProperty></TextShadowProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty></BoxShadowProperty>\n                        <FilterProperty></FilterProperty>    \n                        <BackdropProperty></BackdropProperty>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPathProperty></ClipPathProperty>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty></Transform2DProperty>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty></Transform3DProperty>\n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty></LayerCodeProperty>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty></PageProperty>\n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                       <LayerProperty></LayerProperty>\n                       <LayerBorderProperty></LayerBorderProperty>    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty></LayerFontProperty>\n                        <LayerTextProperty></LayerTextProperty>\n                        <TextShadowProperty></TextShadowProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty></BoxShadowProperty>\n                        <FilterProperty></FilterProperty>    \n                        <BackdropProperty></BackdropProperty>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPathProperty></ClipPathProperty>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty></Transform2DProperty>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty></Transform3DProperty>\n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty></LayerCodeProperty>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -24680,7 +25022,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.read('selection/is/not/empty');
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_SIZE),
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_BORDER, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_SIZE),
         value: function value$$1() {
             this.refresh();
         }
@@ -26184,7 +26526,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_LAYER_TEXT,
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_BORDER, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_LAYER_TEXT,
         // CHANGE_LAYER_POSITION,
         // CHANGE_LAYER_SIZE,
         // CHANGE_LAYER_MOVE,    

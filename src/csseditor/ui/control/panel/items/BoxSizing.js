@@ -5,16 +5,16 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../types/SelectionTypes';
 
-export default class BackgroundClip extends BasePropertyItem {
+export default class BoxSizing extends BasePropertyItem {
 
     template () { 
         return `
-        <div class='property-item clip-area show'>
+        <div class='property-item box-sizing show'>
             <div class='items'>         
                 <div>
-                    <label>Clip Area</label>
+                    <label>Box Sizing</label>
                     <div class='size-list full-size'>
-                        <select ref="$clip">
+                        <select ref="$boxSizing">
                             <option value="content-box">content-box</option>
                             <option value="border-box">border-box</option>
                             <option value="padding-box">padding-box</option>
@@ -33,7 +33,7 @@ export default class BackgroundClip extends BasePropertyItem {
     refresh () {
 
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            this.refs.$clip.val(layer.backgroundClip)
+            this.refs.$boxSizing.val(layer.boxSizing)
         })
 
     }
@@ -45,9 +45,9 @@ export default class BackgroundClip extends BasePropertyItem {
         this.refresh()
     }
 
-    [CHANGE('$clip')] (e) {
+    [CHANGE('$boxSizing')] (e) {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER, {id, backgroundClip: this.refs.$clip.val() }, true)
+            this.commit(CHANGE_LAYER, {id, boxSizing: this.refs.$boxSizing.val() }, true)
         });
     }
 

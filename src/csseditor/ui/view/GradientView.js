@@ -38,7 +38,8 @@ import {
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
     CHANGE_PAGE_TRANSFORM,
     CHANGE_PAGE_NAME,
-    CHANGE_TOOL
+    CHANGE_TOOL,
+    CHANGE_LAYER_BORDER
 } from '../../types/event';
 import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD } from '../../../util/Event';
@@ -255,6 +256,7 @@ export default class GradientView extends UIElement {
         CHANGE_LAYER_FILTER,
         CHANGE_LAYER_BACKDROP_FILTER,
         CHANGE_LAYER_RADIUS,
+        CHANGE_LAYER_BORDER,
         CHANGE_LAYER_ROTATE,
         CHANGE_LAYER_OPACITY,
         CHANGE_LAYER_TRANSFORM,

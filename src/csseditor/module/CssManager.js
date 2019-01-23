@@ -97,7 +97,7 @@ export default class CssManager extends BaseModule {
     }    
 
     [GETTER(CSS_TO_STRING)] ($store, style) {
-        var newStyle = $store.read(CSS_SORTING, style);        
+        var newStyle = $store.read(CSS_SORTING, style);      
 
         return Object.keys(newStyle).filter(key => {
             return !!newStyle[key]
