@@ -8,15 +8,11 @@ export default class BackgroundInfo extends BasePropertyItem {
 
     template () { 
         return `
-        <div class='property-item background-info show'>
-            <div class='title' ref="$title">Background Image</div>        
-            <div class='items max-height'>         
+        <div class='property-item background-info show'>   
+            <div class='items'>         
                 <div>
                     <label>Gradient</label>
-                    <div>
-                        <div class="gradient" ref="$typeView"></div>
-                        <label ref="$type"></label>
-                    </div>
+                    <div><div class="gradient" ref="$typeView"></div><label ref="$type"></label></div>
                 </div>
             </div>
         </div>

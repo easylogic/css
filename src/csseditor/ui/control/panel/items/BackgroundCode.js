@@ -22,12 +22,7 @@ export default class BackgroundCode extends BasePropertyItem {
     template () {
         return `
             <div class='property-item background-code show'>
-                <div class='title' ref="$title">CSS code</div>
-                <div class='items'>            
-                    <div class="key-value-view" ref="$keys">
-
-                    </div>
-                </div>
+                <div class='items'><div class="key-value-view" ref="$keys"></div></div>
             </div>
         `
     }
@@ -77,7 +72,7 @@ export default class BackgroundCode extends BasePropertyItem {
 
     refresh() {
 
-        if (this.parent.selectedTabId == 'css') {
+        if (this.config('tool.tabs.image.selectedId') == 'css') {
             this.load();
         }
 

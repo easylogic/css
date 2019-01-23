@@ -1,4 +1,8 @@
 &.box-shadow {
+    .items {
+        padding: 2px;    
+    }
+
     .box-shadow-list {
         display: block;
 
@@ -6,8 +10,9 @@
             position: relative;
             display: block;
             margin-top: 2px;
-            padding: 2px 0px;
+            padding: 2px 2px;
             box-sizing: border-box;
+            border: 1px solid rgba($border-color, 0.5);
 
             > div {
                 height: 28px;                

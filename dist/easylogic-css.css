@@ -4477,7 +4477,8 @@ html, body {
     overflow: auto; }
     .csseditor .property-view .property {
       padding: 0px;
-      border-bottom: 1px solid rgba(204, 204, 204, 0.5); }
+      border-bottom: 1px solid rgba(204, 204, 204, 0.5);
+      padding-bottom: 5px; }
       .csseditor .property-view .property.show > .property-body {
         display: block; }
       .csseditor .property-view .property > .property-title {
@@ -4495,7 +4496,7 @@ html, body {
           position: absolute;
           top: 3px;
           bottom: 3px;
-          right: 3px; }
+          right: 10px; }
           .csseditor .property-view .property > .property-title > .tools button {
             -webkit-appearance: none;
                -moz-appearance: none;
@@ -4506,7 +4507,8 @@ html, body {
             display: inline-block;
             height: 100%; }
       .csseditor .property-view .property > .property-body {
-        display: none; }
+        display: none;
+        padding: 5px 4px; }
     .csseditor .property-view .tab:not(.horizontal) .tab-body {
       border: 0px; }
     .csseditor .property-view .tab:not(.horizontal) .tab-item {
@@ -4605,11 +4607,7 @@ html, body {
           display: inline-block;
           height: 100%; }
       .csseditor .property-view .property-item > .items {
-        display: none;
-        padding: 4px 5px;
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        min-height: 30px; }
+        display: none; }
         .csseditor .property-view .property-item > .items.no-padding {
           padding: 0px !important; }
         .csseditor .property-view .property-item > .items.bar {
@@ -5344,15 +5342,18 @@ html, body {
           margin-bottom: 0px; }
         .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .colorsets {
           display: none; }
+      .csseditor .property-view .property-item.box-shadow .items {
+        padding: 2px; }
       .csseditor .property-view .property-item.box-shadow .box-shadow-list {
         display: block; }
         .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item {
           position: relative;
           display: block;
           margin-top: 2px;
-          padding: 2px 0px;
+          padding: 2px 2px;
           -webkit-box-sizing: border-box;
-                  box-sizing: border-box; }
+                  box-sizing: border-box;
+          border: 1px solid rgba(204, 204, 204, 0.5); }
           .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div {
             height: 28px;
             display: grid;

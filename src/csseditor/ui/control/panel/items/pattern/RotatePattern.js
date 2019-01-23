@@ -10,8 +10,7 @@ import { EMPTY_STRING } from "../../../../../../util/css/types";
 export default class RotatePattern extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item background-color show'>
-                <div class='title' ref="$title">Rotate Pattern</div>
+            <div class='property-item rotate-pattern show'>
                 <div class='items'>            
                     <div>
                         <label>Enable</label>

@@ -2,16 +2,13 @@
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { CLICK, SELF, LOAD } from '../../../../../util/Event';
-import { IMAGE_ITEM_TYPE_IMAGE } from '../../../../types/ItemTypes';
-import { SELECTION_IS_IMAGE } from '../../../../types/SelectionTypes';
+import { CLICK, SELF } from '../../../../../util/Event';
 
 export default class BackgroundImage extends BasePropertyItem {
 
     template () { 
         return `
         <div class='property-item background-image'>
-            <div class='title' ref="$title">Background Image</div>
             <div class='items'>         
                 <div>
                     <img ref="$image" style="max-width: 100%; height: 100px" />

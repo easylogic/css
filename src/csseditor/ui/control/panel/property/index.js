@@ -10,8 +10,18 @@ import ClipPathProperty from "./ClipPathProperty";
 import Transform2DProperty from "./Transform2DProperty";
 import Transform3DProperty from "./Transform3DProperty";
 import LayerCodeProperty from "./LayerCodeProperty";
+import ImageSortingProperty from "./ImageSortingProperty";
+import ColorStepProperty from "./ColorStepProperty";
+import BackgroundCodeProperty from "./BackgroundCodeProperty";
+import BackgroundProperty from "./BackgroundProperty";
+import RotatePatternProperty from "./RotatePatternProperty";
 
 export default {
+    RotatePatternProperty,
+    BackgroundProperty,
+    BackgroundCodeProperty,
+    ColorStepProperty,
+    ImageSortingProperty,
     LayerCodeProperty,
     Transform2DProperty,
     Transform3DProperty,

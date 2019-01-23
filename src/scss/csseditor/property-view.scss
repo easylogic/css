@@ -10,6 +10,7 @@
     .property {
         padding: 0px;
         border-bottom: 1px solid rgba($border-color, 0.5);
+        padding-bottom: 5px;
 
         &.show {
             > .property-body {
@@ -32,7 +33,7 @@
                 position: absolute;
                 top: 3px;
                 bottom: 3px;
-                right: 3px;
+                right: 10px;
 
                 button {
                     appearance: none;
@@ -46,6 +47,7 @@
 
         > .property-body {
             display: none;
+            padding: 5px 4px;
         }
     }
 
@@ -196,9 +198,6 @@
 
         > .items {
             display: none; 
-            padding: 4px 5px; 
-            box-sizing: border-box;
-            min-height: 30px;
 
             &.no-padding { 
                 padding: 0px !important;

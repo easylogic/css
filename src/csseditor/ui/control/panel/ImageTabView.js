@@ -1,6 +1,7 @@
 import items  from './items/index'
 import BaseTab from "../../BaseTab";
 import { SELECT_TAB_IMAGE } from '../../../types/event';
+import property from './property/index';
 
 
 export default class ImageTabView extends BaseTab {
@@ -16,30 +17,25 @@ export default class ImageTabView extends BaseTab {
                 <div class="tab-body" ref="$body">
                     <div class="tab-content flex selected" data-id="gradient">
                         <div class='fixed'>
-                            <ColorPickerPanel></ColorPickerPanel>
-                            <ImageSorting></ImageSorting>
-                            <ColorStepsInfo></ColorStepsInfo>                            
+                            <ColorPickerPanel></ColorPickerPanel>                        
                         </div>
                         <div class='scroll'>
-                            <!--<BackgroundImage></BackgroundImage>-->
+                            <ImageSortingProperty></ImageSortingProperty>
+                            <ColorStepProperty></ColorStepProperty>    
                         </div>    
 
                     </div>
                     <div class="tab-content flex" data-id="pattern">
                         <div class='fixed'>
-                            <BackgroundInfo></BackgroundInfo>
-                            <BackgroundBlend></BackgroundBlend>
-                            <div class='sub-feature'>
-                                <BackgroundSize></BackgroundSize>
-                            </div>
+                            <BackgroundProperty></BackgroundProperty>
                         </div>
                         <div class='scroll'>
-                            <RotatePattern></RotatePattern>
+                            <RotatePatternProperty></RotatePatternProperty>
                         </div>    
 
                     </div>                    
                     <div class="tab-content" data-id="css">
-                        <BackgroundCode></BackgroundCode>
+                        <BackgroundCodeProperty></BackgroundCodeProperty>
                     </div>
                 </div>
             </div> 
@@ -47,11 +43,13 @@ export default class ImageTabView extends BaseTab {
     }
 
     onTabShow () {
+        this.config('tool.tabs.image.selectedId', this.selectedTabId);        
         this.emit(SELECT_TAB_IMAGE, this.selectedTabId)
     }
 
     components () {
-        return {            
+        return {       
+            ...property,     
             ...items
         }
     }

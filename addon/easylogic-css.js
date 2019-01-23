@@ -20006,7 +20006,7 @@ var BackgroundInfo = function (_BasePropertyItem) {
     createClass(BackgroundInfo, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item background-info show\'>\n            <div class=\'title\' ref="$title">Background Image</div>        \n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Gradient</label>\n                    <div>\n                        <div class="gradient" ref="$typeView"></div>\n                        <label ref="$type"></label>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item background-info show\'>   \n            <div class=\'items\'>         \n                <div>\n                    <label>Gradient</label>\n                    <div><div class="gradient" ref="$typeView"></div><label ref="$type"></label></div>\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'isShow',
@@ -20173,7 +20173,7 @@ var BackgroundCode = function (_BasePropertyItem) {
     createClass(BackgroundCode, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background-code show'>\n                <div class='title' ref=\"$title\">CSS code</div>\n                <div class='items'>            \n                    <div class=\"key-value-view\" ref=\"$keys\">\n\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background-code show'>\n                <div class='items'><div class=\"key-value-view\" ref=\"$keys\"></div></div>\n            </div>\n        ";
         }
     }, {
         key: LOAD('$keys'),
@@ -20210,7 +20210,7 @@ var BackgroundCode = function (_BasePropertyItem) {
         key: "refresh",
         value: function refresh() {
 
-            if (this.parent.selectedTabId == 'css') {
+            if (this.config('tool.tabs.image.selectedId') == 'css') {
                 this.load();
             }
         }
@@ -20946,7 +20946,7 @@ var BackgroundImage = function (_BasePropertyItem) {
     createClass(BackgroundImage, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item background-image\'>\n            <div class=\'title\' ref="$title">Background Image</div>\n            <div class=\'items\'>         \n                <div>\n                    <img ref="$image" style="max-width: 100%; height: 100px" />\n                </div>\n            </div>\n        </div>\n        ';
+            return '\n        <div class=\'property-item background-image\'>\n            <div class=\'items\'>         \n                <div>\n                    <img ref="$image" style="max-width: 100%; height: 100px" />\n                </div>\n            </div>\n        </div>\n        ';
         }
     }, {
         key: 'onToggleShow',
@@ -21006,7 +21006,7 @@ var RotatePattern = function (_BasePropertyItem) {
     createClass(RotatePattern, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background-color show'>\n                <div class='title' ref=\"$title\">Rotate Pattern</div>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone Count</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            " + this.read(BLEND_LIST).map(function (blend) {
+            return "\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone Count</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            " + this.read(BLEND_LIST).map(function (blend) {
                 return "<option value=\"" + blend + "\">" + blend + "</option>";
             }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
@@ -21489,7 +21489,7 @@ var Transform2DProperty = function (_BaseProperty) {
     createClass(Transform2DProperty, [{
         key: "getTitle",
         value: function getTitle() {
-            return 'Transform';
+            return 'Transform 2D';
         }
     }, {
         key: "getBody",
@@ -21544,7 +21544,122 @@ var LayerCodeProperty = function (_BaseProperty) {
     return LayerCodeProperty;
 }(BaseProperty);
 
+var ImageSortingProperty = function (_BaseProperty) {
+    inherits(ImageSortingProperty, _BaseProperty);
+
+    function ImageSortingProperty() {
+        classCallCheck(this, ImageSortingProperty);
+        return possibleConstructorReturn(this, (ImageSortingProperty.__proto__ || Object.getPrototypeOf(ImageSortingProperty)).apply(this, arguments));
+    }
+
+    createClass(ImageSortingProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Image sorting';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <ImageSorting ></ImageSorting>\n        ";
+        }
+    }]);
+    return ImageSortingProperty;
+}(BaseProperty);
+
+var ColorStepProperty = function (_BaseProperty) {
+    inherits(ColorStepProperty, _BaseProperty);
+
+    function ColorStepProperty() {
+        classCallCheck(this, ColorStepProperty);
+        return possibleConstructorReturn(this, (ColorStepProperty.__proto__ || Object.getPrototypeOf(ColorStepProperty)).apply(this, arguments));
+    }
+
+    createClass(ColorStepProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Color steps';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <ColorStepsInfo ></ColorStepsInfo>\n        ";
+        }
+    }]);
+    return ColorStepProperty;
+}(BaseProperty);
+
+var BackgroundCodeProperty = function (_BaseProperty) {
+    inherits(BackgroundCodeProperty, _BaseProperty);
+
+    function BackgroundCodeProperty() {
+        classCallCheck(this, BackgroundCodeProperty);
+        return possibleConstructorReturn(this, (BackgroundCodeProperty.__proto__ || Object.getPrototypeOf(BackgroundCodeProperty)).apply(this, arguments));
+    }
+
+    createClass(BackgroundCodeProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'CSS Code';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <BackgroundCode ></BackgroundCode>\n        ";
+        }
+    }]);
+    return BackgroundCodeProperty;
+}(BaseProperty);
+
+var BackgroundProperty = function (_BaseProperty) {
+    inherits(BackgroundProperty, _BaseProperty);
+
+    function BackgroundProperty() {
+        classCallCheck(this, BackgroundProperty);
+        return possibleConstructorReturn(this, (BackgroundProperty.__proto__ || Object.getPrototypeOf(BackgroundProperty)).apply(this, arguments));
+    }
+
+    createClass(BackgroundProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Background Image';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <BackgroundInfo></BackgroundInfo>\n            <BackgroundBlend></BackgroundBlend>\n            <div class='sub-feature'>\n                <BackgroundSize></BackgroundSize>\n            </div>\n        ";
+        }
+    }]);
+    return BackgroundProperty;
+}(BaseProperty);
+
+var RotatePatternProperty = function (_BaseProperty) {
+    inherits(RotatePatternProperty, _BaseProperty);
+
+    function RotatePatternProperty() {
+        classCallCheck(this, RotatePatternProperty);
+        return possibleConstructorReturn(this, (RotatePatternProperty.__proto__ || Object.getPrototypeOf(RotatePatternProperty)).apply(this, arguments));
+    }
+
+    createClass(RotatePatternProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Rotate pattern';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <RotatePattern ></RotatePattern>\n        ";
+        }
+    }]);
+    return RotatePatternProperty;
+}(BaseProperty);
+
 var property = {
+    RotatePatternProperty: RotatePatternProperty,
+    BackgroundProperty: BackgroundProperty,
+    BackgroundCodeProperty: BackgroundCodeProperty,
+    ColorStepProperty: ColorStepProperty,
+    ImageSortingProperty: ImageSortingProperty,
     LayerCodeProperty: LayerCodeProperty,
     Transform2DProperty: Transform2DProperty,
     Transform3DProperty: Transform3DProperty,
@@ -21635,17 +21750,18 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>\n                            <ImageSorting></ImageSorting>\n                            <ColorStepsInfo></ColorStepsInfo>                            \n                        </div>\n                        <div class=\'scroll\'>\n                            <!--<BackgroundImage></BackgroundImage>-->\n                        </div>    \n\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'>\n                            <BackgroundInfo></BackgroundInfo>\n                            <BackgroundBlend></BackgroundBlend>\n                            <div class=\'sub-feature\'>\n                                <BackgroundSize></BackgroundSize>\n                            </div>\n                        </div>\n                        <div class=\'scroll\'>\n                            <RotatePattern></RotatePattern>\n                        </div>    \n\n                    </div>                    \n                    <div class="tab-content" data-id="css">\n                        <BackgroundCode></BackgroundCode>\n                    </div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>                        \n                        </div>\n                        <div class=\'scroll\'>\n                            <ImageSortingProperty></ImageSortingProperty>\n                            <ColorStepProperty></ColorStepProperty>    \n                        </div>    \n\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'>\n                            <BackgroundProperty></BackgroundProperty>\n                        </div>\n                        <div class=\'scroll\'>\n                            <RotatePatternProperty></RotatePatternProperty>\n                        </div>    \n\n                    </div>                    \n                    <div class="tab-content" data-id="css">\n                        <BackgroundCodeProperty></BackgroundCodeProperty>\n                    </div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
         value: function onTabShow() {
+            this.config('tool.tabs.image.selectedId', this.selectedTabId);
             this.emit(SELECT_TAB_IMAGE, this.selectedTabId);
         }
     }, {
         key: 'components',
         value: function components() {
-            return _extends({}, items);
+            return _extends({}, property, items);
         }
     }]);
     return ImageTabView;
