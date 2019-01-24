@@ -18175,7 +18175,7 @@ var BackgroundSize = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }

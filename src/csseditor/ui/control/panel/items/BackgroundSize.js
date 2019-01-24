@@ -1,6 +1,6 @@
 import UnitRange from "./element/UnitRange";
 import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
-import { CHANGE_IMAGE, CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { UNIT_PX, percentUnit, unitValue, isValueUnit, convertPercentUnit } from "../../../../../util/css/types";
 import { CLICK } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
@@ -212,7 +212,8 @@ export default class BackgroundSize extends UIElement {
 
     [EVENT(
         CHANGE_IMAGE,
-        CHANGE_EDITOR
+        CHANGE_EDITOR,
+        CHANGE_SELECTION
     )] () {
         this.refresh()
     }
