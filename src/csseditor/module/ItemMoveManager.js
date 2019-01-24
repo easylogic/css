@@ -3,8 +3,9 @@ import { GETTER, ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
 import { ITEM_SET, ITEM_GET, ITEM_SORT } from "../types/ItemTypes";
 import { ITEM_MOVE_TO, ITEM_MOVE_NEXT, ITEM_NEXT_INDEX, ITEM_MOVE_LAST, ITEM_MOVE_FIRST, ITEM_MOVE_IN, ITEM_MOVE_IN_LAYER, ITEM_MOVE_PREV, ITEM_PREV_INDEX, ITEM_ADD_INDEX, ITEM_MOVE_Y, ITEM_MOVE_X } from "../types/ItemMoveTypes";
-import { SELECTION_CURRENT } from "../types/SelectionTypes";
+import { SELECTION_CURRENT, SELECTION_CURRENT_LAYER } from "../types/SelectionTypes";
 import { pxUnit, unitValue } from "../../util/css/types";
+import { isArray } from "../../util/functions/func";
 
 const INDEX_DIST = 100 ; 
 const COPY_INDEX_DIST = 1; 
@@ -99,18 +100,32 @@ export default class ItemMoveManager extends BaseModule {
 
 
     [ACTION(ITEM_MOVE_Y)] ($store, distY) {
-        $store.read(SELECTION_CURRENT).forEach(it => {
-            it.y = pxUnit(unitValue(it.y) + distY);
+        $store.read(SELECTION_CURRENT_LAYER, layers => {
+            if (!isArray(layers)) {
+                layers = [layers]
+                
+            }
 
-            $store.run(ITEM_SET, it);
+            layers.forEach(it => {
+                it.y = pxUnit(unitValue(it.y) + distY);
+    
+                $store.run(ITEM_SET, it);
+            })
         })
     }
 
     [ACTION(ITEM_MOVE_X)] ($store, distX) {
-        $store.read(SELECTION_CURRENT).forEach(it => {
-            it.x = pxUnit(unitValue(it.x) + distX);
+        $store.read(SELECTION_CURRENT_LAYER, layers => {
+            if (!isArray(layers)) {
+                layers = [layers]
+                
+            }
 
-            $store.run(ITEM_SET, it);
-        })
+            layers.forEach(it => {
+                it.x = pxUnit(unitValue(it.x) + distX);
+
+                $store.run(ITEM_SET, it);
+            })
+        })        
     }    
 }

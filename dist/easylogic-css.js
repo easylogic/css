@@ -15617,19 +15617,31 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_Y),
         value: function value$$1($store, distY) {
-            $store.read(SELECTION_CURRENT).forEach(function (it) {
-                it.y = pxUnit(unitValue(it.y) + distY);
+            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
+                if (!isArray(layers)) {
+                    layers = [layers];
+                }
 
-                $store.run(ITEM_SET, it);
+                layers.forEach(function (it) {
+                    it.y = pxUnit(unitValue(it.y) + distY);
+
+                    $store.run(ITEM_SET, it);
+                });
             });
         }
     }, {
         key: ACTION(ITEM_MOVE_X),
         value: function value$$1($store, distX) {
-            $store.read(SELECTION_CURRENT).forEach(function (it) {
-                it.x = pxUnit(unitValue(it.x) + distX);
+            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
+                if (!isArray(layers)) {
+                    layers = [layers];
+                }
 
-                $store.run(ITEM_SET, it);
+                layers.forEach(function (it) {
+                    it.x = pxUnit(unitValue(it.x) + distX);
+
+                    $store.run(ITEM_SET, it);
+                });
             });
         }
     }]);
