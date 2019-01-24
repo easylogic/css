@@ -3972,6 +3972,8 @@ var functions$1 = (_functions = {
 
 var LocalFilter = functions$1;
 
+var ROUND_MAX = 1000;
+
 function weight(arr) {
     var num = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
@@ -4247,19 +4249,19 @@ function parseParamNumber$1(param, callback) {
 
 
 function px2percent(px, maxValue) {
-    return round(px / maxValue * 100, 100);
+    return round(px / maxValue * 100, ROUND_MAX);
 }
 
 function px2em(px, maxValue) {
     var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
 
-    return round(px / fontSize, 100);
+    return round(px / fontSize, ROUND_MAX);
 }
 
 function em2px(em$$1, maxValue) {
     var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
 
-    return Math.floor(round(em$$1 * fontSize, 100));
+    return round(em$$1 * fontSize, ROUND_MAX);
 }
 
 function em2percent(em$$1, maxValue) {
@@ -4267,7 +4269,7 @@ function em2percent(em$$1, maxValue) {
 }
 
 function percent2px(percent$$1, maxValue) {
-    return Math.floor(round(maxValue * (percent$$1 / 100), 100));
+    return round(maxValue * (percent$$1 / 100), ROUND_MAX);
 }
 
 function percent2em(percent$$1, maxValue) {
@@ -17025,7 +17027,7 @@ var GradientSteps = function (_UIElement) {
                 if (item) {
 
                     // item.px = px; 
-                    var percent$$1 = Math.floor(px2percent(px, max - min));
+                    var percent$$1 = px2percent(px, max - min);
                     var em$$1 = px2em(px, max - min);
                     var newValue = { id: item.id, px: px, percent: percent$$1, em: em$$1 };
 
@@ -17034,7 +17036,7 @@ var GradientSteps = function (_UIElement) {
                     this.currentUnitEm.val(em$$1);
 
                     this.run(ITEM_SET, newValue);
-                    this.run('colorstep/sort', newValue.id, this.getSortedStepList());
+                    this.run(COLORSTEP_SORT, newValue.id, this.getSortedStepList());
                     this.commit(CHANGE_COLOR_STEP, newValue);
                     this.setBackgroundColor();
                 }
@@ -17166,11 +17168,11 @@ var GradientSteps = function (_UIElement) {
         value: function value$$1(e) {
             this.removeStep(e);
         }
-    }, {
-        key: CLICK('$steps .step'),
-        value: function value$$1(e) {
-            this.selectStep(e);
-        }
+
+        // [CLICK('$steps .step')] (e) {
+        //     this.selectStep(e)
+        // }
+
     }, {
         key: CLICK('$steps .guide-change'),
         value: function value$$1(e) {
@@ -26549,7 +26551,7 @@ var GradientView = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh(isDrag) {
-            this.hasScroll = false;
+            //this.hasScroll = false; 
             this.setBackgroundColor();
             this.load();
 
@@ -26618,7 +26620,7 @@ var GradientView = function (_UIElement) {
 
             var colorviewCSS = this.read(PAGE_COLORVIEW_TO_CSS, page || { clip: false });
             this.refs.$canvas.css(canvasCSS);
-            this.refs.$page.attr('title', page.name || 'page');
+            this.refs.$page.attr('title', page.name || 'Untitled page');
             this.refs.$page.css(pageCSS);
             this.refs.$colorview.css(colorviewCSS);
 
@@ -26895,31 +26897,41 @@ var HandleView = function (_GradientView) {
     return HandleView;
 }(GradientView);
 
+var DEFAULT_TITLE = EMPTY_STRING;
+var DEFAULT_ICON = EMPTY_STRING;
+var DEFAULT_CHECKED = false;
+
 var MenuItem = function (_UIElement) {
     inherits(MenuItem, _UIElement);
 
     function MenuItem() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, MenuItem);
-
-        var _this = possibleConstructorReturn(this, (MenuItem.__proto__ || Object.getPrototypeOf(MenuItem)).call(this, opt, props, parent));
-
-        _this.title = EMPTY_STRING;
-        _this.icon = EMPTY_STRING;
-        _this.checked = false;
-        return _this;
+        return possibleConstructorReturn(this, (MenuItem.__proto__ || Object.getPrototypeOf(MenuItem)).apply(this, arguments));
     }
 
     createClass(MenuItem, [{
         key: "template",
         value: function template() {
-            return "\n            <button type=\"button\" class='menu-item' checked=\"" + (this.checked ? 'checked' : EMPTY_STRING) + "\">\n                <div class=\"icon " + this.icon + "\"></div>\n                <div class=\"title\">" + this.title + "</div>\n            </button>\n        ";
+            return "\n            <button type=\"button\" class='menu-item' checked=\"" + (this.getChecked() ? 'checked' : EMPTY_STRING) + "\">\n                <div class=\"icon " + this.getIcon() + "\"></div>\n                <div class=\"title\">" + this.getTitle() + "</div>\n            </button>\n        ";
         }
     }, {
         key: "clickButton",
         value: function clickButton(e) {}
+    }, {
+        key: "getChecked",
+        value: function getChecked() {
+            return DEFAULT_CHECKED;
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return DEFAULT_TITLE;
+        }
+    }, {
+        key: "getIcon",
+        value: function getIcon() {
+            return DEFAULT_ICON;
+        }
     }, {
         key: CLICK(),
         value: function value$$1(e) {
@@ -26933,19 +26945,21 @@ var Export = function (_MenuItem) {
     inherits(Export, _MenuItem);
 
     function Export() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Export);
-
-        var _this = possibleConstructorReturn(this, (Export.__proto__ || Object.getPrototypeOf(Export)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Export';
-        _this.icon = 'export';
-        return _this;
+        return possibleConstructorReturn(this, (Export.__proto__ || Object.getPrototypeOf(Export)).apply(this, arguments));
     }
 
     createClass(Export, [{
+        key: 'getIcon',
+        value: function getIcon() {
+            return 'export';
+        }
+    }, {
+        key: 'getTitle',
+        value: function getTitle() {
+            return 'Export';
+        }
+    }, {
         key: 'clickButton',
         value: function clickButton(e) {
             this.emit('showExport');
@@ -26958,19 +26972,21 @@ var Redo = function (_MenuItem) {
     inherits(Redo, _MenuItem);
 
     function Redo() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Redo);
-
-        var _this = possibleConstructorReturn(this, (Redo.__proto__ || Object.getPrototypeOf(Redo)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Redo';
-        _this.icon = 'redo';
-        return _this;
+        return possibleConstructorReturn(this, (Redo.__proto__ || Object.getPrototypeOf(Redo)).apply(this, arguments));
     }
 
     createClass(Redo, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'redo';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Redo';
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             this.dispatch(HISTORY_REDO);
@@ -26983,19 +26999,21 @@ var Undo = function (_MenuItem) {
     inherits(Undo, _MenuItem);
 
     function Undo() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Undo);
-
-        var _this = possibleConstructorReturn(this, (Undo.__proto__ || Object.getPrototypeOf(Undo)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Undo';
-        _this.icon = 'undo';
-        return _this;
+        return possibleConstructorReturn(this, (Undo.__proto__ || Object.getPrototypeOf(Undo)).apply(this, arguments));
     }
 
     createClass(Undo, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'undo';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Undo';
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             this.dispatch(HISTORY_UNDO);
@@ -27008,19 +27026,21 @@ var Save = function (_MenuItem) {
     inherits(Save, _MenuItem);
 
     function Save() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Save);
-
-        var _this = possibleConstructorReturn(this, (Save.__proto__ || Object.getPrototypeOf(Save)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Save';
-        _this.icon = 'save';
-        return _this;
+        return possibleConstructorReturn(this, (Save.__proto__ || Object.getPrototypeOf(Save)).apply(this, arguments));
     }
 
     createClass(Save, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'save';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Save';
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             this.run(STORAGE_SAVE);
@@ -27033,20 +27053,26 @@ var ShowGrid = function (_MenuItem) {
     inherits(ShowGrid, _MenuItem);
 
     function ShowGrid() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, ShowGrid);
-
-        var _this = possibleConstructorReturn(this, (ShowGrid.__proto__ || Object.getPrototypeOf(ShowGrid)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Show Grid';
-        _this.icon = 'show-grid';
-        _this.checked = _this.config('show.grid');
-        return _this;
+        return possibleConstructorReturn(this, (ShowGrid.__proto__ || Object.getPrototypeOf(ShowGrid)).apply(this, arguments));
     }
 
     createClass(ShowGrid, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'show-grid';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Show Grid';
+        }
+    }, {
+        key: "getChecked",
+        value: function getChecked() {
+            return this.config('show.grid');
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             var _this2 = this;
@@ -27077,19 +27103,21 @@ var Github = function (_MenuItem) {
     inherits(Github, _MenuItem);
 
     function Github() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Github);
-
-        var _this = possibleConstructorReturn(this, (Github.__proto__ || Object.getPrototypeOf(Github)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Github';
-        _this.icon = 'github';
-        return _this;
+        return possibleConstructorReturn(this, (Github.__proto__ || Object.getPrototypeOf(Github)).apply(this, arguments));
     }
 
     createClass(Github, [{
+        key: 'getIcon',
+        value: function getIcon() {
+            return 'github';
+        }
+    }, {
+        key: 'getTitle',
+        value: function getTitle() {
+            return 'Github';
+        }
+    }, {
         key: 'clickButton',
         value: function clickButton(e) {
             window.open('https://github.com/easylogic/css', 'github-window');
@@ -27159,19 +27187,21 @@ var Rect = function (_MenuItem) {
     inherits(Rect, _MenuItem);
 
     function Rect() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Rect);
-
-        var _this = possibleConstructorReturn(this, (Rect.__proto__ || Object.getPrototypeOf(Rect)).call(this, opt, props, parent));
-
-        _this.title = props.title || '+ Rect';
-        _this.icon = 'rect';
-        return _this;
+        return possibleConstructorReturn(this, (Rect.__proto__ || Object.getPrototypeOf(Rect)).apply(this, arguments));
     }
 
     createClass(Rect, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'rect';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Rect';
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             var _this2 = this;
@@ -27189,19 +27219,21 @@ var Circle = function (_MenuItem) {
     inherits(Circle, _MenuItem);
 
     function Circle() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, Circle);
-
-        var _this = possibleConstructorReturn(this, (Circle.__proto__ || Object.getPrototypeOf(Circle)).call(this, opt, props, parent));
-
-        _this.title = props.title || '+ Circle';
-        _this.icon = 'circle';
-        return _this;
+        return possibleConstructorReturn(this, (Circle.__proto__ || Object.getPrototypeOf(Circle)).apply(this, arguments));
     }
 
     createClass(Circle, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'circle';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Circle';
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             var _this2 = this;
@@ -27219,19 +27251,21 @@ var ShowClipPath = function (_MenuItem) {
     inherits(ShowClipPath, _MenuItem);
 
     function ShowClipPath() {
-        var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
         classCallCheck(this, ShowClipPath);
-
-        var _this = possibleConstructorReturn(this, (ShowClipPath.__proto__ || Object.getPrototypeOf(ShowClipPath)).call(this, opt, props, parent));
-
-        _this.title = props.title || 'Show ClipPath';
-        _this.icon = 'show-clip-path';
-        return _this;
+        return possibleConstructorReturn(this, (ShowClipPath.__proto__ || Object.getPrototypeOf(ShowClipPath)).apply(this, arguments));
     }
 
     createClass(ShowClipPath, [{
+        key: "getIcon",
+        value: function getIcon() {
+            return 'show-clip-path';
+        }
+    }, {
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Show ClipPath';
+        }
+    }, {
         key: "clickButton",
         value: function clickButton(e) {
             var _this2 = this;

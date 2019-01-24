@@ -6,13 +6,9 @@ import { EMPTY_STRING } from "../../../../util/css/types";
 
 
 export default class ShowGrid extends MenuItem {
-    constructor(opt = {}, props = {}, parent = null) {
-        super(opt, props, parent);
-
-        this.title = props.title || 'Show Grid';
-        this.icon = 'show-grid';
-        this.checked = this.config('show.grid');
-    }
+    getIcon() { return 'show-grid'; }
+    getTitle () { return 'Show Grid'; }
+    getChecked () { return this.config('show.grid'); }
 
     clickButton (e) {
         this.read(SELECTION_CURRENT_PAGE, (item) => {

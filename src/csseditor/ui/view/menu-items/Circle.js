@@ -5,12 +5,9 @@ import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
 import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 
 export default class Circle extends MenuItem {
-    constructor(opt = {}, props = {}, parent = null) {
-        super(opt, props, parent);
 
-        this.title = props.title || '+ Circle';
-        this.icon = 'circle';
-    }
+    getIcon() { return 'circle'; }
+    getTitle () { return 'Circle'; }
 
     clickButton (e) {
         this.read(SELECTION_CURRENT_PAGE_ID, (id) => {

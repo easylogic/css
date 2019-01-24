@@ -122,7 +122,7 @@ export default class GradientView extends UIElement {
     }
 
     refresh (isDrag) {
-        this.hasScroll = false; 
+        //this.hasScroll = false; 
         this.setBackgroundColor();
         this.load();
 
@@ -186,7 +186,7 @@ export default class GradientView extends UIElement {
 
         var colorviewCSS = this.read(PAGE_COLORVIEW_TO_CSS, page || {clip: false});
         this.refs.$canvas.css(canvasCSS)
-        this.refs.$page.attr('title', page.name || 'page');
+        this.refs.$page.attr('title', page.name || 'Untitled page');
         this.refs.$page.css(pageCSS)
         this.refs.$colorview.css(colorviewCSS);
 

@@ -202,7 +202,7 @@ export default class GradientSteps extends UIElement {
             if (item) {
 
                 // item.px = px; 
-                var percent = Math.floor(px2percent(px, max - min));
+                var percent = px2percent(px, max - min);
                 var em = px2em(px, max- min);
                 var newValue = {id: item.id, px, percent, em}
 
@@ -211,7 +211,7 @@ export default class GradientSteps extends UIElement {
                 this.currentUnitEm.val(em);
 
                 this.run(ITEM_SET, newValue);
-                this.run('colorstep/sort', newValue.id, this.getSortedStepList());
+                this.run(COLORSTEP_SORT, newValue.id, this.getSortedStepList());
                 this.commit(CHANGE_COLOR_STEP, newValue);
                 this.setBackgroundColor();
             }
@@ -320,7 +320,7 @@ export default class GradientSteps extends UIElement {
         }
 
         this.currentStepBox.addClass('selected')
-        this.run (ITEM_SET, item); 
+        this.run(ITEM_SET, item); 
         this.dispatch(COLORSTEP_SORT, item.id, this.getSortedStepList());
         this.setBackgroundColor();
     }

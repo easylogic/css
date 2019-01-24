@@ -3,7 +3,7 @@ import Matrix from '../Matrix'
 import ImageFilter from './index' 
 import Color from '../Color'
 import { round } from '../functions/math';
-import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, UNIT_PX, isPX } from '../css/types';
+import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING } from '../css/types';
 import { isFunction, isString, isNumber, isArray } from '../functions/func';
 
 let makeId = 0 
@@ -49,6 +49,8 @@ const functions = {
 const LocalFilter = functions
 
 export default functions
+
+const ROUND_MAX = 1000; 
 
 export function weight(arr, num = 1) {
     return arr.map(i => {
@@ -341,15 +343,15 @@ export function unit2em(unitValue, maxValue) {
 }
 
 export function px2percent (px, maxValue) {
-    return round((px / maxValue) * 100, 100); 
+    return round((px / maxValue) * 100, ROUND_MAX); 
 }
 
 export function px2em (px, maxValue, fontSize = 16) {
-    return round((px / fontSize), 100);
+    return round((px / fontSize), ROUND_MAX);
 }
 
 export function em2px (em, maxValue, fontSize = 16) {
-    return Math.floor(round(em * fontSize, 100)); 
+    return round(em * fontSize, ROUND_MAX); 
 }
 
 export function em2percent (em, maxValue) {
@@ -357,7 +359,7 @@ export function em2percent (em, maxValue) {
 }
 
 export function percent2px (percent, maxValue) {
-    return Math.floor(round(maxValue * (percent/ 100), 100));
+    return round(maxValue * (percent/ 100), ROUND_MAX);
 }
 
 export function percent2em (percent, maxValue) {

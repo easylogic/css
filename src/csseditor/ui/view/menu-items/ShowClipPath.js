@@ -6,12 +6,9 @@ import { EMPTY_STRING } from "../../../../util/css/types";
 
 
 export default class ShowClipPath extends MenuItem {
-    constructor(opt = {}, props = {}, parent = null) {
-        super(opt, props, parent);
 
-        this.title = props.title || 'Show ClipPath';
-        this.icon = 'show-clip-path';
-    }
+    getIcon() { return 'show-clip-path'; }
+    getTitle () { return 'Show ClipPath'; }
 
     clickButton (e) {
         this.read(SELECTION_CURRENT_LAYER, (item) => {
