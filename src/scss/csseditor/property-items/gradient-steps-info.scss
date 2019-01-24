@@ -72,7 +72,7 @@
                     margin-right: 2px;
                     box-sizing: border-box;
                     position: relative;
-                    @include transparent-background();
+                    @include transparent-background(5px);
                     border: 1px solid #ececec;
                     vertical-align: middle;
                     border-radius: 3px;

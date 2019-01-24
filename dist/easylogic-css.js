@@ -17168,11 +17168,11 @@ var GradientSteps = function (_UIElement) {
         value: function value$$1(e) {
             this.removeStep(e);
         }
-
-        // [CLICK('$steps .step')] (e) {
-        //     this.selectStep(e)
-        // }
-
+    }, {
+        key: CLICK('$steps .step'),
+        value: function value$$1(e) {
+            this.selectStep(e);
+        }
     }, {
         key: CLICK('$steps .guide-change'),
         value: function value$$1(e) {
