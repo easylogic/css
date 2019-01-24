@@ -1,14 +1,24 @@
-import Event, { CHECK_PATTERN, NAME_SAPARATOR, CHECK_SAPARATOR, SAPARATOR, CHECK_LOAD_PATTERN, LOAD_SAPARATOR } from './Event'
+import Event, { 
+  CHECK_PATTERN, 
+  NAME_SAPARATOR, 
+  CHECK_SAPARATOR, 
+  SAPARATOR, 
+  CHECK_LOAD_PATTERN, 
+  LOAD_SAPARATOR, 
+  KEY_CONTROL, 
+  KEY_SHIFT, 
+  KEY_ALT, 
+  KEY_META 
+} from './Event'
 import Dom from './Dom'
 import State from './State'
 import { debounce, isFunction } from './functions/func';
-import { CONTROL, ALT, SHIFT, META } from './Key';
 import { EMPTY_STRING } from './css/types';
-
 
 const checkGroup = /\>(\W*)\</g
 
-const META_KEYS = [ CONTROL, SHIFT, ALT, META];
+const META_KEYS = [ KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
+const REFERENCE_PROPERTY = 'ref';
 
 export default class EventMachin { 
 
@@ -52,13 +62,13 @@ export default class EventMachin {
 
     list.forEach($el => {
       // ref element 정리 
-      if ($el.attr('ref')) {
-        this.refs[$el.attr('ref')] = $el; 
+      if ($el.attr(REFERENCE_PROPERTY)) {
+        this.refs[$el.attr(REFERENCE_PROPERTY)] = $el; 
       }
-      var refs = $el.$$('[ref]');
+      var refs = $el.$$(`[${REFERENCE_PROPERTY}]`);
 
       [...refs].forEach($dom => {
-        const name = $dom.attr('ref')
+        const name = $dom.attr(REFERENCE_PROPERTY)
         this.refs[name] = $dom;
       })
 
@@ -83,12 +93,12 @@ export default class EventMachin {
         let props = {};
         
         [...$dom.el.attributes].filter(t => {
-          return ['ref'].indexOf(t.nodeName) < 0 
+          return [REFERENCE_PROPERTY].indexOf(t.nodeName) < 0 
         }).forEach(t => {
           props[t.nodeName] = t.nodeValue 
         })
   
-        const refName = $dom.attr('ref') || ComponentName
+        const refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName
   
         if (refName) {
         
@@ -116,7 +126,7 @@ export default class EventMachin {
     this.filterProps(CHECK_LOAD_PATTERN).forEach(callbackName => {
       const elName = callbackName.split(LOAD_SAPARATOR)[1]
       if (this.refs[elName]) { 
-        var fragment = this.parseTemplate(this[callbackName].call(this), true);
+        const fragment = this.parseTemplate(this[callbackName].call(this), true);
         this.refs[elName].html(fragment)
       }
     })
@@ -223,7 +233,6 @@ export default class EventMachin {
     
     eventNames.forEach(eventName => {
       var eventInfo = [eventName, ...params]
-      // console.log(eventInfo)
       this.bindingEvent(eventInfo, checkMethodFilters, callback);
     })
   }
@@ -252,10 +261,10 @@ export default class EventMachin {
 
 
   getDefaultEventObject (eventName, checkMethodFilters) {
-    const isControl = checkMethodFilters.includes(CONTROL);
-    const isShift =  checkMethodFilters.includes(SHIFT);
-    const isAlt = checkMethodFilters.includes(ALT);
-    const isMeta =  checkMethodFilters.includes(META);
+    const isControl = checkMethodFilters.includes(KEY_CONTROL);
+    const isShift =  checkMethodFilters.includes(KEY_SHIFT);
+    const isAlt = checkMethodFilters.includes(KEY_ALT);
+    const isMeta =  checkMethodFilters.includes(KEY_META);
 
     var arr = checkMethodFilters.filter((code) => {
       return META_KEYS.includes(code.toUpperCase()) === false;

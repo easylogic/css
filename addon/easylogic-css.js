@@ -6977,15 +6977,25 @@ var CHECKER = function CHECKER(value) {
     return new EventChecker(value, split);
 };
 
-var ALT = CHECKER('ALT');
-var SHIFT = CHECKER('SHIFT');
-var META = CHECKER('META');
-var CONTROL = CHECKER('CONTROL');
+var KEY_ALT = 'ALT';
+var KEY_SHIFT = 'SHIFT';
+var KEY_META = 'META';
+var KEY_CONTROL = 'CONTROL';
 
-var ARROW_UP = CHECKER('ArrowUp');
-var ARROW_DOWN = CHECKER('ArrowDown');
-var ARROW_LEFT = CHECKER('ArrowLeft');
-var ARROW_RIGHT = CHECKER('ArrowRight');
+var KEY_ARROW_UP = 'ArrowUp';
+var KEY_ARROW_DOWN = 'ArrowDown';
+var KEY_ARROW_LEFT = 'ArrowLeft';
+var KEY_ARROW_RIGHT = 'ArrowRight';
+
+var ALT = CHECKER(KEY_ALT);
+var SHIFT = CHECKER(KEY_SHIFT);
+var META = CHECKER(KEY_META);
+var CONTROL = CHECKER(KEY_CONTROL);
+
+var ARROW_UP = CHECKER(KEY_ARROW_UP);
+var ARROW_DOWN = CHECKER(KEY_ARROW_DOWN);
+var ARROW_LEFT = CHECKER(KEY_ARROW_LEFT);
+var ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT);
 
 var SELF = CHECKER('self');
 var CAPTURE = CHECKER('capture');
@@ -7103,17 +7113,8 @@ var State = function () {
   return State;
 }();
 
-var ALT$1 = 'ALT';
-var SHIFT$1 = 'SHIFT';
-var META$1 = 'META';
-var CONTROL$1 = 'CONTROL';
-
-var ARROW_UP$1 = 'ArrowUp';
-var ARROW_DOWN$1 = 'ArrowDown';
-var ARROW_LEFT$1 = 'ArrowLeft';
-var ARROW_RIGHT$1 = 'ArrowRight';
-
-var META_KEYS = [CONTROL$1, SHIFT$1, ALT$1, META$1];
+var META_KEYS = [KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
+var REFERENCE_PROPERTY = 'ref';
 
 var EventMachin = function () {
   function EventMachin() {
@@ -7162,13 +7163,13 @@ var EventMachin = function () {
 
       list.forEach(function ($el) {
         // ref element 정리 
-        if ($el.attr('ref')) {
-          _this.refs[$el.attr('ref')] = $el;
+        if ($el.attr(REFERENCE_PROPERTY)) {
+          _this.refs[$el.attr(REFERENCE_PROPERTY)] = $el;
         }
-        var refs = $el.$$('[ref]');
+        var refs = $el.$$('[' + REFERENCE_PROPERTY + ']');
 
         [].concat(toConsumableArray(refs)).forEach(function ($dom) {
-          var name = $dom.attr('ref');
+          var name = $dom.attr(REFERENCE_PROPERTY);
           _this.refs[name] = $dom;
         });
 
@@ -7195,12 +7196,12 @@ var EventMachin = function () {
           var props = {};
 
           [].concat(toConsumableArray($dom.el.attributes)).filter(function (t) {
-            return ['ref'].indexOf(t.nodeName) < 0;
+            return [REFERENCE_PROPERTY].indexOf(t.nodeName) < 0;
           }).forEach(function (t) {
             props[t.nodeName] = t.nodeValue;
           });
 
-          var refName = $dom.attr('ref') || ComponentName;
+          var refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName;
 
           if (refName) {
 
@@ -7362,7 +7363,6 @@ var EventMachin = function () {
 
       eventNames.forEach(function (eventName) {
         var eventInfo = [eventName].concat(toConsumableArray(params));
-        // console.log(eventInfo)
         _this5.bindingEvent(eventInfo, checkMethodFilters, callback);
       });
     }
@@ -7397,10 +7397,10 @@ var EventMachin = function () {
     value: function getDefaultEventObject(eventName, checkMethodFilters) {
       var _this6 = this;
 
-      var isControl = checkMethodFilters.includes(CONTROL$1);
-      var isShift = checkMethodFilters.includes(SHIFT$1);
-      var isAlt = checkMethodFilters.includes(ALT$1);
-      var isMeta = checkMethodFilters.includes(META$1);
+      var isControl = checkMethodFilters.includes(KEY_CONTROL);
+      var isShift = checkMethodFilters.includes(KEY_SHIFT);
+      var isAlt = checkMethodFilters.includes(KEY_ALT);
+      var isMeta = checkMethodFilters.includes(KEY_META);
 
       var arr = checkMethodFilters.filter(function (code) {
         return META_KEYS.includes(code.toUpperCase()) === false;
@@ -12016,6 +12016,8 @@ var ITEM_MOVE_PREV = 'item/move/prev';
 var ITEM_ADD_INDEX = 'item/add/index';
 var ITEM_NEXT_INDEX = 'item/next/index';
 var ITEM_PREV_INDEX = 'item/prev/index';
+var ITEM_MOVE_X = 'item/move/x';
+var ITEM_MOVE_Y = 'item/move/y';
 
 var ITEM_RECOVER = 'item/recover';
 var ITEM_RECOVER_IMAGE = 'item/recover/image';
@@ -15374,7 +15376,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_TO),
-        value: function value($store, sourceId, newItemId) {
+        value: function value$$1($store, sourceId, newItemId) {
 
             var currentItem = $store.read(ITEM_GET, sourceId);
 
@@ -15386,7 +15388,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_NEXT),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var item = $store.read(ITEM_GET, id);
             item.index = $store.read(ITEM_NEXT_INDEX, id);
 
@@ -15395,7 +15397,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_LAST),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var item = $store.read(ITEM_GET, id);
             item.index = Number.MAX_SAFE_INTEGER;
 
@@ -15404,7 +15406,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_FIRST),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var item = $store.read(ITEM_GET, id);
             item.index = -1 * COPY_INDEX_DIST;
 
@@ -15413,7 +15415,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_IN),
-        value: function value($store, destId, sourceId) {
+        value: function value$$1($store, destId, sourceId) {
             var destItem = $store.read(ITEM_GET, destId);
             var sourceItem = $store.read(ITEM_GET, sourceId);
             sourceItem.parentId = destItem.parentId;
@@ -15424,7 +15426,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_IN_LAYER),
-        value: function value($store, destId, sourceId) {
+        value: function value$$1($store, destId, sourceId) {
             var destItem = $store.read(ITEM_GET, destId); /* layer */
             var sourceItem = $store.read(ITEM_GET, sourceId);
 
@@ -15436,7 +15438,7 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(ITEM_MOVE_PREV),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var item = $store.read(ITEM_GET, id);
             item.index = $store.read(ITEM_PREV_INDEX, id);
 
@@ -15445,20 +15447,38 @@ var ItemMoveManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(ITEM_ADD_INDEX),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST$1;
 
             return $store.items[id].index + dist;
         }
     }, {
         key: GETTER(ITEM_NEXT_INDEX),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             return $store.read(ITEM_ADD_INDEX, id, INDEX_DIST$1 + COPY_INDEX_DIST);
         }
     }, {
         key: GETTER(ITEM_PREV_INDEX),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             return $store.read(ITEM_ADD_INDEX, id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_Y),
+        value: function value$$1($store, distY) {
+            $store.read(SELECTION_CURRENT).forEach(function (it) {
+                it.y = pxUnit(unitValue(it.y) + distY);
+
+                $store.run(ITEM_SET, it);
+            });
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_X),
+        value: function value$$1($store, distX) {
+            $store.read(SELECTION_CURRENT).forEach(function (it) {
+                it.x = pxUnit(unitValue(it.x) + distX);
+
+                $store.run(ITEM_SET, it);
+            });
         }
     }]);
     return ItemMoveManager;
@@ -16225,7 +16245,169 @@ var ShapeManager = function (_BaseModule) {
     return ShapeManager;
 }(BaseModule);
 
-var ModuleList = [ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var HOTKEY_EXISTS = 'hotkey/exists';
+var HOTKEY_RUN = 'hotkey/run';
+
+var HOTKEY_EXECUTE = 'hotkey/execute';
+var HOTKEY_EXCLUDE = 'hotkey/exclude';
+
+var KEY_SPLIT = '+';
+
+var hotKeys = [{ key: 'alt+ArrowUp', command: 'item/move/y', args: [-5] }, { key: 'ArrowUp', command: 'item/move/y', args: [-1] }, { key: 'alt+ArrowDown', command: 'item/move/y', args: [5] }, { key: 'ArrowDown', command: 'item/move/y', args: [1] }, { key: 'alt+ArrowRight', command: 'item/move/x', args: [5] }, { key: 'ArrowRight', command: 'item/move/x', args: [1] }, { key: 'alt+ArrowLeft', command: 'item/move/x', args: [-5] }, { key: 'ArrowLeft', command: 'item/move/x', args: [-1] }, { key: 'shift+a', command: function command($store) {
+        // console.log($store, args); 
+    }, args: [1, 2, 3] }];
+
+var getKeyType = function getKeyType(it) {
+    if (it.toLowerCase() === 'ctrl') return 'ctrl';
+    if (it.toLowerCase() === 'alt') return 'alt';
+    if (it.toLowerCase() === 'shift') return 'shift';
+    if (it.toLowerCase() === 'meta') return 'meta';
+
+    return it;
+};
+
+hotKeys = hotKeys.map(function (it) {
+    var obj = {};
+
+    it.key.split(KEY_SPLIT).forEach(function (key) {
+        var type = getKeyType(key);
+        switch (type) {
+            case 'ctrl':
+            case 'alt':
+            case 'shift':
+            case 'meta':
+                obj[type] = true;
+                break;
+            default:
+                obj[''] = type;
+        }
+    });
+
+    var arr = [];
+
+    if (obj['ctrl']) {
+        arr.push('ctrl');
+    }
+    if (obj['alt']) {
+        arr.push('alt');
+    }
+    if (obj['shift']) {
+        arr.push('shift');
+    }
+    if (obj['meta']) {
+        arr.push('meta');
+    }
+    if (obj['']) {
+        arr.push(obj['']);
+    }
+
+    it.key = arr.join(KEY_SPLIT);
+
+    return it;
+});
+
+var HotkeyManager = function (_BaseModule) {
+    inherits(HotkeyManager, _BaseModule);
+
+    function HotkeyManager() {
+        classCallCheck(this, HotkeyManager);
+        return possibleConstructorReturn(this, (HotkeyManager.__proto__ || Object.getPrototypeOf(HotkeyManager)).apply(this, arguments));
+    }
+
+    createClass(HotkeyManager, [{
+        key: "makeKeydownString",
+        value: function makeKeydownString(e) {
+            var keyStrings = [];
+
+            var arr = [];
+
+            if (e.ctrlKey) {
+                arr.push('ctrl');
+            }
+            if (e.altKey) {
+                arr.push('alt');
+            }
+            if (e.shiftKey) {
+                arr.push('shift');
+            }
+            if (e.metaKey) {
+                arr.push('meta');
+            }
+            arr.push(e.keyCode); // key code number check 
+
+            keyStrings.push(arr.join(KEY_SPLIT));
+
+            arr[arr.length - 1] = e.key; // key string check 
+
+            keyStrings.push(arr.join(KEY_SPLIT));
+
+            return keyStrings;
+        }
+    }, {
+        key: "checkKey",
+        value: function checkKey(key, e) {
+            return this.makeKeydownString(e).includes(key);
+        }
+    }, {
+        key: GETTER(HOTKEY_EXISTS),
+        value: function value($store, e) {
+            var _this2 = this;
+
+            return hotKeys.filter(function (command) {
+                return _this2.checkKey(command.key, e);
+            });
+        }
+    }, {
+        key: ACTION(HOTKEY_RUN),
+        value: function value($store, hotkey) {
+
+            if (hotkey) {
+                if (isFunction(hotkey.command)) {
+                    var _hotkey$command;
+
+                    (_hotkey$command = hotkey.command).call.apply(_hotkey$command, [null, $store].concat(toConsumableArray(hotkey.args)));
+                } else {
+                    $store.dispatch.apply($store, [hotkey.command].concat(toConsumableArray(hotkey.args)));
+                }
+            }
+        }
+    }, {
+        key: GETTER(HOTKEY_EXCLUDE),
+        value: function value($store, e) {
+
+            switch (e.target.nodeName) {
+                case 'INPUT':
+                case 'SELECT':
+                case 'TEXTAREA':
+                    return true;
+                default:
+                    break;
+            }
+
+            return false;
+        }
+    }, {
+        key: ACTION(HOTKEY_EXECUTE),
+        value: function value($store, e) {
+
+            if ($store.read(HOTKEY_EXCLUDE, e)) {
+                return;
+            }
+
+            var keys = $store.read(HOTKEY_EXISTS, e);
+
+            if (keys.length) {
+                e.preventDefault();
+                keys.forEach(function (it) {
+                    $store.run(HOTKEY_RUN, it);
+                });
+            }
+        }
+    }]);
+    return HotkeyManager;
+}(BaseModule);
+
+var ModuleList = [HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var BaseCSSEditor = function (_UIElement) {
     inherits(BaseCSSEditor, _UIElement);
@@ -26581,34 +26763,6 @@ var HandleView = function (_GradientView) {
             }
         }
     }, {
-        key: KEYDOWN('$colorview .layer') + ARROW_DOWN$1,
-        value: function value(e) {
-            e.preventDefault();
-            var y = e.altKey ? 1 : 5;
-            this.refreshPosition({ y: y });
-        }
-    }, {
-        key: KEYDOWN('$colorview .layer') + ARROW_UP$1,
-        value: function value(e) {
-            e.preventDefault();
-            var y = e.altKey ? -1 : -5;
-            this.refreshPosition({ y: y });
-        }
-    }, {
-        key: KEYDOWN('$colorview .layer') + ARROW_LEFT$1,
-        value: function value(e) {
-            e.preventDefault();
-            var x = e.altKey ? -1 : -5;
-            this.refreshPosition({ x: x });
-        }
-    }, {
-        key: KEYDOWN('$colorview .layer') + ARROW_RIGHT$1,
-        value: function value(e) {
-            e.preventDefault();
-            var x = e.altKey ? 1 : 5;
-            this.refreshPosition({ x: x });
-        }
-    }, {
         key: 'refreshPosition',
         value: function refreshPosition(obj) {
             var _this2 = this;
@@ -28007,6 +28161,23 @@ var Alignment = function (_UIElement) {
     return Alignment;
 }(UIElement);
 
+var HotKey = function (_UIElement) {
+    inherits(HotKey, _UIElement);
+
+    function HotKey() {
+        classCallCheck(this, HotKey);
+        return possibleConstructorReturn(this, (HotKey.__proto__ || Object.getPrototypeOf(HotKey)).apply(this, arguments));
+    }
+
+    createClass(HotKey, [{
+        key: KEYDOWN('document'),
+        value: function value(e) {
+            this.dispatch(HOTKEY_EXECUTE, e);
+        }
+    }]);
+    return HotKey;
+}(UIElement);
+
 var CSSEditor$1 = function (_BaseCSSEditor) {
     inherits(CSSEditor, _BaseCSSEditor);
 
@@ -28027,12 +28198,13 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                \n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>                \n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <Alignment></Alignment>\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportWindow></ExportWindow>\n                <DropView></DropView>\n            </div>\n        ';
+            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                \n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>                \n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <Alignment></Alignment>\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportWindow></ExportWindow>\n                <DropView></DropView>\n                <HotKey></HotKey>\n            </div>\n        ';
         }
     }, {
         key: 'components',
         value: function components() {
             return {
+                HotKey: HotKey,
                 Alignment: Alignment,
                 SelectLayerView: SelectLayerView,
                 ToolMenu: ToolMenu,

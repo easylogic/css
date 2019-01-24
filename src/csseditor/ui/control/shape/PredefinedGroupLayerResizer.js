@@ -349,7 +349,6 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
 
     /* drag  */
-
     isNotDownCheck () {
         return !this.xy;
     }

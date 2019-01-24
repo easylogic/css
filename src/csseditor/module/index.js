@@ -29,8 +29,10 @@ import ItemSearchManager from "./ItemSearchManager";
 import ExportManager from "./ExportManager";
 import PatternManager from "./PatternManager";
 import ShapeManager from "./ShapeManager";
+import HotkeyManager from "./HotkeyManager";
 
 export default [  
+    HotkeyManager,
     ShapeManager,
     PatternManager,
     ExportManager,

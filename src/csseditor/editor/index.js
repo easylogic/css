@@ -18,6 +18,7 @@ import Alignment from '../ui/control/Alignment';
 import { ITEM_ADD_PAGE } from '../types/ItemCreateTypes';
 import { ITEM_LOAD } from '../types/ItemTypes';
 import { STORAGE_LOAD } from '../types/StorageTypes';
+import HotKey from '../ui/control/HotKey';
 
 export default class CSSEditor extends BaseCSSEditor {
 
@@ -56,12 +57,14 @@ export default class CSSEditor extends BaseCSSEditor {
                 </div>
                 <ExportWindow></ExportWindow>
                 <DropView></DropView>
+                <HotKey></HotKey>
             </div>
         `
     }
 
     components() {      
         return { 
+            HotKey,
             Alignment,
             SelectLayerView,
             ToolMenu,

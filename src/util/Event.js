@@ -77,15 +77,26 @@ export const CHECKER = (value, split = CHECK_SAPARATOR) => {
     return new EventChecker(value, split);
 }
 
-export const ALT = CHECKER('ALT')
-export const SHIFT = CHECKER('SHIFT')
-export const META = CHECKER('META')
-export const CONTROL = CHECKER('CONTROL')
+export const KEY_ALT = 'ALT'
+export const KEY_SHIFT = 'SHIFT'
+export const KEY_META = 'META'
+export const KEY_CONTROL = 'CONTROL'
 
-export const ARROW_UP = CHECKER('ArrowUp')
-export const ARROW_DOWN = CHECKER('ArrowDown')
-export const ARROW_LEFT = CHECKER('ArrowLeft')
-export const ARROW_RIGHT = CHECKER('ArrowRight')
+export const KEY_ARROW_UP = 'ArrowUp'
+export const KEY_ARROW_DOWN = 'ArrowDown'
+export const KEY_ARROW_LEFT = 'ArrowLeft'
+export const KEY_ARROW_RIGHT = 'ArrowRight'
+
+
+export const ALT = CHECKER(KEY_ALT)
+export const SHIFT = CHECKER(KEY_SHIFT)
+export const META = CHECKER(KEY_META)
+export const CONTROL = CHECKER(KEY_CONTROL)
+
+export const ARROW_UP = CHECKER(KEY_ARROW_UP)
+export const ARROW_DOWN = CHECKER(KEY_ARROW_DOWN)
+export const ARROW_LEFT = CHECKER(KEY_ARROW_LEFT)
+export const ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT)
 
 export const SELF = CHECKER('self');
 export const CAPTURE = CHECKER('capture');

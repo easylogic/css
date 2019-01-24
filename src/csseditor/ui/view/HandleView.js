@@ -1,8 +1,7 @@
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
 import { ITEM_TYPE_PAGE, ITEM_FOCUS } from '../../types/ItemTypes';
-import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, KEYDOWN, SELF, CHECKER } from '../../../util/Event';
-import { ARROW_DOWN, ARROW_UP, ARROW_LEFT, ARROW_RIGHT } from '../../../util/Key';
+import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CHECKER } from '../../../util/Event';
 import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER } from '../../types/SelectionTypes';
 
 export default class HandleView extends GradientView {
@@ -21,30 +20,6 @@ export default class HandleView extends GradientView {
     }
 
 
-    [KEYDOWN('$colorview .layer') + ARROW_DOWN] (e) {
-        e.preventDefault()
-        var y = e.altKey ? 1 : 5;
-        this.refreshPosition({y})
-    }    
-
-    [KEYDOWN('$colorview .layer') + ARROW_UP] (e) {
-        e.preventDefault()
-        var y = e.altKey ? -1 : -5;
-        this.refreshPosition({y})
-    }     
-    
-    [KEYDOWN('$colorview .layer') + ARROW_LEFT] (e) {
-        e.preventDefault()
-        var x = e.altKey ? -1 : -5;
-        this.refreshPosition({x})
-    }         
-
-    [KEYDOWN('$colorview .layer') + ARROW_RIGHT] (e) {
-        e.preventDefault()
-        var x = e.altKey ? 1 : 5;
-        this.refreshPosition({x})
-    }       
-    
     refreshPosition (obj) {
         this.read(SELECTION_CURRENT).forEach(item => {
             this.dispatch('matrix/move', Object.assign({id: item.id}, obj))
