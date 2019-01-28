@@ -30,7 +30,7 @@ export default class CSSEditor extends BaseCSSEditor {
 
     template () {
         return `
-            <div class="layout-main expertor-mode" ref="$layoutMain">
+            <div class="layout-main show-timeline" ref="$layoutMain">
                 <div class="layout-header">
                     <div class="page-tab-menu">
                         <ToolMenu></ToolMenu>
@@ -79,42 +79,6 @@ export default class CSSEditor extends BaseCSSEditor {
             Timeline
         }
     } 
-
-    [EVENT(CHANGE_EDITOR)] () {
-        /*
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            var self = this; 
-            var obj = layer.style
-            var aniObject = Animation.createTimeline([{
-                duration: 1000, 
-                obj,
-                timing: 'ease-out-sine',
-                iteration: 3, 
-                direction: 'alternate',
-                keyframes : {
-                    '0%': {
-                        'x': '0px',
-                        'background-color': 'rgba(255, 255, 255, 0.5)',
-                    },
-                    '100%': {
-                        'x': '250px',
-                        'background-color': 'rgba(255, 0, 255, 1)'
-                    }
-                } 
-
-            }], {
-                callback() {
-                    self.run('item/set', layer);
-                    self.emit('animationEditor')
-                }
-            });
-
-            aniObject.start();
-    
-        })
-        */
-
-    }
 
     loadStart (isAdd) {
         this.dispatch(STORAGE_LOAD, (isLoaded) => {

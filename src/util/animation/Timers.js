@@ -153,6 +153,7 @@ const Timers = {
             // 끝나지 않음 
             if (!unfinished.length) {
                 opt.callback && opt.callback();      
+                opt.done && opt.done();
                 end();
                 return false; 
             }   

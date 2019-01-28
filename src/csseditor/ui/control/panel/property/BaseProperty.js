@@ -9,10 +9,12 @@ export default class BaseProperty extends UIElement {
     template () {
         return `
         <div class='property ${this.getClassName()} show'>
+            ${this.isHideHeader() ? '' : `
             <div class='property-title' ref="$title">
                 ${this.getTitle()}
                 <span class="tools">${this.getTools()}</span>
             </div>
+            `}
             <div class='property-body'>
                 ${this.getBody()}
             </div>
@@ -20,6 +22,7 @@ export default class BaseProperty extends UIElement {
         `
     }
 
+    isHideHeader () { return false; }
     getClassName() {return ''}
     getTitle () { return '' }
     getTools () { return '' }

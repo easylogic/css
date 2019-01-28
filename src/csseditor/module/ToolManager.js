@@ -1,9 +1,9 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { isFunction, isUndefined } from "../../util/functions/func";
+import { isFunction, isUndefined, clone } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
-import { CLONE, TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE } from "../types/ToolTypes";
-import { CHANGE_TOOL } from "../types/event";
+import { CLONE, TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE, TOOL_SAVE_DATA, TOOL_RESTORE_DATA } from "../types/ToolTypes";
+import { CHANGE_TOOL, CHANGE_EDITOR } from "../types/event";
 
 export default class ToolManager extends BaseModule {
 
@@ -19,6 +19,8 @@ export default class ToolManager extends BaseModule {
             'guide.angle': true,
             'guide.position': true
         }
+
+        this.$store.toolStack = []
     } 
 
     [GETTER(CLONE)] ($store, object) {
@@ -59,6 +61,22 @@ export default class ToolManager extends BaseModule {
         }
 
         $store.emit(CHANGE_TOOL)
+    }
+
+    [ACTION(TOOL_SAVE_DATA)] ($store) {
+        $store.toolStack.push({
+            items: clone($store.items),
+            itemKeys: clone($store.itemKeys)
+        })
+    }
+
+    [ACTION(TOOL_RESTORE_DATA)] ($store) {
+        var obj = $store.toolStack.pop();
+
+        $store.items = obj.items; 
+        $store.itemKeys = obj.itemKeys;
+
+        $store.emit(CHANGE_EDITOR);
     }
 
 }

@@ -7,12 +7,39 @@ import {
     ITEM_TYPE_TEXTSHADOW,
     ITEM_TYPE_LAYER,
     ITEM_GET,
-    ITEM_TYPE_PAGE
+    ITEM_TYPE_PAGE,
+    ITEM_TYPE_TIMELINE,
+    ITEM_TYPE_KEYFRAME
 } from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
 import { isUndefined, clone } from "../../util/functions/func";
 import { EMPTY_STRING } from "../../util/css/types";
-import { ITEM_MAP_PAGE, ITEM_LIST_PAGE, ITEM_GET_ALL, ITEM_EACH_CHILDREN, ITEM_LIST, ITEM_FILTER, ITEM_LIST_CHILDREN, ITEM_COUNT_CHILDREN, ITEM_MAP_CHILDREN, ITEM_MAP_TYPE_CHILDREN, ITEM_MAP_LAYER_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN, ITEM_MAP_BOXSHADOW_CHILDREN, ITEM_MAP_TEXTSHADOW_CHILDREN, ITEM_FILTER_CHILDREN, ITEM_EACH_TYPE_CHILDREN, ITEM_TRAVERSE, ITEM_TREE, ITEM_TREE_NORMALIZE, ITEM_PATH, ITEM_DOM } from "../types/ItemSearchTypes";
+import { 
+    ITEM_MAP_PAGE, 
+    ITEM_LIST_PAGE, 
+    ITEM_GET_ALL, 
+    ITEM_EACH_CHILDREN, 
+    ITEM_LIST, 
+    ITEM_FILTER, 
+    ITEM_LIST_CHILDREN, 
+    ITEM_COUNT_CHILDREN, 
+    ITEM_MAP_CHILDREN, 
+    ITEM_MAP_TYPE_CHILDREN, 
+    ITEM_MAP_LAYER_CHILDREN, 
+    ITEM_MAP_IMAGE_CHILDREN, 
+    ITEM_MAP_COLORSTEP_CHILDREN, 
+    ITEM_MAP_BOXSHADOW_CHILDREN, 
+    ITEM_MAP_TEXTSHADOW_CHILDREN, 
+    ITEM_FILTER_CHILDREN, 
+    ITEM_EACH_TYPE_CHILDREN, 
+    ITEM_TRAVERSE, 
+    ITEM_TREE, 
+    ITEM_TREE_NORMALIZE, 
+    ITEM_PATH, 
+    ITEM_DOM, 
+    ITEM_MAP_TIMELINE_CHILDREN, 
+    ITEM_MAP_KEYFRAME_CHILDREN 
+} from "../types/ItemSearchTypes";
 export const DEFAULT_FUNCTION = (item) => item; 
 
 export default class ItemSearchManager extends BaseModule {
@@ -105,6 +132,18 @@ export default class ItemSearchManager extends BaseModule {
             return callback($store.items[id], index)
         });        
     }
+
+    [GETTER(ITEM_MAP_TIMELINE_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TIMELINE)).map(function (id, index) { 
+            return callback($store.items[id], index)
+        });        
+    }    
+
+    [GETTER(ITEM_MAP_KEYFRAME_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
+        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_KEYFRAME)).map(function (id, index) { 
+            return callback($store.items[id], index)
+        });        
+    }        
 
     [GETTER(ITEM_MAP_IMAGE_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
         return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) { 

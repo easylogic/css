@@ -62,17 +62,6 @@ const updateUnitField = {
     backgroundSizeWidth: true
 }
 
-const updateNumberUnitField = {
-    x: UNIT_PX,
-    y: UNIT_PX,
-    width: UNIT_PX,
-    height: UNIT_PX,
-    backgroundPositionX: UNIT_PX,
-    backgroundPositionY: UNIT_PX,
-    backgroundSizeHeight: UNIT_PX,
-    backgroundSizeWidth: UNIT_PX,
-}
-
 const convertStyle = (item) => {
     var style = item.style || {};
 

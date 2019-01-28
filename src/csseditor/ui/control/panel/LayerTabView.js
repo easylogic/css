@@ -16,7 +16,7 @@ export default class LayerTabView extends BaseTab {
                 <div class="tab-item selected" data-id="property">Property</div>
                 <div class="tab-item" data-id="fill">Fill</div>       
                 <div class="tab-item" data-id="text">Text</div>
-                <div class="tab-item" data-id="shape">Shape</div>
+                <div class="tab-item small-font" data-id="clip-path">Clip Path</div>
                 <div class="tab-item small-font" data-id="transform">Transform</div>
                 <div class="tab-item" data-id="transform3d">3D</div>
                 <div class="tab-item" data-id="css">CSS</div>
@@ -56,10 +56,11 @@ export default class LayerTabView extends BaseTab {
                         <EmptyArea height="100px"></EmptyArea>      
                     </div>
                 </div>                
-                <div class="tab-content" data-id="shape">
+                <div class="tab-content" data-id="clip-path">
                     <ClipPathProperty></ClipPathProperty>
                 </div>
                 <div class="tab-content" data-id="transform">
+                    <!-- <Transform2DControlProperty></Transform2DControlProperty> -->
                     <Transform2DProperty></Transform2DProperty>
                 </div>
                 <div class="tab-content" data-id="transform3d">

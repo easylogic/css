@@ -114,6 +114,7 @@ export default class LayerListView extends UIElement {
     [DRAGSTART('$layerList .tree-item')] (e) {
         this.draggedLayer = e.$delegateTarget;
         this.draggedLayer.css('opacity', 0.5);
+        e.dataTransfer.setData('text', e.$delegateTarget.attr('id'))
         // e.preventDefault();
     }
 

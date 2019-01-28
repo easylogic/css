@@ -189,6 +189,18 @@ export default class Dom {
     
         return this;
     }
+
+    appendHTML (html) {
+        const list = new Dom("div").html(html).children()
+    
+        var fragment = document.createDocumentFragment()
+
+        list.forEach($el => {
+            fragment.appendChild($el.el);
+        })
+
+        this.append(fragment);
+    }
     
     appendTo (target) {
         var t = target.el ? target.el : target;
@@ -393,6 +405,16 @@ export default class Dom {
         }
     }
 
+    setScrollTop (scrollTop) {
+        this.el.scrollTop = scrollTop;
+        return this;
+    }
+
+    setScrollLeft (scrollLeft) {
+        this.el.scrollLeft = scrollLeft;
+        return this; 
+    }
+
     scrollTop () {
         if (this.el === document.body) {
             return Dom.getScrollTop()
@@ -407,6 +429,10 @@ export default class Dom {
         }
 
         return this.el.scrollLeft
+    }
+
+    scrollHeight () {
+        return this.el.scrollHeight; 
     }
 
     on (eventName, callback, opt1, opt2) {

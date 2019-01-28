@@ -1,6 +1,6 @@
 import { interpolateRGBObject } from "../functions/mixin";
 import { rgb } from "../functions/formatter";
-import { UNIT_PERCENT, UNIT_PX, UNIT_EM } from "../css/types";
+import { UNIT_PERCENT, UNIT_PX, UNIT_EM, string2unit } from "../css/types";
 
 const ScaleFunctions = {
     'color': 'makeScaleFunctionForColor',
@@ -63,16 +63,27 @@ const Scale = {
         var scale = this.makeScaleFunction(start, end, isLast);
 
         if (start.itemType == 'color') {
-            return function (ani, progress) {
-                if (check(progress)) {
-                    ani.obj[start.key] = rgb(scale(ani.timing(progress, ani.duration, start, end)));
-                }
-            }
+            return this.makeSetupColorScaleFunction(check, scale, start, end);
         } else {
-            return function (ani, progress) {
-                if (check(progress)) {   
-                    ani.obj[start.key] = scale(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
-                }
+            return this.makeSetupNumberScaleFunction(check, scale, start, end);
+        }
+    },
+
+    makeSetupColorScaleFunction (check, scale, start, end) {
+        return function (ani, progress) {
+            if (check(progress)) {
+                ani.obj[start.key] = rgb(scale(ani.timing(progress, ani.duration, start, end)));
+            }
+        }
+    },
+
+    makeSetupNumberScaleFunction (check, scale, start, end) {
+
+        return function (ani, progress) {
+            if (check(progress)) {   
+                const value =  scale(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
+
+                ani.obj[start.key] =  string2unit(value);
             }
         }
     }

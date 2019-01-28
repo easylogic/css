@@ -87,6 +87,8 @@ export const KEY_ARROW_DOWN = 'ArrowDown'
 export const KEY_ARROW_LEFT = 'ArrowLeft'
 export const KEY_ARROW_RIGHT = 'ArrowRight'
 
+export const KEY_SPACE = 'Space'
+
 
 export const ALT = CHECKER(KEY_ALT)
 export const SHIFT = CHECKER(KEY_SHIFT)
@@ -97,6 +99,8 @@ export const ARROW_UP = CHECKER(KEY_ARROW_UP)
 export const ARROW_DOWN = CHECKER(KEY_ARROW_DOWN)
 export const ARROW_LEFT = CHECKER(KEY_ARROW_LEFT)
 export const ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT)
+
+export const SPACE = CHECKER(KEY_SPACE)
 
 export const SELF = CHECKER('self');
 export const CAPTURE = CHECKER('capture');

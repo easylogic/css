@@ -48,6 +48,7 @@ import RotatePattern from "./pattern/RotatePattern";
 import BorderFixed from "./border-fixed";
 import BoxSizing from "./BoxSizing";
 import BorderWidth from "./BorderWidth";
+import BackgroundPosition from "./BackgroundPosition";
 
 
 var patterns = {
@@ -56,6 +57,7 @@ var patterns = {
 
 export default {
     ...patterns,
+    BackgroundPosition,
     BoxSizing,
     BorderWidth,
     BackgroundImage,

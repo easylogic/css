@@ -1,3 +1,9 @@
+$timeline-property-width: 600px;
+$timeline-title-padding: 30px;
+$timeline-row-height: 30px;
+$timeline-keyframe-border-color: rgba($border-color, 0.3);
+$timeline-keyframe-time-color: rgba($border-color, 0.7);
+
 .timeline-view {
     position: absolute;
     box-sizing: border-box;
@@ -9,13 +15,140 @@
     display: flex; 
     flex-direction: column;
 
-    > * {
-        flex: 1 1 auto; 
+    > .timeline-header {
+        position: relative;
+        flex: none;
+        height: $timeline-row-height;
+
+        .timeline-toolbar {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            top: 0px;
+            width: $timeline-property-width;
+            box-sizing: border-box;
+            border-right:1px solid $border-color;            
+            border-bottom: 1px solid $border-color;            
+        }
+
+        .keyframe-toolbar {
+            position: absolute;
+            left: $timeline-property-width;
+            bottom: 0px;
+            top: 0px;
+            right: 0px;
+            overflow: hidden;
+            box-sizing: border-box;
+            border-bottom: 1px solid $border-color;
+
+            .keyframe-time-view {
+                position: relative;
+                height: 100%;
+                width: 3000px;
+                background-size: 100px 100%;
+                background-position: 99px 0px;
+                background-repeat: repeat-x;
+                background-image: linear-gradient(to right, $timeline-keyframe-border-color 1px, transparent 1px);
+                display: flex; 
+
+                .time {
+                    flex: none; 
+                    pointer-events: none;
+                    height: 100%;
+                    vertical-align: middle;
+                    width: 100px;
+                    text-align: right;
+                    box-sizing: border-box;
+                    padding:10px 5px;
+                    color: $timeline-keyframe-time-color;
+                    font-size: 11px;
+                }
+            }
+        }
     }
 
-    > .timeline-header {
-        flex: none;
-        height: 30px;
-        border-bottom: 1px solid $border-color;
+    > .timeline-body {
+        position: relative;
+        flex: 1 1 auto;
+
+        .timeline-list {
+            position: absolute;
+            left: 0px;
+            width: $timeline-property-width;
+            top: 0px;
+            bottom: 0px;
+            border-right:1px solid $border-color;
+            box-sizing: border-box;
+            overflow:auto;
+            background-color: yellow;
+
+            .timeline-object {
+                height: $timeline-row-height;
+                border-bottom: 1px solid $border-color;
+                box-sizing: border-box;
+                display: grid;
+                grid-template-columns: 60px 2fr 120px 60px 60px;
+
+                .title {
+                    box-sizing: border-box;
+                }
+
+                &.group {
+                    .title {
+                        padding-left: $timeline-title-padding;
+                    }
+                }
+
+                &.property {
+
+                    display: none; 
+
+                    &.show {
+                        display: grid;
+                    }
+
+                    .title {
+                        padding-left: $timeline-title-padding * 2;
+                    }
+                }
+            }            
+        }
+
+        .timeline-panel {
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            box-sizing: border-box;
+            overflow: auto;
+            margin-left: $timeline-property-width;
+
+            .keyframe-list {
+                position: relative;
+                width: 3000px;
+                background-size: 100px 100%;
+                background-position: 99px 0px;
+                background-repeat: repeat-x;
+                background-image: linear-gradient(to right, $timeline-keyframe-border-color 1px, transparent 1px);
+
+                .keyframe-object {
+                    height: $timeline-row-height;
+                    border-bottom: 1px solid $border-color;
+                    box-sizing: border-box;
+                    position: relative;
+                }
+            }
+
+            .keyframe-guide-line {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
+                box-sizing: border-box;
+            }
+        }
+
     }
 }

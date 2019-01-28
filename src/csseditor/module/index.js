@@ -30,8 +30,10 @@ import ExportManager from "./ExportManager";
 import PatternManager from "./PatternManager";
 import ShapeManager from "./ShapeManager";
 import HotkeyManager from "./HotkeyManager";
+import TimelineManager from "./TimelineManager";
 
 export default [  
+    TimelineManager,
     HotkeyManager,
     ShapeManager,
     PatternManager,

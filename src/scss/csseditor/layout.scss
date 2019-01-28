@@ -31,7 +31,8 @@ $layer-toolbar-height: 0px;
         }
 
         .layout-footer {
-            height: $timeline-size;
+            display: block;
+            height: $timeline-size - 1px;
         }
 
 

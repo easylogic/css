@@ -29,12 +29,16 @@ import {
     ITEM_TYPE_COLORSTEP,
     ITEM_TYPE_CIRCLE,
     ITEM_TYPE_SHAPE,
-    POLYGON_DEFAULT_OBJECT
+    POLYGON_DEFAULT_OBJECT,
+    ITEM_TYPE_TIMELINE,
+    ITEM_TYPE_KEYFRAME,
+    TIMELINE_DEFAULT_OBJECT,
+    KEYFRAME_DEFAULT_OBJECT
 } from "../types/ItemTypes";
 import { percentUnit, pxUnit, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER, ITEM_ADD_SHAPE, ITEM_CREATE_POLYGON } from "../types/ItemCreateTypes";
-import { clone } from "../../util/functions/func";
+import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER, ITEM_ADD_SHAPE, ITEM_CREATE_POLYGON, ITEM_CREATE_TIMELINE, ITEM_CREATE_KEYFRAME, ITEM_ADD_TIMELINE, ITEM_ADD_KEYFRAME } from "../types/ItemCreateTypes";
+import { clone, isFunction } from "../../util/functions/func";
 import { SELECTION_RECT } from "../types/SelectionTypes";
 import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 
@@ -58,6 +62,8 @@ const itemCreateActions = {
     [ITEM_TYPE_LAYER] : ITEM_CREATE_LAYER,
     [ITEM_TYPE_CIRCLE] : ITEM_CREATE_CIRCLE,
     [ITEM_TYPE_IMAGE] : ITEM_CREATE_IMAGE,
+    [ITEM_TYPE_TIMELINE]: ITEM_CREATE_TIMELINE,
+    [ITEM_TYPE_KEYFRAME]: ITEM_CREATE_KEYFRAME,
     [ITEM_TYPE_BOXSHADOW] : ITEM_CREATE_BOXSHADOW,
     [ITEM_TYPE_TEXTSHADOW] : ITEM_CREATE_TEXTSHADOW,
     [ITEM_TYPE_COLORSTEP] : ITEM_CREATE_COLORSTEP
@@ -108,6 +114,14 @@ export default class ItemCreateManager extends BaseModule {
     [GETTER(ITEM_CREATE_LAYER)] ($store, obj = {}) {
         return $store.read(ITEM_CREATE_OBJECT, obj, LAYER_DEFAULT_OBJECT);
     }
+
+    [GETTER(ITEM_CREATE_TIMELINE)] ($store, obj = {}) {
+        return $store.read(ITEM_CREATE_OBJECT, obj, TIMELINE_DEFAULT_OBJECT);
+    }    
+
+    [GETTER(ITEM_CREATE_KEYFRAME)] ($store, obj = {}) {
+        return $store.read(ITEM_CREATE_OBJECT, obj, KEYFRAME_DEFAULT_OBJECT);
+    }        
 
     [GETTER(ITEM_CREATE_CIRCLE)] ($store, obj = {}) {
         return $store.read(ITEM_CREATE_OBJECT, obj, CIRCLE_DEFAULT_OBJECT);
@@ -202,7 +216,30 @@ export default class ItemCreateManager extends BaseModule {
 
         $store.run(ITEM_SET, item, isSelected);
         $store.run(ITEM_SORT, item.id)
-    }
+    } 
+
+    [ACTION(ITEM_ADD_TIMELINE)] ($store, targetId, parentId = EMPTY_STRING, callback) {
+        var id = $store.read(ITEM_CREATE_TIMELINE, {
+            targetId,
+            parentId, 
+            index: Number.MAX_SAFE_INTEGER
+        });
+
+        $store.run(ITEM_SORT, id)
+
+        if (isFunction(callback)) {
+            callback(id);
+        }
+    }    
+
+    [ACTION(ITEM_ADD_KEYFRAME)] ($store, parentId = EMPTY_STRING) {
+        var id = $store.read(ITEM_CREATE_KEYFRAME, {
+            parentId, 
+            index: Number.MAX_SAFE_INTEGER
+        });
+
+        $store.run(ITEM_SORT, id)
+    }        
 
     [ACTION(ITEM_ADD_SHAPE)] ($store, shapeObject, isSelected = false, parentId = EMPTY_STRING) {
         var rect = $store.read(SELECTION_RECT);

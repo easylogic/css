@@ -16,8 +16,12 @@ import BackgroundCodeProperty from "./BackgroundCodeProperty";
 import BackgroundProperty from "./BackgroundProperty";
 import RotatePatternProperty from "./RotatePatternProperty";
 import LayerBorderProperty from "./LayerBorderProperty";
+import Transform2DControlProperty from "./Transform2DControlProperty";
+import BackgroundPositionProperty from "./BackgroundPositionProperty";
 
 export default {
+    BackgroundPositionProperty,
+    Transform2DControlProperty,
     LayerBorderProperty,
     RotatePatternProperty,
     BackgroundProperty,

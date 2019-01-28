@@ -20,11 +20,7 @@ import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 export default class PolygonEditor extends UIElement {
 
     template () {
-        return `
-            <div class='layer-shape-polygon-editor'>
-
-            </div>
-        `
+        return `<div class='layer-shape-polygon-editor' title="Click panel with alt if you want to add point"></div>`
     }
 
     [LOAD()] () {

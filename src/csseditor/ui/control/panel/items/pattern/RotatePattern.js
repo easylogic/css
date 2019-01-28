@@ -20,7 +20,7 @@ export default class RotatePattern extends BasePropertyItem {
                         </div>
                     </div>   
                     <div>
-                        <label>Clone Count</label>
+                        <label>Clone</label>
                         <div >
                             <input type='range' ref="$cloneCountRange" min="0" max="100">                        
                             <input type='number' class='middle' min="0" max="100" ref="$cloneCount"> 

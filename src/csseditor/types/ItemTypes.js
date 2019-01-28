@@ -10,6 +10,8 @@ export const ITEM_TYPE_IMAGE = 'image';
 export const ITEM_TYPE_BOXSHADOW = 'boxshadow';
 export const ITEM_TYPE_TEXTSHADOW = 'textshadow';
 export const ITEM_TYPE_COLORSTEP = 'colorstep';
+export const ITEM_TYPE_TIMELINE = 'timeline';
+export const ITEM_TYPE_KEYFRAME = 'keyframe';
 
 export const IS_OBJECT = 'object';
 export const IS_ATTRIBUTE = 'attribute';
@@ -266,3 +268,20 @@ export const COLORSTEP_DEFAULT_OBJECT = {
     color: 'rgba(0, 0, 0, 0)'
 }
 
+export const TIMELINE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TIMELINE,
+    targetId: EMPTY_STRING,
+    parentId: EMPTY_STRING
+}
+
+export const KEYFRAME_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_KEYFRAME,
+    targetId: EMPTY_STRING,
+    attribute: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    delay: 0,
+    duration: 1000, 
+    timing: 'linear',
+    iteration: 1, 
+    direction: 'alternate'
+}

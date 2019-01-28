@@ -225,6 +225,22 @@
             display: flex; 
             margin-bottom: 5px;
 
+            &.drag-property-ui {
+                flex-direction: row;
+
+                > .drag-ui {
+                    flex: none; 
+                    width: 70px;
+                    height: 70px;
+                    position: relative;
+                }
+
+                > .property-ui {
+                    flex: 1 1 auto;
+                    flex-direction: column;
+                }
+            }            
+
             > label {
                 width: 70px;
                 display: inline-block;
@@ -250,6 +266,7 @@
 
             > div {
                 display: flex; 
+
 
                 &.full-size {
                     width: 160px;
@@ -495,20 +512,4 @@
     }
 
     @import './property-items/sub-feature.scss';        
-}
-
-.layout-main.expertor-mode {
-    .layout-top {
-        .property-view {
-            .property-item {
-                padding: 0px;
-                margin-bottom: 0px;
-
-                .items {
-                    padding: 2px 5px;
-                }
-            }
-        }
-    }
-
 }
