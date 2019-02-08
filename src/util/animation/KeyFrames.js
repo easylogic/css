@@ -7,7 +7,7 @@ const KeyFrames = {
     parse (obj, ani) {
         var list = Object.keys(obj).map(key => {
             var originAttrs = obj[key];
-            var attrs = Object.assign({}, originAttrs);
+            var attrs = {...originAttrs};
             var percent = 0; 
             if (key == 'from') {
                 key = '0%';

@@ -11,6 +11,10 @@ import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../..
 export default class LayerColorPickerLayer extends UIElement {
 
     afterRender () {
+
+        this.eventType = CHANGE_LAYER_BACKGROUND_COLOR
+        this.eventKey = 'backgroundColor'
+
         var layer = this.read(SELECTION_CURRENT_LAYER);
 
         var defaultColor = layer ? layer.backgroundColor : 'rgba(0, 0, 0, 0)'
@@ -36,8 +40,10 @@ export default class LayerColorPickerLayer extends UIElement {
     }
 
     changeColor (color) {
+        console.log(color);
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_BACKGROUND_COLOR, {id, backgroundColor: color})
+            console.log(this.eventType, this.eventKey);
+            this.commit(this.eventType, {id, [this.eventKey]: color})
         })
     }
 
@@ -59,4 +65,10 @@ export default class LayerColorPickerLayer extends UIElement {
         }
     }
 
+    [EVENT('selectLayerColor')] (color, key, eventType) {
+        this.eventKey = key
+        this.eventType = eventType;
+
+        this.colorPicker.initColorWithoutChangeEvent(color);
+    }
 }

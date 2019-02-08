@@ -46,11 +46,13 @@ export default class Opacity extends BasePropertyItem {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
 
             if (type == 'opacity') {
-                this.commit(CHANGE_LAYER_TRANSFORM, {id, opacity: this.refs.$opacity.val()})
-                this.refs.$opacityRange.val(this.refs.$opacity.val())
+                var opacity = this.refs.$opacity.val()
+                this.commit(CHANGE_LAYER_TRANSFORM, {id, opacity})
+                this.refs.$opacityRange.val(opacity)
             } else if (type == 'range') {
-                this.commit(CHANGE_LAYER_TRANSFORM, {id, opacity: this.refs.$opacityRange.val()})
-                this.refs.$opacity.val(this.refs.$opacityRange.val())
+                var opacity = this.refs.$opacityRange.val()
+                this.commit(CHANGE_LAYER_TRANSFORM, {id, opacity})
+                this.refs.$opacity.val(opacity)
             }
             
         })

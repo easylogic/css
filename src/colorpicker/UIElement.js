@@ -62,11 +62,10 @@ class UIElement extends EventMachin {
         this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach((key) => {
             const events = this.getRealEventName(key, MULTI_PREFIX);
 
-            var callback = this[key].bind(this)
-
             events.split(SPLITTER).forEach(e => {
                 e = this.getRealEventName(e);
-
+                var callback = this[key].bind(this)
+                callback.displayName = e;
                 this.storeEvents[e] = callback                
                 this.$store.on(e, this.storeEvents[e], this);
             })
@@ -80,47 +79,55 @@ class UIElement extends EventMachin {
         })
     }
 
-    read (...args) {
-        return this.$store.read(...args)
+    read ($1, $2, $3, $4, $5) {
+        return this.$store.read($1, $2, $3, $4, $5)
     }
 
-    i18n (...args) {
-        return this.read('i18n/get', ...args);
+    mapGetters (...args) {
+        return this.$store.mapGetters(...args);
     }
 
-    config (...args) {
-        if (args.length == 1) {
-            return this.read(TOOL_GET, args[0]);
-        }
-
-        this.dispatch(TOOL_SET, ...args);
-    }
-
-    initConfig (...args) {
-        if (args.length == 1) {
-            return this.read(TOOL_GET, args[0]);
-        }
-
-        this.run(TOOL_SET, ...args);
+    mapActions (...args) {
+        return this.$store.mapActions(...args);
     }    
 
-    run (...args) {
-        return this.$store.run(...args);
+    mapDispatches (...args) {
+        return this.$store.mapDispatches(...args);
+    }        
+
+    i18n ($1, $2, $3, $4, $5) {
+        return this.read('i18n/get', $1, $2, $3, $4, $5);
     }
 
-    dispatch (...args) {
+    config ($1, $2, $3, $4, $5) {
+        if (arguments.length == 1) {
+            return this.read(TOOL_GET, $1);
+        }
+
+        this.dispatch(TOOL_SET, $1, $2, $3, $4, $5);
+    }
+
+    initConfig ($1, $2, $3, $4, $5) {
+        this.run(TOOL_SET, $1, $2, $3, $4, $5);
+    }    
+
+    run ($1, $2, $3, $4, $5) {
+        return this.$store.run($1, $2, $3, $4, $5);
+    }
+
+    dispatch ($1, $2, $3, $4, $5) {
         this.$store.source = this.source ; 
-        return this.$store.dispatch(...args) 
+        return this.$store.dispatch($1, $2, $3, $4, $5) 
     }
 
-    emit (...args) {
+    emit ($1, $2, $3, $4, $5) {
         this.$store.source = this.source ; 
-        this.$store.emit(...args);
+        this.$store.emit($1, $2, $3, $4, $5);
     }
 
-    commit (eventType, ...args) {
-        this.run(ITEM_SET, ...args);
-        this.emit(eventType, ...args);
+    commit (eventType, $1, $2, $3, $4, $5) {
+        this.run(ITEM_SET, $1, $2, $3, $4, $5);
+        this.emit(eventType, $1, $2, $3, $4, $5);
     }
 
 }

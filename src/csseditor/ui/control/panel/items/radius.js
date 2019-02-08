@@ -104,42 +104,42 @@ export default class Radius extends BasePropertyItem {
     }
 
     [CHANGEINPUT('$topLeftRadiusRange')] () {
-        this.refs.$topLeftRadius.val(this.refs.$topLeftRadiusRange.val());
+        this.refs.$topLeftRadius.val(this.refs.$topLeftRadiusRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$topRightRadiusRange')] () {
-        this.refs.$topRightRadius.val(this.refs.$topRightRadiusRange.val());
+        this.refs.$topRightRadius.val(this.refs.$topRightRadiusRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$bottomLeftRadiusRange')] () {
-        this.refs.$bottomLeftRadius.val(this.refs.$bottomLeftRadiusRange.val());
+        this.refs.$bottomLeftRadius.val(this.refs.$bottomLeftRadiusRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$bottomRightRadiusRange')] () {
-        this.refs.$bottomRightRadius.val(this.refs.$bottomRightRadiusRange.val());
+        this.refs.$bottomRightRadius.val(this.refs.$bottomRightRadiusRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$topLeftRadius')] () {
-        this.refs.$topLeftRadiusRange.val(this.refs.$topLeftRadius.val());
+        this.refs.$topLeftRadiusRange.val(this.refs.$topLeftRadius);
         this.refreshValue();
     }
 
     [CHANGEINPUT('$topRightRadius')] () {
-        this.refs.$topRightRadiusRange.val(this.refs.$topRightRadius.val());        
+        this.refs.$topRightRadiusRange.val(this.refs.$topRightRadius);        
         this.refreshValue();
     }
 
     [CHANGEINPUT('$bottomLeftRadius')] () {
-        this.refs.$bottomLeftRadiusRange.val(this.refs.$bottomLeftRadius.val());        
+        this.refs.$bottomLeftRadiusRange.val(this.refs.$bottomLeftRadius);        
         this.refreshValue();
     }
 
     [CHANGEINPUT('$bottomRightRadius')] () {
-        this.refs.$bottomRightRadiusRange.val(this.refs.$bottomRightRadius.val());        
+        this.refs.$bottomRightRadiusRange.val(this.refs.$bottomRightRadius);        
         this.refreshValue();
     }
 

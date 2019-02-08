@@ -12,7 +12,7 @@ import Event, {
 } from './Event'
 import Dom from './Dom'
 import State from './State'
-import { debounce, isFunction } from './functions/func';
+import { debounce, isFunction, isArray } from './functions/func';
 import { EMPTY_STRING } from './css/types';
 
 const checkGroup = /\>(\W*)\</g
@@ -50,7 +50,7 @@ export default class EventMachin {
 
   parseTemplate (html, isLoad) {
 
-    if (Array.isArray(html)) {
+    if (isArray(html)) {
       html = html.join(EMPTY_STRING)
     }
 
@@ -59,15 +59,14 @@ export default class EventMachin {
     const list = new Dom("div").html(html).children()
     
     var fragment = document.createDocumentFragment()
-
+    var queryProperty = `[${REFERENCE_PROPERTY}]`;
     list.forEach($el => {
       // ref element 정리 
       if ($el.attr(REFERENCE_PROPERTY)) {
         this.refs[$el.attr(REFERENCE_PROPERTY)] = $el; 
       }
-      var refs = $el.$$(`[${REFERENCE_PROPERTY}]`);
-
-      [...refs].forEach($dom => {
+      var refs = $el.$$(queryProperty);
+      refs.forEach($dom => {
         const name = $dom.attr(REFERENCE_PROPERTY)
         this.refs[name] = $dom;
       })

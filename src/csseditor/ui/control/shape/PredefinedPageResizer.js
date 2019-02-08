@@ -2,30 +2,17 @@ import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
 import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
-import { SELECTION_CURRENT_PAGE } from '../../../types/SelectionTypes';
+import { SELECTION_CURRENT_PAGE, SELECTION_IS_PAGE } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 
 export default class PredefinedPageResizer extends UIElement {
-
-
-    initialize () {
-        super.initialize()
-
-        this.$board = this.parent.refs.$board;
-        this.$page = this.parent.refs.$page; 
-    }
 
     template () { 
         return `
             <div class="predefined-page-resizer">
                 <button type="button" data-value="to right"></button>
-                <!--<button type="button" data-value="to left"></button>-->
-                <!--<button type="button" data-value="to top"></button>-->
                 <button type="button" data-value="to bottom"></button>
-                <!--<button type="button" data-value="to top right"></button>-->
                 <button type="button" data-value="to bottom right"></button>
-                <!--<button type="button" data-value="to bottom left"></button>-->
-                <!--<button type="button" data-value="to top left"></button>-->
             </div>
         `
     }
@@ -47,11 +34,12 @@ export default class PredefinedPageResizer extends UIElement {
         if (!page) return; 
 
         var {width, height} = page; 
+        var toolSize = this.config('tool.size');
 
-        var boardOffset = this.$board.offset()
-        var pageOffset = this.$page.offset()
-        var canvasScrollLeft = this.$board.scrollLeft();
-        var canvasScrollTop = this.$board.scrollTop();
+        var boardOffset = toolSize['board.offset']
+        var pageOffset = toolSize['page.offset']
+        var canvasScrollLeft = toolSize['board.scrollLeft'];
+        var canvasScrollTop = toolSize['board.scrollTop'];
 
         var x = pxUnit (pageOffset.left - boardOffset.left + canvasScrollLeft); 
         var y = pxUnit (pageOffset.top - boardOffset.top + canvasScrollTop) ; 
@@ -69,7 +57,7 @@ export default class PredefinedPageResizer extends UIElement {
     }    
 
     isShow () { 
-        return this.read('selection/is/page')
+        return this.read(SELECTION_IS_PAGE)
     }
 
     [EVENT(
@@ -80,14 +68,14 @@ export default class PredefinedPageResizer extends UIElement {
 
     change (style1 = {}, style2 = {}) {
 
-        let style = Object.assign({}, style1, style2);
+        let style = {...style1, ...style2}
 
         Object.keys(style).forEach(key => {
             style[key] = pxUnit(style[key]) 
         })
 
         var page = this.read(SELECTION_CURRENT_PAGE)
-        page = Object.assign(page, style)
+        page = {...page, ...style}
         this.commit(CHANGE_PAGE_SIZE, page)
         this.refresh();
     }

@@ -16,7 +16,7 @@ import {
 } from "../../../../types/ItemTypes";
 import { CHANGE, CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { EMPTY_STRING } from "../../../../../util/css/types";
+import { html } from "../../../../../util/functions/func";
 
 const CLIP_PATH_TYPES = [
     CLIP_PATH_TYPE_NONE,
@@ -29,7 +29,7 @@ const CLIP_PATH_TYPES = [
 
 export default class ClipPath extends BasePropertyItem {
     template () {
-        return `
+        return html`
             <div class='property-item clip-path show'>
                 <div class='items'>            
                     <div>
@@ -38,14 +38,13 @@ export default class ClipPath extends BasePropertyItem {
                             <label><input type="checkbox" ref="$showClipPathEditor" /> show clip path editor</label>
                         </div>
                     </div>                       
-
                     <div>
                         <label>Type</label>
                         <div class='full-size'>
                             <select ref="$clipType">
                                 ${CLIP_PATH_TYPES.map(type => {
                                     return `<option value="${type}">${type}</option>`
-                                }).join(EMPTY_STRING)}
+                                })}
                             </select>
                         </div>
                     </div>                       

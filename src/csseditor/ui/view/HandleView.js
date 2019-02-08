@@ -2,7 +2,7 @@ import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
 import { ITEM_TYPE_PAGE, ITEM_FOCUS } from '../../types/ItemTypes';
 import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CHECKER } from '../../../util/Event';
-import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER } from '../../types/SelectionTypes';
+import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_CHANGE, SELECTION_IS_PAGE, SELECTION_AREA } from '../../types/SelectionTypes';
 
 export default class HandleView extends GradientView {
 
@@ -22,7 +22,7 @@ export default class HandleView extends GradientView {
 
     refreshPosition (obj) {
         this.read(SELECTION_CURRENT).forEach(item => {
-            this.dispatch('matrix/move', Object.assign({id: item.id}, obj))
+            this.dispatch('matrix/move', {id: item.id, ...obj})
             this.refreshLayer();
         })    
     }
@@ -32,7 +32,7 @@ export default class HandleView extends GradientView {
     selectPageMode () {
         
         if (!this.dragArea) {
-            this.dispatch('selection/change', ITEM_TYPE_PAGE) ;
+            this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE) ;
         }
 
     }
@@ -46,7 +46,7 @@ export default class HandleView extends GradientView {
     }
 
     isPageMode (e) {
-        if (this.read('selection/is/page')) {
+        if (this.read(SELECTION_IS_PAGE)) {
             return true; 
         }
 
@@ -85,14 +85,15 @@ export default class HandleView extends GradientView {
         // if (!this.xy) return;         
         // this.refs.$page.addClass('moving');
         this.targetXY = e.xy;
+        var toolSize = this.config('tool.size');
 
         var width = Math.abs(this.targetXY.x - this.xy.x)
         var height = Math.abs(this.targetXY.y - this.xy.y)
 
-        var offset = this.refs.$board.offset();
+        var offset = toolSize['board.offset'];
 
-        var x = Math.min(this.targetXY.x, this.xy.x) + this.refs.$board.scrollLeft() - offset.left;
-        var y = Math.min(this.targetXY.y, this.xy.y) + this.refs.$board.scrollTop() - offset.top;
+        var x = Math.min(this.targetXY.x, this.xy.x) + toolSize['board.scrollLeft'] - offset.left;
+        var y = Math.min(this.targetXY.y, this.xy.y) + toolSize['board.scrollTop'] - offset.top;
         this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: ${width}px;height:${height}px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`);
 
         // console.log('c');
@@ -100,11 +101,11 @@ export default class HandleView extends GradientView {
 
     [POINTEREND('document') + CHECKER('hasDragArea') + CHECKER('isDownCheck')] (e) {
         this.isDown = false; 
-        
+        var toolSize = this.config('tool.size');
         var width = Math.abs(this.targetXY.x - this.xy.x)
         var height = Math.abs(this.targetXY.y - this.xy.y)
 
-        var po = this.refs.$page.offset();
+        var po = toolSize['page.offset'];
 
         var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
         var y = Math.min(this.targetXY.y, this.xy.y) - po.top;        
@@ -123,13 +124,13 @@ export default class HandleView extends GradientView {
             }
         }
 
-        this.dispatch('selection/area', area)
+        this.dispatch(SELECTION_AREA, area)
 
         this.updateSelection();         
         
         if (this.read(SELECTION_IS_LAYER)) {
             var items = this.read(SELECTION_CURRENT);
-            this.run(ITEM_FOCUS, items[0].id);                 
+            this.run(ITEM_FOCUS, items[0]);                 
         }
 
 

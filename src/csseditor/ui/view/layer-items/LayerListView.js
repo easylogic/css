@@ -1,22 +1,19 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
-import { ITEM_SET, ITEM_GET, ITEM_REMOVE, ITEM_FOCUS } from "../../../types/ItemTypes";
+import { ITEM_GET, ITEM_REMOVE, ITEM_FOCUS, ITEM_TOGGLE_VISIBLE } from "../../../types/ItemTypes";
 import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../types/SelectionTypes";
 import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { ITEM_MOVE_IN_LAYER, ITEM_MOVE_IN, ITEM_MOVE_LAST } from "../../../types/ItemMoveTypes";
 import { ITEM_ADD_COPY, ITEM_COPY_IN, ITEM_COPY_IN_LAYER } from "../../../types/ItemRecoverTypes";
 import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_CHILDREN } from "../../../types/ItemSearchTypes";
+import { html } from "../../../../util/functions/func";
 
 export default class LayerListView extends UIElement {
 
     template () { 
-        return `
-            <div class='layers show-mini-view'>
-                <div class="layer-list" ref="$layerList"></div>
-            </div>
-        `
+        return `<div class='layers show-mini-view'><div class="layer-list" ref="$layerList"></div></div>`
     }
 
     makeItemNode (node, index) {
@@ -33,11 +30,10 @@ export default class LayerListView extends UIElement {
         var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING; 
         return `
             <div class='tree-item image ${selected}' id="${item.id}" draggable="true" >
-                <div class="item-title"> 
-                    &lt;${item.type}&gt;
-                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
-                </div>                
+                <div class="item-title">&lt;${item.type}&gt;</div>                
                 <div class='item-tools'>
+                    <button type="button" class='visible-item ${item.visible ? 'visible': ''}' item-id='${item.id}' title="Visible"></button>
+                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
                     <button type="button" class='copy-image-item' item-id='${item.id}' title="Copy">+</button>
                 </div>            
             </div>
@@ -47,22 +43,18 @@ export default class LayerListView extends UIElement {
     
     makeItemNodeLayer (item, index = 0) {
         var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING; 
-        return `
+        return html`
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
-                <div class="item-title"> 
-                    ${index+1}. ${item.name || `Layer `} 
-                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
-                </div>
+                <div class="item-title"> ${index+1}. ${item.name || `Layer `}</div>
                 <div class='item-tools'>
+                    <button type="button" class='visible-item ${item.visible ? 'visible': ''}' item-id='${item.id}' title="Visible"></button>
+                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">+</button>
-                </div>                            
+                </div>                
             </div>
             <div class="gradient-list-group" >
-                <!-- <div class='gradient-collapse-button' item-id="${item.id}"></div> -->
                 <div class="tree-item-children">
-                    ${this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, (item) => {
-                        return this.makeItemNodeImage(item)
-                    }).join(EMPTY_STRING)}
+                    ${this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, (item) => this.makeItemNodeImage(item))}
                 </div>
             </div>       
             `
@@ -191,15 +183,12 @@ export default class LayerListView extends UIElement {
         this.refresh()
     } 
 
+    [CLICK('$layerList .visible-item')] (e) {
+        e.$delegateTarget.toggleClass('visible');
+        this.dispatch(ITEM_TOGGLE_VISIBLE, e.$delegateTarget.attr('item-id'))
+    }     
+
     [CLICK('$viewSample')] (e) {
         this.emit('toggleLayerSampleView');
-    }
-
-    [CLICK('$layerList .gradient-collapse-button') + SELF] (e) {
-        e.$delegateTarget.parent().toggleClass('collapsed')
-        var item = this.read(ITEM_GET, e.$delegateTarget.attr('item-id'))
-
-        item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
-        this.run(ITEM_SET, item);
     }
 }

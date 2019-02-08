@@ -7,8 +7,7 @@ export default class LayerBorderProperty extends BaseProperty {
         return `
             <BorderFixed></BorderFixed>
             <BorderWidth></BorderWidth>
-            <RadiusFixed></RadiusFixed>
-            <radius></radius>      
+            <BorderColorFixed></BorderColorFixed>
         `
     }
 }

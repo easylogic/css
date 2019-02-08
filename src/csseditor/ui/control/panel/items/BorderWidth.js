@@ -15,29 +15,29 @@ export default class BorderWidth extends BasePropertyItem {
                     <div>
                         <label >Top</label>
                         <div>
-                            <input type='range' ref="$topWidthRange" min="0" max="500">                        
-                            <input type='number' class='middle' min="0" max="500" ref="$topWidth"> <span>${UNIT_PX}</span>
+                            <input type='range' ref="$topWidthRange" min="0" max="500" value="0">                        
+                            <input type='number' class='middle' min="0" max="500" ref="$topWidth" value="0"> <span>${UNIT_PX}</span>
                         </div>
                     </div>
                     <div>
                         <label>Right</label>
                         <div>
-                            <input type='range' ref="$rightWidthRange" min="0" max="500">                                                
-                            <input type='number' class='middle' min="0" max="500" ref="$rightWidth"> <span>${UNIT_PX}</span>
+                            <input type='range' ref="$rightWidthRange" min="0" max="500" value="0">                                                
+                            <input type='number' class='middle' min="0" max="500" ref="$rightWidth" value="0"> <span>${UNIT_PX}</span>
                         </div>
                     </div>          
                     <div>
                         <label>Bottom</label>
                         <div>
-                            <input type='range' ref="$bottomWidthRange" min="0" max="500">                                                
-                            <input type='number' class='middle' min="0" max="500" ref="$bottomWidth"> <span>${UNIT_PX}</span>
+                            <input type='range' ref="$bottomWidthRange" min="0" max="500" value="0">                                                
+                            <input type='number' class='middle' min="0" max="500" ref="$bottomWidth" value="0"> <span>${UNIT_PX}</span>
                         </div>
                     </div>
                     <div>
                         <label>Left</label>
                         <div>
-                            <input type='range' ref="$leftWidthRange" min="0" max="500">                                                
-                            <input type='number' class='middle' min="0" max="500" ref="$leftWidth"> <span>${UNIT_PX}</span>
+                            <input type='range' ref="$leftWidthRange" min="0" max="500" value="0">                                                
+                            <input type='number' class='middle' min="0" max="500" ref="$leftWidth" value="0"> <span>${UNIT_PX}</span>
                         </div>
                     </div>
                 </div>
@@ -53,11 +53,11 @@ export default class BorderWidth extends BasePropertyItem {
 
     refresh() {
         this.read(SELECTION_CURRENT_LAYER, (item) => {
-            var maxWidth = unitValue(item.width);
 
             if (item.fixedBorderWidth) {
                 var borderWidth = defaultValue (item.borderWidth, pxUnit(0));
-                var border = value2px(borderWidth, maxWidth)
+                var border = unitValue(borderWidth);
+
                 this.refs.$topWidthRange.val(border)
                 this.refs.$rightWidthRange.val(border)
                 this.refs.$leftWidthRange.val(border)                
@@ -68,22 +68,23 @@ export default class BorderWidth extends BasePropertyItem {
                 this.refs.$bottomWidth.val(border)
 
             } else {
-                if (item.borderTopWidth) {
-                    this.refs.$topWidth.val(value2px(item.borderTopWidth, maxWidth))
-                    this.refs.$topWidthRange.val(value2px(item.borderTopWidth, maxWidth))
-                }
-                if (item.borderRightWidth) {
-                    this.refs.$rightWidth.val(value2px(item.borderRightWidth, maxWidth))
-                    this.refs.$rightWidthRange.val(value2px(item.borderRightWidth, maxWidth))
-                }
-                if (item.borderLeftWidth) {
-                    this.refs.$leftWidth.val(value2px(item.borderLeftWidth, maxWidth))
-                    this.refs.$leftWidthRange.val(value2px(item.borderLeftWidth, maxWidth))
-                }
-                if (item.borderBottomWidth) {
-                    this.refs.$bottomWidth.val(value2px(item.borderBottomWidth, maxWidth))
-                    this.refs.$bottomWidthRange.val(value2px(item.borderBottomWidth, maxWidth))
-                }
+
+                var value = defaultValue(item.borderTopWidth, pxUnit(0));
+
+                this.refs.$topWidth.val(unitValue(value))
+                this.refs.$topWidthRange.val(unitValue(value))
+
+                var value = defaultValue(item.borderRightWidth, pxUnit(0));                
+                this.refs.$rightWidth.val(unitValue(value))
+                this.refs.$rightWidthRange.val(unitValue(value))
+
+                var value = defaultValue(item.borderLeftWidth, pxUnit(0));
+                this.refs.$leftWidth.val(unitValue(value))
+                this.refs.$leftWidthRange.val(unitValue(value))
+
+                var value = defaultValue(item.borderBottomWidth, pxUnit(0));
+                this.refs.$bottomWidth.val(unitValue(value))
+                this.refs.$bottomWidthRange.val(unitValue(value))
             }
 
         })
@@ -104,42 +105,42 @@ export default class BorderWidth extends BasePropertyItem {
     }
 
     [CHANGEINPUT('$topWidthRange')] () {
-        this.refs.$topWidth.val(this.refs.$topWidthRange.val());
+        this.refs.$topWidth.val(this.refs.$topWidthRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$rightWidthRange')] () {
-        this.refs.$rightWidth.val(this.refs.$rightWidthRange.val());
+        this.refs.$rightWidth.val(this.refs.$rightWidthRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$leftWidthRange')] () {  
-        this.refs.$leftWidth.val(this.refs.$leftWidthRange.val());
+        this.refs.$leftWidth.val(this.refs.$leftWidthRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$bottomWidthRange')] () {
-        this.refs.$bottomWidth.val(this.refs.$bottomWidthRange.val());
+        this.refs.$bottomWidth.val(this.refs.$bottomWidthRange);
         this.refreshValue();        
     }
 
     [CHANGEINPUT('$topWidth')] () {
-        this.refs.$topWidthRange.val(this.refs.$topWidth.val());
+        this.refs.$topWidthRange.val(this.refs.$topWidth);
         this.refreshValue();
     }
 
     [CHANGEINPUT('$rightWidth')] () {
-        this.refs.$rightWidthRange.val(this.refs.$rightWidth.val());        
+        this.refs.$rightWidthRange.val(this.refs.$rightWidth);        
         this.refreshValue();
     }
 
     [CHANGEINPUT('$leftWidth')] () {
-        this.refs.$leftWidthRange.val(this.refs.$leftWidth.val());        
+        this.refs.$leftWidthRange.val(this.refs.$leftWidth);        
         this.refreshValue();
     }
 
     [CHANGEINPUT('$bottomWidth')] () {
-        this.refs.$bottomWidthRange.val(this.refs.$bottomWidth.val());        
+        this.refs.$bottomWidthRange.val(this.refs.$bottomWidth);        
         this.refreshValue();
     }
 

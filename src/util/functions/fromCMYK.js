@@ -11,7 +11,3 @@ export function CMYKtoRGB(c, m, y, k) {
 
     return { r: R, g: G, b: B }
 }
-
-export default {
-    CMYKtoRGB
-}

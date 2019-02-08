@@ -83,10 +83,3 @@ export function hsl (obj) {
     }
 
 }
-
-export default {
-    format,
-    rgb,
-    hsl,
-    hex
-}; 

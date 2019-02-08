@@ -1,6 +1,7 @@
 /* event trigger */
 export const CHANGE_STRORAGE = 'CHANGE_STORAGE'
 export const CHANGE_TOOL = 'CHANGE_TOOL'
+export const CHANGE_TOOL_SIZE = 'CHANGE_TOOL_SIZE'
 export const CHANGE_HISTORY = 'CHANGE_HISTORY'
 
 export const CHANGE_EDITOR = 'CHANGE_EDITOR'

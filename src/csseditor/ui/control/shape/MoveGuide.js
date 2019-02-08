@@ -10,35 +10,26 @@ import {
 import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
 import { GUIDE_TYPE_HORIZONTAL } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
+import { GUIDE_SNAP_LAYER } from '../../../types/GuideTypes';
 
 export default class MoveGuide extends UIElement {
 
-    initialize () {
-        super.initialize()
-
-        this.$board = this.parent.refs.$board;
-        this.$page = this.parent.refs.$page; 
-    }
 
     template () { 
-        return `
-            <div class="move-guide">
-
-            </div>
-        `
+        return `<div class="move-guide"></div>`
     }
 
     [LOAD()] () {
         var layer = this.read(SELECTION_CURRENT_LAYER);
         if (!layer) return []; 
+        var toolSize = this.config('tool.size')
+        var list = this.read(GUIDE_SNAP_LAYER, 3);
 
-        var list = this.read('guide/snap/layer', 3);
+        var bo = toolSize['board.offset']
+        var po = toolSize['page.offset']
 
-        var bo = this.$board.offset()
-        var po = this.$page.offset()
-
-        var top = po.top - bo.top + this.$board.scrollTop();
-        var left = po.left - bo.left + this.$board.scrollLeft(); 
+        var top = po.top - bo.top + toolSize['board.scrollTop'];
+        var left = po.left - bo.left + toolSize['board.scrollLeft']; 
 
         return list.map(axis => {
             if (axis.type == GUIDE_TYPE_HORIZONTAL) {

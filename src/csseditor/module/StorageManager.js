@@ -67,7 +67,7 @@ export default class StorageManager extends BaseModule {
     }
 
     [ACTION(STORAGE_UNSHIFT_LAYER)] ($store, layer) {
-        var item = clone(layer);
+        var item = {...layer};
         item.id = uuid()
         $store.cachedLayers.unshift(item);
 
@@ -75,7 +75,7 @@ export default class StorageManager extends BaseModule {
     }
 
     [ACTION(STORAGE_ADD_LAYER)] ($store, layer) {
-        var item = clone(layer);
+        var item = {...layer};
         item.id = uuid()        
         $store.cachedLayers.push(item);
 
@@ -101,7 +101,7 @@ export default class StorageManager extends BaseModule {
     }            
 
     [ACTION(STORAGE_UNSHIFT_PAGE)] ($store, page) {
-        var item = clone(page);
+        var item = {...page};
         item.id = uuid()
         $store.cachedPages.unshift(item);
 
@@ -109,7 +109,7 @@ export default class StorageManager extends BaseModule {
     }
 
     [ACTION(STORAGE_ADD_PAGE)] ($store, page) {
-        var item = clone(page);
+        var item = {...page};
         item.id = uuid()        
         $store.cachedPages.push(item);
 
@@ -135,7 +135,7 @@ export default class StorageManager extends BaseModule {
     }            
 
     [ACTION(STORAGE_ADD_IMAGE)] ($store, image) {
-        var item = clone(image);
+        var item = {...image};
         item.id = uuid()        
         $store.cachedImages.push(item);
 

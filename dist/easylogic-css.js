@@ -180,7 +180,13 @@ var slicedToArray = function () {
 
 
 
-
+var taggedTemplateLiteral = function (strings, raw) {
+  return Object.freeze(Object.defineProperties(strings, {
+    raw: {
+      value: Object.freeze(raw)
+    }
+  }));
+};
 
 
 
@@ -297,9 +303,72 @@ function combineKeyArray(obj) {
     return obj;
 }
 
-var func = {
-    debounce: debounce
+function flatKeyValue(obj) {
+    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+    var values = {};
+
+    Object.keys(obj).forEach(function (key) {
+        var realKey = key;
+        if (rootKey !== '') {
+            realKey = rootKey + '.' + key;
+        }
+
+        if (isObject(obj[key])) {
+            values = _extends({}, values, flatKeyValue(obj[key], realKey));
+        } else {
+            values[realKey] = obj[key];
+        }
+    });
+
+    return values;
+}
+
+function repeat(count) {
+    return [].concat(toConsumableArray(Array(count)));
+}
+
+var html = function html(strings) {
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+    }
+
+    return strings.map(function (it, index) {
+
+        var results = args[index] || '';
+
+        if (isFunction(results)) {
+            results = results();
+        } else if (isArray(results)) {
+            results = results.join('');
+        }
+
+        return it + results;
+    }).join('');
 };
+
+
+
+var func = Object.freeze({
+	debounce: debounce,
+	get: get,
+	defaultValue: defaultValue,
+	isUndefined: isUndefined,
+	isNotUndefined: isNotUndefined,
+	isArray: isArray,
+	isBoolean: isBoolean,
+	isString: isString,
+	isNotString: isNotString,
+	isObject: isObject,
+	isFunction: isFunction,
+	isNumber: isNumber,
+	clone: clone,
+	cleanObject: cleanObject,
+	combineKeyArray: combineKeyArray,
+	flatKeyValue: flatKeyValue,
+	repeat: repeat,
+	html: html
+});
 
 /**
  * @method format
@@ -388,12 +457,12 @@ function hsl(obj) {
     }
 }
 
-var formatter = {
-    format: format,
-    rgb: rgb,
-    hsl: hsl,
-    hex: hex
-};
+var formatter = Object.freeze({
+	format: format,
+	hex: hex,
+	rgb: rgb,
+	hsl: hsl
+});
 
 function round(n, k) {
     k = isUndefined(k) ? 1 : k;
@@ -444,7 +513,12 @@ function getXYInCircle(angle, radius) {
     };
 }
 
+function getDist(x, y) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
+    return Math.sqrt(Math.pow(Math.abs(centerX - x), 2) + Math.pow(Math.abs(centerY - y), 2));
+}
 
 function caculateAngle(rx, ry) {
     return radianToDegree(Math.atan2(ry, rx));
@@ -512,17 +586,19 @@ function getGradientLine(angle, box) {
     };
 }
 
-var math = {
-    round: round,
-    uuid: uuid,
-    radianToDegree: radianToDegree,
-    degreeToRadian: degreeToRadian,
-    getXInCircle: getXInCircle,
-    getYInCircle: getYInCircle,
-    caculateAngle: caculateAngle,
-    cubicBezier: cubicBezier,
-    getGradientLine: getGradientLine
-};
+var math = Object.freeze({
+	round: round,
+	degreeToRadian: degreeToRadian,
+	radianToDegree: radianToDegree,
+	getXInCircle: getXInCircle,
+	getYInCircle: getYInCircle,
+	getXYInCircle: getXYInCircle,
+	getDist: getDist,
+	caculateAngle: caculateAngle,
+	uuid: uuid,
+	cubicBezier: cubicBezier,
+	getGradientLine: getGradientLine
+});
 
 /**
  * @method RGBtoHSV
@@ -730,19 +806,20 @@ function RGBtoLAB(r, g, b) {
     return XYZtoLAB(RGBtoXYZ(r, g, b));
 }
 
-var fromRGB = {
-    RGBtoCMYK: RGBtoCMYK,
-    RGBtoGray: RGBtoGray,
-    RGBtoHSL: RGBtoHSL,
-    RGBtoHSV: RGBtoHSV,
-    RGBtoLAB: RGBtoLAB,
-    RGBtoSimpleGray: RGBtoSimpleGray,
-    RGBtoXYZ: RGBtoXYZ,
-    RGBtoYCrCb: RGBtoYCrCb,
-    c: c,
-    brightness: brightness,
-    gray: gray
-};
+var fromRGB = Object.freeze({
+	RGBtoHSV: RGBtoHSV,
+	RGBtoCMYK: RGBtoCMYK,
+	RGBtoHSL: RGBtoHSL,
+	c: c,
+	gray: gray,
+	RGBtoSimpleGray: RGBtoSimpleGray,
+	RGBtoGray: RGBtoGray,
+	brightness: brightness,
+	RGBtoYCrCb: RGBtoYCrCb,
+	PivotRGB: PivotRGB,
+	RGBtoXYZ: RGBtoXYZ,
+	RGBtoLAB: RGBtoLAB
+});
 
 function CMYKtoRGB(c, m, y, k) {
 
@@ -761,9 +838,9 @@ function CMYKtoRGB(c, m, y, k) {
     return { r: R, g: G, b: B };
 }
 
-var fromCMYK = {
-    CMYKtoRGB: CMYKtoRGB
-};
+var fromCMYK = Object.freeze({
+	CMYKtoRGB: CMYKtoRGB
+});
 
 function ReverseXyz(n) {
     return Math.pow(n, 3) > 0.008856 ? Math.pow(n, 3) : (n - 16 / 116) / 7.787;
@@ -827,9 +904,36 @@ function LABtoXYZ(l, a, b) {
     return { x: x, y: y, z: z };
 }
 
+function PivotXyz(n) {
+    return n > 0.008856 ? Math.pow(n, 1 / 3) : (7.787 * n + 16) / 116;
+}
 
+function XYZtoLAB$1(x, y, z) {
+    if (arguments.length == 1) {
+        var _arguments$3 = arguments[0],
+            x = _arguments$3.x,
+            y = _arguments$3.y,
+            z = _arguments$3.z;
+    }
 
+    //Reference-X, Y and Z refer to specific illuminants and observers.
+    //Common reference values are available below in this same page.
+    // Observer= 2°, Illuminant= D65
 
+    var X = x / 95.047;
+    var Y = y / 100.00;
+    var Z = z / 108.883;
+
+    X = PivotXyz(X);
+    Y = PivotXyz(Y);
+    Z = PivotXyz(Z);
+
+    var l = 116 * Y - 16;
+    var a = 500 * (X - Y);
+    var b = 200 * (Y - Z);
+
+    return { l: l, a: a, b: b };
+}
 
 function LABtoRGB(l, a, b) {
     if (arguments.length == 1) {
@@ -841,11 +945,15 @@ function LABtoRGB(l, a, b) {
     return XYZtoRGB(LABtoXYZ(l, a, b));
 }
 
-var fromLAB = {
-    XYZtoRGB: XYZtoRGB,
-    LABtoRGB: LABtoRGB,
-    LABtoXYZ: LABtoXYZ
-};
+var fromLAB = Object.freeze({
+	ReverseXyz: ReverseXyz,
+	ReverseRGB: ReverseRGB,
+	XYZtoRGB: XYZtoRGB,
+	LABtoXYZ: LABtoXYZ,
+	PivotXyz: PivotXyz,
+	XYZtoLAB: XYZtoLAB$1,
+	LABtoRGB: LABtoRGB
+});
 
 /**
  * @method HSVtoRGB
@@ -917,10 +1025,10 @@ function HSVtoHSL(h, s, v) {
     return RGBtoHSL(rgb.r, rgb.g, rgb.b);
 }
 
-var fromHSV = {
-    HSVtoHSL: HSVtoHSL,
-    HSVtoRGB: HSVtoRGB
-};
+var fromHSV = Object.freeze({
+	HSVtoRGB: HSVtoRGB,
+	HSVtoHSL: HSVtoHSL
+});
 
 function HUEtoRGB(p, q, t) {
     if (t < 0) t += 1;
@@ -972,11 +1080,11 @@ function HSLtoRGB(h, s, l) {
     return { r: round(r * 255), g: round(g * 255), b: round(b * 255) };
 }
 
-var fromHSL = {
-    HUEtoRGB: HUEtoRGB,
-    HSLtoHSV: HSLtoHSV,
-    HSLtoRGB: HSLtoRGB
-};
+var fromHSL = Object.freeze({
+	HUEtoRGB: HUEtoRGB,
+	HSLtoHSV: HSLtoHSV,
+	HSLtoRGB: HSLtoRGB
+});
 
 function YCrCbtoRGB(y, cr, cb, bit) {
 
@@ -996,9 +1104,9 @@ function YCrCbtoRGB(y, cr, cb, bit) {
     return { r: Math.ceil(R), g: Math.ceil(G), b: Math.ceil(B) };
 }
 
-var fromYCrCb = {
-    YCrCbtoRGB: YCrCbtoRGB
-};
+var fromYCrCb = Object.freeze({
+	YCrCbtoRGB: YCrCbtoRGB
+});
 
 var color_names = { aliceblue: "rgb(240, 248, 255)", antiquewhite: "rgb(250, 235, 215)", aqua: "rgb(0, 255, 255)", aquamarine: "rgb(127, 255, 212)", azure: "rgb(240, 255, 255)", beige: "rgb(245, 245, 220)", bisque: "rgb(255, 228, 196)", black: "rgb(0, 0, 0)", blanchedalmond: "rgb(255, 235, 205)", blue: "rgb(0, 0, 255)", blueviolet: "rgb(138, 43, 226)", brown: "rgb(165, 42, 42)", burlywood: "rgb(222, 184, 135)", cadetblue: "rgb(95, 158, 160)", chartreuse: "rgb(127, 255, 0)", chocolate: "rgb(210, 105, 30)", coral: "rgb(255, 127, 80)", cornflowerblue: "rgb(100, 149, 237)", cornsilk: "rgb(255, 248, 220)", crimson: "rgb(237, 20, 61)", cyan: "rgb(0, 255, 255)", darkblue: "rgb(0, 0, 139)", darkcyan: "rgb(0, 139, 139)", darkgoldenrod: "rgb(184, 134, 11)", darkgray: "rgb(169, 169, 169)", darkgrey: "rgb(169, 169, 169)", darkgreen: "rgb(0, 100, 0)", darkkhaki: "rgb(189, 183, 107)", darkmagenta: "rgb(139, 0, 139)", darkolivegreen: "rgb(85, 107, 47)", darkorange: "rgb(255, 140, 0)", darkorchid: "rgb(153, 50, 204)", darkred: "rgb(139, 0, 0)", darksalmon: "rgb(233, 150, 122)", darkseagreen: "rgb(143, 188, 143)", darkslateblue: "rgb(72, 61, 139)", darkslategray: "rgb(47, 79, 79)", darkslategrey: "rgb(47, 79, 79)", darkturquoise: "rgb(0, 206, 209)", darkviolet: "rgb(148, 0, 211)", deeppink: "rgb(255, 20, 147)", deepskyblue: "rgb(0, 191, 255)", dimgray: "rgb(105, 105, 105)", dimgrey: "rgb(105, 105, 105)", dodgerblue: "rgb(30, 144, 255)", firebrick: "rgb(178, 34, 34)", floralwhite: "rgb(255, 250, 240)", forestgreen: "rgb(34, 139, 34)", fuchsia: "rgb(255, 0, 255)", gainsboro: "rgb(220, 220, 220)", ghostwhite: "rgb(248, 248, 255)", gold: "rgb(255, 215, 0)", goldenrod: "rgb(218, 165, 32)", gray: "rgb(128, 128, 128)", grey: "rgb(128, 128, 128)", green: "rgb(0, 128, 0)", greenyellow: "rgb(173, 255, 47)", honeydew: "rgb(240, 255, 240)", hotpink: "rgb(255, 105, 180)", indianred: "rgb(205, 92, 92)", indigo: "rgb(75, 0, 130)", ivory: "rgb(255, 255, 240)", khaki: "rgb(240, 230, 140)", lavender: "rgb(230, 230, 250)", lavenderblush: "rgb(255, 240, 245)", lawngreen: "rgb(124, 252, 0)", lemonchiffon: "rgb(255, 250, 205)", lightblue: "rgb(173, 216, 230)", lightcoral: "rgb(240, 128, 128)", lightcyan: "rgb(224, 255, 255)", lightgoldenrodyellow: "rgb(250, 250, 210)", lightgreen: "rgb(144, 238, 144)", lightgray: "rgb(211, 211, 211)", lightgrey: "rgb(211, 211, 211)", lightpink: "rgb(255, 182, 193)", lightsalmon: "rgb(255, 160, 122)", lightseagreen: "rgb(32, 178, 170)", lightskyblue: "rgb(135, 206, 250)", lightslategray: "rgb(119, 136, 153)", lightslategrey: "rgb(119, 136, 153)", lightsteelblue: "rgb(176, 196, 222)", lightyellow: "rgb(255, 255, 224)", lime: "rgb(0, 255, 0)", limegreen: "rgb(50, 205, 50)", linen: "rgb(250, 240, 230)", magenta: "rgb(255, 0, 255)", maroon: "rgb(128, 0, 0)", mediumaquamarine: "rgb(102, 205, 170)", mediumblue: "rgb(0, 0, 205)", mediumorchid: "rgb(186, 85, 211)", mediumpurple: "rgb(147, 112, 219)", mediumseagreen: "rgb(60, 179, 113)", mediumslateblue: "rgb(123, 104, 238)", mediumspringgreen: "rgb(0, 250, 154)", mediumturquoise: "rgb(72, 209, 204)", mediumvioletred: "rgb(199, 21, 133)", midnightblue: "rgb(25, 25, 112)", mintcream: "rgb(245, 255, 250)", mistyrose: "rgb(255, 228, 225)", moccasin: "rgb(255, 228, 181)", navajowhite: "rgb(255, 222, 173)", navy: "rgb(0, 0, 128)", oldlace: "rgb(253, 245, 230)", olive: "rgb(128, 128, 0)", olivedrab: "rgb(107, 142, 35)", orange: "rgb(255, 165, 0)", orangered: "rgb(255, 69, 0)", orchid: "rgb(218, 112, 214)", palegoldenrod: "rgb(238, 232, 170)", palegreen: "rgb(152, 251, 152)", paleturquoise: "rgb(175, 238, 238)", palevioletred: "rgb(219, 112, 147)", papayawhip: "rgb(255, 239, 213)", peachpuff: "rgb(255, 218, 185)", peru: "rgb(205, 133, 63)", pink: "rgb(255, 192, 203)", plum: "rgb(221, 160, 221)", powderblue: "rgb(176, 224, 230)", purple: "rgb(128, 0, 128)", rebeccapurple: "rgb(102, 51, 153)", red: "rgb(255, 0, 0)", rosybrown: "rgb(188, 143, 143)", royalblue: "rgb(65, 105, 225)", saddlebrown: "rgb(139, 69, 19)", salmon: "rgb(250, 128, 114)", sandybrown: "rgb(244, 164, 96)", seagreen: "rgb(46, 139, 87)", seashell: "rgb(255, 245, 238)", sienna: "rgb(160, 82, 45)", silver: "rgb(192, 192, 192)", skyblue: "rgb(135, 206, 235)", slateblue: "rgb(106, 90, 205)", slategray: "rgb(112, 128, 144)", slategrey: "rgb(112, 128, 144)", snow: "rgb(255, 250, 250)", springgreen: "rgb(0, 255, 127)", steelblue: "rgb(70, 130, 180)", tan: "rgb(210, 180, 140)", teal: "rgb(0, 128, 128)", thistle: "rgb(216, 191, 216)", tomato: "rgb(255, 99, 71)", turquoise: "rgb(64, 224, 208)", violet: "rgb(238, 130, 238)", wheat: "rgb(245, 222, 179)", white: "rgb(255, 255, 255)", whitesmoke: "rgb(245, 245, 245)", yellow: "rgb(255, 255, 0)", yellowgreen: "rgb(154, 205, 50)", transparent: "rgba(0, 0, 0, 0)" };
 
@@ -1016,8 +1124,6 @@ var ColorNames = {
 };
 
 var color_regexp = /(#(?:[\da-f]{3}){1,2}|rgb\((?:\s*\d{1,3},\s*){2}\d{1,3}\s*\)|rgba\((?:\s*\d{1,3},\s*){3}\d*\.?\d+\s*\)|hsl\(\s*\d{1,3}(?:,\s*\d{1,3}%){2}\s*\)|hsla\(\s*\d{1,3}(?:,\s*\d{1,3}%){2},\s*\d*\.?\d+\s*\)|([\w_\-]+))/gi;
-var color_split = ',';
-
 function matches(str) {
     var matches = str.match(color_regexp);
     var result = [];
@@ -1119,7 +1225,7 @@ function parse(str) {
 
             var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: 1 };
 
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = _extends({}, obj, RGBtoHSL(obj));
 
             return obj;
         } else if (str.indexOf("rgba(") > -1) {
@@ -1136,7 +1242,7 @@ function parse(str) {
 
             var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: arr[3] };
 
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = _extends({}, obj, RGBtoHSL(obj));
 
             return obj;
         } else if (str.indexOf("hsl(") > -1) {
@@ -1148,7 +1254,7 @@ function parse(str) {
 
             var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: 1 };
 
-            obj = Object.assign(obj, HSLtoRGB(obj));
+            obj = _extends({}, obj, HSLtoRGB(obj));
 
             return obj;
         } else if (str.indexOf("hsla(") > -1) {
@@ -1165,7 +1271,7 @@ function parse(str) {
 
             var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: arr[3] };
 
-            obj = Object.assign(obj, HSLtoRGB(obj));
+            obj = _extends({}, obj, HSLtoRGB(obj));
 
             return obj;
         } else if (str.indexOf("#") == 0) {
@@ -1186,7 +1292,7 @@ function parse(str) {
 
             var obj = { type: 'hex', r: arr[0], g: arr[1], b: arr[2], a: 1 };
 
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = _extends({}, obj, RGBtoHSL(obj));
 
             return obj;
         }
@@ -1197,7 +1303,7 @@ function parse(str) {
             var b = (str & 0x0000ff) >> 0;
 
             var obj = { type: 'hex', r: r, g: g, b: b, a: 1 };
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = _extends({}, obj, RGBtoHSL(obj));
             return obj;
         } else if (0x00000000 <= str && str <= 0xffffffff) {
             var _r = (str & 0xff000000) >> 24;
@@ -1206,7 +1312,7 @@ function parse(str) {
             var a = (str & 0x000000ff) / 255;
 
             var obj = { type: 'hex', r: _r, g: _g, b: _b, a: a };
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = _extends({}, obj, RGBtoHSL(obj));
 
             return obj;
         }
@@ -1282,17 +1388,17 @@ function parseGradient(colors) {
     return colors;
 }
 
-var parser = {
-    matches: matches,
-    convertMatches: convertMatches,
-    convertMatchesArray: convertMatchesArray,
-    reverseMatches: reverseMatches,
-    parse: parse,
-    parseGradient: parseGradient,
-    trim: trim,
-    color_regexp: color_regexp,
-    color_split: color_split
-};
+
+
+var parser = Object.freeze({
+	matches: matches,
+	convertMatches: convertMatches,
+	convertMatchesArray: convertMatchesArray,
+	reverseMatches: reverseMatches,
+	trim: trim,
+	parse: parse,
+	parseGradient: parseGradient
+});
 
 /**
  * @deprecated 
@@ -1477,19 +1583,20 @@ scale.copper = function (count) {
     return scale(['#000000', '#3d2618', '#9d623e', '#ffa167', '#ffc77f'], count);
 };
 
-var mixin = {
-    interpolateRGB: interpolateRGB,
-    blend: blend,
-    mix: mix,
-    scale: scale,
-    contrast: contrast,
-    contrastColor: contrastColor,
-    gradient: gradient,
-    scaleHSV: scaleHSV,
-    scaleH: scaleH,
-    scaleS: scaleS,
-    scaleV: scaleV
-};
+var mixin = Object.freeze({
+	interpolateRGB: interpolateRGB,
+	interpolateRGBObject: interpolateRGBObject,
+	scale: scale,
+	blend: blend,
+	mix: mix,
+	contrast: contrast,
+	contrastColor: contrastColor,
+	gradient: gradient,
+	scaleHSV: scaleHSV,
+	scaleH: scaleH,
+	scaleS: scaleS,
+	scaleV: scaleV
+});
 
 function array_equals(v1, v2) {
     if (v1.length !== v2.length) return false;
@@ -2440,9 +2547,11 @@ var ITEM_SET_ALL = 'item/set/all';
 var ITEM_SORT = 'item/sort';
 var ITEM_REMOVE_CHILDREN = 'item/remove/children';
 var ITEM_REMOVE = 'item/remove';
+var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
 var ITEM_REMOVE_ALL = 'item/remove/all';
 var ITEM_FOCUS = 'item/focus';
 var ITEM_LOAD = 'item/load';
+var ITEM_INIT_CHILDREN = 'item/init/children';
 
 /* page is equal to artboard */
 var PAGE_DEFAULT_OBJECT = {
@@ -2535,13 +2644,13 @@ var CLIP_PATH_DEFAULT_OBJECT = {
     content: EMPTY_STRING
 }, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
 
-var CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
     type: SHAPE_TYPE_CIRCLE,
     borderRadius: percentUnit(100),
     fixedRadius: true
 });
 
-var POLYGON_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
     type: SHAPE_TYPE_POLYGON,
     fixedShape: true
 });
@@ -2613,6 +2722,13 @@ var COLORSTEP_DEFAULT_OBJECT = {
     parentId: EMPTY_STRING,
     percent: 0,
     color: 'rgba(0, 0, 0, 0)'
+};
+
+var DEFAULT_TOOL_SIZE = {
+    'board.offset': { left: 0, top: 0 },
+    'page.offset': { left: 0, top: 0 },
+    'board.scrollTop': 0,
+    'board.scrollLeft': 0
 };
 
 function rotateDegree(angle) {
@@ -3942,7 +4058,7 @@ var functions$1 = (_functions = {
     multi: multi$1,
     merge: merge$1,
     weight: weight,
-    repeat: repeat,
+    repeat: repeat$1,
     colorMatrix: colorMatrix,
     each: each$1,
     eachXY: eachXY,
@@ -3982,7 +4098,7 @@ function weight(arr) {
     });
 }
 
-function repeat(value$$1, num) {
+function repeat$1(value$$1, num) {
     var arr = new Array(num);
     for (var i = 0; i < num; i++) {
         arr[i] = value$$1;
@@ -4295,7 +4411,7 @@ function makePrebuildUserFilterList(arr) {
 
     var rootContextObject = { clamp: clamp$1, Color: Color$1 };
     arr.forEach(function (it) {
-        Object.assign(rootContextObject, it.userFunction.rootContextObject);
+        rootContextObject = _extends({}, rootContextObject, it.userFunction.rootContextObject);
     });
 
     var rootContextDefine = 'const ' + Object.keys(rootContextObject).map(function (key) {
@@ -4440,7 +4556,7 @@ function createBlurMatrix() {
 
     var count = Math.pow(amount, 2);
     var value$$1 = 1 / count;
-    return repeat(value$$1, count);
+    return repeat$1(value$$1, count);
 }
 
 function fillColor(pixels, i, r, g, b, a) {
@@ -6123,9 +6239,7 @@ function ImageToRGB(url) {
 function ImageToCanvas(url, filter, callback) {
     var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : { frameTimer: 'full' };
 
-    ImageToURL(url, filter, callback, Object.assign({
-        returnTo: 'canvas'
-    }, opt));
+    ImageToURL(url, filter, callback, _extends({ returnTo: 'canvas' }, opt));
 }
 
 function ImageToURL(url, filter, callback) {
@@ -6225,16 +6339,18 @@ function ImageToHistogram(url, callback) {
     });
 }
 
-var image = {
-    palette: palette,
-    ImageToCanvas: ImageToCanvas,
-    ImageToHistogram: ImageToHistogram,
-    ImageToRGB: ImageToRGB,
-    ImageToURL: ImageToURL,
-    GLToCanvas: GLToCanvas,
-    histogram: histogram,
-    histogramToPoints: histogramToPoints
-};
+
+
+var image = Object.freeze({
+	palette: palette,
+	ImageToRGB: ImageToRGB,
+	ImageToCanvas: ImageToCanvas,
+	ImageToURL: ImageToURL,
+	GLToCanvas: GLToCanvas,
+	histogram: histogram,
+	histogramToPoints: histogramToPoints,
+	ImageToHistogram: ImageToHistogram
+});
 
 var Color$1 = _extends({}, formatter, math, mixin, parser, fromYCrCb, fromRGB, fromCMYK, fromHSV, fromHSL, fromLAB, image, func);
 
@@ -6280,15 +6396,221 @@ var HueColor = {
 // TODO: worker run 
 var ImageFilter = _extends({}, FilterList, functions$1);
 
-var Util = {
-    Color: Color$1,
-    HueColor: HueColor,
-    ColorNames: ColorNames,
-    ImageFilter: ImageFilter,
-    GL: GL,
-    Canvas: Canvas,
-    ImageLoader: ImageLoader
-};
+var GETTER_PREFIX = '*/';
+var ACTION_PREFIX = '/';
+
+function GETTER(str) {
+    return GETTER_PREFIX + str;
+}
+
+function ACTION(str) {
+    return ACTION_PREFIX + str;
+}
+
+var PREVENT = 'PREVENT';
+
+var BaseStore = function () {
+    function BaseStore(opt) {
+        classCallCheck(this, BaseStore);
+
+        this.callbacks = [];
+        this.actions = [];
+        this.getters = [];
+        this.modules = opt.modules || [];
+        this.standalone = {
+            getters: {},
+            actions: {},
+            dispatches: {}
+        };
+
+        this.initialize();
+    }
+
+    createClass(BaseStore, [{
+        key: "initialize",
+        value: function initialize() {
+            this.initializeModule();
+        }
+    }, {
+        key: "initializeModule",
+        value: function initializeModule() {
+            var _this = this;
+
+            this.modules.forEach(function (ModuleClass) {
+                var instance = _this.addModule(ModuleClass);
+            });
+        }
+    }, {
+        key: "makeActionCallback",
+        value: function makeActionCallback(context, action, actionName) {
+            var _this2 = this;
+
+            var func = function func($1, $2, $3, $4, $5) {
+                return context[action].call(context, _this2, $1, $2, $3, $4, $5);
+            };
+
+            func.context = context;
+            func.displayName = actionName;
+
+            return func;
+        }
+    }, {
+        key: "action",
+        value: function action(_action, context) {
+            var _this3 = this;
+
+            var actionName = _action.substr(_action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length);
+
+            this.actions[actionName] = this.makeActionCallback(context, _action, actionName);
+
+            this.standalone.actions[actionName] = function ($1, $2, $3, $4, $5) {
+                return _this3.run(actionName, $1, $2, $3, $4, $5);
+            };
+            this.standalone.dispatches[actionName] = function ($1, $2, $3, $4, $5) {
+                return _this3.dispatch(actionName, $1, $2, $3, $4, $5);
+            };
+        }
+    }, {
+        key: "getter",
+        value: function getter(action, context) {
+            var _this4 = this;
+
+            var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length);
+
+            this.getters[actionName] = this.makeActionCallback(context, action, actionName);
+
+            this.standalone.getters[actionName] = function ($1, $2, $3, $4, $5) {
+                return _this4.read(actionName, $1, $2, $3, $4, $5);
+            };
+        }
+    }, {
+        key: "mapGetters",
+        value: function mapGetters() {
+            var _this5 = this;
+
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+            }
+
+            return args.map(function (actionName) {
+                return _this5.standalone.getters[actionName];
+            });
+        }
+    }, {
+        key: "mapActions",
+        value: function mapActions() {
+            var _this6 = this;
+
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            return args.map(function (actionName) {
+                return _this6.standalone.actions[actionName];
+            });
+        }
+    }, {
+        key: "mapDispatches",
+        value: function mapDispatches() {
+            var _this7 = this;
+
+            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+                args[_key3] = arguments[_key3];
+            }
+
+            return args.map(function (actionName) {
+                return _this7.standalone.dispatches[actionName];
+            });
+        }
+    }, {
+        key: "dispatch",
+        value: function dispatch(action, $1, $2, $3, $4, $5) {
+            var actionCallback = this.actions[action];
+
+            if (actionCallback) {
+                var ret = actionCallback($1, $2, $3, $4, $5);
+
+                if (ret != PREVENT) {
+                    actionCallback.context.afterDispatch();
+                }
+            } else {
+                throw new Error('action : ' + action + ' is not a valid.');
+            }
+        }
+    }, {
+        key: "run",
+        value: function run(action, $1, $2, $3, $4, $5) {
+            var actionCallback = this.actions[action];
+
+            if (actionCallback) {
+                return actionCallback($1, $2, $3, $4, $5);
+            } else {
+                throw new Error('action : ' + action + ' is not a valid.');
+            }
+        }
+    }, {
+        key: "read",
+        value: function read(action, $1, $2, $3, $4, $5) {
+            var getterCallback = this.getters[action];
+
+            if (getterCallback) {
+                return getterCallback($1, $2, $3, $4, $5);
+            } else {
+                throw new Error('getter : ' + action + ' is not a valid.');
+            }
+        }
+    }, {
+        key: "clone",
+        value: function clone$$1(action, $1, $2, $3, $4, $5) {
+            return JSON.parse(JSON.stringify(this.read(action, $1, $2, $3, $4, $5)));
+        }
+    }, {
+        key: "addModule",
+        value: function addModule(ModuleClass) {
+            return new ModuleClass(this);
+        }
+    }, {
+        key: "on",
+        value: function on(event, originalCallback, context) {
+            var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+            var callback = delay > 0 ? debounce(originalCallback, delay) : originalCallback;
+            this.callbacks.push({ event: event, callback: callback, context: context, originalCallback: originalCallback });
+        }
+    }, {
+        key: "off",
+        value: function off(event, originalCallback) {
+
+            if (arguments.length == 0) {
+                this.callbacks = [];
+            } else if (arguments.length == 1) {
+                this.callbacks = this.callbacks.filter(function (f) {
+                    return f.event != event;
+                });
+            } else if (arguments.length == 2) {
+                this.callbacks = this.callbacks.filter(function (f) {
+                    return !(f.event == event && f.originalCallback == originalCallback);
+                });
+            }
+        }
+    }, {
+        key: "emit",
+        value: function emit($1, $2, $3, $4, $5) {
+            var _this8 = this;
+
+            var event = $1;
+
+            this.callbacks.filter(function (f) {
+                return f.event == event;
+            }).forEach(function (f) {
+                if (f && isFunction(f.callback) && f.context.source != _this8.source) {
+                    f.callback($2, $3, $4, $5);
+                }
+            });
+        }
+    }]);
+    return BaseStore;
+}();
 
 var counter = 0;
 var cached = [];
@@ -6442,7 +6764,7 @@ var Dom = function () {
         }
     }, {
         key: "html",
-        value: function html(_html) {
+        value: function html$$1(_html) {
 
             if (arguments.length == 0) {
                 return this.el.innerHTML;
@@ -6520,7 +6842,14 @@ var Dom = function () {
             if (arguments.length == 0) {
                 return this.el.textContent;
             } else {
-                this.el.textContent = value$$1;
+
+                var tempText = value$$1;
+
+                if (value$$1 instanceof Dom) {
+                    tempText = value$$1.text();
+                }
+
+                this.el.textContent = tempText;
                 return this;
             }
         }
@@ -6683,7 +7012,14 @@ var Dom = function () {
             if (arguments.length == 0) {
                 return this.el.value;
             } else if (arguments.length == 1) {
-                this.el.value = value$$1;
+
+                var tempValue = value$$1;
+
+                if (value$$1 instanceof Dom) {
+                    tempValue = value$$1.val();
+                }
+
+                this.el.value = tempValue;
             }
 
             return this;
@@ -6825,6 +7161,13 @@ var Dom = function () {
 
             return this;
         }
+    }, {
+        key: "focus",
+        value: function focus() {
+            this.el.focus();
+
+            return this;
+        }
     }], [{
         key: "getScrollTop",
         value: function getScrollTop() {
@@ -6838,201 +7181,6 @@ var Dom = function () {
     }]);
     return Dom;
 }();
-
-var GETTER_PREFIX = '*/';
-var ACTION_PREFIX = '/';
-
-function GETTER(str) {
-    return GETTER_PREFIX + str;
-}
-
-function ACTION(str) {
-    return ACTION_PREFIX + str;
-}
-
-var BaseModule = function () {
-    function BaseModule($store) {
-        classCallCheck(this, BaseModule);
-
-        this.$store = $store;
-        this.initialize();
-    }
-
-    createClass(BaseModule, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {}
-    }, {
-        key: "initialize",
-        value: function initialize() {
-            var _this = this;
-
-            this.filterProps(ACTION_PREFIX).forEach(function (key) {
-                _this.$store.action(key, _this);
-            });
-
-            this.filterProps(GETTER_PREFIX).forEach(function (key) {
-                _this.$store.getter(key, _this);
-            });
-        }
-    }, {
-        key: "filterProps",
-        value: function filterProps() {
-            var pattern = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '/';
-
-            return Object.getOwnPropertyNames(this.__proto__).filter(function (key) {
-                return key.startsWith(pattern);
-            });
-        }
-    }]);
-    return BaseModule;
-}();
-
-var ColorSetsList = function (_BaseModule) {
-    inherits(ColorSetsList, _BaseModule);
-
-    function ColorSetsList() {
-        classCallCheck(this, ColorSetsList);
-        return possibleConstructorReturn(this, (ColorSetsList.__proto__ || Object.getPrototypeOf(ColorSetsList)).apply(this, arguments));
-    }
-
-    createClass(ColorSetsList, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(ColorSetsList.prototype.__proto__ || Object.getPrototypeOf(ColorSetsList.prototype), 'initialize', this).call(this);
-
-            // set property
-            this.$store.colorSetsList = [{ name: "Material",
-                edit: true,
-                colors: ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B']
-            }, { name: "Custom", "edit": true, "colors": [] }, { name: "Color Scale", "scale": ['red', 'yellow', 'black'], count: 5 }];
-            this.$store.currentColorSets = {};
-        }
-    }, {
-        key: ACTION('setUserPalette'),
-        value: function value($store, list) {
-            $store.userList = list;
-
-            $store.dispatch('resetUserPalette');
-            $store.dispatch('setCurrentColorSets');
-        }
-    }, {
-        key: ACTION('resetUserPalette'),
-        value: function value($store) {
-            if ($store.userList && $store.userList.length) {
-                $store.userList = $store.userList.map(function (element, index) {
-
-                    if (isFunction(element.colors)) {
-                        var makeCallback = element.colors;
-
-                        element.colors = makeCallback($store);
-                        element._colors = makeCallback;
-                    }
-
-                    return Object.assign({
-                        name: 'color-' + index,
-                        colors: []
-                    }, element);
-                });
-
-                $store.emit('changeUserList');
-            }
-        }
-    }, {
-        key: ACTION('setCurrentColorSets'),
-        value: function value($store, nameOrIndex) {
-
-            var _list = $store.read('list');
-
-            if (isUndefined(nameOrIndex)) {
-                $store.currentColorSets = _list[0];
-            } else if (isNumber(nameOrIndex)) {
-                $store.currentColorSets = _list[nameOrIndex];
-            } else {
-                $store.currentColorSets = _list.filter(function (obj) {
-                    return obj.name == nameOrIndex;
-                })[0];
-            }
-
-            $store.emit('changeCurrentColorSets');
-        }
-    }, {
-        key: GETTER('getCurrentColorSets'),
-        value: function value($store) {
-            return $store.currentColorSets;
-        }
-    }, {
-        key: ACTION('addCurrentColor'),
-        value: function value($store, color) {
-            if (Array.isArray($store.currentColorSets.colors)) {
-                $store.currentColorSets.colors.push(color);
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: ACTION('setCurrentColorAll'),
-        value: function value($store) {
-            var colors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-            $store.currentColorSets.colors = colors;
-            $store.emit('changeCurrentColorSets');
-        }
-    }, {
-        key: ACTION('removeCurrentColor'),
-        value: function value($store, index) {
-            if ($store.currentColorSets.colors[index]) {
-                $store.currentColorSets.colors.splice(index, 1);
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: ACTION('removeCurrentColorToTheRight'),
-        value: function value($store, index) {
-            if ($store.currentColorSets.colors[index]) {
-                $store.currentColorSets.colors.splice(index, Number.MAX_VALUE);
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: ACTION('clearPalette'),
-        value: function value($store) {
-            if ($store.currentColorSets.colors) {
-                $store.currentColorSets.colors = [];
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: GETTER('list'),
-        value: function value($store) {
-            return Array.isArray($store.userList) && $store.userList.length ? $store.userList : $store.colorSetsList;
-        }
-    }, {
-        key: GETTER('getCurrentColors'),
-        value: function value($store) {
-            return $store.read('getColors', $store.currentColorSets);
-        }
-    }, {
-        key: GETTER('getColors'),
-        value: function value($store, element) {
-            if (element.scale) {
-                return Color$1.scale(element.scale, element.count);
-            }
-
-            return element.colors || [];
-        }
-    }, {
-        key: GETTER('getColorSetsList'),
-        value: function value($store) {
-            return $store.read('list').map(function (element) {
-                return {
-                    name: element.name,
-                    edit: element.edit,
-                    colors: $store.read('getColors', element)
-                };
-            });
-        }
-    }]);
-    return ColorSetsList;
-}(BaseModule);
 
 var EventChecker = function () {
     function EventChecker(value) {
@@ -7113,14 +7261,6 @@ var POINTERMOVE = CUSTOM('mousemove', 'touchmove');
 var POINTEREND = CUSTOM('mouseup', 'touchend');
 var CHANGEINPUT = CUSTOM('change', 'input');
 
-// custom event 
-
-/*export const PREDEFINED_NAMES = {
-    'pointerstart': 'mousedown:touchstart',
-    'pointermove': 'mousemove:touchmove',
-    'pointerend': 'mouseup:touchend'
-}*/
-
 // Predefined CHECKER 
 var CHECKER = function CHECKER(value) {
     var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
@@ -7137,6 +7277,7 @@ var KEY_ARROW_UP = 'ArrowUp';
 var KEY_ARROW_DOWN = 'ArrowDown';
 var KEY_ARROW_LEFT = 'ArrowLeft';
 var KEY_ARROW_RIGHT = 'ArrowRight';
+var KEY_ENTER = 'Enter';
 
 var ALT = CHECKER(KEY_ALT);
 var SHIFT = CHECKER(KEY_SHIFT);
@@ -7147,6 +7288,7 @@ var ARROW_UP = CHECKER(KEY_ARROW_UP);
 var ARROW_DOWN = CHECKER(KEY_ARROW_DOWN);
 var ARROW_LEFT = CHECKER(KEY_ARROW_LEFT);
 var ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT);
+var ENTER = CHECKER(KEY_ENTER);
 
 var SELF = CHECKER('self');
 var CAPTURE = CHECKER('capture');
@@ -7299,27 +7441,26 @@ var EventMachin = function () {
     }
   }, {
     key: 'parseTemplate',
-    value: function parseTemplate(html, isLoad) {
+    value: function parseTemplate(html$$1, isLoad) {
       var _this = this;
 
-      if (Array.isArray(html)) {
-        html = html.join(EMPTY_STRING);
+      if (isArray(html$$1)) {
+        html$$1 = html$$1.join(EMPTY_STRING);
       }
 
-      html = html.trim();
+      html$$1 = html$$1.trim();
 
-      var list = new Dom("div").html(html).children();
+      var list = new Dom("div").html(html$$1).children();
 
       var fragment = document.createDocumentFragment();
-
+      var queryProperty = '[' + REFERENCE_PROPERTY + ']';
       list.forEach(function ($el) {
         // ref element 정리 
         if ($el.attr(REFERENCE_PROPERTY)) {
           _this.refs[$el.attr(REFERENCE_PROPERTY)] = $el;
         }
-        var refs = $el.$$('[' + REFERENCE_PROPERTY + ']');
-
-        [].concat(toConsumableArray(refs)).forEach(function ($dom) {
+        var refs = $el.$$(queryProperty);
+        refs.forEach(function ($dom) {
           var name = $dom.attr(REFERENCE_PROPERTY);
           _this.refs[name] = $dom;
         });
@@ -7750,6 +7891,7 @@ var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
 var TOOL_CHANGE_COLOR = 'tool/changeColor';
 var TOOL_SET = 'tool/set';
 var TOOL_TOGGLE = 'tool/toggle';
+var RESIZE_WINDOW = 'resize/window';
 
 // const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
@@ -7827,11 +7969,10 @@ var UIElement = function (_EventMachin) {
             this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach(function (key) {
                 var events = _this2.getRealEventName(key, MULTI_PREFIX);
 
-                var callback = _this2[key].bind(_this2);
-
                 events.split(SPLITTER).forEach(function (e) {
                     e = _this2.getRealEventName(e);
-
+                    var callback = _this2[key].bind(_this2);
+                    callback.displayName = e;
                     _this2.storeEvents[e] = callback;
                     _this2.$store.on(e, _this2.storeEvents[e], _this2);
                 });
@@ -7848,82 +7989,336 @@ var UIElement = function (_EventMachin) {
         }
     }, {
         key: "read",
-        value: function read() {
+        value: function read($1, $2, $3, $4, $5) {
+            return this.$store.read($1, $2, $3, $4, $5);
+        }
+    }, {
+        key: "mapGetters",
+        value: function mapGetters() {
             var _$store;
 
-            return (_$store = this.$store).read.apply(_$store, arguments);
+            return (_$store = this.$store).mapGetters.apply(_$store, arguments);
+        }
+    }, {
+        key: "mapActions",
+        value: function mapActions() {
+            var _$store2;
+
+            return (_$store2 = this.$store).mapActions.apply(_$store2, arguments);
+        }
+    }, {
+        key: "mapDispatches",
+        value: function mapDispatches() {
+            var _$store3;
+
+            return (_$store3 = this.$store).mapDispatches.apply(_$store3, arguments);
         }
     }, {
         key: "i18n",
-        value: function i18n() {
-            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                args[_key2] = arguments[_key2];
-            }
-
-            return this.read.apply(this, ['i18n/get'].concat(args));
+        value: function i18n($1, $2, $3, $4, $5) {
+            return this.read('i18n/get', $1, $2, $3, $4, $5);
         }
     }, {
         key: "config",
-        value: function config() {
-            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-                args[_key3] = arguments[_key3];
+        value: function config($1, $2, $3, $4, $5) {
+            if (arguments.length == 1) {
+                return this.read(TOOL_GET, $1);
             }
 
-            if (args.length == 1) {
-                return this.read(TOOL_GET, args[0]);
-            }
-
-            this.dispatch.apply(this, [TOOL_SET].concat(args));
+            this.dispatch(TOOL_SET, $1, $2, $3, $4, $5);
         }
     }, {
         key: "initConfig",
-        value: function initConfig() {
-            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-                args[_key4] = arguments[_key4];
-            }
-
-            if (args.length == 1) {
-                return this.read(TOOL_GET, args[0]);
-            }
-
-            this.run.apply(this, [TOOL_SET].concat(args));
+        value: function initConfig($1, $2, $3, $4, $5) {
+            this.run(TOOL_SET, $1, $2, $3, $4, $5);
         }
     }, {
         key: "run",
-        value: function run() {
-            var _$store2;
-
-            return (_$store2 = this.$store).run.apply(_$store2, arguments);
+        value: function run($1, $2, $3, $4, $5) {
+            return this.$store.run($1, $2, $3, $4, $5);
         }
     }, {
         key: "dispatch",
-        value: function dispatch() {
-            var _$store3;
-
+        value: function dispatch($1, $2, $3, $4, $5) {
             this.$store.source = this.source;
-            return (_$store3 = this.$store).dispatch.apply(_$store3, arguments);
+            return this.$store.dispatch($1, $2, $3, $4, $5);
         }
     }, {
         key: "emit",
-        value: function emit() {
-            var _$store4;
-
+        value: function emit($1, $2, $3, $4, $5) {
             this.$store.source = this.source;
-            (_$store4 = this.$store).emit.apply(_$store4, arguments);
+            this.$store.emit($1, $2, $3, $4, $5);
         }
     }, {
         key: "commit",
-        value: function commit(eventType) {
-            for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
-                args[_key5 - 1] = arguments[_key5];
-            }
-
-            this.run.apply(this, [ITEM_SET].concat(args));
-            this.emit.apply(this, [eventType].concat(args));
+        value: function commit(eventType, $1, $2, $3, $4, $5) {
+            this.run(ITEM_SET, $1, $2, $3, $4, $5);
+            this.emit(eventType, $1, $2, $3, $4, $5);
         }
     }]);
     return UIElement;
 }(EventMachin);
+
+var start = function start(opt) {
+    var App = function (_UIElement) {
+        inherits(App, _UIElement);
+
+        function App() {
+            classCallCheck(this, App);
+            return possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+        }
+
+        createClass(App, [{
+            key: "initialize",
+            value: function initialize() {
+                var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+                this.$store = new BaseStore({
+                    modules: [].concat(toConsumableArray(this.getModuleList()), toConsumableArray(modules))
+                });
+
+                this.$body = new Dom(this.getContainer());
+                this.$root = new Dom('div', this.getClassName());
+
+                this.$body.append(this.$root);
+
+                this.render(this.$root);
+
+                // 이벤트 연결 
+                this.initializeEvent();
+            }
+        }, {
+            key: "getModuleList",
+            value: function getModuleList() {
+                return opt.modules || [];
+            }
+        }, {
+            key: "getClassName",
+            value: function getClassName() {
+                return opt.className || 'csseditor';
+            }
+        }, {
+            key: "getContainer",
+            value: function getContainer() {
+                return opt.container || document.body;
+            }
+        }, {
+            key: "template",
+            value: function template() {
+                return "<div>" + opt.template + "</div>";
+            }
+        }, {
+            key: "components",
+            value: function components() {
+                return opt.components || {};
+            }
+        }]);
+        return App;
+    }(UIElement);
+
+    return new App(opt);
+};
+
+
+
+var App = Object.freeze({
+	start: start
+});
+
+var Util = {
+    App: App,
+    Color: Color$1,
+    HueColor: HueColor,
+    ColorNames: ColorNames,
+    ImageFilter: ImageFilter,
+    GL: GL,
+    Canvas: Canvas,
+    ImageLoader: ImageLoader
+};
+
+var BaseModule = function () {
+    function BaseModule($store) {
+        classCallCheck(this, BaseModule);
+
+        this.$store = $store;
+        this.initialize();
+    }
+
+    createClass(BaseModule, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {}
+    }, {
+        key: "initialize",
+        value: function initialize() {
+            var _this = this;
+
+            this.filterProps(ACTION_PREFIX).forEach(function (key) {
+                _this.$store.action(key, _this);
+            });
+
+            this.filterProps(GETTER_PREFIX).forEach(function (key) {
+                _this.$store.getter(key, _this);
+            });
+        }
+    }, {
+        key: "filterProps",
+        value: function filterProps() {
+            var pattern = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '/';
+
+            return Object.getOwnPropertyNames(this.__proto__).filter(function (key) {
+                return key.startsWith(pattern);
+            });
+        }
+    }]);
+    return BaseModule;
+}();
+
+var ColorSetsList = function (_BaseModule) {
+    inherits(ColorSetsList, _BaseModule);
+
+    function ColorSetsList() {
+        classCallCheck(this, ColorSetsList);
+        return possibleConstructorReturn(this, (ColorSetsList.__proto__ || Object.getPrototypeOf(ColorSetsList)).apply(this, arguments));
+    }
+
+    createClass(ColorSetsList, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(ColorSetsList.prototype.__proto__ || Object.getPrototypeOf(ColorSetsList.prototype), 'initialize', this).call(this);
+
+            // set property
+            this.$store.colorSetsList = [{ name: "Material",
+                edit: true,
+                colors: ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B']
+            }, { name: "Custom", "edit": true, "colors": [] }, { name: "Color Scale", "scale": ['red', 'yellow', 'black'], count: 5 }];
+            this.$store.currentColorSets = {};
+        }
+    }, {
+        key: ACTION('setUserPalette'),
+        value: function value($store, list) {
+            $store.userList = list;
+
+            $store.dispatch('resetUserPalette');
+            $store.dispatch('setCurrentColorSets');
+        }
+    }, {
+        key: ACTION('resetUserPalette'),
+        value: function value($store) {
+            if ($store.userList && $store.userList.length) {
+                $store.userList = $store.userList.map(function (element, index) {
+
+                    if (isFunction(element.colors)) {
+                        var makeCallback = element.colors;
+
+                        element.colors = makeCallback($store);
+                        element._colors = makeCallback;
+                    }
+
+                    return _extends({
+                        name: 'color-' + index,
+                        colors: []
+                    }, element);
+                });
+
+                $store.emit('changeUserList');
+            }
+        }
+    }, {
+        key: ACTION('setCurrentColorSets'),
+        value: function value($store, nameOrIndex) {
+
+            var _list = $store.read('list');
+
+            if (isUndefined(nameOrIndex)) {
+                $store.currentColorSets = _list[0];
+            } else if (isNumber(nameOrIndex)) {
+                $store.currentColorSets = _list[nameOrIndex];
+            } else {
+                $store.currentColorSets = _list.filter(function (obj) {
+                    return obj.name == nameOrIndex;
+                })[0];
+            }
+
+            $store.emit('changeCurrentColorSets');
+        }
+    }, {
+        key: GETTER('getCurrentColorSets'),
+        value: function value($store) {
+            return $store.currentColorSets;
+        }
+    }, {
+        key: ACTION('addCurrentColor'),
+        value: function value($store, color) {
+            if (Array.isArray($store.currentColorSets.colors)) {
+                $store.currentColorSets.colors.push(color);
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: ACTION('setCurrentColorAll'),
+        value: function value($store) {
+            var colors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+            $store.currentColorSets.colors = colors;
+            $store.emit('changeCurrentColorSets');
+        }
+    }, {
+        key: ACTION('removeCurrentColor'),
+        value: function value($store, index) {
+            if ($store.currentColorSets.colors[index]) {
+                $store.currentColorSets.colors.splice(index, 1);
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: ACTION('removeCurrentColorToTheRight'),
+        value: function value($store, index) {
+            if ($store.currentColorSets.colors[index]) {
+                $store.currentColorSets.colors.splice(index, Number.MAX_VALUE);
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: ACTION('clearPalette'),
+        value: function value($store) {
+            if ($store.currentColorSets.colors) {
+                $store.currentColorSets.colors = [];
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: GETTER('list'),
+        value: function value($store) {
+            return Array.isArray($store.userList) && $store.userList.length ? $store.userList : $store.colorSetsList;
+        }
+    }, {
+        key: GETTER('getCurrentColors'),
+        value: function value($store) {
+            return $store.read('getColors', $store.currentColorSets);
+        }
+    }, {
+        key: GETTER('getColors'),
+        value: function value($store, element) {
+            if (element.scale) {
+                return Color$1.scale(element.scale, element.count);
+            }
+
+            return element.colors || [];
+        }
+    }, {
+        key: GETTER('getColorSetsList'),
+        value: function value($store) {
+            return $store.read('list').map(function (element) {
+                return {
+                    name: element.name,
+                    edit: element.edit,
+                    colors: $store.read('getColors', element)
+                };
+            });
+        }
+    }]);
+    return ColorSetsList;
+}(BaseModule);
 
 var ColorManager = function (_BaseModule) {
     inherits(ColorManager, _BaseModule);
@@ -7979,19 +8374,19 @@ var ColorManager = function (_BaseModule) {
             }
 
             if (colorObj.type == 'hsl') {
-                $store.hsl = Object.assign($store.hsl, colorObj);
+                $store.hsl = _extends({}, $store.hsl, colorObj);
                 $store.rgb = Color$1.HSLtoRGB($store.hsl);
                 $store.hsv = Color$1.HSLtoHSV(colorObj);
             } else if (colorObj.type == 'hex') {
-                $store.rgb = Object.assign($store.rgb, colorObj);
+                $store.rgb = _extends({}, $store.rgb, colorObj);
                 $store.hsl = Color$1.RGBtoHSL($store.rgb);
                 $store.hsv = Color$1.RGBtoHSV(colorObj);
             } else if (colorObj.type == 'rgb') {
-                $store.rgb = Object.assign($store.rgb, colorObj);
+                $store.rgb = _extends({}, $store.rgb, colorObj);
                 $store.hsl = Color$1.RGBtoHSL($store.rgb);
                 $store.hsv = Color$1.RGBtoHSV(colorObj);
             } else if (colorObj.type == 'hsv') {
-                $store.hsv = Object.assign($store.hsv, colorObj);
+                $store.hsv = _extends({}, $store.hsv, colorObj);
                 $store.rgb = Color$1.HSVtoRGB($store.hsv);
                 $store.hsl = Color$1.HSVtoHSL($store.hsv);
             }
@@ -8010,7 +8405,7 @@ var ColorManager = function (_BaseModule) {
         value: function value($store, type) {
             type = type || $store.format;
             var colorObj = $store[type] || $store.rgb;
-            return Color$1.format(Object.assign({}, colorObj, { a: $store.alpha }), type);
+            return Color$1.format(_extends({}, colorObj, { a: $store.alpha }), type);
         }
     }, {
         key: GETTER('toColor'),
@@ -8045,136 +8440,6 @@ var ColorManager = function (_BaseModule) {
     }]);
     return ColorManager;
 }(BaseModule);
-
-var PREVENT = 'PREVENT';
-
-var BaseStore = function () {
-    function BaseStore(opt) {
-        classCallCheck(this, BaseStore);
-
-        this.callbacks = [];
-        this.actions = [];
-        this.getters = [];
-        this.modules = opt.modules || [];
-
-        this.initialize();
-    }
-
-    createClass(BaseStore, [{
-        key: "initialize",
-        value: function initialize() {
-            this.initializeModule();
-        }
-    }, {
-        key: "initializeModule",
-        value: function initializeModule() {
-            var _this = this;
-
-            this.modules.forEach(function (ModuleClass) {
-                var instance = _this.addModule(ModuleClass);
-            });
-        }
-    }, {
-        key: "action",
-        value: function action(_action, context) {
-            var actionName = _action.substr(_action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length);
-            this.actions[actionName] = { context: context, callback: context[_action] };
-        }
-    }, {
-        key: "getter",
-        value: function getter(action, context) {
-            var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length);
-            this.getters[actionName] = { context: context, callback: context[action] };
-        }
-    }, {
-        key: "dispatch",
-        value: function dispatch(action, $1, $2, $3, $4, $5) {
-            var m = this.actions[action];
-
-            if (m) {
-                var ret = this.run(action, $1, $2, $3, $4, $5);
-
-                if (ret != PREVENT) {
-                    m.context.afterDispatch();
-                }
-            } else {
-                throw new Error('action : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "run",
-        value: function run(action, $1, $2, $3, $4, $5) {
-            var m = this.actions[action];
-
-            if (m) {
-                m.callback.call(m.context, this, $1, $2, $3, $4, $5);
-            } else {
-                throw new Error('action : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "read",
-        value: function read(action, $1, $2, $3, $4, $5) {
-            var m = this.getters[action];
-
-            if (m) {
-                return m.callback.call(m.context, this, $1, $2, $3, $4, $5);
-            } else {
-                throw new Error('getter : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "clone",
-        value: function clone$$1(action, $1, $2, $3, $4, $5) {
-            return JSON.parse(JSON.stringify(this.read(action, $1, $2, $3, $4, $5)));
-        }
-    }, {
-        key: "addModule",
-        value: function addModule(ModuleClass) {
-            return new ModuleClass(this);
-        }
-    }, {
-        key: "on",
-        value: function on(event, originalCallback, context) {
-            var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-            var callback = delay > 0 ? debounce(originalCallback, delay) : originalCallback;
-            this.callbacks.push({ event: event, callback: callback, context: context, originalCallback: originalCallback });
-        }
-    }, {
-        key: "off",
-        value: function off(event, originalCallback) {
-
-            if (arguments.length == 0) {
-                this.callbacks = [];
-            } else if (arguments.length == 1) {
-                this.callbacks = this.callbacks.filter(function (f) {
-                    return f.event != event;
-                });
-            } else if (arguments.length == 2) {
-                this.callbacks = this.callbacks.filter(function (f) {
-                    return !(f.event == event && f.originalCallback == originalCallback);
-                });
-            }
-        }
-    }, {
-        key: "emit",
-        value: function emit($1, $2, $3, $4, $5) {
-            var _this2 = this;
-
-            var event = $1;
-
-            this.callbacks.filter(function (f) {
-                return f.event == event;
-            }).forEach(function (f) {
-                if (f && isFunction(f.callback) && f.context.source != _this2.source) {
-                    f.callback($2, $3, $4, $5);
-                }
-            });
-        }
-    }]);
-    return BaseStore;
-}();
 
 var BaseColorPicker = function (_UIElement) {
     inherits(BaseColorPicker, _UIElement);
@@ -8848,7 +9113,7 @@ var Opacity = function (_BaseSlider) {
     }, {
         key: 'setOpacityColorBar',
         value: function setOpacityColorBar() {
-            var rgb = Object.assign({}, this.$store.rgb);
+            var rgb = _extends({}, this.$store.rgb);
 
             rgb.a = 0;
             var start = Color$1.format(rgb, 'rgb');
@@ -9355,6 +9620,9 @@ var ColorInformation = function (_UIElement) {
     return ColorInformation;
 }(UIElement);
 
+var _templateObject = taggedTemplateLiteral(['\n            <div>\n                ', '\n            </div>\n        '], ['\n            <div>\n                ', '\n            </div>\n        ']);
+var _templateObject2 = taggedTemplateLiteral(['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>'], ['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>']);
+
 var DATA_COLORSETS_INDEX = 'data-colorsets-index';
 
 var ColorSetsChooser = function (_UIElement) {
@@ -9368,7 +9636,7 @@ var ColorSetsChooser = function (_UIElement) {
     createClass(ColorSetsChooser, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="color-chooser">\n                <div class="color-chooser-container">\n                    <div class="colorsets-item colorsets-item-header">\n                        <h1 class="title">Color Palettes</h1>\n                        <span ref="$toggleButton" class="items">&times;</span>\n                    </div>\n                    <div ref="$colorsetsList" class="colorsets-list"></div>\n                </div>\n            </div>\n        ';
+            return '<div class="color-chooser">\n            <div class="color-chooser-container">\n                <div class="colorsets-item colorsets-item-header">\n                    <h1 class="title">Color Palettes</h1>\n                    <span ref="$toggleButton" class="items">&times;</span>\n                </div>\n                <div ref="$colorsetsList" class="colorsets-list"></div>\n            </div>\n        </div>';
         }
     }, {
         key: 'refresh',
@@ -9377,12 +9645,12 @@ var ColorSetsChooser = function (_UIElement) {
         }
     }, {
         key: EVENT('changeCurrentColorSets'),
-        value: function value$$1() {
+        value: function value() {
             this.refresh();
         }
     }, {
         key: EVENT('toggleColorChooser'),
-        value: function value$$1() {
+        value: function value() {
             this.toggle();
         }
 
@@ -9390,18 +9658,18 @@ var ColorSetsChooser = function (_UIElement) {
 
     }, {
         key: LOAD('$colorsetsList'),
-        value: function value$$1() {
+        value: function value() {
             // colorsets 
             var colorSets = this.read('getColorSetsList');
 
-            return '\n            <div>\n                ' + colorSets.map(function (element, index) {
-                return '\n                        <div class="colorsets-item" data-colorsets-index="' + index + '" >\n                            <h1 class="title">' + element.name + '</h1>\n                            <div class="items">\n                                <div>\n                                    ' + element.colors.filter(function (color$$1, i) {
+            return html(_templateObject, colorSets.map(function (element, index) {
+                return html(_templateObject2, index, element.name, element.colors.filter(function (color, i) {
                     return i < 5;
-                }).map(function (color$$1) {
-                    color$$1 = color$$1 || 'rgba(255, 255, 255, 1)';
-                    return '<div class="color-item" title="' + color$$1 + '">\n                                                <div class="color-view" style="background-color: ' + color$$1 + '"></div>\n                                            </div>';
-                }).join(EMPTY_STRING) + '\n                                </div>\n                            </div>\n                        </div>';
-            }).join(EMPTY_STRING) + '\n            </div>\n        ';
+                }).map(function (color) {
+                    color = color || 'rgba(255, 255, 255, 1)';
+                    return '<div class="color-item" title="' + color + '">\n                                                <div class="color-view" style="background-color: ' + color + '"></div>\n                                            </div>';
+                }));
+            }));
         }
     }, {
         key: 'show',
@@ -9420,12 +9688,12 @@ var ColorSetsChooser = function (_UIElement) {
         }
     }, {
         key: CLICK('$toggleButton'),
-        value: function value$$1(e) {
+        value: function value(e) {
             this.toggle();
         }
     }, {
         key: CLICK('$colorsetsList .colorsets-item'),
-        value: function value$$1(e, $dt) {
+        value: function value(e, $dt) {
             if ($dt) {
 
                 var index = parseInt($dt.attr(DATA_COLORSETS_INDEX));
@@ -9465,9 +9733,9 @@ var CurrentColorSets = function (_UIElement) {
             var currentColorSets = this.read('getCurrentColorSets');
             var colors = this.read('getCurrentColors');
 
-            return '\n            <div class="current-color-sets">\n            ' + colors.map(function (color$$1, i) {
+            return '<div class="current-color-sets">\n            ' + colors.map(function (color$$1, i) {
                 return '<div class="color-item" title="' + color$$1 + '" data-index="' + i + '" data-color="' + color$$1 + '">\n                    <div class="empty"></div>\n                    <div class="color-view" style="background-color: ' + color$$1 + '"></div>\n                </div>';
-            }).join(EMPTY_STRING) + '   \n            ' + (currentColorSets.edit ? '<div class="add-color-item">+</div>' : EMPTY_STRING) + '         \n            </div>\n        ';
+            }).join(EMPTY_STRING) + '   \n            ' + (currentColorSets.edit ? '<div class="add-color-item">+</div>' : EMPTY_STRING) + '         \n            </div>';
         }
     }, {
         key: 'refresh',
@@ -9786,7 +10054,7 @@ var ChromeDevToolColorPicker = function (_BaseColorPicker) {
     createClass(ChromeDevToolColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <Palette></Palette> \n                <div class="control">\n                    <Hue></Hue>\n                    <Opacity></Opacity>\n                    <div class="empty"></div>\n                    <ColorView></ColorView>\n                </div>\n                <Information></Information>\n                <CurrentColorSets></CurrentColorSets>\n                <ColorSetsChooser></ColorSetsChooser>\n                <ContextMenu></ContextMenu>\n            </div>\n        ';
+            return '<div class=\'colorpicker-body\'>\n            <Palette></Palette> \n            <div class="control">\n                <Hue></Hue>\n                <Opacity></Opacity>\n                <div class="empty"></div>\n                <ColorView></ColorView>\n            </div>\n            <Information></Information>\n            <CurrentColorSets></CurrentColorSets>\n            <ColorSetsChooser></ColorSetsChooser>\n            <ContextMenu></ContextMenu>\n        </div>';
         }
     }, {
         key: 'components',
@@ -9968,7 +10236,7 @@ var VerticalOpacity = function (_VerticalSlider) {
     }, {
         key: 'setOpacityColorBar',
         value: function setOpacityColorBar() {
-            var rgb = Object.assign({}, this.$store.rgb);
+            var rgb = _extends({}, this.$store.rgb);
 
             rgb.a = 0;
             var start = Color$1.format(rgb, 'rgb');
@@ -10045,7 +10313,7 @@ var ColorRing = function (_ColorWheel) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n        <div class="wheel" data-type="ring">\n            <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>\n            <div class="drag-pointer" ref="$drag_pointer"></div>\n        </div>\n        ';
+            return '<div class="wheel" data-type="ring">\n            <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>\n            <div class="drag-pointer" ref="$drag_pointer"></div>\n        </div>';
         }
     }, {
         key: 'setColorUI',
@@ -10285,9 +10553,40 @@ var ColorPicker = {
     XDColorPicker: XDColorPicker
 };
 
+var BasePropertyItem = function (_UIElement) {
+    inherits(BasePropertyItem, _UIElement);
+
+    function BasePropertyItem() {
+        classCallCheck(this, BasePropertyItem);
+        return possibleConstructorReturn(this, (BasePropertyItem.__proto__ || Object.getPrototypeOf(BasePropertyItem)).apply(this, arguments));
+    }
+
+    createClass(BasePropertyItem, [{
+        key: "onToggleShow",
+        value: function onToggleShow() {}
+    }, {
+        key: CLICK('$title'),
+        value: function value(e) {
+            var $dom = new Dom(e.target);
+
+            if ($dom.hasClass('title')) {
+                this.$el.toggleClass('show');
+                this.onToggleShow();
+            }
+        }
+    }, {
+        key: "isPropertyShow",
+        value: function isPropertyShow() {
+            return this.$el.hasClass('show');
+        }
+    }]);
+    return BasePropertyItem;
+}(UIElement);
+
 /* event trigger */
 
 var CHANGE_TOOL = 'CHANGE_TOOL';
+var CHANGE_TOOL_SIZE = 'CHANGE_TOOL_SIZE';
 var CHANGE_HISTORY = 'CHANGE_HISTORY';
 
 var CHANGE_EDITOR = 'CHANGE_EDITOR';
@@ -10359,7 +10658,7 @@ var SELECTION_CURRENT_PAGE_ID = 'selection/current/page/id';
 var SELECTION_MODE = 'selection/mode';
 var SELECTION_IS = 'selection/is';
 var SELECTION_IS_ITEM = 'selection/is/item';
-var SELECTION_IS_LAYER$1 = 'selection/is/layer';
+var SELECTION_IS_LAYER = 'selection/is/layer';
 var SELECTION_IS_IMAGE = 'selection/is/image';
 var SELECTION_IS_PAGE = 'selection/is/page';
 var SELECTION_IS_BOXSHADOW = 'selection/is/boxshadow';
@@ -10374,6275 +10673,6 @@ var SELECTION_ONE = 'selection/one';
 var SELECTION_CHANGE = 'selection/change';
 var SELECTION_AREA = 'selection/area';
 var SELECTION_RECT = 'selection/rect';
-
-var COLORSTEP_COLOR_SOURCE = 'colorstep/colorSource';
-var COLORSTEP_CURRENT = 'colorstep/current';
-var COLORSTEP_INIT_COLOR = 'colorstep/initColor';
-var COLORSTEP_ADD = 'colorstep/add';
-var COLORSTEP_REMOVE = 'colorstep/remove';
-var COLORSTEP_SORT = 'colorstep/sort';
-var COLORSTEP_SORT_LIST = 'colorstep/sort/list';
-var COLORSTEP_LIST = 'colorstep/list';
-var COLORSTEP_CURRENT_INDEX = 'colorstep/currentIndex';
-var COLORSTEP_CUT_OFF = 'colorstep/cut/off';
-var COLORSTEP_CUT_ON = 'colorstep/cut/on';
-var COLORSTEP_UNIT_VALUE = 'colorstep/unit/value';
-var COLORSTEP_ORDERING_EQUALS = 'colorstep/ordering/equals';
-var COLORSTEP_ORDERING_EQUALS_LEFT = 'colorstep/ordering/equals/left';
-var COLORSTEP_ORDERING_EQUALS_RIGHT = 'colorstep/ordering/equals/right';
-
-var ITEM_KEYS = 'item/keys';
-
-var ITEM_KEYS_GENERATE = 'item/keys/generate';
-var ITEM_INITIALIZE = 'item/initialize';
-var ITEM_CREATE_OBJECT = 'item/create/object';
-var ITEM_CREATE_PAGE = 'item/create/page';
-var ITEM_CREATE_LAYER = 'item/create/layer';
-var ITEM_CREATE_IMAGE = 'item/create/image';
-var ITEM_CREATE_BOXSHADOW = 'item/create/boxshadow';
-var ITEM_CREATE_TEXTSHADOW = 'item/create/textshadow';
-var ITEM_CREATE_CIRCLE = 'item/create/circle';
-var ITEM_CREATE_POLYGON = 'item/create/polygon';
-var ITEM_CREATE_GROUP = 'item/create/group';
-var ITEM_CREATE_COLORSTEP = 'item/create/colorstep';
-var ITEM_CREATE = 'item/create';
-var ITEM_COPY = 'item/copy';
-var ITEM_ADD = 'item/add';
-var ITEM_CREATE_IMAGE_WITH_COLORSTEP = 'item/create/image/with/colorstep';
-var ITEM_PREPEND_IMAGE = 'item/prepend/image';
-var ITEM_PREPEND_IMAGE_FILE$1 = 'item/prepend/image/file';
-var ITEM_SET_IMAGE_FILE = 'item/set/image/file';
-var ITEM_PREPEND_IMAGE_URL$1 = 'item/prepend/image/url';
-
-var ITEM_ADD_LAYER = 'item/add/layer';
-var ITEM_ADD_SHAPE = 'item/add/shape';
-var ITEM_ADD_IMAGE = 'item/add/image';
-var ITEM_ADD_IMAGE_FILE = 'item/add/image/file';
-var ITEM_ADD_IMAGE_URL = 'item/add/image/url';
-var ITEM_ADD_PAGE = 'item/add/page';
-
-var ITEM_GET_ALL = 'item/get/all';
-var ITEM_LIST = 'item/list';
-var ITEM_LIST_PAGE = 'item/list/page';
-var ITEM_LIST_CHILDREN = 'item/list/children';
-var ITEM_FILTER = 'item/filter';
-var ITEM_FILTER_CHILDREN = 'item/filter/children';
-var ITEM_MAP_PAGE = 'item/map/page';
-var ITEM_COUNT_CHILDREN = 'item/count/children';
-var ITEM_MAP_CHILDREN = 'item/map/children';
-var ITEM_MAP_TYPE_CHILDREN = 'item/map/type/children';
-var ITEM_MAP_LAYER_CHILDREN = 'item/map/layer/children';
-var ITEM_MAP_IMAGE_CHILDREN = 'item/map/image/children';
-var ITEM_MAP_COLORSTEP_CHILDREN = 'item/map/colorstep/children';
-var ITEM_MAP_BOXSHADOW_CHILDREN = 'item/map/boxshadow/children';
-var ITEM_MAP_TEXTSHADOW_CHILDREN = 'item/map/textshadow/children';
-var ITEM_EACH_CHILDREN = 'item/each/children';
-var ITEM_EACH_TYPE_CHILDREN = 'item/each/type/children';
-var ITEM_TRAVERSE = 'item/traverse';
-var ITEM_TREE = 'item/tree';
-var ITEM_TREE_NORMALIZE = 'item/tree/normalize';
-var ITEM_PATH = 'item/path';
-var ITEM_DOM = 'item/dom';
-
-var INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP;
-
-var ColorStepManager = function (_BaseModule) {
-    inherits(ColorStepManager, _BaseModule);
-
-    function ColorStepManager() {
-        classCallCheck(this, ColorStepManager);
-        return possibleConstructorReturn(this, (ColorStepManager.__proto__ || Object.getPrototypeOf(ColorStepManager)).apply(this, arguments));
-    }
-
-    createClass(ColorStepManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ColorStepManager.prototype.__proto__ || Object.getPrototypeOf(ColorStepManager.prototype), "initialize", this).call(this);
-
-            this.$store.step = {
-                width: 400
-            };
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: GETTER(COLORSTEP_COLOR_SOURCE),
-        value: function value$$1($store) {
-            return INIT_COLOR_SOURCE;
-        }
-    }, {
-        key: GETTER(COLORSTEP_CURRENT),
-        value: function value$$1($store, index) {
-            if (!isUndefined(index)) {
-                return $store.read(COLORSTEP_LIST)[index] || $store.read(ITEM_CREATE_COLORSTEP);
-            } else {
-                return $store.read(COLORSTEP_LIST).filter(function (item) {
-                    return !!item.selected;
-                })[0];
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_INIT_COLOR),
-        value: function value$$1($store, color$$1) {
-            $store.run(TOOL_SET_COLOR_SOURCE, INIT_COLOR_SOURCE);
-            $store.run(TOOL_CHANGE_COLOR, color$$1);
-        }
-    }, {
-        key: ACTION(COLORSTEP_ADD),
-        value: function value$$1($store, item, percent$$1) {
-
-            var list = $store.read(ITEM_LIST_CHILDREN, item.id);
-
-            if (!list.length) {
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
-
-                $store.run(ITEM_SET, item);
-                return;
-            }
-
-            var colorsteps = list.map(function (id) {
-                return $store.items[id];
-            });
-
-            if (percent$$1 < colorsteps[0].percent) {
-
-                colorsteps[0].index = 1;
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent$$1 });
-                $store.run(ITEM_SET, colorsteps[0]);
-                $store.run(ITEM_SET, item);
-                return;
-            }
-
-            if (colorsteps[colorsteps.length - 1].percent < percent$$1) {
-                var color$$1 = colorsteps[colorsteps.length - 1].color;
-                var index = colorsteps[colorsteps.length - 1].index;
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: index + 1, color: color$$1, percent: percent$$1 });
-                $store.run(ITEM_SET, item);
-                return;
-            }
-
-            for (var i = 0, len = colorsteps.length - 1; i < len; i++) {
-                var step = colorsteps[i];
-                var nextStep = colorsteps[i + 1];
-
-                if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
-                    var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
-
-                    $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: step.index + 1, color: color$$1, percent: percent$$1 });
-                    $store.run(ITEM_SET, item);
-                    return;
-                }
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_REMOVE),
-        value: function value$$1($store, id) {
-            $store.run(ITEM_REMOVE, id);
-        }
-    }, {
-        key: ACTION(COLORSTEP_SORT),
-        value: function value$$1($store, id, sortedList) {
-
-            sortedList.forEach(function (stepId, index) {
-                var item = $store.read(ITEM_GET, stepId);
-                item.index = index * 100;
-
-                $store.run(ITEM_SET, item);
-            });
-
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: GETTER(COLORSTEP_SORT_LIST),
-        value: function value$$1($store, parentId) {
-            var colorsteps = $store.read(ITEM_MAP_CHILDREN, parentId);
-
-            colorsteps.sort(function (a, b) {
-                if (a.index == b.index) return 0;
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return colorsteps;
-        }
-
-        // 이미지 리스트 얻어오기 
-
-    }, {
-        key: GETTER(COLORSTEP_LIST),
-        value: function value$$1($store) {
-            var image = $store.read(SELECTION_CURRENT_IMAGE$1);
-
-            if (image) {
-                return $store.read(COLORSTEP_SORT_LIST, image.id);
-            }
-
-            return [];
-        }
-    }, {
-        key: GETTER(COLORSTEP_CURRENT_INDEX),
-        value: function value$$1($store, index) {
-            if (isUndefined(index)) {
-                return $store.read(COLORSTEP_LIST).map(function (step, index) {
-                    return { step: step, index: index };
-                }).filter(function (item) {
-                    return !!item.step.selected;
-                })[0].index;
-            } else {
-                return index;
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_CUT_OFF),
-        value: function value$$1($store, id) {
-            var list = [];
-            if (isUndefined(id)) {
-                list = $store.read(COLORSTEP_LIST);
-            } else {
-                list = [$store.read(ITEM_GET, id)];
-            }
-            list.forEach(function (item) {
-                item.cut = false;
-                $store.run(ITEM_SET, item);
-            });
-        }
-    }, {
-        key: ACTION(COLORSTEP_CUT_ON),
-        value: function value$$1($store, id) {
-            var list = [];
-            if (isUndefined(id)) {
-                list = $store.read(COLORSTEP_LIST);
-            } else {
-                list = [$store.read(ITEM_GET, id)];
-            }
-            list.forEach(function (item) {
-                item.cut = true;
-                $store.run(ITEM_SET, item);
-            });
-        }
-    }, {
-        key: "getMaxValue",
-        value: function getMaxValue() {
-            return this.$store.step.width;
-        }
-    }, {
-        key: "getUnitValue",
-        value: function getUnitValue(step, maxValue) {
-
-            if (isPX(step.unit)) {
-                if (isUndefined(step.px)) {
-                    step.px = percent2px(step.percent, maxValue);
-                }
-
-                return {
-                    px: step.px,
-                    percent: px2percent(step.px, maxValue),
-                    em: px2em(step.px, maxValue)
-                };
-            } else if (isEM(step.unit)) {
-                if (isUndefined(step.em)) {
-                    step.em = percent2em(step.percent, maxValue);
-                }
-                return {
-                    em: step.em,
-                    percent: em2percent(step.em, maxValue),
-                    px: em2px(step.em, maxValue)
-                };
-            }
-
-            return {
-                percent: step.percent,
-                px: percent2px(step.percent, maxValue),
-                em: percent2em(step.percent, maxValue)
-            };
-        }
-    }, {
-        key: GETTER(COLORSTEP_UNIT_VALUE),
-        value: function value$$1($store, step, maxValue) {
-            return this.getUnitValue(step, +defaultValue(maxValue, this.getMaxValue()));
-        }
-    }, {
-        key: ACTION(COLORSTEP_ORDERING_EQUALS),
-        value: function value$$1($store) {
-            var _this2 = this;
-
-            var firstIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-            var lastIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Number.MAX_SAFE_INTEGER;
-
-
-            var list = $store.read(COLORSTEP_LIST).map(function (step) {
-                return Object.assign({}, step, $store.read(COLORSTEP_UNIT_VALUE, step, _this2.getMaxValue()));
-            });
-
-            if (lastIndex > list.length - 1) {
-                lastIndex = list.length - 1;
-            }
-
-            var count = lastIndex - firstIndex;
-            var dist = (list[lastIndex].px - list[firstIndex].px) / count;
-
-            var firstValue = list[firstIndex].px;
-            for (var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
-                var step = list[i];
-                step.px = firstValue + start * dist;
-                step.percent = px2percent(step.px, this.getMaxValue());
-                step.em = px2em(step.px, this.getMaxValue());
-                $store.run(ITEM_SET, step);
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_ORDERING_EQUALS_LEFT),
-        value: function value$$1($store) {
-            $store.run(COLORSTEP_ORDERING_EQUALS, 0, $store.read(COLORSTEP_CURRENT_INDEX));
-        }
-    }, {
-        key: ACTION(COLORSTEP_ORDERING_EQUALS_RIGHT),
-        value: function value$$1($store) {
-            $store.run(COLORSTEP_ORDERING_EQUALS, $store.read(COLORSTEP_CURRENT_INDEX));
-        }
-    }]);
-    return ColorStepManager;
-}(BaseModule);
-
-var IMAGE_GET_FILE = 'image/get/file';
-var IMAGE_GET_URL = 'image/get/url';
-var IMAGE_GET_BLOB = 'image/get/blob';
-var IMAGE_TYPE_IS_GRADIENT = 'image/type/isGradient';
-var IMAGE_TYPE_IS_NOT_GRADIENT = 'image/type/isNotGradient';
-var IMAGE_TYPE_IS_LINEAR = 'image/type/isLinear';
-var IMAGE_TYPE_IS_RADIAL = 'image/type/isRadial';
-var IMAGE_TYPE_IS_CONIC = 'image/type/isConic';
-var IMAGE_TYPE_IS_IMAGE = 'image/type/isImage';
-var IMAGE_TYPE_IS_STATIC = 'image/type/isStatic';
-var IMAGE_ANGLE = 'image/angle';
-var IMAGE_RADIAL_POSITION = 'image/radialPosition';
-var IMAGE_BACKGROUND_SIZE_TO_CSS = 'image/backgroundSize/toCSS';
-var IMAGE_TO_CSS = 'image/toCSS';
-var IMAGE_CACHE_TO_CSS = 'image/cache/toCSS';
-var IMAGE_TO_STRING = 'image/toString';
-var IMAGE_TO_IMAGE_STRING = 'image/toImageString';
-var IMAGE_TO_BACKGROUND_SIZE_STRING = 'image/toBackgroundSizeString';
-var IMAGE_TO_BACKGROUND_POSITION_STRING = 'image/toBackgroundPositionString';
-var IMAGE_TO_BACKGROUND_REPEAT_STRING = 'image/toBackgroundRepeatString';
-var IMAGE_TO_BACKGROUND_BLEND_MODE_STRING = 'image/toBackgroundBlendModeString';
-var IMAGE_GET_UNIT_VALUE = 'image/get/unitValue';
-var IMAGE_GET_STEP_VALUE = 'image/get/stepValue';
-var IMAGE_TO_ITEM_STRING = 'image/toItemString';
-var IMAGE_TO_CONIC_ITEM_STRING = 'image/toConicItemString';
-var IMAGE_TO_LINEAR = 'image/toLinear';
-var IMAGE_TO_STATIC = 'image/toStatic';
-var IMAGE_TO_LINEAR_RIGHT = 'image/toLinearRight';
-var IMAGE_TO_RADIAL = 'image/toRadial';
-var IMAGE_TO_CONIC = 'image/toConic';
-var IMAGE_TO_IMAGE = 'image/toImage';
-
-var _DEFINED_POSITIONS;
-
-var DEFINED_ANGLES = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var DEFINED_DIRECTIONS = {
-    '0': 'to top',
-    '45': 'to top right',
-    '90': 'to right',
-    '135': 'to bottom right',
-    '180': 'to bottom',
-    '225': 'to bottom left',
-    '270': 'to left',
-    '315': 'to top left'
-};
-
-var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITIONS, POSITION_CENTER, true), defineProperty(_DEFINED_POSITIONS, POSITION_TOP, true), defineProperty(_DEFINED_POSITIONS, POSITION_LEFT, true), defineProperty(_DEFINED_POSITIONS, POSITION_RIGHT, true), defineProperty(_DEFINED_POSITIONS, POSITION_BOTTOM, true), _DEFINED_POSITIONS);
-
-var IMAGE_LIST = [IMAGE_FILE_TYPE_JPG, IMAGE_FILE_TYPE_PNG, IMAGE_FILE_TYPE_GIF, IMAGE_FILE_TYPE_SVG];
-
-var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
-var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
-var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
-var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
-
-var ImageManager = function (_BaseModule) {
-    inherits(ImageManager, _BaseModule);
-
-    function ImageManager() {
-        classCallCheck(this, ImageManager);
-        return possibleConstructorReturn(this, (ImageManager.__proto__ || Object.getPrototypeOf(ImageManager)).apply(this, arguments));
-    }
-
-    createClass(ImageManager, [{
-        key: GETTER(IMAGE_GET_FILE),
-        value: function value$$1($store, files, callback) {
-            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
-
-            (files || []).forEach(function (file) {
-                var fileType = file.name.split('.').pop();
-                if (IMAGE_LIST.includes(fileType)) {
-
-                    if (isFunction(callback)) {
-                        new ImageLoader(file).getImage(function (image$$1) {
-
-                            ImageToRGB(file, { maxWidth: 100 }, function (results) {
-                                callback({
-                                    datauri: image$$1.src, // export 용 
-                                    colors: palette(results, colorCount),
-                                    url: URL.createObjectURL(file), // 화면 제어용 
-                                    fileType: fileType
-                                });
-                            });
-                        });
-                    }
-                }
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_GET_URL),
-        value: function value$$1($store, urls, callback) {
-            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
-
-            (urls || []).forEach(function (url) {
-                var fileType = url.split('.').pop();
-                if (IMAGE_LIST.includes(fileType)) {
-
-                    if (isFunction(callback)) {
-                        ImageToRGB(url, { maxWidth: 100 }, function (results) {
-                            callback({
-                                colors: palette(results, colorCount),
-                                url: url,
-                                fileType: fileType
-                            });
-                        });
-                    }
-                }
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_GET_BLOB),
-        value: function value$$1($store, blobs, callback) {
-            (blobs || []).forEach(function (file) {
-                if (isFunction(callback)) {
-                    new ImageLoader(file, {
-                        forceDataURI: true
-                    }).getImage(function (image$$1) {
-                        var url = file;
-                        var svg = EMPY;
-                        var svgContent = image$$1.src.split('data:image/svg+xml;charset=utf-8;base64,');
-
-                        if (svgContent.length > 1) {
-                            svg = atob(svgContent[1]);
-                        }
-
-                        if (url instanceof Blob) {
-                            url = URL.createObjectURL(file);
-                        }
-
-                        callback({
-                            datauri: image$$1.src, // export 용 
-                            url: url // 화면 제어용 
-                        });
-                    });
-                }
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_GRADIENT),
-        value: function value$$1($store, type) {
-            return $store.read(IMAGE_TYPE_IS_LINEAR, type) || $store.read(IMAGE_TYPE_IS_RADIAL, type) || $store.read(IMAGE_TYPE_IS_CONIC, type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_NOT_GRADIENT),
-        value: function value$$1($store, type) {
-            return $store.read(IMAGE_TYPE_IS_GRADIENT, type) == false;
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_LINEAR),
-        value: function value$$1($store, type) {
-            return LINEAR_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_RADIAL),
-        value: function value$$1($store, type) {
-            return RADIAL_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_CONIC),
-        value: function value$$1($store, type) {
-            return CONIC_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_IMAGE),
-        value: function value$$1($store, type) {
-            return IMAGE_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_STATIC),
-        value: function value$$1($store, type) {
-            return STATIC_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_ANGLE),
-        value: function value$$1($store) {
-            var angle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-            return isUndefined(DEFINED_ANGLES[angle]) ? angle : DEFINED_ANGLES[angle] || 0;
-        }
-    }, {
-        key: GETTER(IMAGE_RADIAL_POSITION),
-        value: function value$$1($store) {
-            var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-            return position; //|| $store.read('image/get', 'radialPosition');
-        }
-    }, {
-        key: GETTER(IMAGE_BACKGROUND_SIZE_TO_CSS),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image$$1, isExport);
-            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image$$1, isExport);
-            if (backgroundSize) {
-                results['background-size'] = backgroundSize;
-            }
-
-            if (backgroundPosition) {
-                results['background-position'] = backgroundPosition;
-            }
-            results['background-image'] = 'linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))';
-            results['background-repeat'] = 'no-repeat';
-
-            return results;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_CSS),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image$$1, isExport);
-            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image$$1, isExport);
-            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image$$1, isExport);
-            var backgroundRepeat = $store.read(IMAGE_TO_BACKGROUND_REPEAT_STRING, image$$1, isExport);
-            var backgroundBlendMode = $store.read(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, image$$1, isExport);
-
-            if (backgroundImage) {
-                results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
-            }
-
-            if (backgroundSize) {
-                results['background-size'] = backgroundSize;
-            }
-
-            if (backgroundPosition) {
-                results['background-position'] = backgroundPosition;
-            }
-
-            if (backgroundRepeat) {
-                results['background-repeat'] = backgroundRepeat;
-            }
-
-            if (backgroundBlendMode) {
-                results['background-blend-mode'] = backgroundBlendMode;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER(IMAGE_CACHE_TO_CSS),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var image$$1 = Object.assign({}, item.image, { colorsteps: item.colorsteps });
-
-            var results = {};
-            var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image$$1);
-            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image$$1);
-            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image$$1);
-            var backgroundRepeat = $store.read(IMAGE_TO_BACKGROUND_REPEAT_STRING, image$$1);
-            var backgroundBlendMode = $store.read(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, image$$1);
-
-            if (backgroundImage) {
-                results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
-            }
-
-            if (backgroundSize) {
-                results['background-size'] = backgroundSize;
-            }
-
-            if (backgroundPosition) {
-                results['background-position'] = backgroundPosition;
-            }
-
-            if (backgroundRepeat) {
-                results['background-repeat'] = backgroundRepeat;
-            }
-
-            if (backgroundBlendMode) {
-                results['background-blend-mode'] = backgroundBlendMode;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_STRING),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-
-            var obj = $store.read(IMAGE_TO_CSS, image$$1);
-
-            return Object.keys(obj).map(function (key) {
-                return key + ': ' + obj[key] + ';';
-            }).join(' ');
-        }
-    }, {
-        key: GETTER(IMAGE_TO_IMAGE_STRING),
-        value: function value$$1($store, image$$1) {
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var type = image$$1.type;
-
-            if (type == IMAGE_ITEM_TYPE_LINEAR || type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
-                return $store.read(IMAGE_TO_LINEAR, image$$1, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_RADIAL || type == IMAGE_ITEM_TYPE_REPEATING_RADIAL) {
-                return $store.read(IMAGE_TO_RADIAL, image$$1, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_CONIC || type == IMAGE_ITEM_TYPE_REPEATING_CONIC) {
-                return $store.read(IMAGE_TO_CONIC, image$$1, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_IMAGE) {
-                return $store.read(IMAGE_TO_IMAGE, image$$1, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_STATIC) {
-                return $store.read(IMAGE_TO_STATIC, image$$1, isExport);
-            }
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_SIZE_STRING),
-        value: function value$$1($store, image$$1) {
-
-            if (image$$1.backgroundSize == 'contain' || image$$1.backgroundSize == 'cover') {
-                return image$$1.backgroundSize;
-            } else if (image$$1.backgroundSizeWidth && image$$1.backgroundSizeHeight) {
-                return [stringUnit(image$$1.backgroundSizeWidth), stringUnit(image$$1.backgroundSizeHeight)].join(' ');
-            } else if (image$$1.backgroundSizeWidth) {
-                return stringUnit(image$$1.backgroundSizeWidth);
-            }
-
-            return 'auto';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_POSITION_STRING),
-        value: function value$$1($store, image$$1) {
-
-            var x = defaultValue(image$$1.backgroundPositionX, valueUnit(POSITION_CENTER));
-            var y = defaultValue(image$$1.backgroundPositionY, valueUnit(POSITION_CENTER));
-
-            if (x === 0) x = percentUnit(0);
-            if (y === 0) y = percentUnit(0);
-
-            return stringUnit(x) + ' ' + stringUnit(y);
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_REPEAT_STRING),
-        value: function value$$1($store, image$$1) {
-            if (image$$1.backgroundRepeat) {
-                return image$$1.backgroundRepeat;
-            }
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING),
-        value: function value$$1($store, image$$1) {
-            if (image$$1.backgroundBlendMode) {
-                return image$$1.backgroundBlendMode || 'normal';
-            }
-        }
-    }, {
-        key: GETTER(IMAGE_GET_UNIT_VALUE),
-        value: function value$$1($store, step) {
-            if (isPX(step.unit)) {
-                return px$1(step.px);
-            } else if (isEM(step.unit)) {
-                return em(step.em);
-            }
-
-            return percent(step.percent);
-        }
-    }, {
-        key: GETTER(IMAGE_GET_STEP_VALUE),
-        value: function value$$1($store, step) {
-            if (isPX(step.unit)) {
-                return step.px;
-            } else if (isEM(step.unit)) {
-                return step.em;
-            }
-
-            return step.percent;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_ITEM_STRING),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!image$$1) return EMPTY_STRING;
-
-            var colorsteps = image$$1.colorsteps || $store.read(ITEM_MAP_CHILDREN, image$$1.id);
-
-            if (!colorsteps) return EMPTY_STRING;
-
-            var colors = [].concat(toConsumableArray(colorsteps));
-            if (!colors.length) return EMPTY_STRING;
-
-            var newColors = [];
-            colors.forEach(function (c, index) {
-                if (c.cut && index > 0) {
-                    newColors.push({
-                        color: c.color,
-                        unit: colors[index - 1].unit,
-                        percent: colors[index - 1].percent,
-                        px: colors[index - 1].px,
-                        em: colors[index - 1].em
-                    });
-                }
-
-                newColors.push(c);
-            });
-
-            colors = newColors.map(function (f) {
-
-                var value$$1 = stringUnit(percentUnit(f.percent));
-                return f.color + ' ' + value$$1;
-            }).join(',');
-
-            return colors;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_CONIC_ITEM_STRING),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!image$$1) return EMPTY_STRING;
-
-            var colorsteps = image$$1.colorsteps || $store.read(ITEM_MAP_CHILDREN, image$$1.id, function (step) {
-                return step;
-            });
-
-            if (!colorsteps) return EMPTY_STRING;
-
-            var colors = [].concat(toConsumableArray(colorsteps)).map(function (it, index) {
-                it.index = index;
-                return it;
-            });
-            if (!colors.length) return EMPTY_STRING;
-
-            colors.sort(function (a, b) {
-                if (a.percent == b.percent) {
-                    if (a.index > b.index) return 1;
-                    if (a.index < b.index) return 0;
-                    return 0;
-                }
-                return a.percent > b.percent ? 1 : -1;
-            });
-
-            var newColors = [];
-            colors.forEach(function (c, index) {
-                if (c.cut && index > 0) {
-                    newColors.push(Object.assign({}, c, { percent: colors[index - 1].percent }));
-                }
-
-                newColors.push(c);
-            });
-
-            colors = newColors.map(function (f) {
-                var deg$$1 = Math.floor(f.percent * 3.6);
-                return f.color + ' ' + deg$$1 + 'deg';
-            }).join(',');
-
-            return colors;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_LINEAR),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var colors = $store.read(IMAGE_TO_ITEM_STRING, image$$1);
-
-            if (colors == EMPTY_STRING) return EMPTY_STRING;
-
-            var opt = EMPTY_STRING;
-            var angle = image$$1.angle;
-            var gradientType = image$$1.type;
-
-            opt = angle;
-
-            if (isNumber(opt)) {
-                opt = DEFINED_DIRECTIONS['' + opt] || opt;
-            }
-
-            if (isNumber(opt)) {
-                opt = opt > 360 ? opt % 360 : opt;
-
-                opt = opt + 'deg';
-            }
-
-            return gradientType + '-gradient(' + opt + ', ' + colors + ')';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_STATIC),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(IMAGE_TO_LINEAR, {
-                type: 'linear',
-                angle: 0,
-                colorsteps: [{ color: image$$1.color, percent: 0 }, { color: image$$1.color, percent: 100 }]
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_TO_LINEAR_RIGHT),
-        value: function value$$1($store, image$$1) {
-            return $store.read(IMAGE_TO_LINEAR, Object.assign({}, image$$1, { type: 'linear', angle: 'to right' }));
-        }
-    }, {
-        key: GETTER(IMAGE_TO_RADIAL),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var colors = $store.read(IMAGE_TO_ITEM_STRING, image$$1);
-
-            if (colors == EMPTY_STRING) return EMPTY_STRING;
-            var opt = EMPTY_STRING;
-            var radialType = image$$1.radialType;
-            var radialPosition = image$$1.radialPosition || [POSITION_CENTER, POSITION_CENTER];
-            var gradientType = image$$1.type;
-
-            radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(' ');
-
-            opt = radialPosition ? radialType + ' at ' + radialPosition : radialType;
-
-            return gradientType + '-gradient(' + opt + ', ' + colors + ')';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_CONIC),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var colors = $store.read(IMAGE_TO_CONIC_ITEM_STRING, image$$1);
-
-            if (colors == EMPTY_STRING) return EMPTY_STRING;
-            var opt = [];
-            var conicAngle = image$$1.angle;
-            var conicPosition = image$$1.radialPosition || [POSITION_CENTER, POSITION_CENTER];
-            var gradientType = image$$1.type;
-
-            conicPosition = DEFINED_POSITIONS[conicPosition] ? conicPosition : conicPosition.join(' ');
-
-            if (isNotUndefined(conicAngle)) {
-                conicAngle = get(DEFINED_ANGLES, conicAngle, function (it) {
-                    return +it;
-                });
-                opt.push('from ' + conicAngle + 'deg');
-            }
-
-            if (conicPosition) {
-                opt.push('at ' + conicPosition);
-            }
-
-            var optString = opt.length ? opt.join(' ') + ',' : EMPTY_STRING;
-
-            return gradientType + '-gradient(' + optString + ' ' + colors + ')';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_IMAGE),
-        value: function value$$1($store) {
-            var image$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var url = image$$1.backgroundImage;
-
-            if (!isExport && url) {
-                return 'url(' + url + ')';
-            } else if (isExport) {
-                return 'url(' + image$$1.backgroundImageDataURI + ')';
-            }
-
-            return null;
-        }
-    }]);
-    return ImageManager;
-}(BaseModule);
-
-var layerList = [
-    // sample
-];
-
-var BACKDROP_GET = 'backdrop/get';
-var BACKDROP_LIST = 'backdrop/list';
-var BACKDROP_TO_CSS = 'backdrop/toCSS';
-
-var CSS_FILTERING = 'css/filtering';
-var CSS_SORTING = 'css/sorting';
-var CSS_TO_STRING = 'css/toString';
-var CSS_GENERATE = 'css/generate';
-
-var CLIPPATH_SAMPLE_LIST = 'clip-path/sample/list';
-var CLIPPATH_SAMPLE_GET = 'clip-path/sample/get';
-var CLIPPATH_MAKE_CIRCLE = 'clip-path/make/circle';
-var CLIPPATH_MAKE_ELLIPSE = 'clip-path/make/ellipse';
-var CLIPPATH_MAKE_INSET = 'clip-path/make/inset';
-var CLIPPATH_MAKE_POLYGON = 'clip-path/make/polygon';
-var CLIPPATH_MAKE_SVG = 'clip-path/make/svg';
-var CLIPPATH_TO_CSS = 'clip-path/toCSS';
-
-var LAYER_LIST_SAMPLE = 'layer/list/sample';
-var LAYER_TO_STRING = 'layer/toString';
-var LAYER_CACHE_TO_STRING = 'layer/cache/toString';
-var LAYER_TOEXPORT = 'layer/toExport';
-var LAYER_MAKE_CLIPPATH = 'layer/make/clip-path';
-var LAYER_MAKE_FILTER = 'layer/make/filter';
-var LAYER_MAKE_BACKDROP = 'layer/make/backdrop';
-var LAYER_TO_IMAGE_CSS = 'layer/TO_IMAGE_CSS';
-var LAYER_CACHE_TO_IMAGE_CSS = 'layer/cache/TO_IMAGE_CSS';
-var LAYER_IMAGE_TO_IMAGE_CSS = 'layer/image/TO_IMAGE_CSS';
-var LAYER_MAKE_MAP = 'layer/make/map';
-var LAYER_MAKE_MAP_IMAGE = 'layer/make/map/image';
-var LAYER_MAKE_BOXSHADOW = 'layer/make/box-shadow';
-var LAYER_MAKE_FONT = 'layer/make/font';
-var LAYER_MAKE_IMAGE = 'layer/make/image';
-var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
-var LAYER_MAKE_TRANSFORM_ROTATE = 'layer/make/transform/rotate';
-var LAYER_MAKE_TRANSFORM = 'layer/make/transform';
-var LAYER_TO_STRING_CLIPPATH = 'layer/toStringClipPath';
-var LAYER_GET_CLIPPATH = 'layer/getClipPath';
-var LAYER_BOUND_TO_CSS = 'layer/bound/toCSS';
-var LAYER_TO_CSS = 'layer/toCSS';
-var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
-var LAYER_MAKE_BORDER = 'layer/make/border';
-var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
-
-var FILTER_GET = 'filter/get';
-var FILTER_LIST = 'filter/list';
-var FILTER_TO_CSS = 'filter/toCSS';
-
-var PATTERN_MAKE = 'pattern/make';
-var PATTERN_GET = 'pattern/get';
-var PATTERN_SET = 'pattern/set';
-
-var LayerManager = function (_BaseModule) {
-    inherits(LayerManager, _BaseModule);
-
-    function LayerManager() {
-        classCallCheck(this, LayerManager);
-        return possibleConstructorReturn(this, (LayerManager.__proto__ || Object.getPrototypeOf(LayerManager)).apply(this, arguments));
-    }
-
-    createClass(LayerManager, [{
-        key: GETTER(LAYER_LIST_SAMPLE),
-        value: function value$$1($store) {
-            var results = [];
-
-            results = layerList.map(function (it) {
-                return Object.assign({}, it);
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER(LAYER_TO_STRING),
-        value: function value$$1($store, layer) {
-            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-            var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-
-
-            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, image) || {};
-
-            if (image) {
-                delete obj['background-color'];
-                delete obj['mix-blend-mode'];
-                delete obj['filter'];
-            }
-
-            return $store.read(CSS_TO_STRING, obj);
-        }
-    }, {
-        key: GETTER(LAYER_CACHE_TO_STRING),
-        value: function value$$1($store, layer) {
-            var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
-            obj.position = 'absolute';
-            return {
-                css: $store.read(CSS_TO_STRING, obj),
-                obj: obj
-            };
-        }
-    }, {
-        key: GETTER(LAYER_TOEXPORT),
-        value: function value$$1($store, layer) {
-            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-
-            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
-            obj.position = obj.position || 'absolute';
-
-            return $store.read(CSS_TO_STRING, obj);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_CLIPPATH),
-        value: function value$$1($store, layer) {
-            return $store.read(CLIPPATH_TO_CSS, layer);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_FILTER),
-        value: function value$$1($store, layer) {
-            return $store.read(FILTER_TO_CSS, layer);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BACKDROP),
-        value: function value$$1($store, layer) {
-            return $store.read(BACKDROP_TO_CSS, layer);
-        }
-    }, {
-        key: GETTER(LAYER_TO_IMAGE_CSS),
-        value: function value$$1($store, layer) {
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var results = {};
-            $store.read(ITEM_EACH_CHILDREN, layer.id, function (item) {
-                var css = $store.read(IMAGE_TO_CSS, item, isExport);
-
-                Object.keys(css).forEach(function (key) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(css[key]);
-                });
-            });
-
-            return combineKeyArray(results);
-        }
-    }, {
-        key: GETTER(LAYER_CACHE_TO_IMAGE_CSS),
-        value: function value$$1($store, images) {
-            var results = {};
-
-            images.forEach(function (item) {
-                var image = Object.assign({}, item.image, { colorsteps: item.colorsteps });
-                var css = $store.read(IMAGE_TO_CSS, image);
-
-                Object.keys(css).forEach(function (key) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(css[key]);
-                });
-            });
-
-            return combineKeyArray(results);
-        }
-    }, {
-        key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
-        value: function value$$1($store, image) {
-            var images = this.generateImagePattern($store, [image]);
-            return $store.read('css/generate', this.generateImageCSS($store, images));
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_MAP),
-        value: function value$$1($store, layer, itemType, isExport) {
-            var results = {};
-            $store.read("item/map/" + itemType + "/children", layer.id, function (item) {
-                var css = $store.read(itemType + "/toCSS", item, isExport);
-
-                Object.keys(css).forEach(function (key) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(css[key]);
-                });
-            });
-
-            Object.keys(results).forEach(function (key) {
-                if (isArray(results[key])) {
-                    results[key] = results[key].join(', ');
-                }
-            });
-
-            return results;
-        }
-    }, {
-        key: "generateImageCSS",
-        value: function generateImageCSS($store, images, isExport) {
-            var results = {};
-
-            images.forEach(function (item) {
-
-                var css = $store.read(IMAGE_TO_CSS, item, isExport);
-
-                Object.keys(css).forEach(function (key) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(css[key]);
-                });
-            });
-
-            Object.keys(results).forEach(function (key) {
-                if (isArray(results[key])) {
-                    results[key] = results[key].join(', ');
-                }
-            });
-
-            return results;
-        }
-    }, {
-        key: "generateImagePattern",
-        value: function generateImagePattern($store, images) {
-            var results = [];
-
-            images.forEach(function (item) {
-                var patternedItems = $store.read(PATTERN_MAKE, item);
-                if (patternedItems) {
-                    results.push.apply(results, toConsumableArray(patternedItems));
-                } else {
-                    results.push(item);
-                }
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_MAP_IMAGE),
-        value: function value$$1($store, layer, isExport) {
-            var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id));
-
-            return this.generateImageCSS($store, images, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BOXSHADOW),
-        value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_BOXSHADOW, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_FONT),
-        value: function value$$1($store, layer, isExport) {
-            var results = {};
-
-            if (layer.color) {
-                results['color'] = layer.color;
-            }
-
-            if (layer.fontSize) {
-                results['font-size'] = stringUnit(layer.fontSize);
-            }
-
-            if (layer.fontFamily) {
-                results['font-family'] = layer.fontFamily;
-            }
-
-            if (layer.fontWeight) {
-                results['font-weight'] = layer.fontWeight;
-            }
-
-            if (isNotUndefined(layer.lineHeight)) {
-                results['line-height'] = stringUnit(layer.lineHeight);
-            }
-
-            results['word-wrap'] = layer.wordWrap || 'break-word';
-            results['word-break'] = layer.wordBreak || 'break-word';
-
-            if (layer.clipText) {
-                results['color'] = 'transparent';
-                results['background-clip'] = 'text';
-                results['-webkit-background-clip'] = 'text';
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_IMAGE),
-        value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP_IMAGE, layer, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_TEXTSHADOW),
-        value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_TRANSFORM_ROTATE),
-        value: function value$$1($store, layer) {
-
-            var results = [];
-
-            if (layer.rotate) {
-                results.push("rotate(" + layer.rotate + "deg)");
-            }
-
-            return {
-                transform: results.length ? results.join(' ') : 'none'
-            };
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_TRANSFORM),
-        value: function value$$1($store, layer) {
-
-            var results = [];
-
-            if (layer.perspective) {
-                results.push("perspective(" + layer.perspective + "px)");
-            }
-
-            if (layer.rotate) {
-                results.push("rotate(" + layer.rotate + "deg)");
-            }
-
-            if (layer.skewX) {
-                results.push("skewX(" + layer.skewX + "deg)");
-            }
-
-            if (layer.skewY) {
-                results.push("skewY(" + layer.skewY + "deg)");
-            }
-
-            if (layer.scale) {
-                results.push("scale(" + layer.scale + ")");
-            }
-
-            if (layer.translateX) {
-                results.push("translateX(" + layer.translateX + "px)");
-            }
-
-            if (layer.translateY) {
-                results.push("translateY(" + layer.translateY + "px)");
-            }
-
-            if (layer.translateZ) {
-                results.push("translateZ(" + layer.translateZ + "px)");
-            }
-
-            if (layer.rotateX) {
-                results.push("rotateX(" + layer.rotateX + "deg)");
-            }
-
-            if (layer.rotateY) {
-                results.push("rotateY(" + layer.rotateY + "deg)");
-            }
-
-            if (layer.rotateZ) {
-                results.push("rotateZ(" + layer.rotateZ + "deg)");
-            }
-
-            if (layer.scaleX) {
-                results.push("scaleX(" + layer.scaleX + ")");
-            }
-
-            if (layer.scaleY) {
-                results.push("scaleY(" + layer.scaleY + ")");
-            }
-
-            if (layer.scaleZ) {
-                results.push("scaleZ(" + layer.scaleZ + ")");
-            }
-
-            return {
-                transform: results.length ? results.join(' ') : 'none'
-            };
-        }
-    }, {
-        key: GETTER(LAYER_TO_STRING_CLIPPATH),
-        value: function value$$1($store, layer) {
-
-            if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING;
-            if (!layer.clipPathSvg) return EMPTY_STRING;
-
-            var transform = EMPTY_STRING;
-
-            if (layer.fitClipPathSize) {
-                var widthScale = layer.width.value / layer.clipPathSvgWidth;
-                var heightScale = layer.height.value / layer.clipPathSvgHeight;
-
-                transform = "scale(" + widthScale + " " + heightScale + ")";
-            }
-
-            var $div = new Dom('div');
-            var paths = $div.html(layer.clipPathSvg).$('svg').html();
-            var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"clippath-" + layer.id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
-
-            return svg;
-        }
-    }, {
-        key: GETTER(LAYER_GET_CLIPPATH),
-        value: function value$$1($store, layer) {
-            var items = $store.read(ITEM_FILTER_CHILDREN, layer.id, function (image) {
-                return image.isClipPath;
-            }).map(function (id) {
-                return $store.items[id];
-            });
-
-            return items.length ? items[0] : null;
-        }
-    }, {
-        key: "isFixedRadius",
-        value: function isFixedRadius(layer) {
-            if (layer.fixedRadius && layer.borderRadius) {
-                return [stringUnit(layer.borderRadius)];
-            }
-
-            if (!layer.borderTopLeftRadius) return [];
-
-            if (layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value && layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value && layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value) {
-                return [stringUnit(layer.borderTopLeftRadius)];
-            }
-
-            return [];
-        }
-    }, {
-        key: "isFixedBorderWidth",
-        value: function isFixedBorderWidth(layer) {
-            if (layer.fixedBorderWidth && layer.borderWidth) {
-                return [stringUnit(layer.borderWidth)];
-            }
-
-            if (!layer.borderTopWidth) return [];
-
-            if (layer.borderLeftWidth.value == layer.borderRightWidth.value && layer.borderTopWidth.value == layer.borderBottomWidth.value && layer.borderBottomWidth.value == layer.borderLeftWidth.value) {
-                return [stringUnit(layer.borderTopWidth)];
-            }
-
-            return [];
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BORDER_RADIUS),
-        value: function value$$1($store, layer) {
-            var css = {};
-            var isFixedRadius = this.isFixedRadius(layer);
-            if (isFixedRadius.length) {
-                css['border-radius'] = isFixedRadius[0];
-            } else {
-
-                if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
-                if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
-                if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
-                if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
-            }
-
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BORDER),
-        value: function value$$1($store, layer) {
-            var css = {};
-            var isFixedBorderWidth = this.isFixedBorderWidth(layer);
-            if (isFixedBorderWidth.length) {
-                css['border-width'] = isFixedBorderWidth[0];
-                css['border-style'] = 'solid';
-            } else {
-
-                if (layer.borderTopWidth) {
-                    css['border-top-width'] = stringUnit(layer.borderTopWidth);
-                    css['border-top-style'] = 'solid';
-                }
-
-                if (layer.borderRightWidth) {
-                    css['border-right-width'] = stringUnit(layer.borderRightWidth);
-                    css['border-right-style'] = 'solid';
-                }
-
-                if (layer.borderLeftWidth) {
-                    css['border-left-width'] = stringUnit(layer.borderLeftWidth);
-                    css['border-left-style'] = 'solid';
-                }
-
-                if (layer.borderBottomWidth) {
-                    css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
-                    css['border-bottom-style'] = 'solid';
-                }
-            }
-
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_BOUND_TO_CSS),
-        value: function value$$1($store, layer) {
-            var css = {};
-
-            if (!layer) return css;
-
-            css.left = stringUnit(layer.x);
-            css.top = stringUnit(layer.y);
-            css.width = stringUnit(layer.width);
-            css.height = stringUnit(layer.height);
-            css['z-index'] = layer.index;
-
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_TO_CSS),
-        value: function value$$1($store) {
-            var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-            var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-            var isExport = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-
-            var css = {};
-
-            if (withStyle) {
-                css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
-            }
-
-            css['box-sizing'] = layer.boxSizing || 'border-box';
-
-            if (layer.backgroundColor) {
-                css['background-color'] = layer.backgroundColor;
-            }
-
-            if (layer.mixBlendMode) {
-                css['mix-blend-mode'] = layer.mixBlendMode || "";
-            }
-
-            if (layer.backgroundClip && !layer.clipText) {
-                css['background-clip'] = layer.backgroundClip || "";
-                css['-webkit-background-clip'] = layer.backgroundClip || "";
-            }
-
-            if (layer.opacity) {
-                css['opacity'] = layer.opacity;
-            }
-
-            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport));
-
-            return cleanObject(results);
-        }
-    }, {
-        key: GETTER(LAYER_CACHE_TO_CSS),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-            var layer = Object.assign({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
-            var css = {};
-
-            css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
-
-            css['box-sizing'] = layer.boxSizing || 'border-box';
-
-            if (layer.backgroundColor) {
-                css['background-color'] = layer.backgroundColor;
-            }
-
-            if (layer.mixBlendMode) {
-                css['mix-blend-mode'] = layer.mixBlendMode;
-            }
-
-            if (layer.backgroundClip && !layer.clipText) {
-                css['background-clip'] = layer.backgroundClip || "";
-                css['-webkit-background-clip'] = layer.backgroundClip || "";
-            }
-
-            if (layer.opacity) {
-                css['opacity'] = layer.opacity;
-            }
-
-            var results = Object.assign(css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
-
-            return cleanObject(results);
-        }
-    }]);
-    return LayerManager;
-}(BaseModule);
-
-var ToolManager = function (_BaseModule) {
-    inherits(ToolManager, _BaseModule);
-
-    function ToolManager() {
-        classCallCheck(this, ToolManager);
-        return possibleConstructorReturn(this, (ToolManager.__proto__ || Object.getPrototypeOf(ToolManager)).apply(this, arguments));
-    }
-
-    createClass(ToolManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ToolManager.prototype.__proto__ || Object.getPrototypeOf(ToolManager.prototype), "initialize", this).call(this);
-
-            this.$store.tool = {
-                color: EMPTY_STRING,
-                colorSource: EMPTY_STRING,
-                'show.grid': false,
-                'snap.grid': false,
-                'guide.only': false,
-                'guide.angle': true,
-                'guide.position': true
-            };
-        }
-    }, {
-        key: GETTER(CLONE),
-        value: function value$$1($store, object) {
-            return JSON.parse(JSON.stringify(object));
-        }
-    }, {
-        key: GETTER(TOOL_COLOR_SOURCE),
-        value: function value$$1($store) {
-            return $store.tool.colorSource;
-        }
-    }, {
-        key: GETTER(TOOL_GET),
-        value: function value$$1($store, key, defaultValue$$1) {
-            return isUndefined($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
-        }
-    }, {
-        key: ACTION(TOOL_SET_COLOR_SOURCE),
-        value: function value$$1($store, colorSource) {
-            $store.tool.colorSource = colorSource;
-        }
-    }, {
-        key: ACTION(TOOL_CHANGE_COLOR),
-        value: function value$$1($store, color$$1) {
-            $store.tool.color = color$$1;
-
-            $store.emit('changeColor');
-        }
-    }, {
-        key: ACTION(TOOL_SET),
-        value: function value$$1($store, key, _value) {
-            $store.tool[key] = _value;
-
-            $store.emit(CHANGE_TOOL);
-        }
-    }, {
-        key: ACTION(TOOL_TOGGLE),
-        value: function value$$1($store, key, isForce) {
-            if (isFunction(isForce)) {
-                $store.tool[key] = !$store.tool[key];
-            } else {
-                $store.tool[key] = isForce;
-            }
-
-            $store.emit(CHANGE_TOOL);
-        }
-    }]);
-    return ToolManager;
-}(BaseModule);
-
-var BLEND_LAYER_TO_STRING = 'blend/layer/toString';
-var BLEND_IMAGE_TO_STRING = 'blend/image/toString';
-var BLEND_TO_STRING_WITHOUT_DIMENSION = 'blend/toStringWithoutDimension';
-var BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE = 'blend/toStringWithoutDimensionForImage';
-var BLEND_LIST = 'blend/list';
-
-var blend_list = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
-
-var BlendManager = function (_BaseModule) {
-    inherits(BlendManager, _BaseModule);
-
-    function BlendManager() {
-        classCallCheck(this, BlendManager);
-        return possibleConstructorReturn(this, (BlendManager.__proto__ || Object.getPrototypeOf(BlendManager)).apply(this, arguments));
-    }
-
-    createClass(BlendManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(BlendManager.prototype.__proto__ || Object.getPrototypeOf(BlendManager.prototype), "initialize", this).call(this);
-
-            this.$store.blendMode = EMPTY_STRING;
-        }
-    }, {
-        key: GETTER(BLEND_LAYER_TO_STRING),
-        value: function value$$1($store, item) {
-            var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-            var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-
-            item = clone(item);
-
-            item.mixBlendMode = mixBlend;
-
-            return $store.read(LAYER_TO_STRING, item, withStyle);
-        }
-    }, {
-        key: GETTER(BLEND_IMAGE_TO_STRING),
-        value: function value$$1($store, item) {
-            var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-            var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-
-            item = clone(item);
-
-            item.backgroundBlendMode = blend;
-
-            return $store.read(IMAGE_TO_STRING, item, withStyle);
-        }
-    }, {
-        key: GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION),
-        value: function value$$1($store, item) {
-            var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-
-            return $store.read(BLEND_LAYER_TO_STRING, item, mixBlend, false);
-        }
-    }, {
-        key: GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE),
-        value: function value$$1($store, item) {
-            var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
-
-            // console.log(item, blend);
-            var cssText = $store.read(BLEND_IMAGE_TO_STRING, item, blend, false);
-
-            cssText = cssText.split(';').map(function (it) {
-                return it.split(':').map(function (it) {
-                    return it.trim();
-                });
-            }).map(function (a) {
-                if (a[0] == 'background-image') {
-                    a[1] += ',url(/resources/image/grapes.jpg)';
-                } else if (a[0] == 'background-size') {
-                    a[1] += ',auto';
-                } else if (a[0] == 'background-repeat') {
-                    a[1] += ',no-repeat';
-                } else if (a[0] == 'background-position') {
-                    a[1] += ',center center';
-                } else if (a[0] == 'background-blend-mode') {
-                    a[1] += ',normal';
-                }
-
-                return a.join(':');
-            }).join(';');
-
-            return cssText;
-        }
-    }, {
-        key: GETTER(BLEND_LIST),
-        value: function value$$1($store) {
-            return blend_list;
-        }
-    }]);
-    return BlendManager;
-}(BaseModule);
-
-var sample1 = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: 'red', percent: 0, index: 0 }, { color: 'blue', percent: 10, index: 100 }, { color: 'yellow', percent: 40, index: 200 }, { color: 'green', percent: 60, index: 300 }, { color: 'magenta', percent: 80, index: 400 }, { color: 'black', percent: 100, index: 500 }]
-};
-
-var gradegray = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#bdc3c7', percent: 0, index: 0 }, { color: '#2c3e50', percent: 100, index: 100 }]
-};
-
-var piggypink = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#ee9ca7', percent: 0, index: 0 }, { color: '#ffdde1', percent: 100, index: 100 }]
-};
-
-var coolblues = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#2193b0', percent: 0, index: 0 }, { color: '#6dd5ed', percent: 100, index: 100 }]
-};
-
-var megatron = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#C6FFDD', percent: 0, index: 0 }, { color: '#FBD786', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
-};
-
-var jshine = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#12c2e9', percent: 0, index: 0 }, { color: '#c471ed', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
-};
-
-var darkocean = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#373B44', percent: 0, index: 0 }, { color: '#4286f4', percent: 100, index: 100 }]
-};
-
-var yoda = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#FF0099', percent: 0, index: 0 }, { color: '#493240', percent: 100, index: 100 }]
-};
-
-var liberty = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#200122', percent: 0, index: 0 }, { color: '#6f0000', percent: 100, index: 100 }]
-};
-
-var silence = {
-    image: {
-        type: 'linear',
-        angle: 340
-    },
-    colorsteps: [{ color: '#b721ff', percent: 0, index: 0 }, { color: '#21d4fd', percent: 100, index: 100 }]
-};
-
-var circle = {
-    image: {
-        type: 'radial',
-        radialPosition: POSITION_CENTER,
-        radialType: 'circle'
-    },
-    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'black', percent: 50, index: 100 }]
-};
-
-var circle2 = {
-    image: {
-        type: 'repeating-radial',
-        radialPosition: 'top',
-        radialType: 'circle'
-    },
-    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'rgb(255,82,2)', percent: 9, index: 100 }]
-};
-
-var deepblue = {
-    image: {
-        type: 'linear',
-        angle: 'to right'
-    },
-    colorsteps: [{ color: '#6a11cb', percent: 0, index: 0 }, { color: '#2575fc', percent: 100, index: 100 }]
-};
-
-var gradientList = [deepblue, sample1, gradegray, piggypink, coolblues, megatron, jshine, darkocean, yoda, liberty, silence, circle, circle2];
-
-var material = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E'];
-
-var types = [{ id: 'material', title: 'Material Colors' }];
-
-var list = {
-    material: material
-};
-
-var ColorList = {
-    list: list,
-    types: types
-};
-
-var ITEM_MOVE_TO = 'item/move/to';
-var ITEM_MOVE_NEXT = 'item/move/next';
-var ITEM_MOVE_LAST = 'item/move/last';
-var ITEM_MOVE_FIRST = 'item/move/first';
-var ITEM_MOVE_IN = 'item/move/in';
-var ITEM_MOVE_IN_LAYER = 'item/move/in/layer';
-var ITEM_MOVE_PREV = 'item/move/prev';
-var ITEM_ADD_INDEX = 'item/add/index';
-var ITEM_NEXT_INDEX = 'item/next/index';
-var ITEM_PREV_INDEX = 'item/prev/index';
-var ITEM_MOVE_X = 'item/move/x';
-var ITEM_MOVE_Y = 'item/move/y';
-
-var ITEM_RECOVER = 'item/recover';
-var ITEM_RECOVER_IMAGE = 'item/recover/image';
-var ITEM_RECOVER_COLORSTEP = 'item/recover/colorstep';
-var ITEM_RECOVER_BOXSHADOW = 'item/recover/boxshadow';
-var ITEM_RECOVER_TEXTSHADOW = 'item/recover/textshadow';
-var ITEM_RECOVER_LAYER = 'item/recover/layer';
-var ITEM_RECOVER_PAGE = 'item/recover/page';
-var ITEM_ADD_CACHE = 'item/addCache';
-var ITEM_ADD_COPY = 'item/addCopy';
-var ITEM_COPY_IN = 'item/copy/in';
-var ITEM_COPY_IN_LAYER = 'item/copy/in/layer';
-
-var GradientManager = function (_BaseModule) {
-    inherits(GradientManager, _BaseModule);
-
-    function GradientManager() {
-        classCallCheck(this, GradientManager);
-        return possibleConstructorReturn(this, (GradientManager.__proto__ || Object.getPrototypeOf(GradientManager)).apply(this, arguments));
-    }
-
-    createClass(GradientManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: "getStaticList",
-        value: function getStaticList() {
-            return ColorList.list['material'].map(function (color) {
-                return {
-                    image: {
-                        type: 'static',
-                        color: color
-                    }
-                };
-            });
-        }
-    }, {
-        key: GETTER('gradient/list/sample'),
-        value: function value($store) {
-            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
-
-
-            var results = [];
-
-            if (type == 'all') {
-                results.push.apply(results, toConsumableArray(gradientList.map(function (it) {
-                    return clone(it);
-                })));
-            }
-
-            results.push.apply(results, toConsumableArray(this.getStaticList()));
-
-            return results;
-        }
-    }, {
-        key: ACTION('gradient/image/select'),
-        value: function value($store, obj) {
-            var image = this.getFirstImage($store);
-
-            if (image) {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
-                $store.run(ITEM_MOVE_IN, image.id, newImageId);
-                $store.run(ITEM_REMOVE_CHILDREN, image.id);
-                $store.run(ITEM_REMOVE, image.id);
-            } else {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
-                var newImage = $store.read(ITEM_GET, newImageId);
-                $store.run(ITEM_SET, newImage);
-            }
-        }
-    }, {
-        key: "getFirstImage",
-        value: function getFirstImage($store) {
-            var image = $store.read(SELECTION_CURRENT_IMAGE$1);
-
-            if (!image) {
-                var layer = $store.read(SELECTION_CURRENT_LAYER);
-
-                if (!layer) {
-                    return;
-                }
-
-                var images = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id);
-
-                if (images.length) {
-                    image = images[0];
-                }
-            }
-
-            return image;
-        }
-    }, {
-        key: ACTION('gradient/image/add'),
-        value: function value($store, obj) {
-            var image = this.getFirstImage($store);
-            var layerId = $store.read(SELECTION_CURRENT_LAYER_ID);
-            if (image) {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
-                $store.run(ITEM_MOVE_IN, image.id, newImageId);
-            } else {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
-                var newImage = $store.read(ITEM_GET, newImageId);
-                $store.run(ITEM_SET, newImage);
-            }
-        }
-    }, {
-        key: ACTION('gradient/select'),
-        value: function value($store, type, index) {
-            var obj = $store.read('gradient/list/sample', type)[index];
-
-            if (obj) {
-                $store.run('gradient/image/select', obj);
-            }
-        }
-    }, {
-        key: ACTION('gradient/add'),
-        value: function value($store, type, index) {
-            var obj = $store.read('gradient/list/sample', type)[index];
-
-            if (obj) {
-                $store.run('gradient/image/add', obj);
-            }
-        }
-    }]);
-    return GradientManager;
-}(BaseModule);
-
-var HISTORY_INITIALIZE = 'history/initialize';
-var HISTORY_PUSH = 'history/push';
-var HISTORY_UNDO = 'history/undo';
-var HISTORY_REDO = 'history/redo';
-var HISTORY_LIST = 'history/list';
-var HISTORY_SELECTED_CHECK = 'history/selected/check';
-
-var _updateUnitField;
-
-var INDEX_DIST = 100;
-var NONE_INDEX = -99999;
-
-var itemField = {
-    'mix-blend-mode': 'mixBlendMode',
-    'background-blend-mode': 'backgroundBlendMode',
-    'background-color': 'backgroundColor',
-    'x': 'x',
-    'y': 'y',
-    'width': 'width',
-    'height': 'height',
-    'rotate': 'rotate',
-    'border-radius': 'borderRadius',
-    'border-top-left-radius': 'borderTopLeftRadius',
-    'border-top-right-radius': 'borderTopRightRadius',
-    'border-bottom-left-radius': 'borderBottomLeftRadius',
-    'border-bottom-right-radius': 'borderBottomRightRadius',
-    'skewX': 'skewX',
-    'skewY': 'skewY',
-    'scale': 'scale',
-    'translateX': 'translateX',
-    'translateY': 'translateY',
-    'translateZ': 'translateZ',
-    'rotate3dX': 'rotate3dX',
-    'rotate3dY': 'rotate3dY',
-    'rotate3dZ': 'rotate3dZ',
-    'rotate3dA': 'rotate3dA',
-    'scale3dX': 'scale3dX',
-    'scale3dY': 'scale3dY',
-    'scale3dZ': 'scale3dZ',
-    'translate3dX': 'translate3dX',
-    'translate3dY': 'translate3dY',
-    'translate3dZ': 'translate3dZ'
-};
-
-var updateUnitField = (_updateUnitField = {
-    borderRadius: true,
-    borderTopLeftRadius: true,
-    borderBottomLeftRadius: true,
-    borderTopRightRadius: true,
-    borderBottomRightRadius: true,
-    backgroundSizeWidth: true,
-    backgroundSizeHeight: true,
-    x: true,
-    y: true,
-    width: true,
-    height: true,
-    backgroundPositionX: true,
-    backgroundPositionY: true
-}, defineProperty(_updateUnitField, "backgroundSizeHeight", true), defineProperty(_updateUnitField, "backgroundSizeWidth", true), _updateUnitField);
-
-var convertStyle = function convertStyle(item) {
-    var style = item.style || {};
-
-    Object.keys(style).forEach(function (key) {
-        item[itemField[key]] = style[key];
-    });
-
-    delete item.style;
-
-    Object.keys(item).forEach(function (key) {
-        if (updateUnitField[key]) {
-            item[key] = string2unit(item[key]);
-        }
-    });
-
-    return item;
-};
-
-
-
-var ItemManager = function (_BaseModule) {
-    inherits(ItemManager, _BaseModule);
-
-    function ItemManager() {
-        classCallCheck(this, ItemManager);
-        return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
-    }
-
-    createClass(ItemManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: GETTER(ITEM_CONVERT_STYLE),
-        value: function value$$1($store, item) {
-            return convertStyle(item);
-        }
-    }, {
-        key: GETTER(ITEM_GET),
-        value: function value$$1($store, id) {
-            return $store.items[id] || {};
-        }
-    }, {
-        key: ACTION(ITEM_SET_ALL),
-        value: function value$$1($store, parentId, items) {
-            var isRemove = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-            if (isRemove) {
-                $store.run(ITEM_REMOVE_ALL, parentId);
-            }
-            Object.assign($store.items, items);
-        }
-    }, {
-        key: ACTION(ITEM_FOCUS),
-        value: function value$$1($store, id) {
-            var $el = $store.read(ITEM_DOM, id);
-
-            if ($el && $el.el) {
-                $el.el.focus();
-            }
-        }
-    }, {
-        key: ACTION(ITEM_REMOVE),
-        value: function value$$1($store, id) {
-            if (id) {
-
-                var item = $store.read(ITEM_GET, id);
-                var itemType = item.itemType;
-
-                if (item.parentId) {
-                    var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
-                } else {
-                    var list = $store.read(ITEM_LIST_PAGE);
-                }
-
-                var nextSelectedId = EMPTY_STRING;
-                for (var i = 0, len = list.length; i < len; i++) {
-                    var nodeId = list[i];
-                    if ($store.items[id].index > item.index) {
-                        nextSelectedId = nodeId;
-                        break;
-                    }
-                }
-
-                if (nextSelectedId) {
-                    $store.run(SELECTION_ONE, nextSelectedId);
-                } else {
-                    if (item.index > 0) {
-                        for (var i = 0, len = list.length; i < len; i++) {
-                            var nodeId = list[i];
-                            if ($store.items[nodeId].index == item.index - INDEX_DIST) {
-                                nextSelectedId = nodeId;
-                                break;
-                            }
-                        }
-
-                        if (nextSelectedId) {
-                            $store.run(SELECTION_ONE, nextSelectedId);
-                        }
-                    } else {
-                        $store.run(SELECTION_ONE, item.parentId);
-                    }
-                }
-
-                $store.items[id].index = NONE_INDEX;
-                $store.run(ITEM_SORT, id);
-
-                if ($store.items[id].backgroundImage) {
-                    URL.revokeObjectURL($store.items[id].backgroundImage);
-                }
-                $store.run(ITEM_INITIALIZE, id);
-            }
-        }
-    }, {
-        key: ACTION(ITEM_REMOVE_ALL),
-        value: function value$$1($store, parentId) {
-            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
-
-                $store.run(ITEM_REMOVE_ALL, item.id);
-
-                $store.run(ITEM_INITIALIZE, item.id);
-            });
-        }
-    }, {
-        key: ACTION(ITEM_REMOVE_CHILDREN),
-        value: function value$$1($store, parentId) {
-            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
-                $store.run(ITEM_REMOVE, item.id);
-            });
-        }
-    }, {
-        key: ACTION(ITEM_SET),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var id = obj.id;
-            var prevItem = clone($store.read(ITEM_GET, id));
-            $store.items[id] = Object.assign({}, prevItem, obj);
-
-            if (isSelected) $store.run(SELECTION_ONE, id);
-        }
-
-        // initialize items 
-
-    }, {
-        key: ACTION(ITEM_LOAD),
-        value: function value$$1($store) {
-            $store.read(ITEM_KEYS).forEach(function (id) {
-                $store.items[id] = convertStyle($store.items[id]);
-            });
-
-            $store.run(HISTORY_INITIALIZE);
-        }
-    }, {
-        key: ACTION(ITEM_SORT),
-        value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
-            var itemType = item.itemType;
-
-            if (item.parentId) {
-                var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
-            } else {
-                var list = $store.read(ITEM_LIST_PAGE);
-            }
-
-            // 필요 없는 index 를 가진 객체는 지운다. 
-            list = list.filter(function (id) {
-                return $store.items[id].index != NONE_INDEX;
-            });
-
-            list.sort(function (a, b) {
-                return $store.items[a].index > $store.items[b].index ? 1 : -1;
-            });
-
-            list.forEach(function (id, index) {
-                $store.items[id].index = index * INDEX_DIST;
-            });
-        }
-    }]);
-    return ItemManager;
-}(BaseModule);
-
-var MAX_DIST = 1;
-var ZERO_DIST = 0;
-
-var GuideManager = function (_BaseModule) {
-    inherits(GuideManager, _BaseModule);
-
-    function GuideManager() {
-        classCallCheck(this, GuideManager);
-        return possibleConstructorReturn(this, (GuideManager.__proto__ || Object.getPrototypeOf(GuideManager)).apply(this, arguments));
-    }
-
-    createClass(GuideManager, [{
-        key: GETTER('guide/rect/point'),
-        value: function value$$1($store, obj) {
-            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
-
-            var id = obj.id;
-            var x = unitValue(obj.x);
-            var y = unitValue(obj.y);
-            var width = unitValue(obj.width);
-            var height = unitValue(obj.height);
-
-            var x2 = x + width;
-            var y2 = y + height;
-
-            var centerX = x + Math.floor(width / 2);
-            var centerY = y + Math.floor(height / 2);
-
-            var startX = x;
-            var endX = x2;
-            var startY = y;
-            var endY = y2;
-            var pointX = [];
-            var pointY = [];
-
-            var segment = SEGMENT_CHECK[segmentType];
-
-            if (!segment) return { pointX: pointX, pointY: pointY };
-
-            if (segment.move) {
-                pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
-                pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isCenter: true });
-                pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
-
-                pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
-                pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isCenter: true });
-                pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
-
-                return { pointX: pointX, pointY: pointY };
-            } else {
-                if (segment.xIndex === 0) pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
-                if (segment.xIndex === 1) pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isCenter: true });
-                if (segment.xIndex === 2) pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height });
-
-                if (segment.yIndex === 0) pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
-                if (segment.yIndex === 1) pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isCenter: true });
-                if (segment.yIndex === 2) pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height });
-
-                return { pointX: pointX, pointY: pointY };
-            }
-        }
-    }, {
-        key: GETTER('guide/compare'),
-        value: function value$$1($store, A, B) {
-            var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
-
-            // x 축 비교 , x 축이 dist 안에 있으면 합격 
-            var results = [];
-            A.pointX.forEach(function (AX, index) {
-                B.pointX.forEach(function (BX, targetIndex) {
-
-                    var tempDist = AX.isCenter || BX.isCenter ? ZERO_DIST : dist;
-
-                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
-                    if (Math.abs(AX.x - BX.x) <= tempDist) {
-
-                        results.push({
-                            type: GUIDE_TYPE_VERTICAL,
-                            x: BX.x,
-                            y: AX.y,
-                            index: index,
-                            targetIndex: targetIndex,
-                            startX: BX.startX,
-                            endX: BX.endX,
-                            centerX: BX.centerX,
-                            sourceId: AX.id,
-                            targetId: BX.id,
-                            sourceX: AX.startX,
-                            width: AX.width,
-                            height: AX.height
-                        });
-                    }
-                });
-            });
-
-            // y 축 비교,    
-            A.pointY.forEach(function (AY, index) {
-                B.pointY.forEach(function (BY, targetIndex) {
-                    var tempDist = AY.isCenter || BY.isCenter ? ZERO_DIST : dist;
-
-                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
-                    if (Math.abs(AY.y - BY.y) <= tempDist) {
-                        results.push({
-                            type: GUIDE_TYPE_HORIZONTAL,
-                            x: AY.x,
-                            y: BY.y,
-                            index: index,
-                            targetIndex: targetIndex,
-                            startY: BY.startY,
-                            endY: BY.endY,
-                            centerY: BY.centerY,
-                            sourceId: AY.id,
-                            targetId: BY.id,
-                            sourceY: AY.startY,
-                            width: AY.width,
-                            height: AY.height
-                        });
-                    }
-                });
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER('guide/snap/layer'),
-        value: function value$$1($store) {
-            var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
-            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
-
-            var page = $store.read(SELECTION_CURRENT_PAGE);
-
-            if (!page) return [];
-            if (page.selected) return [];
-
-            var selectionRect = $store.read('guide/rect/point', $store.read(SELECTION_RECT), segmentType);
-            var pageRect = $store.read('guide/rect/point', {
-                x: pxUnit(0),
-                y: pxUnit(0),
-                width: page.width,
-                height: page.height
-            });
-
-            var layers = [];
-            $store.read(ITEM_EACH_CHILDREN, page.id, function (item) {
-                if ($store.read(SELECTION_CHECK, item.id) == false) {
-                    layers.push($store.read('guide/rect/point', item));
-                }
-            });
-            layers.push(pageRect);
-
-            var points = [];
-
-            layers.forEach(function (B) {
-                points.push.apply(points, toConsumableArray($store.read('guide/compare', selectionRect, B, dist)));
-            });
-
-            // console.log(points);
-
-            return points; //.filter( (_, index) => index === 0);
-        }
-    }, {
-        key: ACTION('guide/snap/caculate'),
-        value: function value$$1($store) {
-            var _this2 = this;
-
-            var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
-            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
-
-
-            var list = $store.read('guide/snap/layer', dist, segmentType);
-
-            if (list.length) {
-
-                list.forEach(function (rect) {
-
-                    if (segmentType == SEGMENT_TYPE_MOVE) {
-                        _this2.moveSnap($store, rect, segmentType);
-                    } else {
-                        _this2.sizeSnap($store, rect, segmentType);
-                    }
-                });
-            }
-        }
-    }, {
-        key: "sizeSnap",
-        value: function sizeSnap($store, rect, segmentType) {
-            var positionObject = null;
-            if (rect.type == GUIDE_TYPE_HORIZONTAL) {
-                var y;
-
-                if (segmentType == SEGMENT_TYPE_TOP || segmentType == SEGMENT_TYPE_TOP_LEFT || segmentType == SEGMENT_TYPE_TOP_RIGHT) {
-                    y = rect.y;
-                    var height = rect.height + (rect.sourceY - y);
-
-                    positionObject = { id: rect.sourceId, y: pxUnit(y), height: pxUnit(height) };
-                } else if (segmentType == SEGMENT_TYPE_BOTTOM || segmentType == SEGMENT_TYPE_BOTTOM_LEFT || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
-                    var height = rect.y - rect.sourceY;
-
-                    positionObject = { id: rect.sourceId, height: pxUnit(height) };
-                }
-            } else if (rect.type == GUIDE_TYPE_VERTICAL) {
-                var x;
-                if (segmentType == SEGMENT_TYPE_LEFT || segmentType == SEGMENT_TYPE_TOP_LEFT || segmentType == SEGMENT_TYPE_BOTTOM_LEFT) {
-                    x = rect.x;
-                    var width = rect.width + (rect.sourceX - x);
-
-                    positionObject = { id: rect.sourceId, x: pxUnit(x), width: pxUnit(width) };
-                } else if (segmentType == SEGMENT_TYPE_RIGHT || segmentType == SEGMENT_TYPE_TOP_RIGHT || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
-                    var width = rect.x - rect.sourceX;
-
-                    positionObject = { id: rect.sourceId, width: pxUnit(width) };
-                }
-            }
-            if (isNotUndefined(positionObject)) {
-                $store.run(ITEM_SET, positionObject);
-            }
-        }
-    }, {
-        key: "moveSnap",
-        value: function moveSnap($store, rect) {
-            var positionObject = null;
-            if (rect.type == GUIDE_TYPE_HORIZONTAL) {
-                var y;
-                switch (rect.targetIndex) {
-                    case 0:
-                        y = rect.startY;
-                        break;
-                    case 1:
-                        y = rect.centerY;
-                        break;
-                    case 2:
-                        y = rect.endY;
-                        break;
-                }
-                switch (rect.index) {
-                    case 1:
-                        y -= Math.floor(rect.height / 2);
-                        break;
-                    case 2:
-                        y -= rect.height;
-                        break;
-                }
-                positionObject = { id: rect.sourceId, y: pxUnit(y) };
-            } else if (rect.type == GUIDE_TYPE_VERTICAL) {
-                var x;
-                switch (rect.targetIndex) {
-                    case 0:
-                        x = rect.startX;
-                        break;
-                    case 1:
-                        x = rect.centerX;
-                        break;
-                    case 2:
-                        x = rect.endX;
-                        break;
-                }
-                switch (rect.index) {
-                    case 1:
-                        x -= Math.floor(rect.width / 2);
-                        break;
-                    case 2:
-                        x -= rect.width;
-                        break;
-                }
-                positionObject = { id: rect.sourceId, x: pxUnit(x) };
-            }
-            if (isNotUndefined(positionObject)) {
-                $store.run(ITEM_SET, positionObject);
-            }
-        }
-    }]);
-    return GuideManager;
-}(BaseModule);
-
-var STORAGE_GET = 'storage/get';
-var STORAGE_SET = 'storage/set';
-var STORAGE_PAGES = 'storage/pages';
-var STORAGE_LAYERS = 'storage/layers';
-var STORAGE_IMAGES = 'storage/images';
-var STORAGE_UNSHIFT_LAYER = 'storage/unshift/layer';
-
-var STORAGE_REMOVE_LAYER = 'storage/remove/layer';
-var STORAGE_REMOVE_PAGE = 'storage/remove/page';
-var STORAGE_UNSHIFT_PAGE = 'storage/unshift/page';
-var STORAGE_ADD_PAGE = 'storage/add/page';
-var STORAGE_ADD_LAYER = 'storage/add/layer';
-var STORAGE_ADD_IMAGE = 'storage/add/image';
-var STORAGE_DELETE_PAGE = 'storage/delete/page';
-var STORAGE_DELETE_IMAGE = 'storage/delete/image';
-var STORAGE_SAVE = 'storage/save';
-var STORAGE_SAVE_LAYER = 'storage/save/layer';
-var STORAGE_SAVE_PAGE = 'storage/save/page';
-var STORAGE_SAVE_IMAGE = 'storage/save/image';
-var STORAGE_LOAD_LAYER = 'storage/load/layer';
-var STORAGE_LOAD_PAGE = 'storage/load/page';
-var STORAGE_LOAD_IMAGE = 'storage/load/image';
-var STORAGE_LOAD = 'storage/load';
-
-var SAVE_ID = 'css-imageeditor';
-var CACHED_PAGE_SAVE_ID = 'css-imageeditor-cached-pages';
-var CACHED_LAYER_SAVE_ID = 'css-imageeditor-cached-layers';
-var CACHED_IMAGE_SAVE_ID = 'css-imageeditor-cached-images';
-
-var StorageManager = function (_BaseModule) {
-    inherits(StorageManager, _BaseModule);
-
-    function StorageManager() {
-        classCallCheck(this, StorageManager);
-        return possibleConstructorReturn(this, (StorageManager.__proto__ || Object.getPrototypeOf(StorageManager)).apply(this, arguments));
-    }
-
-    createClass(StorageManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(StorageManager.prototype.__proto__ || Object.getPrototypeOf(StorageManager.prototype), "initialize", this).call(this);
-
-            this.$store.cachedPages = [];
-            this.$store.cachedLayers = [];
-            this.$store.cachedImages = [];
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit('changeStorage');
-        }
-    }, {
-        key: GETTER(STORAGE_GET),
-        value: function value($store, key) {
-            return JSON.parse(localStorage.getItem(SAVE_ID + "-" + key));
-        }
-    }, {
-        key: ACTION(STORAGE_SET),
-        value: function value($store, key, _value) {
-            localStorage.setItem(SAVE_ID + "-" + key, JSON.stringify(_value));
-        }
-    }, {
-        key: GETTER(STORAGE_PAGES),
-        value: function value($store) {
-            var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-            if (isNotUndefined(id)) {
-                var results = $store.cachedPages.filter(function (item) {
-                    return item.id == id;
-                });
-
-                if (!results.length) {
-                    return {};
-                }
-
-                return results[0];
-            }
-            return $store.cachedPages;
-        }
-    }, {
-        key: GETTER(STORAGE_LAYERS),
-        value: function value($store) {
-            var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-            if (isNotUndefined(id)) {
-                var results = $store.cachedLayers.filter(function (item) {
-                    return item.id == id;
-                });
-
-                if (!results.length) {
-                    return {};
-                }
-
-                return results[0];
-            }
-            return $store.cachedLayers;
-        }
-    }, {
-        key: GETTER(STORAGE_IMAGES),
-        value: function value($store) {
-            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-            if (isNotUndefined(index)) {
-                return $store.cachedImages[index];
-            }
-            return $store.cachedImages;
-        }
-    }, {
-        key: ACTION(STORAGE_UNSHIFT_LAYER),
-        value: function value($store, layer) {
-            var item = clone(layer);
-            item.id = uuid();
-            $store.cachedLayers.unshift(item);
-
-            $store.run(STORAGE_SAVE_LAYER);
-        }
-    }, {
-        key: ACTION(STORAGE_ADD_LAYER),
-        value: function value($store, layer) {
-            var item = clone(layer);
-            item.id = uuid();
-            $store.cachedLayers.push(item);
-
-            $store.run(STORAGE_SAVE_LAYER);
-        }
-    }, {
-        key: ACTION(STORAGE_REMOVE_LAYER),
-        value: function value($store, id) {
-
-            $store.cachedLayers = $store.cachedLayers.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_LAYER);
-        }
-    }, {
-        key: ACTION(STORAGE_REMOVE_PAGE),
-        value: function value($store, id) {
-
-            $store.cachedLayers = $store.cachedPages.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_UNSHIFT_PAGE),
-        value: function value($store, page) {
-            var item = clone(page);
-            item.id = uuid();
-            $store.cachedPages.unshift(item);
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_ADD_PAGE),
-        value: function value($store, page) {
-            var item = clone(page);
-            item.id = uuid();
-            $store.cachedPages.push(item);
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_DELETE_PAGE),
-        value: function value($store, id) {
-
-            $store.cachedPages = $store.cachedPages.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_DELETE_IMAGE),
-        value: function value($store, id) {
-
-            $store.cachedImages = $store.cachedImages.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_IMAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_ADD_IMAGE),
-        value: function value($store, image) {
-            var item = clone(image);
-            item.id = uuid();
-            $store.cachedImages.push(item);
-
-            $store.run(STORAGE_SAVE_IMAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE),
-        value: function value($store) {
-            localStorage.setItem(SAVE_ID, JSON.stringify({
-                items: $store.items,
-                selection: $store.selection
-            }));
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE_LAYER),
-        value: function value($store) {
-            localStorage.setItem(CACHED_LAYER_SAVE_ID, JSON.stringify($store.cachedLayers));
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE_PAGE),
-        value: function value($store) {
-            localStorage.setItem(CACHED_PAGE_SAVE_ID, JSON.stringify($store.cachedPages));
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE_IMAGE),
-        value: function value($store) {
-            localStorage.setItem(CACHED_IMAGE_SAVE_ID, JSON.stringify($store.cachedImages));
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD_LAYER),
-        value: function value($store) {
-            $store.cachedLayers = JSON.parse(localStorage.getItem(CACHED_LAYER_SAVE_ID) || "[]");
-
-            $store.cachedLayers = $store.cachedLayers.map(function (item) {
-                if (!item.id) item.id = uuid();
-                return item;
-            });
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD_PAGE),
-        value: function value($store) {
-            $store.cachedPages = JSON.parse(localStorage.getItem(CACHED_PAGE_SAVE_ID) || "[]");
-
-            $store.cachedPages = $store.cachedPages.map(function (item) {
-                if (!item.id) item.id = uuid();
-                return item;
-            });
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD_IMAGE),
-        value: function value($store) {
-            $store.cachedImages = JSON.parse(localStorage.getItem(CACHED_IMAGE_SAVE_ID) || "[]");
-
-            $store.cachedLayers = $store.cachedLayers.map(function (item) {
-                if (!item.id) item.id = uuid();
-                return item;
-            });
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD),
-        value: function value($store, callback) {
-            var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
-
-            if (obj.items) $store.items = obj.items;
-            if (obj.selectedId) $store.selectedId = obj.selectedId;
-            if (obj.selectedMode) $store.selectedMode = obj.selectedMode;
-            if (obj.selection) $store.selection = obj.selection;
-
-            $store.run(ITEM_KEYS_GENERATE);
-
-            if ($store.selectedId) {
-                $store.run(SELECTION_ONE, $store.selectedId);
-            }
-
-            if (isFunction(callback)) {
-                callback(!!obj.items);
-            }
-        }
-    }]);
-    return StorageManager;
-}(BaseModule);
-
-var ordering = {
-    'position': 1,
-    'left': 2,
-    'top': 2,
-    'right': 2,
-    'bottom': 2,
-    'width': 3,
-    'height': 3,
-
-    'font-size': 4,
-    'font-family': 4,
-
-    'opacity': 10,
-    'border-radius': 10,
-
-    'box-shadow': 15,
-    'text-shadow': 15,
-    'filter': 15,
-
-    'background-clip': 50,
-    '-webkit-background-clip': 50,
-
-    'background-repeat': 100,
-    'background-blend-mode': 100,
-    'background-image': 100,
-    'background-size': 100,
-    'background-position': 100,
-
-    'transform': 1000
-
-};
-
-var MAX_ORDER = Number.MAX_SAFE_INTEGER;
-
-var CssManager = function (_BaseModule) {
-    inherits(CssManager, _BaseModule);
-
-    function CssManager() {
-        classCallCheck(this, CssManager);
-        return possibleConstructorReturn(this, (CssManager.__proto__ || Object.getPrototypeOf(CssManager)).apply(this, arguments));
-    }
-
-    createClass(CssManager, [{
-        key: GETTER(CSS_FILTERING),
-        value: function value($store, style) {
-            var newStyle = style;
-
-            if (newStyle['background-blend-mode'] == 'normal') {
-                delete newStyle['background-blend-mode'];
-            }
-
-            if (newStyle['mix-blend-mode'] == 'normal') {
-                delete newStyle['mix-blend-mode'];
-            }
-
-            if (parseParamNumber$2(newStyle.opacity) == 1) {
-                delete newStyle.opacity;
-            }
-
-            if (parseParamNumber$2(newStyle.left) == 0) {
-                delete newStyle.left;
-            }
-
-            if (parseParamNumber$2(newStyle.top) == 0) {
-                delete newStyle.top;
-            }
-
-            if (newStyle.transform == 'none') {
-                delete newStyle.transform;
-            }
-
-            if (newStyle['transform-style'] == 'float') {
-                delete newStyle['transform-style'];
-            }
-
-            return newStyle;
-        }
-    }, {
-        key: GETTER(CSS_SORTING),
-        value: function value($store, style) {
-
-            style = $store.read(CSS_FILTERING, style);
-
-            var keys = Object.keys(style);
-
-            keys.sort(function (a, b) {
-                var aN = ordering[a] || MAX_ORDER;
-                var bN = ordering[b] || MAX_ORDER;
-
-                if (aN == bN) return 0;
-
-                return aN < bN ? -1 : 1;
-            });
-
-            var newStyle = {};
-            keys.forEach(function (key) {
-                newStyle[key] = style[key];
-            });
-
-            return newStyle;
-        }
-    }, {
-        key: GETTER(CSS_TO_STRING),
-        value: function value($store, style) {
-            var newStyle = $store.read(CSS_SORTING, style);
-
-            return Object.keys(newStyle).filter(function (key) {
-                return !!newStyle[key];
-            }).map(function (key) {
-                return key + ": " + newStyle[key];
-            }).join(';');
-        }
-    }, {
-        key: GETTER(CSS_GENERATE),
-        value: function value($store, css) {
-            var results = {};
-
-            Object.keys(css).forEach(function (key) {
-                if (!results[key]) {
-                    results[key] = [];
-                }
-
-                results[key].push(css[key]);
-            });
-
-            Object.keys(results).forEach(function (key) {
-                if (Array.isArray(results[key])) {
-                    results[key] = results[key].join(', ');
-                }
-            });
-
-            return results;
-        }
-    }]);
-    return CssManager;
-}(BaseModule);
-
-var EXTERNAL_PASTE = 'external/paste';
-
-var ExternalResourceManager = function (_BaseModule) {
-    inherits(ExternalResourceManager, _BaseModule);
-
-    function ExternalResourceManager() {
-        classCallCheck(this, ExternalResourceManager);
-        return possibleConstructorReturn(this, (ExternalResourceManager.__proto__ || Object.getPrototypeOf(ExternalResourceManager)).apply(this, arguments));
-    }
-
-    createClass(ExternalResourceManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: ACTION(EXTERNAL_PASTE),
-        value: function value($store, dataTransfer, layerId) {
-            var items = [].concat(toConsumableArray(dataTransfer.items));
-            var types = [].concat(toConsumableArray(dataTransfer.types)).filter(function (type) {
-                return type == 'text/uri-list';
-            });
-
-            var dataList = types.map(function (type) {
-                return dataTransfer.getData(type);
-            });
-
-            if (dataList.length) {
-                $store.read(IMAGE_GET_URL, dataList, function (url) {
-
-                    $store.run(ITEM_PREPEND_IMAGE_URL, url, true, layerId);
-                });
-            }
-
-            var files = [].concat(toConsumableArray(dataTransfer.files));
-            if (files.length) {
-
-                $store.read(IMAGE_GET_FILE, files, function (img) {
-                    $store.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layerId);
-                });
-            }
-        }
-    }]);
-    return ExternalResourceManager;
-}(BaseModule);
-
-var sample1$1 = "\n<svg xmlns='http://www.w3.org/2000/svg'>\n    <rect width=\"30px\" height=\"30px\" fill=\"black\" />\n</svg>\n";
-
-var cloud = "<svg version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 60 60\" style=\"enable-background:new 0 0 60 60;\" xml:space=\"preserve\">\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M50.003,27\n\tc-0.115-8.699-7.193-16-15.919-16c-5.559,0-10.779,3.005-13.661,7.336C19.157,17.493,17.636,17,16,17c-4.418,0-8,3.582-8,8\n\tc0,0.153,0.014,0.302,0.023,0.454C8.013,25.636,8,25.82,8,26c-3.988,1.912-7,6.457-7,11.155C1,43.67,6.33,49,12.845,49h24.507\n\tc0.138,0,0.272-0.016,0.408-0.021C37.897,48.984,38.031,49,38.169,49h9.803C54.037,49,59,44.037,59,37.972\n\tC59,32.601,55.106,27.961,50.003,27z\"/>\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M50.003,27\n\tc0,0-2.535-0.375-5.003,0\"/>\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M8,25c0-4.418,3.582-8,8-8\n\ts8,3.582,8,8\"/>\n</svg>\n";
-
-var SVGList = [sample1$1, cloud];
-
-var SVG_LIST = 'svg/list';
-var SVG_LIST_LOAD = 'svg/list/load';
-var SVG_GET_CLIPPATH = 'svg/get/clipPath';
-var SVG_GET_BLOB = 'svg/get/blob';
-var SVG_GET = 'svg/get';
-
-var SVGManager = function (_BaseModule) {
-    inherits(SVGManager, _BaseModule);
-
-    function SVGManager() {
-        classCallCheck(this, SVGManager);
-        return possibleConstructorReturn(this, (SVGManager.__proto__ || Object.getPrototypeOf(SVGManager)).apply(this, arguments));
-    }
-
-    createClass(SVGManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(SVGManager.prototype.__proto__ || Object.getPrototypeOf(SVGManager.prototype), "initialize", this).call(this);
-
-            this.$store.svgList = [];
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit('changeSvgList');
-        }
-    }, {
-        key: GETTER(SVG_LIST),
-        value: function value$$1($store) {
-            return [].concat(toConsumableArray(SVGList), toConsumableArray($store.svgList));
-        }
-    }, {
-        key: ACTION(SVG_LIST_LOAD),
-        value: function value$$1($store) {
-            var loadList = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-            $store.svgList = clone(loadList);
-        }
-    }, {
-        key: GETTER(SVG_GET_CLIPPATH),
-        value: function value$$1($store, svg, id, callback) {
-            var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "";
-
-
-            var $div = new Dom('div');
-            var paths = $div.html(svg).$('svg').html();
-
-            var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"" + id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
-
-            callback && callback(svg, id);
-        }
-    }, {
-        key: GETTER(SVG_GET_BLOB),
-        value: function value$$1($store, index, key) {
-            if (SVGList[index]) {
-                var svg = "" + SVGList[index];
-
-                return new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-            } else {
-                var list = $store.svgList.filter(function (item) {
-                    return item.key == key;
-                });
-
-                if (list.length) {
-                    return new Blob([list[0].svg], { type: "image/svg+xml;charset=utf-8" });
-                }
-            }
-
-            return EMPTY_STRING;
-        }
-    }, {
-        key: GETTER(SVG_GET),
-        value: function value$$1($store, index, key) {
-            if (SVGList[index]) {
-                return SVGList[index];
-            } else {
-                var list = $store.svgList.filter(function (item) {
-                    return item.key == key;
-                });
-
-                if (list.length) {
-                    return list[0].svg;
-                }
-            }
-
-            return EMPTY_STRING;
-        }
-    }]);
-    return SVGManager;
-}(BaseModule);
-
-var COLLECT_COLORSTEPS = 'collect/colorsteps';
-var COLLECT_ONE = 'collect/one';
-var COLLECT_IMAGE_ONE = 'collect/image/one';
-var COLLECT_BOXSHADOW_ONE = 'collect/boxshadow/one';
-var COLLECT_TEXTSHADOW_ONE = 'collect/textshadow/one';
-var COLLECT_IMAGES = 'collect/images';
-var COLLECT_BOXSHADOWS = 'collect/boxshadows';
-var COLLECT_TEXTSHADOWS = 'collect/textshadows';
-var COLLECT_LAYER_ONE = 'collect/layer/one';
-var COLLECT_LAYERS = 'collect/layers';
-var COLLECT_PAGE_ONE = 'collect/page/one';
-
-var CollectManager = function (_BaseModule) {
-    inherits(CollectManager, _BaseModule);
-
-    function CollectManager() {
-        classCallCheck(this, CollectManager);
-        return possibleConstructorReturn(this, (CollectManager.__proto__ || Object.getPrototypeOf(CollectManager)).apply(this, arguments));
-    }
-
-    createClass(CollectManager, [{
-        key: GETTER(COLLECT_COLORSTEPS),
-        value: function value($store, imageId) {
-            return $store.read(ITEM_MAP_CHILDREN, imageId, function (colorstep) {
-                var colorstep = clone($store.items[colorstep.id]);
-                delete colorstep.id;
-                delete colorstep.parentId;
-
-                return colorstep;
-            });
-        }
-    }, {
-        key: GETTER(COLLECT_ONE),
-        value: function value($store, id) {
-            var item = $store.read(ITEM_GET, id);
-
-            switch (item.itemType) {
-                case ITEM_TYPE_PAGE:
-                    return $store.read(COLLECT_PAGE_ONE, id);
-                case ITEM_TYPE_LAYER:
-                    return $store.read(COLLECT_LAYER_ONE, id);
-                case ITEM_TYPE_IMAGE:
-                    return $store.read(COLLECT_IMAGE_ONE, id);
-                case ITEM_TYPE_BOXSHADOW:
-                    return $store.read(COLLECT_BOXSHADOW_ONE, id);
-                case ITEM_TYPE_TEXTSHADOW:
-                    return $store.read(COLLECT_TEXTSHADOW_ONE, id);
-            }
-
-            return null;
-        }
-    }, {
-        key: GETTER(COLLECT_IMAGE_ONE),
-        value: function value($store, imageId) {
-            var image = clone($store.items[imageId]);
-            delete image.id;
-            delete image.parentId;
-
-            return {
-                image: image,
-                colorsteps: $store.read(COLLECT_COLORSTEPS, imageId)
-            };
-        }
-    }, {
-        key: GETTER(COLLECT_BOXSHADOW_ONE),
-        value: function value($store, boxshadowId) {
-            var boxshadow = clone($store.items[boxshadowId]);
-            delete boxshadow.id;
-            delete boxshadow.parentId;
-
-            return { boxshadow: boxshadow };
-        }
-    }, {
-        key: GETTER(COLLECT_TEXTSHADOW_ONE),
-        value: function value($store, textshadowId) {
-            var textshadow = clone($store.items[textshadowId]);
-            delete textshadow.id;
-            delete textshadow.parentId;
-
-            return { textshadow: textshadow };
-        }
-    }, {
-        key: GETTER(COLLECT_IMAGES),
-        value: function value($store, layerId) {
-            return $store.read(ITEM_MAP_IMAGE_CHILDREN, layerId, function (image) {
-                return $store.read(COLLECT_IMAGE_ONE, image.id);
-            });
-        }
-    }, {
-        key: GETTER(COLLECT_BOXSHADOWS),
-        value: function value($store, layerId) {
-            return $store.read(ITEM_MAP_BOXSHADOW_CHILDREN, layerId, function (image) {
-                return $store.read(COLLECT_BOXSHADOW_ONE, image.id);
-            });
-        }
-    }, {
-        key: GETTER(COLLECT_TEXTSHADOWS),
-        value: function value($store, layerId) {
-            return $store.read(ITEM_MAP_TEXTSHADOW_CHILDREN, layerId, function (image) {
-                return $store.read(COLLECT_TEXTSHADOW_ONE, image.id);
-            });
-        }
-    }, {
-        key: GETTER(COLLECT_LAYER_ONE),
-        value: function value($store, layerId) {
-            var results = {};
-
-            if (!$store.items[layerId]) {
-                return results;
-            }
-
-            var layer = clone($store.items[layerId]);
-            delete layer.id;
-            delete layer.parentId;
-
-            return {
-                layer: layer,
-                images: $store.read(COLLECT_IMAGES, layerId),
-                boxshadows: $store.read(COLLECT_BOXSHADOWS, layerId),
-                textshadows: $store.read(COLLECT_TEXTSHADOWS, layerId)
-            };
-        }
-    }, {
-        key: GETTER(COLLECT_LAYERS),
-        value: function value($store, pageId) {
-            return $store.read(ITEM_MAP_CHILDREN, pageId, function (layer) {
-                return $store.read(COLLECT_LAYER_ONE, layer.id);
-            });
-        }
-    }, {
-        key: GETTER(COLLECT_PAGE_ONE),
-        value: function value($store, pageId) {
-            var results = {};
-
-            if (!$store.items[pageId]) {
-                return results;
-            }
-
-            var page = clone($store.items[pageId]);
-            delete page.id;
-            delete page.parentId;
-
-            return {
-                page: page,
-                layers: $store.read(COLLECT_LAYERS, pageId)
-            };
-        }
-    }]);
-    return CollectManager;
-}(BaseModule);
-
-var PAGE_TO_STRING = 'page/toString';
-var PAGE_TO_CSS = 'page/toCSS';
-var PAGE_COLORVIEW_TO_CSS = 'page/colorview/toCSS';
-var PAGE_CACHE_TO_CSS = 'page/cache/toCSS';
-var PAGE_CACHE_TO_STRING = 'page/cache/toString';
-
-var PageManager = function (_BaseModule) {
-    inherits(PageManager, _BaseModule);
-
-    function PageManager() {
-        classCallCheck(this, PageManager);
-        return possibleConstructorReturn(this, (PageManager.__proto__ || Object.getPrototypeOf(PageManager)).apply(this, arguments));
-    }
-
-    createClass(PageManager, [{
-        key: GETTER(PAGE_TO_STRING),
-        value: function value$$1($store, id) {
-
-            var page = $store.read(ITEM_GET, id);
-            var obj = $store.read(PAGE_TO_CSS, page) || {};
-
-            return Object.keys(obj).map(function (key) {
-                return key + ": " + obj[key] + ";";
-            }).join(' ');
-        }
-    }, {
-        key: GETTER(PAGE_TO_CSS),
-        value: function value$$1($store) {
-            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
-            var css = {
-                overflow: sample.clip ? 'hidden' : EMPTY_STRING,
-                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-                width: stringUnit(sample.width),
-                height: stringUnit(sample.height)
-            };
-
-            if (sample.perspective) {
-                css.perspective = stringUnit(sample.perspective);
-            }
-
-            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
-                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
-            }
-
-            return $store.read('css/sorting', css);
-        }
-    }, {
-        key: GETTER(PAGE_COLORVIEW_TO_CSS),
-        value: function value$$1($store) {
-            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
-            var css = {
-                'transform-style': sample.preserve ? 'preserve-3d' : 'flat'
-            };
-
-            if (sample.perspective) {
-                css.perspective = stringUnit(sample.perspective);
-            }
-
-            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
-                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
-            }
-
-            return $store.read('css/sorting', css);
-        }
-    }, {
-        key: GETTER(PAGE_CACHE_TO_CSS),
-        value: function value$$1($store) {
-            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
-            var css = {
-                overflow: sample.clip ? 'hidden' : EMPTY_STRING,
-                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-                width: stringUnit(sample.width),
-                height: stringUnit(sample.height)
-            };
-
-            if (sample.perspective) {
-                css.perspective = stringUnit(sample.perspective);
-            }
-
-            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
-                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
-            }
-
-            return $store.read('css/sorting', css);
-        }
-    }, {
-        key: GETTER(PAGE_CACHE_TO_STRING),
-        value: function value$$1($store, page) {
-            var obj = $store.read(PAGE_CACHE_TO_CSS, page) || {};
-
-            return {
-                css: $store.read(CSS_TO_STRING, obj),
-                obj: obj
-            };
-        }
-    }]);
-    return PageManager;
-}(BaseModule);
-
-var HISTORY_MAX = 200;
-
-var HistoryManager = function (_BaseModule) {
-    inherits(HistoryManager, _BaseModule);
-
-    function HistoryManager() {
-        classCallCheck(this, HistoryManager);
-        return possibleConstructorReturn(this, (HistoryManager.__proto__ || Object.getPrototypeOf(HistoryManager)).apply(this, arguments));
-    }
-
-    createClass(HistoryManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(HistoryManager.prototype.__proto__ || Object.getPrototypeOf(HistoryManager.prototype), "initialize", this).call(this);
-
-            this.$store.historyOriginal = null;
-            this.$store.histories = [];
-            this.$store.historyIndex = -1;
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_HISTORY);
-        }
-    }, {
-        key: GETTER(HISTORY_LIST),
-        value: function value($store) {
-            return $store.histories || [];
-        }
-    }, {
-        key: GETTER(HISTORY_SELECTED_CHECK),
-        value: function value($store, index) {
-            return $store.historyIndex == index;
-        }
-    }, {
-        key: "changeHistory",
-        value: function changeHistory($store) {
-
-            if ($store.historyIndex < 0) {
-                var command = $store.historyOriginal;
-            } else {
-                var index = $store.historyIndex;
-                var command = $store.histories[index];
-            }
-
-            if (command) {
-                var items = command.items,
-                    selection = command.selection;
-
-                $store.selection = selection || $store.read(SELECTION_INITIALIZE_DATA);
-                $store.items = clone(items);
-                $store.emit(CHANGE_EDITOR);
-            }
-        }
-    }, {
-        key: ACTION(HISTORY_INITIALIZE),
-        value: function value($store) {
-            var _this2 = this;
-
-            $store.read(SELECTION_CURRENT_PAGE, function (page) {
-                _this2.setHistory($store, page);
-            });
-        }
-    }, {
-        key: "setHistory",
-        value: function setHistory($store) {
-            if (!$store.historyOriginal) {
-                $store.historyOriginal = {
-                    items: clone($store.items),
-                    selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
-                };
-                $store.histories = [];
-                $store.historyIndex = 0;
-            }
-        }
-    }, {
-        key: ACTION(HISTORY_PUSH),
-        value: function value($store, title) {
-
-            this.setHistory($store);
-
-            var index = $store.historyIndex;
-            if (index < 0) index = -1;
-            var histories = index < 0 ? [] : $store.histories.slice(0, index + 1);
-
-            histories.push({
-                title: title,
-                items: clone($store.items),
-                selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
-            });
-
-            $store.histories = histories;
-
-            if ($store.histories.length > HISTORY_MAX) {
-                $store.histories.shift();
-            }
-
-            $store.historyIndex = $store.histories.length - 1;
-        }
-    }, {
-        key: ACTION(HISTORY_UNDO),
-        value: function value($store) {
-            if ($store.historyIndex < 0) {
-                return;
-            }
-
-            $store.historyIndex--;
-            this.changeHistory($store);
-        }
-    }, {
-        key: ACTION(HISTORY_REDO),
-        value: function value($store) {
-
-            if ($store.historyIndex > $store.histories.length - 1) {
-                return;
-            }
-
-            $store.historyIndex++;
-            this.changeHistory($store);
-        }
-    }]);
-    return HistoryManager;
-}(BaseModule);
-
-var SELECT_MODE_ONE = "SELECT_MODE_ONE";
-var SELECT_MODE_AREA = "SELECT_MODE_AREA";
-var SELECT_MODE_GROUP = "SELECT_MODE_GROUP";
-
-var SelectionManager = function (_BaseModule) {
-    inherits(SelectionManager, _BaseModule);
-
-    function SelectionManager() {
-        classCallCheck(this, SelectionManager);
-        return possibleConstructorReturn(this, (SelectionManager.__proto__ || Object.getPrototypeOf(SelectionManager)).apply(this, arguments));
-    }
-
-    createClass(SelectionManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(SelectionManager.prototype.__proto__ || Object.getPrototypeOf(SelectionManager.prototype), "initialize", this).call(this);
-
-            this.$store.selection = {
-                type: SELECT_MODE_ONE,
-                ids: [],
-                items: [],
-                itemType: EMPTY_STRING
-            };
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_SELECTION);
-        }
-    }, {
-        key: "checkInArea",
-        value: function checkInArea(area, item) {
-
-            if (area.width === 0) {
-                return false;
-            }
-            if (area.height === 0) {
-                return false;
-            }
-            if (area.x2 < item.x) {
-                return false;
-            }
-            if (area.y2 < item.y) {
-                return false;
-            }
-            if (area.x > item.x2) {
-                return false;
-            }
-            if (area.y > item.y2) {
-                return false;
-            }
-
-            return true;
-        }
-    }, {
-        key: GETTER(SELECTION_INITIALIZE_DATA),
-        value: function value$$1($store) {
-            return {
-                type: SELECT_MODE_ONE,
-                ids: [],
-                items: [],
-                itemType: EMPTY_STRING
-            };
-        }
-    }, {
-        key: GETTER(SELECTION_IDS),
-        value: function value$$1($store) {
-            return $store.selection.ids || [];
-        }
-    }, {
-        key: GETTER(SELECTION_CHECK),
-        value: function value$$1($store, id) {
-            return $store.selection.ids.includes(id);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_EMPTY),
-        value: function value$$1($store) {
-            return $store.selection.ids.length === 0;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_NOT_EMPTY),
-        value: function value$$1($store) {
-            return $store.selection.ids.length > 0;
-        }
-    }, {
-        key: GETTER(SELECTION_HAS_ONE),
-        value: function value$$1($store) {
-            return $store.selection.ids.length === 1;
-        }
-    }, {
-        key: GETTER(SELECTION_HAS_MANY),
-        value: function value$$1($store) {
-            return $store.selection.ids.length > 1;
-        }
-    }, {
-        key: GETTER(SELECTION_TYPE),
-        value: function value$$1($store) {
-            return $store.selection.type;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT),
-        value: function value$$1($store) {
-            return $store.selection.ids.filter(function (id) {
-                return !!$store.items[id];
-            }).map(function (id) {
-                return $store.items[id];
-            });
-        }
-    }, {
-        key: GETTER(SELECTION_UNIT_VALUES),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_CURRENT).map(function (item) {
-                return {
-                    id: item.id,
-                    x: unitValue(item.x),
-                    y: unitValue(item.y),
-                    width: unitValue(item.width),
-                    height: unitValue(item.height),
-                    x2: unitValue(item.x) + unitValue(item.width),
-                    y2: unitValue(item.y) + unitValue(item.height),
-                    centerX: unitValue(item.x) + unitValue(item.width) / 2,
-                    centerY: unitValue(item.y) + unitValue(item.height) / 2
-                };
-            });
-        }
-    }, {
-        key: "getCurrentItem",
-        value: function getCurrentItem($store, itemType, callback) {
-            var items = null;
-
-            if ($store.selection.itemType == itemType) {
-                var items = $store.read(SELECTION_CURRENT);
-            }
-
-            if (Array.isArray(items) && items.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(items[0]);
-                    return items[0];
-                } else {
-                    if (isFunction(callback)) callback(items);
-                    return items;
-                }
-            }
-
-            return items;
-        }
-    }, {
-        key: "getCurrentItemId",
-        value: function getCurrentItemId($store, itemType, callback) {
-            var items = null;
-
-            if ($store.selection.itemType == itemType) {
-                var items = $store.read(SELECTION_CURRENT);
-            }
-
-            if (Array.isArray(items) && items.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(items[0].id);
-                    return items[0].id;
-                } else {
-                    if (isFunction(callback)) callback(items.map(function (it) {
-                        return it.id;
-                    }));
-                    return items.map(function (it) {
-                        return it.id;
-                    });
-                }
-            }
-
-            return items;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_IMAGE$1),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_IMAGE_ID$1),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_IMAGE, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_BOXSHADOW),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_BOXSHADOW, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_BOXSHADOW_ID),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_BOXSHADOW, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_TEXTSHADOW),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW$1, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_TEXTSHADOW_ID),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW$1, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_LAYER),
-        value: function value$$1($store, callback) {
-            var layers = null;
-
-            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-                var layers = $store.read(SELECTION_CURRENT);
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
-                var layers = $store.read(SELECTION_CURRENT).map(function (item) {
-                    return $store.items[item.parentId];
-                });
-            }
-            if (Array.isArray(layers) && layers.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(layers[0]);
-                    return layers[0];
-                } else {
-                    if (isFunction(callback)) callback(layers);
-                    return layers;
-                }
-            }
-
-            return layers;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_LAYER_ID),
-        value: function value$$1($store, callback) {
-            var layers = null;
-
-            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-                var layers = $store.read(SELECTION_CURRENT);
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
-                var layers = $store.read(SELECTION_CURRENT).map(function (item) {
-                    return $store.items[item.parentId];
-                });
-            }
-
-            if (Array.isArray(layers) && layers.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(layers[0].id);
-                    return layers[0].id;
-                } else {
-                    if (isFunction(callback)) callback(layers.map(function (it) {
-                        return it.id;
-                    }));
-                    return layers.map(function (it) {
-                        return it.id;
-                    });
-                }
-            }
-
-            return layers;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_PAGE),
-        value: function value$$1($store, callback) {
-
-            var pages = $store.read(SELECTION_CURRENT).map(function (it) {
-                var path = $store.read(ITEM_PATH, it.id);
-                return $store.read(ITEM_GET, path[path.length - 1]);
-            });
-
-            if (Array.isArray(pages) && pages.length) {
-                if (isFunction(callback)) callback(pages[0]);
-                return pages[0];
-            }
-
-            return null;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_PAGE_ID),
-        value: function value$$1($store, callback) {
-
-            var pages = $store.read(SELECTION_CURRENT).map(function (it) {
-                var path = $store.read(ITEM_PATH, it.id);
-                return $store.read(ITEM_GET, path[path.length - 1]);
-            });
-
-            if (Array.isArray(pages) && pages.length) {
-                if (isFunction(callback)) callback(pages[0].id);
-                return pages[0].id;
-            }
-
-            return null;
-        }
-    }, {
-        key: GETTER(SELECTION_MODE),
-        value: function value$$1($store) {
-            return $store.selection;
-        }
-    }, {
-        key: GETTER(SELECTION_IS),
-        value: function value$$1($store, type) {
-            return $store.selection.type == type;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_ITEM),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == type;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_LAYER$1),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_LAYER;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_IMAGE),
-        value: function value$$1($store, type) {
-
-            var isImage = $store.selection.itemType == ITEM_TYPE_IMAGE;
-            var isTypeCheck = true;
-
-            if (type) {
-                if ($store.selection.ids.length) {
-                    var item = $store.read(ITEM_GET, $store.selection.ids[0]);
-
-                    isTypeCheck = item.type == type;
-                }
-            }
-
-            return isImage && isTypeCheck;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_PAGE),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_PAGE;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_BOXSHADOW),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_TEXTSHADOW),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_FILTER),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_FILTER;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_BACKDROP_FILTER),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_BACKDROP;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_ONE),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_IS, SELECT_MODE_ONE);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_GROUP),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_IS, SELECT_MODE_GROUP);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_AREA),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_IS, SELECT_MODE_AREA);
-        }
-    }, {
-        key: GETTER(SELECTION_LAYERS),
-        value: function value$$1($store) {
-            return $store.read(ITEM_FILTER, function (id) {
-                return $store.items[id].itemType == ITEM_TYPE_LAYER;
-            }).map(function (id) {
-                var _$store$items$id = $store.items[id],
-                    x = _$store$items$id.x,
-                    y = _$store$items$id.y,
-                    width = _$store$items$id.width,
-                    height = _$store$items$id.height;
-
-
-                x = unitValue(x);
-                y = unitValue(y);
-                width = unitValue(width);
-                height = unitValue(height);
-                var x2 = x + width;
-                var y2 = y + height;
-
-                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
-            });
-        }
-    }, {
-        key: ACTION(SELECTION_ONE),
-        value: function value$$1($store) {
-            var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-            $store.selection = {
-                type: SELECT_MODE_ONE,
-                ids: [selectedId],
-                itemType: $store.items[selectedId].itemType
-            };
-        }
-    }, {
-        key: ACTION(SELECTION_CHANGE),
-        value: function value$$1($store, itemType) {
-            if (itemType == ITEM_TYPE_PAGE) {
-                $store.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    $store.run(SELECTION_ONE, id);
-                });
-            }
-        }
-    }, {
-        key: ACTION(SELECTION_AREA),
-        value: function value$$1($store, _ref) {
-            var _this2 = this;
-
-            var x = _ref.x,
-                y = _ref.y,
-                width = _ref.width,
-                height = _ref.height;
-
-            var x2 = x + width;
-            var y2 = y + height;
-
-            var area = { x: x, y: y, width: width, height: height, x2: x2, y2: y2 };
-
-            var layers = $store.read(SELECTION_LAYERS);
-
-            var selectItems = [];
-            layers.forEach(function (it) {
-
-                if (_this2.checkInArea(area, it)) {
-                    selectItems.push(it.id);
-                }
-            });
-
-            if (selectItems.length) {
-                $store.selection = {
-                    type: selectItems.length == 1 ? SELECT_MODE_ONE : SELECT_MODE_GROUP,
-                    ids: selectItems,
-                    itemType: ITEM_TYPE_LAYER
-                };
-            } else {
-                $store.run(SELECTION_CHANGE, ITEM_TYPE_PAGE);
-            }
-        }
-    }, {
-        key: GETTER(SELECTION_RECT),
-        value: function value$$1($store) {
-            var items = $store.selection.ids.map(function (id) {
-                var _$store$items$id2 = $store.items[id],
-                    x = _$store$items$id2.x,
-                    y = _$store$items$id2.y,
-                    width = _$store$items$id2.width,
-                    height = _$store$items$id2.height;
-
-
-                x = unitValue(x);
-                y = unitValue(y);
-                width = unitValue(width);
-                height = unitValue(height);
-                var x2 = x + width;
-                var y2 = y + height;
-
-                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
-            });
-
-            var x = Math.min.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.x;
-            })));
-            var y = Math.min.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.y;
-            })));
-            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.x2;
-            })));
-            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.y2;
-            })));
-
-            var width = x2 - x;
-            var height = y2 - y;
-            var centerX = x + width / 2;
-            var centerY = y + height / 2;
-
-            x = pxUnit(x);
-            y = pxUnit(y);
-            width = pxUnit(width);
-            height = pxUnit(height);
-            centerX = pxUnit(centerX);
-            centerY = pxUnit(centerY);
-
-            if (items.length == 1) {
-                return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY, id: items[0].id };
-            }
-
-            return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY };
-        }
-    }]);
-    return SelectionManager;
-}(BaseModule);
-
-var ORDERING_TYPE = 'ordering/type';
-var ORDERING_INDEX = 'ordering/index';
-
-var OrderingManager = function (_BaseModule) {
-    inherits(OrderingManager, _BaseModule);
-
-    function OrderingManager() {
-        classCallCheck(this, OrderingManager);
-        return possibleConstructorReturn(this, (OrderingManager.__proto__ || Object.getPrototypeOf(OrderingManager)).apply(this, arguments));
-    }
-
-    createClass(OrderingManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: "horizontal",
-        value: function horizontal($store) {
-            var items = $store.read(SELECTION_UNIT_VALUES);
-
-            var x = Number.MAX_SAFE_INTEGER;
-            var xItem = null;
-
-            var x2 = Number.MIN_SAFE_INTEGER;
-            var x2Item = null;
-
-            items.forEach(function (item) {
-
-                if (x > item.x) {
-                    x = item.x;
-                    xItem = item;
-                } else if (x2 < item.x2) {
-                    x2 = item.x2;
-                    x2Item = item;
-                }
-            });
-
-            var count = items.length - 2;
-            var tempIds = [xItem.id, x2Item.id];
-
-            if (count > 0) {
-                var restItems = items.filter(function (it) {
-                    return !tempIds.includes(it.id);
-                });
-
-                restItems.sort(function (a, b) {
-                    if (a.centerX == b.centerX) return 0;
-                    return a.centerX > b.centerX ? 1 : -1;
-                });
-
-                var startX = xItem.centerX;
-                var endX = x2Item.centerX;
-                var unitWidth = (endX - startX) / (count + 1);
-
-                restItems.forEach(function (item, index) {
-                    item.centerX = startX + (index + 1) * unitWidth;
-                    item.x = item.centerX - item.width / 2;
-
-                    $store.run(ITEM_SET, { id: item.id, x: pxUnit(item.x) });
-                });
-            }
-        }
-    }, {
-        key: "vertical",
-        value: function vertical($store) {
-            var items = $store.read(SELECTION_UNIT_VALUES);
-
-            var y = Number.MAX_SAFE_INTEGER;
-            var yItem = null;
-
-            var y2 = Number.MIN_SAFE_INTEGER;
-            var y2Item = null;
-
-            items.forEach(function (item) {
-
-                if (y > item.y) {
-                    y = item.y;
-                    yItem = item;
-                } else if (y2 < item.y2) {
-                    y2 = item.y2;
-                    y2Item = item;
-                }
-            });
-
-            var count = items.length - 2;
-            var tempIds = [yItem.id, y2Item.id];
-
-            if (count > 0) {
-                var restItems = items.filter(function (it) {
-                    return !tempIds.includes(it.id);
-                });
-
-                restItems.sort(function (a, b) {
-                    if (a.centerY == b.centerY) return 0;
-                    return a.centerY > b.centerY ? 1 : -1;
-                });
-
-                var startY = yItem.centerY;
-                var endY = y2Item.centerY;
-                var unitHeight = (endY - startY) / (count + 1);
-
-                restItems.forEach(function (item, index) {
-                    item.centerY = startY + (index + 1) * unitHeight;
-                    item.y = item.centerY - item.height / 2;
-
-                    $store.run(ITEM_SET, { id: item.id, y: pxUnit(item.y) });
-                });
-            }
-        }
-    }, {
-        key: "left",
-        value: function left($store) {
-            var items = $store.read(SELECTION_CURRENT);
-            var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x);
-            })));
-
-            items.forEach(function (item) {
-                $store.run(ITEM_SET, { id: item.id, x: pxUnit(x) });
-            });
-        }
-    }, {
-        key: "center",
-        value: function center($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x);
-            })));
-
-            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x) + unitValue(item.width);
-            })));
-
-            var centerX = x + Math.floor((x2 - x) / 2);
-
-            items.forEach(function (item) {
-                var newX = pxUnit(Math.floor(centerX - unitValue(item.width) / 2));
-                $store.run(ITEM_SET, { id: item.id, x: newX });
-            });
-        }
-    }, {
-        key: "right",
-        value: function right($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x) + unitValue(item.width);
-            })));
-
-            items.forEach(function (item) {
-                var newX = pxUnit(x2 - unitValue(item.width));
-                $store.run(ITEM_SET, { id: item.id, x: newX });
-            });
-        }
-    }, {
-        key: "top",
-        value: function top($store) {
-            var items = $store.read(SELECTION_CURRENT);
-            var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y);
-            })));
-
-            items.forEach(function (item) {
-                $store.run(ITEM_SET, { id: item.id, y: pxUnit(y) });
-            });
-        }
-    }, {
-        key: "middle",
-        value: function middle($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y);
-            })));
-
-            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y) + unitValue(item.height);
-            })));
-
-            var centerY = y + (y2 - y) / 2;
-
-            items.forEach(function (item) {
-                var newY = pxUnit(Math.floor(centerY - unitValue(item.height) / 2));
-                $store.run(ITEM_SET, { id: item.id, y: newY });
-            });
-        }
-    }, {
-        key: "bottom",
-        value: function bottom($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y) + unitValue(item.height);
-            })));
-
-            items.forEach(function (item) {
-                var newY = pxUnit(y2 - unitValue(item.height));
-                $store.run(ITEM_SET, { id: item.id, y: newY });
-            });
-        }
-    }, {
-        key: ACTION(ORDERING_TYPE),
-        value: function value$$1($store, type) {
-            if (this[type]) {
-                this[type].call(this, $store);
-            }
-        }
-    }, {
-        key: "forward",
-        value: function forward($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_NEXT, id);
-            });
-        }
-    }, {
-        key: "backward",
-        value: function backward($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_PREV, id);
-            });
-        }
-    }, {
-        key: "front",
-        value: function front($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_LAST, id);
-            });
-        }
-    }, {
-        key: "back",
-        value: function back($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_FIRST, id);
-            });
-        }
-    }, {
-        key: ACTION(ORDERING_INDEX),
-        value: function value$$1($store, type) {
-            if (this[type]) {
-                this[type].call(this, $store);
-            }
-        }
-    }]);
-    return OrderingManager;
-}(BaseModule);
-
-var MatrixManager = function (_BaseModule) {
-    inherits(MatrixManager, _BaseModule);
-
-    function MatrixManager() {
-        classCallCheck(this, MatrixManager);
-        return possibleConstructorReturn(this, (MatrixManager.__proto__ || Object.getPrototypeOf(MatrixManager)).apply(this, arguments));
-    }
-
-    createClass(MatrixManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_LAYER_POSITION);
-        }
-    }, {
-        key: ACTION('matrix/move'),
-        value: function value$$1($store, newValue) {
-            var item = $store.read(ITEM_GET, newValue.id);
-
-            Object.keys(newValue).filter(function (key) {
-                return key != 'id';
-            }).forEach(function (key) {
-                item[key] = pxUnit(unitValue(item[key]) + newValue[key]);
-            });
-
-            $store.run(ITEM_SET, item);
-        }
-    }]);
-    return MatrixManager;
-}(BaseModule);
-
-var BoxShadowManager = function (_BaseModule) {
-    inherits(BoxShadowManager, _BaseModule);
-
-    function BoxShadowManager() {
-        classCallCheck(this, BoxShadowManager);
-        return possibleConstructorReturn(this, (BoxShadowManager.__proto__ || Object.getPrototypeOf(BoxShadowManager)).apply(this, arguments));
-    }
-
-    createClass(BoxShadowManager, [{
-        key: GETTER('boxshadow/toCSS'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var boxshadow = $store.read('boxshadow/toBoxShadowString', item, isExport);
-
-            if (boxshadow) {
-                results['box-shadow'] = boxshadow;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('boxshadow/cache/toCSS'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-
-            var results = {};
-            var boxshadow = $store.read('boxshadow/toBoxShadowString', item, isExport);
-
-            if (boxshadow) {
-                results['box-shadow'] = boxshadow;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('boxshadow/toString'),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-
-            var obj = $store.read('boxshadow/toCSS', image);
-
-            return Object.keys(obj).map(function (key) {
-                return key + ": " + obj[key] + ";";
-            }).join(' ');
-        }
-    }, {
-        key: GETTER('boxshadow/toBoxShadowString'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!item) return EMPTY_STRING;
-
-            var results = [EMPTY_STRING];
-
-            if (item.inset) {
-                results.push('inset');
-            }
-
-            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), stringUnit(item.spreadRadius), item.color);
-
-            return results.join(' ');
-        }
-    }]);
-    return BoxShadowManager;
-}(BaseModule);
-
-var TextShadowManager = function (_BaseModule) {
-    inherits(TextShadowManager, _BaseModule);
-
-    function TextShadowManager() {
-        classCallCheck(this, TextShadowManager);
-        return possibleConstructorReturn(this, (TextShadowManager.__proto__ || Object.getPrototypeOf(TextShadowManager)).apply(this, arguments));
-    }
-
-    createClass(TextShadowManager, [{
-        key: GETTER('textshadow/toCSS'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var textshadow = $store.read('textshadow/toTextShadowString', item, isExport);
-
-            if (textshadow) {
-                results['text-shadow'] = textshadow;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('textshadow/cache/toCSS'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-
-            var results = {};
-            var textshadow = $store.read('textshadow/toTextShadowString', item, isExport);
-
-            if (textshadow) {
-                results['text-shadow'] = textshadow;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('textshadow/toString'),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-
-            var obj = $store.read('textshadow/toCSS', image);
-
-            return Object.keys(obj).map(function (key) {
-                return key + ": " + obj[key] + ";";
-            }).join(' ');
-        }
-    }, {
-        key: GETTER('textshadow/toTextShadowString'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!item) return EMPTY_STRING;
-
-            var results = [];
-
-            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), item.color);
-
-            return results.join(' ');
-        }
-    }]);
-    return TextShadowManager;
-}(BaseModule);
-
-var filterInfo = {
-    'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
-    'filterGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'filterHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'filterInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'filterBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
-    'filterDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'filterDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'filterDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'filterDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
-    'filterOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
-};
-
-var DROP_SHADOW_LIST = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
-
-var FilterManager = function (_BaseModule) {
-    inherits(FilterManager, _BaseModule);
-
-    function FilterManager() {
-        classCallCheck(this, FilterManager);
-        return possibleConstructorReturn(this, (FilterManager.__proto__ || Object.getPrototypeOf(FilterManager)).apply(this, arguments));
-    }
-
-    createClass(FilterManager, [{
-        key: GETTER(FILTER_GET),
-        value: function value$$1($store, id) {
-            return filterInfo[id];
-        }
-    }, {
-        key: GETTER(FILTER_LIST),
-        value: function value$$1($store, layerId) {
-            var layer = $store.read(ITEM_GET, layerId);
-            var realFilters = {};
-
-            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
-                return layer[key];
-            }).forEach(function (key) {
-                realFilters[key] = layer[key];
-            });
-
-            realFilters = Object.assign(clone(FILTER_DEFAULT_OBJECT), realFilters);
-
-            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
-                return _extends({ key: key }, realFilters[key]);
-            });
-
-            filterList.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return filterList.map(function (it) {
-                return it.key;
-            });
-        }
-    }, {
-        key: GETTER(FILTER_TO_CSS),
-        value: function value$$1($store, layer) {
-            var realFilters = {};
-
-            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
-                return layer[key];
-            }).forEach(function (key) {
-                realFilters[key] = layer[key];
-            });
-
-            realFilters = Object.assign(clone(FILTER_DEFAULT_OBJECT), realFilters);
-
-            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
-                return _extends({ key: key }, realFilters[key]);
-            });
-
-            filterList.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            var filterString = filterList.filter(function (it) {
-                return it.checked;
-            }).map(function (it) {
-                var viewObject = filterInfo[it.key];
-                if (it.key == 'filterDropshadow') {
-
-                    var values = DROP_SHADOW_LIST.map(function (key) {
-                        return stringUnit(layer[key] || FILTER_DEFAULT_OBJECT[key]);
-                    }).join(' ');
-
-                    return viewObject.func + "(" + values + ")";
-                } else {
-                    var values = stringUnit(it);
-                    return viewObject.func + "(" + values + ")";
-                }
-            }).join(' ');
-
-            return {
-                filter: filterString
-            };
-        }
-    }]);
-    return FilterManager;
-}(BaseModule);
-
-var backdropInfo = {
-    'backdropBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
-    'backdropGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'backdropHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'backdropInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'backdropBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'backdropContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'backdropDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
-    'backdropDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'backdropDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'backdropDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'backdropDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
-    'backdropOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'backdropSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'backdropSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
-};
-
-var DROP_SHADOW_LIST$1 = ['backdropDropshadowOffsetX', 'backdropDropshadowOffsetY', 'backdropDropshadowBlurRadius', 'backdropDropshadowColor'];
-
-var BackdropManager = function (_BaseModule) {
-    inherits(BackdropManager, _BaseModule);
-
-    function BackdropManager() {
-        classCallCheck(this, BackdropManager);
-        return possibleConstructorReturn(this, (BackdropManager.__proto__ || Object.getPrototypeOf(BackdropManager)).apply(this, arguments));
-    }
-
-    createClass(BackdropManager, [{
-        key: GETTER(BACKDROP_GET),
-        value: function value$$1($store, id) {
-            return backdropInfo[id];
-        }
-    }, {
-        key: GETTER(BACKDROP_LIST),
-        value: function value$$1($store, layerId) {
-            var layer = $store.read(ITEM_GET, layerId);
-            var realFilters = {};
-
-            BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
-                return layer[key];
-            }).forEach(function (key) {
-                realFilters[key] = layer[key];
-            });
-
-            realFilters = Object.assign(clone(BACKDROP_DEFAULT_OBJECT), realFilters);
-
-            var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(function (key) {
-                return _extends({ key: key }, realFilters[key]);
-            });
-
-            filterList.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return filterList.map(function (it) {
-                return it.key;
-            });
-        }
-    }, {
-        key: GETTER(BACKDROP_TO_CSS),
-        value: function value$$1($store, layer) {
-            var realFilters = {};
-
-            BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
-                return layer[key];
-            }).forEach(function (key) {
-                realFilters[key] = layer[key];
-            });
-
-            realFilters = Object.assign(clone(BACKDROP_DEFAULT_OBJECT), realFilters);
-
-            var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(function (key) {
-                return _extends({ key: key }, realFilters[key]);
-            });
-
-            filterList.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            var filterString = filterList.filter(function (it) {
-                return it.checked;
-            }).map(function (it) {
-                var viewObject = backdropInfo[it.key];
-                if (it.key == 'backdropDropshadow') {
-
-                    var values = DROP_SHADOW_LIST$1.map(function (key) {
-                        var value$$1 = layer[key] || BACKDROP_DEFAULT_OBJECT[key];
-
-                        return unit(value$$1.value, value$$1.unit, true);
-                    }).join(' ');
-
-                    return viewObject.func + "(" + values + ")";
-                } else {
-                    var values = unit(it.value, it.unit, true);
-                    return viewObject.func + "(" + values + ")";
-                }
-            }).join(' ');
-
-            return {
-                'backdrop-filter': filterString,
-                '-webkit-backdrop-filter': filterString
-            };
-        }
-    }]);
-    return BackdropManager;
-}(BaseModule);
-
-var en_US = {
-    'app.title': 'EASYLOGIC',
-    'app.counting': '{index}'
-};
-
-var ko_KR = {
-    'app.title': '이지로직'
-};
-
-var langs = {
-    en_US: en_US,
-    ko_KR: ko_KR
-};
-
-var LANG_EN = 'en_US';
-
-var FALLBACK_LANG = LANG_EN;
-
-var i18n = {
-    get: function get(key) {
-        var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var lang = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : FALLBACK_LANG;
-
-        var str = langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
-
-        Object.keys(params).forEach(function (key) {
-            str = str.replace(new RegExp('{' + key + '}', 'ig'), params[key]);
-        });
-
-        return str;
-    }
-};
-
-var I18nManager = function (_BaseModule) {
-    inherits(I18nManager, _BaseModule);
-
-    function I18nManager() {
-        classCallCheck(this, I18nManager);
-        return possibleConstructorReturn(this, (I18nManager.__proto__ || Object.getPrototypeOf(I18nManager)).apply(this, arguments));
-    }
-
-    createClass(I18nManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(I18nManager.prototype.__proto__ || Object.getPrototypeOf(I18nManager.prototype), "initialize", this).call(this);
-
-            this.$store.lang = LANG_EN;
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: ACTION('i18n/change/language'),
-        value: function value($store) {
-            var lang = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : LANG_EN;
-
-            $store.lang = lang;
-        }
-    }, {
-        key: GETTER('i18n/get'),
-        value: function value($store, key) {
-            var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-            var lang = arguments[3];
-
-            return i18n.get(key, params, lang || $store.lang);
-        }
-    }]);
-    return I18nManager;
-}(BaseModule);
-
-var triangle = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }]
-};
-
-var trapezoid = {
-    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(0) }]
-};
-
-var parallelogram = {
-    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(0) }]
-};
-
-var rhombus = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(50) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(50) }]
-};
-
-var pentagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(38) }, { x: percentUnit(18), y: percentUnit(100) }, { x: percentUnit(82), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(38) }]
-};
-
-var hexagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(25) }, { x: percentUnit(0), y: percentUnit(75) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(75) }, { x: percentUnit(100), y: percentUnit(25) }]
-};
-
-var heptagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(10), y: percentUnit(20) }, { x: percentUnit(0), y: percentUnit(60) }, { x: percentUnit(25), y: percentUnit(100) }, { x: percentUnit(75), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(60) }, { x: percentUnit(90), y: percentUnit(20) }]
-};
-
-var octagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(30), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(30) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(30), y: percentUnit(100) }, { x: percentUnit(70), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(30) }, { x: percentUnit(70), y: percentUnit(0) }]
-};
-
-var nonagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(17), y: percentUnit(12) }, { x: percentUnit(0), y: percentUnit(43) }, { x: percentUnit(6), y: percentUnit(78) }, { x: percentUnit(32), y: percentUnit(100) }, { x: percentUnit(68), y: percentUnit(100) }, { x: percentUnit(94), y: percentUnit(78) }, { x: percentUnit(100), y: percentUnit(43) }, { x: percentUnit(83), y: percentUnit(12) }]
-};
-
-var decagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(20), y: percentUnit(10) }, { x: percentUnit(0), y: percentUnit(35) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(20), y: percentUnit(90) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(90) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(35) }, { x: percentUnit(80), y: percentUnit(10) }]
-};
-
-var clipPathList = [triangle, trapezoid, parallelogram, rhombus, pentagon, hexagon, heptagon, octagon, nonagon, decagon];
-
-var SQRT_2 = Math.sqrt(2);
-
-var ClipPathManager = function (_BaseModule) {
-    inherits(ClipPathManager, _BaseModule);
-
-    function ClipPathManager() {
-        classCallCheck(this, ClipPathManager);
-        return possibleConstructorReturn(this, (ClipPathManager.__proto__ || Object.getPrototypeOf(ClipPathManager)).apply(this, arguments));
-    }
-
-    createClass(ClipPathManager, [{
-        key: GETTER(CLIPPATH_SAMPLE_LIST),
-        value: function value$$1($store) {
-            return clipPathList;
-        }
-    }, {
-        key: GETTER(CLIPPATH_SAMPLE_GET),
-        value: function value$$1($store, index) {
-            return clipPathList[index];
-        }
-    }, {
-        key: "caculateClosestFromCenter",
-        value: function caculateClosestFromCenter(centerX, centerY, width, height) {
-            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
-
-            return Math.min.apply(Math, toConsumableArray(list.map(function (it) {
-                var x = Math.pow(Math.abs(centerX - it[0]), 2);
-                var y = Math.pow(Math.abs(centerY - it[1]), 2);
-                return Math.sqrt(x + y) / SQRT_2;
-            })));
-        }
-    }, {
-        key: "caculateFarthestFromCenter",
-        value: function caculateFarthestFromCenter(centerX, centerY, width, height) {
-            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
-
-            return Math.max.apply(Math, toConsumableArray(list.map(function (it) {
-                var x = Math.pow(Math.abs(centerX - it[0]), 2);
-                var y = Math.pow(Math.abs(centerY - it[1]), 2);
-                return Math.sqrt(x + y) / SQRT_2;
-            })));
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_CIRCLE),
-        value: function value$$1($store, layer) {
-
-            var width = unitValue(layer.width);
-            var height = unitValue(layer.height);
-
-            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
-
-            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
-            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
-            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
-            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
-            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
-
-            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
-            var placeCenterY = stringUnit(clipPathCenterY); // centerY
-
-            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
-                var radiusSize = Math.sqrt(Math.pow(Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width)), 2) + Math.pow(Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height)), 2));
-                var radiusString = percent(Math.floor(radiusSize / dist * 100));
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
-            }
-            return "circle(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_ELLIPSE),
-        value: function value$$1($store, layer) {
-            var width = unitValue(layer.width);
-            var height = unitValue(layer.height);
-
-            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
-            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
-            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
-            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
-            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
-
-            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
-            var placeCenterY = stringUnit(clipPathCenterY); // centerY
-
-            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
-
-            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
-                var radiusSizeX = Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width));
-
-                var radiusPercentX = stringUnit(percentUnit(Math.floor(radiusSizeX / dist * 100)));
-
-                var radiusSizeY = Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height));
-                var radiusPercentY = stringUnit(percentUnit(Math.floor(radiusSizeY / dist * 100)));
-
-                var radiusString = radiusPercentX + " " + radiusPercentY;
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
-            }
-
-            return "ellipse(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_INSET),
-        value: function value$$1($store, layer) {
-
-            var clipPathInsetTop = defaultValue(layer.clipPathInsetTop, percentUnit(0));
-            var clipPathInsetLeft = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
-            var clipPathInsetRight = defaultValue(layer.clipPathInsetRight, percentUnit(0));
-            var clipPathInsetBottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
-
-            var top = stringUnit(clipPathInsetTop);
-            var left = stringUnit(clipPathInsetLeft);
-            var right = stringUnit(clipPathInsetRight);
-            var bottom = stringUnit(clipPathInsetBottom);
-
-            var insetString = top + " " + right + " " + bottom + " " + left;
-
-            return "inset(" + insetString + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_POLYGON),
-        value: function value$$1($store, layer) {
-
-            var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || EMPTY_STRING;
-
-            var fillRule = EMPTY_STRING;
-            if (clipPathPolygonFillRule != EMPTY_STRING) {
-                fillRule = clipPathPolygonFillRule + ',';
-            }
-
-            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
-
-            var polygonString = clipPathPolygonPoints.map(function (it) {
-                return stringUnit(it.x) + " " + stringUnit(it.y);
-            }).join(', ');
-
-            return "polygon(" + fillRule + " " + polygonString + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_SVG),
-        value: function value$$1($store, layer) {
-            if (layer.clipPathSvg) {
-                return "url(#clippath-" + layer.id + ")";
-            }
-        }
-    }, {
-        key: GETTER(CLIPPATH_TO_CSS),
-        value: function value$$1($store, layer) {
-            var clipPath = null;
-            if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
-                clipPath = CLIP_PATH_TYPE_NONE;
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_CIRCLE) {
-                clipPath = $store.read(CLIPPATH_MAKE_CIRCLE, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_ELLIPSE) {
-                clipPath = $store.read(CLIPPATH_MAKE_ELLIPSE, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
-                clipPath = $store.read(CLIPPATH_MAKE_INSET, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_POLYGON) {
-                clipPath = $store.read(CLIPPATH_MAKE_POLYGON, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
-                clipPath = $store.read(CLIPPATH_MAKE_SVG, layer);
-            }
-
-            // console.log(layer.clipPathType, clipPath);
-
-            return {
-                'clip-path': clipPath
-            };
-        }
-    }]);
-    return ClipPathManager;
-}(BaseModule);
-
-var _itemCreateActions;
-
-var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
-var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-
-var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
-
-var ItemCreateManager = function (_BaseModule) {
-    inherits(ItemCreateManager, _BaseModule);
-
-    function ItemCreateManager() {
-        classCallCheck(this, ItemCreateManager);
-        return possibleConstructorReturn(this, (ItemCreateManager.__proto__ || Object.getPrototypeOf(ItemCreateManager)).apply(this, arguments));
-    }
-
-    createClass(ItemCreateManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ItemCreateManager.prototype.__proto__ || Object.getPrototypeOf(ItemCreateManager.prototype), "initialize", this).call(this);
-
-            this.$store.items = {};
-            this.$store.itemKeys = [];
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: GETTER(ITEM_KEYS),
-        value: function value$$1($store) {
-            return $store.itemKeys;
-        }
-    }, {
-        key: ACTION(ITEM_KEYS_GENERATE),
-        value: function value$$1($store) {
-            $store.itemKeys = Object.keys($store.items);
-        }
-    }, {
-        key: ACTION(ITEM_INITIALIZE),
-        value: function value$$1($store, id) {
-            delete $store.items[id];
-
-            $store.run(ITEM_KEYS_GENERATE);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_OBJECT),
-        value: function value$$1($store, obj) {
-            var defaultObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            obj = Object.assign(clone(defaultObj), obj);
-            obj.id = Date.now() + '-' + uuid();
-
-            $store.items[obj.id] = obj;
-
-            $store.run(ITEM_KEYS_GENERATE);
-
-            return obj.id;
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_PAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, PAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_LAYER),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, LAYER_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_CIRCLE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, CIRCLE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_POLYGON),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, POLYGON_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_GROUP),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, GROUP_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_BOXSHADOW),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, BOXSHADOW_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_TEXTSHADOW),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, TEXTSHADOW_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_IMAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_IMAGE_WITH_COLORSTEP),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-
-            var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
-            var color_0 = 'rgba(216,216,216, 0)';
-            var color_1 = 'rgba(216,216,216, 1)';
-            if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
-
-                if (conicList.includes(obj.type)) {
-                    $store.items[imageId].angle = 0;
-                }
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 100, index: 100 });
-            } else if (repeatingGradientTypeList.includes(obj.type)) {
-                if (conicList.includes(obj.type)) {
-                    $store.items[imageId].angle = 0;
-                }
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 10, index: 100 });
-            }
-
-            return imageId;
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_COLORSTEP),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, COLORSTEP_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE),
-        value: function value$$1($store, itemType) {
-            var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            return $store.read(itemCreateActions[itemType], obj);
-        }
-    }, {
-        key: GETTER(ITEM_COPY),
-        value: function value$$1($store, id) {
-            var copyObject = clone($store.read(ITEM_GET, id));
-
-            return $store.read(ITEM_CREATE, copyObject.itemType, copyObject);
-        }
-    }, {
-        key: ACTION(ITEM_ADD),
-        value: function value$$1($store, itemType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            var id = $store.read(ITEM_CREATE, itemType);
-            var item = $store.read(ITEM_GET, id);
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, item.id);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_LAYER),
-        value: function value$$1($store, itemType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            var rect = $store.read(SELECTION_RECT);
-
-            var id = $store.read(ITEM_CREATE, itemType);
-            var item = $store.read(ITEM_GET, id);
-            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
-            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
-
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, item.id);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_SHAPE),
-        value: function value$$1($store, shapeObject) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            var rect = $store.read(SELECTION_RECT);
-
-            var id = $store.read(ITEM_CREATE, ITEM_TYPE_LAYER, shapeObject);
-            var item = $store.read(ITEM_GET, id);
-            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
-            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
-
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, item.id);
-        }
-    }, {
-        key: ACTION(ITEM_PREPEND_IMAGE),
-        value: function value$$1($store, imageType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD_IMAGE, imageType, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_IMAGE),
-        value: function value$$1($store, imageType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read(ITEM_CREATE_IMAGE_WITH_COLORSTEP, { type: imageType });
-            var item = $store.read(ITEM_GET, id);
-            item.type = imageType;
-            item.parentId = parentId;
-            item.index = index;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_PREPEND_IMAGE_FILE$1),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD_IMAGE_FILE, img, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_IMAGE_FILE),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
-            var item = $store.read(ITEM_GET, id);
-            item.parentId = parentId;
-            item.index = index;
-            item.fileType = img.fileType;
-            item.backgroundImage = img.url;
-            item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_SET_IMAGE_FILE),
-        value: function value$$1($store, id, img) {
-            var item = $store.read(ITEM_GET, id);
-            item.fileType = img.fileType || 'svg';
-            if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
-            if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
-            item.backgroundImage = img.url;
-            item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run(ITEM_SET, item);
-        }
-    }, {
-        key: ACTION(ITEM_PREPEND_IMAGE_URL$1),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD_IMAGE_URL, img, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_IMAGE_URL),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
-            var item = $store.read(ITEM_GET, id);
-            item.parentId = parentId;
-            item.index = index;
-            item.fileType = img.fileType;
-            item.backgroundImage = img.url;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_PAGE),
-        value: function value$$1($store) {
-            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-            var pageId = $store.read(ITEM_CREATE_PAGE);
-            var layerId = $store.read(ITEM_CREATE_LAYER);
-            var imageId = $store.read(ITEM_CREATE_IMAGE);
-
-            // 페이지 생성 
-            var page = $store.read(ITEM_GET, pageId);
-            page.index = Number.MAX_SAFE_INTEGER;
-            $store.run(ITEM_SET, page);
-
-            // 레이어 생성 
-            var layer = $store.read(ITEM_GET, layerId);
-            layer.parentId = pageId;
-            layer.width = clone(page.width);
-            layer.height = clone(page.height);
-            $store.run(ITEM_SET, layer);
-
-            // 이미지 생성 
-            var image = $store.read(ITEM_GET, imageId);
-            image.parentId = layerId;
-            $store.run(ITEM_SET, image, isSelected);
-
-            $store.run(HISTORY_INITIALIZE);
-        }
-    }]);
-    return ItemCreateManager;
-}(BaseModule);
-
-var INDEX_DIST$1 = 100;
-var COPY_INDEX_DIST = 1;
-
-
-
-var ItemMoveManager = function (_BaseModule) {
-    inherits(ItemMoveManager, _BaseModule);
-
-    function ItemMoveManager() {
-        classCallCheck(this, ItemMoveManager);
-        return possibleConstructorReturn(this, (ItemMoveManager.__proto__ || Object.getPrototypeOf(ItemMoveManager)).apply(this, arguments));
-    }
-
-    createClass(ItemMoveManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_TO),
-        value: function value$$1($store, sourceId, newItemId) {
-
-            var currentItem = $store.read(ITEM_GET, sourceId);
-
-            var newItem = $store.read(ITEM_GET, newItemId);
-            newItem.index = currentItem.index + COPY_INDEX_DIST;
-
-            $store.run(ITEM_SET, newItem, true);
-            $store.run(ITEM_SORT, newItemId);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_NEXT),
-        value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
-            item.index = $store.read(ITEM_NEXT_INDEX, id);
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_LAST),
-        value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_FIRST),
-        value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
-            item.index = -1 * COPY_INDEX_DIST;
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_IN),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId);
-            var sourceItem = $store.read(ITEM_GET, sourceId);
-            sourceItem.parentId = destItem.parentId;
-            sourceItem.index = destItem.index - COPY_INDEX_DIST;
-
-            $store.run(ITEM_SET, sourceItem, true);
-            $store.run(ITEM_SORT, sourceId);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_IN_LAYER),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId); /* layer */
-            var sourceItem = $store.read(ITEM_GET, sourceId);
-
-            sourceItem.parentId = destItem.id;
-            sourceItem.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, sourceItem, true);
-            $store.run(ITEM_SORT, sourceId);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_PREV),
-        value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
-            item.index = $store.read(ITEM_PREV_INDEX, id);
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: GETTER(ITEM_ADD_INDEX),
-        value: function value$$1($store, id) {
-            var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST$1;
-
-            return $store.items[id].index + dist;
-        }
-    }, {
-        key: GETTER(ITEM_NEXT_INDEX),
-        value: function value$$1($store, id) {
-            return $store.read(ITEM_ADD_INDEX, id, INDEX_DIST$1 + COPY_INDEX_DIST);
-        }
-    }, {
-        key: GETTER(ITEM_PREV_INDEX),
-        value: function value$$1($store, id) {
-            return $store.read(ITEM_ADD_INDEX, id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_Y),
-        value: function value$$1($store, distY) {
-            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
-                if (!isArray(layers)) {
-                    layers = [layers];
-                }
-
-                layers.forEach(function (it) {
-                    it.y = pxUnit(unitValue(it.y) + distY);
-
-                    $store.run(ITEM_SET, it);
-                });
-            });
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_X),
-        value: function value$$1($store, distX) {
-            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
-                if (!isArray(layers)) {
-                    layers = [layers];
-                }
-
-                layers.forEach(function (it) {
-                    it.x = pxUnit(unitValue(it.x) + distX);
-
-                    $store.run(ITEM_SET, it);
-                });
-            });
-        }
-    }]);
-    return ItemMoveManager;
-}(BaseModule);
-
-var COPY_INDEX_DIST$1 = 1;
-
-var ItemRecoverManager = function (_BaseModule) {
-    inherits(ItemRecoverManager, _BaseModule);
-
-    function ItemRecoverManager() {
-        classCallCheck(this, ItemRecoverManager);
-        return possibleConstructorReturn(this, (ItemRecoverManager.__proto__ || Object.getPrototypeOf(ItemRecoverManager)).apply(this, arguments));
-    }
-
-    createClass(ItemRecoverManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER),
-        value: function value($store, item, parentId) {
-
-            if (item.page) {
-                return $store.read(ITEM_RECOVER_PAGE, item, parentId);
-            } else if (item.layer) {
-                return $store.read(ITEM_RECOVER_LAYER, item, parentId);
-            } else if (item.image) {
-                return $store.read(ITEM_RECOVER_IMAGE, item, parentId);
-            } else if (item.boxshadow) {
-                return $store.read(ITEM_RECOVER_BOXSHADOW, item, parentId);
-            } else if (item.textshadow) {
-                return $store.read(ITEM_RECOVER_TEXTSHADOW, item, parentId);
-            }
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_IMAGE),
-        value: function value($store, image, parentId) {
-            var newImageId = $store.read(ITEM_CREATE_IMAGE, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, image.image)));
-            var colorsteps = image.colorsteps || [];
-
-            colorsteps.forEach(function (step) {
-                $store.read(ITEM_RECOVER_COLORSTEP, step, newImageId);
-            });
-
-            return newImageId;
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_COLORSTEP),
-        value: function value($store, colorstep, parentId) {
-            return $store.read(ITEM_CREATE_COLORSTEP, Object.assign({ parentId: parentId }, colorstep));
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_BOXSHADOW),
-        value: function value($store, boxshadow, parentId) {
-            return $store.read(ITEM_CREATE_BOXSHADOW, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow)));
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_TEXTSHADOW),
-        value: function value($store, textshadow, parentId) {
-            return $store.read(ITEM_CREATE_TEXTSHADOW, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow)));
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_LAYER),
-        value: function value($store, layer, parentId) {
-            var newLayerId = $store.read(ITEM_CREATE_LAYER, Object.assign({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, layer.layer)));
-
-            var images = layer.images || [];
-            images.forEach(function (image) {
-                $store.read(ITEM_RECOVER_IMAGE, image, newLayerId);
-            });
-
-            var boxshadows = layer.boxshadows || [];
-            boxshadows.forEach(function (boxshadow) {
-                $store.read(ITEM_RECOVER_BOXSHADOW, boxshadow, newLayerId);
-            });
-
-            var textshadows = layer.textshadows || [];
-            textshadows.forEach(function (textshadow) {
-                $store.read(ITEM_RECOVER_TEXTSHADOW, textshadow, newLayerId);
-            });
-
-            return newLayerId;
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_PAGE),
-        value: function value($store, page) {
-            var newPageId = $store.read(ITEM_CREATE_PAGE, $store.read(ITEM_CONVERT_STYLE, page.page));
-            page.layers.forEach(function (layer) {
-                $store.read(ITEM_RECOVER_LAYER, layer, newPageId);
-            });
-
-            return newPageId;
-        }
-    }, {
-        key: ACTION(ITEM_ADD_CACHE),
-        value: function value($store, item, sourceId) {
-            var currentItem = $store.read(ITEM_GET, sourceId);
-            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, item, currentItem.parentId));
-        }
-    }, {
-        key: ACTION(ITEM_ADD_COPY),
-        value: function value($store, sourceId) {
-            var currentItem = $store.read(ITEM_GET, sourceId);
-            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
-        }
-    }, {
-        key: ACTION(ITEM_COPY_IN),
-        value: function value($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId);
-            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
-
-            var newImageItem = $store.read(ITEM_GET, newImageId);
-            newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
-
-            $store.run(ITEM_SET, sourceItem, true);
-            $store.run(ITEM_SORT, sourceId);
-        }
-    }, {
-        key: ACTION(ITEM_COPY_IN_LAYER),
-        value: function value($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId); /* layer */
-            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
-
-            var newImageItem = $store.read(ITEM_GET, newImageId);
-            newImageItem.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, newImageItem, true);
-            $store.run(ITEM_SORT, newImageId);
-        }
-    }]);
-    return ItemRecoverManager;
-}(BaseModule);
-
-var DEFAULT_FUNCTION$2 = function DEFAULT_FUNCTION(item) {
-    return item;
-};
-
-var ItemSearchManager = function (_BaseModule) {
-    inherits(ItemSearchManager, _BaseModule);
-
-    function ItemSearchManager() {
-        classCallCheck(this, ItemSearchManager);
-        return possibleConstructorReturn(this, (ItemSearchManager.__proto__ || Object.getPrototypeOf(ItemSearchManager)).apply(this, arguments));
-    }
-
-    createClass(ItemSearchManager, [{
-        key: GETTER(ITEM_GET_ALL),
-        value: function value$$1($store, parentId) {
-            var items = {};
-
-            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
-                items[item.id] = clone(item);
-
-                var children = $store.read(ITEM_GET_ALL, item.id);
-                Object.keys(children).forEach(function (key) {
-                    items[key] = children[key];
-                });
-            });
-
-            return items;
-        }
-    }, {
-        key: GETTER(ITEM_LIST),
-        value: function value$$1($store, filterCallback) {
-            var list = $store.itemKeys.filter(filterCallback);
-
-            list.sort(function (aId, bId) {
-                return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
-            });
-
-            return list;
-        }
-    }, {
-        key: GETTER(ITEM_FILTER),
-        value: function value$$1($store, filterCallback) {
-            return $store.read(ITEM_LIST, filterCallback);
-        }
-    }, {
-        key: GETTER(ITEM_LIST_PAGE),
-        value: function value$$1($store) {
-            return $store.read(ITEM_LIST, this.checkOnlyItemTypeCallback($store, ITEM_TYPE_PAGE));
-        }
-    }, {
-        key: GETTER(ITEM_MAP_PAGE),
-        value: function value$$1($store, callback) {
-            return $store.read(ITEM_LIST_PAGE).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: "checkItemTypeCallback",
-        value: function checkItemTypeCallback($store, parentId) {
-            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-
-            return function (id) {
-                return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType;
-            };
-        }
-    }, {
-        key: "checkOnlyItemTypeCallback",
-        value: function checkOnlyItemTypeCallback($store, itemType) {
-            return function (id) {
-                return $store.items[id].itemType == itemType;
-            };
-        }
-    }, {
-        key: "checkParentItemCallback",
-        value: function checkParentItemCallback($store, parentId) {
-            return function (id) {
-                return $store.items[id].parentId == parentId;
-            };
-        }
-    }, {
-        key: GETTER(ITEM_LIST_CHILDREN),
-        value: function value$$1($store, parentId, itemType) {
-            if (isUndefined(itemType)) {
-                return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
-            } else {
-                return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
-            }
-        }
-    }, {
-        key: GETTER(ITEM_COUNT_CHILDREN),
-        value: function value$$1($store, parentId) {
-            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).length;
-        }
-    }, {
-        key: GETTER(ITEM_MAP_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_TYPE_CHILDREN),
-        value: function value$$1($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_LAYER_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_LAYER)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_IMAGE_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_IMAGE)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_COLORSTEP_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_COLORSTEP)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_BOXSHADOW_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_BOXSHADOW)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_TEXTSHADOW_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
-
-            return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TEXTSHADOW$1)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_FILTER_CHILDREN),
-        value: function value$$1($store, parentId, callback) {
-            return $store.read(ITEM_LIST_CHILDREN, parentId).filter(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_EACH_CHILDREN),
-        value: function value$$1($store, parentId, callback) {
-            return $store.read(ITEM_LIST_CHILDREN, parentId).forEach(function (id, index) {
-                callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_EACH_TYPE_CHILDREN),
-        value: function value$$1($store, parentId, itemType, callback) {
-            return $store.read(ITEM_LIST_CHILDREN, parentId, itemType).forEach(function (id, index) {
-                callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_TRAVERSE),
-        value: function value$$1($store, parentId) {
-            var list = $store.read(ITEM_LIST_CHILDREN, parentId);
-
-            list.sort(function (a, b) {
-                var $a = $store.items[a];
-                var $b = $store.items[b];
-
-                if ($a.order == $b.order) {
-
-                    if (a > b) return 1;
-                    if (a < b) return -1;
-
-                    return 0;
-                }
-                return $a.order > $b.order ? 1 : -1;
-            });
-
-            return list.map(function (childId) {
-                return { id: childId, children: $store.read(ITEM_TRAVERSE, childId) };
-            });
-        }
-    }, {
-        key: GETTER(ITEM_TREE),
-        value: function value$$1($store) {
-            return $store.read(ITEM_TRAVERSE, EMPTY_STRING);
-        }
-    }, {
-        key: GETTER(ITEM_TREE_NORMALIZE),
-        value: function value$$1($store) {
-            var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-            var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-            var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-            var results = [];
-
-            var list = root != null ? $store.read(ITEM_TREE) : children;
-            list.forEach(function (item) {
-                results.push({ id: item.id, depth: depth });
-                results.push.apply(results, toConsumableArray($store.read(ITEM_TREE_NORMALIZE, null, item.children, depth + 1)));
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER(ITEM_PATH),
-        value: function value$$1($store, id) {
-            var results = [id];
-            var targetId = id;
-
-            do {
-                var item = $store.read(ITEM_GET, targetId);
-
-                if (item.parentId == EMPTY_STRING) {
-                    results.push(item.id);
-                    break;
-                } else {
-                    results.push(item.id);
-                    targetId = item.parentId;
-                }
-            } while (targetId);
-
-            return results;
-        }
-    }, {
-        key: GETTER(ITEM_DOM),
-        value: function value$$1($store, id) {
-            var element = document.querySelector('[item-layer-id="' + id + '"]');
-
-            if (element) {
-                return new Dom(element);
-            }
-        }
-    }]);
-    return ItemSearchManager;
-}(BaseModule);
-
-var EXPORT_GENERATE_CODE = 'export/generate/code';
-var EXPORT_CODEPEN_CODE = 'export/codepen/code';
-
-var ExportManager = function (_BaseModule) {
-    inherits(ExportManager, _BaseModule);
-
-    function ExportManager() {
-        classCallCheck(this, ExportManager);
-        return possibleConstructorReturn(this, (ExportManager.__proto__ || Object.getPrototypeOf(ExportManager)).apply(this, arguments));
-    }
-
-    createClass(ExportManager, [{
-        key: "makePageCSS",
-        value: function makePageCSS($store, page) {
-
-            var css = Object.assign({
-                position: 'relative'
-            }, $store.read(PAGE_TO_CSS, page));
-
-            return $store.read(CSS_TO_STRING, css);
-        }
-    }, {
-        key: "getClassName",
-        value: function getClassName(className) {
-            return (className || EMPTY_STRING).split(' ').map(function (it) {
-                return '.' + it;
-            }).join(EMPTY_STRING);
-        }
-    }, {
-        key: "getPageStyle",
-        value: function getPageStyle($store, page) {
-            var pageStyle = this.makePageCSS($store, page).split(';').map(function (it) {
-                return "\t" + it + ';';
-            }).join('\n');
-
-            return pageStyle;
-        }
-    }, {
-        key: "getPageHtml",
-        value: function getPageHtml($store, page) {
-            var html = "<div id=\"page-1\">\n" + $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
-
-                var idString = item.idString || 'layer-' + (index + 1);
-                var className = item.className;
-
-                var selector = [];
-
-                if (className) {
-                    selector.push("class=\"" + className + "\"");
-                }
-
-                if (!selector.length && item.idString) {
-                    selector.push("id=\"" + idString + "\"");
-                } else {
-                    selector.push("id=\"layer-" + (index + 1) + "\"");
-                }
-
-                var clipPath = $store.read(LAYER_TO_STRING_CLIPPATH, item);
-
-                if (clipPath) {
-                    clipPath = "\t\t\n" + clipPath;
-                }
-
-                var content = item.content || EMPTY_STRING;
-
-                return "\t<div " + selector.join(' ') + ">" + content + clipPath + "</div>";
-            }).join('\n') + "\n</div>";
-
-            return html;
-        }
-    }, {
-        key: "getLayerStyle",
-        value: function getLayerStyle($store, page) {
-            var _this2 = this;
-
-            var layerStyle = $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
-
-                var idString = item.idString || 'layer-' + (index + 1);
-                var className = item.className;
-
-                var selector = [];
-
-                if (className) {
-                    selector = _this2.getClassName(className);
-                } else {
-                    selector = "#" + idString;
-                }
-
-                var css = $store.read(LAYER_TOEXPORT, item, true).split(';').map(function (it) {
-                    return '\t' + it + ';';
-                }).join('\n');
-
-                return selector + " {\n" + css + "\n}";
-            }).join('\n');
-
-            return layerStyle;
-        }
-    }, {
-        key: GETTER(EXPORT_GENERATE_CODE),
-        value: function value$$1($store) {
-            var page = $store.read(SELECTION_CURRENT_PAGE);
-
-            if (!page) {
-                return EMPTY_STRING;
-            }
-
-            var pageStyle = this.getPageStyle($store, page);
-
-            var html = this.getPageHtml($store, page);
-
-            var layerStyle = this.getLayerStyle($store, page);
-
-            var styleText = "\n#page-1 { \n" + pageStyle + "\n}\n" + layerStyle + "\n\n";
-            var style = "<style type=\"text/css\">" + styleText + "</style>\n";
-            return {
-                html: html,
-                fullhtml: style + html,
-                css: styleText
-            };
-        }
-    }, {
-        key: GETTER(EXPORT_CODEPEN_CODE),
-        value: function value$$1($store, obj) {
-            var title = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'CSS Gradient Editor';
-            var description = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'EasyLogic Studio';
-            var link = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : ' - https://css.easylogic.studio';
-
-            return JSON.stringify(_extends({
-                title: title,
-                description: description + link,
-                tags: ["css", "gradient", "editor", "easylogic", "studio"]
-            }, obj)).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
-        }
-    }]);
-    return ExportManager;
-}(BaseModule);
-
-var DEFINED_ANGLES$1 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var rotate$1 = function () {
-    function rotate() {
-        classCallCheck(this, rotate);
-    }
-
-    createClass(rotate, [{
-        key: "make",
-        value: function make(item) {
-            var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            // return always array 
-
-            var results = [];
-
-            if (item.type == IMAGE_ITEM_TYPE_LINEAR || item.type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
-                results.push.apply(results, toConsumableArray(this.makeClone(item, opt)));
-            }
-
-            return results;
-        }
-    }, {
-        key: "makeClone",
-        value: function makeClone(image, opt) {
-            var _this = this;
-
-            var results = [];
-            opt = opt || { clone: 1, blend: 'normal' };
-
-            var count = opt.clone || 1;
-            var blend = opt.blend || 'normal';
-
-            if (count < 2) return results;
-
-            var degree = 360 / count;
-
-            return [].concat(toConsumableArray(Array(count - 1))).map(function (_, index) {
-                var newItem = clone(image);
-                newItem.angle = _this.caculateAngle(newItem, (index + 1) * degree);
-                newItem.backgroundBlendMode = blend;
-
-                return newItem;
-            });
-        }
-    }, {
-        key: "caculateAngle",
-        value: function caculateAngle(image) {
-            var plusAngle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            var angle = isNotUndefined(DEFINED_ANGLES$1[image.angle]) ? DEFINED_ANGLES$1[image.angle] : image.angle;
-
-            angle = angle || 0;
-
-            return (angle + plusAngle) % 360;
-        }
-    }]);
-    return rotate;
-}();
-
-var patterns = {
-    rotate: new rotate$1()
-};
-
-var PatternManager = function (_BaseModule) {
-    inherits(PatternManager, _BaseModule);
-
-    function PatternManager() {
-        classCallCheck(this, PatternManager);
-        return possibleConstructorReturn(this, (PatternManager.__proto__ || Object.getPrototypeOf(PatternManager)).apply(this, arguments));
-    }
-
-    createClass(PatternManager, [{
-        key: GETTER(PATTERN_MAKE),
-        value: function value($store, item) {
-            var patternOption = item.pattern || {};
-            var patternList = Object.keys(patternOption);
-
-            if (!patternList.length) {
-                return null;
-            }
-
-            var results = [];
-            patternList.filter(function (name) {
-                return patterns[name];
-            }).forEach(function (patternName) {
-
-                if (patternOption[patternName].enable) {
-                    results.push.apply(results, toConsumableArray(patterns[patternName].make(item, patternOption[patternName])));
-                }
-            });
-
-            results.push(item);
-
-            return results;
-        }
-    }, {
-        key: GETTER(PATTERN_GET),
-        value: function value($store, item, patternName) {
-            var pattern = item.pattern || {};
-
-            return pattern[patternName] || {};
-        }
-    }, {
-        key: ACTION(PATTERN_SET),
-        value: function value($store, item, patternName, patternOption) {
-            var pattern = item.pattern || {};
-
-            pattern[patternName] = patternOption || {};
-
-            $store.run(ITEM_SET, { id: item.id, pattern: pattern });
-        }
-    }]);
-    return PatternManager;
-}(BaseModule);
-
-var octagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, octagon);
-
-var rect = {
-    type: SHAPE_TYPE_RECT
-};
-
-var circle$1 = {
-    type: SHAPE_TYPE_CIRCLE,
-    fixedRadius: true,
-    borderRadius: percentUnit(100)
-};
-
-var decagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, decagon);
-
-var heptagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, heptagon);
-
-var hexagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, hexagon);
-
-var nonagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, nonagon);
-
-var parallelogram$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, parallelogram);
-
-var pentagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, pentagon);
-
-var rhombus$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, rhombus);
-
-var trapezoid$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, trapezoid);
-
-var triangle$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, triangle);
-
-var shapes = {
-    rect: rect,
-    circle: circle$1,
-    triangle: triangle$1,
-    rhombus: rhombus$1,
-    hexagon: hexagon$1,
-    trapezoid: trapezoid$1,
-    pentagon: pentagon$1,
-    parallelogram: parallelogram$1,
-    octagon: octagon$1,
-    decagon: decagon$1,
-    heptagon: heptagon$1,
-    nonagon: nonagon$1
-};
-
-var SHAPE_LIST = 'shape/list';
-var SHAPE_GET = 'shape/get';
-
-
-var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
-
-var shapeKeys = Object.keys(shapes);
-
-var ShapeManager = function (_BaseModule) {
-    inherits(ShapeManager, _BaseModule);
-
-    function ShapeManager() {
-        classCallCheck(this, ShapeManager);
-        return possibleConstructorReturn(this, (ShapeManager.__proto__ || Object.getPrototypeOf(ShapeManager)).apply(this, arguments));
-    }
-
-    createClass(ShapeManager, [{
-        key: GETTER(SHAPE_LIST),
-        value: function value$$1($store) {
-            return shapeKeys;
-        }
-    }, {
-        key: GETTER(SHAPE_GET),
-        value: function value$$1($store, key) {
-            return shapes[key];
-        }
-    }, {
-        key: GETTER(SHAPE_TO_CSS_TEXT),
-        value: function value$$1($store, key) {
-            var item = Object.assign(clone(LAYER_DEFAULT_OBJECT), shapes[key]);
-
-            var cssText = $store.read(LAYER_TO_STRING, item, true);
-
-            return cssText;
-        }
-    }]);
-    return ShapeManager;
-}(BaseModule);
-
-var HOTKEY_EXISTS = 'hotkey/exists';
-var HOTKEY_RUN = 'hotkey/run';
-
-var HOTKEY_EXECUTE = 'hotkey/execute';
-var HOTKEY_EXCLUDE = 'hotkey/exclude';
-
-var KEY_SPLIT = '+';
-
-var hotKeys = [{ key: 'alt+ArrowUp', command: 'item/move/y', args: [-5] }, { key: 'ArrowUp', command: 'item/move/y', args: [-1] }, { key: 'alt+ArrowDown', command: 'item/move/y', args: [5] }, { key: 'ArrowDown', command: 'item/move/y', args: [1] }, { key: 'alt+ArrowRight', command: 'item/move/x', args: [5] }, { key: 'ArrowRight', command: 'item/move/x', args: [1] }, { key: 'alt+ArrowLeft', command: 'item/move/x', args: [-5] }, { key: 'ArrowLeft', command: 'item/move/x', args: [-1] }, { key: 'shift+a', command: function command($store) {
-        // console.log($store, args); 
-    }, args: [1, 2, 3] }];
-
-var getKeyType = function getKeyType(it) {
-    if (it.toLowerCase() === 'ctrl') return 'ctrl';
-    if (it.toLowerCase() === 'alt') return 'alt';
-    if (it.toLowerCase() === 'shift') return 'shift';
-    if (it.toLowerCase() === 'meta') return 'meta';
-
-    return it;
-};
-
-hotKeys = hotKeys.map(function (it) {
-    var obj = {};
-
-    it.key.split(KEY_SPLIT).forEach(function (key) {
-        var type = getKeyType(key);
-        switch (type) {
-            case 'ctrl':
-            case 'alt':
-            case 'shift':
-            case 'meta':
-                obj[type] = true;
-                break;
-            default:
-                obj[''] = type;
-        }
-    });
-
-    var arr = [];
-
-    if (obj['ctrl']) {
-        arr.push('ctrl');
-    }
-    if (obj['alt']) {
-        arr.push('alt');
-    }
-    if (obj['shift']) {
-        arr.push('shift');
-    }
-    if (obj['meta']) {
-        arr.push('meta');
-    }
-    if (obj['']) {
-        arr.push(obj['']);
-    }
-
-    it.key = arr.join(KEY_SPLIT);
-
-    return it;
-});
-
-var HotkeyManager = function (_BaseModule) {
-    inherits(HotkeyManager, _BaseModule);
-
-    function HotkeyManager() {
-        classCallCheck(this, HotkeyManager);
-        return possibleConstructorReturn(this, (HotkeyManager.__proto__ || Object.getPrototypeOf(HotkeyManager)).apply(this, arguments));
-    }
-
-    createClass(HotkeyManager, [{
-        key: "makeKeydownString",
-        value: function makeKeydownString(e) {
-            var keyStrings = [];
-
-            var arr = [];
-
-            if (e.ctrlKey) {
-                arr.push('ctrl');
-            }
-            if (e.altKey) {
-                arr.push('alt');
-            }
-            if (e.shiftKey) {
-                arr.push('shift');
-            }
-            if (e.metaKey) {
-                arr.push('meta');
-            }
-            arr.push(e.keyCode); // key code number check 
-
-            keyStrings.push(arr.join(KEY_SPLIT));
-
-            arr[arr.length - 1] = e.key; // key string check 
-
-            keyStrings.push(arr.join(KEY_SPLIT));
-
-            return keyStrings;
-        }
-    }, {
-        key: "checkKey",
-        value: function checkKey(key, e) {
-            return this.makeKeydownString(e).includes(key);
-        }
-    }, {
-        key: GETTER(HOTKEY_EXISTS),
-        value: function value($store, e) {
-            var _this2 = this;
-
-            return hotKeys.filter(function (command) {
-                return _this2.checkKey(command.key, e);
-            });
-        }
-    }, {
-        key: ACTION(HOTKEY_RUN),
-        value: function value($store, hotkey) {
-
-            if (hotkey) {
-                if (isFunction(hotkey.command)) {
-                    var _hotkey$command;
-
-                    (_hotkey$command = hotkey.command).call.apply(_hotkey$command, [null, $store].concat(toConsumableArray(hotkey.args)));
-                } else {
-                    $store.dispatch.apply($store, [hotkey.command].concat(toConsumableArray(hotkey.args)));
-                }
-            }
-        }
-    }, {
-        key: GETTER(HOTKEY_EXCLUDE),
-        value: function value($store, e) {
-
-            switch (e.target.nodeName) {
-                case 'INPUT':
-                case 'SELECT':
-                case 'TEXTAREA':
-                    return true;
-                default:
-                    break;
-            }
-
-            return false;
-        }
-    }, {
-        key: ACTION(HOTKEY_EXECUTE),
-        value: function value($store, e) {
-
-            if ($store.read(HOTKEY_EXCLUDE, e)) {
-                return;
-            }
-
-            var keys = $store.read(HOTKEY_EXISTS, e);
-
-            if (keys.length) {
-                e.preventDefault();
-                keys.forEach(function (it) {
-                    $store.run(HOTKEY_RUN, it);
-                });
-            }
-        }
-    }]);
-    return HotkeyManager;
-}(BaseModule);
-
-var ModuleList = [HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
-
-var BaseCSSEditor = function (_UIElement) {
-    inherits(BaseCSSEditor, _UIElement);
-
-    function BaseCSSEditor() {
-        classCallCheck(this, BaseCSSEditor);
-        return possibleConstructorReturn(this, (BaseCSSEditor.__proto__ || Object.getPrototypeOf(BaseCSSEditor)).apply(this, arguments));
-    }
-
-    createClass(BaseCSSEditor, [{
-        key: 'initialize',
-        value: function initialize() {
-            var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            this.$store = new BaseStore({
-                modules: [].concat(toConsumableArray(ModuleList), toConsumableArray(modules))
-            });
-
-            this.$body = new Dom(this.getContainer());
-            this.$root = new Dom('div', 'csseditor');
-
-            this.$body.append(this.$root);
-
-            if (this.opt.type) {
-                // to change css style
-                this.$root.addClass(this.opt.type);
-            }
-
-            this.render(this.$root);
-
-            // 이벤트 연결 
-            this.initializeEvent();
-        }
-    }, {
-        key: 'getContainer',
-        value: function getContainer() {
-            return this.opt.container || document.body;
-        }
-    }]);
-    return BaseCSSEditor;
-}(UIElement);
-
-var BasePropertyItem = function (_UIElement) {
-    inherits(BasePropertyItem, _UIElement);
-
-    function BasePropertyItem() {
-        classCallCheck(this, BasePropertyItem);
-        return possibleConstructorReturn(this, (BasePropertyItem.__proto__ || Object.getPrototypeOf(BasePropertyItem)).apply(this, arguments));
-    }
-
-    createClass(BasePropertyItem, [{
-        key: "onToggleShow",
-        value: function onToggleShow() {}
-    }, {
-        key: CLICK('$title'),
-        value: function value(e) {
-            var $dom = new Dom(e.target);
-
-            if ($dom.hasClass('title')) {
-                this.$el.toggleClass('show');
-                this.onToggleShow();
-            }
-        }
-    }, {
-        key: "isPropertyShow",
-        value: function isPropertyShow() {
-            return this.$el.hasClass('show');
-        }
-    }]);
-    return BasePropertyItem;
-}(UIElement);
 
 var Size = function (_BasePropertyItem) {
     inherits(Size, _BasePropertyItem);
@@ -16693,10 +10723,11 @@ var Size = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                var width = pxUnit(_this2.refs.$width.int());
+                var widthValue = _this2.refs.$width.val();
+                var width = pxUnit(+widthValue);
                 var height = width;
                 _this2.commit(CHANGE_LAYER_SIZE, { id: id, width: width, height: height });
-                _this2.refs.$height.val(_this2.refs.$width.val());
+                _this2.refs.$height.val(widthValue);
             });
         }
     }, {
@@ -16871,49 +10902,49 @@ var Radius = function (_BasePropertyItem) {
     }, {
         key: CHANGEINPUT('$topLeftRadiusRange'),
         value: function value$$1() {
-            this.refs.$topLeftRadius.val(this.refs.$topLeftRadiusRange.val());
+            this.refs.$topLeftRadius.val(this.refs.$topLeftRadiusRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topRightRadiusRange'),
         value: function value$$1() {
-            this.refs.$topRightRadius.val(this.refs.$topRightRadiusRange.val());
+            this.refs.$topRightRadius.val(this.refs.$topRightRadiusRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomLeftRadiusRange'),
         value: function value$$1() {
-            this.refs.$bottomLeftRadius.val(this.refs.$bottomLeftRadiusRange.val());
+            this.refs.$bottomLeftRadius.val(this.refs.$bottomLeftRadiusRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomRightRadiusRange'),
         value: function value$$1() {
-            this.refs.$bottomRightRadius.val(this.refs.$bottomRightRadiusRange.val());
+            this.refs.$bottomRightRadius.val(this.refs.$bottomRightRadiusRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topLeftRadius'),
         value: function value$$1() {
-            this.refs.$topLeftRadiusRange.val(this.refs.$topLeftRadius.val());
+            this.refs.$topLeftRadiusRange.val(this.refs.$topLeftRadius);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topRightRadius'),
         value: function value$$1() {
-            this.refs.$topRightRadiusRange.val(this.refs.$topRightRadius.val());
+            this.refs.$topRightRadiusRange.val(this.refs.$topRightRadius);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomLeftRadius'),
         value: function value$$1() {
-            this.refs.$bottomLeftRadiusRange.val(this.refs.$bottomLeftRadius.val());
+            this.refs.$bottomLeftRadiusRange.val(this.refs.$bottomLeftRadius);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomRightRadius'),
         value: function value$$1() {
-            this.refs.$bottomRightRadiusRange.val(this.refs.$bottomRightRadius.val());
+            this.refs.$bottomRightRadiusRange.val(this.refs.$bottomRightRadius);
             this.refreshValue();
         }
     }, {
@@ -17035,6 +11066,84 @@ var Name = function (_BasePropertyItem) {
     }]);
     return Name;
 }(BasePropertyItem);
+
+var HISTORY_INITIALIZE = 'history/initialize';
+var HISTORY_PUSH = 'history/push';
+var HISTORY_UNDO = 'history/undo';
+var HISTORY_REDO = 'history/redo';
+var HISTORY_LIST = 'history/list';
+var HISTORY_SELECTED_CHECK = 'history/selected/check';
+
+var IMAGE_GET_FILE = 'image/get/file';
+var IMAGE_GET_URL = 'image/get/url';
+var IMAGE_GET_BLOB = 'image/get/blob';
+var IMAGE_TYPE_IS_GRADIENT = 'image/type/isGradient';
+var IMAGE_TYPE_IS_NOT_GRADIENT = 'image/type/isNotGradient';
+var IMAGE_TYPE_IS_LINEAR = 'image/type/isLinear';
+var IMAGE_TYPE_IS_RADIAL = 'image/type/isRadial';
+var IMAGE_TYPE_IS_CONIC = 'image/type/isConic';
+var IMAGE_TYPE_IS_IMAGE = 'image/type/isImage';
+var IMAGE_TYPE_IS_STATIC = 'image/type/isStatic';
+var IMAGE_ANGLE = 'image/angle';
+var IMAGE_RADIAL_POSITION = 'image/radialPosition';
+var IMAGE_BACKGROUND_SIZE_TO_CSS = 'image/backgroundSize/toCSS';
+var IMAGE_TO_CSS = 'image/toCSS';
+var IMAGE_CACHE_TO_CSS = 'image/cache/toCSS';
+var IMAGE_TO_STRING = 'image/toString';
+var IMAGE_TO_IMAGE_STRING = 'image/toImageString';
+var IMAGE_TO_BACKGROUND_SIZE_STRING = 'image/toBackgroundSizeString';
+var IMAGE_TO_BACKGROUND_POSITION_STRING = 'image/toBackgroundPositionString';
+var IMAGE_TO_BACKGROUND_REPEAT_STRING = 'image/toBackgroundRepeatString';
+var IMAGE_TO_BACKGROUND_BLEND_MODE_STRING = 'image/toBackgroundBlendModeString';
+var IMAGE_GET_UNIT_VALUE = 'image/get/unitValue';
+var IMAGE_GET_STEP_VALUE = 'image/get/stepValue';
+var IMAGE_TO_ITEM_STRING = 'image/toItemString';
+var IMAGE_TO_CONIC_ITEM_STRING = 'image/toConicItemString';
+var IMAGE_TO_LINEAR = 'image/toLinear';
+var IMAGE_TO_STATIC = 'image/toStatic';
+var IMAGE_TO_LINEAR_RIGHT = 'image/toLinearRight';
+var IMAGE_TO_RADIAL = 'image/toRadial';
+var IMAGE_TO_CONIC = 'image/toConic';
+var IMAGE_TO_IMAGE = 'image/toImage';
+
+var ITEM_GET_ALL = 'item/get/all';
+var ITEM_LIST = 'item/list';
+var ITEM_LIST_PAGE = 'item/list/page';
+var ITEM_LIST_CHILDREN = 'item/list/children';
+var ITEM_FILTER = 'item/filter';
+var ITEM_FILTER_CHILDREN = 'item/filter/children';
+var ITEM_MAP_PAGE = 'item/map/page';
+var ITEM_COUNT_CHILDREN = 'item/count/children';
+var ITEM_MAP_CHILDREN = 'item/map/children';
+var ITEM_MAP_TYPE_CHILDREN = 'item/map/type/children';
+var ITEM_MAP_LAYER_CHILDREN = 'item/map/layer/children';
+var ITEM_MAP_IMAGE_CHILDREN = 'item/map/image/children';
+var ITEM_MAP_COLORSTEP_CHILDREN = 'item/map/colorstep/children';
+var ITEM_MAP_BOXSHADOW_CHILDREN = 'item/map/boxshadow/children';
+var ITEM_MAP_TEXTSHADOW_CHILDREN = 'item/map/textshadow/children';
+var ITEM_EACH_CHILDREN = 'item/each/children';
+var ITEM_EACH_TYPE_CHILDREN = 'item/each/type/children';
+var ITEM_TRAVERSE = 'item/traverse';
+var ITEM_TREE = 'item/tree';
+var ITEM_TREE_NORMALIZE = 'item/tree/normalize';
+var ITEM_PATH = 'item/path';
+var ITEM_DOM = 'item/dom';
+
+var COLORSTEP_COLOR_SOURCE = 'colorstep/colorSource';
+var COLORSTEP_CURRENT = 'colorstep/current';
+var COLORSTEP_INIT_COLOR = 'colorstep/initColor';
+var COLORSTEP_ADD = 'colorstep/add';
+var COLORSTEP_REMOVE = 'colorstep/remove';
+var COLORSTEP_SORT = 'colorstep/sort';
+var COLORSTEP_SORT_LIST = 'colorstep/sort/list';
+var COLORSTEP_LIST = 'colorstep/list';
+var COLORSTEP_CURRENT_INDEX = 'colorstep/currentIndex';
+var COLORSTEP_CUT_OFF = 'colorstep/cut/off';
+var COLORSTEP_CUT_ON = 'colorstep/cut/on';
+var COLORSTEP_UNIT_VALUE = 'colorstep/unit/value';
+var COLORSTEP_ORDERING_EQUALS = 'colorstep/ordering/equals';
+var COLORSTEP_ORDERING_EQUALS_LEFT = 'colorstep/ordering/equals/left';
+var COLORSTEP_ORDERING_EQUALS_RIGHT = 'colorstep/ordering/equals/right';
 
 var GradientSteps = function (_UIElement) {
     inherits(GradientSteps, _UIElement);
@@ -17595,6 +11704,8 @@ var ColorSteps = function (_BasePropertyItem) {
     return ColorSteps;
 }(BasePropertyItem);
 
+var _templateObject$1 = taggedTemplateLiteral(["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"], ["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"]);
+
 function checkPxEm(unit$$1) {
     return [UNIT_PX, UNIT_EM].includes(unit$$1);
 }
@@ -17610,7 +11721,7 @@ var GradientInfo = function (_UIElement) {
     createClass(GradientInfo, [{
         key: "template",
         value: function template() {
-            return " \n            <div class='gradient-info'>\n                <div class=\"form-item\" ref=\"$colorsteps\"></div>\n            </div>\n        ";
+            return "<div class='gradient-info'><div class=\"form-item\" ref=\"$colorsteps\"></div></div>";
         }
     }, {
         key: "getUnitName",
@@ -17670,11 +11781,11 @@ var GradientInfo = function (_UIElement) {
 
             var colorsteps = this.read('colorstep/sort/list', item.id);
 
-            return "<div class='step-list' ref=\"$stepList\">\n                    " + colorsteps.map(function (step) {
+            return html(_templateObject$1, colorsteps.map(function (step) {
                 var cut = step.cut ? 'cut' : EMPTY_STRING;
                 var unitValue$$1 = _this2.getUnitValue(step);
                 return "\n                            <div class='color-step " + (step.selected ? 'selected' : EMPTY_STRING) + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + _this2.getUnitName(step) + "\">\n                                    <input type=\"number\" class=\"" + UNIT_PERCENT + "\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue$$1.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_PX + "\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue$$1.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_EM + "\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue$$1.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
-            }).join(EMPTY_STRING) + "\n                </div>";
+            }));
         }
     }, {
         key: "refresh",
@@ -18692,6 +12803,12 @@ var PageExport = function (_UIElement) {
     return PageExport;
 }(UIElement);
 
+var FILTER_GET = 'filter/get';
+var FILTER_LIST = 'filter/list';
+var FILTER_TO_CSS = 'filter/toCSS';
+
+var _templateObject$2 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
+
 var DROPSHADOW_FILTER_KEYS = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
 
 var FilterList$1 = function (_BasePropertyItem) {
@@ -18705,7 +12822,7 @@ var FilterList$1 = function (_BasePropertyItem) {
     createClass(FilterList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item filters show'>\n                <div class='items'><div class=\"filter-list\" ref=\"$filterList\"></div></div>         \n            </div>\n        ";
+            return "<div class='property-item filters show'><div class='items'><div class=\"filter-list\" ref=\"$filterList\"></div></div></div>";
         }
     }, {
         key: "makeInputItem",
@@ -18721,7 +12838,7 @@ var FilterList$1 = function (_BasePropertyItem) {
 
                 return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
-                return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS.map(function (subkey) {
+                return html(_templateObject$2, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS.map(function (subkey) {
 
                     var it = _this2.read(FILTER_GET, subkey);
                     var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
@@ -18732,7 +12849,7 @@ var FilterList$1 = function (_BasePropertyItem) {
 
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
                     }
-                }).join(EMPTY_STRING) + "\n            </div>\n            ";
+                }));
             }
 
             return "<div></div>";
@@ -18777,7 +12894,7 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
                 var id = layer.id;
-                var value$$1 = layer[key] || clone(FILTER_DEFAULT_OBJECT[key]);
+                var value$$1 = layer[key] || _extends({}, FILTER_DEFAULT_OBJECT[key]);
                 value$$1.value = lastValue;
 
                 _this4.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value$$1));
@@ -18790,7 +12907,7 @@ var FilterList$1 = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
                 var id = layer.id;
-                var value$$1 = layer[key] || clone(FILTER_DEFAULT_OBJECT[key]);
+                var value$$1 = layer[key] || _extends({}, FILTER_DEFAULT_OBJECT[key]);
                 value$$1.checked = checked;
 
                 _this5.commit(CHANGE_LAYER_FILTER, defineProperty({ id: id }, key, value$$1));
@@ -18850,7 +12967,7 @@ var BackgroundColor = function (_BasePropertyItem) {
     createClass(BackgroundColor, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background-color show'>\n                <div class='title' ref=\"$title\">Background Color</div>            \n                <div class='items'>            \n                    <div>\n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='color' ref=\"$color\"></span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div> \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background-color show'>\n                <div class='items'>            \n                    <div>\n                        <label > Background Color</label>                    \n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='background-transparent'>\n                                <span class='color' ref='$color'></span>\n                            </span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div> \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR),
@@ -18876,101 +12993,51 @@ var BackgroundColor = function (_BasePropertyItem) {
     }, {
         key: CLICK('$colorview'),
         value: function value() {
-            this.emit('toggleLayerColorPicker');
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_LAYER, function (layer) {
+                _this3.emit('selectLayerColor', layer.backgroundColor, 'backgroundColor', CHANGE_LAYER_BACKGROUND_COLOR);
+            });
         }
     }]);
     return BackgroundColor;
 }(BasePropertyItem);
 
-var LayerColorPickerLayer = function (_UIElement) {
-    inherits(LayerColorPickerLayer, _UIElement);
+var ITEM_KEYS = 'item/keys';
 
-    function LayerColorPickerLayer() {
-        classCallCheck(this, LayerColorPickerLayer);
-        return possibleConstructorReturn(this, (LayerColorPickerLayer.__proto__ || Object.getPrototypeOf(LayerColorPickerLayer)).apply(this, arguments));
-    }
+var ITEM_KEYS_GENERATE = 'item/keys/generate';
+var ITEM_INITIALIZE = 'item/initialize';
+var ITEM_CREATE_OBJECT = 'item/create/object';
+var ITEM_CREATE_PAGE = 'item/create/page';
+var ITEM_CREATE_LAYER = 'item/create/layer';
+var ITEM_CREATE_IMAGE = 'item/create/image';
+var ITEM_CREATE_BOXSHADOW = 'item/create/boxshadow';
+var ITEM_CREATE_TEXTSHADOW = 'item/create/textshadow';
+var ITEM_CREATE_CIRCLE = 'item/create/circle';
+var ITEM_CREATE_POLYGON = 'item/create/polygon';
+var ITEM_CREATE_GROUP = 'item/create/group';
+var ITEM_CREATE_COLORSTEP = 'item/create/colorstep';
+var ITEM_CREATE = 'item/create';
+var ITEM_COPY = 'item/copy';
+var ITEM_ADD = 'item/add';
+var ITEM_CREATE_IMAGE_WITH_COLORSTEP = 'item/create/image/with/colorstep';
+var ITEM_PREPEND_IMAGE = 'item/prepend/image';
+var ITEM_PREPEND_IMAGE_FILE$1 = 'item/prepend/image/file';
+var ITEM_SET_IMAGE_FILE = 'item/set/image/file';
+var ITEM_PREPEND_IMAGE_URL$1 = 'item/prepend/image/url';
 
-    createClass(LayerColorPickerLayer, [{
-        key: 'afterRender',
-        value: function afterRender() {
-            var _this2 = this;
+var ITEM_ADD_LAYER = 'item/add/layer';
+var ITEM_ADD_SHAPE = 'item/add/shape';
+var ITEM_ADD_IMAGE = 'item/add/image';
+var ITEM_ADD_IMAGE_FILE = 'item/add/image/file';
+var ITEM_ADD_IMAGE_URL = 'item/add/image/url';
+var ITEM_ADD_PAGE = 'item/add/page';
 
-            var layer = this.read(SELECTION_CURRENT_LAYER);
-
-            var defaultColor = layer ? layer.backgroundColor : 'rgba(0, 0, 0, 0)';
-
-            this.colorPicker = ColorPicker.create({
-                type: 'xd',
-                position: 'inline',
-                container: this.$el.el,
-                color: defaultColor,
-                onChange: function onChange(c) {
-                    _this2.changeColor(c);
-                }
-            });
-
-            setTimeout(function () {
-                _this2.colorPicker.dispatch('initColor', defaultColor);
-            }, 100);
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '<div class=\'colorpicker-layer\'> </div>';
-        }
-    }, {
-        key: 'changeColor',
-        value: function changeColor(color) {
-            var _this3 = this;
-
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this3.commit(CHANGE_LAYER_BACKGROUND_COLOR, { id: id, backgroundColor: color });
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this4 = this;
-
-            if (this.read(SELECTION_IS_LAYER)) {
-                this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    if (layer.backgroundColor) {
-                        if (layer.backgroundColor.includes('rgb')) return;
-                        _this4.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
-                    }
-                });
-            }
-        }
-    }]);
-    return LayerColorPickerLayer;
-}(UIElement);
-
-var LayerColorPickerPanel = function (_UIElement) {
-    inherits(LayerColorPickerPanel, _UIElement);
-
-    function LayerColorPickerPanel() {
-        classCallCheck(this, LayerColorPickerPanel);
-        return possibleConstructorReturn(this, (LayerColorPickerPanel.__proto__ || Object.getPrototypeOf(LayerColorPickerPanel)).apply(this, arguments));
-    }
-
-    createClass(LayerColorPickerPanel, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='property-item layer-colorpicker show'>\n                <div class='title' ref=\"$title\">Background Color</div>\n                <div class='items'>            \n                    <LayerColorPicker></LayerColorPicker>\n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return { LayerColorPicker: LayerColorPickerLayer };
-        }
-    }]);
-    return LayerColorPickerPanel;
-}(UIElement);
+var SVG_LIST = 'svg/list';
+var SVG_LIST_LOAD = 'svg/list/load';
+var SVG_GET_CLIPPATH = 'svg/get/clipPath';
+var SVG_GET_BLOB = 'svg/get/blob';
+var SVG_GET = 'svg/get';
 
 var ImageResource = function (_BasePropertyItem) {
     inherits(ImageResource, _BasePropertyItem);
@@ -19057,6 +13124,8 @@ var ImageResource = function (_BasePropertyItem) {
     return ImageResource;
 }(BasePropertyItem);
 
+var _templateObject$3 = taggedTemplateLiteral(["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "]);
+
 var CLIP_PATH_TYPES = [CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_SVG];
 
 var ClipPath = function (_BasePropertyItem) {
@@ -19070,13 +13139,13 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n\n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                " + CLIP_PATH_TYPES.map(function (type) {
+            return html(_templateObject$3, CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        ";
+            }));
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
-        value: function value$$1() {
+        value: function value() {
             this.refresh();
         }
     }, {
@@ -19091,7 +13160,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: CHANGE('$clipType'),
-        value: function value$$1() {
+        value: function value() {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -19103,7 +13172,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$showClipPathEditor'),
-        value: function value$$1() {
+        value: function value() {
             var _this4 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -19163,6 +13232,9 @@ var PageShowGrid = function (_UIElement) {
     return PageShowGrid;
 }(UIElement);
 
+var ORDERING_TYPE = 'ordering/type';
+var ORDERING_INDEX = 'ordering/index';
+
 var GroupAlign = function (_BasePropertyItem) {
     inherits(GroupAlign, _BasePropertyItem);
 
@@ -19185,6 +13257,14 @@ var GroupAlign = function (_BasePropertyItem) {
     return GroupAlign;
 }(BasePropertyItem);
 
+var BLEND_LAYER_TO_STRING = 'blend/layer/toString';
+var BLEND_IMAGE_TO_STRING = 'blend/image/toString';
+var BLEND_TO_STRING_WITHOUT_DIMENSION = 'blend/toStringWithoutDimension';
+var BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE = 'blend/toStringWithoutDimensionForImage';
+var BLEND_LIST = 'blend/list';
+
+var _templateObject$4 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+
 var BackgroundBlend = function (_BasePropertyItem) {
     inherits(BackgroundBlend, _BasePropertyItem);
 
@@ -19196,9 +13276,9 @@ var BackgroundBlend = function (_BasePropertyItem) {
     createClass(BackgroundBlend, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
+            return html(_templateObject$4, this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
-            }).join(EMPTY_STRING) + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+            }));
         }
     }, {
         key: 'isShow',
@@ -19216,12 +13296,12 @@ var BackgroundBlend = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT(CHANGE_IMAGE, CHANGE_SELECTION),
-        value: function value$$1() {
+        value: function value() {
             this.refresh();
         }
     }, {
         key: CHANGE('$blend'),
-        value: function value$$1(e) {
+        value: function value(e) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
@@ -19231,6 +13311,8 @@ var BackgroundBlend = function (_BasePropertyItem) {
     }]);
     return BackgroundBlend;
 }(BasePropertyItem);
+
+var _templateObject$5 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
 
 var LayerBlend = function (_BasePropertyItem) {
     inherits(LayerBlend, _BasePropertyItem);
@@ -19243,14 +13325,14 @@ var LayerBlend = function (_BasePropertyItem) {
     createClass(LayerBlend, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ' + this.read(BLEND_LIST).map(function (blend) {
+            return html(_templateObject$5, this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
-            }).join(EMPTY_STRING) + '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ';
+            }));
         }
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_LAYER$1);
+            return this.read(SELECTION_IS_LAYER);
         }
     }, {
         key: 'refresh',
@@ -19263,12 +13345,12 @@ var LayerBlend = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_SELECTION),
-        value: function value$$1() {
+        value: function value() {
             this.refresh();
         }
     }, {
         key: CHANGE('$blend'),
-        value: function value$$1(e) {
+        value: function value(e) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -19315,11 +13397,13 @@ var Rotate = function (_BasePropertyItem) {
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
 
                 if (type == 'rotate') {
-                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, rotate: _this3.refs.$rotate.val() });
-                    _this3.refs.$rotateRange.val(_this3.refs.$rotate.val());
+                    var rotate = _this3.refs.$rotate.val();
+                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, rotate: rotate });
+                    _this3.refs.$rotateRange.val(rotate);
                 } else if (type == 'range') {
-                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, rotate: _this3.refs.$rotateRange.val() });
-                    _this3.refs.$rotate.val(_this3.refs.$rotateRange.val());
+                    var rotate = _this3.refs.$rotateRange.val();
+                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, rotate: rotate });
+                    _this3.refs.$rotate.val(rotate);
                 }
             });
         }
@@ -19391,19 +13475,21 @@ var RadiusFixed = function (_BasePropertyItem) {
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
 
                 if (type == 'radius') {
+                    var borderRadiusValue = _this3.refs.$radius.val();
                     _this3.commit(CHANGE_LAYER_RADIUS, {
                         id: id,
                         fixedRadius: true,
-                        borderRadius: pxUnit(_this3.refs.$radius.val())
+                        borderRadius: pxUnit(borderRadiusValue)
                     });
-                    _this3.refs.$radiusRange.val(_this3.refs.$radius.val());
+                    _this3.refs.$radiusRange.val(borderRadiusValue);
                 } else if (type == 'range') {
+                    var borderRadiusValue = _this3.refs.$radiusRange.val();
                     _this3.commit(CHANGE_LAYER_RADIUS, {
                         id: id,
                         fixedRadius: true,
-                        borderRadius: pxUnit(_this3.refs.$radiusRange.val())
+                        borderRadius: pxUnit(borderRadiusValue)
                     });
-                    _this3.refs.$radius.val(_this3.refs.$radiusRange.val());
+                    _this3.refs.$radius.val(borderRadiusValue);
                 }
             });
         }
@@ -19462,11 +13548,13 @@ var Opacity$3 = function (_BasePropertyItem) {
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
 
                 if (type == 'opacity') {
-                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, opacity: _this3.refs.$opacity.val() });
-                    _this3.refs.$opacityRange.val(_this3.refs.$opacity.val());
+                    var opacity = _this3.refs.$opacity.val();
+                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, opacity: opacity });
+                    _this3.refs.$opacityRange.val(opacity);
                 } else if (type == 'range') {
-                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, opacity: _this3.refs.$opacityRange.val() });
-                    _this3.refs.$opacity.val(_this3.refs.$opacityRange.val());
+                    var opacity = _this3.refs.$opacityRange.val();
+                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, opacity: opacity });
+                    _this3.refs.$opacity.val(opacity);
                 }
             });
         }
@@ -19662,6 +13750,8 @@ var ClipPathSVG = function (_BasePropertyItem) {
     return ClipPathSVG;
 }(BasePropertyItem);
 
+var _templateObject$6 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
+
 var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
 
 var ClipPathSide = function (_BasePropertyItem) {
@@ -19675,13 +13765,13 @@ var ClipPathSide = function (_BasePropertyItem) {
     createClass(ClipPathSide, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                " + CLIP_PATH_SIDE_TYPES.map(function (type) {
+            return html(_templateObject$6, CLIP_PATH_SIDE_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        ";
+            }));
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
-        value: function value$$1() {
+        value: function value() {
             this.refresh();
         }
     }, {
@@ -19712,12 +13802,12 @@ var ClipPathSide = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT('toggleClipPathSideType'),
-        value: function value$$1() {
+        value: function value() {
             this.$el.toggleClass('show');
         }
     }, {
         key: CHANGE('$clipSideType'),
-        value: function value$$1() {
+        value: function value() {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -19730,6 +13820,17 @@ var ClipPathSide = function (_BasePropertyItem) {
     }]);
     return ClipPathSide;
 }(BasePropertyItem);
+
+var CLIPPATH_SAMPLE_LIST = 'clip-path/sample/list';
+var CLIPPATH_SAMPLE_GET = 'clip-path/sample/get';
+var CLIPPATH_MAKE_CIRCLE = 'clip-path/make/circle';
+var CLIPPATH_MAKE_ELLIPSE = 'clip-path/make/ellipse';
+var CLIPPATH_MAKE_INSET = 'clip-path/make/inset';
+var CLIPPATH_MAKE_POLYGON = 'clip-path/make/polygon';
+var CLIPPATH_MAKE_SVG = 'clip-path/make/svg';
+var CLIPPATH_TO_CSS = 'clip-path/toCSS';
+
+var _templateObject$7 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>", "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>", "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "]);
 
 var ClipPathPolygon = function (_BasePropertyItem) {
     inherits(ClipPathPolygon, _BasePropertyItem);
@@ -19744,12 +13845,12 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         value: function template() {
             var list = this.read(CLIPPATH_SAMPLE_LIST);
 
-            return "\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>" + list.map(function (it, index) {
+            return html(_templateObject$7, list.map(function (it, index) {
                 var values = it.clipPathPolygonPoints.map(function (point) {
                     return stringUnit(point.x) + " " + stringUnit(point.y);
                 }).join(', ');
                 return "<div class='clip-path-item' data-index='" + index + "' style='clip-path: polygon(" + values + ")'></div>";
-            }).join(EMPTY_STRING) + "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        ";
+            }));
         }
     }, {
         key: LOAD('$polygonList'),
@@ -20507,6 +14608,34 @@ var Text = function (_BasePropertyItem) {
     return Text;
 }(BasePropertyItem);
 
+var LAYER_LIST_SAMPLE = 'layer/list/sample';
+var LAYER_TO_STRING = 'layer/toString';
+var LAYER_CACHE_TO_STRING = 'layer/cache/toString';
+var LAYER_TOEXPORT = 'layer/toExport';
+var LAYER_MAKE_CLIPPATH = 'layer/make/clip-path';
+var LAYER_MAKE_FILTER = 'layer/make/filter';
+var LAYER_MAKE_BACKDROP = 'layer/make/backdrop';
+var LAYER_TO_IMAGE_CSS = 'layer/TO_IMAGE_CSS';
+var LAYER_CACHE_TO_IMAGE_CSS = 'layer/cache/TO_IMAGE_CSS';
+var LAYER_IMAGE_TO_IMAGE_CSS = 'layer/image/TO_IMAGE_CSS';
+var LAYER_MAKE_MAP = 'layer/make/map';
+var LAYER_MAKE_MAP_IMAGE = 'layer/make/map/image';
+var LAYER_MAKE_BOXSHADOW = 'layer/make/box-shadow';
+var LAYER_MAKE_FONT = 'layer/make/font';
+var LAYER_MAKE_IMAGE = 'layer/make/image';
+var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
+var LAYER_MAKE_TRANSFORM_ROTATE = 'layer/make/transform/rotate';
+var LAYER_MAKE_TRANSFORM = 'layer/make/transform';
+var LAYER_TO_STRING_CLIPPATH = 'layer/toStringClipPath';
+var LAYER_GET_CLIPPATH = 'layer/getClipPath';
+var LAYER_BOUND_TO_CSS = 'layer/bound/toCSS';
+var LAYER_TO_CSS = 'layer/toCSS';
+var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
+var LAYER_MAKE_BORDER = 'layer/make/border';
+var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
+var LAYER_MAKE_BORDER_COLOR = 'layer/make/border-color';
+var LAYER_MAKE_BORDER_STYLE = 'layer/make/border-style';
+
 var LayerCode = function (_BasePropertyItem) {
     inherits(LayerCode, _BasePropertyItem);
 
@@ -20544,7 +14673,13 @@ var LayerCode = function (_BasePropertyItem) {
                     value$$1 = reverseMatches(str, ret.matches);
                 }
 
-                return "\n                <div class=\"key-value-item\">\n                    <div class=\"key\">" + key + ":</div>\n                    <pre class=\"value\">" + value$$1 + ";</pre>\n                </div>\n            ";
+                var isShort = '';
+
+                if (value$$1.length < 20) {
+                    isShort = 'short';
+                }
+
+                return "\n                <div class=\"key-value-item " + isShort + "\">\n                    <div class=\"key\">" + key + ":</div>\n                    <pre class=\"value\">" + value$$1 + ";</pre>\n                </div>\n            ";
             });
         }
     }, {
@@ -20620,95 +14755,7 @@ var BackgroundCode = function (_BasePropertyItem) {
     return BackgroundCode;
 }(BasePropertyItem);
 
-var TextFillColorPicker = function (_UIElement) {
-    inherits(TextFillColorPicker, _UIElement);
-
-    function TextFillColorPicker() {
-        classCallCheck(this, TextFillColorPicker);
-        return possibleConstructorReturn(this, (TextFillColorPicker.__proto__ || Object.getPrototypeOf(TextFillColorPicker)).apply(this, arguments));
-    }
-
-    createClass(TextFillColorPicker, [{
-        key: 'afterRender',
-        value: function afterRender() {
-            var _this2 = this;
-
-            var defaultColor = 'rgba(0, 0, 0, 0)';
-
-            this.colorPicker = ColorPicker.create({
-                type: 'xd-tab',
-                tabTitle: 'Text',
-                position: 'inline',
-                container: this.$el.el,
-                color: defaultColor,
-                onChange: function onChange(c) {
-                    _this2.changeColor(c);
-                }
-            });
-
-            setTimeout(function () {
-                _this2.colorPicker.dispatch('initColor', defaultColor);
-            }, 100);
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '<div class=\'colorpicker-layer\'> </div>';
-        }
-    }, {
-        key: 'changeColor',
-        value: function changeColor(color) {
-            if (this.changeColorId) {
-                this.commit(this.eventType, { id: this.changeColorId, color: color });
-            }
-        }
-    }, {
-        key: EVENT(TEXT_FILL_COLOR),
-        value: function value(id, eventType) {
-            this.changeColorId = id;
-            this.itemType = this.read(ITEM_GET, id).itemType;
-            this.eventType = eventType;
-
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            if (this.changeColorId) {
-                var item = this.read(ITEM_GET, this.changeColorId);
-                this.colorPicker.initColorWithoutChangeEvent(item.color);
-            }
-        }
-    }]);
-    return TextFillColorPicker;
-}(UIElement);
-
-var LayerTextColorPickerPanel = function (_UIElement) {
-    inherits(LayerTextColorPickerPanel, _UIElement);
-
-    function LayerTextColorPickerPanel() {
-        classCallCheck(this, LayerTextColorPickerPanel);
-        return possibleConstructorReturn(this, (LayerTextColorPickerPanel.__proto__ || Object.getPrototypeOf(LayerTextColorPickerPanel)).apply(this, arguments));
-    }
-
-    createClass(LayerTextColorPickerPanel, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <TextFillColorPicker></TextFillColorPicker>\n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return { TextFillColorPicker: TextFillColorPicker };
-        }
-    }]);
-    return LayerTextColorPickerPanel;
-}(UIElement);
+var _templateObject$8 = taggedTemplateLiteral(["\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"", "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"", "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        "], ["\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"", "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"", "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        "]);
 
 var fontFamilyList = ['Georgia', "Times New Roman", 'serif', 'sans-serif'];
 
@@ -20728,11 +14775,11 @@ var Font = function (_BasePropertyItem) {
     createClass(Font, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                " + fontFamilyList.map(function (f) {
+            return html(_templateObject$8, fontFamilyList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                " + fontWeightList.map(function (f) {
+            }), fontWeightList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        ";
+            }), UNIT_PX, UNIT_PX);
         }
     }, {
         key: "components",
@@ -20832,7 +14879,7 @@ var BackgroundClip = function (_BasePropertyItem) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_LAYER$1);
+            return this.read(SELECTION_IS_LAYER);
         }
     }, {
         key: 'refresh',
@@ -20861,6 +14908,96 @@ var BackgroundClip = function (_BasePropertyItem) {
     return BackgroundClip;
 }(BasePropertyItem);
 
+var TextFillColorPicker = function (_UIElement) {
+    inherits(TextFillColorPicker, _UIElement);
+
+    function TextFillColorPicker() {
+        classCallCheck(this, TextFillColorPicker);
+        return possibleConstructorReturn(this, (TextFillColorPicker.__proto__ || Object.getPrototypeOf(TextFillColorPicker)).apply(this, arguments));
+    }
+
+    createClass(TextFillColorPicker, [{
+        key: 'afterRender',
+        value: function afterRender() {
+            var _this2 = this;
+
+            var defaultColor = 'rgba(0, 0, 0, 0)';
+
+            this.colorPicker = ColorPicker.create({
+                type: 'xd-tab',
+                tabTitle: 'Text',
+                position: 'inline',
+                container: this.$el.el,
+                color: defaultColor,
+                onChange: function onChange(c) {
+                    _this2.changeColor(c);
+                }
+            });
+
+            setTimeout(function () {
+                _this2.colorPicker.dispatch('initColor', defaultColor);
+            }, 100);
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '<div class=\'colorpicker-layer\'> </div>';
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor(color) {
+            if (this.changeColorId) {
+                this.commit(this.eventType, { id: this.changeColorId, color: color });
+            }
+        }
+    }, {
+        key: EVENT(TEXT_FILL_COLOR),
+        value: function value(id, eventType) {
+            this.changeColorId = id;
+            this.itemType = this.read(ITEM_GET, id).itemType;
+            this.eventType = eventType;
+
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            if (this.changeColorId) {
+                var item = this.read(ITEM_GET, this.changeColorId);
+                this.colorPicker.initColorWithoutChangeEvent(item.color);
+            }
+        }
+    }]);
+    return TextFillColorPicker;
+}(UIElement);
+
+var LayerTextColorPickerPanel = function (_UIElement) {
+    inherits(LayerTextColorPickerPanel, _UIElement);
+
+    function LayerTextColorPickerPanel() {
+        classCallCheck(this, LayerTextColorPickerPanel);
+        return possibleConstructorReturn(this, (LayerTextColorPickerPanel.__proto__ || Object.getPrototypeOf(LayerTextColorPickerPanel)).apply(this, arguments));
+    }
+
+    createClass(LayerTextColorPickerPanel, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <TextFillColorPicker></TextFillColorPicker>\n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { TextFillColorPicker: TextFillColorPicker };
+        }
+    }]);
+    return LayerTextColorPickerPanel;
+}(UIElement);
+
 var InfoFillColorPicker = function (_UIElement) {
     inherits(InfoFillColorPicker, _UIElement);
 
@@ -20870,6 +15007,15 @@ var InfoFillColorPicker = function (_UIElement) {
     }
 
     createClass(InfoFillColorPicker, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(InfoFillColorPicker.prototype.__proto__ || Object.getPrototypeOf(InfoFillColorPicker.prototype), 'initialize', this).call(this);
+
+            this.eventType = CHANGE_LAYER_BACKGROUND_COLOR;
+            this.eventKey = 'backgroundColor';
+            this.eventOpt = {};
+        }
+    }, {
         key: 'afterRender',
         value: function afterRender() {
             var _this2 = this;
@@ -20902,7 +15048,7 @@ var InfoFillColorPicker = function (_UIElement) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this3.commit(CHANGE_LAYER_BACKGROUND_COLOR, { id: id, backgroundColor: color });
+                _this3.commit(_this3.eventType, _extends(defineProperty({ id: id }, _this3.eventKey, color), _this3.eventOpt));
             });
         }
     }, {
@@ -20915,7 +15061,7 @@ var InfoFillColorPicker = function (_UIElement) {
         value: function refresh() {
             var _this4 = this;
 
-            if (this.read(SELECTION_IS_LAYER$1)) {
+            if (this.read(SELECTION_IS_LAYER)) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
                     if (layer.backgroundColor) {
                         if (layer.backgroundColor.includes('rgb')) return;
@@ -20923,6 +15069,17 @@ var InfoFillColorPicker = function (_UIElement) {
                     }
                 });
             }
+        }
+    }, {
+        key: EVENT('selectLayerColor'),
+        value: function value(color, key, eventType) {
+            var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+            this.eventKey = key;
+            this.eventType = eventType;
+            this.eventOpt = opt;
+
+            this.colorPicker.initColorWithoutChangeEvent(color);
         }
     }]);
     return InfoFillColorPicker;
@@ -20949,6 +15106,119 @@ var LayerInfoColorPickerPanel = function (_UIElement) {
     }]);
     return LayerInfoColorPickerPanel;
 }(UIElement);
+
+var BorderFillColorPicker = function (_UIElement) {
+    inherits(BorderFillColorPicker, _UIElement);
+
+    function BorderFillColorPicker() {
+        classCallCheck(this, BorderFillColorPicker);
+        return possibleConstructorReturn(this, (BorderFillColorPicker.__proto__ || Object.getPrototypeOf(BorderFillColorPicker)).apply(this, arguments));
+    }
+
+    createClass(BorderFillColorPicker, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(BorderFillColorPicker.prototype.__proto__ || Object.getPrototypeOf(BorderFillColorPicker.prototype), 'initialize', this).call(this);
+
+            this.eventType = CHANGE_LAYER_BORDER;
+            this.eventKey = 'borderColor';
+        }
+    }, {
+        key: 'afterRender',
+        value: function afterRender() {
+            var _this2 = this;
+
+            var defaultColor = 'rgba(0, 0, 0, 0)';
+
+            this.colorPicker = ColorPicker.create({
+                type: 'xd-tab',
+                tabTitle: 'Border',
+                position: 'inline',
+                container: this.$el.el,
+                color: defaultColor,
+                onChange: function onChange(c) {
+                    _this2.changeColor(c);
+                }
+            });
+
+            setTimeout(function () {
+                _this2.colorPicker.dispatch('initColor', defaultColor);
+            }, 100);
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '<div class=\'colorpicker-layer\'> </div>';
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor(color) {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this3.commit(_this3.eventType, _extends(defineProperty({ id: id }, _this3.eventKey, color), _this3.eventOpt));
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this4 = this;
+
+            if (this.read(SELECTION_IS_LAYER)) {
+                this.read(SELECTION_CURRENT_LAYER, function (layer) {
+                    if (layer.borderColor) {
+                        _this4.colorPicker.initColorWithoutChangeEvent(layer.borderColor);
+                    }
+                });
+            }
+        }
+    }, {
+        key: EVENT('selectBorderColor'),
+        value: function value(color, key, eventType) {
+            var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+            this.eventKey = key;
+            this.eventType = eventType;
+            this.eventOpt = opt;
+
+            this.colorPicker.initColorWithoutChangeEvent(color);
+        }
+    }]);
+    return BorderFillColorPicker;
+}(UIElement);
+
+var LayerBorderColorPickerPanel = function (_UIElement) {
+    inherits(LayerBorderColorPickerPanel, _UIElement);
+
+    function LayerBorderColorPickerPanel() {
+        classCallCheck(this, LayerBorderColorPickerPanel);
+        return possibleConstructorReturn(this, (LayerBorderColorPickerPanel.__proto__ || Object.getPrototypeOf(LayerBorderColorPickerPanel)).apply(this, arguments));
+    }
+
+    createClass(LayerBorderColorPickerPanel, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <BorderFillColorPicker></BorderFillColorPicker>\n                </div>\n                <div class=\"items bar\"></div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { BorderFillColorPicker: BorderFillColorPicker };
+        }
+    }]);
+    return LayerBorderColorPickerPanel;
+}(UIElement);
+
+var BACKDROP_GET = 'backdrop/get';
+var BACKDROP_LIST = 'backdrop/list';
+var BACKDROP_TO_CSS = 'backdrop/toCSS';
+
+var _templateObject$9 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
 
 var DROPSHADOW_FILTER_KEYS$1 = ['backdropDropshadowOffsetX', 'backdropDropshadowOffsetY', 'backdropDropshadowBlurRadius', 'backdropDropshadowColor'];
 
@@ -20979,7 +15249,7 @@ var BackdropList = function (_BasePropertyItem) {
 
                 return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
-                return "\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                </span>\n                <span class='title long' draggable=\"true\">" + viewObject.title + "</span>\n            </div>\n            <div class='items'>\n                " + DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
+                return html(_templateObject$9, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
 
                     var it = _this2.read(BACKDROP_GET, subkey);
                     var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
@@ -20990,7 +15260,7 @@ var BackdropList = function (_BasePropertyItem) {
 
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='range'><input type=\"range\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Range\"  data-key=\"" + subkey + "\" /></span>\n                            <span class='input-value'><input type=\"number\" min=\"" + it.min + "\" max=\"" + it.max + "\" step=\"" + it.step + "\" value=\"" + value$$1 + "\" ref=\"" + subkey + "Number\" data-key=\"" + subkey + "\" /></span>\n                            <span class='unit'>" + unitString(it.unit) + "</span>\n                        </div>\n                        ";
                     }
-                }).join(EMPTY_STRING) + "\n            </div>\n            ";
+                }));
             }
 
             return "<div></div>";
@@ -21049,7 +15319,7 @@ var BackdropList = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
                 var id = layer.id;
-                var value$$1 = layer[key] || clone(BACKDROP_DEFAULT_OBJECT[key]);
+                var value$$1 = layer[key] || _extends({}, BACKDROP_DEFAULT_OBJECT[key]);
                 value$$1.value = lastValue;
 
                 _this4.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value$$1));
@@ -21062,7 +15332,7 @@ var BackdropList = function (_BasePropertyItem) {
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
                 var id = layer.id;
-                var value$$1 = layer[key] || clone(BACKDROP_DEFAULT_OBJECT[key]);
+                var value$$1 = layer[key] || _extends({}, BACKDROP_DEFAULT_OBJECT[key]);
                 value$$1.checked = checked;
 
                 _this5.commit(CHANGE_LAYER_BACKDROP_FILTER, defineProperty({ id: id }, key, value$$1));
@@ -21397,6 +15667,12 @@ var BackgroundImage = function (_BasePropertyItem) {
     return BackgroundImage;
 }(BasePropertyItem);
 
+var PATTERN_MAKE = 'pattern/make';
+var PATTERN_GET = 'pattern/get';
+var PATTERN_SET = 'pattern/set';
+
+var _templateObject$10 = taggedTemplateLiteral(["\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            ", "\n                            </select>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Random</label>\n                        <div>\n                            <label><input type=\"checkbox\" ref=\"$randomPosition\" /> Position</label>\n                            <label><input type=\"checkbox\" ref=\"$randomSize\" /> Size</label>\n                        </div>                        \n                    </div>  \n                </div>\n            </div>\n        "], ["\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            ", "\n                            </select>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Random</label>\n                        <div>\n                            <label><input type=\"checkbox\" ref=\"$randomPosition\" /> Position</label>\n                            <label><input type=\"checkbox\" ref=\"$randomSize\" /> Size</label>\n                        </div>                        \n                    </div>  \n                </div>\n            </div>\n        "]);
+
 var RotatePattern = function (_BasePropertyItem) {
     inherits(RotatePattern, _BasePropertyItem);
 
@@ -21408,13 +15684,13 @@ var RotatePattern = function (_BasePropertyItem) {
     createClass(RotatePattern, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone Count</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            " + this.read(BLEND_LIST).map(function (blend) {
+            return html(_templateObject$10, this.read(BLEND_LIST).map(function (blend) {
                 return "<option value=\"" + blend + "\">" + blend + "</option>";
-            }).join(EMPTY_STRING) + "\n                            </select>\n                        </div>\n                    </div>                    \n                </div>\n            </div>\n        ";
+            }));
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value$$1() {
+        value: function value() {
             this.refresh();
         }
     }, {
@@ -21429,6 +15705,8 @@ var RotatePattern = function (_BasePropertyItem) {
                     _this2.refs.$cloneCountRange.val(rotate.clone || 1);
                     _this2.refs.$cloneCount.val(rotate.clone || 1);
                     _this2.refs.$blend.val(rotate.blend || 'normal');
+                    _this2.refs.$randomPosition.checked(rotate.randomPosition || false);
+                    _this2.refs.$randomSize.checked(rotate.randomSize || false);
                 }
             });
         }
@@ -21441,7 +15719,9 @@ var RotatePattern = function (_BasePropertyItem) {
                 _this3.run(PATTERN_SET, image, 'rotate', {
                     enable: _this3.refs.$enable.checked(),
                     clone: _this3.refs.$cloneCount.int(),
-                    blend: _this3.refs.$blend.val()
+                    blend: _this3.refs.$blend.val(),
+                    randomPosition: _this3.refs.$randomPosition.checked(),
+                    randomSize: _this3.refs.$randomSize.checked()
                 });
 
                 _this3.emit(CHANGE_IMAGE);
@@ -21449,24 +15729,34 @@ var RotatePattern = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$enable'),
-        value: function value$$1() {
+        value: function value() {
+            this.changePatternValue();
+        }
+    }, {
+        key: CLICK('$randomPosition'),
+        value: function value() {
+            this.changePatternValue();
+        }
+    }, {
+        key: CLICK('$randomSize'),
+        value: function value() {
             this.changePatternValue();
         }
     }, {
         key: INPUT('$cloneCount'),
-        value: function value$$1() {
-            this.refs.$cloneCountRange.val(this.refs.$cloneCount.val());
+        value: function value() {
+            this.refs.$cloneCountRange.val(this.refs.$cloneCount);
             this.changePatternValue();
         }
     }, {
         key: INPUT('$cloneCountRange'),
-        value: function value$$1() {
-            this.refs.$cloneCount.val(this.refs.$cloneCountRange.val());
+        value: function value() {
+            this.refs.$cloneCount.val(this.refs.$cloneCountRange);
             this.changePatternValue();
         }
     }, {
         key: CHANGE('$blend'),
-        value: function value$$1() {
+        value: function value() {
             this.changePatternValue();
         }
     }]);
@@ -21484,7 +15774,7 @@ var BorderFixed = function (_BasePropertyItem) {
     createClass(BorderFixed, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item fixed-border'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$borderLabel\">*</button> Border</label>\n                        <div>\n                            <input type='range' ref=\"$borderWidthRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$borderWidth\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item fixed-border'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$borderLabel\">*</button> Width</label>\n                        <div>\n                            <input type='range' ref=\"$borderWidthRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$borderWidth\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -21526,19 +15816,21 @@ var BorderFixed = function (_BasePropertyItem) {
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
 
                 if (type == 'border') {
+                    var borderWidthValue = _this3.refs.$borderWidth.val();
                     _this3.commit(CHANGE_LAYER_BORDER, {
                         id: id,
                         fixedBorderWidth: true,
-                        borderWidth: pxUnit(_this3.refs.$borderWidth.val())
+                        borderWidth: pxUnit(borderWidthValue)
                     });
-                    _this3.refs.$borderWidthRange.val(_this3.refs.$borderWidth.val());
+                    _this3.refs.$borderWidthRange.val(borderWidthValue);
                 } else if (type == 'range') {
+                    var borderWidthValue = _this3.refs.$borderWidthRange.val();
                     _this3.commit(CHANGE_LAYER_BORDER, {
                         id: id,
                         fixedBorderWidth: true,
-                        borderWidth: pxUnit(_this3.refs.$borderWidthRange.val())
+                        borderWidth: pxUnit(borderWidthValue)
                     });
-                    _this3.refs.$borderWidth.val(_this3.refs.$borderWidthRange.val());
+                    _this3.refs.$borderWidth.val(borderWidthValue);
                 }
             });
         }
@@ -21577,7 +15869,7 @@ var BoxSizing = function (_BasePropertyItem) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read(SELECTION_IS_LAYER$1);
+            return this.read(SELECTION_IS_LAYER);
         }
     }, {
         key: 'refresh',
@@ -21617,7 +15909,7 @@ var BorderWidth = function (_BasePropertyItem) {
     createClass(BorderWidth, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item border'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item border'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\" value=\"0\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -21630,11 +15922,11 @@ var BorderWidth = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER, function (item) {
-                var maxWidth = unitValue(item.width);
 
                 if (item.fixedBorderWidth) {
                     var borderWidth = defaultValue(item.borderWidth, pxUnit(0));
-                    var border = value2px(borderWidth, maxWidth);
+                    var border = unitValue(borderWidth);
+
                     _this2.refs.$topWidthRange.val(border);
                     _this2.refs.$rightWidthRange.val(border);
                     _this2.refs.$leftWidthRange.val(border);
@@ -21644,22 +15936,23 @@ var BorderWidth = function (_BasePropertyItem) {
                     _this2.refs.$leftWidth.val(border);
                     _this2.refs.$bottomWidth.val(border);
                 } else {
-                    if (item.borderTopWidth) {
-                        _this2.refs.$topWidth.val(value2px(item.borderTopWidth, maxWidth));
-                        _this2.refs.$topWidthRange.val(value2px(item.borderTopWidth, maxWidth));
-                    }
-                    if (item.borderRightWidth) {
-                        _this2.refs.$rightWidth.val(value2px(item.borderRightWidth, maxWidth));
-                        _this2.refs.$rightWidthRange.val(value2px(item.borderRightWidth, maxWidth));
-                    }
-                    if (item.borderLeftWidth) {
-                        _this2.refs.$leftWidth.val(value2px(item.borderLeftWidth, maxWidth));
-                        _this2.refs.$leftWidthRange.val(value2px(item.borderLeftWidth, maxWidth));
-                    }
-                    if (item.borderBottomWidth) {
-                        _this2.refs.$bottomWidth.val(value2px(item.borderBottomWidth, maxWidth));
-                        _this2.refs.$bottomWidthRange.val(value2px(item.borderBottomWidth, maxWidth));
-                    }
+
+                    var value$$1 = defaultValue(item.borderTopWidth, pxUnit(0));
+
+                    _this2.refs.$topWidth.val(unitValue(value$$1));
+                    _this2.refs.$topWidthRange.val(unitValue(value$$1));
+
+                    var value$$1 = defaultValue(item.borderRightWidth, pxUnit(0));
+                    _this2.refs.$rightWidth.val(unitValue(value$$1));
+                    _this2.refs.$rightWidthRange.val(unitValue(value$$1));
+
+                    var value$$1 = defaultValue(item.borderLeftWidth, pxUnit(0));
+                    _this2.refs.$leftWidth.val(unitValue(value$$1));
+                    _this2.refs.$leftWidthRange.val(unitValue(value$$1));
+
+                    var value$$1 = defaultValue(item.borderBottomWidth, pxUnit(0));
+                    _this2.refs.$bottomWidth.val(unitValue(value$$1));
+                    _this2.refs.$bottomWidthRange.val(unitValue(value$$1));
                 }
             });
         }
@@ -21682,49 +15975,49 @@ var BorderWidth = function (_BasePropertyItem) {
     }, {
         key: CHANGEINPUT('$topWidthRange'),
         value: function value$$1() {
-            this.refs.$topWidth.val(this.refs.$topWidthRange.val());
+            this.refs.$topWidth.val(this.refs.$topWidthRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$rightWidthRange'),
         value: function value$$1() {
-            this.refs.$rightWidth.val(this.refs.$rightWidthRange.val());
+            this.refs.$rightWidth.val(this.refs.$rightWidthRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$leftWidthRange'),
         value: function value$$1() {
-            this.refs.$leftWidth.val(this.refs.$leftWidthRange.val());
+            this.refs.$leftWidth.val(this.refs.$leftWidthRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomWidthRange'),
         value: function value$$1() {
-            this.refs.$bottomWidth.val(this.refs.$bottomWidthRange.val());
+            this.refs.$bottomWidth.val(this.refs.$bottomWidthRange);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$topWidth'),
         value: function value$$1() {
-            this.refs.$topWidthRange.val(this.refs.$topWidth.val());
+            this.refs.$topWidthRange.val(this.refs.$topWidth);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$rightWidth'),
         value: function value$$1() {
-            this.refs.$rightWidthRange.val(this.refs.$rightWidth.val());
+            this.refs.$rightWidthRange.val(this.refs.$rightWidth);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$leftWidth'),
         value: function value$$1() {
-            this.refs.$leftWidthRange.val(this.refs.$leftWidth.val());
+            this.refs.$leftWidthRange.val(this.refs.$leftWidth);
             this.refreshValue();
         }
     }, {
         key: CHANGEINPUT('$bottomWidth'),
         value: function value$$1() {
-            this.refs.$bottomWidthRange.val(this.refs.$bottomWidth.val());
+            this.refs.$bottomWidthRange.val(this.refs.$bottomWidth);
             this.refreshValue();
         }
     }, {
@@ -21736,13 +16029,56 @@ var BorderWidth = function (_BasePropertyItem) {
     return BorderWidth;
 }(BasePropertyItem);
 
+var BorderColorFixed = function (_BasePropertyItem) {
+    inherits(BorderColorFixed, _BasePropertyItem);
+
+    function BorderColorFixed() {
+        classCallCheck(this, BorderColorFixed);
+        return possibleConstructorReturn(this, (BorderColorFixed.__proto__ || Object.getPrototypeOf(BorderColorFixed)).apply(this, arguments));
+    }
+
+    createClass(BorderColorFixed, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item fixed-border-color show'>\n                <div class='items'>            \n                    <div>\n                        <label >Color</label>\n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='background-transparent'>\n                                <span class='color' ref='$color'></span>\n                            </span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER, function (item) {
+                _this2.refs.$color.css('background-color', item.borderColor);
+                _this2.refs.$colortext.text(item.borderColor);
+            });
+        }
+    }, {
+        key: CLICK('$colorview'),
+        value: function value() {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_LAYER, function (item) {
+                _this3.emit('selectBorderColor', item.borderColor, 'borderColor', CHANGE_LAYER_BORDER);
+            });
+        }
+    }]);
+    return BorderColorFixed;
+}(BasePropertyItem);
+
 var _babelHelpers$extends;
 
-var patterns$1 = {
+var patterns = {
     RotatePattern: RotatePattern
 };
 
-var items = _extends({}, patterns$1, (_babelHelpers$extends = {
+var items = _extends({}, patterns, (_babelHelpers$extends = {
+    LayerBorderColorPickerPanel: LayerBorderColorPickerPanel,
+    BorderColorFixed: BorderColorFixed,
     BoxSizing: BoxSizing,
     BorderWidth: BorderWidth,
     BackgroundImage: BackgroundImage,
@@ -21764,7 +16100,7 @@ var items = _extends({}, patterns$1, (_babelHelpers$extends = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "BorderFixed", BorderFixed), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundColor", BackgroundColor), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "LayerColorPickerPanel", LayerColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
+}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "BorderFixed", BorderFixed), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundColor", BackgroundColor), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -21955,7 +16291,7 @@ var LayerProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>     \n        ";
+            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>     \n            <BackgroundColor></BackgroundColor>\n        ";
         }
     }]);
     return LayerProperty;
@@ -22337,13 +16673,36 @@ var LayerBorderProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <BorderFixed></BorderFixed>\n            <BorderWidth></BorderWidth>\n            <RadiusFixed></RadiusFixed>\n            <radius></radius>      \n        ";
+            return "\n            <BorderFixed></BorderFixed>\n            <BorderWidth></BorderWidth>\n            <BorderColorFixed></BorderColorFixed>\n        ";
         }
     }]);
     return LayerBorderProperty;
 }(BaseProperty);
 
+var LayerBorderRadiusProperty = function (_BaseProperty) {
+    inherits(LayerBorderRadiusProperty, _BaseProperty);
+
+    function LayerBorderRadiusProperty() {
+        classCallCheck(this, LayerBorderRadiusProperty);
+        return possibleConstructorReturn(this, (LayerBorderRadiusProperty.__proto__ || Object.getPrototypeOf(LayerBorderRadiusProperty)).apply(this, arguments));
+    }
+
+    createClass(LayerBorderRadiusProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Border Radius';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <RadiusFixed></RadiusFixed>\n            <radius></radius>\n        ";
+        }
+    }]);
+    return LayerBorderRadiusProperty;
+}(BaseProperty);
+
 var property = {
+    LayerBorderRadiusProperty: LayerBorderRadiusProperty,
     LayerBorderProperty: LayerBorderProperty,
     RotatePatternProperty: RotatePatternProperty,
     BackgroundProperty: BackgroundProperty,
@@ -22375,12 +16734,17 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty></PageProperty>\n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                       <LayerProperty></LayerProperty>\n                       <LayerBorderProperty></LayerBorderProperty>    \n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty></LayerFontProperty>\n                        <LayerTextProperty></LayerTextProperty>\n                        <TextShadowProperty></TextShadowProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty></BoxShadowProperty>\n                        <FilterProperty></FilterProperty>    \n                        <BackdropProperty></BackdropProperty>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPathProperty></ClipPathProperty>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty></Transform2DProperty>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty></Transform3DProperty>\n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty></LayerCodeProperty>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty></PageProperty>\n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                       <LayerProperty></LayerProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <div class=\'fixed\'>\n                        <LayerBorderColorPickerPanel></LayerBorderColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerBorderScroll">\n                        <LayerBorderProperty></LayerBorderProperty>    \n                        <LayerBorderRadiusProperty></LayerBorderRadiusProperty>    \n                    </div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty></LayerFontProperty>\n                        <LayerTextProperty></LayerTextProperty>\n                        <TextShadowProperty></TextShadowProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty></BoxShadowProperty>\n                        <FilterProperty></FilterProperty>    \n                        <BackdropProperty></BackdropProperty>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPathProperty></ClipPathProperty>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty></Transform2DProperty>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty></Transform3DProperty>\n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty></LayerCodeProperty>\n                </div>               \n            </div>\n        </div>\n\n        ';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
         value: function value(e) {
             this.setScrollTabTitle(this.refs.$layerInfoScroll);
+        }
+    }, {
+        key: SCROLL('$layerBorderScroll'),
+        value: function value(e) {
+            this.setScrollTabTitle(this.refs.$layerBorderScroll);
         }
     }, {
         key: SCROLL('$layerTextScroll'),
@@ -22516,7 +16880,7 @@ var FeatureControl = function (_UIElement) {
 
             var selectType = 'layer';
 
-            if (this.read(SELECTION_IS_LAYER$1) || this.read(SELECTION_IS_GROUP)) {
+            if (this.read(SELECTION_IS_LAYER) || this.read(SELECTION_IS_GROUP)) {
                 selectType = 'layer';
             } else if (this.read(SELECTION_IS_IMAGE)) {
                 selectType = 'image';
@@ -22532,6 +16896,19 @@ var FeatureControl = function (_UIElement) {
     }]);
     return FeatureControl;
 }(UIElement);
+
+var ITEM_MOVE_TO = 'item/move/to';
+var ITEM_MOVE_NEXT = 'item/move/next';
+var ITEM_MOVE_LAST = 'item/move/last';
+var ITEM_MOVE_FIRST = 'item/move/first';
+var ITEM_MOVE_IN = 'item/move/in';
+var ITEM_MOVE_IN_LAYER = 'item/move/in/layer';
+var ITEM_MOVE_PREV = 'item/move/prev';
+var ITEM_ADD_INDEX = 'item/add/index';
+var ITEM_NEXT_INDEX = 'item/next/index';
+var ITEM_PREV_INDEX = 'item/prev/index';
+var ITEM_MOVE_X = 'item/move/x';
+var ITEM_MOVE_Y = 'item/move/y';
 
 var ImageListView = function (_UIElement) {
     inherits(ImageListView, _UIElement);
@@ -23765,7 +18142,7 @@ var LayerAngle = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (!this.read(SELECTION_IS_LAYER$1)) return false;
+            if (!this.read(SELECTION_IS_LAYER)) return false;
 
             return this.config('guide.angle');
         }
@@ -23901,7 +18278,7 @@ var LayerAngle = function (_UIElement) {
     return LayerAngle;
 }(UIElement);
 
-var DEFINED_ANGLES$2 = {
+var DEFINED_ANGLES = {
     'to top': 0,
     'to top right': 45,
     'to right': 90,
@@ -23934,7 +18311,7 @@ var PredefinedLayerAngle = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            if (!this.read(SELECTION_IS_LAYER$1)) return false;
+            if (!this.read(SELECTION_IS_LAYER)) return false;
 
             return this.config('guide.angle');
         }
@@ -23944,7 +18321,7 @@ var PredefinedLayerAngle = function (_UIElement) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                var rotate = DEFINED_ANGLES$2[e.$delegateTarget.attr('data-value')];
+                var rotate = DEFINED_ANGLES[e.$delegateTarget.attr('data-value')];
                 _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
             });
         }
@@ -24016,7 +18393,7 @@ var SubFeatureControl = function (_UIElement) {
     }, {
         key: "isNotLayer",
         value: function isNotLayer() {
-            return this.read(SELECTION_IS_LAYER$1) == false;
+            return this.read(SELECTION_IS_LAYER) == false;
         }
     }, {
         key: "isNotPage",
@@ -24150,7 +18527,7 @@ var ColorView$2 = function () {
         if (isBoolean(opt)) {
             opt = { mode: 'edit' };
         } else {
-            opt = Object.assign({ mode: 'edit' }, opt || {});
+            opt = _extends({ mode: 'edit' }, opt || {});
         }
 
         this.opt = opt;
@@ -24577,6 +18954,9 @@ var ExportJSFiddleButton = function (_UIElement) {
     return ExportJSFiddleButton;
 }(UIElement);
 
+var EXPORT_GENERATE_CODE = 'export/generate/code';
+var EXPORT_CODEPEN_CODE = 'export/codepen/code';
+
 var ExportWindow = function (_UIElement) {
     inherits(ExportWindow, _UIElement);
 
@@ -24638,13 +19018,18 @@ var ExportWindow = function (_UIElement) {
     }, {
         key: "loadCode",
         value: function loadCode() {
-            var page = this.read(SELECTION_CURRENT_PAGE);
+            var _mapGetters = this.mapGetters(SELECTION_CURRENT_PAGE, EXPORT_GENERATE_CODE),
+                _mapGetters2 = slicedToArray(_mapGetters, 2),
+                current_page = _mapGetters2[0],
+                generate_code = _mapGetters2[1];
+
+            var page = current_page();
 
             if (!page) {
                 return EMPTY_STRING;
             }
 
-            var generateCode = this.read('export/generate/code');
+            var generateCode = generate_code();
 
             if (this.cmFullHtml) {
                 this.cmFullHtml.setValue(generateCode.fullhtml);
@@ -25059,17 +19444,9 @@ var PredefinedPageResizer = function (_UIElement) {
     }
 
     createClass(PredefinedPageResizer, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(PredefinedPageResizer.prototype.__proto__ || Object.getPrototypeOf(PredefinedPageResizer.prototype), 'initialize', this).call(this);
-
-            this.$board = this.parent.refs.$board;
-            this.$page = this.parent.refs.$page;
-        }
-    }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="predefined-page-resizer">\n                <button type="button" data-value="to right"></button>\n                <!--<button type="button" data-value="to left"></button>-->\n                <!--<button type="button" data-value="to top"></button>-->\n                <button type="button" data-value="to bottom"></button>\n                <!--<button type="button" data-value="to top right"></button>-->\n                <button type="button" data-value="to bottom right"></button>\n                <!--<button type="button" data-value="to bottom left"></button>-->\n                <!--<button type="button" data-value="to top left"></button>-->\n            </div>\n        ';
+            return '\n            <div class="predefined-page-resizer">\n                <button type="button" data-value="to right"></button>\n                <button type="button" data-value="to bottom"></button>\n                <button type="button" data-value="to bottom right"></button>\n            </div>\n        ';
         }
     }, {
         key: 'refresh',
@@ -25091,11 +19468,12 @@ var PredefinedPageResizer = function (_UIElement) {
             var width = page.width,
                 height = page.height;
 
+            var toolSize = this.config('tool.size');
 
-            var boardOffset = this.$board.offset();
-            var pageOffset = this.$page.offset();
-            var canvasScrollLeft = this.$board.scrollLeft();
-            var canvasScrollTop = this.$board.scrollTop();
+            var boardOffset = toolSize['board.offset'];
+            var pageOffset = toolSize['page.offset'];
+            var canvasScrollLeft = toolSize['board.scrollLeft'];
+            var canvasScrollTop = toolSize['board.scrollTop'];
 
             var x = pxUnit(pageOffset.left - boardOffset.left + canvasScrollLeft);
             var y = pxUnit(pageOffset.top - boardOffset.top + canvasScrollTop);
@@ -25113,7 +19491,7 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('selection/is/page');
+            return this.read(SELECTION_IS_PAGE);
         }
     }, {
         key: EVENT(CHANGE_PAGE_SIZE, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -25127,14 +19505,14 @@ var PredefinedPageResizer = function (_UIElement) {
             var style2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 
-            var style = Object.assign({}, style1, style2);
+            var style = _extends({}, style1, style2);
 
             Object.keys(style).forEach(function (key) {
                 style[key] = pxUnit(style[key]);
             });
 
             var page = this.read(SELECTION_CURRENT_PAGE);
-            page = Object.assign(page, style);
+            page = _extends({}, page, style);
             this.commit(CHANGE_PAGE_SIZE, page);
             this.refresh();
         }
@@ -25257,6 +19635,16 @@ var PredefinedPageResizer = function (_UIElement) {
     return PredefinedPageResizer;
 }(UIElement);
 
+var CSS_FILTERING = 'css/filtering';
+var CSS_SORTING = 'css/sorting';
+var CSS_TO_STRING = 'css/toString';
+var CSS_GENERATE = 'css/generate';
+
+var GUIDE_RECT_POINT = 'guide/rect/point';
+var GUIDE_COMPARE = 'guide/compare';
+var GUIDE_SNAP_LAYER = 'guide/snap/layer';
+var GUIDE_SNAP_CACULATE = 'guide/snap/caculate';
+
 var SNAP_GRID = 20;
 
 var PredefinedGroupLayerResizer = function (_UIElement) {
@@ -25268,15 +19656,6 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }
 
     createClass(PredefinedGroupLayerResizer, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(PredefinedGroupLayerResizer.prototype.__proto__ || Object.getPrototypeOf(PredefinedGroupLayerResizer.prototype), 'initialize', this).call(this);
-
-            this.$board = this.parent.refs.$board;
-            this.$canvas = this.parent.refs.$canvas;
-            this.$page = this.parent.refs.$page;
-        }
-    }, {
         key: 'template',
         value: function template() {
             return '<div class="predefined-group-resizer"></div>';
@@ -25291,7 +19670,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             if (!layers) return EMPTY_STRING;
 
-            if (Array.isArray(layers) == false) {
+            if (isArray(layers) == false) {
                 layers = [layers];
             }
 
@@ -25306,7 +19685,10 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
                     backgroundCSS = _this2.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
                 }
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TO_STRING, css) + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TO_STRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                    <!-- <button type=\'button\' data-value=\'' + SEGMENT_TYPE_ROTATE + '\'></button>         -->\n                    \n                    \n                </div> \n            ';
+
+                var title = 1 + item.index / 100 + '. ' + (item.name || 'Layer');
+
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TO_STRING, css) + '" title="' + title + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TO_STRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                </div> \n            ';
             });
         }
     }, {
@@ -25318,25 +19700,23 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 height = _ref.height,
                 id = _ref.id;
 
-            var boardOffset = this.boardOffset || this.$board.offset();
-            var pageOffset = this.pageOffset || this.$page.offset();
-            var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
-            var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
+            var toolSize = this.config('tool.size') || DEFAULT_TOOL_SIZE;
+            var boardOffset = toolSize['board.offset'];
+            var pageOffset = toolSize['page.offset'];
+            var canvasScrollLeft = toolSize['board.scrollLeft'];
+            var canvasScrollTop = toolSize['board.scrollTop'];
 
             x = pxUnit(unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft);
             y = pxUnit(unitValue(y) + pageOffset.top - boardOffset.top + canvasScrollTop);
 
-            x = stringUnit(x);
-            y = stringUnit(y);
+            var left = stringUnit(x);
+            var top = stringUnit(y);
             width = stringUnit(width);
             height = stringUnit(height);
 
-            var transform = "none";
+            // var transform = "none"; 
 
-            return _extends({
-                width: width, height: height,
-                left: x, top: y
-            }, transform);
+            return { width: width, height: height, left: left, top: top };
         }
     }, {
         key: 'refresh',
@@ -25455,7 +19835,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         key: 'caculateSnap',
         value: function caculateSnap(e) {
             // if (this.currentType == SEGMENT_TYPE_MOVE) {
-            this.run('guide/snap/caculate', 3, this.currentType);
+            this.run(GUIDE_SNAP_CACULATE, 3, this.currentType);
             // }
         }
     }, {
@@ -25659,11 +20039,6 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                     rotate: unitValue(it.rotate || 0)
                 };
             });
-
-            this.boardOffset = this.$board.offset();
-            this.pageOffset = this.$page.offset();
-            this.canvasScrollLeft = this.$board.scrollLeft();
-            this.canvasScrollTop = this.$board.scrollTop();
         }
     }, {
         key: POINTERMOVE('document') + CHECKER('isDownCheck'),
@@ -25690,12 +20065,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                     var tempX = moveX - moveX % SNAP_GRID;
                     var tempY = moveY - moveY % SNAP_GRID;
 
-                    // console.log({tempX, tempY})
-
                     this.dx = Math.floor(tempX / SNAP_GRID) * SNAP_GRID - this.layerX;
                     this.dy = Math.floor(tempY / SNAP_GRID) * SNAP_GRID - this.layerY;
-
-                    // console.log('dy', this.dx, 'dx', this.dy)                
                 }
             }
 
@@ -25731,7 +20102,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.moveY = null;
             this.rectItems = null;
             this.currentId = null;
-            this.run('tool/set', 'moving', false);
+            this.run(TOOL_SET, 'moving', false);
         }
     }, {
         key: RESIZE('window') + DEBOUNCE(300),
@@ -26519,15 +20890,6 @@ var LayerShapeEditor = function (_UIElement) {
     }
 
     createClass(LayerShapeEditor, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(LayerShapeEditor.prototype.__proto__ || Object.getPrototypeOf(LayerShapeEditor.prototype), 'initialize', this).call(this);
-
-            this.$board = this.parent.refs.$board;
-            this.$canvas = this.parent.refs.$canvas;
-            this.$page = this.parent.refs.$page;
-        }
-    }, {
         key: 'components',
         value: function components() {
             return shapeEditor;
@@ -26535,7 +20897,7 @@ var LayerShapeEditor = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layer-shape-editor">\n                <CircleEditor></CircleEditor>\n                <EllipseEditor></EllipseEditor>\n                <InsetEditor></InsetEditor>\n                <PolygonEditor></PolygonEditor>\n                <PathEditor></PathEditor>\n            </div>\n        ';
+            return '<div class="layer-shape-editor">\n            <CircleEditor></CircleEditor>\n            <EllipseEditor></EllipseEditor>\n            <InsetEditor></InsetEditor>\n            <PolygonEditor></PolygonEditor>\n            <PathEditor></PathEditor>\n        </div>';
         }
     }, {
         key: 'refresh',
@@ -26556,31 +20918,27 @@ var LayerShapeEditor = function (_UIElement) {
                 height = _ref.height,
                 id = _ref.id;
 
-            var boardOffset = this.boardOffset || this.$board.offset();
-            var pageOffset = this.pageOffset || this.$page.offset();
-            var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
-            var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
+            var toolSize = this.config('tool.size');
+            var boardOffset = this.boardOffset || toolSize['board.offset'];
+            var pageOffset = this.pageOffset || toolSize['page.offset'];
+            var canvasScrollLeft = this.canvasScrollLeft || toolSize['board.scrollLeft'];
+            var canvasScrollTop = this.canvasScrollTop || toolSize['board.scrollTop'];
 
             x = pxUnit(unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft);
             y = pxUnit(unitValue(y) + pageOffset.top - boardOffset.top + canvasScrollTop);
 
-            x = stringUnit(x);
-            y = stringUnit(y);
+            var left = stringUnit(x);
+            var top = stringUnit(y);
             width = stringUnit(width);
             height = stringUnit(height);
 
-            var transform = "none";
+            // var transform = "none"; 
 
-            if (id) {
-                transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
-            }
+            // if (id) {
+            //     // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
+            // }
 
-            return _extends({
-                width: width,
-                height: height,
-                left: x,
-                top: y
-            }, transform);
+            return { width: width, height: height, left: left, top: top };
         }
     }, {
         key: 'setPosition',
@@ -26588,14 +20946,14 @@ var LayerShapeEditor = function (_UIElement) {
             var item = this.read(SELECTION_CURRENT_LAYER);
 
             if (!item) return;
+            if (!item.showClipPathEditor) return;
 
             this.$el.css(this.setRectangle(item));
         }
     }, {
         key: 'isShow',
         value: function isShow() {
-            // console.log(this.read(SELECTION_CURRENT));
-            return this.read(SELECTION_IS_LAYER$1) || this.read(SELECTION_IS_IMAGE) || this.read(SELECTION_IS_BOXSHADOW) || this.read(SELECTION_IS_TEXTSHADOW);
+            return this.read(SELECTION_IS_LAYER) || this.read(SELECTION_IS_IMAGE) || this.read(SELECTION_IS_BOXSHADOW) || this.read(SELECTION_IS_TEXTSHADOW);
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -26615,31 +20973,23 @@ var MoveGuide = function (_UIElement) {
     }
 
     createClass(MoveGuide, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(MoveGuide.prototype.__proto__ || Object.getPrototypeOf(MoveGuide.prototype), 'initialize', this).call(this);
-
-            this.$board = this.parent.refs.$board;
-            this.$page = this.parent.refs.$page;
-        }
-    }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="move-guide">\n\n            </div>\n        ';
+            return '<div class="move-guide"></div>';
         }
     }, {
         key: LOAD(),
         value: function value() {
             var layer = this.read(SELECTION_CURRENT_LAYER);
             if (!layer) return [];
+            var toolSize = this.config('tool.size');
+            var list = this.read(GUIDE_SNAP_LAYER, 3);
 
-            var list = this.read('guide/snap/layer', 3);
+            var bo = toolSize['board.offset'];
+            var po = toolSize['page.offset'];
 
-            var bo = this.$board.offset();
-            var po = this.$page.offset();
-
-            var top = po.top - bo.top + this.$board.scrollTop();
-            var left = po.left - bo.left + this.$board.scrollLeft();
+            var top = po.top - bo.top + toolSize['board.scrollTop'];
+            var left = po.left - bo.left + toolSize['board.scrollLeft'];
 
             return list.map(function (axis) {
                 if (axis.type == GUIDE_TYPE_HORIZONTAL) {
@@ -26678,6 +21028,12 @@ var MoveGuide = function (_UIElement) {
     }]);
     return MoveGuide;
 }(UIElement);
+
+var PAGE_TO_STRING = 'page/toString';
+var PAGE_TO_CSS = 'page/toCSS';
+var PAGE_COLORVIEW_TO_CSS = 'page/colorview/toCSS';
+var PAGE_CACHE_TO_CSS = 'page/cache/toCSS';
+var PAGE_CACHE_TO_STRING = 'page/cache/toString';
 
 var GradientView = function (_UIElement) {
     inherits(GradientView, _UIElement);
@@ -26732,7 +21088,8 @@ var GradientView = function (_UIElement) {
 
             var list = this.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
                 var content = item.content || EMPTY_STRING;
-                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + (index + 1) + '. ' + (item.name || 'Layer') + '" \n                    style=\'' + _this2.read(LAYER_TO_STRING, item, true) + '\'>' + content + _this2.read(LAYER_TO_STRING_CLIPPATH, item) + '</div>';
+                var title = 1 + item.index / 100 + '. ' + (item.name || 'Layer');
+                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + title + '" \n                    style=\'' + _this2.read(LAYER_TO_STRING, item, true) + '\'>' + content + _this2.read(LAYER_TO_STRING_CLIPPATH, item) + '</div>';
             });
 
             return list;
@@ -26794,6 +21151,8 @@ var GradientView = function (_UIElement) {
 
                         _this4.layerItems[item.id] = $el;
                     }
+
+                    // this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
                     _this4.layerItems[item.id].css(_this4.read(LAYER_BOUND_TO_CSS, item));
                 });
@@ -26873,11 +21232,7 @@ var GradientView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_BORDER, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_LAYER_TEXT,
-        // CHANGE_LAYER_POSITION,
-        // CHANGE_LAYER_SIZE,
-        // CHANGE_LAYER_MOVE,    
-        CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_IMAGE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_COLOR_STEP),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_BORDER, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_LAYER_TEXT, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_IMAGE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_COLOR_STEP),
         value: function value$$1() {
             this.refreshLayer();
         }
@@ -26898,6 +21253,28 @@ var GradientView = function (_UIElement) {
         key: EVENT(CHANGE_TOOL),
         value: function value$$1() {
             this.refs.$colorview.toggleClass('showGrid', this.config('show.grid'));
+        }
+    }, {
+        key: 'updateToolSize',
+        value: function updateToolSize() {
+            this.initConfig('tool.size', {
+                'page.offset': this.refs.$page.offset(),
+                'board.offset': this.refs.$board.offset(),
+                'board.scrollTop': this.refs.$board.scrollTop(),
+                'board.scrollLeft': this.refs.$board.scrollLeft()
+            });
+
+            this.emit(CHANGE_TOOL_SIZE);
+        }
+    }, {
+        key: EVENT(RESIZE_WINDOW),
+        value: function value$$1() {
+            this.updateToolSize();
+        }
+    }, {
+        key: SCROLL('$board'),
+        value: function value$$1() {
+            this.updateToolSize();
         }
     }]);
     return GradientView;
@@ -26931,7 +21308,7 @@ var HandleView = function (_GradientView) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT).forEach(function (item) {
-                _this2.dispatch('matrix/move', Object.assign({ id: item.id }, obj));
+                _this2.dispatch('matrix/move', _extends({ id: item.id }, obj));
                 _this2.refreshLayer();
             });
         }
@@ -26940,7 +21317,7 @@ var HandleView = function (_GradientView) {
         value: function selectPageMode() {
 
             if (!this.dragArea) {
-                this.dispatch('selection/change', ITEM_TYPE_PAGE);
+                this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE);
             }
         }
     }, {
@@ -26956,7 +21333,7 @@ var HandleView = function (_GradientView) {
     }, {
         key: 'isPageMode',
         value: function isPageMode(e) {
-            if (this.read('selection/is/page')) {
+            if (this.read(SELECTION_IS_PAGE)) {
                 return true;
             }
 
@@ -26999,14 +21376,15 @@ var HandleView = function (_GradientView) {
             // if (!this.xy) return;         
             // this.refs.$page.addClass('moving');
             this.targetXY = e.xy;
+            var toolSize = this.config('tool.size');
 
             var width = Math.abs(this.targetXY.x - this.xy.x);
             var height = Math.abs(this.targetXY.y - this.xy.y);
 
-            var offset = this.refs.$board.offset();
+            var offset = toolSize['board.offset'];
 
-            var x = Math.min(this.targetXY.x, this.xy.x) + this.refs.$board.scrollLeft() - offset.left;
-            var y = Math.min(this.targetXY.y, this.xy.y) + this.refs.$board.scrollTop() - offset.top;
+            var x = Math.min(this.targetXY.x, this.xy.x) + toolSize['board.scrollLeft'] - offset.left;
+            var y = Math.min(this.targetXY.y, this.xy.y) + toolSize['board.scrollTop'] - offset.top;
             this.refs.$dragArea.cssText('position:absolute;left: ' + x + 'px;top: ' + y + 'px;width: ' + width + 'px;height:' + height + 'px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;');
 
             // console.log('c');
@@ -27017,11 +21395,11 @@ var HandleView = function (_GradientView) {
             var _this3 = this;
 
             this.isDown = false;
-
+            var toolSize = this.config('tool.size');
             var width = Math.abs(this.targetXY.x - this.xy.x);
             var height = Math.abs(this.targetXY.y - this.xy.y);
 
-            var po = this.refs.$page.offset();
+            var po = toolSize['page.offset'];
 
             var x = Math.min(this.targetXY.x, this.xy.x) - po.left;
             var y = Math.min(this.targetXY.y, this.xy.y) - po.top;
@@ -27040,13 +21418,13 @@ var HandleView = function (_GradientView) {
                 }
             }
 
-            this.dispatch('selection/area', area);
+            this.dispatch(SELECTION_AREA, area);
 
             this.updateSelection();
 
-            if (this.read(SELECTION_IS_LAYER$1)) {
+            if (this.read(SELECTION_IS_LAYER)) {
                 var items = this.read(SELECTION_CURRENT);
-                this.run(ITEM_FOCUS, items[0].id);
+                this.run(ITEM_FOCUS, items[0]);
             }
 
             this.targetXY = null;
@@ -27187,6 +21565,30 @@ var Undo = function (_MenuItem) {
     }]);
     return Undo;
 }(MenuItem);
+
+var STORAGE_GET = 'storage/get';
+var STORAGE_SET = 'storage/set';
+var STORAGE_PAGES = 'storage/pages';
+var STORAGE_LAYERS = 'storage/layers';
+var STORAGE_IMAGES = 'storage/images';
+var STORAGE_UNSHIFT_LAYER = 'storage/unshift/layer';
+
+var STORAGE_REMOVE_LAYER = 'storage/remove/layer';
+var STORAGE_REMOVE_PAGE = 'storage/remove/page';
+var STORAGE_UNSHIFT_PAGE = 'storage/unshift/page';
+var STORAGE_ADD_PAGE = 'storage/add/page';
+var STORAGE_ADD_LAYER = 'storage/add/layer';
+var STORAGE_ADD_IMAGE = 'storage/add/image';
+var STORAGE_DELETE_PAGE = 'storage/delete/page';
+var STORAGE_DELETE_IMAGE = 'storage/delete/image';
+var STORAGE_SAVE = 'storage/save';
+var STORAGE_SAVE_LAYER = 'storage/save/layer';
+var STORAGE_SAVE_PAGE = 'storage/save/page';
+var STORAGE_SAVE_IMAGE = 'storage/save/image';
+var STORAGE_LOAD_LAYER = 'storage/load/layer';
+var STORAGE_LOAD_PAGE = 'storage/load/page';
+var STORAGE_LOAD_IMAGE = 'storage/load/image';
+var STORAGE_LOAD = 'storage/load';
 
 var Save = function (_MenuItem) {
     inherits(Save, _MenuItem);
@@ -27452,7 +21854,7 @@ var ShowClipPath = function (_MenuItem) {
     }, {
         key: "isShow",
         value: function isShow() {
-            return this.read(SELECTION_IS_LAYER$1);
+            return this.read(SELECTION_IS_LAYER);
         }
     }, {
         key: "refresh",
@@ -27539,6 +21941,18 @@ var BasicGradient = function (_UIElement) {
     return BasicGradient;
 }(UIElement);
 
+var COLLECT_COLORSTEPS = 'collect/colorsteps';
+var COLLECT_ONE = 'collect/one';
+var COLLECT_IMAGE_ONE = 'collect/image/one';
+var COLLECT_BOXSHADOW_ONE = 'collect/boxshadow/one';
+var COLLECT_TEXTSHADOW_ONE = 'collect/textshadow/one';
+var COLLECT_IMAGES = 'collect/images';
+var COLLECT_BOXSHADOWS = 'collect/boxshadows';
+var COLLECT_TEXTSHADOWS = 'collect/textshadows';
+var COLLECT_LAYER_ONE = 'collect/layer/one';
+var COLLECT_LAYERS = 'collect/layers';
+var COLLECT_PAGE_ONE = 'collect/page/one';
+
 var GradientSampleList = function (_UIElement) {
     inherits(GradientSampleList, _UIElement);
 
@@ -27567,12 +21981,12 @@ var GradientSampleList = function (_UIElement) {
             var _this2 = this;
 
             var list = this.list.map(function (item, index) {
-                var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
+                var newImage = _extends({}, item.image, { colorsteps: item.colorsteps });
                 return "\n            <div class='gradient-sample-item' data-index=\"" + index + "\">\n                <div class='preview' style='" + _this2.read(IMAGE_TO_STRING, newImage) + "'></div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>                \n                    <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                </div>          \n            </div>";
             });
 
             var storageList = this.read(STORAGE_IMAGES).map(function (item, index) {
-                var newImage = Object.assign({}, item.image, { colorsteps: item.colorsteps });
+                var newImage = _extends({}, item.image, { colorsteps: item.colorsteps });
                 return "\n                <div class='gradient-cached-item' data-index=\"" + index + "\">\n                    <div class='preview' style='" + _this2.read(IMAGE_TO_STRING, newImage) + "'></div>                \n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='change-item'  data-index=\"" + index + "\" title=\"Change\"></button>\n                    </div>          \n                </div>\n            ";
             });
 
@@ -27580,7 +21994,7 @@ var GradientSampleList = function (_UIElement) {
 
             var emptyCount = 5 - results.length % 5;
 
-            var arr = [].concat(toConsumableArray(Array(emptyCount)));
+            var arr = repeat$1(emptyCount);
 
             arr.forEach(function (it) {
                 results.push("<div class='empty'></div>");
@@ -27617,7 +22031,7 @@ var GradientSampleList = function (_UIElement) {
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
             var image = this.read(STORAGE_IMAGES, index);
-            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
+            var newImage = _extends({}, image.image, { colorsteps: image.colorsteps });
 
             this.dispatch('gradient/image/add', this.read(ITEM_CONVERT_STYLE, newImage));
         }
@@ -27626,7 +22040,7 @@ var GradientSampleList = function (_UIElement) {
         value: function value(e) {
             var index = +e.$delegateTarget.attr('data-index');
             var image = this.read(STORAGE_IMAGES, index);
-            var newImage = Object.assign({}, image.image, { colorsteps: image.colorsteps });
+            var newImage = _extends({}, image.image, { colorsteps: image.colorsteps });
 
             this.dispatch('gradient/image/select', this.read(ITEM_CONVERT_STYLE, newImage));
         }
@@ -27645,6 +22059,18 @@ var GradientSampleList = function (_UIElement) {
     }]);
     return GradientSampleList;
 }(UIElement);
+
+var ITEM_RECOVER = 'item/recover';
+var ITEM_RECOVER_IMAGE = 'item/recover/image';
+var ITEM_RECOVER_COLORSTEP = 'item/recover/colorstep';
+var ITEM_RECOVER_BOXSHADOW = 'item/recover/boxshadow';
+var ITEM_RECOVER_TEXTSHADOW = 'item/recover/textshadow';
+var ITEM_RECOVER_LAYER = 'item/recover/layer';
+var ITEM_RECOVER_PAGE = 'item/recover/page';
+var ITEM_ADD_CACHE = 'item/addCache';
+var ITEM_ADD_COPY = 'item/addCopy';
+var ITEM_COPY_IN = 'item/copy/in';
+var ITEM_COPY_IN_LAYER = 'item/copy/in/layer';
 
 var LayerSampleList = function (_UIElement) {
     inherits(LayerSampleList, _UIElement);
@@ -27671,11 +22097,14 @@ var LayerSampleList = function (_UIElement) {
     }, {
         key: LOAD('$cachedList'),
         value: function value$$1() {
-            var _this2 = this;
+            var _mapGetters = this.mapGetters(LAYER_CACHE_TO_STRING, STORAGE_LAYERS),
+                _mapGetters2 = slicedToArray(_mapGetters, 2),
+                cache_to_string = _mapGetters2[0],
+                storage_layers = _mapGetters2[1];
 
             var list = this.list.map(function (item, index) {
 
-                var data = _this2.read(LAYER_CACHE_TO_STRING, item);
+                var data = cache_to_string(item);
 
                 var rateX = 60 / unitValue(data.obj.width);
                 var rateY = 62 / unitValue(data.obj.height);
@@ -27685,8 +22114,8 @@ var LayerSampleList = function (_UIElement) {
                 return "\n            <div class='layer-sample-item'  data-sample-id=\"" + item.id + "\">\n                <div class=\"layer-view\" style=\"" + data.css + "; " + transform + "\"></div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>          \n            </div>";
             });
 
-            var storageList = this.read(STORAGE_LAYERS).map(function (item) {
-                var data = _this2.read(LAYER_CACHE_TO_STRING, item);
+            var storageList = storage_layers().map(function (item) {
+                var data = cache_to_string(item);
 
                 var rateX = 60 / unitValue(item.layer.width);
                 var rateY = 62 / unitValue(item.layer.height);
@@ -27702,7 +22131,7 @@ var LayerSampleList = function (_UIElement) {
 
             var emptyCount = 5 - results.length % 5;
 
-            var arr = [].concat(toConsumableArray(Array(emptyCount)));
+            var arr = repeat(emptyCount);
 
             arr.forEach(function (it) {
                 results.push("<div class='empty'></div>");
@@ -27723,7 +22152,7 @@ var LayerSampleList = function (_UIElement) {
     }, {
         key: CLICK('$el .layer-sample-item .add-item'),
         value: function value$$1(e) {
-            var _this3 = this;
+            var _this2 = this;
 
             var index = +e.$delegateTarget.attr('data-index');
 
@@ -27731,20 +22160,20 @@ var LayerSampleList = function (_UIElement) {
 
             if (newLayer) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    _this3.dispatch(ITEM_ADD_CACHE, newLayer, layer.id);
+                    _this2.dispatch(ITEM_ADD_CACHE, newLayer, layer.id);
                 });
             }
         }
     }, {
         key: CLICK('$el .layer-cached-item .add-item'),
         value: function value$$1(e) {
-            var _this4 = this;
+            var _this3 = this;
 
             var newLayer = this.read(STORAGE_LAYERS, e.$delegateTarget.attr('data-sample-id'));
 
             if (newLayer) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    _this4.dispatch(ITEM_ADD_CACHE, newLayer, layer.id);
+                    _this3.dispatch(ITEM_ADD_CACHE, newLayer, layer.id);
                 });
             }
         }
@@ -27757,18 +22186,26 @@ var LayerSampleList = function (_UIElement) {
     }, {
         key: CLICK('$el .add-current-layer'),
         value: function value$$1(e) {
-            var _this5 = this;
+            var _this4 = this;
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                var newLayer = _this5.read(COLLECT_LAYER_ONE, layer.id);
+                var newLayer = _this4.read(COLLECT_LAYER_ONE, layer.id);
 
-                _this5.dispatch(STORAGE_ADD_LAYER, newLayer);
-                _this5.refresh();
+                _this4.dispatch(STORAGE_ADD_LAYER, newLayer);
+                _this4.refresh();
             });
         }
     }]);
     return LayerSampleList;
 }(UIElement);
+
+var SHAPE_LIST = 'shape/list';
+var SHAPE_GET = 'shape/get';
+
+
+var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
+
+var _templateObject$11 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
 
 var ShapeListView = function (_UIElement) {
     inherits(ShapeListView, _UIElement);
@@ -27783,13 +22220,13 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return "\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    " + this.read(SHAPE_LIST).map(function (key) {
+            return html(_templateObject$11, this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
-            }).join(EMPTY_STRING) + "\n                </div>\n            </div>\n        ";
+            }));
         }
     }, {
         key: CLICK('$shapeList .add-layer'),
-        value: function value$$1(e) {
+        value: function value(e) {
             var _this3 = this;
 
             var $button = e.$delegateTarget;
@@ -27803,6 +22240,9 @@ var ShapeListView = function (_UIElement) {
     }]);
     return ShapeListView;
 }(UIElement);
+
+var _templateObject$12 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject2$1 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
     inherits(PageSampleList, _UIElement);
@@ -27824,7 +22264,7 @@ var PageSampleList = function (_UIElement) {
         key: "template",
         value: function template() {
 
-            return "\n        <div class=\"page-sample-list\">\n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
+            return "<div class=\"page-sample-list\"><div class='cached-list' ref=\"$cachedList\"></div></div>";
         }
     }, {
         key: LOAD('$cachedList'),
@@ -27839,10 +22279,10 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
-                return "\n            <div class='page-sample-item'  data-sample-id=\"" + page.id + "\">\n                <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                " + page.layers.map(function (layer) {
+                return html(_templateObject$12, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
-                    return "\n                        <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                    ";
-                }).join(EMPTY_STRING) + "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"" + index + "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>";
+                    return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
+                }), index);
             });
 
             var storageList = this.read(STORAGE_PAGES).map(function (page) {
@@ -27856,17 +22296,17 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
 
-                return "\n                <div class='page-cached-item' data-sample-id=\"" + page.id + "\">\n                    <div class=\"page-view\" style=\"" + data.css + "; " + transform + "\">\n                    " + page.layers.map(function (layer) {
+                return html(_templateObject2$1, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
-                    return "\n                            <div class=\"layer-view\" style=\"" + data.css + "\"></div>\n                        ";
-                }).join(EMPTY_STRING) + "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"" + page.id + "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"" + page.id + "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            ";
+                    return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
+                }), page.id, page.id);
             });
 
             var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-page\" title=\"Cache a page\">+</button>"]);
 
             var emptyCount = 5 - results.length % 5;
 
-            var arr = [].concat(toConsumableArray(Array(emptyCount)));
+            var arr = repeat(emptyCount);
 
             arr.forEach(function (it) {
                 results.push("<div class='empty'></div>");
@@ -27951,7 +22391,7 @@ var PageListView = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='pages'>         \n                <div class=\"page-list\" ref=\"$pageList\">\n                \n                </div>\n                <PageSampleList></PageSampleList>\n            </div>\n        ";
+            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n            <PageSampleList></PageSampleList>\n        </div>";
         }
     }, {
         key: "makeItemNode",
@@ -27972,7 +22412,7 @@ var PageListView = function (_UIElement) {
         key: "makeItemNodePage",
         value: function makeItemNodePage(item, index, selectedId) {
             var selected = item.id == selectedId ? 'selected' : EMPTY_STRING;
-            return "\n            <div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n                <div class=\"item-preview\"></div>\n                <div class=\"item-title\">\n                    " + (item.name || "Project " + (index + 1)) + "\n                </div>   \n            </div>\n            ";
+            return "<div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n            <div class=\"item-preview\"></div>\n            <div class=\"item-title\">" + (item.name || "Project " + (index + 1)) + "</div>   \n        </div>";
         }
     }, {
         key: LOAD('$pageList'),
@@ -28031,6 +22471,8 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
+var _templateObject$13 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
 
@@ -28042,7 +22484,7 @@ var LayerListView = function (_UIElement) {
     createClass(LayerListView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='layers show-mini-view'>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+            return "<div class='layers show-mini-view'><div class=\"layer-list\" ref=\"$layerList\"></div></div>";
         }
     }, {
         key: "makeItemNode",
@@ -28057,7 +22499,7 @@ var LayerListView = function (_UIElement) {
         key: "makeItemNodeImage",
         value: function makeItemNodeImage(item) {
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return "\n            <div class='tree-item image " + selected + "' id=\"" + item.id + "\" draggable=\"true\" >\n                <div class=\"item-title\"> \n                    &lt;" + item.type + "&gt;\n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                </div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='copy-image-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>            \n            </div>\n            ";
+            return "\n            <div class='tree-item image " + selected + "' id=\"" + item.id + "\" draggable=\"true\" >\n                <div class=\"item-title\">&lt;" + item.type + "&gt;</div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item " + (item.visible ? 'visible' : '') + "' item-id='" + item.id + "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-image-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>            \n            </div>\n            ";
         }
     }, {
         key: "makeItemNodeLayer",
@@ -28067,9 +22509,9 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return "\n            <div class='tree-item " + selected + "' id=\"" + item.id + "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> \n                    " + (index + 1) + ". " + (item.name || "Layer ") + " \n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                </div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='copy-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>                            \n            </div>\n            <div class=\"gradient-list-group\" >\n                <!-- <div class='gradient-collapse-button' item-id=\"" + item.id + "\"></div> -->\n                <div class=\"tree-item-children\">\n                    " + this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$13, selected, item.id, index + 1, item.name || "Layer ", item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
-            }).join(EMPTY_STRING) + "\n                </div>\n            </div>       \n            ";
+            }));
         }
     }, {
         key: LOAD('$layerList'),
@@ -28208,18 +22650,15 @@ var LayerListView = function (_UIElement) {
             this.refresh();
         }
     }, {
+        key: CLICK('$layerList .visible-item'),
+        value: function value$$1(e) {
+            e.$delegateTarget.toggleClass('visible');
+            this.dispatch(ITEM_TOGGLE_VISIBLE, e.$delegateTarget.attr('item-id'));
+        }
+    }, {
         key: CLICK('$viewSample'),
         value: function value$$1(e) {
             this.emit('toggleLayerSampleView');
-        }
-    }, {
-        key: CLICK('$layerList .gradient-collapse-button') + SELF,
-        value: function value$$1(e) {
-            e.$delegateTarget.parent().toggleClass('collapsed');
-            var item = this.read(ITEM_GET, e.$delegateTarget.attr('item-id'));
-
-            item.gradientCollapsed = e.$delegateTarget.parent().hasClass('collapsed');
-            this.run(ITEM_SET, item);
         }
     }]);
     return LayerListView;
@@ -28324,6 +22763,12 @@ var Alignment = function (_UIElement) {
     return Alignment;
 }(UIElement);
 
+var HOTKEY_EXISTS = 'hotkey/exists';
+var HOTKEY_RUN = 'hotkey/run';
+
+var HOTKEY_EXECUTE = 'hotkey/execute';
+var HOTKEY_EXCLUDE = 'hotkey/exclude';
+
 var HotKey = function (_UIElement) {
     inherits(HotKey, _UIElement);
 
@@ -28341,8 +22786,10 @@ var HotKey = function (_UIElement) {
     return HotKey;
 }(UIElement);
 
-var CSSEditor$1 = function (_BaseCSSEditor) {
-    inherits(CSSEditor, _BaseCSSEditor);
+var LOAD_START = 'load/start';
+
+var CSSEditor$1 = function (_UIElement) {
+    inherits(CSSEditor, _UIElement);
 
     function CSSEditor() {
         classCallCheck(this, CSSEditor);
@@ -28355,6 +22802,7 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
             var _this2 = this;
 
             setTimeout(function () {
+                _this2.emit(RESIZE_WINDOW);
                 _this2.emit(CHANGE_EDITOR);
             }, 100);
         }
@@ -28417,8 +22865,8 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
 
         }
     }, {
-        key: 'loadStart',
-        value: function loadStart(isAdd) {
+        key: EVENT(LOAD_START),
+        value: function value(isAdd) {
             var _this3 = this;
 
             this.dispatch(STORAGE_LOAD, function (isLoaded) {
@@ -28436,15 +22884,6 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
             this.$el.toggleClass('show-timeline');
         }
     }, {
-        key: EVENT('updateLayout'),
-        value: function value(layout) {
-            // screenModes.filter(key => key != layout).forEach(key => {
-            //     this.refs.$layoutMain.removeClass(`${key}-mode`)
-            // })
-
-            // this.refs.$layoutMain.addClass(`${layout}-mode`)
-        }
-    }, {
         key: EVENT('togglePagePanel'),
         value: function value() {
             this.$el.toggleClass('has-page-panel');
@@ -28454,9 +22893,6045 @@ var CSSEditor$1 = function (_BaseCSSEditor) {
         value: function value() {
             this.$el.toggleClass('has-layer-panel');
         }
+    }, {
+        key: RESIZE('window'),
+        value: function value(e) {
+            this.emit(RESIZE_WINDOW);
+        }
     }]);
     return CSSEditor;
-}(BaseCSSEditor);
+}(UIElement);
+
+var INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP;
+
+var ColorStepManager = function (_BaseModule) {
+    inherits(ColorStepManager, _BaseModule);
+
+    function ColorStepManager() {
+        classCallCheck(this, ColorStepManager);
+        return possibleConstructorReturn(this, (ColorStepManager.__proto__ || Object.getPrototypeOf(ColorStepManager)).apply(this, arguments));
+    }
+
+    createClass(ColorStepManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(ColorStepManager.prototype.__proto__ || Object.getPrototypeOf(ColorStepManager.prototype), "initialize", this).call(this);
+
+            this.$store.step = {
+                width: 400
+            };
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: GETTER(COLORSTEP_COLOR_SOURCE),
+        value: function value$$1($store) {
+            return INIT_COLOR_SOURCE;
+        }
+    }, {
+        key: GETTER(COLORSTEP_CURRENT),
+        value: function value$$1($store, index) {
+            if (!isUndefined(index)) {
+                return $store.read(COLORSTEP_LIST)[index] || $store.read(ITEM_CREATE_COLORSTEP);
+            } else {
+                return $store.read(COLORSTEP_LIST).filter(function (item) {
+                    return !!item.selected;
+                })[0];
+            }
+        }
+    }, {
+        key: ACTION(COLORSTEP_INIT_COLOR),
+        value: function value$$1($store, color$$1) {
+            $store.run(TOOL_SET_COLOR_SOURCE, INIT_COLOR_SOURCE);
+            $store.run(TOOL_CHANGE_COLOR, color$$1);
+        }
+    }, {
+        key: ACTION(COLORSTEP_ADD),
+        value: function value$$1($store, item, percent$$1) {
+
+            var list = $store.read(ITEM_LIST_CHILDREN, item.id);
+
+            if (!list.length) {
+
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
+
+                $store.run(ITEM_SET, item);
+                return;
+            }
+
+            var colorsteps = list.map(function (id) {
+                return $store.items[id];
+            });
+
+            if (percent$$1 < colorsteps[0].percent) {
+
+                colorsteps[0].index = 1;
+
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent$$1 });
+                $store.run(ITEM_SET, colorsteps[0]);
+                $store.run(ITEM_SET, item);
+                return;
+            }
+
+            if (colorsteps[colorsteps.length - 1].percent < percent$$1) {
+                var color$$1 = colorsteps[colorsteps.length - 1].color;
+                var index = colorsteps[colorsteps.length - 1].index;
+
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: index + 1, color: color$$1, percent: percent$$1 });
+                $store.run(ITEM_SET, item);
+                return;
+            }
+
+            for (var i = 0, len = colorsteps.length - 1; i < len; i++) {
+                var step = colorsteps[i];
+                var nextStep = colorsteps[i + 1];
+
+                if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
+                    var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
+
+                    $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: step.index + 1, color: color$$1, percent: percent$$1 });
+                    $store.run(ITEM_SET, item);
+                    return;
+                }
+            }
+        }
+    }, {
+        key: ACTION(COLORSTEP_REMOVE),
+        value: function value$$1($store, id) {
+            $store.run(ITEM_REMOVE, id);
+        }
+    }, {
+        key: ACTION(COLORSTEP_SORT),
+        value: function value$$1($store, id, sortedList) {
+
+            sortedList.forEach(function (stepId, index) {
+                var item = $store.read(ITEM_GET, stepId);
+                item.index = index * 100;
+
+                $store.run(ITEM_SET, item);
+            });
+
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: GETTER(COLORSTEP_SORT_LIST),
+        value: function value$$1($store, parentId) {
+            var colorsteps = $store.read(ITEM_MAP_CHILDREN, parentId);
+
+            colorsteps.sort(function (a, b) {
+                if (a.index == b.index) return 0;
+                return a.index > b.index ? 1 : -1;
+            });
+
+            return colorsteps;
+        }
+
+        // 이미지 리스트 얻어오기 
+
+    }, {
+        key: GETTER(COLORSTEP_LIST),
+        value: function value$$1($store) {
+            var image = $store.read(SELECTION_CURRENT_IMAGE$1);
+
+            if (image) {
+                return $store.read(COLORSTEP_SORT_LIST, image.id);
+            }
+
+            return [];
+        }
+    }, {
+        key: GETTER(COLORSTEP_CURRENT_INDEX),
+        value: function value$$1($store, index) {
+            if (isUndefined(index)) {
+                return $store.read(COLORSTEP_LIST).map(function (step, index) {
+                    return { step: step, index: index };
+                }).filter(function (item) {
+                    return !!item.step.selected;
+                })[0].index;
+            } else {
+                return index;
+            }
+        }
+    }, {
+        key: ACTION(COLORSTEP_CUT_OFF),
+        value: function value$$1($store, id) {
+            var list = [];
+            if (isUndefined(id)) {
+                list = $store.read(COLORSTEP_LIST);
+            } else {
+                list = [$store.read(ITEM_GET, id)];
+            }
+            list.forEach(function (item) {
+                item.cut = false;
+                $store.run(ITEM_SET, item);
+            });
+        }
+    }, {
+        key: ACTION(COLORSTEP_CUT_ON),
+        value: function value$$1($store, id) {
+            var list = [];
+            if (isUndefined(id)) {
+                list = $store.read(COLORSTEP_LIST);
+            } else {
+                list = [$store.read(ITEM_GET, id)];
+            }
+            list.forEach(function (item) {
+                item.cut = true;
+                $store.run(ITEM_SET, item);
+            });
+        }
+    }, {
+        key: "getMaxValue",
+        value: function getMaxValue() {
+            return this.$store.step.width;
+        }
+    }, {
+        key: "getUnitValue",
+        value: function getUnitValue(step, maxValue) {
+
+            if (isPX(step.unit)) {
+                if (isUndefined(step.px)) {
+                    step.px = percent2px(step.percent, maxValue);
+                }
+
+                return {
+                    px: step.px,
+                    percent: px2percent(step.px, maxValue),
+                    em: px2em(step.px, maxValue)
+                };
+            } else if (isEM(step.unit)) {
+                if (isUndefined(step.em)) {
+                    step.em = percent2em(step.percent, maxValue);
+                }
+                return {
+                    em: step.em,
+                    percent: em2percent(step.em, maxValue),
+                    px: em2px(step.em, maxValue)
+                };
+            }
+
+            return {
+                percent: step.percent,
+                px: percent2px(step.percent, maxValue),
+                em: percent2em(step.percent, maxValue)
+            };
+        }
+    }, {
+        key: GETTER(COLORSTEP_UNIT_VALUE),
+        value: function value$$1($store, step, maxValue) {
+            return this.getUnitValue(step, +defaultValue(maxValue, this.getMaxValue()));
+        }
+    }, {
+        key: ACTION(COLORSTEP_ORDERING_EQUALS),
+        value: function value$$1($store) {
+            var _this2 = this;
+
+            var firstIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var lastIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Number.MAX_SAFE_INTEGER;
+
+
+            var list = $store.read(COLORSTEP_LIST).map(function (step) {
+                return _extends({}, step, $store.read(COLORSTEP_UNIT_VALUE, step, _this2.getMaxValue()));
+            });
+
+            if (lastIndex > list.length - 1) {
+                lastIndex = list.length - 1;
+            }
+
+            var count = lastIndex - firstIndex;
+            var dist = (list[lastIndex].px - list[firstIndex].px) / count;
+
+            var firstValue = list[firstIndex].px;
+            for (var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
+                var step = list[i];
+                step.px = firstValue + start * dist;
+                step.percent = px2percent(step.px, this.getMaxValue());
+                step.em = px2em(step.px, this.getMaxValue());
+                $store.run(ITEM_SET, step);
+            }
+        }
+    }, {
+        key: ACTION(COLORSTEP_ORDERING_EQUALS_LEFT),
+        value: function value$$1($store) {
+            $store.run(COLORSTEP_ORDERING_EQUALS, 0, $store.read(COLORSTEP_CURRENT_INDEX));
+        }
+    }, {
+        key: ACTION(COLORSTEP_ORDERING_EQUALS_RIGHT),
+        value: function value$$1($store) {
+            $store.run(COLORSTEP_ORDERING_EQUALS, $store.read(COLORSTEP_CURRENT_INDEX));
+        }
+    }]);
+    return ColorStepManager;
+}(BaseModule);
+
+var _DEFINED_POSITIONS;
+
+var DEFINED_ANGLES$1 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var DEFINED_DIRECTIONS = {
+    '0': 'to top',
+    '45': 'to top right',
+    '90': 'to right',
+    '135': 'to bottom right',
+    '180': 'to bottom',
+    '225': 'to bottom left',
+    '270': 'to left',
+    '315': 'to top left'
+};
+
+var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITIONS, POSITION_CENTER, true), defineProperty(_DEFINED_POSITIONS, POSITION_TOP, true), defineProperty(_DEFINED_POSITIONS, POSITION_LEFT, true), defineProperty(_DEFINED_POSITIONS, POSITION_RIGHT, true), defineProperty(_DEFINED_POSITIONS, POSITION_BOTTOM, true), _DEFINED_POSITIONS);
+
+var IMAGE_LIST = [IMAGE_FILE_TYPE_JPG, IMAGE_FILE_TYPE_PNG, IMAGE_FILE_TYPE_GIF, IMAGE_FILE_TYPE_SVG];
+
+var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
+var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
+var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
+var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
+
+var ImageManager = function (_BaseModule) {
+    inherits(ImageManager, _BaseModule);
+
+    function ImageManager() {
+        classCallCheck(this, ImageManager);
+        return possibleConstructorReturn(this, (ImageManager.__proto__ || Object.getPrototypeOf(ImageManager)).apply(this, arguments));
+    }
+
+    createClass(ImageManager, [{
+        key: GETTER(IMAGE_GET_FILE),
+        value: function value$$1($store, files, callback) {
+            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
+
+            (files || []).forEach(function (file) {
+                var fileType = file.name.split('.').pop();
+                if (IMAGE_LIST.includes(fileType)) {
+
+                    if (isFunction(callback)) {
+                        new ImageLoader(file).getImage(function (image) {
+
+                            ImageToRGB(file, { maxWidth: 100 }, function (results) {
+                                callback({
+                                    datauri: image.src, // export 용 
+                                    colors: palette(results, colorCount),
+                                    url: URL.createObjectURL(file), // 화면 제어용 
+                                    fileType: fileType
+                                });
+                            });
+                        });
+                    }
+                }
+            });
+        }
+    }, {
+        key: GETTER(IMAGE_GET_URL),
+        value: function value$$1($store, urls, callback) {
+            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
+
+            (urls || []).forEach(function (url) {
+                var fileType = url.split('.').pop();
+                if (IMAGE_LIST.includes(fileType)) {
+
+                    if (isFunction(callback)) {
+                        ImageToRGB(url, { maxWidth: 100 }, function (results) {
+                            callback({
+                                colors: palette(results, colorCount),
+                                url: url,
+                                fileType: fileType
+                            });
+                        });
+                    }
+                }
+            });
+        }
+    }, {
+        key: GETTER(IMAGE_GET_BLOB),
+        value: function value$$1($store, blobs, callback) {
+            (blobs || []).forEach(function (file) {
+                if (isFunction(callback)) {
+                    new ImageLoader(file, {
+                        forceDataURI: true
+                    }).getImage(function (image) {
+                        var url = file;
+                        var svg = EMPY;
+                        var svgContent = image.src.split('data:image/svg+xml;charset=utf-8;base64,');
+
+                        if (svgContent.length > 1) {
+                            svg = atob(svgContent[1]);
+                        }
+
+                        if (url instanceof Blob) {
+                            url = URL.createObjectURL(file);
+                        }
+
+                        callback({
+                            datauri: image.src, // export 용 
+                            url: url // 화면 제어용 
+                        });
+                    });
+                }
+            });
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_GRADIENT),
+        value: function value$$1($store, type) {
+            return $store.read(IMAGE_TYPE_IS_LINEAR, type) || $store.read(IMAGE_TYPE_IS_RADIAL, type) || $store.read(IMAGE_TYPE_IS_CONIC, type);
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_NOT_GRADIENT),
+        value: function value$$1($store, type) {
+            return $store.read(IMAGE_TYPE_IS_GRADIENT, type) == false;
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_LINEAR),
+        value: function value$$1($store, type) {
+            return LINEAR_GRADIENT_LIST.includes(type);
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_RADIAL),
+        value: function value$$1($store, type) {
+            return RADIAL_GRADIENT_LIST.includes(type);
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_CONIC),
+        value: function value$$1($store, type) {
+            return CONIC_GRADIENT_LIST.includes(type);
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_IMAGE),
+        value: function value$$1($store, type) {
+            return IMAGE_GRADIENT_LIST.includes(type);
+        }
+    }, {
+        key: GETTER(IMAGE_TYPE_IS_STATIC),
+        value: function value$$1($store, type) {
+            return STATIC_GRADIENT_LIST.includes(type);
+        }
+    }, {
+        key: GETTER(IMAGE_ANGLE),
+        value: function value$$1($store) {
+            var angle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+
+            return isUndefined(DEFINED_ANGLES$1[angle]) ? angle : DEFINED_ANGLES$1[angle] || 0;
+        }
+    }, {
+        key: GETTER(IMAGE_RADIAL_POSITION),
+        value: function value$$1($store) {
+            var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+
+            return position; //|| $store.read('image/get', 'radialPosition');
+        }
+    }, {
+        key: GETTER(IMAGE_BACKGROUND_SIZE_TO_CSS),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image, isExport);
+            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image, isExport);
+            if (backgroundSize) {
+                results['background-size'] = backgroundSize;
+            }
+
+            if (backgroundPosition) {
+                results['background-position'] = backgroundPosition;
+            }
+            results['background-image'] = 'linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))';
+            results['background-repeat'] = 'no-repeat';
+
+            return results;
+        }
+    }, {
+        key: GETTER(IMAGE_TO_CSS),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image, isExport);
+            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image, isExport);
+            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image, isExport);
+            var backgroundRepeat = $store.read(IMAGE_TO_BACKGROUND_REPEAT_STRING, image, isExport);
+            var backgroundBlendMode = $store.read(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, image, isExport);
+
+            if (backgroundImage) {
+                results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
+            }
+
+            if (backgroundSize) {
+                results['background-size'] = backgroundSize;
+            }
+
+            if (backgroundPosition) {
+                results['background-position'] = backgroundPosition;
+            }
+
+            if (backgroundRepeat) {
+                results['background-repeat'] = backgroundRepeat;
+            }
+
+            if (backgroundBlendMode) {
+                results['background-blend-mode'] = backgroundBlendMode;
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER(IMAGE_CACHE_TO_CSS),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var image = _extends({}, item.image, { colorsteps: item.colorsteps });
+
+            var results = {};
+            var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image);
+            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image);
+            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image);
+            var backgroundRepeat = $store.read(IMAGE_TO_BACKGROUND_REPEAT_STRING, image);
+            var backgroundBlendMode = $store.read(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, image);
+
+            if (backgroundImage) {
+                results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
+            }
+
+            if (backgroundSize) {
+                results['background-size'] = backgroundSize;
+            }
+
+            if (backgroundPosition) {
+                results['background-position'] = backgroundPosition;
+            }
+
+            if (backgroundRepeat) {
+                results['background-repeat'] = backgroundRepeat;
+            }
+
+            if (backgroundBlendMode) {
+                results['background-blend-mode'] = backgroundBlendMode;
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER(IMAGE_TO_STRING),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+
+            var obj = $store.read(IMAGE_TO_CSS, image);
+
+            return Object.keys(obj).map(function (key) {
+                return key + ': ' + obj[key] + ';';
+            }).join(' ');
+        }
+    }, {
+        key: GETTER(IMAGE_TO_IMAGE_STRING),
+        value: function value$$1($store, image) {
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            var type = image.type;
+
+            if (type == IMAGE_ITEM_TYPE_LINEAR || type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
+                return $store.read(IMAGE_TO_LINEAR, image, isExport);
+            } else if (type == IMAGE_ITEM_TYPE_RADIAL || type == IMAGE_ITEM_TYPE_REPEATING_RADIAL) {
+                return $store.read(IMAGE_TO_RADIAL, image, isExport);
+            } else if (type == IMAGE_ITEM_TYPE_CONIC || type == IMAGE_ITEM_TYPE_REPEATING_CONIC) {
+                return $store.read(IMAGE_TO_CONIC, image, isExport);
+            } else if (type == IMAGE_ITEM_TYPE_IMAGE) {
+                return $store.read(IMAGE_TO_IMAGE, image, isExport);
+            } else if (type == IMAGE_ITEM_TYPE_STATIC) {
+                return $store.read(IMAGE_TO_STATIC, image, isExport);
+            }
+        }
+    }, {
+        key: GETTER(IMAGE_TO_BACKGROUND_SIZE_STRING),
+        value: function value$$1($store, image) {
+
+            if (image.backgroundSize == 'contain' || image.backgroundSize == 'cover') {
+                return image.backgroundSize;
+            } else if (image.backgroundSizeWidth && image.backgroundSizeHeight) {
+                return [stringUnit(image.backgroundSizeWidth), stringUnit(image.backgroundSizeHeight)].join(' ');
+            } else if (image.backgroundSizeWidth) {
+                return stringUnit(image.backgroundSizeWidth);
+            }
+
+            return 'auto';
+        }
+    }, {
+        key: GETTER(IMAGE_TO_BACKGROUND_POSITION_STRING),
+        value: function value$$1($store, image) {
+
+            var x = defaultValue(image.backgroundPositionX, valueUnit(POSITION_CENTER));
+            var y = defaultValue(image.backgroundPositionY, valueUnit(POSITION_CENTER));
+
+            if (x === 0) x = percentUnit(0);
+            if (y === 0) y = percentUnit(0);
+
+            return stringUnit(x) + ' ' + stringUnit(y);
+        }
+    }, {
+        key: GETTER(IMAGE_TO_BACKGROUND_REPEAT_STRING),
+        value: function value$$1($store, image) {
+            if (image.backgroundRepeat) {
+                return image.backgroundRepeat;
+            }
+        }
+    }, {
+        key: GETTER(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING),
+        value: function value$$1($store, image) {
+            if (image.backgroundBlendMode) {
+                return image.backgroundBlendMode || 'normal';
+            }
+        }
+    }, {
+        key: GETTER(IMAGE_GET_UNIT_VALUE),
+        value: function value$$1($store, step) {
+            if (isPX(step.unit)) {
+                return px$1(step.px);
+            } else if (isEM(step.unit)) {
+                return em(step.em);
+            }
+
+            return percent(step.percent);
+        }
+    }, {
+        key: GETTER(IMAGE_GET_STEP_VALUE),
+        value: function value$$1($store, step) {
+            if (isPX(step.unit)) {
+                return step.px;
+            } else if (isEM(step.unit)) {
+                return step.em;
+            }
+
+            return step.percent;
+        }
+    }, {
+        key: GETTER(IMAGE_TO_ITEM_STRING),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+            if (!image) return EMPTY_STRING;
+
+            var colorsteps = image.colorsteps || $store.read(ITEM_MAP_CHILDREN, image.id);
+
+            if (!colorsteps) return EMPTY_STRING;
+
+            var colors = [].concat(toConsumableArray(colorsteps));
+            if (!colors.length) return EMPTY_STRING;
+
+            var newColors = [];
+            colors.forEach(function (c, index) {
+                if (c.cut && index > 0) {
+                    newColors.push({
+                        color: c.color,
+                        unit: colors[index - 1].unit,
+                        percent: colors[index - 1].percent,
+                        px: colors[index - 1].px,
+                        em: colors[index - 1].em
+                    });
+                }
+
+                newColors.push(c);
+            });
+
+            colors = newColors.map(function (f) {
+
+                var value$$1 = stringUnit(percentUnit(f.percent));
+                return f.color + ' ' + value$$1;
+            }).join(',');
+
+            return colors;
+        }
+    }, {
+        key: GETTER(IMAGE_TO_CONIC_ITEM_STRING),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+            if (!image) return EMPTY_STRING;
+
+            var colorsteps = image.colorsteps || $store.read(ITEM_MAP_CHILDREN, image.id, function (step) {
+                return step;
+            });
+
+            if (!colorsteps) return EMPTY_STRING;
+
+            var colors = [].concat(toConsumableArray(colorsteps)).map(function (it, index) {
+                it.index = index;
+                return it;
+            });
+            if (!colors.length) return EMPTY_STRING;
+
+            colors.sort(function (a, b) {
+                if (a.percent == b.percent) {
+                    if (a.index > b.index) return 1;
+                    if (a.index < b.index) return 0;
+                    return 0;
+                }
+                return a.percent > b.percent ? 1 : -1;
+            });
+
+            var newColors = [];
+            colors.forEach(function (c, index) {
+                if (c.cut && index > 0) {
+                    newColors.push(_extends({}, c, { percent: colors[index - 1].percent }));
+                }
+
+                newColors.push(c);
+            });
+
+            colors = newColors.map(function (f) {
+                var deg$$1 = Math.floor(f.percent * 3.6);
+                return f.color + ' ' + deg$$1 + 'deg';
+            }).join(',');
+
+            return colors;
+        }
+    }, {
+        key: GETTER(IMAGE_TO_LINEAR),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var colors = $store.read(IMAGE_TO_ITEM_STRING, image);
+
+            if (colors == EMPTY_STRING) return EMPTY_STRING;
+
+            var opt = EMPTY_STRING;
+            var angle = image.angle;
+            var gradientType = image.type;
+
+            opt = angle;
+
+            if (isNumber(opt)) {
+                opt = DEFINED_DIRECTIONS['' + opt] || opt;
+            }
+
+            if (isNumber(opt)) {
+                opt = opt > 360 ? opt % 360 : opt;
+
+                opt = opt + 'deg';
+            }
+
+            return gradientType + '-gradient(' + opt + ', ' + colors + ')';
+        }
+    }, {
+        key: GETTER(IMAGE_TO_STATIC),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(IMAGE_TO_LINEAR, {
+                type: 'linear',
+                angle: 0,
+                colorsteps: [{ color: image.color, percent: 0 }, { color: image.color, percent: 100 }]
+            });
+        }
+    }, {
+        key: GETTER(IMAGE_TO_LINEAR_RIGHT),
+        value: function value$$1($store, image) {
+            return $store.read(IMAGE_TO_LINEAR, _extends({}, image, { type: 'linear', angle: 'to right' }));
+        }
+    }, {
+        key: GETTER(IMAGE_TO_RADIAL),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var colors = $store.read(IMAGE_TO_ITEM_STRING, image);
+
+            if (colors == EMPTY_STRING) return EMPTY_STRING;
+            var opt = EMPTY_STRING;
+            var radialType = image.radialType;
+            var radialPosition = image.radialPosition || [POSITION_CENTER, POSITION_CENTER];
+            var gradientType = image.type;
+
+            radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(' ');
+
+            opt = radialPosition ? radialType + ' at ' + radialPosition : radialType;
+
+            return gradientType + '-gradient(' + opt + ', ' + colors + ')';
+        }
+    }, {
+        key: GETTER(IMAGE_TO_CONIC),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var colors = $store.read(IMAGE_TO_CONIC_ITEM_STRING, image);
+
+            if (colors == EMPTY_STRING) return EMPTY_STRING;
+            var opt = [];
+            var conicAngle = image.angle;
+            var conicPosition = image.radialPosition || [POSITION_CENTER, POSITION_CENTER];
+            var gradientType = image.type;
+
+            conicPosition = DEFINED_POSITIONS[conicPosition] ? conicPosition : conicPosition.join(' ');
+
+            if (isNotUndefined(conicAngle)) {
+                conicAngle = get(DEFINED_ANGLES$1, conicAngle, function (it) {
+                    return +it;
+                });
+                opt.push('from ' + conicAngle + 'deg');
+            }
+
+            if (conicPosition) {
+                opt.push('at ' + conicPosition);
+            }
+
+            var optString = opt.length ? opt.join(' ') + ',' : EMPTY_STRING;
+
+            return gradientType + '-gradient(' + optString + ' ' + colors + ')';
+        }
+    }, {
+        key: GETTER(IMAGE_TO_IMAGE),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            var url = image.backgroundImage;
+
+            if (!isExport && url) {
+                return 'url(' + url + ')';
+            } else if (isExport) {
+                return 'url(' + image.backgroundImageDataURI + ')';
+            }
+
+            return null;
+        }
+    }]);
+    return ImageManager;
+}(BaseModule);
+
+var layerList = [
+    // sample
+];
+
+var LayerManager = function (_BaseModule) {
+    inherits(LayerManager, _BaseModule);
+
+    function LayerManager() {
+        classCallCheck(this, LayerManager);
+        return possibleConstructorReturn(this, (LayerManager.__proto__ || Object.getPrototypeOf(LayerManager)).apply(this, arguments));
+    }
+
+    createClass(LayerManager, [{
+        key: GETTER(LAYER_LIST_SAMPLE),
+        value: function value$$1($store) {
+            var results = [];
+
+            results = layerList.map(function (it) {
+                return _extends({}, it);
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER(LAYER_TO_STRING),
+        value: function value$$1($store, layer) {
+            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+            var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+
+            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, image) || {};
+
+            if (image) {
+                delete obj['background-color'];
+                delete obj['mix-blend-mode'];
+                delete obj['filter'];
+            }
+
+            return $store.read(CSS_TO_STRING, obj);
+        }
+    }, {
+        key: GETTER(LAYER_CACHE_TO_STRING),
+        value: function value$$1($store, layer) {
+            var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
+            obj.position = 'absolute';
+            return {
+                css: $store.read(CSS_TO_STRING, obj),
+                obj: obj
+            };
+        }
+    }, {
+        key: GETTER(LAYER_TOEXPORT),
+        value: function value$$1($store, layer) {
+            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+
+            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
+            obj.position = obj.position || 'absolute';
+
+            return $store.read(CSS_TO_STRING, obj);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_CLIPPATH),
+        value: function value$$1($store, layer) {
+            return $store.read(CLIPPATH_TO_CSS, layer);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_FILTER),
+        value: function value$$1($store, layer) {
+            return $store.read(FILTER_TO_CSS, layer);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BACKDROP),
+        value: function value$$1($store, layer) {
+            return $store.read(BACKDROP_TO_CSS, layer);
+        }
+    }, {
+        key: GETTER(LAYER_TO_IMAGE_CSS),
+        value: function value$$1($store, layer) {
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            var results = {};
+            $store.read(ITEM_EACH_CHILDREN, layer.id, function (item) {
+                var css = $store.read(IMAGE_TO_CSS, item, isExport);
+
+                Object.keys(css).forEach(function (key) {
+                    if (!results[key]) {
+                        results[key] = [];
+                    }
+
+                    results[key].push(css[key]);
+                });
+            });
+
+            return combineKeyArray(results);
+        }
+    }, {
+        key: GETTER(LAYER_CACHE_TO_IMAGE_CSS),
+        value: function value$$1($store, images) {
+            var results = {};
+
+            images.forEach(function (item) {
+                var image = _extends({}, item.image, { colorsteps: item.colorsteps });
+                var css = $store.read(IMAGE_TO_CSS, image);
+
+                Object.keys(css).forEach(function (key) {
+                    if (!results[key]) {
+                        results[key] = [];
+                    }
+
+                    results[key].push(css[key]);
+                });
+            });
+
+            return combineKeyArray(results);
+        }
+    }, {
+        key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
+        value: function value$$1($store, image) {
+            var images = this.generateImagePattern($store, [image]);
+            return $store.read(CSS_GENERATE, this.generateImageCSS($store, images));
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_MAP),
+        value: function value$$1($store, layer, itemType, isExport) {
+            var results = {};
+            $store.read("item/map/" + itemType + "/children", layer.id, function (item) {
+                var css = $store.read(itemType + "/toCSS", item, isExport);
+
+                Object.keys(css).forEach(function (key) {
+                    if (!results[key]) {
+                        results[key] = [];
+                    }
+
+                    results[key].push(css[key]);
+                });
+            });
+
+            Object.keys(results).forEach(function (key) {
+                if (isArray(results[key])) {
+                    results[key] = results[key].join(', ');
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: "generateImageCSS",
+        value: function generateImageCSS($store, images, isExport) {
+            var results = {};
+
+            images.forEach(function (item) {
+
+                var css = $store.read(IMAGE_TO_CSS, item, isExport);
+
+                Object.keys(css).forEach(function (key) {
+                    if (!results[key]) {
+                        results[key] = [];
+                    }
+
+                    results[key].push(css[key]);
+                });
+            });
+
+            Object.keys(results).forEach(function (key) {
+                if (isArray(results[key])) {
+                    results[key] = results[key].join(', ');
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: "generateImagePattern",
+        value: function generateImagePattern($store, images) {
+            var results = [];
+
+            images.forEach(function (item) {
+                var patternedItems = $store.read(PATTERN_MAKE, item);
+                if (patternedItems) {
+                    results.push.apply(results, toConsumableArray(patternedItems));
+                } else {
+                    results.push(item);
+                }
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_MAP_IMAGE),
+        value: function value$$1($store, layer, isExport) {
+            var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(function (it) {
+                return it.visible;
+            }));
+
+            return this.generateImageCSS($store, images, isExport);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BOXSHADOW),
+        value: function value$$1($store, layer, isExport) {
+            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_BOXSHADOW, isExport);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_FONT),
+        value: function value$$1($store, layer, isExport) {
+            var results = {};
+
+            if (layer.color) {
+                results['color'] = layer.color;
+            }
+
+            if (layer.fontSize) {
+                results['font-size'] = stringUnit(layer.fontSize);
+            }
+
+            if (layer.fontFamily) {
+                results['font-family'] = layer.fontFamily;
+            }
+
+            if (layer.fontWeight) {
+                results['font-weight'] = layer.fontWeight;
+            }
+
+            if (isNotUndefined(layer.lineHeight)) {
+                results['line-height'] = stringUnit(layer.lineHeight);
+            }
+
+            results['word-wrap'] = layer.wordWrap || 'break-word';
+            results['word-break'] = layer.wordBreak || 'break-word';
+
+            if (layer.clipText) {
+                results['color'] = 'transparent';
+                results['background-clip'] = 'text';
+                results['-webkit-background-clip'] = 'text';
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_IMAGE),
+        value: function value$$1($store, layer, isExport) {
+            return $store.read(LAYER_MAKE_MAP_IMAGE, layer, isExport);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_TEXTSHADOW),
+        value: function value$$1($store, layer, isExport) {
+            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_TRANSFORM_ROTATE),
+        value: function value$$1($store, layer) {
+
+            var results = [];
+
+            if (layer.rotate) {
+                results.push("rotate(" + layer.rotate + "deg)");
+            }
+
+            return {
+                transform: results.length ? results.join(' ') : 'none'
+            };
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_TRANSFORM),
+        value: function value$$1($store, layer) {
+
+            var results = [];
+
+            if (layer.perspective) {
+                results.push("perspective(" + layer.perspective + "px)");
+            }
+
+            if (layer.rotate) {
+                results.push("rotate(" + layer.rotate + "deg)");
+            }
+
+            if (layer.skewX) {
+                results.push("skewX(" + layer.skewX + "deg)");
+            }
+
+            if (layer.skewY) {
+                results.push("skewY(" + layer.skewY + "deg)");
+            }
+
+            if (layer.scale) {
+                results.push("scale(" + layer.scale + ")");
+            }
+
+            if (layer.translateX) {
+                results.push("translateX(" + layer.translateX + "px)");
+            }
+
+            if (layer.translateY) {
+                results.push("translateY(" + layer.translateY + "px)");
+            }
+
+            if (layer.translateZ) {
+                results.push("translateZ(" + layer.translateZ + "px)");
+            }
+
+            if (layer.rotateX) {
+                results.push("rotateX(" + layer.rotateX + "deg)");
+            }
+
+            if (layer.rotateY) {
+                results.push("rotateY(" + layer.rotateY + "deg)");
+            }
+
+            if (layer.rotateZ) {
+                results.push("rotateZ(" + layer.rotateZ + "deg)");
+            }
+
+            if (layer.scaleX) {
+                results.push("scaleX(" + layer.scaleX + ")");
+            }
+
+            if (layer.scaleY) {
+                results.push("scaleY(" + layer.scaleY + ")");
+            }
+
+            if (layer.scaleZ) {
+                results.push("scaleZ(" + layer.scaleZ + ")");
+            }
+
+            return {
+                transform: results.length ? results.join(' ') : 'none'
+            };
+        }
+    }, {
+        key: GETTER(LAYER_TO_STRING_CLIPPATH),
+        value: function value$$1($store, layer) {
+
+            if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING;
+            if (!layer.clipPathSvg) return EMPTY_STRING;
+
+            var transform = EMPTY_STRING;
+
+            if (layer.fitClipPathSize) {
+                var widthScale = layer.width.value / layer.clipPathSvgWidth;
+                var heightScale = layer.height.value / layer.clipPathSvgHeight;
+
+                transform = "scale(" + widthScale + " " + heightScale + ")";
+            }
+
+            var $div = new Dom('div');
+            var paths = $div.html(layer.clipPathSvg).$('svg').html();
+            var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"clippath-" + layer.id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
+
+            return svg;
+        }
+    }, {
+        key: GETTER(LAYER_GET_CLIPPATH),
+        value: function value$$1($store, layer) {
+            var items = $store.read(ITEM_FILTER_CHILDREN, layer.id, function (image) {
+                return image.isClipPath;
+            }).map(function (id) {
+                return $store.items[id];
+            });
+
+            return items.length ? items[0] : null;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BORDER_RADIUS),
+        value: function value$$1($store, layer) {
+            var css = {};
+
+            if (layer.borderRadius) css['border-radius'] = stringUnit(layer.borderRadius);
+            if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
+            if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
+            if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
+            if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
+
+            return css;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BORDER_COLOR),
+        value: function value$$1($store, layer) {
+            var css = {};
+
+            if (layer.borderColor) css['border-color'] = layer.borderColor;
+            if (layer.borderTopColor) css['border-top-color'] = layer.borderTopColor;
+            if (layer.borderRightColor) css['border-right-color'] = layer.borderRightColor;
+            if (layer.borderBottomColor) css['border-bottom-color'] = layer.borderBottomColor;
+            if (layer.borderLeftColor) css['border-left-color'] = layer.borderLeftColor;
+
+            return css;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BORDER_STYLE),
+        value: function value$$1($store, layer) {
+            var css = {};
+
+            if (layer.borderStyle) css['border-style'] = layer.borderStyle;
+            if (layer.borderTopStyle) css['border-top-style'] = layer.borderTopStyle;
+            if (layer.borderRightStyle) css['border-right-style'] = layer.borderRightStyle;
+            if (layer.borderBottomStyle) css['border-bottom-style'] = layer.borderBottomStyle;
+            if (layer.borderLeftStyle) css['border-left-style'] = layer.borderLeftStyle;
+
+            return css;
+        }
+    }, {
+        key: GETTER(LAYER_MAKE_BORDER),
+        value: function value$$1($store, layer) {
+            var css = {};
+
+            if (layer.borderWidth) {
+                css['border-width'] = stringUnit(layer.borderWidth);
+                css['border-style'] = 'solid';
+            }
+
+            if (layer.borderTopWidth) {
+                css['border-top-width'] = stringUnit(layer.borderTopWidth);
+                css['border-top-style'] = 'solid';
+            }
+
+            if (layer.borderRightWidth) {
+                css['border-right-width'] = stringUnit(layer.borderRightWidth);
+                css['border-right-style'] = 'solid';
+            }
+
+            if (layer.borderLeftWidth) {
+                css['border-left-width'] = stringUnit(layer.borderLeftWidth);
+                css['border-left-style'] = 'solid';
+            }
+
+            if (layer.borderBottomWidth) {
+                css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
+                css['border-bottom-style'] = 'solid';
+            }
+            return css;
+        }
+    }, {
+        key: GETTER(LAYER_BOUND_TO_CSS),
+        value: function value$$1($store, layer) {
+            var css = {};
+
+            if (!layer) return css;
+
+            css.left = stringUnit(layer.x);
+            css.top = stringUnit(layer.y);
+            css.width = stringUnit(layer.width);
+            css.height = stringUnit(layer.height);
+            css['z-index'] = layer.index;
+
+            return css;
+        }
+    }, {
+        key: GETTER(LAYER_TO_CSS),
+        value: function value$$1($store) {
+            var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+            var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+            var isExport = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
+            var css = {};
+
+            if (withStyle) {
+                css = _extends({}, css, $store.read(LAYER_BOUND_TO_CSS, layer));
+            }
+
+            css['box-sizing'] = layer.boxSizing || 'border-box';
+            css['visibility'] = layer.visible ? 'visible' : 'hidden';
+
+            if (layer.backgroundColor) {
+                css['background-color'] = layer.backgroundColor;
+            }
+
+            if (layer.mixBlendMode) {
+                css['mix-blend-mode'] = layer.mixBlendMode || "";
+            }
+
+            if (layer.backgroundClip && !layer.clipText) {
+                css['background-clip'] = layer.backgroundClip || "";
+                css['-webkit-background-clip'] = layer.backgroundClip || "";
+            }
+
+            if (layer.opacity) {
+                css['opacity'] = layer.opacity;
+            }
+
+            var imageCSS = image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport);
+
+            var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), imageCSS);
+
+            return cleanObject(results);
+        }
+    }, {
+        key: GETTER(LAYER_CACHE_TO_CSS),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+            var layer = _extends({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
+            var css = {};
+
+            css = _extends({}, $store.read(LAYER_BOUND_TO_CSS, layer));
+
+            css['box-sizing'] = layer.boxSizing || 'border-box';
+            css['visibility'] = layer.visible ? 'visible' : 'hidden';
+
+            if (layer.backgroundColor) {
+                css['background-color'] = layer.backgroundColor;
+            }
+
+            if (layer.mixBlendMode) {
+                css['mix-blend-mode'] = layer.mixBlendMode;
+            }
+
+            if (layer.backgroundClip && !layer.clipText) {
+                css['background-clip'] = layer.backgroundClip || "";
+                css['-webkit-background-clip'] = layer.backgroundClip || "";
+            }
+
+            if (layer.opacity) {
+                css['opacity'] = layer.opacity;
+            }
+
+            var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
+
+            return cleanObject(results);
+        }
+    }]);
+    return LayerManager;
+}(BaseModule);
+
+var ToolManager = function (_BaseModule) {
+    inherits(ToolManager, _BaseModule);
+
+    function ToolManager() {
+        classCallCheck(this, ToolManager);
+        return possibleConstructorReturn(this, (ToolManager.__proto__ || Object.getPrototypeOf(ToolManager)).apply(this, arguments));
+    }
+
+    createClass(ToolManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(ToolManager.prototype.__proto__ || Object.getPrototypeOf(ToolManager.prototype), "initialize", this).call(this);
+
+            this.$store.tool = {
+                color: EMPTY_STRING,
+                colorSource: EMPTY_STRING,
+                'show.grid': false,
+                'snap.grid': false,
+                'guide.only': false,
+                'guide.angle': true,
+                'guide.position': true
+            };
+        }
+    }, {
+        key: GETTER(CLONE),
+        value: function value$$1($store, object) {
+            return JSON.parse(JSON.stringify(object));
+        }
+    }, {
+        key: GETTER(TOOL_COLOR_SOURCE),
+        value: function value$$1($store) {
+            return $store.tool.colorSource;
+        }
+    }, {
+        key: GETTER(TOOL_GET),
+        value: function value$$1($store, key, defaultValue$$1) {
+            return isUndefined($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
+        }
+    }, {
+        key: ACTION(TOOL_SET_COLOR_SOURCE),
+        value: function value$$1($store, colorSource) {
+            $store.tool.colorSource = colorSource;
+        }
+    }, {
+        key: ACTION(TOOL_CHANGE_COLOR),
+        value: function value$$1($store, color$$1) {
+            $store.tool.color = color$$1;
+
+            $store.emit('changeColor');
+        }
+    }, {
+        key: ACTION(TOOL_SET),
+        value: function value$$1($store, key, _value) {
+            $store.tool[key] = _value;
+
+            $store.emit(CHANGE_TOOL);
+        }
+    }, {
+        key: ACTION(TOOL_TOGGLE),
+        value: function value$$1($store, key, isForce) {
+            if (isFunction(isForce)) {
+                $store.tool[key] = !$store.tool[key];
+            } else {
+                $store.tool[key] = isForce;
+            }
+
+            $store.emit(CHANGE_TOOL);
+        }
+    }]);
+    return ToolManager;
+}(BaseModule);
+
+var blend_list = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
+
+var BlendManager = function (_BaseModule) {
+    inherits(BlendManager, _BaseModule);
+
+    function BlendManager() {
+        classCallCheck(this, BlendManager);
+        return possibleConstructorReturn(this, (BlendManager.__proto__ || Object.getPrototypeOf(BlendManager)).apply(this, arguments));
+    }
+
+    createClass(BlendManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(BlendManager.prototype.__proto__ || Object.getPrototypeOf(BlendManager.prototype), "initialize", this).call(this);
+
+            this.$store.blendMode = EMPTY_STRING;
+        }
+    }, {
+        key: GETTER(BLEND_LAYER_TO_STRING),
+        value: function value$$1($store, item) {
+            var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
+            var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+
+            var newItem = _extends({}, item);
+
+            newItem.mixBlendMode = mixBlend;
+
+            return $store.read(LAYER_TO_STRING, newItem, withStyle);
+        }
+    }, {
+        key: GETTER(BLEND_IMAGE_TO_STRING),
+        value: function value$$1($store, item) {
+            var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
+            var withStyle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+
+            var newItem = _extends({}, item);
+
+            newItem.backgroundBlendMode = blend;
+
+            return $store.read(IMAGE_TO_STRING, newItem, withStyle);
+        }
+    }, {
+        key: GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION),
+        value: function value$$1($store, item) {
+            var mixBlend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
+
+            return $store.read(BLEND_LAYER_TO_STRING, item, mixBlend, false);
+        }
+    }, {
+        key: GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE),
+        value: function value$$1($store, item) {
+            var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
+
+            // console.log(item, blend);
+            var cssText = $store.read(BLEND_IMAGE_TO_STRING, item, blend, false);
+
+            cssText = cssText.split(';').map(function (it) {
+                return it.split(':').map(function (it) {
+                    return it.trim();
+                });
+            }).map(function (a) {
+                if (a[0] == 'background-image') {
+                    a[1] += ',url(/resources/image/grapes.jpg)';
+                } else if (a[0] == 'background-size') {
+                    a[1] += ',auto';
+                } else if (a[0] == 'background-repeat') {
+                    a[1] += ',no-repeat';
+                } else if (a[0] == 'background-position') {
+                    a[1] += ',center center';
+                } else if (a[0] == 'background-blend-mode') {
+                    a[1] += ',normal';
+                }
+
+                return a.join(':');
+            }).join(';');
+
+            return cssText;
+        }
+    }, {
+        key: GETTER(BLEND_LIST),
+        value: function value$$1($store) {
+            return blend_list;
+        }
+    }]);
+    return BlendManager;
+}(BaseModule);
+
+var sample1 = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: 'red', percent: 0, index: 0 }, { color: 'blue', percent: 10, index: 100 }, { color: 'yellow', percent: 40, index: 200 }, { color: 'green', percent: 60, index: 300 }, { color: 'magenta', percent: 80, index: 400 }, { color: 'black', percent: 100, index: 500 }]
+};
+
+var gradegray = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#bdc3c7', percent: 0, index: 0 }, { color: '#2c3e50', percent: 100, index: 100 }]
+};
+
+var piggypink = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#ee9ca7', percent: 0, index: 0 }, { color: '#ffdde1', percent: 100, index: 100 }]
+};
+
+var coolblues = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#2193b0', percent: 0, index: 0 }, { color: '#6dd5ed', percent: 100, index: 100 }]
+};
+
+var megatron = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#C6FFDD', percent: 0, index: 0 }, { color: '#FBD786', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
+};
+
+var jshine = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#12c2e9', percent: 0, index: 0 }, { color: '#c471ed', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
+};
+
+var darkocean = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#373B44', percent: 0, index: 0 }, { color: '#4286f4', percent: 100, index: 100 }]
+};
+
+var yoda = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#FF0099', percent: 0, index: 0 }, { color: '#493240', percent: 100, index: 100 }]
+};
+
+var liberty = {
+    image: {
+        type: 'linear',
+        angle: 90
+    },
+    colorsteps: [{ color: '#200122', percent: 0, index: 0 }, { color: '#6f0000', percent: 100, index: 100 }]
+};
+
+var silence = {
+    image: {
+        type: 'linear',
+        angle: 340
+    },
+    colorsteps: [{ color: '#b721ff', percent: 0, index: 0 }, { color: '#21d4fd', percent: 100, index: 100 }]
+};
+
+var circle = {
+    image: {
+        type: 'radial',
+        radialPosition: POSITION_CENTER,
+        radialType: 'circle'
+    },
+    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'black', percent: 50, index: 100 }]
+};
+
+var circle2 = {
+    image: {
+        type: 'repeating-radial',
+        radialPosition: 'top',
+        radialType: 'circle'
+    },
+    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'rgb(255,82,2)', percent: 9, index: 100 }]
+};
+
+var deepblue = {
+    image: {
+        type: 'linear',
+        angle: 'to right'
+    },
+    colorsteps: [{ color: '#6a11cb', percent: 0, index: 0 }, { color: '#2575fc', percent: 100, index: 100 }]
+};
+
+var gradientList = [deepblue, sample1, gradegray, piggypink, coolblues, megatron, jshine, darkocean, yoda, liberty, silence, circle, circle2];
+
+var material = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E'];
+
+var types = [{ id: 'material', title: 'Material Colors' }];
+
+var list = {
+    material: material
+};
+
+var ColorList = {
+    list: list,
+    types: types
+};
+
+var GradientManager = function (_BaseModule) {
+    inherits(GradientManager, _BaseModule);
+
+    function GradientManager() {
+        classCallCheck(this, GradientManager);
+        return possibleConstructorReturn(this, (GradientManager.__proto__ || Object.getPrototypeOf(GradientManager)).apply(this, arguments));
+    }
+
+    createClass(GradientManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: "getStaticList",
+        value: function getStaticList() {
+            return ColorList.list['material'].map(function (color) {
+                return {
+                    image: {
+                        type: 'static',
+                        color: color
+                    }
+                };
+            });
+        }
+    }, {
+        key: GETTER('gradient/list/sample'),
+        value: function value($store) {
+            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
+
+
+            var results = [];
+
+            if (type == 'all') {
+                results.push.apply(results, toConsumableArray(gradientList.map(function (it) {
+                    return _extends({}, it);
+                })));
+            }
+
+            results.push.apply(results, toConsumableArray(this.getStaticList()));
+
+            return results;
+        }
+    }, {
+        key: ACTION('gradient/image/select'),
+        value: function value($store, obj) {
+            var image = this.getFirstImage($store);
+
+            if (image) {
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
+                $store.run(ITEM_MOVE_IN, image.id, newImageId);
+                $store.run(ITEM_REMOVE_CHILDREN, image.id);
+                $store.run(ITEM_REMOVE, image.id);
+            } else {
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
+                var newImage = $store.read(ITEM_GET, newImageId);
+                $store.run(ITEM_SET, newImage);
+            }
+        }
+    }, {
+        key: "getFirstImage",
+        value: function getFirstImage($store) {
+            var image = $store.read(SELECTION_CURRENT_IMAGE$1);
+
+            if (!image) {
+                var layer = $store.read(SELECTION_CURRENT_LAYER);
+
+                if (!layer) {
+                    return;
+                }
+
+                var images = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id);
+
+                if (images.length) {
+                    image = images[0];
+                }
+            }
+
+            return image;
+        }
+    }, {
+        key: ACTION('gradient/image/add'),
+        value: function value($store, obj) {
+            var image = this.getFirstImage($store);
+            var layerId = $store.read(SELECTION_CURRENT_LAYER_ID);
+            if (image) {
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
+                $store.run(ITEM_MOVE_IN, image.id, newImageId);
+            } else {
+                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
+                var newImage = $store.read(ITEM_GET, newImageId);
+                $store.run(ITEM_SET, newImage);
+            }
+        }
+    }, {
+        key: ACTION('gradient/select'),
+        value: function value($store, type, index) {
+            var obj = $store.read('gradient/list/sample', type)[index];
+
+            if (obj) {
+                $store.run('gradient/image/select', obj);
+            }
+        }
+    }, {
+        key: ACTION('gradient/add'),
+        value: function value($store, type, index) {
+            var obj = $store.read('gradient/list/sample', type)[index];
+
+            if (obj) {
+                $store.run('gradient/image/add', obj);
+            }
+        }
+    }]);
+    return GradientManager;
+}(BaseModule);
+
+var _updateUnitField;
+
+var INDEX_DIST = 100;
+var NONE_INDEX = -99999;
+
+var itemField = {
+    'mix-blend-mode': 'mixBlendMode',
+    'background-blend-mode': 'backgroundBlendMode',
+    'background-color': 'backgroundColor',
+    'x': 'x',
+    'y': 'y',
+    'width': 'width',
+    'height': 'height',
+    'rotate': 'rotate',
+    'border-radius': 'borderRadius',
+    'border-top-left-radius': 'borderTopLeftRadius',
+    'border-top-right-radius': 'borderTopRightRadius',
+    'border-bottom-left-radius': 'borderBottomLeftRadius',
+    'border-bottom-right-radius': 'borderBottomRightRadius',
+    'skewX': 'skewX',
+    'skewY': 'skewY',
+    'scale': 'scale',
+    'translateX': 'translateX',
+    'translateY': 'translateY',
+    'translateZ': 'translateZ',
+    'rotate3dX': 'rotate3dX',
+    'rotate3dY': 'rotate3dY',
+    'rotate3dZ': 'rotate3dZ',
+    'rotate3dA': 'rotate3dA',
+    'scale3dX': 'scale3dX',
+    'scale3dY': 'scale3dY',
+    'scale3dZ': 'scale3dZ',
+    'translate3dX': 'translate3dX',
+    'translate3dY': 'translate3dY',
+    'translate3dZ': 'translate3dZ'
+};
+
+var updateUnitField = (_updateUnitField = {
+    borderRadius: true,
+    borderTopLeftRadius: true,
+    borderBottomLeftRadius: true,
+    borderTopRightRadius: true,
+    borderBottomRightRadius: true,
+    backgroundSizeWidth: true,
+    backgroundSizeHeight: true,
+    x: true,
+    y: true,
+    width: true,
+    height: true,
+    backgroundPositionX: true,
+    backgroundPositionY: true
+}, defineProperty(_updateUnitField, "backgroundSizeHeight", true), defineProperty(_updateUnitField, "backgroundSizeWidth", true), _updateUnitField);
+
+var convertStyle = function convertStyle(item) {
+    var style = item.style || {};
+
+    Object.keys(style).forEach(function (key) {
+        item[itemField[key]] = style[key];
+    });
+
+    delete item.style;
+
+    Object.keys(item).forEach(function (key) {
+        if (updateUnitField[key]) {
+            item[key] = string2unit(item[key]);
+        }
+    });
+
+    return item;
+};
+
+
+
+var ItemManager = function (_BaseModule) {
+    inherits(ItemManager, _BaseModule);
+
+    function ItemManager() {
+        classCallCheck(this, ItemManager);
+        return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
+    }
+
+    createClass(ItemManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: GETTER(ITEM_CONVERT_STYLE),
+        value: function value$$1($store, item) {
+            return convertStyle(item);
+        }
+    }, {
+        key: GETTER(ITEM_GET),
+        value: function value$$1($store, id) {
+            return $store.items[id] || {};
+        }
+    }, {
+        key: ACTION(ITEM_TOGGLE_VISIBLE),
+        value: function value$$1($store, id) {
+            var item = $store.read(ITEM_GET, id);
+
+            var visible = !item.visible;
+
+            $store.run(ITEM_SET, { id: item.id, visible: visible });
+        }
+    }, {
+        key: ACTION(ITEM_SET_ALL),
+        value: function value$$1($store, parentId, items) {
+            var isRemove = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+            if (isRemove) {
+                $store.run(ITEM_REMOVE_ALL, parentId);
+            }
+            $store.items = _extends({}, $store.items, items);
+        }
+    }, {
+        key: ACTION(ITEM_FOCUS),
+        value: function value$$1($store, objOrId) {
+            var $el = $store.read(ITEM_DOM, objOrId.id || objOrId);
+
+            if ($el) {
+                $el.focus();
+            }
+        }
+    }, {
+        key: ACTION(ITEM_REMOVE),
+        value: function value$$1($store, id) {
+            if (id) {
+
+                var item = $store.read(ITEM_GET, id);
+                var itemType = item.itemType;
+
+                if (item.parentId) {
+                    var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
+                } else {
+                    var list = $store.read(ITEM_LIST_PAGE);
+                }
+
+                var nextSelectedId = EMPTY_STRING;
+                for (var i = 0, len = list.length; i < len; i++) {
+                    var nodeId = list[i];
+                    if ($store.items[id].index > item.index) {
+                        nextSelectedId = nodeId;
+                        break;
+                    }
+                }
+
+                if (nextSelectedId) {
+                    $store.run(SELECTION_ONE, nextSelectedId);
+                } else {
+                    if (item.index > 0) {
+                        for (var i = 0, len = list.length; i < len; i++) {
+                            var nodeId = list[i];
+                            if ($store.items[nodeId].index == item.index - INDEX_DIST) {
+                                nextSelectedId = nodeId;
+                                break;
+                            }
+                        }
+
+                        if (nextSelectedId) {
+                            $store.run(SELECTION_ONE, nextSelectedId);
+                        }
+                    } else {
+                        $store.run(SELECTION_ONE, item.parentId);
+                    }
+                }
+
+                $store.items[id].index = NONE_INDEX;
+                $store.run(ITEM_SORT, id);
+
+                if ($store.items[id].backgroundImage) {
+                    URL.revokeObjectURL($store.items[id].backgroundImage);
+                }
+                $store.run(ITEM_INITIALIZE, id);
+            }
+        }
+    }, {
+        key: ACTION(ITEM_REMOVE_ALL),
+        value: function value$$1($store, parentId) {
+            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
+
+                $store.run(ITEM_REMOVE_ALL, item.id);
+
+                $store.run(ITEM_INITIALIZE, item.id);
+            });
+        }
+    }, {
+        key: ACTION(ITEM_REMOVE_CHILDREN),
+        value: function value$$1($store, parentId) {
+            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
+                $store.run(ITEM_REMOVE, item.id);
+            });
+        }
+    }, {
+        key: ACTION(ITEM_SET),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            var _$store$mapGetters = $store.mapGetters(ITEM_GET),
+                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 1),
+                get$$1 = _$store$mapGetters2[0];
+
+            var id = obj.id;
+            var isExists = $store.items[id];
+            $store.items[id] = _extends({}, get$$1(id), obj);
+
+            if (!isExists) {
+                $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId);
+            }
+
+            if (isSelected) $store.run(SELECTION_ONE, id);
+        }
+
+        // initialize items 
+
+    }, {
+        key: ACTION(ITEM_LOAD),
+        value: function value$$1($store) {
+            $store.read(ITEM_KEYS).forEach(function (id) {
+                $store.items[id] = convertStyle($store.items[id]);
+            });
+
+            $store.run(HISTORY_INITIALIZE);
+        }
+    }, {
+        key: ACTION(ITEM_INIT_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var parent = $store.items[parentId];
+            if (parent) {
+                parent.children = undefined;
+            }
+        }
+    }, {
+        key: ACTION(ITEM_SORT),
+        value: function value$$1($store, id) {
+            var _$store$mapGetters3 = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE),
+                _$store$mapGetters4 = slicedToArray(_$store$mapGetters3, 3),
+                get$$1 = _$store$mapGetters4[0],
+                list_children = _$store$mapGetters4[1],
+                list_page = _$store$mapGetters4[2];
+
+            var item = get$$1(id);
+            var itemType = item.itemType;
+
+            if (item.parentId) {
+                var list = list_children(item.parentId, itemType);
+
+                $store.run(ITEM_INIT_CHILDREN, item.parentId);
+            } else {
+                var list = list_page();
+            }
+
+            // 필요 없는 index 를 가진 객체는 지운다. 
+            list = list.filter(function (id) {
+                return $store.items[id].index != NONE_INDEX;
+            });
+
+            list.sort(function (a, b) {
+                return $store.items[a].index > $store.items[b].index ? 1 : -1;
+            });
+
+            list.forEach(function (id, index) {
+                $store.items[id].index = index * INDEX_DIST;
+            });
+        }
+    }]);
+    return ItemManager;
+}(BaseModule);
+
+var MAX_DIST = 1;
+var ZERO_DIST = 0;
+
+var GuideManager = function (_BaseModule) {
+    inherits(GuideManager, _BaseModule);
+
+    function GuideManager() {
+        classCallCheck(this, GuideManager);
+        return possibleConstructorReturn(this, (GuideManager.__proto__ || Object.getPrototypeOf(GuideManager)).apply(this, arguments));
+    }
+
+    createClass(GuideManager, [{
+        key: GETTER(GUIDE_RECT_POINT),
+        value: function value$$1($store, obj) {
+            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
+
+            var id = obj.id;
+            var x = unitValue(obj.x);
+            var y = unitValue(obj.y);
+            var width = unitValue(obj.width);
+            var height = unitValue(obj.height);
+
+            var x2 = x + width;
+            var y2 = y + height;
+
+            var centerX = x + Math.floor(width / 2);
+            var centerY = y + Math.floor(height / 2);
+
+            var startX = x;
+            var endX = x2;
+            var startY = y;
+            var endY = y2;
+            var pointX = [];
+            var pointY = [];
+
+            var segment = SEGMENT_CHECK[segmentType];
+
+            if (!segment) return { pointX: pointX, pointY: pointY };
+
+            if (segment.move) {
+                pointX = [{ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isLeft: true }, { x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isCenter: true }, { x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isRight: true }];
+
+                pointY = [{ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isTop: true }, { x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isCenter: true }, { x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isBottom: true }];
+
+                return { pointX: pointX, pointY: pointY };
+            } else {
+                if (segment.xIndex === 0) pointX.push({ x: x, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isLeft: true });
+                if (segment.xIndex === 1) pointX.push({ x: centerX, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isCenter: true });
+                if (segment.xIndex === 2) pointX.push({ x: x2, y: centerY, startX: startX, endX: endX, centerX: centerX, id: id, width: width, height: height, isRight: true });
+
+                if (segment.yIndex === 0) pointY.push({ x: centerX, y: y, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isTop: true });
+                if (segment.yIndex === 1) pointY.push({ x: centerX, y: centerY, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isCenter: true });
+                if (segment.yIndex === 2) pointY.push({ x: centerX, y: y2, startY: startY, endY: endY, centerY: centerY, id: id, width: width, height: height, isBottom: true });
+
+                return { pointX: pointX, pointY: pointY };
+            }
+        }
+    }, {
+        key: GETTER(GUIDE_COMPARE),
+        value: function value$$1($store, A, B) {
+            var dist = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : MAX_DIST;
+
+            // x 축 비교 , x 축이 dist 안에 있으면 합격 
+            var results = [];
+            A.pointX.forEach(function (AX, index) {
+                B.pointX.forEach(function (BX, targetIndex) {
+
+                    var tempDist = AX.isCenter || BX.isCenter ? ZERO_DIST : dist;
+
+                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
+                    if (Math.abs(AX.x - BX.x) <= tempDist) {
+
+                        results.push({
+                            type: GUIDE_TYPE_VERTICAL,
+                            x: BX.x,
+                            y: AX.y,
+                            index: index,
+                            targetIndex: targetIndex,
+                            startX: BX.startX,
+                            endX: BX.endX,
+                            centerX: BX.centerX,
+                            sourceId: AX.id,
+                            targetId: BX.id,
+                            sourceX: AX.startX,
+                            width: AX.width,
+                            height: AX.height
+                        });
+                    }
+                });
+            });
+
+            // y 축 비교,    
+            A.pointY.forEach(function (AY, index) {
+                B.pointY.forEach(function (BY, targetIndex) {
+                    var tempDist = AY.isCenter || BY.isCenter ? ZERO_DIST : dist;
+
+                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
+                    if (Math.abs(AY.y - BY.y) <= tempDist) {
+                        results.push({
+                            type: GUIDE_TYPE_HORIZONTAL,
+                            x: AY.x,
+                            y: BY.y,
+                            index: index,
+                            targetIndex: targetIndex,
+                            startY: BY.startY,
+                            endY: BY.endY,
+                            centerY: BY.centerY,
+                            sourceId: AY.id,
+                            targetId: BY.id,
+                            sourceY: AY.startY,
+                            width: AY.width,
+                            height: AY.height
+                        });
+                    }
+                });
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER(GUIDE_SNAP_LAYER),
+        value: function value$$1($store) {
+            var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
+            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
+
+            var page = $store.read(SELECTION_CURRENT_PAGE);
+
+            if (!page) return [];
+            if (page.selected) return [];
+
+            var selectionRect = $store.read(GUIDE_RECT_POINT, $store.read(SELECTION_RECT), segmentType);
+            var pageRect = $store.read(GUIDE_RECT_POINT, {
+                x: pxUnit(0),
+                y: pxUnit(0),
+                width: page.width,
+                height: page.height
+            });
+
+            var layers = [];
+            $store.read(ITEM_EACH_CHILDREN, page.id, function (item) {
+                if ($store.read(SELECTION_CHECK, item.id) == false) {
+                    layers.push($store.read(GUIDE_RECT_POINT, item));
+                }
+            });
+            layers.push(pageRect);
+
+            var points = [];
+
+            layers.forEach(function (B) {
+                points.push.apply(points, toConsumableArray($store.read(GUIDE_COMPARE, selectionRect, B, dist)));
+            });
+
+            return points;
+        }
+    }, {
+        key: ACTION(GUIDE_SNAP_CACULATE),
+        value: function value$$1($store) {
+            var _this2 = this;
+
+            var dist = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : MAX_DIST;
+            var segmentType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : SEGMENT_TYPE_MOVE;
+
+
+            var list = $store.read(GUIDE_SNAP_LAYER, dist, segmentType);
+
+            if (list.length) {
+
+                list.forEach(function (rect) {
+
+                    if (segmentType == SEGMENT_TYPE_MOVE) {
+                        _this2.moveSnap($store, rect, segmentType);
+                    } else {
+                        _this2.sizeSnap($store, rect, segmentType);
+                    }
+                });
+            }
+        }
+    }, {
+        key: "sizeSnap",
+        value: function sizeSnap($store, rect, segmentType) {
+            var positionObject = null;
+            if (rect.type == GUIDE_TYPE_HORIZONTAL) {
+                var y;
+
+                if (segmentType == SEGMENT_TYPE_TOP || segmentType == SEGMENT_TYPE_TOP_LEFT || segmentType == SEGMENT_TYPE_TOP_RIGHT) {
+                    y = rect.y;
+                    var height = rect.height + (rect.sourceY - y);
+
+                    positionObject = { id: rect.sourceId, y: pxUnit(y), height: pxUnit(height) };
+                } else if (segmentType == SEGMENT_TYPE_BOTTOM || segmentType == SEGMENT_TYPE_BOTTOM_LEFT || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
+                    var height = rect.y - rect.sourceY;
+
+                    positionObject = { id: rect.sourceId, height: pxUnit(height) };
+                }
+            } else if (rect.type == GUIDE_TYPE_VERTICAL) {
+                var x;
+                if (segmentType == SEGMENT_TYPE_LEFT || segmentType == SEGMENT_TYPE_TOP_LEFT || segmentType == SEGMENT_TYPE_BOTTOM_LEFT) {
+                    x = rect.x;
+                    var width = rect.width + (rect.sourceX - x);
+
+                    positionObject = { id: rect.sourceId, x: pxUnit(x), width: pxUnit(width) };
+                } else if (segmentType == SEGMENT_TYPE_RIGHT || segmentType == SEGMENT_TYPE_TOP_RIGHT || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT) {
+                    var width = rect.x - rect.sourceX;
+
+                    positionObject = { id: rect.sourceId, width: pxUnit(width) };
+                }
+            }
+            if (isNotUndefined(positionObject)) {
+                $store.run(ITEM_SET, positionObject);
+            }
+        }
+    }, {
+        key: "moveSnap",
+        value: function moveSnap($store, rect) {
+            var positionObject = null;
+            if (rect.type == GUIDE_TYPE_HORIZONTAL) {
+                var y;
+                switch (rect.targetIndex) {
+                    case 0:
+                        y = rect.startY;break;
+                    case 1:
+                        y = rect.centerY;break;
+                    case 2:
+                        y = rect.endY;break;
+                }
+                switch (rect.index) {
+                    case 1:
+                        y -= Math.floor(rect.height / 2);break;
+                    case 2:
+                        y -= rect.height;break;
+                }
+                positionObject = { id: rect.sourceId, y: pxUnit(y) };
+            } else if (rect.type == GUIDE_TYPE_VERTICAL) {
+                var x;
+                switch (rect.targetIndex) {
+                    case 0:
+                        x = rect.startX;break;
+                    case 1:
+                        x = rect.centerX;break;
+                    case 2:
+                        x = rect.endX;break;
+                }
+                switch (rect.index) {
+                    case 1:
+                        x -= Math.floor(rect.width / 2);break;
+                    case 2:
+                        x -= rect.width;break;
+                }
+                positionObject = { id: rect.sourceId, x: pxUnit(x) };
+            }
+            if (isNotUndefined(positionObject)) {
+                $store.run(ITEM_SET, positionObject);
+            }
+        }
+    }]);
+    return GuideManager;
+}(BaseModule);
+
+var SAVE_ID = 'css-imageeditor';
+var CACHED_PAGE_SAVE_ID = 'css-imageeditor-cached-pages';
+var CACHED_LAYER_SAVE_ID = 'css-imageeditor-cached-layers';
+var CACHED_IMAGE_SAVE_ID = 'css-imageeditor-cached-images';
+
+var StorageManager = function (_BaseModule) {
+    inherits(StorageManager, _BaseModule);
+
+    function StorageManager() {
+        classCallCheck(this, StorageManager);
+        return possibleConstructorReturn(this, (StorageManager.__proto__ || Object.getPrototypeOf(StorageManager)).apply(this, arguments));
+    }
+
+    createClass(StorageManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(StorageManager.prototype.__proto__ || Object.getPrototypeOf(StorageManager.prototype), "initialize", this).call(this);
+
+            this.$store.cachedPages = [];
+            this.$store.cachedLayers = [];
+            this.$store.cachedImages = [];
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit('changeStorage');
+        }
+    }, {
+        key: GETTER(STORAGE_GET),
+        value: function value($store, key) {
+            return JSON.parse(localStorage.getItem(SAVE_ID + "-" + key));
+        }
+    }, {
+        key: ACTION(STORAGE_SET),
+        value: function value($store, key, _value) {
+            localStorage.setItem(SAVE_ID + "-" + key, JSON.stringify(_value));
+        }
+    }, {
+        key: GETTER(STORAGE_PAGES),
+        value: function value($store) {
+            var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+            if (isNotUndefined(id)) {
+                var results = $store.cachedPages.filter(function (item) {
+                    return item.id == id;
+                });
+
+                if (!results.length) {
+                    return {};
+                }
+
+                return results[0];
+            }
+            return $store.cachedPages;
+        }
+    }, {
+        key: GETTER(STORAGE_LAYERS),
+        value: function value($store) {
+            var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+            if (isNotUndefined(id)) {
+                var results = $store.cachedLayers.filter(function (item) {
+                    return item.id == id;
+                });
+
+                if (!results.length) {
+                    return {};
+                }
+
+                return results[0];
+            }
+            return $store.cachedLayers;
+        }
+    }, {
+        key: GETTER(STORAGE_IMAGES),
+        value: function value($store) {
+            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+            if (isNotUndefined(index)) {
+                return $store.cachedImages[index];
+            }
+            return $store.cachedImages;
+        }
+    }, {
+        key: ACTION(STORAGE_UNSHIFT_LAYER),
+        value: function value($store, layer) {
+            var item = _extends({}, layer);
+            item.id = uuid();
+            $store.cachedLayers.unshift(item);
+
+            $store.run(STORAGE_SAVE_LAYER);
+        }
+    }, {
+        key: ACTION(STORAGE_ADD_LAYER),
+        value: function value($store, layer) {
+            var item = _extends({}, layer);
+            item.id = uuid();
+            $store.cachedLayers.push(item);
+
+            $store.run(STORAGE_SAVE_LAYER);
+        }
+    }, {
+        key: ACTION(STORAGE_REMOVE_LAYER),
+        value: function value($store, id) {
+
+            $store.cachedLayers = $store.cachedLayers.filter(function (item) {
+                return item.id != id;
+            });
+
+            $store.run(STORAGE_SAVE_LAYER);
+        }
+    }, {
+        key: ACTION(STORAGE_REMOVE_PAGE),
+        value: function value($store, id) {
+
+            $store.cachedLayers = $store.cachedPages.filter(function (item) {
+                return item.id != id;
+            });
+
+            $store.run(STORAGE_SAVE_PAGE);
+        }
+    }, {
+        key: ACTION(STORAGE_UNSHIFT_PAGE),
+        value: function value($store, page) {
+            var item = _extends({}, page);
+            item.id = uuid();
+            $store.cachedPages.unshift(item);
+
+            $store.run(STORAGE_SAVE_PAGE);
+        }
+    }, {
+        key: ACTION(STORAGE_ADD_PAGE),
+        value: function value($store, page) {
+            var item = _extends({}, page);
+            item.id = uuid();
+            $store.cachedPages.push(item);
+
+            $store.run(STORAGE_SAVE_PAGE);
+        }
+    }, {
+        key: ACTION(STORAGE_DELETE_PAGE),
+        value: function value($store, id) {
+
+            $store.cachedPages = $store.cachedPages.filter(function (item) {
+                return item.id != id;
+            });
+
+            $store.run(STORAGE_SAVE_PAGE);
+        }
+    }, {
+        key: ACTION(STORAGE_DELETE_IMAGE),
+        value: function value($store, id) {
+
+            $store.cachedImages = $store.cachedImages.filter(function (item) {
+                return item.id != id;
+            });
+
+            $store.run(STORAGE_SAVE_IMAGE);
+        }
+    }, {
+        key: ACTION(STORAGE_ADD_IMAGE),
+        value: function value($store, image) {
+            var item = _extends({}, image);
+            item.id = uuid();
+            $store.cachedImages.push(item);
+
+            $store.run(STORAGE_SAVE_IMAGE);
+        }
+    }, {
+        key: ACTION(STORAGE_SAVE),
+        value: function value($store) {
+            localStorage.setItem(SAVE_ID, JSON.stringify({
+                items: $store.items,
+                selection: $store.selection
+            }));
+        }
+    }, {
+        key: ACTION(STORAGE_SAVE_LAYER),
+        value: function value($store) {
+            localStorage.setItem(CACHED_LAYER_SAVE_ID, JSON.stringify($store.cachedLayers));
+        }
+    }, {
+        key: ACTION(STORAGE_SAVE_PAGE),
+        value: function value($store) {
+            localStorage.setItem(CACHED_PAGE_SAVE_ID, JSON.stringify($store.cachedPages));
+        }
+    }, {
+        key: ACTION(STORAGE_SAVE_IMAGE),
+        value: function value($store) {
+            localStorage.setItem(CACHED_IMAGE_SAVE_ID, JSON.stringify($store.cachedImages));
+        }
+    }, {
+        key: ACTION(STORAGE_LOAD_LAYER),
+        value: function value($store) {
+            $store.cachedLayers = JSON.parse(localStorage.getItem(CACHED_LAYER_SAVE_ID) || "[]");
+
+            $store.cachedLayers = $store.cachedLayers.map(function (item) {
+                if (!item.id) item.id = uuid();
+                return item;
+            });
+        }
+    }, {
+        key: ACTION(STORAGE_LOAD_PAGE),
+        value: function value($store) {
+            $store.cachedPages = JSON.parse(localStorage.getItem(CACHED_PAGE_SAVE_ID) || "[]");
+
+            $store.cachedPages = $store.cachedPages.map(function (item) {
+                if (!item.id) item.id = uuid();
+                return item;
+            });
+        }
+    }, {
+        key: ACTION(STORAGE_LOAD_IMAGE),
+        value: function value($store) {
+            $store.cachedImages = JSON.parse(localStorage.getItem(CACHED_IMAGE_SAVE_ID) || "[]");
+
+            $store.cachedLayers = $store.cachedLayers.map(function (item) {
+                if (!item.id) item.id = uuid();
+                return item;
+            });
+        }
+    }, {
+        key: ACTION(STORAGE_LOAD),
+        value: function value($store, callback) {
+            var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
+
+            if (obj.items) $store.items = obj.items;
+            if (obj.selectedId) $store.selectedId = obj.selectedId;
+            if (obj.selectedMode) $store.selectedMode = obj.selectedMode;
+            if (obj.selection) $store.selection = obj.selection;
+
+            $store.run(ITEM_KEYS_GENERATE);
+
+            if ($store.selectedId) {
+                $store.run(SELECTION_ONE, $store.selectedId);
+            }
+
+            if (isFunction(callback)) {
+                callback(!!obj.items);
+            }
+        }
+    }]);
+    return StorageManager;
+}(BaseModule);
+
+var ordering = {
+    'position': 1,
+    'left': 2,
+    'top': 2,
+    'right': 2,
+    'bottom': 2,
+    'width': 3,
+    'height': 3,
+
+    'font-size': 4,
+    'font-family': 4,
+
+    'opacity': 10,
+    'border-radius': 10,
+
+    'box-shadow': 15,
+    'text-shadow': 15,
+    'filter': 15,
+
+    'background-clip': 50,
+    '-webkit-background-clip': 50,
+
+    'background-repeat': 100,
+    'background-blend-mode': 100,
+    'background-image': 100,
+    'background-size': 100,
+    'background-position': 100,
+
+    'transform': 1000
+
+};
+
+var MAX_ORDER = Number.MAX_SAFE_INTEGER;
+
+var CssManager = function (_BaseModule) {
+    inherits(CssManager, _BaseModule);
+
+    function CssManager() {
+        classCallCheck(this, CssManager);
+        return possibleConstructorReturn(this, (CssManager.__proto__ || Object.getPrototypeOf(CssManager)).apply(this, arguments));
+    }
+
+    createClass(CssManager, [{
+        key: GETTER(CSS_FILTERING),
+        value: function value($store, style) {
+            var newStyle = style;
+
+            if (newStyle['background-blend-mode'] == 'normal') {
+                delete newStyle['background-blend-mode'];
+            }
+
+            if (newStyle['mix-blend-mode'] == 'normal') {
+                delete newStyle['mix-blend-mode'];
+            }
+
+            if (newStyle['background-size'] == 'auto') {
+                delete newStyle['background-size'];
+            }
+
+            if (newStyle['background-position'] == 'center center') {
+                delete newStyle['background-position'];
+            }
+
+            if (parseParamNumber$2(newStyle.opacity) == 1) {
+                delete newStyle.opacity;
+            }
+
+            if (parseParamNumber$2(newStyle.left) == 0) {
+                delete newStyle.left;
+            }
+
+            if (parseParamNumber$2(newStyle.top) == 0) {
+                delete newStyle.top;
+            }
+
+            if (newStyle.transform == 'none') {
+                delete newStyle.transform;
+            }
+
+            if (newStyle['transform-style'] == 'float') {
+                delete newStyle['transform-style'];
+            }
+
+            return newStyle;
+        }
+    }, {
+        key: GETTER(CSS_SORTING),
+        value: function value($store, style) {
+
+            style = $store.read(CSS_FILTERING, style);
+
+            var keys = Object.keys(style);
+
+            keys.sort(function (a, b) {
+                var aN = ordering[a] || MAX_ORDER;
+                var bN = ordering[b] || MAX_ORDER;
+
+                if (aN == bN) return 0;
+
+                return aN < bN ? -1 : 1;
+            });
+
+            var newStyle = {};
+            keys.forEach(function (key) {
+                newStyle[key] = style[key];
+            });
+
+            return newStyle;
+        }
+    }, {
+        key: GETTER(CSS_TO_STRING),
+        value: function value($store, style) {
+            var newStyle = $store.read(CSS_SORTING, style);
+
+            return Object.keys(newStyle).filter(function (key) {
+                return !!newStyle[key];
+            }).map(function (key) {
+                return key + ": " + newStyle[key];
+            }).join(';');
+        }
+    }, {
+        key: GETTER(CSS_GENERATE),
+        value: function value($store, css) {
+            var results = {};
+
+            Object.keys(css).forEach(function (key) {
+                if (!results[key]) {
+                    results[key] = [];
+                }
+
+                results[key].push(css[key]);
+            });
+
+            Object.keys(results).forEach(function (key) {
+                if (Array.isArray(results[key])) {
+                    results[key] = results[key].join(', ');
+                }
+            });
+
+            return $store.read(CSS_FILTERING, results);
+        }
+    }]);
+    return CssManager;
+}(BaseModule);
+
+var EXTERNAL_PASTE = 'external/paste';
+
+var ExternalResourceManager = function (_BaseModule) {
+    inherits(ExternalResourceManager, _BaseModule);
+
+    function ExternalResourceManager() {
+        classCallCheck(this, ExternalResourceManager);
+        return possibleConstructorReturn(this, (ExternalResourceManager.__proto__ || Object.getPrototypeOf(ExternalResourceManager)).apply(this, arguments));
+    }
+
+    createClass(ExternalResourceManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: ACTION(EXTERNAL_PASTE),
+        value: function value($store, dataTransfer, layerId) {
+            var items = [].concat(toConsumableArray(dataTransfer.items));
+            var types = [].concat(toConsumableArray(dataTransfer.types)).filter(function (type) {
+                return type == 'text/uri-list';
+            });
+
+            var dataList = types.map(function (type) {
+                return dataTransfer.getData(type);
+            });
+
+            if (dataList.length) {
+                $store.read(IMAGE_GET_URL, dataList, function (url) {
+
+                    $store.run(ITEM_PREPEND_IMAGE_URL, url, true, layerId);
+                });
+            }
+
+            var files = [].concat(toConsumableArray(dataTransfer.files));
+            if (files.length) {
+
+                $store.read(IMAGE_GET_FILE, files, function (img) {
+                    $store.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layerId);
+                });
+            }
+        }
+    }]);
+    return ExternalResourceManager;
+}(BaseModule);
+
+var sample1$1 = "\n<svg xmlns='http://www.w3.org/2000/svg'>\n    <rect width=\"30px\" height=\"30px\" fill=\"black\" />\n</svg>\n";
+
+var cloud = "<svg version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 60 60\" style=\"enable-background:new 0 0 60 60;\" xml:space=\"preserve\">\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M50.003,27\n\tc-0.115-8.699-7.193-16-15.919-16c-5.559,0-10.779,3.005-13.661,7.336C19.157,17.493,17.636,17,16,17c-4.418,0-8,3.582-8,8\n\tc0,0.153,0.014,0.302,0.023,0.454C8.013,25.636,8,25.82,8,26c-3.988,1.912-7,6.457-7,11.155C1,43.67,6.33,49,12.845,49h24.507\n\tc0.138,0,0.272-0.016,0.408-0.021C37.897,48.984,38.031,49,38.169,49h9.803C54.037,49,59,44.037,59,37.972\n\tC59,32.601,55.106,27.961,50.003,27z\"/>\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M50.003,27\n\tc0,0-2.535-0.375-5.003,0\"/>\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M8,25c0-4.418,3.582-8,8-8\n\ts8,3.582,8,8\"/>\n</svg>\n";
+
+var SVGList = [sample1$1, cloud];
+
+var SVGManager = function (_BaseModule) {
+    inherits(SVGManager, _BaseModule);
+
+    function SVGManager() {
+        classCallCheck(this, SVGManager);
+        return possibleConstructorReturn(this, (SVGManager.__proto__ || Object.getPrototypeOf(SVGManager)).apply(this, arguments));
+    }
+
+    createClass(SVGManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(SVGManager.prototype.__proto__ || Object.getPrototypeOf(SVGManager.prototype), "initialize", this).call(this);
+
+            this.$store.svgList = [];
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit('changeSvgList');
+        }
+    }, {
+        key: GETTER(SVG_LIST),
+        value: function value$$1($store) {
+            return [].concat(toConsumableArray(SVGList), toConsumableArray($store.svgList));
+        }
+    }, {
+        key: ACTION(SVG_LIST_LOAD),
+        value: function value$$1($store) {
+            var loadList = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+            $store.svgList = [].concat(toConsumableArray(loadList));
+        }
+    }, {
+        key: GETTER(SVG_GET_CLIPPATH),
+        value: function value$$1($store, svg, id, callback) {
+            var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "";
+
+
+            var $div = new Dom('div');
+            var paths = $div.html(svg).$('svg').html();
+
+            var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"" + id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
+
+            callback && callback(svg, id);
+        }
+    }, {
+        key: GETTER(SVG_GET_BLOB),
+        value: function value$$1($store, index, key) {
+            if (SVGList[index]) {
+                var svg = "" + SVGList[index];
+
+                return new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+            } else {
+                var list = $store.svgList.filter(function (item) {
+                    return item.key == key;
+                });
+
+                if (list.length) {
+                    return new Blob([list[0].svg], { type: "image/svg+xml;charset=utf-8" });
+                }
+            }
+
+            return EMPTY_STRING;
+        }
+    }, {
+        key: GETTER(SVG_GET),
+        value: function value$$1($store, index, key) {
+            if (SVGList[index]) {
+                return SVGList[index];
+            } else {
+                var list = $store.svgList.filter(function (item) {
+                    return item.key == key;
+                });
+
+                if (list.length) {
+                    return list[0].svg;
+                }
+            }
+
+            return EMPTY_STRING;
+        }
+    }]);
+    return SVGManager;
+}(BaseModule);
+
+var CollectManager = function (_BaseModule) {
+    inherits(CollectManager, _BaseModule);
+
+    function CollectManager() {
+        classCallCheck(this, CollectManager);
+        return possibleConstructorReturn(this, (CollectManager.__proto__ || Object.getPrototypeOf(CollectManager)).apply(this, arguments));
+    }
+
+    createClass(CollectManager, [{
+        key: GETTER(COLLECT_COLORSTEPS),
+        value: function value($store, imageId) {
+            return $store.read(ITEM_MAP_CHILDREN, imageId, function (colorstep) {
+                var colorstep = _extends({}, $store.items[colorstep.id]);
+                delete colorstep.id;
+                delete colorstep.parentId;
+
+                return colorstep;
+            });
+        }
+    }, {
+        key: GETTER(COLLECT_ONE),
+        value: function value($store, id) {
+            var item = $store.read(ITEM_GET, id);
+
+            switch (item.itemType) {
+                case ITEM_TYPE_PAGE:
+                    return $store.read(COLLECT_PAGE_ONE, id);
+                case ITEM_TYPE_LAYER:
+                    return $store.read(COLLECT_LAYER_ONE, id);
+                case ITEM_TYPE_IMAGE:
+                    return $store.read(COLLECT_IMAGE_ONE, id);
+                case ITEM_TYPE_BOXSHADOW:
+                    return $store.read(COLLECT_BOXSHADOW_ONE, id);
+                case ITEM_TYPE_TEXTSHADOW:
+                    return $store.read(COLLECT_TEXTSHADOW_ONE, id);
+            }
+
+            return null;
+        }
+    }, {
+        key: GETTER(COLLECT_IMAGE_ONE),
+        value: function value($store, imageId) {
+            var image = _extends({}, $store.items[imageId]);
+            delete image.id;
+            delete image.parentId;
+
+            return {
+                image: image,
+                colorsteps: $store.read(COLLECT_COLORSTEPS, imageId)
+            };
+        }
+    }, {
+        key: GETTER(COLLECT_BOXSHADOW_ONE),
+        value: function value($store, boxshadowId) {
+            var boxshadow = _extends({}, $store.items[boxshadowId]);
+            delete boxshadow.id;
+            delete boxshadow.parentId;
+
+            return { boxshadow: boxshadow };
+        }
+    }, {
+        key: GETTER(COLLECT_TEXTSHADOW_ONE),
+        value: function value($store, textshadowId) {
+            var textshadow = _extends({}, $store.items[textshadowId]);
+            delete textshadow.id;
+            delete textshadow.parentId;
+
+            return { textshadow: textshadow };
+        }
+    }, {
+        key: GETTER(COLLECT_IMAGES),
+        value: function value($store, layerId) {
+            return $store.read(ITEM_MAP_IMAGE_CHILDREN, layerId, function (image) {
+                return $store.read(COLLECT_IMAGE_ONE, image.id);
+            });
+        }
+    }, {
+        key: GETTER(COLLECT_BOXSHADOWS),
+        value: function value($store, layerId) {
+            return $store.read(ITEM_MAP_BOXSHADOW_CHILDREN, layerId, function (image) {
+                return $store.read(COLLECT_BOXSHADOW_ONE, image.id);
+            });
+        }
+    }, {
+        key: GETTER(COLLECT_TEXTSHADOWS),
+        value: function value($store, layerId) {
+            return $store.read(ITEM_MAP_TEXTSHADOW_CHILDREN, layerId, function (image) {
+                return $store.read(COLLECT_TEXTSHADOW_ONE, image.id);
+            });
+        }
+    }, {
+        key: GETTER(COLLECT_LAYER_ONE),
+        value: function value($store, layerId) {
+            var results = {};
+
+            if (!$store.items[layerId]) {
+                return results;
+            }
+
+            var layer = _extends({}, $store.items[layerId]);
+            delete layer.id;
+            delete layer.parentId;
+
+            return {
+                layer: layer,
+                images: $store.read(COLLECT_IMAGES, layerId),
+                boxshadows: $store.read(COLLECT_BOXSHADOWS, layerId),
+                textshadows: $store.read(COLLECT_TEXTSHADOWS, layerId)
+            };
+        }
+    }, {
+        key: GETTER(COLLECT_LAYERS),
+        value: function value($store, pageId) {
+            return $store.read(ITEM_MAP_CHILDREN, pageId, function (layer) {
+                return $store.read(COLLECT_LAYER_ONE, layer.id);
+            });
+        }
+    }, {
+        key: GETTER(COLLECT_PAGE_ONE),
+        value: function value($store, pageId) {
+            var results = {};
+
+            if (!$store.items[pageId]) {
+                return results;
+            }
+
+            var page = _extends({}, $store.items[pageId]);
+            delete page.id;
+            delete page.parentId;
+
+            return {
+                page: page,
+                layers: $store.read(COLLECT_LAYERS, pageId)
+            };
+        }
+    }]);
+    return CollectManager;
+}(BaseModule);
+
+var PageManager = function (_BaseModule) {
+    inherits(PageManager, _BaseModule);
+
+    function PageManager() {
+        classCallCheck(this, PageManager);
+        return possibleConstructorReturn(this, (PageManager.__proto__ || Object.getPrototypeOf(PageManager)).apply(this, arguments));
+    }
+
+    createClass(PageManager, [{
+        key: GETTER(PAGE_TO_STRING),
+        value: function value$$1($store, id) {
+
+            var page = $store.read(ITEM_GET, id);
+            var obj = $store.read(PAGE_TO_CSS, page) || {};
+
+            return Object.keys(obj).map(function (key) {
+                return key + ": " + obj[key] + ";";
+            }).join(' ');
+        }
+    }, {
+        key: GETTER(PAGE_TO_CSS),
+        value: function value$$1($store) {
+            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
+
+            var css = {
+                overflow: sample.clip ? 'hidden' : EMPTY_STRING,
+                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
+                width: stringUnit(sample.width),
+                height: stringUnit(sample.height)
+            };
+
+            if (sample.perspective) {
+                css.perspective = stringUnit(sample.perspective);
+            }
+
+            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
+                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
+            }
+
+            return $store.read('css/sorting', css);
+        }
+    }, {
+        key: GETTER(PAGE_COLORVIEW_TO_CSS),
+        value: function value$$1($store) {
+            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
+
+            var css = {
+                'transform-style': sample.preserve ? 'preserve-3d' : 'flat'
+            };
+
+            if (sample.perspective) {
+                css.perspective = stringUnit(sample.perspective);
+            }
+
+            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
+                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
+            }
+
+            return $store.read('css/sorting', css);
+        }
+    }, {
+        key: GETTER(PAGE_CACHE_TO_CSS),
+        value: function value$$1($store) {
+            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
+
+            var css = {
+                overflow: sample.clip ? 'hidden' : EMPTY_STRING,
+                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
+                width: stringUnit(sample.width),
+                height: stringUnit(sample.height)
+            };
+
+            if (sample.perspective) {
+                css.perspective = stringUnit(sample.perspective);
+            }
+
+            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
+                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
+            }
+
+            return $store.read('css/sorting', css);
+        }
+    }, {
+        key: GETTER(PAGE_CACHE_TO_STRING),
+        value: function value$$1($store, page) {
+            var obj = $store.read(PAGE_CACHE_TO_CSS, page) || {};
+
+            return {
+                css: $store.read(CSS_TO_STRING, obj),
+                obj: obj
+            };
+        }
+    }]);
+    return PageManager;
+}(BaseModule);
+
+var HISTORY_MAX = 200;
+
+var HistoryManager = function (_BaseModule) {
+    inherits(HistoryManager, _BaseModule);
+
+    function HistoryManager() {
+        classCallCheck(this, HistoryManager);
+        return possibleConstructorReturn(this, (HistoryManager.__proto__ || Object.getPrototypeOf(HistoryManager)).apply(this, arguments));
+    }
+
+    createClass(HistoryManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(HistoryManager.prototype.__proto__ || Object.getPrototypeOf(HistoryManager.prototype), "initialize", this).call(this);
+
+            this.$store.historyOriginal = null;
+            this.$store.histories = [];
+            this.$store.historyIndex = -1;
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_HISTORY);
+        }
+    }, {
+        key: GETTER(HISTORY_LIST),
+        value: function value($store) {
+            return $store.histories || [];
+        }
+    }, {
+        key: GETTER(HISTORY_SELECTED_CHECK),
+        value: function value($store, index) {
+            return $store.historyIndex == index;
+        }
+    }, {
+        key: "changeHistory",
+        value: function changeHistory($store) {
+
+            if ($store.historyIndex < 0) {
+                var command = $store.historyOriginal;
+            } else {
+                var index = $store.historyIndex;
+                var command = $store.histories[index];
+            }
+
+            if (command) {
+                var items = command.items,
+                    selection = command.selection;
+
+                $store.selection = selection || $store.read(SELECTION_INITIALIZE_DATA);
+                $store.items = clone(items);
+                $store.emit(CHANGE_EDITOR);
+            }
+        }
+    }, {
+        key: ACTION(HISTORY_INITIALIZE),
+        value: function value($store) {
+            var _this2 = this;
+
+            $store.read(SELECTION_CURRENT_PAGE, function (page) {
+                _this2.setHistory($store, page);
+            });
+        }
+    }, {
+        key: "setHistory",
+        value: function setHistory($store) {
+            if (!$store.historyOriginal) {
+                $store.historyOriginal = {
+                    items: _extends({}, $store.items),
+                    selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
+                };
+                $store.histories = [];
+                $store.historyIndex = 0;
+            }
+        }
+    }, {
+        key: ACTION(HISTORY_PUSH),
+        value: function value($store, title) {
+
+            this.setHistory($store);
+
+            var index = $store.historyIndex;
+            if (index < 0) index = -1;
+            var histories = index < 0 ? [] : $store.histories.slice(0, index + 1);
+
+            histories.push({
+                title: title,
+                items: _extends({}, $store.items),
+                selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
+            });
+
+            $store.histories = histories;
+
+            if ($store.histories.length > HISTORY_MAX) {
+                $store.histories.shift();
+            }
+
+            $store.historyIndex = $store.histories.length - 1;
+        }
+    }, {
+        key: ACTION(HISTORY_UNDO),
+        value: function value($store) {
+            if ($store.historyIndex < 0) {
+                return;
+            }
+
+            $store.historyIndex--;
+            this.changeHistory($store);
+        }
+    }, {
+        key: ACTION(HISTORY_REDO),
+        value: function value($store) {
+
+            if ($store.historyIndex > $store.histories.length - 1) {
+                return;
+            }
+
+            $store.historyIndex++;
+            this.changeHistory($store);
+        }
+    }]);
+    return HistoryManager;
+}(BaseModule);
+
+var SELECT_MODE_ONE = "SELECT_MODE_ONE";
+var SELECT_MODE_AREA = "SELECT_MODE_AREA";
+var SELECT_MODE_GROUP = "SELECT_MODE_GROUP";
+
+var SelectionManager = function (_BaseModule) {
+    inherits(SelectionManager, _BaseModule);
+
+    function SelectionManager() {
+        classCallCheck(this, SelectionManager);
+        return possibleConstructorReturn(this, (SelectionManager.__proto__ || Object.getPrototypeOf(SelectionManager)).apply(this, arguments));
+    }
+
+    createClass(SelectionManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(SelectionManager.prototype.__proto__ || Object.getPrototypeOf(SelectionManager.prototype), "initialize", this).call(this);
+
+            this.$store.selection = {
+                type: SELECT_MODE_ONE,
+                ids: [],
+                items: [],
+                itemType: EMPTY_STRING
+            };
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_SELECTION);
+        }
+    }, {
+        key: "checkInArea",
+        value: function checkInArea(area, item) {
+
+            if (area.width === 0) {
+                return false;
+            }
+            if (area.height === 0) {
+                return false;
+            }
+            if (area.x2 < item.x) {
+                return false;
+            }
+            if (area.y2 < item.y) {
+                return false;
+            }
+            if (area.x > item.x2) {
+                return false;
+            }
+            if (area.y > item.y2) {
+                return false;
+            }
+
+            return true;
+        }
+    }, {
+        key: GETTER(SELECTION_INITIALIZE_DATA),
+        value: function value$$1($store) {
+            return {
+                type: SELECT_MODE_ONE,
+                ids: [],
+                items: [],
+                itemType: EMPTY_STRING
+            };
+        }
+    }, {
+        key: GETTER(SELECTION_IDS),
+        value: function value$$1($store) {
+            return $store.selection.ids || [];
+        }
+    }, {
+        key: GETTER(SELECTION_CHECK),
+        value: function value$$1($store, id) {
+            return $store.selection.ids.includes(id);
+        }
+    }, {
+        key: GETTER(SELECTION_IS_EMPTY),
+        value: function value$$1($store) {
+            return $store.selection.ids.length === 0;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_NOT_EMPTY),
+        value: function value$$1($store) {
+            return $store.selection.ids.length > 0;
+        }
+    }, {
+        key: GETTER(SELECTION_HAS_ONE),
+        value: function value$$1($store) {
+            return $store.selection.ids.length === 1;
+        }
+    }, {
+        key: GETTER(SELECTION_HAS_MANY),
+        value: function value$$1($store) {
+            return $store.selection.ids.length > 1;
+        }
+    }, {
+        key: GETTER(SELECTION_TYPE),
+        value: function value$$1($store) {
+            return $store.selection.type;
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT),
+        value: function value$$1($store) {
+            return $store.selection.ids.filter(function (id) {
+                return !!$store.items[id];
+            }).map(function (id) {
+                return $store.items[id];
+            });
+        }
+    }, {
+        key: GETTER(SELECTION_UNIT_VALUES),
+        value: function value$$1($store) {
+            return $store.read(SELECTION_CURRENT).map(function (item) {
+                return {
+                    id: item.id,
+                    x: unitValue(item.x),
+                    y: unitValue(item.y),
+                    width: unitValue(item.width),
+                    height: unitValue(item.height),
+                    x2: unitValue(item.x) + unitValue(item.width),
+                    y2: unitValue(item.y) + unitValue(item.height),
+                    centerX: unitValue(item.x) + unitValue(item.width) / 2,
+                    centerY: unitValue(item.y) + unitValue(item.height) / 2
+                };
+            });
+        }
+    }, {
+        key: "getCurrentItem",
+        value: function getCurrentItem($store, itemType, callback) {
+            var items = null;
+
+            if ($store.selection.itemType == itemType) {
+                var items = $store.read(SELECTION_CURRENT);
+            }
+
+            if (Array.isArray(items) && items.length) {
+                if ($store.read(SELECTION_IS_ONE)) {
+                    if (isFunction(callback)) callback(items[0]);
+                    return items[0];
+                } else {
+                    if (isFunction(callback)) callback(items);
+                    return items;
+                }
+            }
+
+            return items;
+        }
+    }, {
+        key: "getCurrentItemId",
+        value: function getCurrentItemId($store, itemType, callback) {
+            var items = null;
+
+            if ($store.selection.itemType == itemType) {
+                var items = $store.read(SELECTION_CURRENT);
+            }
+
+            if (Array.isArray(items) && items.length) {
+                if ($store.read(SELECTION_IS_ONE)) {
+                    if (isFunction(callback)) callback(items[0].id);
+                    return items[0].id;
+                } else {
+                    if (isFunction(callback)) callback(items.map(function (it) {
+                        return it.id;
+                    }));
+                    return items.map(function (it) {
+                        return it.id;
+                    });
+                }
+            }
+
+            return items;
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_IMAGE$1),
+        value: function value$$1($store, callback) {
+            return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_IMAGE_ID$1),
+        value: function value$$1($store, callback) {
+            return this.getCurrentItemId($store, ITEM_TYPE_IMAGE, callback);
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_BOXSHADOW),
+        value: function value$$1($store, callback) {
+            return this.getCurrentItem($store, ITEM_TYPE_BOXSHADOW, callback);
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_BOXSHADOW_ID),
+        value: function value$$1($store, callback) {
+            return this.getCurrentItemId($store, ITEM_TYPE_BOXSHADOW, callback);
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_TEXTSHADOW),
+        value: function value$$1($store, callback) {
+            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_TEXTSHADOW_ID),
+        value: function value$$1($store, callback) {
+            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_LAYER),
+        value: function value$$1($store, callback) {
+            var layers = null;
+
+            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+                var layers = $store.read(SELECTION_CURRENT);
+            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+                var layers = $store.read(SELECTION_CURRENT).map(function (item) {
+                    return $store.items[item.parentId];
+                });
+            }
+            if (Array.isArray(layers) && layers.length) {
+                if ($store.read(SELECTION_IS_ONE)) {
+                    if (isFunction(callback)) callback(layers[0]);
+                    return layers[0];
+                } else {
+                    if (isFunction(callback)) callback(layers);
+                    return layers;
+                }
+            }
+
+            return layers;
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_LAYER_ID),
+        value: function value$$1($store, callback) {
+            var layers = null;
+
+            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+                var layers = $store.read(SELECTION_CURRENT);
+            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+                var layers = $store.read(SELECTION_CURRENT).map(function (item) {
+                    return $store.items[item.parentId];
+                });
+            }
+
+            if (Array.isArray(layers) && layers.length) {
+                if ($store.read(SELECTION_IS_ONE)) {
+                    if (isFunction(callback)) callback(layers[0].id);
+                    return layers[0].id;
+                } else {
+                    if (isFunction(callback)) callback(layers.map(function (it) {
+                        return it.id;
+                    }));
+                    return layers.map(function (it) {
+                        return it.id;
+                    });
+                }
+            }
+
+            return layers;
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_PAGE),
+        value: function value$$1($store, callback) {
+
+            var pages = $store.read(SELECTION_CURRENT).map(function (it) {
+                var path = $store.read(ITEM_PATH, it.id);
+                return $store.read(ITEM_GET, path[path.length - 1]);
+            });
+
+            if (Array.isArray(pages) && pages.length) {
+                if (isFunction(callback)) callback(pages[0]);
+                return pages[0];
+            }
+
+            return null;
+        }
+    }, {
+        key: GETTER(SELECTION_CURRENT_PAGE_ID),
+        value: function value$$1($store, callback) {
+
+            var pages = $store.read(SELECTION_CURRENT).map(function (it) {
+                var path = $store.read(ITEM_PATH, it.id);
+                return $store.read(ITEM_GET, path[path.length - 1]);
+            });
+
+            if (Array.isArray(pages) && pages.length) {
+                if (isFunction(callback)) callback(pages[0].id);
+                return pages[0].id;
+            }
+
+            return null;
+        }
+    }, {
+        key: GETTER(SELECTION_MODE),
+        value: function value$$1($store) {
+            return $store.selection;
+        }
+    }, {
+        key: GETTER(SELECTION_IS),
+        value: function value$$1($store, type) {
+            return $store.selection.type == type;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_ITEM),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == type;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_LAYER),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == ITEM_TYPE_LAYER;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_IMAGE),
+        value: function value$$1($store, type) {
+
+            var isImage = $store.selection.itemType == ITEM_TYPE_IMAGE;
+            var isTypeCheck = true;
+
+            if (type) {
+                if ($store.selection.ids.length) {
+                    var item = $store.read(ITEM_GET, $store.selection.ids[0]);
+
+                    isTypeCheck = item.type == type;
+                }
+            }
+
+            return isImage && isTypeCheck;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_PAGE),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == ITEM_TYPE_PAGE;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_BOXSHADOW),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_TEXTSHADOW),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_FILTER),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == ITEM_TYPE_FILTER;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_BACKDROP_FILTER),
+        value: function value$$1($store, type) {
+            return $store.selection.itemType == ITEM_TYPE_BACKDROP;
+        }
+    }, {
+        key: GETTER(SELECTION_IS_ONE),
+        value: function value$$1($store) {
+            return $store.read(SELECTION_IS, SELECT_MODE_ONE);
+        }
+    }, {
+        key: GETTER(SELECTION_IS_GROUP),
+        value: function value$$1($store) {
+            return $store.read(SELECTION_IS, SELECT_MODE_GROUP);
+        }
+    }, {
+        key: GETTER(SELECTION_IS_AREA),
+        value: function value$$1($store) {
+            return $store.read(SELECTION_IS, SELECT_MODE_AREA);
+        }
+    }, {
+        key: GETTER(SELECTION_LAYERS),
+        value: function value$$1($store) {
+            return $store.read(ITEM_FILTER, function (id) {
+                return $store.items[id].itemType == ITEM_TYPE_LAYER;
+            }).map(function (id) {
+                var _$store$items$id = $store.items[id],
+                    x = _$store$items$id.x,
+                    y = _$store$items$id.y,
+                    width = _$store$items$id.width,
+                    height = _$store$items$id.height;
+
+
+                x = unitValue(x);
+                y = unitValue(y);
+                width = unitValue(width);
+                height = unitValue(height);
+                var x2 = x + width;
+                var y2 = y + height;
+
+                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
+            });
+        }
+    }, {
+        key: ACTION(SELECTION_ONE),
+        value: function value$$1($store) {
+            var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+
+            $store.selection = {
+                type: SELECT_MODE_ONE,
+                ids: [selectedId],
+                itemType: $store.items[selectedId].itemType
+            };
+        }
+    }, {
+        key: ACTION(SELECTION_CHANGE),
+        value: function value$$1($store, itemType) {
+            if (itemType == ITEM_TYPE_PAGE) {
+                $store.read(SELECTION_CURRENT_PAGE_ID, function (id) {
+                    $store.run(SELECTION_ONE, id);
+                });
+            }
+        }
+    }, {
+        key: ACTION(SELECTION_AREA),
+        value: function value$$1($store, _ref) {
+            var _this2 = this;
+
+            var x = _ref.x,
+                y = _ref.y,
+                width = _ref.width,
+                height = _ref.height;
+
+            var x2 = x + width;
+            var y2 = y + height;
+
+            var area = { x: x, y: y, width: width, height: height, x2: x2, y2: y2 };
+
+            var layers = $store.read(SELECTION_LAYERS);
+
+            var selectItems = [];
+            layers.forEach(function (it) {
+
+                if (_this2.checkInArea(area, it)) {
+                    selectItems.push(it.id);
+                }
+            });
+
+            if (selectItems.length) {
+                $store.selection = {
+                    type: selectItems.length == 1 ? SELECT_MODE_ONE : SELECT_MODE_GROUP,
+                    ids: selectItems,
+                    itemType: ITEM_TYPE_LAYER
+                };
+            } else {
+                $store.run(SELECTION_CHANGE, ITEM_TYPE_PAGE);
+            }
+        }
+    }, {
+        key: GETTER(SELECTION_RECT),
+        value: function value$$1($store) {
+            var items = $store.selection.ids.map(function (id) {
+                var _$store$items$id2 = $store.items[id],
+                    x = _$store$items$id2.x,
+                    y = _$store$items$id2.y,
+                    width = _$store$items$id2.width,
+                    height = _$store$items$id2.height;
+
+
+                x = unitValue(x);
+                y = unitValue(y);
+                width = unitValue(width);
+                height = unitValue(height);
+                var x2 = x + width;
+                var y2 = y + height;
+
+                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
+            });
+
+            var x = Math.min.apply(Math, toConsumableArray(items.map(function (it) {
+                return it.x;
+            })));
+            var y = Math.min.apply(Math, toConsumableArray(items.map(function (it) {
+                return it.y;
+            })));
+            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (it) {
+                return it.x2;
+            })));
+            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (it) {
+                return it.y2;
+            })));
+
+            var width = x2 - x;
+            var height = y2 - y;
+            var centerX = x + width / 2;
+            var centerY = y + height / 2;
+
+            x = pxUnit(x);
+            y = pxUnit(y);
+            width = pxUnit(width);
+            height = pxUnit(height);
+            centerX = pxUnit(centerX);
+            centerY = pxUnit(centerY);
+
+            if (items.length == 1) {
+                return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY, id: items[0].id };
+            }
+
+            return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY };
+        }
+    }]);
+    return SelectionManager;
+}(BaseModule);
+
+var OrderingManager = function (_BaseModule) {
+    inherits(OrderingManager, _BaseModule);
+
+    function OrderingManager() {
+        classCallCheck(this, OrderingManager);
+        return possibleConstructorReturn(this, (OrderingManager.__proto__ || Object.getPrototypeOf(OrderingManager)).apply(this, arguments));
+    }
+
+    createClass(OrderingManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: "horizontal",
+        value: function horizontal($store) {
+            var items = $store.read(SELECTION_UNIT_VALUES);
+
+            var x = Number.MAX_SAFE_INTEGER;
+            var xItem = null;
+
+            var x2 = Number.MIN_SAFE_INTEGER;
+            var x2Item = null;
+
+            items.forEach(function (item) {
+
+                if (x > item.x) {
+                    x = item.x;
+                    xItem = item;
+                } else if (x2 < item.x2) {
+                    x2 = item.x2;
+                    x2Item = item;
+                }
+            });
+
+            var count = items.length - 2;
+            var tempIds = [xItem.id, x2Item.id];
+
+            if (count > 0) {
+                var restItems = items.filter(function (it) {
+                    return !tempIds.includes(it.id);
+                });
+
+                restItems.sort(function (a, b) {
+                    if (a.centerX == b.centerX) return 0;
+                    return a.centerX > b.centerX ? 1 : -1;
+                });
+
+                var startX = xItem.centerX;
+                var endX = x2Item.centerX;
+                var unitWidth = (endX - startX) / (count + 1);
+
+                restItems.forEach(function (item, index) {
+                    item.centerX = startX + (index + 1) * unitWidth;
+                    item.x = item.centerX - item.width / 2;
+
+                    $store.run(ITEM_SET, { id: item.id, x: pxUnit(item.x) });
+                });
+            }
+        }
+    }, {
+        key: "vertical",
+        value: function vertical($store) {
+            var items = $store.read(SELECTION_UNIT_VALUES);
+
+            var y = Number.MAX_SAFE_INTEGER;
+            var yItem = null;
+
+            var y2 = Number.MIN_SAFE_INTEGER;
+            var y2Item = null;
+
+            items.forEach(function (item) {
+
+                if (y > item.y) {
+                    y = item.y;
+                    yItem = item;
+                } else if (y2 < item.y2) {
+                    y2 = item.y2;
+                    y2Item = item;
+                }
+            });
+
+            var count = items.length - 2;
+            var tempIds = [yItem.id, y2Item.id];
+
+            if (count > 0) {
+                var restItems = items.filter(function (it) {
+                    return !tempIds.includes(it.id);
+                });
+
+                restItems.sort(function (a, b) {
+                    if (a.centerY == b.centerY) return 0;
+                    return a.centerY > b.centerY ? 1 : -1;
+                });
+
+                var startY = yItem.centerY;
+                var endY = y2Item.centerY;
+                var unitHeight = (endY - startY) / (count + 1);
+
+                restItems.forEach(function (item, index) {
+                    item.centerY = startY + (index + 1) * unitHeight;
+                    item.y = item.centerY - item.height / 2;
+
+                    $store.run(ITEM_SET, { id: item.id, y: pxUnit(item.y) });
+                });
+            }
+        }
+    }, {
+        key: "left",
+        value: function left($store) {
+            var items = $store.read(SELECTION_CURRENT);
+            var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.x);
+            })));
+
+            items.forEach(function (item) {
+                $store.run(ITEM_SET, { id: item.id, x: pxUnit(x) });
+            });
+        }
+    }, {
+        key: "center",
+        value: function center($store) {
+            var items = $store.read(SELECTION_CURRENT);
+
+            var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.x);
+            })));
+
+            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.x) + unitValue(item.width);
+            })));
+
+            var centerX = x + Math.floor((x2 - x) / 2);
+
+            items.forEach(function (item) {
+                var newX = pxUnit(Math.floor(centerX - unitValue(item.width) / 2));
+                $store.run(ITEM_SET, { id: item.id, x: newX });
+            });
+        }
+    }, {
+        key: "right",
+        value: function right($store) {
+            var items = $store.read(SELECTION_CURRENT);
+
+            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.x) + unitValue(item.width);
+            })));
+
+            items.forEach(function (item) {
+                var newX = pxUnit(x2 - unitValue(item.width));
+                $store.run(ITEM_SET, { id: item.id, x: newX });
+            });
+        }
+    }, {
+        key: "top",
+        value: function top($store) {
+            var items = $store.read(SELECTION_CURRENT);
+            var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.y);
+            })));
+
+            items.forEach(function (item) {
+                $store.run(ITEM_SET, { id: item.id, y: pxUnit(y) });
+            });
+        }
+    }, {
+        key: "middle",
+        value: function middle($store) {
+            var items = $store.read(SELECTION_CURRENT);
+
+            var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.y);
+            })));
+
+            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.y) + unitValue(item.height);
+            })));
+
+            var centerY = y + (y2 - y) / 2;
+
+            items.forEach(function (item) {
+                var newY = pxUnit(Math.floor(centerY - unitValue(item.height) / 2));
+                $store.run(ITEM_SET, { id: item.id, y: newY });
+            });
+        }
+    }, {
+        key: "bottom",
+        value: function bottom($store) {
+            var items = $store.read(SELECTION_CURRENT);
+
+            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
+                return unitValue(item.y) + unitValue(item.height);
+            })));
+
+            items.forEach(function (item) {
+                var newY = pxUnit(y2 - unitValue(item.height));
+                $store.run(ITEM_SET, { id: item.id, y: newY });
+            });
+        }
+    }, {
+        key: ACTION(ORDERING_TYPE),
+        value: function value$$1($store, type) {
+            if (this[type]) {
+                this[type].call(this, $store);
+            }
+        }
+    }, {
+        key: "forward",
+        value: function forward($store) {
+            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                $store.run(ITEM_MOVE_NEXT, id);
+            });
+        }
+    }, {
+        key: "backward",
+        value: function backward($store) {
+            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                $store.run(ITEM_MOVE_PREV, id);
+            });
+        }
+    }, {
+        key: "front",
+        value: function front($store) {
+            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                $store.run(ITEM_MOVE_LAST, id);
+            });
+        }
+    }, {
+        key: "back",
+        value: function back($store) {
+            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                $store.run(ITEM_MOVE_FIRST, id);
+            });
+        }
+    }, {
+        key: ACTION(ORDERING_INDEX),
+        value: function value$$1($store, type) {
+            if (this[type]) {
+                this[type].call(this, $store);
+            }
+        }
+    }]);
+    return OrderingManager;
+}(BaseModule);
+
+var MatrixManager = function (_BaseModule) {
+    inherits(MatrixManager, _BaseModule);
+
+    function MatrixManager() {
+        classCallCheck(this, MatrixManager);
+        return possibleConstructorReturn(this, (MatrixManager.__proto__ || Object.getPrototypeOf(MatrixManager)).apply(this, arguments));
+    }
+
+    createClass(MatrixManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_LAYER_POSITION);
+        }
+    }, {
+        key: ACTION('matrix/move'),
+        value: function value$$1($store, newValue) {
+            var item = $store.read(ITEM_GET, newValue.id);
+
+            Object.keys(newValue).filter(function (key) {
+                return key != 'id';
+            }).forEach(function (key) {
+                item[key] = pxUnit(unitValue(item[key]) + newValue[key]);
+            });
+
+            $store.run(ITEM_SET, item);
+        }
+    }]);
+    return MatrixManager;
+}(BaseModule);
+
+var BoxShadowManager = function (_BaseModule) {
+    inherits(BoxShadowManager, _BaseModule);
+
+    function BoxShadowManager() {
+        classCallCheck(this, BoxShadowManager);
+        return possibleConstructorReturn(this, (BoxShadowManager.__proto__ || Object.getPrototypeOf(BoxShadowManager)).apply(this, arguments));
+    }
+
+    createClass(BoxShadowManager, [{
+        key: GETTER('boxshadow/toCSS'),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var boxshadow = $store.read('boxshadow/toBoxShadowString', item, isExport);
+
+            if (boxshadow) {
+                results['box-shadow'] = boxshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER('boxshadow/cache/toCSS'),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var results = {};
+            var boxshadow = $store.read('boxshadow/toBoxShadowString', item, isExport);
+
+            if (boxshadow) {
+                results['box-shadow'] = boxshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER('boxshadow/toString'),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+
+            var obj = $store.read('boxshadow/toCSS', image);
+
+            return Object.keys(obj).map(function (key) {
+                return key + ": " + obj[key] + ";";
+            }).join(' ');
+        }
+    }, {
+        key: GETTER('boxshadow/toBoxShadowString'),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+            if (!item) return EMPTY_STRING;
+
+            var results = [EMPTY_STRING];
+
+            if (item.inset) {
+                results.push('inset');
+            }
+
+            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), stringUnit(item.spreadRadius), item.color);
+
+            return results.join(' ');
+        }
+    }]);
+    return BoxShadowManager;
+}(BaseModule);
+
+var TextShadowManager = function (_BaseModule) {
+    inherits(TextShadowManager, _BaseModule);
+
+    function TextShadowManager() {
+        classCallCheck(this, TextShadowManager);
+        return possibleConstructorReturn(this, (TextShadowManager.__proto__ || Object.getPrototypeOf(TextShadowManager)).apply(this, arguments));
+    }
+
+    createClass(TextShadowManager, [{
+        key: GETTER('textshadow/toCSS'),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var results = {};
+            var textshadow = $store.read('textshadow/toTextShadowString', item, isExport);
+
+            if (textshadow) {
+                results['text-shadow'] = textshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER('textshadow/cache/toCSS'),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var results = {};
+            var textshadow = $store.read('textshadow/toTextShadowString', item, isExport);
+
+            if (textshadow) {
+                results['text-shadow'] = textshadow;
+            }
+
+            return results;
+        }
+    }, {
+        key: GETTER('textshadow/toString'),
+        value: function value$$1($store) {
+            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+
+            var obj = $store.read('textshadow/toCSS', image);
+
+            return Object.keys(obj).map(function (key) {
+                return key + ": " + obj[key] + ";";
+            }).join(' ');
+        }
+    }, {
+        key: GETTER('textshadow/toTextShadowString'),
+        value: function value$$1($store) {
+            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+            if (!item) return EMPTY_STRING;
+
+            var results = [];
+
+            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), item.color);
+
+            return results.join(' ');
+        }
+    }]);
+    return TextShadowManager;
+}(BaseModule);
+
+var filterInfo = {
+    'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'filterGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'filterHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'filterInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'filterBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
+    'filterDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'filterDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
+    'filterOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'filterSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
+};
+
+var DROP_SHADOW_LIST = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
+
+var FilterManager = function (_BaseModule) {
+    inherits(FilterManager, _BaseModule);
+
+    function FilterManager() {
+        classCallCheck(this, FilterManager);
+        return possibleConstructorReturn(this, (FilterManager.__proto__ || Object.getPrototypeOf(FilterManager)).apply(this, arguments));
+    }
+
+    createClass(FilterManager, [{
+        key: GETTER(FILTER_GET),
+        value: function value$$1($store, id) {
+            return filterInfo[id];
+        }
+    }, {
+        key: GETTER(FILTER_LIST),
+        value: function value$$1($store, layerId) {
+            var layer = $store.read(ITEM_GET, layerId);
+            var realFilters = {};
+
+            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
+
+            realFilters = _extends({}, FILTER_DEFAULT_OBJECT, realFilters);
+
+            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            return filterList.map(function (it) {
+                return it.key;
+            });
+        }
+    }, {
+        key: GETTER(FILTER_TO_CSS),
+        value: function value$$1($store, layer) {
+            var realFilters = {};
+
+            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
+
+            realFilters = _extends({}, FILTER_DEFAULT_OBJECT, realFilters);
+
+            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            var filterString = filterList.filter(function (it) {
+                return it.checked;
+            }).map(function (it) {
+                var viewObject = filterInfo[it.key];
+                if (it.key == 'filterDropshadow') {
+
+                    var values = DROP_SHADOW_LIST.map(function (key) {
+                        return stringUnit(layer[key] || FILTER_DEFAULT_OBJECT[key]);
+                    }).join(' ');
+
+                    return viewObject.func + "(" + values + ")";
+                } else {
+                    var values = stringUnit(it);
+                    return viewObject.func + "(" + values + ")";
+                }
+            }).join(' ');
+
+            return {
+                filter: filterString
+            };
+        }
+    }]);
+    return FilterManager;
+}(BaseModule);
+
+var backdropInfo = {
+    'backdropBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
+    'backdropGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'backdropHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
+    'backdropInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
+    'backdropBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
+    'backdropDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'backdropDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'backdropDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
+    'backdropDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
+    'backdropOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
+    'backdropSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
+};
+
+var DROP_SHADOW_LIST$1 = ['backdropDropshadowOffsetX', 'backdropDropshadowOffsetY', 'backdropDropshadowBlurRadius', 'backdropDropshadowColor'];
+
+var BackdropManager = function (_BaseModule) {
+    inherits(BackdropManager, _BaseModule);
+
+    function BackdropManager() {
+        classCallCheck(this, BackdropManager);
+        return possibleConstructorReturn(this, (BackdropManager.__proto__ || Object.getPrototypeOf(BackdropManager)).apply(this, arguments));
+    }
+
+    createClass(BackdropManager, [{
+        key: GETTER(BACKDROP_GET),
+        value: function value$$1($store, id) {
+            return backdropInfo[id];
+        }
+    }, {
+        key: GETTER(BACKDROP_LIST),
+        value: function value$$1($store, layerId) {
+            var _$store$mapGetters = $store.mapGetters(ITEM_GET),
+                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 1),
+                get$$1 = _$store$mapGetters2[0];
+
+            var layer = get$$1(layerId);
+            var realFilters = {};
+
+            BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
+
+            realFilters = _extends({}, BACKDROP_DEFAULT_OBJECT, realFilters);
+
+            var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            return filterList.map(function (it) {
+                return it.key;
+            });
+        }
+    }, {
+        key: GETTER(BACKDROP_TO_CSS),
+        value: function value$$1($store, layer) {
+            var realFilters = {};
+
+            BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
+                return layer[key];
+            }).forEach(function (key) {
+                realFilters[key] = layer[key];
+            });
+
+            realFilters = _extends({}, BACKDROP_DEFAULT_OBJECT, realFilters);
+
+            var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(function (key) {
+                return _extends({ key: key }, realFilters[key]);
+            });
+
+            filterList.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            var filterString = filterList.filter(function (it) {
+                return it.checked;
+            }).map(function (it) {
+                var viewObject = backdropInfo[it.key];
+                if (it.key == 'backdropDropshadow') {
+
+                    var values = DROP_SHADOW_LIST$1.map(function (key) {
+                        var value$$1 = layer[key] || BACKDROP_DEFAULT_OBJECT[key];
+
+                        return unit(value$$1.value, value$$1.unit, true);
+                    }).join(' ');
+
+                    return viewObject.func + "(" + values + ")";
+                } else {
+                    var values = unit(it.value, it.unit, true);
+                    return viewObject.func + "(" + values + ")";
+                }
+            }).join(' ');
+
+            return {
+                'backdrop-filter': filterString,
+                '-webkit-backdrop-filter': filterString
+            };
+        }
+    }]);
+    return BackdropManager;
+}(BaseModule);
+
+var en_US = {
+
+    app: {
+        title: 'EASYLOGIC',
+        counting: '{index}'
+    },
+    label: {
+        pattern: {
+            cloneCount: 'Clone'
+        }
+    }
+};
+
+var ko_KR = {
+    app: {
+        title: '이지로직',
+        counting: '{index}'
+    },
+    label: {
+        pattern: {
+            cloneCount: '복제'
+        }
+    }
+};
+
+var langs = {
+    en_US: flatKeyValue(en_US),
+    ko_KR: flatKeyValue(ko_KR)
+};
+
+var LANG_EN = 'en_US';
+
+var FALLBACK_LANG = LANG_EN;
+
+var i18n = {
+    get: function get$$1(key) {
+        var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var lang = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : FALLBACK_LANG;
+
+        var str = langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
+
+        Object.keys(params).forEach(function (key) {
+            str = str.replace(new RegExp('{' + key + '}', 'ig'), params[key]);
+        });
+
+        return str;
+    }
+};
+
+var I18nManager = function (_BaseModule) {
+    inherits(I18nManager, _BaseModule);
+
+    function I18nManager() {
+        classCallCheck(this, I18nManager);
+        return possibleConstructorReturn(this, (I18nManager.__proto__ || Object.getPrototypeOf(I18nManager)).apply(this, arguments));
+    }
+
+    createClass(I18nManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(I18nManager.prototype.__proto__ || Object.getPrototypeOf(I18nManager.prototype), "initialize", this).call(this);
+
+            this.$store.lang = LANG_EN;
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: ACTION('i18n/change/language'),
+        value: function value($store) {
+            var lang = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : LANG_EN;
+
+            $store.lang = lang;
+        }
+    }, {
+        key: GETTER('i18n/get'),
+        value: function value($store, key) {
+            var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+            var lang = arguments[3];
+
+            return i18n.get(key, params, lang || $store.lang);
+        }
+    }]);
+    return I18nManager;
+}(BaseModule);
+
+var triangle = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }]
+};
+
+var trapezoid = {
+    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(0) }]
+};
+
+var parallelogram = {
+    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(0) }]
+};
+
+var rhombus = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(50) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(50) }]
+};
+
+var pentagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(38) }, { x: percentUnit(18), y: percentUnit(100) }, { x: percentUnit(82), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(38) }]
+};
+
+var hexagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(25) }, { x: percentUnit(0), y: percentUnit(75) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(75) }, { x: percentUnit(100), y: percentUnit(25) }]
+};
+
+var heptagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(10), y: percentUnit(20) }, { x: percentUnit(0), y: percentUnit(60) }, { x: percentUnit(25), y: percentUnit(100) }, { x: percentUnit(75), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(60) }, { x: percentUnit(90), y: percentUnit(20) }]
+};
+
+var octagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(30), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(30) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(30), y: percentUnit(100) }, { x: percentUnit(70), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(30) }, { x: percentUnit(70), y: percentUnit(0) }]
+};
+
+var nonagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(17), y: percentUnit(12) }, { x: percentUnit(0), y: percentUnit(43) }, { x: percentUnit(6), y: percentUnit(78) }, { x: percentUnit(32), y: percentUnit(100) }, { x: percentUnit(68), y: percentUnit(100) }, { x: percentUnit(94), y: percentUnit(78) }, { x: percentUnit(100), y: percentUnit(43) }, { x: percentUnit(83), y: percentUnit(12) }]
+};
+
+var decagon = {
+    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(20), y: percentUnit(10) }, { x: percentUnit(0), y: percentUnit(35) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(20), y: percentUnit(90) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(90) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(35) }, { x: percentUnit(80), y: percentUnit(10) }]
+};
+
+var clipPathList = [triangle, trapezoid, parallelogram, rhombus, pentagon, hexagon, heptagon, octagon, nonagon, decagon];
+
+var SQRT_2 = Math.sqrt(2);
+
+var ClipPathManager = function (_BaseModule) {
+    inherits(ClipPathManager, _BaseModule);
+
+    function ClipPathManager() {
+        classCallCheck(this, ClipPathManager);
+        return possibleConstructorReturn(this, (ClipPathManager.__proto__ || Object.getPrototypeOf(ClipPathManager)).apply(this, arguments));
+    }
+
+    createClass(ClipPathManager, [{
+        key: GETTER(CLIPPATH_SAMPLE_LIST),
+        value: function value$$1($store) {
+            return clipPathList;
+        }
+    }, {
+        key: GETTER(CLIPPATH_SAMPLE_GET),
+        value: function value$$1($store, index) {
+            return clipPathList[index];
+        }
+    }, {
+        key: "caculateClosestFromCenter",
+        value: function caculateClosestFromCenter(centerX, centerY, width, height) {
+            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
+
+            return Math.min.apply(Math, toConsumableArray(list.map(function (it) {
+                var x = Math.pow(Math.abs(centerX - it[0]), 2);
+                var y = Math.pow(Math.abs(centerY - it[1]), 2);
+                return Math.sqrt(x + y) / SQRT_2;
+            })));
+        }
+    }, {
+        key: "caculateFarthestFromCenter",
+        value: function caculateFarthestFromCenter(centerX, centerY, width, height) {
+            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
+
+            return Math.max.apply(Math, toConsumableArray(list.map(function (it) {
+                var x = Math.pow(Math.abs(centerX - it[0]), 2);
+                var y = Math.pow(Math.abs(centerY - it[1]), 2);
+                return Math.sqrt(x + y) / SQRT_2;
+            })));
+        }
+    }, {
+        key: GETTER(CLIPPATH_MAKE_CIRCLE),
+        value: function value$$1($store, layer) {
+
+            var width = unitValue(layer.width);
+            var height = unitValue(layer.height);
+
+            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
+
+            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
+            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
+            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
+            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
+            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
+
+            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
+            var placeCenterY = stringUnit(clipPathCenterY); // centerY
+
+            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
+                var radiusSize = Math.sqrt(Math.pow(Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width)), 2) + Math.pow(Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height)), 2));
+                var radiusString = percent(Math.floor(radiusSize / dist * 100));
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
+            }
+            return "circle(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
+        }
+    }, {
+        key: GETTER(CLIPPATH_MAKE_ELLIPSE),
+        value: function value$$1($store, layer) {
+            var width = unitValue(layer.width);
+            var height = unitValue(layer.height);
+
+            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
+            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
+            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
+            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
+            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
+
+            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
+            var placeCenterY = stringUnit(clipPathCenterY); // centerY
+
+            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
+
+            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
+                var radiusSizeX = Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width));
+
+                var radiusPercentX = stringUnit(percentUnit(Math.floor(radiusSizeX / dist * 100)));
+
+                var radiusSizeY = Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height));
+                var radiusPercentY = stringUnit(percentUnit(Math.floor(radiusSizeY / dist * 100)));
+
+                var radiusString = radiusPercentX + " " + radiusPercentY;
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
+            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
+                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
+            }
+
+            return "ellipse(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
+        }
+    }, {
+        key: GETTER(CLIPPATH_MAKE_INSET),
+        value: function value$$1($store, layer) {
+
+            var clipPathInsetTop = defaultValue(layer.clipPathInsetTop, percentUnit(0));
+            var clipPathInsetLeft = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
+            var clipPathInsetRight = defaultValue(layer.clipPathInsetRight, percentUnit(0));
+            var clipPathInsetBottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
+
+            var top = stringUnit(clipPathInsetTop);
+            var left = stringUnit(clipPathInsetLeft);
+            var right = stringUnit(clipPathInsetRight);
+            var bottom = stringUnit(clipPathInsetBottom);
+
+            var insetString = top + " " + right + " " + bottom + " " + left;
+
+            return "inset(" + insetString + ")";
+        }
+    }, {
+        key: GETTER(CLIPPATH_MAKE_POLYGON),
+        value: function value$$1($store, layer) {
+
+            var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || EMPTY_STRING;
+
+            var fillRule = EMPTY_STRING;
+            if (clipPathPolygonFillRule != EMPTY_STRING) {
+                fillRule = clipPathPolygonFillRule + ',';
+            }
+
+            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
+
+            var polygonString = clipPathPolygonPoints.map(function (it) {
+                return stringUnit(it.x) + " " + stringUnit(it.y);
+            }).join(', ');
+
+            return "polygon(" + fillRule + " " + polygonString + ")";
+        }
+    }, {
+        key: GETTER(CLIPPATH_MAKE_SVG),
+        value: function value$$1($store, layer) {
+            if (layer.clipPathSvg) {
+                return "url(#clippath-" + layer.id + ")";
+            }
+        }
+    }, {
+        key: GETTER(CLIPPATH_TO_CSS),
+        value: function value$$1($store, layer) {
+            var clipPath = null;
+            if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
+                clipPath = CLIP_PATH_TYPE_NONE;
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_CIRCLE) {
+                clipPath = $store.read(CLIPPATH_MAKE_CIRCLE, layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_ELLIPSE) {
+                clipPath = $store.read(CLIPPATH_MAKE_ELLIPSE, layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
+                clipPath = $store.read(CLIPPATH_MAKE_INSET, layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_POLYGON) {
+                clipPath = $store.read(CLIPPATH_MAKE_POLYGON, layer);
+            } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
+                clipPath = $store.read(CLIPPATH_MAKE_SVG, layer);
+            }
+
+            // console.log(layer.clipPathType, clipPath);
+
+            return {
+                'clip-path': clipPath
+            };
+        }
+    }]);
+    return ClipPathManager;
+}(BaseModule);
+
+var _itemCreateActions;
+
+var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
+var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+
+var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
+
+var ItemCreateManager = function (_BaseModule) {
+    inherits(ItemCreateManager, _BaseModule);
+
+    function ItemCreateManager() {
+        classCallCheck(this, ItemCreateManager);
+        return possibleConstructorReturn(this, (ItemCreateManager.__proto__ || Object.getPrototypeOf(ItemCreateManager)).apply(this, arguments));
+    }
+
+    createClass(ItemCreateManager, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(ItemCreateManager.prototype.__proto__ || Object.getPrototypeOf(ItemCreateManager.prototype), "initialize", this).call(this);
+
+            this.$store.items = {};
+            this.$store.itemKeys = [];
+        }
+    }, {
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: GETTER(ITEM_KEYS),
+        value: function value$$1($store) {
+            return $store.itemKeys;
+        }
+    }, {
+        key: ACTION(ITEM_KEYS_GENERATE),
+        value: function value$$1($store) {
+            $store.itemKeys = Object.keys($store.items);
+        }
+    }, {
+        key: ACTION(ITEM_INITIALIZE),
+        value: function value$$1($store, id) {
+            var item = $store.items[id];
+
+            if (item) {
+                $store.run(ITEM_INIT_CHILDREN, item.parentId);
+            }
+
+            delete $store.items[id];
+
+            $store.run(ITEM_KEYS_GENERATE);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_OBJECT),
+        value: function value$$1($store, obj) {
+            var defaultObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var newObj = _extends({}, defaultObj, obj);
+            newObj.id = Date.now() + '-' + uuid();
+
+            $store.items[newObj.id] = newObj;
+
+            $store.run(ITEM_KEYS_GENERATE);
+
+            return newObj.id;
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_PAGE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, PAGE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_LAYER),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, LAYER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_CIRCLE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, CIRCLE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_POLYGON),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, POLYGON_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_GROUP),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, GROUP_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_BOXSHADOW),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, BOXSHADOW_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_TEXTSHADOW),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, TEXTSHADOW_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_IMAGE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_IMAGE_WITH_COLORSTEP),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
+            var color_0 = 'rgba(216,216,216, 0)';
+            var color_1 = 'rgba(216,216,216, 1)';
+            if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
+
+                if (conicList.includes(obj.type)) {
+                    $store.items[imageId].angle = 0;
+                }
+
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 100, index: 100 });
+            } else if (repeatingGradientTypeList.includes(obj.type)) {
+                if (conicList.includes(obj.type)) {
+                    $store.items[imageId].angle = 0;
+                }
+
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 10, index: 100 });
+            }
+
+            return imageId;
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_COLORSTEP),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, COLORSTEP_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE),
+        value: function value$$1($store, itemType) {
+            var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            return $store.read(itemCreateActions[itemType], obj);
+        }
+    }, {
+        key: GETTER(ITEM_COPY),
+        value: function value$$1($store, id) {
+            var copyObject = _extends({}, $store.read(ITEM_GET, id));
+
+            return $store.read(ITEM_CREATE, copyObject.itemType, copyObject);
+        }
+    }, {
+        key: ACTION(ITEM_ADD),
+        value: function value$$1($store, itemType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            var id = $store.read(ITEM_CREATE, itemType);
+            var item = $store.read(ITEM_GET, id);
+            item.parentId = parentId;
+
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, item.id);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_LAYER),
+        value: function value$$1($store, itemType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            var rect = $store.read(SELECTION_RECT);
+
+            var id = $store.read(ITEM_CREATE, itemType);
+            var item = $store.read(ITEM_GET, id);
+            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
+            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
+
+            item.parentId = parentId;
+
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, item.id);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_SHAPE),
+        value: function value$$1($store, shapeObject) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            var rect = $store.read(SELECTION_RECT);
+
+            var id = $store.read(ITEM_CREATE, ITEM_TYPE_LAYER, shapeObject);
+            var item = $store.read(ITEM_GET, id);
+            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
+            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
+
+            item.parentId = parentId;
+
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, item.id);
+        }
+    }, {
+        key: ACTION(ITEM_PREPEND_IMAGE),
+        value: function value$$1($store, imageType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            $store.run(ITEM_ADD_IMAGE, imageType, isSelected, parentId, -1);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_IMAGE),
+        value: function value$$1($store, imageType) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
+
+            var id = $store.read(ITEM_CREATE_IMAGE_WITH_COLORSTEP, { type: imageType });
+            var item = $store.read(ITEM_GET, id);
+            item.type = imageType;
+            item.parentId = parentId;
+            item.index = index;
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: ACTION(ITEM_PREPEND_IMAGE_FILE$1),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            $store.run(ITEM_ADD_IMAGE_FILE, img, isSelected, parentId, -1);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_IMAGE_FILE),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
+
+            var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
+            var item = $store.read(ITEM_GET, id);
+            item.parentId = parentId;
+            item.index = index;
+            item.fileType = img.fileType;
+            item.backgroundImage = img.url;
+            item.backgroundImageDataURI = img.datauri;
+            item.backgroundSizeWidth = percentUnit(100);
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: ACTION(ITEM_SET_IMAGE_FILE),
+        value: function value$$1($store, id, img) {
+            var item = $store.read(ITEM_GET, id);
+            item.fileType = img.fileType || 'svg';
+            if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
+            if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
+            item.backgroundImage = img.url;
+            item.backgroundImageDataURI = img.datauri;
+            item.backgroundSizeWidth = percentUnit(100);
+
+            $store.run(ITEM_SET, item);
+        }
+    }, {
+        key: ACTION(ITEM_PREPEND_IMAGE_URL$1),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+
+            $store.run(ITEM_ADD_IMAGE_URL, img, isSelected, parentId, -1);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_IMAGE_URL),
+        value: function value$$1($store, img) {
+            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
+            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
+
+            var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
+            var item = $store.read(ITEM_GET, id);
+            item.parentId = parentId;
+            item.index = index;
+            item.fileType = img.fileType;
+            item.backgroundImage = img.url;
+            item.backgroundSizeWidth = percentUnit(100);
+
+            $store.run(ITEM_SET, item, isSelected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_PAGE),
+        value: function value$$1($store) {
+            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            var pageId = $store.read(ITEM_CREATE_PAGE);
+            var layerId = $store.read(ITEM_CREATE_LAYER);
+            var imageId = $store.read(ITEM_CREATE_IMAGE);
+
+            // 페이지 생성 
+            var page = $store.read(ITEM_GET, pageId);
+            page.index = Number.MAX_SAFE_INTEGER;
+            $store.run(ITEM_SET, page);
+
+            // 레이어 생성 
+            var layer = $store.read(ITEM_GET, layerId);
+            layer.parentId = pageId;
+            layer.width = _extends({}, page.width);
+            layer.height = _extends({}, page.height);
+            $store.run(ITEM_SET, layer);
+
+            // 이미지 생성 
+            var image = $store.read(ITEM_GET, imageId);
+            image.parentId = layerId;
+            $store.run(ITEM_SET, image, isSelected);
+
+            $store.run(HISTORY_INITIALIZE);
+        }
+    }]);
+    return ItemCreateManager;
+}(BaseModule);
+
+var INDEX_DIST$1 = 100;
+var COPY_INDEX_DIST = 1;
+
+
+
+var ItemMoveManager = function (_BaseModule) {
+    inherits(ItemMoveManager, _BaseModule);
+
+    function ItemMoveManager() {
+        classCallCheck(this, ItemMoveManager);
+        return possibleConstructorReturn(this, (ItemMoveManager.__proto__ || Object.getPrototypeOf(ItemMoveManager)).apply(this, arguments));
+    }
+
+    createClass(ItemMoveManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_TO),
+        value: function value$$1($store, sourceId, newItemId) {
+
+            var currentItem = $store.read(ITEM_GET, sourceId);
+
+            var newItem = $store.read(ITEM_GET, newItemId);
+            newItem.index = currentItem.index + COPY_INDEX_DIST;
+
+            $store.run(ITEM_SET, newItem, true);
+            $store.run(ITEM_SORT, newItemId);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_NEXT),
+        value: function value$$1($store, id) {
+            var item = $store.read(ITEM_GET, id);
+            item.index = $store.read(ITEM_NEXT_INDEX, id);
+
+            $store.run(ITEM_SET, item, item.selected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_LAST),
+        value: function value$$1($store, id) {
+            var item = $store.read(ITEM_GET, id);
+            item.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, item, item.selected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_FIRST),
+        value: function value$$1($store, id) {
+            var item = $store.read(ITEM_GET, id);
+            item.index = -1 * COPY_INDEX_DIST;
+
+            $store.run(ITEM_SET, item, item.selected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_IN),
+        value: function value$$1($store, destId, sourceId) {
+            var destItem = $store.read(ITEM_GET, destId);
+            var sourceItem = $store.read(ITEM_GET, sourceId);
+            sourceItem.parentId = destItem.parentId;
+            sourceItem.index = destItem.index - COPY_INDEX_DIST;
+
+            $store.run(ITEM_SET, sourceItem, true);
+            $store.run(ITEM_SORT, sourceId);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_IN_LAYER),
+        value: function value$$1($store, destId, sourceId) {
+            var destItem = $store.read(ITEM_GET, destId); /* layer */
+            var sourceItem = $store.read(ITEM_GET, sourceId);
+
+            sourceItem.parentId = destItem.id;
+            sourceItem.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, sourceItem, true);
+            $store.run(ITEM_SORT, sourceId);
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_PREV),
+        value: function value$$1($store, id) {
+            var item = $store.read(ITEM_GET, id);
+            item.index = $store.read(ITEM_PREV_INDEX, id);
+
+            $store.run(ITEM_SET, item, item.selected);
+            $store.run(ITEM_SORT, id);
+        }
+    }, {
+        key: GETTER(ITEM_ADD_INDEX),
+        value: function value$$1($store, id) {
+            var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST$1;
+
+            return $store.items[id].index + dist;
+        }
+    }, {
+        key: GETTER(ITEM_NEXT_INDEX),
+        value: function value$$1($store, id) {
+            return $store.read(ITEM_ADD_INDEX, id, INDEX_DIST$1 + COPY_INDEX_DIST);
+        }
+    }, {
+        key: GETTER(ITEM_PREV_INDEX),
+        value: function value$$1($store, id) {
+            return $store.read(ITEM_ADD_INDEX, id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_Y),
+        value: function value$$1($store, distY) {
+            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
+                if (!isArray(layers)) {
+                    layers = [layers];
+                }
+
+                layers.forEach(function (it) {
+                    it.y = pxUnit(unitValue(it.y) + distY);
+
+                    $store.run(ITEM_SET, it);
+                });
+            });
+        }
+    }, {
+        key: ACTION(ITEM_MOVE_X),
+        value: function value$$1($store, distX) {
+            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
+                if (!isArray(layers)) {
+                    layers = [layers];
+                }
+
+                layers.forEach(function (it) {
+                    it.x = pxUnit(unitValue(it.x) + distX);
+
+                    $store.run(ITEM_SET, it);
+                });
+            });
+        }
+    }]);
+    return ItemMoveManager;
+}(BaseModule);
+
+var COPY_INDEX_DIST$1 = 1;
+
+var ItemRecoverManager = function (_BaseModule) {
+    inherits(ItemRecoverManager, _BaseModule);
+
+    function ItemRecoverManager() {
+        classCallCheck(this, ItemRecoverManager);
+        return possibleConstructorReturn(this, (ItemRecoverManager.__proto__ || Object.getPrototypeOf(ItemRecoverManager)).apply(this, arguments));
+    }
+
+    createClass(ItemRecoverManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_EDITOR);
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER),
+        value: function value($store, item, parentId) {
+
+            if (item.page) {
+                return $store.read(ITEM_RECOVER_PAGE, item, parentId);
+            } else if (item.layer) {
+                return $store.read(ITEM_RECOVER_LAYER, item, parentId);
+            } else if (item.image) {
+                return $store.read(ITEM_RECOVER_IMAGE, item, parentId);
+            } else if (item.boxshadow) {
+                return $store.read(ITEM_RECOVER_BOXSHADOW, item, parentId);
+            } else if (item.textshadow) {
+                return $store.read(ITEM_RECOVER_TEXTSHADOW, item, parentId);
+            }
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER_IMAGE),
+        value: function value($store, image, parentId) {
+            var newImageId = $store.read(ITEM_CREATE_IMAGE, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, image.image)));
+            var colorsteps = image.colorsteps || [];
+
+            colorsteps.forEach(function (step) {
+                $store.read(ITEM_RECOVER_COLORSTEP, step, newImageId);
+            });
+
+            return newImageId;
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER_COLORSTEP),
+        value: function value($store, colorstep, parentId) {
+            return $store.read(ITEM_CREATE_COLORSTEP, _extends({ parentId: parentId }, colorstep));
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER_BOXSHADOW),
+        value: function value($store, boxshadow, parentId) {
+            return $store.read(ITEM_CREATE_BOXSHADOW, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow)));
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER_TEXTSHADOW),
+        value: function value($store, textshadow, parentId) {
+            return $store.read(ITEM_CREATE_TEXTSHADOW, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow)));
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER_LAYER),
+        value: function value($store, layer, parentId) {
+            var newLayerId = $store.read(ITEM_CREATE_LAYER, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, layer.layer)));
+
+            var images = layer.images || [];
+            images.forEach(function (image) {
+                $store.read(ITEM_RECOVER_IMAGE, image, newLayerId);
+            });
+
+            var boxshadows = layer.boxshadows || [];
+            boxshadows.forEach(function (boxshadow) {
+                $store.read(ITEM_RECOVER_BOXSHADOW, boxshadow, newLayerId);
+            });
+
+            var textshadows = layer.textshadows || [];
+            textshadows.forEach(function (textshadow) {
+                $store.read(ITEM_RECOVER_TEXTSHADOW, textshadow, newLayerId);
+            });
+
+            return newLayerId;
+        }
+    }, {
+        key: GETTER(ITEM_RECOVER_PAGE),
+        value: function value($store, page) {
+            var newPageId = $store.read(ITEM_CREATE_PAGE, $store.read(ITEM_CONVERT_STYLE, page.page));
+            page.layers.forEach(function (layer) {
+                $store.read(ITEM_RECOVER_LAYER, layer, newPageId);
+            });
+
+            return newPageId;
+        }
+    }, {
+        key: ACTION(ITEM_ADD_CACHE),
+        value: function value($store, item, sourceId) {
+            var currentItem = $store.read(ITEM_GET, sourceId);
+            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, item, currentItem.parentId));
+        }
+    }, {
+        key: ACTION(ITEM_ADD_COPY),
+        value: function value($store, sourceId) {
+            var currentItem = $store.read(ITEM_GET, sourceId);
+            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
+        }
+    }, {
+        key: ACTION(ITEM_COPY_IN),
+        value: function value($store, destId, sourceId) {
+            var destItem = $store.read(ITEM_GET, destId);
+            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
+
+            var newImageItem = $store.read(ITEM_GET, newImageId);
+            newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
+
+            $store.run(ITEM_SET, sourceItem, true);
+            $store.run(ITEM_SORT, sourceId);
+        }
+    }, {
+        key: ACTION(ITEM_COPY_IN_LAYER),
+        value: function value($store, destId, sourceId) {
+            var destItem = $store.read(ITEM_GET, destId); /* layer */
+            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
+
+            var newImageItem = $store.read(ITEM_GET, newImageId);
+            newImageItem.index = Number.MAX_SAFE_INTEGER;
+
+            $store.run(ITEM_SET, newImageItem, true);
+            $store.run(ITEM_SORT, newImageId);
+        }
+    }]);
+    return ItemRecoverManager;
+}(BaseModule);
+
+var DEFAULT_FUNCTION$2 = function DEFAULT_FUNCTION(item) {
+    return item;
+};
+
+var ItemSearchManager = function (_BaseModule) {
+    inherits(ItemSearchManager, _BaseModule);
+
+    function ItemSearchManager() {
+        classCallCheck(this, ItemSearchManager);
+        return possibleConstructorReturn(this, (ItemSearchManager.__proto__ || Object.getPrototypeOf(ItemSearchManager)).apply(this, arguments));
+    }
+
+    createClass(ItemSearchManager, [{
+        key: GETTER(ITEM_GET_ALL),
+        value: function value$$1($store, parentId) {
+            var items = {};
+
+            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
+                items[item.id] = _extends({}, item);
+
+                var children = $store.read(ITEM_GET_ALL, item.id);
+                Object.keys(children).forEach(function (key) {
+                    items[key] = children[key];
+                });
+            });
+
+            return items;
+        }
+    }, {
+        key: GETTER(ITEM_LIST),
+        value: function value$$1($store, filterCallback) {
+            var list = $store.itemKeys.filter(filterCallback);
+
+            list.sort(function (aId, bId) {
+                return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
+            });
+
+            return list;
+        }
+    }, {
+        key: GETTER(ITEM_FILTER),
+        value: function value$$1($store, filterCallback) {
+            return $store.read(ITEM_LIST, filterCallback);
+        }
+    }, {
+        key: GETTER(ITEM_LIST_PAGE),
+        value: function value$$1($store) {
+            return $store.read(ITEM_LIST, this.checkOnlyItemTypeCallback($store, ITEM_TYPE_PAGE));
+        }
+    }, {
+        key: GETTER(ITEM_MAP_PAGE),
+        value: function value$$1($store, callback) {
+            return $store.read(ITEM_LIST_PAGE).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: "checkItemTypeCallback",
+        value: function checkItemTypeCallback($store, parentId) {
+            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
+            return function (id) {
+                return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType;
+            };
+        }
+    }, {
+        key: "checkOnlyItemTypeCallback",
+        value: function checkOnlyItemTypeCallback($store, itemType) {
+            return function (id) {
+                return $store.items[id].itemType == itemType;
+            };
+        }
+    }, {
+        key: "checkParentItemCallback",
+        value: function checkParentItemCallback($store, parentId) {
+            return function (id) {
+                return $store.items[id].parentId == parentId;
+            };
+        }
+    }, {
+        key: GETTER(ITEM_LIST_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
+
+            if (isUndefined(itemType)) {
+                return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
+            } else {
+                return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
+            }
+        }
+    }, {
+        key: GETTER(ITEM_COUNT_CHILDREN),
+        value: function value$$1($store, parentId) {
+            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).length;
+        }
+    }, {
+        key: GETTER(ITEM_MAP_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: "getChildrenMapForType",
+        value: function getChildrenMapForType($store, parentId, itemType) {
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
+
+            var parent = $store.read(ITEM_GET, parentId);
+
+            if (!parent.children) {
+                parent.children = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
+            }
+
+            return parent.children.map(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER(ITEM_MAP_TYPE_CHILDREN),
+        value: function value$$1($store, parentId, itemType) {
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, itemType, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_LAYER_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_LAYER, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_IMAGE_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_IMAGE, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_COLORSTEP_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_COLORSTEP, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_BOXSHADOW_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_BOXSHADOW, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_TEXTSHADOW_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
+        }
+    }, {
+        key: GETTER(ITEM_FILTER_CHILDREN),
+        value: function value$$1($store, parentId, callback) {
+            return $store.read(ITEM_LIST_CHILDREN, parentId).filter(function (id, index) {
+                return callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER(ITEM_EACH_CHILDREN),
+        value: function value$$1($store, parentId, callback) {
+            return $store.read(ITEM_LIST_CHILDREN, parentId).forEach(function (id, index) {
+                callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER(ITEM_EACH_TYPE_CHILDREN),
+        value: function value$$1($store, parentId, itemType, callback) {
+            return $store.read(ITEM_LIST_CHILDREN, parentId, itemType).forEach(function (id, index) {
+                callback($store.items[id], index);
+            });
+        }
+    }, {
+        key: GETTER(ITEM_TRAVERSE),
+        value: function value$$1($store, parentId) {
+            var list = $store.read(ITEM_LIST_CHILDREN, parentId);
+
+            list.sort(function (a, b) {
+                var $a = $store.items[a];
+                var $b = $store.items[b];
+
+                if ($a.order == $b.order) {
+
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+
+                    return 0;
+                }
+                return $a.order > $b.order ? 1 : -1;
+            });
+
+            return list.map(function (childId) {
+                return { id: childId, children: $store.read(ITEM_TRAVERSE, childId) };
+            });
+        }
+    }, {
+        key: GETTER(ITEM_TREE),
+        value: function value$$1($store) {
+            return $store.read(ITEM_TRAVERSE, EMPTY_STRING);
+        }
+    }, {
+        key: GETTER(ITEM_TREE_NORMALIZE),
+        value: function value$$1($store) {
+            var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+            var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+            var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+            var results = [];
+
+            var list = root != null ? $store.read(ITEM_TREE) : children;
+            list.forEach(function (item) {
+                results.push({ id: item.id, depth: depth });
+                results.push.apply(results, toConsumableArray($store.read(ITEM_TREE_NORMALIZE, null, item.children, depth + 1)));
+            });
+
+            return results;
+        }
+    }, {
+        key: GETTER(ITEM_PATH),
+        value: function value$$1($store, id) {
+            var results = [id];
+            var targetId = id;
+
+            do {
+                var item = $store.read(ITEM_GET, targetId);
+
+                if (item.parentId == EMPTY_STRING) {
+                    results.push(item.id);
+                    break;
+                } else {
+                    results.push(item.id);
+                    targetId = item.parentId;
+                }
+            } while (targetId);
+
+            return results;
+        }
+    }, {
+        key: GETTER(ITEM_DOM),
+        value: function value$$1($store, id) {
+            var element = document.querySelector('[item-layer-id="' + id + '"]');
+
+            if (element) {
+                return new Dom(element);
+            }
+        }
+    }]);
+    return ItemSearchManager;
+}(BaseModule);
+
+var ExportManager = function (_BaseModule) {
+    inherits(ExportManager, _BaseModule);
+
+    function ExportManager() {
+        classCallCheck(this, ExportManager);
+        return possibleConstructorReturn(this, (ExportManager.__proto__ || Object.getPrototypeOf(ExportManager)).apply(this, arguments));
+    }
+
+    createClass(ExportManager, [{
+        key: "makePageCSS",
+        value: function makePageCSS($store, page) {
+
+            var css = _extends({ position: 'relative' }, $store.read(PAGE_TO_CSS, page));
+
+            return $store.read(CSS_TO_STRING, css);
+        }
+    }, {
+        key: "getClassName",
+        value: function getClassName(className) {
+            return (className || EMPTY_STRING).split(' ').map(function (it) {
+                return '.' + it;
+            }).join(EMPTY_STRING);
+        }
+    }, {
+        key: "getPageStyle",
+        value: function getPageStyle($store, page) {
+            var pageStyle = this.makePageCSS($store, page).split(';').map(function (it) {
+                return "\t" + it + ';';
+            }).join('\n');
+
+            return pageStyle;
+        }
+    }, {
+        key: "getPageHtml",
+        value: function getPageHtml($store, page) {
+            var html = "<div id=\"page-1\">\n" + $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                var selector = [];
+
+                if (className) {
+                    selector.push("class=\"" + className + "\"");
+                }
+
+                if (!selector.length && item.idString) {
+                    selector.push("id=\"" + idString + "\"");
+                } else {
+                    selector.push("id=\"layer-" + (index + 1) + "\"");
+                }
+
+                var clipPath = $store.read(LAYER_TO_STRING_CLIPPATH, item);
+
+                if (clipPath) {
+                    clipPath = "\t\t\n" + clipPath;
+                }
+
+                var content = item.content || EMPTY_STRING;
+
+                return "\t<div " + selector.join(' ') + ">" + content + clipPath + "</div>";
+            }).join('\n') + "\n</div>";
+
+            return html;
+        }
+    }, {
+        key: "getLayerStyle",
+        value: function getLayerStyle($store, page) {
+            var _this2 = this;
+
+            var layerStyle = $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
+
+                var idString = item.idString || 'layer-' + (index + 1);
+                var className = item.className;
+
+                var selector = [];
+
+                if (className) {
+                    selector = _this2.getClassName(className);
+                } else {
+                    selector = "#" + idString;
+                }
+
+                var css = $store.read(LAYER_TOEXPORT, item, true).split(';').map(function (it) {
+                    return '\t' + it + ';';
+                }).join('\n');
+
+                return selector + " {\n" + css + "\n}";
+            }).join('\n');
+
+            return layerStyle;
+        }
+    }, {
+        key: GETTER(EXPORT_GENERATE_CODE),
+        value: function value$$1($store) {
+            var page = $store.read(SELECTION_CURRENT_PAGE);
+
+            if (!page) {
+                return EMPTY_STRING;
+            }
+
+            var pageStyle = this.getPageStyle($store, page);
+
+            var html = this.getPageHtml($store, page);
+
+            var layerStyle = this.getLayerStyle($store, page);
+
+            var styleText = "\n#page-1 { \n" + pageStyle + "\n}\n" + layerStyle + "\n\n";
+            var style = "<style type=\"text/css\">" + styleText + "</style>\n";
+            return {
+                html: html,
+                fullhtml: style + html,
+                css: styleText
+            };
+        }
+    }, {
+        key: GETTER(EXPORT_CODEPEN_CODE),
+        value: function value$$1($store, obj) {
+            var title = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'CSS Gradient Editor';
+            var description = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'EasyLogic Studio';
+            var link = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : ' - https://css.easylogic.studio';
+
+            return JSON.stringify(_extends({
+                title: title,
+                description: description + link,
+                tags: ["css", "gradient", "editor", "easylogic", "studio"]
+            }, obj)).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
+        }
+    }]);
+    return ExportManager;
+}(BaseModule);
+
+var DEFINED_ANGLES$2 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var rotate$1 = function () {
+    function rotate() {
+        classCallCheck(this, rotate);
+    }
+
+    createClass(rotate, [{
+        key: "make",
+        value: function make(item) {
+            var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            // return always array 
+
+            var results = [];
+
+            if (item.type == IMAGE_ITEM_TYPE_LINEAR || item.type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
+                results.push.apply(results, toConsumableArray(this.makeClone(item, opt)));
+            }
+
+            return results;
+        }
+    }, {
+        key: "makeClone",
+        value: function makeClone(image, opt) {
+            var _this = this;
+
+            var results = [];
+            opt = opt || { clone: 1, blend: 'normal' };
+
+            var count = opt.clone || 1;
+            var blend = opt.blend || 'normal';
+            var randomPosition = opt.randomPosition || false;
+            var randomSize = opt.randomSize || false;
+
+            if (count < 2) return results;
+
+            var degree = 360 / count;
+
+            return repeat(count - 1).map(function (_, index) {
+                var newItem = _extends({}, image);
+                newItem.angle = _this.caculateAngle(newItem, (index + 1) * degree);
+
+                if (randomPosition) {
+                    newItem.backgroundPositionX = _this.getBackgroundPositionX(index);
+                    newItem.backgroundPositionY = _this.getBackgroundPositionY(index);
+                }
+
+                if (randomSize) {
+                    newItem.backgroundSizeWidth = _this.getBackgroundSizeWidth(index);
+                    newItem.backgroundSizeHeight = _this.getBackgroundSizeHeight(index);
+                }
+
+                newItem.backgroundBlendMode = blend;
+
+                return newItem;
+            });
+        }
+    }, {
+        key: "getBackgroundSizeWidth",
+        value: function getBackgroundSizeWidth(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "getBackgroundSizeHeight",
+        value: function getBackgroundSizeHeight(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "getBackgroundPositionX",
+        value: function getBackgroundPositionX(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "getBackgroundPositionY",
+        value: function getBackgroundPositionY(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "caculateAngle",
+        value: function caculateAngle(image) {
+            var plusAngle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+            var angle = isNotUndefined(DEFINED_ANGLES$2[image.angle]) ? DEFINED_ANGLES$2[image.angle] : image.angle;
+
+            angle = angle || 0;
+
+            return (angle + plusAngle) % 360;
+        }
+    }]);
+    return rotate;
+}();
+
+var patterns$1 = {
+    rotate: new rotate$1()
+};
+
+var PatternManager = function (_BaseModule) {
+    inherits(PatternManager, _BaseModule);
+
+    function PatternManager() {
+        classCallCheck(this, PatternManager);
+        return possibleConstructorReturn(this, (PatternManager.__proto__ || Object.getPrototypeOf(PatternManager)).apply(this, arguments));
+    }
+
+    createClass(PatternManager, [{
+        key: GETTER(PATTERN_MAKE),
+        value: function value($store, item) {
+            var patternOption = item.pattern || {};
+            var patternList = Object.keys(patternOption);
+
+            if (!patternList.length) {
+                return null;
+            }
+
+            var results = [];
+            patternList.filter(function (name) {
+                return patterns$1[name];
+            }).forEach(function (patternName) {
+
+                if (patternOption[patternName].enable) {
+                    results.push.apply(results, toConsumableArray(patterns$1[patternName].make(item, patternOption[patternName])));
+                }
+            });
+
+            results.push(item);
+
+            return results;
+        }
+    }, {
+        key: GETTER(PATTERN_GET),
+        value: function value($store, item, patternName) {
+            var pattern = item.pattern || {};
+
+            return pattern[patternName] || {};
+        }
+    }, {
+        key: ACTION(PATTERN_SET),
+        value: function value($store, item, patternName, patternOption) {
+            var pattern = item.pattern || {};
+
+            pattern[patternName] = patternOption || {};
+
+            $store.run(ITEM_SET, { id: item.id, pattern: pattern });
+        }
+    }]);
+    return PatternManager;
+}(BaseModule);
+
+var octagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, octagon);
+
+var rect = {
+    type: SHAPE_TYPE_RECT
+};
+
+var circle$1 = {
+    type: SHAPE_TYPE_CIRCLE,
+    fixedRadius: true,
+    borderRadius: percentUnit(100)
+};
+
+var decagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, decagon);
+
+var heptagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, heptagon);
+
+var hexagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, hexagon);
+
+var nonagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, nonagon);
+
+var parallelogram$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, parallelogram);
+
+var pentagon$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, pentagon);
+
+var rhombus$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, rhombus);
+
+var trapezoid$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, trapezoid);
+
+var triangle$1 = _extends({
+    type: SHAPE_TYPE_POLYGON,
+    clipPathType: CLIP_PATH_TYPE_POLYGON
+}, triangle);
+
+var shapes = {
+    rect: rect,
+    circle: circle$1,
+    triangle: triangle$1,
+    rhombus: rhombus$1,
+    hexagon: hexagon$1,
+    trapezoid: trapezoid$1,
+    pentagon: pentagon$1,
+    parallelogram: parallelogram$1,
+    octagon: octagon$1,
+    decagon: decagon$1,
+    heptagon: heptagon$1,
+    nonagon: nonagon$1
+};
+
+var shapeKeys = Object.keys(shapes);
+
+var ShapeManager = function (_BaseModule) {
+    inherits(ShapeManager, _BaseModule);
+
+    function ShapeManager() {
+        classCallCheck(this, ShapeManager);
+        return possibleConstructorReturn(this, (ShapeManager.__proto__ || Object.getPrototypeOf(ShapeManager)).apply(this, arguments));
+    }
+
+    createClass(ShapeManager, [{
+        key: GETTER(SHAPE_LIST),
+        value: function value($store) {
+            return shapeKeys;
+        }
+    }, {
+        key: GETTER(SHAPE_GET),
+        value: function value($store, key) {
+            return shapes[key];
+        }
+    }, {
+        key: GETTER(SHAPE_TO_CSS_TEXT),
+        value: function value($store, key) {
+            var item = _extends({}, LAYER_DEFAULT_OBJECT, shapes[key]);
+
+            var cssText = $store.read(LAYER_TO_STRING, item, true);
+
+            return cssText;
+        }
+    }]);
+    return ShapeManager;
+}(BaseModule);
+
+var KEY_SPLIT = '+';
+var KEY_CTRL = 'ctrl';
+var KEY_SHIFT$1 = 'shift';
+var KEY_ALT$1 = 'alt';
+var KEY_META$1 = 'meta';
+
+var hotKeys = [{ key: 'alt+ArrowUp', command: 'item/move/y', args: [-5] }, { key: 'shift+alt+ArrowUp', command: 'item/move/y', args: [-10] }, { key: 'ArrowUp', command: 'item/move/y', args: [-1] }, { key: 'alt+ArrowDown', command: 'item/move/y', args: [5] }, { key: 'ArrowDown', command: 'item/move/y', args: [1] }, { key: 'alt+ArrowRight', command: 'item/move/x', args: [5] }, { key: 'ArrowRight', command: 'item/move/x', args: [1] }, { key: 'alt+ArrowLeft', command: 'item/move/x', args: [-5] }, { key: 'ArrowLeft', command: 'item/move/x', args: [-1] }, { key: 'shift+a', command: function command($store) {
+        // console.log($store, args); 
+    }, args: [1, 2, 3] }];
+
+var getKeyType = function getKeyType(it) {
+    if (it.toLowerCase() === KEY_CTRL) return KEY_CTRL;
+    if (it.toLowerCase() === KEY_ALT$1) return KEY_ALT$1;
+    if (it.toLowerCase() === KEY_SHIFT$1) return KEY_SHIFT$1;
+    if (it.toLowerCase() === 'meta') return KEY_META$1;
+
+    return it;
+};
+
+hotKeys = hotKeys.map(function (it) {
+    var obj = {};
+
+    it.key.split(KEY_SPLIT).forEach(function (key) {
+        var type = getKeyType(key);
+        switch (type) {
+            case KEY_CTRL:
+            case KEY_ALT$1:
+            case KEY_SHIFT$1:
+            case KEY_META$1:
+                obj[type] = true;
+                break;
+            default:
+                obj[''] = type;
+        }
+    });
+
+    var arr = [];
+
+    if (obj[KEY_CTRL]) {
+        arr.push(KEY_CTRL);
+    }
+    if (obj[KEY_ALT$1]) {
+        arr.push(KEY_ALT$1);
+    }
+    if (obj[KEY_SHIFT$1]) {
+        arr.push(KEY_SHIFT$1);
+    }
+    if (obj[KEY_META$1]) {
+        arr.push(KEY_META$1);
+    }
+    if (obj['']) {
+        arr.push(obj['']);
+    }
+
+    it.key = arr.join(KEY_SPLIT);
+
+    return it;
+});
+
+var HotkeyManager = function (_BaseModule) {
+    inherits(HotkeyManager, _BaseModule);
+
+    function HotkeyManager() {
+        classCallCheck(this, HotkeyManager);
+        return possibleConstructorReturn(this, (HotkeyManager.__proto__ || Object.getPrototypeOf(HotkeyManager)).apply(this, arguments));
+    }
+
+    createClass(HotkeyManager, [{
+        key: "makeKeydownString",
+        value: function makeKeydownString(e) {
+            var keyStrings = [];
+
+            var arr = [];
+
+            if (e.ctrlKey) {
+                arr.push(KEY_CTRL);
+            }
+            if (e.altKey) {
+                arr.push(KEY_ALT$1);
+            }
+            if (e.shiftKey) {
+                arr.push(KEY_SHIFT$1);
+            }
+            if (e.metaKey) {
+                arr.push(KEY_META$1);
+            }
+            arr.push(e.keyCode); // key code number check 
+
+            keyStrings.push(arr.join(KEY_SPLIT));
+
+            arr[arr.length - 1] = e.key; // key string check 
+
+            keyStrings.push(arr.join(KEY_SPLIT));
+
+            return keyStrings;
+        }
+    }, {
+        key: "checkKey",
+        value: function checkKey(key, e) {
+            return this.makeKeydownString(e).includes(key);
+        }
+    }, {
+        key: GETTER(HOTKEY_EXISTS),
+        value: function value($store, e) {
+            var _this2 = this;
+
+            return hotKeys.filter(function (command) {
+                return _this2.checkKey(command.key, e);
+            });
+        }
+    }, {
+        key: ACTION(HOTKEY_RUN),
+        value: function value($store, hotkey) {
+
+            if (hotkey) {
+                if (isFunction(hotkey.command)) {
+                    var _hotkey$command;
+
+                    (_hotkey$command = hotkey.command).call.apply(_hotkey$command, [null, $store].concat(toConsumableArray(hotkey.args)));
+                } else {
+                    $store.dispatch.apply($store, [hotkey.command].concat(toConsumableArray(hotkey.args)));
+                }
+            }
+        }
+    }, {
+        key: GETTER(HOTKEY_EXCLUDE),
+        value: function value($store, e) {
+
+            switch (e.target.nodeName) {
+                case 'INPUT':
+                case 'SELECT':
+                case 'TEXTAREA':
+                    return true;
+                default:
+                    break;
+            }
+
+            return false;
+        }
+    }, {
+        key: ACTION(HOTKEY_EXECUTE),
+        value: function value($store, e) {
+            if ($store.read(HOTKEY_EXCLUDE, e)) {
+                return;
+            }
+
+            var keys = $store.read(HOTKEY_EXISTS, e);
+
+            if (keys.length) {
+                e.preventDefault();
+                keys.forEach(function (it) {
+                    $store.run(HOTKEY_RUN, it);
+                });
+            }
+        }
+    }]);
+    return HotkeyManager;
+}(BaseModule);
+
+var modules = [HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var CSSEditor = {
     createCSSEditor: function createCSSEditor() {
@@ -28464,7 +28939,11 @@ var CSSEditor = {
 
         switch (opts.type) {
             default:
-                return new CSSEditor$1(opts);
+                return start({
+                    modules: modules,
+                    components: { CSSEditor: CSSEditor$1 },
+                    template: '<CSSEditor />'
+                });
         }
     },
 

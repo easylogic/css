@@ -33,7 +33,7 @@ export default class ItemRecoverManager extends BaseModule {
     [GETTER(ITEM_RECOVER_IMAGE)] ($store, image, parentId) {
         var newImageId = $store.read(
             ITEM_CREATE_IMAGE, 
-            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE, image.image))
+            {parentId, ...$store.read(ITEM_CONVERT_STYLE, image.image)}
         );
         var colorsteps = (image.colorsteps || []);
         
@@ -44,25 +44,25 @@ export default class ItemRecoverManager extends BaseModule {
         return newImageId;
     }
     [GETTER(ITEM_RECOVER_COLORSTEP)] ($store, colorstep, parentId) {
-        return $store.read(ITEM_CREATE_COLORSTEP, Object.assign({parentId}, colorstep));
+        return $store.read(ITEM_CREATE_COLORSTEP, {parentId, ...colorstep});
     }
     [GETTER(ITEM_RECOVER_BOXSHADOW)] ($store, boxshadow, parentId) {
         return $store.read(
             ITEM_CREATE_BOXSHADOW, 
-            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow))
+            {parentId,  ...$store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow)}
         );
     }    
 
     [GETTER(ITEM_RECOVER_TEXTSHADOW)] ($store, textshadow, parentId) {
         return $store.read(
             ITEM_CREATE_TEXTSHADOW, 
-            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow))
+            {parentId, ...$store.read(ITEM_CONVERT_STYLE, textshadow.textshadow)}
         );
     }        
 
     [GETTER(ITEM_RECOVER_LAYER)] ($store, layer, parentId) {
         var newLayerId = $store.read(ITEM_CREATE_LAYER, 
-            Object.assign({parentId}, $store.read(ITEM_CONVERT_STYLE,layer.layer))
+            {parentId, ...$store.read(ITEM_CONVERT_STYLE,layer.layer)}
         );
 
         var images = layer.images || [] 

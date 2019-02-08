@@ -64,14 +64,6 @@ export const POINTEREND = CUSTOM('mouseup', 'touchend')
 export const CHANGEINPUT = CUSTOM('change', 'input')
 
 
-// custom event 
-
-/*export const PREDEFINED_NAMES = {
-    'pointerstart': 'mousedown:touchstart',
-    'pointermove': 'mousemove:touchmove',
-    'pointerend': 'mouseup:touchend'
-}*/
-
 // Predefined CHECKER 
 export const CHECKER = (value, split = CHECK_SAPARATOR) => {
     return new EventChecker(value, split);
@@ -86,6 +78,7 @@ export const KEY_ARROW_UP = 'ArrowUp'
 export const KEY_ARROW_DOWN = 'ArrowDown'
 export const KEY_ARROW_LEFT = 'ArrowLeft'
 export const KEY_ARROW_RIGHT = 'ArrowRight'
+export const KEY_ENTER = 'Enter'
 
 
 export const ALT = CHECKER(KEY_ALT)
@@ -97,6 +90,7 @@ export const ARROW_UP = CHECKER(KEY_ARROW_UP)
 export const ARROW_DOWN = CHECKER(KEY_ARROW_DOWN)
 export const ARROW_LEFT = CHECKER(KEY_ARROW_LEFT)
 export const ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT)
+export const ENTER = CHECKER(KEY_ENTER)
 
 export const SELF = CHECKER('self');
 export const CAPTURE = CHECKER('capture');

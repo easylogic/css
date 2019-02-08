@@ -4,7 +4,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
-import { isUndefined, clone } from "../../../../../util/functions/func";
+import { isUndefined, html } from "../../../../../util/functions/func";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { FILTER_GET, FILTER_LIST } from "../../../../types/FilterTypes";
 
@@ -18,11 +18,7 @@ const DROPSHADOW_FILTER_KEYS = [
 export default class FilterList extends BasePropertyItem {
 
     template () { 
-        return `
-            <div class='property-item filters show'>
-                <div class='items'><div class="filter-list" ref="$filterList"></div></div>         
-            </div>
-        `
+        return `<div class='property-item filters show'><div class='items'><div class="filter-list" ref="$filterList"></div></div></div>`
     }
 
     makeInputItem (key, viewObject, dataObject) {
@@ -46,7 +42,7 @@ export default class FilterList extends BasePropertyItem {
                 </div>
             `
         } else if (viewObject.type == 'multi') {
-            return `
+            return html`
             <div class='filter'>
                 <span class="area"></span>
                 <span class="checkbox">
@@ -82,7 +78,7 @@ export default class FilterList extends BasePropertyItem {
                         `
                     }
 
-                }).join(EMPTY_STRING)}
+                })}
             </div>
             `
         }
@@ -133,7 +129,7 @@ export default class FilterList extends BasePropertyItem {
 
         this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id; 
-            var value = layer[key] || clone(FILTER_DEFAULT_OBJECT[key]);
+            var value = layer[key] || {...FILTER_DEFAULT_OBJECT[key]};
             value.value = lastValue 
 
             this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
@@ -144,7 +140,7 @@ export default class FilterList extends BasePropertyItem {
 
         this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id;             
-            var value = layer[key] || clone(FILTER_DEFAULT_OBJECT[key]);
+            var value = layer[key] || {...FILTER_DEFAULT_OBJECT[key]};
             value.checked = checked 
 
             this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })

@@ -1,9 +1,10 @@
 import en_US  from './lang/en-US';
 import ko_KR  from './lang/ko-KR';
+import { flatKeyValue } from '../../../util/functions/func';
 
 export const langs = {
-    en_US,
-    ko_KR
+    en_US: flatKeyValue(en_US),
+    ko_KR: flatKeyValue(ko_KR) 
 }
 
 

@@ -395,7 +395,7 @@ export function makePrebuildUserFilterList (arr) {
 
      var rootContextObject = { clamp, Color }
      arr.forEach(it => {
-         Object.assign(rootContextObject, it.userFunction.rootContextObject)
+        rootContextObject = { ...rootContextObject, ...it.userFunction.rootContextObject}
      })
 
      var rootContextDefine = `const ` + Object.keys(rootContextObject).map(key => {

@@ -13,12 +13,10 @@ export default class ColorRing extends ColorWheel {
     }
 
     template () {
-        return `
-        <div class="wheel" data-type="ring">
+        return `<div class="wheel" data-type="ring">
             <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>
             <div class="drag-pointer" ref="$drag_pointer"></div>
-        </div>
-        `
+        </div>`
     }
 
     setColorUI(isEvent) {

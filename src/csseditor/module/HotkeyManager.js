@@ -4,9 +4,14 @@ import { HOTKEY_EXISTS, HOTKEY_RUN, HOTKEY_EXECUTE, HOTKEY_EXCLUDE } from "../ty
 import { isFunction } from "../../util/functions/func";
 
 const KEY_SPLIT = '+'
+const KEY_CTRL = 'ctrl'
+const KEY_SHIFT = 'shift'
+const KEY_ALT = 'alt'
+const KEY_META = 'meta'
 
 let hotKeys = [
     { key: 'alt+ArrowUp',   command: 'item/move/y', args: [-5] },
+    { key: 'shift+alt+ArrowUp',   command: 'item/move/y', args: [-10] },
     { key: 'ArrowUp',       command: 'item/move/y', args: [-1] },
     { key: 'alt+ArrowDown', command: 'item/move/y', args: [5] },
     { key: 'ArrowDown',     command: 'item/move/y', args: [1] },
@@ -20,10 +25,10 @@ let hotKeys = [
 ]
 
 const getKeyType = (it) => {
-    if (it.toLowerCase() === 'ctrl') return 'ctrl'
-    if (it.toLowerCase() === 'alt') return 'alt'
-    if (it.toLowerCase() === 'shift') return 'shift'
-    if (it.toLowerCase() === 'meta') return 'meta'
+    if (it.toLowerCase() === KEY_CTRL) return KEY_CTRL
+    if (it.toLowerCase() === KEY_ALT) return KEY_ALT
+    if (it.toLowerCase() === KEY_SHIFT) return KEY_SHIFT
+    if (it.toLowerCase() === 'meta') return KEY_META
 
     return it; 
 }
@@ -34,10 +39,10 @@ hotKeys = hotKeys.map(it =>{
     it.key.split(KEY_SPLIT).forEach(key => {
         var type = getKeyType(key);
         switch(type) {
-        case 'ctrl':
-        case 'alt':
-        case 'shift':
-        case 'meta':
+        case KEY_CTRL:
+        case KEY_ALT:
+        case KEY_SHIFT:
+        case KEY_META:
             obj[type] = true; 
             break;
         default: 
@@ -48,10 +53,10 @@ hotKeys = hotKeys.map(it =>{
 
     var arr = []
 
-    if (obj['ctrl']) { arr.push('ctrl'); }
-    if (obj['alt']) { arr.push('alt'); }
-    if (obj['shift']) { arr.push('shift'); }
-    if (obj['meta']) { arr.push('meta'); }
+    if (obj[KEY_CTRL]) { arr.push(KEY_CTRL); }
+    if (obj[KEY_ALT]) { arr.push(KEY_ALT); }
+    if (obj[KEY_SHIFT]) { arr.push(KEY_SHIFT); }
+    if (obj[KEY_META]) { arr.push(KEY_META); }
     if (obj['']) { arr.push(obj['']); } 
 
     it.key = arr.join(KEY_SPLIT)
@@ -66,10 +71,10 @@ export default class HotkeyManager extends BaseModule {
 
         var arr = []
 
-        if (e.ctrlKey) { arr.push('ctrl'); }
-        if (e.altKey) { arr.push('alt'); }
-        if (e.shiftKey) { arr.push('shift'); }
-        if (e.metaKey) { arr.push('meta'); }
+        if (e.ctrlKey) { arr.push(KEY_CTRL); }
+        if (e.altKey) { arr.push(KEY_ALT); }
+        if (e.shiftKey) { arr.push(KEY_SHIFT); }
+        if (e.metaKey) { arr.push(KEY_META); }
         arr.push(e.keyCode);        // key code number check 
 
         keyStrings.push(arr.join(KEY_SPLIT));
@@ -120,7 +125,6 @@ export default class HotkeyManager extends BaseModule {
     }
 
     [ACTION(HOTKEY_EXECUTE)] ($store, e) {
-
         if ($store.read(HOTKEY_EXCLUDE, e)) {
             return; 
         }

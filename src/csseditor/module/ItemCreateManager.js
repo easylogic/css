@@ -29,7 +29,8 @@ import {
     ITEM_TYPE_COLORSTEP,
     ITEM_TYPE_CIRCLE,
     ITEM_TYPE_SHAPE,
-    POLYGON_DEFAULT_OBJECT
+    POLYGON_DEFAULT_OBJECT,
+    ITEM_INIT_CHILDREN
 } from "../types/ItemTypes";
 import { percentUnit, pxUnit, unitValue, EMPTY_STRING } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
@@ -85,20 +86,26 @@ export default class ItemCreateManager extends BaseModule {
     }
 
     [ACTION(ITEM_INITIALIZE)] ($store, id) {
+        var item = $store.items[id]
+
+        if (item) {
+            $store.run(ITEM_INIT_CHILDREN, item.parentId)
+        }
+
         delete $store.items[id];
 
         $store.run(ITEM_KEYS_GENERATE)
     }    
 
     [GETTER(ITEM_CREATE_OBJECT)] ($store, obj, defaultObj = {}) {
-        obj = Object.assign(clone( defaultObj), obj);
-        obj.id = Date.now() + '-' + uuid();
+        var newObj = {...defaultObj, ...obj};
+        newObj.id = Date.now() + '-' + uuid();
 
-        $store.items[obj.id] = obj;
+        $store.items[newObj.id] = newObj;
 
         $store.run(ITEM_KEYS_GENERATE)
 
-        return obj.id; 
+        return newObj.id; 
     }
 
     [GETTER(ITEM_CREATE_PAGE)] ($store, obj = {}) {
@@ -171,7 +178,7 @@ export default class ItemCreateManager extends BaseModule {
     }
 
     [GETTER(ITEM_COPY)] ($store, id) {
-        var copyObject = clone( $store.read(ITEM_GET, id) );
+        var copyObject = {...$store.read(ITEM_GET, id)};
 
         return $store.read(ITEM_CREATE, copyObject.itemType, copyObject);
     }    
@@ -297,8 +304,8 @@ export default class ItemCreateManager extends BaseModule {
         // 레이어 생성 
         var layer = $store.read(ITEM_GET, layerId);
         layer.parentId = pageId; 
-        layer.width = clone(page.width);
-        layer.height = clone(page.height); 
+        layer.width = {...page.width};
+        layer.height = {...page.height}; 
         $store.run(ITEM_SET, layer);
 
         // 이미지 생성 

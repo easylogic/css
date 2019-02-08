@@ -16,8 +16,10 @@ import BackgroundCodeProperty from "./BackgroundCodeProperty";
 import BackgroundProperty from "./BackgroundProperty";
 import RotatePatternProperty from "./RotatePatternProperty";
 import LayerBorderProperty from "./LayerBorderProperty";
+import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 
 export default {
+    LayerBorderRadiusProperty,
     LayerBorderProperty,
     RotatePatternProperty,
     BackgroundProperty,

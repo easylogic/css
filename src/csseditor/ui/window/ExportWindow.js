@@ -5,6 +5,7 @@ import ExportCodePenButton from "../view/export/ExportCodPenButton";
 import ExportJSFiddleButton from "../view/export/ExportJSFiddleButton";
 import { SELECTION_CURRENT_PAGE } from "../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../util/css/types";
+import { EXPORT_GENERATE_CODE } from "../../types/ExportTpyes";
 
 
 
@@ -94,13 +95,14 @@ export default class ExportWindow extends UIElement {
  
 
     loadCode () {
-        var page = this.read(SELECTION_CURRENT_PAGE)
+        const [ current_page, generate_code ] = this.mapGetters(SELECTION_CURRENT_PAGE, EXPORT_GENERATE_CODE)
+        var page = current_page()
 
         if (!page) {
             return EMPTY_STRING;  
         }
 
-        var generateCode = this.read('export/generate/code')
+        var generateCode = generate_code()
 
         if (this.cmFullHtml) {
             this.cmFullHtml.setValue(generateCode.fullhtml);

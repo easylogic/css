@@ -10,7 +10,3 @@ export function YCrCbtoRGB(y, cr, cb, bit) {
 
     return { r: Math.ceil(R), g: Math.ceil(G), b: Math.ceil(B) }
 }
-
-export default {
-    YCrCbtoRGB
-}

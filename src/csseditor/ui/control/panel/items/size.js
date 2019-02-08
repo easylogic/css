@@ -83,10 +83,11 @@ export default class Size extends BasePropertyItem {
     [CLICK('$rect')] (e) {
 
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var width = pxUnit(this.refs.$width.int())
+            var widthValue = this.refs.$width.val()
+            var width = pxUnit(+widthValue)
             var height = width;
             this.commit(CHANGE_LAYER_SIZE, {id, width, height});
-            this.refs.$height.val(this.refs.$width.val());            
+            this.refs.$height.val(widthValue);            
         })
 
     }

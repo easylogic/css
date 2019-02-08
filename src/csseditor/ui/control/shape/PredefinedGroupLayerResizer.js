@@ -14,7 +14,7 @@ import {
 import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER, LOAD } from '../../../../util/Event';
-import { defaultValue, isNotUndefined, clone } from '../../../../util/functions/func';
+import { defaultValue, isNotUndefined, clone, isArray } from '../../../../util/functions/func';
 import { 
     SEGMENT_TYPE_MOVE, 
     SEGMENT_TYPE_RIGHT, 
@@ -27,26 +27,20 @@ import {
     SEGMENT_TYPE_TOP_LEFT, 
     SEGMENT_TYPE_ROTATE, 
     ITEM_SET,
-    ITEM_GET
+    ITEM_GET,
+    DEFAULT_TOOL_SIZE
 } from '../../../types/ItemTypes';
 import { CSS_TO_STRING } from '../../../types/CssTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../types/ImageTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
+import { TOOL_SET } from '../../../types/ToolTypes';
+import { GUIDE_SNAP_CACULATE } from '../../../types/GuideTypes';
 
 const SNAP_GRID = 20; 
 
 export default class PredefinedGroupLayerResizer extends UIElement {
-
-
-    initialize () {
-        super.initialize()
-
-        this.$board = this.parent.refs.$board;
-        this.$canvas = this.parent.refs.$canvas;
-        this.$page = this.parent.refs.$page; 
-    }
 
     template () { 
         return `<div class="predefined-group-resizer"></div>`
@@ -59,11 +53,11 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         if (!layers) return EMPTY_STRING;
 
-        if (Array.isArray(layers) == false) {
+        if (isArray(layers) == false) {
             layers = [layers]
         }
 
-        return layers.map(item => { 
+        return layers.map( (item) => { 
             var css = this.setRectangle(item);
             var image = isImage ? 'image' : EMPTY_STRING; 
 
@@ -74,8 +68,12 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
                 backgroundCSS = this.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
             }
+            
+            var title = `${1 + (item.index/100)}. ${item.name || 'Layer'}`
+
+            
             return ` 
-                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read(CSS_TO_STRING, css)}" >
+                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read(CSS_TO_STRING, css)}" title="${title}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
                     <div class="image-panel" style="display:none;${this.read(CSS_TO_STRING, backgroundCSS)}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
@@ -88,9 +86,6 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                         <button type="button" data-value="${SEGMENT_TYPE_BOTTOM_LEFT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_TOP_LEFT}"></button>
                     </div>
-                    <!-- <button type='button' data-value='${SEGMENT_TYPE_ROTATE}'></button>         -->
-                    
-                    
                 </div> 
             `
         })
@@ -98,30 +93,27 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
 
     setRectangle ({x, y, width, height, id}) {
-        var boardOffset = this.boardOffset || this.$board.offset()
-        var pageOffset = this.pageOffset || this.$page.offset()
-        var canvasScrollLeft = this.canvasScrollLeft || this.$board.scrollLeft();
-        var canvasScrollTop = this.canvasScrollTop || this.$board.scrollTop();
+        var toolSize = this.config('tool.size') || DEFAULT_TOOL_SIZE
+        var boardOffset = toolSize['board.offset']
+        var pageOffset = toolSize['page.offset']
+        var canvasScrollLeft = toolSize['board.scrollLeft'];
+        var canvasScrollTop = toolSize['board.scrollTop'];
 
         x = pxUnit( unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
         y = pxUnit( unitValue(y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
 
-        x = stringUnit(x);
-        y = stringUnit(y);
+        var left = stringUnit(x);
+        var top = stringUnit(y);
         width = stringUnit(width); 
         height = stringUnit(height);
 
-        var transform = "none"; 
+        // var transform = "none"; 
         
         if (id) {
             // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
         }
 
-        return { 
-            width, height, 
-            left: x, top: y, 
-            ...transform
-        }
+        return { width, height, left, top}
     }
 
     refresh () {
@@ -230,7 +222,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     caculateSnap (e) {
         // if (this.currentType == SEGMENT_TYPE_MOVE) {
-        this.run('guide/snap/caculate', 3, this.currentType);
+        this.run(GUIDE_SNAP_CACULATE, 3, this.currentType);
         // }
     }
 
@@ -386,10 +378,6 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             }
         })
 
-        this.boardOffset = this.$board.offset()
-        this.pageOffset = this.$page.offset()
-        this.canvasScrollLeft = this.$board.scrollLeft();
-        this.canvasScrollTop = this.$board.scrollTop();        
     }
 
     [POINTERMOVE('document') + CHECKER('isDownCheck')] (e) {
@@ -415,12 +403,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                 var tempX = moveX - moveX % SNAP_GRID
                 var tempY = moveY - moveY % SNAP_GRID
         
-                // console.log({tempX, tempY})
-        
                 this.dx = Math.floor( tempX / SNAP_GRID) * SNAP_GRID - this.layerX; 
                 this.dy = Math.floor( tempY / SNAP_GRID) * SNAP_GRID - this.layerY; 
-
-                // console.log('dy', this.dx, 'dx', this.dy)                
             }
 
         }
@@ -455,7 +439,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.moveY = null; 
         this.rectItems = null 
         this.currentId = null; 
-        this.run('tool/set', 'moving', false);
+        this.run(TOOL_SET, 'moving', false);
         
     }
 

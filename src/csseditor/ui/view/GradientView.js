@@ -39,15 +39,17 @@ import {
     CHANGE_PAGE_TRANSFORM,
     CHANGE_PAGE_NAME,
     CHANGE_TOOL,
-    CHANGE_LAYER_BORDER
+    CHANGE_LAYER_BORDER,
+    CHANGE_TOOL_SIZE
 } from '../../types/event';
 import { px, EMPTY_STRING } from '../../../util/css/types';
-import { LOAD } from '../../../util/Event';
+import { LOAD, SCROLL } from '../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../types/SelectionTypes';
 import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH, LAYER_BOUND_TO_CSS } from '../../types/LayerTypes';
 import { ITEM_MAP_CHILDREN, ITEM_COUNT_CHILDREN } from '../../types/ItemSearchTypes';
 import { PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS } from '../../types/PageTypes';
 import { ITEM_TYPE_PAGE } from '../../types/ItemTypes';
+import { RESIZE_WINDOW } from '../../types/ToolTypes';
 
 
 
@@ -106,11 +108,12 @@ export default class GradientView extends UIElement {
 
         var list = this.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
             var content = item.content || EMPTY_STRING;
+            var title = `${1 + (item.index/100)}. ${item.name || 'Layer'}`
             return `<div 
                     tabindex='${index}'
                     class='layer' 
                     item-layer-id="${item.id}" 
-                    title="${index+1}. ${item.name || 'Layer'}" 
+                    title="${title}" 
                     style='${this.read(LAYER_TO_STRING, item, true)}'>${content}${this.read(LAYER_TO_STRING_CLIPPATH, item)}</div>`
         });
 
@@ -167,6 +170,8 @@ export default class GradientView extends UIElement {
 
                     this.layerItems[item.id] = $el; 
                 }
+
+                // this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
                 this.layerItems[item.id].css(this.read(LAYER_BOUND_TO_CSS, item))            
             })
@@ -262,9 +267,6 @@ export default class GradientView extends UIElement {
         CHANGE_LAYER_TRANSFORM,
         CHANGE_LAYER_TRANSFORM_3D,
         CHANGE_LAYER_TEXT,
-        // CHANGE_LAYER_POSITION,
-        // CHANGE_LAYER_SIZE,
-        // CHANGE_LAYER_MOVE,    
         CHANGE_LAYER_CLIPPATH_POLYGON,
         CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
         CHANGE_BOXSHADOW,
@@ -292,5 +294,24 @@ export default class GradientView extends UIElement {
 
     [EVENT(CHANGE_TOOL)] () {
         this.refs.$colorview.toggleClass('showGrid', this.config('show.grid'))
+    }
+
+    updateToolSize () {
+        this.initConfig('tool.size', {
+            'page.offset': this.refs.$page.offset(),
+            'board.offset': this.refs.$board.offset(),
+            'board.scrollTop': this.refs.$board.scrollTop(),
+            'board.scrollLeft': this.refs.$board.scrollLeft()
+        });
+
+        this.emit(CHANGE_TOOL_SIZE)
+    }
+
+    [EVENT(RESIZE_WINDOW)] () {
+        this.updateToolSize();
+    }
+
+    [SCROLL('$board')] () {
+        this.updateToolSize();
     }
 }

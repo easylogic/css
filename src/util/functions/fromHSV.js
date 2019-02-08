@@ -57,8 +57,3 @@ export function HSVtoHSL(h, s, v) {
 
     return RGBtoHSL(rgb.r, rgb.g, rgb.b);
 }
-
-export default {
-    HSVtoHSL,
-    HSVtoRGB
-}

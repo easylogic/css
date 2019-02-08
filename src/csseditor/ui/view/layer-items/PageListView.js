@@ -16,14 +16,10 @@ export default class PageListView extends UIElement {
     }
 
     template () { 
-        return `
-            <div class='pages'>         
-                <div class="page-list" ref="$pageList">
-                
-                </div>
-                <PageSampleList></PageSampleList>
-            </div>
-        `
+        return `<div class='pages'>         
+            <div class="page-list" ref="$pageList"></div>
+            <PageSampleList></PageSampleList>
+        </div>`
     }
 
     makeItemNode (node, index) {
@@ -43,14 +39,10 @@ export default class PageListView extends UIElement {
 
     makeItemNodePage (item, index, selectedId) {
         var selected = item.id == selectedId ? 'selected' : EMPTY_STRING; 
-        return `
-            <div class='tree-item ${selected}' id="${item.id}" type='page'>
-                <div class="item-preview"></div>
-                <div class="item-title">
-                    ${item.name || `Project ${index+1}`}
-                </div>   
-            </div>
-            `
+        return `<div class='tree-item ${selected}' id="${item.id}" type='page'>
+            <div class="item-preview"></div>
+            <div class="item-title">${item.name || `Project ${index+1}`}</div>   
+        </div>`
     }
 
     [LOAD('$pageList')] () {

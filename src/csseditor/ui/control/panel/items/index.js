@@ -14,7 +14,6 @@ import PageName from "./PageName";
 import PageExport from "./PageExport";
 import FilterList from "./FilterList";
 import BackgroundColor from "./BackgroundColor"; 
-import LayerColorPickerPanel from "./LayerColorPickerPanel";
 import ImageResource from "./ImageResource";
 import ClipPath from "./ClipPath";
 import PageShowGrid from "./PageShowGrid";
@@ -34,20 +33,25 @@ import BackgroundInfo from "./BackgroundInfo";
 import Text from "./text";
 import LayerCode from "./LayerCode";
 import BackgroundCode from "./BackgroundCode";
-import LayerTextColorPickerPanel from "./LayerTextColorPickerPanel";
 import Font from "./Font";
 import BackgroundClip from "./BackgroundClip";
+import LayerTextColorPickerPanel from "./LayerTextColorPickerPanel";
 import LayerInfoColorPickerPanel from "./LayerInfoColorPickerPanel";
+import LayerBorderColorPickerPanel from "./LayerBorderColorPickerPanel";
 import BackdropList from "./BackdropList";
 import EmptyArea from "./EmptyArea";
 import Page3D from "./Page3D";
 import ImageSorting from "./ImageSorting";
 import BackgroundImage from "./BackgroundImage";
 
+
 import RotatePattern from "./pattern/RotatePattern";
 import BorderFixed from "./border-fixed";
 import BoxSizing from "./BoxSizing";
 import BorderWidth from "./BorderWidth";
+import BorderColorFixed from "./BorderColorFixed";
+
+
 
 
 var patterns = {
@@ -56,6 +60,8 @@ var patterns = {
 
 export default {
     ...patterns,
+    LayerBorderColorPickerPanel,
+    BorderColorFixed,
     BoxSizing,
     BorderWidth,
     BackgroundImage,
@@ -96,7 +102,6 @@ export default {
     BackgroundSize,
     Transform3d,
     Transform,
-    LayerColorPickerPanel,
     ColorPickerPanel,
     ColorStepsInfo,
     ColorSteps,

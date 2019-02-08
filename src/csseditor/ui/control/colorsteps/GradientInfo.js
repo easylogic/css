@@ -6,6 +6,7 @@ import { CLICK, INPUT, CHANGE, LOAD } from "../../../../util/Event";
 import { ITEM_SET, ITEM_GET } from "../../../types/ItemTypes";
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";
 import { ITEM_EACH_CHILDREN } from "../../../types/ItemSearchTypes";
+import { html } from "../../../../util/functions/func";
 
 function checkPxEm(unit) {
     return [UNIT_PX, UNIT_EM].includes(unit);
@@ -14,11 +15,7 @@ function checkPxEm(unit) {
 export default class GradientInfo extends UIElement {
 
     template () { 
-        return ` 
-            <div class='gradient-info'>
-                <div class="form-item" ref="$colorsteps"></div>
-            </div>
-        ` 
+        return `<div class='gradient-info'><div class="form-item" ref="$colorsteps"></div></div>` 
     }
 
     getUnitName (step) {
@@ -80,7 +77,7 @@ export default class GradientInfo extends UIElement {
         var colorsteps = this.read('colorstep/sort/list', item.id);
 
 
-        return `<div class='step-list' ref="$stepList">
+        return html`<div class='step-list' ref="$stepList">
                     ${colorsteps.map( step => {
                         var cut = step.cut ? 'cut' : EMPTY_STRING;      
                         var unitValue = this.getUnitValue(step);
@@ -106,7 +103,7 @@ export default class GradientInfo extends UIElement {
                                 </div>
                             </div>
                         `
-                    }).join(EMPTY_STRING)}
+                    })}
                 </div>`
     }
 

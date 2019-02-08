@@ -111,17 +111,4 @@ export function getGradientLine(angle, box) {
         y: center.y + yDiff
       }
     };
-  }
-
-
-export default {
-    round,
-    uuid,
-    radianToDegree,
-    degreeToRadian,
-    getXInCircle,
-    getYInCircle,
-    caculateAngle,
-    cubicBezier,
-    getGradientLine
 }
