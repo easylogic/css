@@ -10,7 +10,6 @@ export default class LayerProperty extends BaseProperty {
             <Rotate></Rotate>
             <opacity></opacity>         
             <LayerBlend></LayerBlend>     
-            <BackgroundColor></BackgroundColor>
         `
     }
 }

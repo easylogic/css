@@ -16326,7 +16326,7 @@ var LayerProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>     \n            <BackgroundColor></BackgroundColor>\n        ";
+            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>     \n        ";
         }
     }]);
     return LayerProperty;
