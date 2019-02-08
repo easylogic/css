@@ -5,12 +5,12 @@ import { CHANGE } from '../../../../../util/Event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { BLEND_LIST } from '../../../../types/BlendTypes';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../types/SelectionTypes';
-import { EMPTY_STRING } from '../../../../../util/css/types';
+import { html } from '../../../../../util/functions/func';
 
 export default class LayerBlend extends BasePropertyItem {
 
     template () { 
-        return `
+        return html`
         <div class='property-item blend show'>
             <div class='items max-height'>         
                 <div>
@@ -19,7 +19,7 @@ export default class LayerBlend extends BasePropertyItem {
                         <select ref="$blend">
                         ${this.read(BLEND_LIST).map(blend => {
                             return `<option value="${blend}">${blend}</option>`
-                        }).join(EMPTY_STRING)}
+                        })}
                         </select>
                     </div>
                 </div>

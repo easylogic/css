@@ -50,6 +50,14 @@ export default class CssManager extends BaseModule {
             delete newStyle['mix-blend-mode'];
         }        
 
+        if (newStyle['background-size'] == 'auto') {
+            delete newStyle['background-size']
+        }
+
+        if (newStyle['background-position'] == 'center center') {
+            delete newStyle['background-position']
+        }        
+
         if (parseParamNumber(newStyle.opacity) == 1) {
             delete newStyle.opacity;
         }
@@ -123,6 +131,6 @@ export default class CssManager extends BaseModule {
             }
         })
 
-        return results;
+        return $store.read(CSS_FILTERING, results);
     }
 }

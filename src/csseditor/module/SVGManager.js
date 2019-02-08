@@ -23,7 +23,7 @@ export default class SVGManager extends BaseModule {
     } 
 
     [ACTION(SVG_LIST_LOAD)] ($store, loadList = []) {s
-        $store.svgList = clone(loadList);
+        $store.svgList = [...loadList];
     }
 
     [GETTER(SVG_GET_CLIPPATH)] ($store, svg, id, callback, transform = "") {

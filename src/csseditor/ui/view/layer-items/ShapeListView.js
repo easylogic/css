@@ -3,15 +3,15 @@ import { CLICK } from "../../../../util/Event";
 import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
 import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 import { SHAPE_LIST, SHAPE_GET, SHAPE_TO_CSS_TEXT } from "../../../types/ShapeTypes";
-import { EMPTY_STRING } from "../../../../util/css/types";
 import { ITEM_ADD_SHAPE } from "../../../types/ItemCreateTypes";
+import { html } from "../../../../util/functions/func";
 
 
 export default class ShapeListView extends UIElement {
 
 
     template () { 
-        return `
+        return html`
             <div class='shapes'>         
                 <div class='layer-title'>Basic Layer</div>
                 <div class="shapes-list" ref="$shapeList">
@@ -19,7 +19,7 @@ export default class ShapeListView extends UIElement {
                         return `<button type="button" class='add-layer' data-shape='${key}'>
                             <div class='shape' style='${this.read(SHAPE_TO_CSS_TEXT, key)}'></div>
                         </button>`
-                    }).join(EMPTY_STRING)}
+                    })}
                 </div>
             </div>
         `

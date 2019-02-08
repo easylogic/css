@@ -216,7 +216,7 @@ export default class ColorStepManager extends BaseModule {
     [ACTION(COLORSTEP_ORDERING_EQUALS)] ($store, firstIndex = 0, lastIndex = Number.MAX_SAFE_INTEGER) {
 
         var list = $store.read(COLORSTEP_LIST).map(step => {
-            return Object.assign({}, step, $store.read(COLORSTEP_UNIT_VALUE, step, this.getMaxValue()));
+            return {...step, ...$store.read(COLORSTEP_UNIT_VALUE, step, this.getMaxValue())};
         });
 
         if (lastIndex > list.length -1 ) {

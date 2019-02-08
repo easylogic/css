@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CLICK, LOAD } from "../../../../util/Event";
-import { unitValue, pxUnit, EMPTY_STRING } from "../../../../util/css/types";
-import { defaultValue } from "../../../../util/functions/func";
+import { unitValue, pxUnit } from "../../../../util/css/types";
+import { defaultValue, repeat, html } from "../../../../util/functions/func";
 import { ITEM_CONVERT_STYLE } from "../../../types/ItemTypes";
 import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
 import { LAYER_CACHE_TO_STRING } from "../../../types/LayerTypes";
@@ -24,12 +24,7 @@ export default class PageSampleList extends UIElement {
 
     template () {
 
-        return `
-        <div class="page-sample-list">
-            <div class='cached-list' ref="$cachedList"></div>
-
-        </div>
-        `  
+        return `<div class="page-sample-list"><div class='cached-list' ref="$cachedList"></div></div>`  
     }
 
     [LOAD('$cachedList')] () {
@@ -42,15 +37,13 @@ export default class PageSampleList extends UIElement {
 
             var transform = `transform: scale(${rateX} ${rateY})`
 
-            return `
+            return html`
             <div class='page-sample-item'  data-sample-id="${page.id}">
                 <div class="page-view" style="${data.css}; ${transform}">
                 ${page.layers.map(layer => {
                     var data = this.read(LAYER_CACHE_TO_STRING, layer)
-                    return `
-                        <div class="layer-view" style="${data.css}"></div>
-                    `
-                }).join(EMPTY_STRING)}
+                    return `<div class="layer-view" style="${data.css}"></div>`
+                })}
                 </div>
 
                 <div class='item-tools'>
@@ -70,15 +63,13 @@ export default class PageSampleList extends UIElement {
 
             var transform = `left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(${minRate})`
 
-            return `
+            return html`
                 <div class='page-cached-item' data-sample-id="${page.id}">
                     <div class="page-view" style="${data.css}; ${transform}">
                     ${page.layers.map(layer => {
                         var data = this.read(LAYER_CACHE_TO_STRING, layer)
-                        return `
-                            <div class="layer-view" style="${data.css}"></div>
-                        `
-                    }).join(EMPTY_STRING)}
+                        return `<div class="layer-view" style="${data.css}"></div>`
+                    })}
                     </div>
                     <div class='item-tools'>
                         <button type="button" class='add-item'  data-sample-id="${page.id}" title="Add">&times;</button>                
@@ -96,7 +87,7 @@ export default class PageSampleList extends UIElement {
 
         var emptyCount = 5 - results.length % 5 
         
-        var arr = [...Array(emptyCount)];
+        var arr = repeat(emptyCount);
 
         arr.forEach(it => {
             results.push(`<div class='empty'></div>`)

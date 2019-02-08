@@ -109,7 +109,7 @@ export function parse(str) {
 
             var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: 1 };
 
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = {...obj, ...RGBtoHSL(obj)};
 
             return obj;
         } else if (str.indexOf("rgba(") > -1) {
@@ -126,7 +126,7 @@ export function parse(str) {
 
             var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: arr[3] };
 
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = {...obj, ...RGBtoHSL(obj)};
 
             return obj;
 
@@ -139,7 +139,7 @@ export function parse(str) {
 
             var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: 1 };
 
-            obj = Object.assign(obj, HSLtoRGB(obj));
+            obj = {...obj, ...HSLtoRGB(obj)};
 
             return obj;
         } else if (str.indexOf("hsla(") > -1) {
@@ -156,7 +156,7 @@ export function parse(str) {
 
             var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: arr[3] };
 
-            obj = Object.assign(obj, HSLtoRGB(obj));
+            obj = {...obj, ...HSLtoRGB(obj)};
 
             return obj;
         } else if (str.indexOf("#") == 0) {
@@ -177,7 +177,7 @@ export function parse(str) {
 
             var obj = { type: 'hex', r: arr[0], g: arr[1], b: arr[2], a: 1 };
 
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = {...obj, ...RGBtoHSL(obj)};
 
             return obj;
         }
@@ -188,7 +188,7 @@ export function parse(str) {
             const b = (str & 0x0000ff) >> 0;
 
             var obj = { type: 'hex', r, g, b, a: 1 };
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = { ...obj, ...RGBtoHSL(obj)};
             return obj;
         } else if (0x00000000 <= str && str <= 0xffffffff) {
             const r = (str & 0xff000000) >> 24;
@@ -197,7 +197,7 @@ export function parse(str) {
             const a = (str & 0x000000ff) / 255;
 
             var obj = { type: 'hex', r, g, b, a };
-            obj = Object.assign(obj, RGBtoHSL(obj));
+            obj = {...obj, ...RGBtoHSL(obj)};
             
             return obj;
         }
@@ -273,16 +273,3 @@ export function parseGradient (colors) {
 
     return colors; 
 }
-
-
-export default {
-    matches,
-    convertMatches,
-    convertMatchesArray,
-    reverseMatches,
-    parse,
-    parseGradient,
-    trim,
-    color_regexp,
-    color_split
-} 

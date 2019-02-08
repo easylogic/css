@@ -261,7 +261,7 @@ export default class ImageManager extends BaseModule {
     }    
 
     [GETTER(IMAGE_CACHE_TO_CSS)] ($store, item = {}) {
-        var image = Object.assign({}, item.image, {colorsteps: item.colorsteps}); 
+        var image = {...item.image, colorsteps: item.colorsteps}; 
 
         var results = {} 
         var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image)
@@ -442,7 +442,7 @@ export default class ImageManager extends BaseModule {
         var newColors = []
         colors.forEach( (c, index) => {
             if (c.cut && index > 0) {
-                newColors.push(Object.assign({}, c, { percent : colors[index-1].percent} ));
+                newColors.push({...c, percent : colors[index-1].percent});
             }
 
             newColors.push(c);
@@ -492,7 +492,7 @@ export default class ImageManager extends BaseModule {
     }
 
     [GETTER(IMAGE_TO_LINEAR_RIGHT)] ($store, image) {
-        return $store.read(IMAGE_TO_LINEAR, Object.assign({}, image, { type: 'linear', angle : 'to right'}))
+        return $store.read(IMAGE_TO_LINEAR, {...image, type: 'linear', angle : 'to right'})
     }
 
     [GETTER(IMAGE_TO_RADIAL)] ($store, image = {}) {

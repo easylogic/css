@@ -13,11 +13,7 @@ export default class ExportManager extends BaseModule {
 
     makePageCSS ($store, page) {
 
-        var css = Object.assign({ 
-                position: 'relative' 
-            },
-            $store.read(PAGE_TO_CSS, page) 
-        )
+        var css = { position: 'relative' , ...$store.read(PAGE_TO_CSS, page) }
 
         return $store.read(CSS_TO_STRING, css);
     }

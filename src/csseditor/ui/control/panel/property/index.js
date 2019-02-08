@@ -18,10 +18,12 @@ import RotatePatternProperty from "./RotatePatternProperty";
 import LayerBorderProperty from "./LayerBorderProperty";
 import Transform2DControlProperty from "./Transform2DControlProperty";
 import BackgroundPositionProperty from "./BackgroundPositionProperty";
+import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 
 export default {
     BackgroundPositionProperty,
     Transform2DControlProperty,
+    LayerBorderRadiusProperty,
     LayerBorderProperty,
     RotatePatternProperty,
     BackgroundProperty,

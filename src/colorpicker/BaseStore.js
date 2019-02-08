@@ -9,6 +9,11 @@ export default class BaseStore {
         this.actions = []
         this.getters = []
         this.modules = opt.modules || []
+        this.standalone = {
+            getters: {},
+            actions: {},
+            dispatches: {}
+        }
 
         this.initialize()
     }
@@ -23,24 +28,66 @@ export default class BaseStore {
         })
     } 
 
+    makeActionCallback (context, action, actionName) {
+        var func = ($1, $2, $3, $4, $5) => {
+            return context[action].call(context, this, $1, $2, $3, $4, $5); 
+        }
+        
+        func.context = context;
+        func.displayName = actionName;
+
+        return func 
+    }
+
     action (action, context) {
         var actionName = action.substr(action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length) 
-        this.actions[actionName] = { context, callback: context[action] };
+
+        this.actions[actionName] = this.makeActionCallback(context, action, actionName);
+
+        this.standalone.actions[actionName] = (($1, $2, $3, $4, $5) => {
+            return this.run(actionName, $1, $2, $3, $4, $5)
+        })        
+        this.standalone.dispatches[actionName] = (($1, $2, $3, $4, $5) => {
+            return this.dispatch(actionName, $1, $2, $3, $4, $5)
+        })                
     }
 
     getter (action, context) {
         var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length) 
-        this.getters[actionName] = { context, callback: context[action] };
+
+        this.getters[actionName] = this.makeActionCallback(context, action, actionName);   
+
+        this.standalone.getters[actionName] = (($1, $2, $3, $4, $5) => {
+            return this.read(actionName, $1, $2, $3, $4, $5)
+        })
+    }    
+
+    mapGetters (...args) {
+        return args.map(actionName => {
+            return this.standalone.getters[actionName]
+        })
+    }
+
+    mapActions (...args) {
+        return args.map(actionName => {
+            return this.standalone.actions[actionName]
+        })
+    }
+    
+    mapDispatches (...args) {
+        return args.map(actionName => {
+            return this.standalone.dispatches[actionName]
+        })
     }    
 
     dispatch (action, $1, $2, $3, $4, $5) {
-        var m = this.actions[action];
+        var actionCallback = this.actions[action];
 
-        if (m) {
-            var ret = this.run(action, $1, $2, $3, $4, $5);
+        if (actionCallback) {
+            var ret = actionCallback($1, $2, $3, $4, $5); 
 
             if (ret != PREVENT) {
-                m.context.afterDispatch()
+                actionCallback.context.afterDispatch()
             }
 
         } else {
@@ -50,20 +97,20 @@ export default class BaseStore {
     }
 
     run (action, $1, $2, $3, $4, $5) {
-        var m = this.actions[action];
+        var actionCallback = this.actions[action];
 
-        if (m) { 
-            m.callback.call(m.context, this, $1, $2, $3, $4, $5); 
+        if (actionCallback) { 
+            return actionCallback($1, $2, $3, $4, $5); 
         } else {
             throw new Error('action : ' + action + ' is not a valid.')            
         }
     }    
 
     read (action, $1, $2, $3, $4, $5) {
-        var m = this.getters[action];
+        var getterCallback = this.getters[action];
 
-        if (m) { 
-            return m.callback.call(m.context, this, $1, $2, $3, $4, $5); 
+        if (getterCallback) { 
+            return getterCallback($1, $2, $3, $4, $5); 
         } else {
             throw new Error('getter : ' + action + ' is not a valid.')            
         }

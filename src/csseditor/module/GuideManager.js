@@ -5,13 +5,14 @@ import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_MOVE, SEGMENT_
 import { isNotUndefined } from "../../util/functions/func";
 import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "../types/SelectionTypes";
 import { ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
+import { GUIDE_RECT_POINT, GUIDE_COMPARE, GUIDE_SNAP_LAYER, GUIDE_SNAP_CACULATE } from "../types/GuideTypes";
 
 var MAX_DIST = 1; 
 const ZERO_DIST = 0; 
 
 export default class GuideManager extends BaseModule {
 
-    [GETTER('guide/rect/point')] ($store, obj, segmentType = SEGMENT_TYPE_MOVE) {
+    [GETTER(GUIDE_RECT_POINT)] ($store, obj, segmentType = SEGMENT_TYPE_MOVE) {
         var id = obj.id; 
         var x = unitValue(obj.x);
         var y = unitValue(obj.y);
@@ -36,31 +37,34 @@ export default class GuideManager extends BaseModule {
         if (!segment) return {pointX, pointY}
 
         if (segment.move) {
-            pointX.push({x, y: centerY, startX, endX, centerX, id, width, height });
-            pointX.push({x: centerX, y: centerY, startX, endX, centerX, id, width, height, isCenter: true });
-            pointX.push({x: x2, y: centerY, startX, endX, centerX, id, width, height });
+            pointX = [
+                {x, y: centerY, startX, endX, centerX, id, width, height, isLeft: true },
+                {x: centerX, y: centerY, startX, endX, centerX, id, width, height, isCenter: true },
+                {x: x2, y: centerY, startX, endX, centerX, id, width, height, isRight: true }
+            ]
     
-    
-            pointY.push({x: centerX, y, startY, endY, centerY, id, width, height })
-            pointY.push({x: centerX, y: centerY, startY, endY, centerY, id, width, height, isCenter: true })
-            pointY.push({x: centerX, y: y2, startY, endY, centerY, id, width, height })
+            pointY = [
+                {x: centerX, y, startY, endY, centerY, id, width, height, isTop: true },
+                {x: centerX, y: centerY, startY, endY, centerY, id, width, height, isCenter: true },
+                {x: centerX, y: y2, startY, endY, centerY, id, width, height, isBottom: true }
+            ]
     
             return { pointX, pointY }
         } else {
-            if (segment.xIndex === 0) pointX.push({x, y: centerY, startX, endX, centerX, id, width, height });
+            if (segment.xIndex === 0) pointX.push({x, y: centerY, startX, endX, centerX, id, width, height, isLeft: true });
             if (segment.xIndex === 1) pointX.push({x: centerX, y: centerY, startX, endX, centerX, id, width, height, isCenter: true });
-            if (segment.xIndex === 2) pointX.push({x: x2, y: centerY, startX, endX, centerX, id, width, height });
+            if (segment.xIndex === 2) pointX.push({x: x2, y: centerY, startX, endX, centerX, id, width, height, isRight: true });
     
-            if (segment.yIndex === 0) pointY.push({x: centerX, y, startY, endY, centerY, id, width, height })
+            if (segment.yIndex === 0) pointY.push({x: centerX, y, startY, endY, centerY, id, width, height, isTop: true })
             if (segment.yIndex === 1) pointY.push({x: centerX, y: centerY, startY, endY, centerY, id, width, height, isCenter: true })
-            if (segment.yIndex === 2) pointY.push({x: centerX, y: y2, startY, endY, centerY, id, width, height })
+            if (segment.yIndex === 2) pointY.push({x: centerX, y: y2, startY, endY, centerY, id, width, height, isBottom: true })
     
             return { pointX, pointY }
         }
 
     }
 
-    [GETTER('guide/compare')] ($store, A, B, dist = MAX_DIST) {
+    [GETTER(GUIDE_COMPARE)] ($store, A, B, dist = MAX_DIST) {
         // x 축 비교 , x 축이 dist 안에 있으면 합격 
         var results = [] 
         A.pointX.forEach((AX, index) => {
@@ -119,14 +123,14 @@ export default class GuideManager extends BaseModule {
         return results;
     }
 
-    [GETTER('guide/snap/layer')] ($store, dist = MAX_DIST, segmentType = SEGMENT_TYPE_MOVE) {
+    [GETTER(GUIDE_SNAP_LAYER)] ($store, dist = MAX_DIST, segmentType = SEGMENT_TYPE_MOVE) {
         var page = $store.read(SELECTION_CURRENT_PAGE);
 
         if (!page) return []
         if (page.selected) return []
 
-        var selectionRect = $store.read('guide/rect/point', $store.read(SELECTION_RECT), segmentType);
-        var pageRect = $store.read('guide/rect/point', { 
+        var selectionRect = $store.read(GUIDE_RECT_POINT, $store.read(SELECTION_RECT), segmentType);
+        var pageRect = $store.read(GUIDE_RECT_POINT, { 
             x: pxUnit(0), 
             y: pxUnit(0), 
             width: page.width, 
@@ -136,7 +140,7 @@ export default class GuideManager extends BaseModule {
         var layers = [] 
         $store.read(ITEM_EACH_CHILDREN, page.id, (item) => {
             if ($store.read(SELECTION_CHECK, item.id) == false) { 
-                layers.push($store.read('guide/rect/point', item))
+                layers.push($store.read(GUIDE_RECT_POINT, item))
             }
         })
         layers.push(pageRect);
@@ -144,18 +148,16 @@ export default class GuideManager extends BaseModule {
         var points = []
 
         layers.forEach(B => {
-            points.push(...$store.read('guide/compare', selectionRect, B, dist));
+            points.push(...$store.read(GUIDE_COMPARE, selectionRect, B, dist));
         })
 
-        // console.log(points);
-
-        return points //.filter( (_, index) => index === 0);
+        return points
 
     } 
 
-    [ACTION('guide/snap/caculate')] ($store, dist = MAX_DIST, segmentType = SEGMENT_TYPE_MOVE) {
+    [ACTION(GUIDE_SNAP_CACULATE)] ($store, dist = MAX_DIST, segmentType = SEGMENT_TYPE_MOVE) {
 
-        var list = $store.read('guide/snap/layer', dist, segmentType);
+        var list = $store.read(GUIDE_SNAP_LAYER, dist, segmentType);
 
         if (list.length) {
 
@@ -228,46 +230,26 @@ export default class GuideManager extends BaseModule {
         if (rect.type == GUIDE_TYPE_HORIZONTAL) {
             var y;
             switch (rect.targetIndex) {
-                case 0:
-                    y = rect.startY;
-                    break;
-                case 1:
-                    y = rect.centerY;
-                    break;
-                case 2:
-                    y = rect.endY;
-                    break;
+                case 0: y = rect.startY; break;
+                case 1: y = rect.centerY; break;
+                case 2: y = rect.endY; break;
             }
             switch (rect.index) {
-                case 1:
-                    y -= Math.floor(rect.height / 2);
-                    break;
-                case 2:
-                    y -= rect.height;
-                    break;
+                case 1: y -= Math.floor(rect.height / 2); break;
+                case 2: y -= rect.height; break;
             }
             positionObject = { id: rect.sourceId, y: pxUnit(y) };
         }
         else if (rect.type == GUIDE_TYPE_VERTICAL) {
             var x;
             switch (rect.targetIndex) {
-                case 0:
-                    x = rect.startX;
-                    break;
-                case 1:
-                    x = rect.centerX;
-                    break;
-                case 2:
-                    x = rect.endX;
-                    break;
+                case 0: x = rect.startX; break;
+                case 1: x = rect.centerX; break;
+                case 2: x = rect.endX; break;
             }
             switch (rect.index) {
-                case 1:
-                    x -= Math.floor(rect.width / 2);
-                    break;
-                case 2:
-                    x -= rect.width;
-                    break;
+                case 1: x -= Math.floor(rect.width / 2); break;
+                case 2: x -= rect.width; break;
             }
             positionObject = { id: rect.sourceId, x: pxUnit(x) };
         }

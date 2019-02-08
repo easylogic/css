@@ -6,6 +6,24 @@
         .key-value-item {
             display: block;
 
+            &.short {
+                .key {
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 100px;
+                    padding-left: 2px;
+                    padding-right: 0px;
+                    box-sizing: border-box;
+                }
+
+                .value {
+                    display: inline-block;
+                    vertical-align: middle;
+                    // margin-left: 10px;
+                    padding-left: 0px;
+                }
+            }
+
             .key {
                 display: block;
                 font-weight: bold;

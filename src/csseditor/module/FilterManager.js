@@ -42,7 +42,7 @@ export default class FilterManager extends BaseModule {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign(clone(FILTER_DEFAULT_OBJECT), realFilters)
+        realFilters = {...FILTER_DEFAULT_OBJECT, ...realFilters}
 
         var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}
@@ -63,7 +63,7 @@ export default class FilterManager extends BaseModule {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign(clone(FILTER_DEFAULT_OBJECT), realFilters)
+        realFilters = {...FILTER_DEFAULT_OBJECT, ...realFilters}
 
         var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}

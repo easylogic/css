@@ -2,7 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { string2unit, UNIT_PX, EMPTY_STRING} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE, ITEM_REMOVE_ALL, ITEM_FOCUS, ITEM_LOAD } from "../types/ItemTypes";
+import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE, ITEM_REMOVE_ALL, ITEM_FOCUS, ITEM_LOAD, ITEM_TOGGLE_VISIBLE, ITEM_INIT_CHILDREN } from "../types/ItemTypes";
 import { ITEM_KEYS, ITEM_INITIALIZE } from "../types/ItemCreateTypes";
 import { SELECTION_ONE } from "../types/SelectionTypes";
 import { clone } from "../../util/functions/func";
@@ -97,18 +97,26 @@ export default class ItemManager extends BaseModule {
         return $store.items[id] || {};
     }
 
+    [ACTION(ITEM_TOGGLE_VISIBLE)] ($store, id) {
+        var item = $store.read(ITEM_GET, id);
+
+        var visible =  !item.visible;
+
+        $store.run(ITEM_SET, {id: item.id, visible});
+    }
+
     [ACTION(ITEM_SET_ALL)] ($store, parentId, items, isRemove = true) {
         if (isRemove) { 
             $store.run(ITEM_REMOVE_ALL, parentId);
         }
-        Object.assign($store.items, items);
+        $store.items = {...$store.items, ...items};
     }
  
-    [ACTION(ITEM_FOCUS)] ($store, id) {
-        var $el = $store.read(ITEM_DOM, id);
+    [ACTION(ITEM_FOCUS)] ($store, objOrId) {
+        var $el = $store.read(ITEM_DOM, objOrId.id || objOrId);
 
-        if ($el && $el.el) {
-            $el.el.focus();
+        if ($el) {
+            $el.focus();
         }
     }
 
@@ -184,9 +192,14 @@ export default class ItemManager extends BaseModule {
     }
 
     [ACTION(ITEM_SET)] ($store, obj = {}, isSelected = false) {
+        const [ get ] = $store.mapGetters(ITEM_GET)
         var id = obj.id; 
-        var prevItem = clone($store.read(ITEM_GET, id));
-        $store.items[id] = Object.assign({}, prevItem, obj);
+        var isExists = $store.items[id];
+        $store.items[id] = {...get(id), ...obj};
+
+        if (!isExists) {
+            $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId)
+        }
 
         if (isSelected) $store.run(SELECTION_ONE, id)
     }
@@ -200,14 +213,25 @@ export default class ItemManager extends BaseModule {
         $store.run(HISTORY_INITIALIZE);
     }  
 
+    [ACTION(ITEM_INIT_CHILDREN)] ($store, parentId) {
+        var parent = $store.items[parentId]
+        if (parent) {
+            parent.children = undefined;
+        }
+    }
+
     [ACTION(ITEM_SORT)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        const[get, list_children, list_page ] = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE);
+
+        var item = get(id);
         var itemType = item.itemType; 
 
         if (item.parentId) {
-            var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
+            var list = list_children(item.parentId, itemType);
+
+            $store.run(ITEM_INIT_CHILDREN, item.parentId)
         } else {
-            var list = $store.read(ITEM_LIST_PAGE);
+            var list = list_page();
         }
 
         // 필요 없는 index 를 가진 객체는 지운다. 

@@ -9,7 +9,7 @@ export default class CollectManager extends BaseModule {
 
     [GETTER(COLLECT_COLORSTEPS)] ($store, imageId) {
         return $store.read(ITEM_MAP_CHILDREN, imageId, (colorstep) => {
-            var colorstep = clone($store.items[colorstep.id]);
+            var colorstep = {...$store.items[colorstep.id]};
             delete colorstep.id;
             delete colorstep.parentId;
     
@@ -37,7 +37,7 @@ export default class CollectManager extends BaseModule {
     }
 
     [GETTER(COLLECT_IMAGE_ONE)] ($store, imageId) {
-        var image = clone($store.items[imageId]);
+        var image = {...$store.items[imageId]};
         delete image.id;
         delete image.parentId;
 
@@ -48,7 +48,7 @@ export default class CollectManager extends BaseModule {
     }
 
     [GETTER(COLLECT_BOXSHADOW_ONE)] ($store, boxshadowId) {
-        var boxshadow = clone($store.items[boxshadowId]);
+        var boxshadow = {...$store.items[boxshadowId]};
         delete boxshadow.id;
         delete boxshadow.parentId;
 
@@ -56,7 +56,7 @@ export default class CollectManager extends BaseModule {
     }    
 
     [GETTER(COLLECT_TEXTSHADOW_ONE)] ($store, textshadowId) {
-        var textshadow = clone($store.items[textshadowId]);
+        var textshadow = {...$store.items[textshadowId]};
         delete textshadow.id;
         delete textshadow.parentId;
 
@@ -88,7 +88,7 @@ export default class CollectManager extends BaseModule {
             return results; 
         }
 
-        var layer = clone($store.items[layerId]);
+        var layer = {...$store.items[layerId]};
         delete layer.id;
         delete layer.parentId;
 
@@ -113,7 +113,7 @@ export default class CollectManager extends BaseModule {
             return results; 
         }
 
-        var page = clone($store.items[pageId]);
+        var page = {...$store.items[pageId]};
         delete page.id;
         delete page.parentId;
 

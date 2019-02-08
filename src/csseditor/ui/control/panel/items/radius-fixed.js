@@ -65,19 +65,21 @@ export default class RadiusFixed extends BasePropertyItem {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
 
             if (type == 'radius') {
+                var borderRadiusValue = this.refs.$radius.val()
                 this.commit(CHANGE_LAYER_RADIUS, {
                     id, 
                     fixedRadius: true, 
-                    borderRadius: pxUnit( this.refs.$radius.val() )
+                    borderRadius: pxUnit( borderRadiusValue )
                 })
-                this.refs.$radiusRange.val(this.refs.$radius.val())
+                this.refs.$radiusRange.val(borderRadiusValue)
             } else if (type == 'range') {
+                var borderRadiusValue = this.refs.$radiusRange.val()
                 this.commit(CHANGE_LAYER_RADIUS, {
                     id, 
                     fixedRadius: true, 
-                    borderRadius: pxUnit( this.refs.$radiusRange.val() )
+                    borderRadius: pxUnit( borderRadiusValue )
                 })
-                this.refs.$radius.val(this.refs.$radiusRange.val())
+                this.refs.$radius.val(borderRadiusValue)
             }
             
         })

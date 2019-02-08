@@ -55,8 +55,14 @@ export default class LayerCode extends BasePropertyItem {
                 value = reverseMatches(str, ret.matches)
             }            
 
+            var isShort = '';
+
+            if (value.length < 20) {
+                isShort = 'short';
+            }
+
             return `
-                <div class="key-value-item">
+                <div class="key-value-item ${isShort}">
                     <div class="key">${key}:</div>
                     <pre class="value">${value};</pre>
                 </div>

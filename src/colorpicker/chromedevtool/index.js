@@ -12,21 +12,19 @@ import ContextMenu from '../ui/CurrentColorSetsContextMenu'
 export default class ChromeDevToolColorPicker extends BaseColorPicker {
 
     template () {
-        return `
-            <div class='colorpicker-body'>
-                <Palette></Palette> 
-                <div class="control">
-                    <Hue></Hue>
-                    <Opacity></Opacity>
-                    <div class="empty"></div>
-                    <ColorView></ColorView>
-                </div>
-                <Information></Information>
-                <CurrentColorSets></CurrentColorSets>
-                <ColorSetsChooser></ColorSetsChooser>
-                <ContextMenu></ContextMenu>
+        return `<div class='colorpicker-body'>
+            <Palette></Palette> 
+            <div class="control">
+                <Hue></Hue>
+                <Opacity></Opacity>
+                <div class="empty"></div>
+                <ColorView></ColorView>
             </div>
-        `
+            <Information></Information>
+            <CurrentColorSets></CurrentColorSets>
+            <ColorSetsChooser></ColorSetsChooser>
+            <ContextMenu></ContextMenu>
+        </div>`
     }
 
     components() {

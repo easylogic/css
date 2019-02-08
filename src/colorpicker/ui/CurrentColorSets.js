@@ -20,8 +20,7 @@ export default class CurrentColorSets extends UIElement {
         const currentColorSets  = this.read('getCurrentColorSets')
         const colors  = this.read('getCurrentColors')
 
-        return `
-            <div class="current-color-sets">
+        return `<div class="current-color-sets">
             ${colors.map( (color, i) => {
                 return `<div class="color-item" title="${color}" data-index="${i}" data-color="${color}">
                     <div class="empty"></div>
@@ -29,8 +28,7 @@ export default class CurrentColorSets extends UIElement {
                 </div>`
             }).join(EMPTY_STRING)}   
             ${currentColorSets.edit ? `<div class="add-color-item">+</div>` : EMPTY_STRING}         
-            </div>
-        `
+            </div>`
     }    
 
     refresh () {

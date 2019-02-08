@@ -44,9 +44,3 @@ export function HSLtoRGB(h, s, l) {
 
     return { r: round(r * 255), g: round(g * 255), b: round(b * 255) };
 }
-
-export default {
-    HUEtoRGB,
-    HSLtoHSV,
-    HSLtoRGB
-}

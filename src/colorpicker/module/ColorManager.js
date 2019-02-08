@@ -47,19 +47,19 @@ export default class ColorManager extends BaseModule {
         }
 
         if (colorObj.type == 'hsl') {
-            $store.hsl = Object.assign($store.hsl, colorObj); 
+            $store.hsl = {...$store.hsl, ...colorObj}; 
             $store.rgb = Color.HSLtoRGB($store.hsl);
             $store.hsv = Color.HSLtoHSV(colorObj);            
         } else if (colorObj.type == 'hex') {
-            $store.rgb = Object.assign($store.rgb, colorObj);
+            $store.rgb = {...$store.rgb, ...colorObj};
             $store.hsl = Color.RGBtoHSL($store.rgb);
             $store.hsv = Color.RGBtoHSV(colorObj);            
         } else if (colorObj.type == 'rgb') {
-            $store.rgb = Object.assign($store.rgb, colorObj);
+            $store.rgb = {...$store.rgb, ...colorObj};
             $store.hsl = Color.RGBtoHSL($store.rgb);            
             $store.hsv = Color.RGBtoHSV(colorObj);            
         } else if (colorObj.type == 'hsv') {
-            $store.hsv = Object.assign($store.hsv, colorObj);
+            $store.hsv = {...$store.hsv, ...colorObj};
             $store.rgb = Color.HSVtoRGB($store.hsv);
             $store.hsl = Color.HSVtoHSL($store.hsv);
         }
@@ -77,7 +77,7 @@ export default class ColorManager extends BaseModule {
     [GETTER('toString')] ($store, type) {
         type = type || $store.format
         var colorObj = $store[type] || $store.rgb
-        return Color.format(Object.assign({}, colorObj, {a: $store.alpha} ), type);
+        return Color.format({...colorObj, a: $store.alpha}, type);
     }
 
     [GETTER('toColor')] ($store, type) {

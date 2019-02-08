@@ -15,8 +15,7 @@ import {
 } from "../../../../types/ItemTypes";
 import { CHANGE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { EMPTY_STRING } from "../../../../../util/css/types";
-
+import { html } from "../../../../../util/functions/func";
 
 const CLIP_PATH_SIDE_TYPES = [
     CLIP_PATH_SIDE_TYPE_NONE,
@@ -26,7 +25,7 @@ const CLIP_PATH_SIDE_TYPES = [
 
 export default class ClipPathSide extends BasePropertyItem {
     template () {
-        return `
+        return html`
             <div class='property-item clip-path-side'>
                 <div class='items'>            
                     <div>
@@ -35,7 +34,7 @@ export default class ClipPathSide extends BasePropertyItem {
                             <select ref="$clipSideType">
                                 ${CLIP_PATH_SIDE_TYPES.map(type => {
                                     return `<option value="${type}">${type}</option>`
-                                }).join(EMPTY_STRING)}
+                                })}
                             </select>
                         </div>
                     </div>                                                    

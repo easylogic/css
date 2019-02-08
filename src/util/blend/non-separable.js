@@ -10,7 +10,7 @@ var util = {
     const n = this.min(c)
     const x = this.max(c)
 
-    let color = Object.assign({}, c);
+    let color = {...c};
 
     if(n < 0) {
       color.r = l + (((color.r - l) * l) / (l - n))

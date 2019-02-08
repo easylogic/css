@@ -17,7 +17,7 @@ export default class BorderFixed extends BasePropertyItem {
             <div class='property-item fixed-border'>
                 <div class='items'>            
                     <div>
-                        <label > <button type="button" ref="$borderLabel">*</button> Border</label>
+                        <label > <button type="button" ref="$borderLabel">*</button> Width</label>
                         <div>
                             <input type='range' ref="$borderWidthRange" min="0" max="360">
                             <input type='number' class='middle' ref="$borderWidth" min="0" max="360"> <span>px</span>
@@ -63,19 +63,21 @@ export default class BorderFixed extends BasePropertyItem {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
 
             if (type == 'border') {
+                var borderWidthValue = this.refs.$borderWidth.val()
                 this.commit(CHANGE_LAYER_BORDER, {
                     id, 
                     fixedBorderWidth: true, 
-                    borderWidth: pxUnit( this.refs.$borderWidth.val() )
+                    borderWidth: pxUnit( borderWidthValue )
                 })
-                this.refs.$borderWidthRange.val(this.refs.$borderWidth.val())
+                this.refs.$borderWidthRange.val(borderWidthValue)
             } else if (type == 'range') {
+                var borderWidthValue = this.refs.$borderWidthRange.val()
                 this.commit(CHANGE_LAYER_BORDER, {
                     id, 
                     fixedBorderWidth: true, 
-                    borderWidth: pxUnit( this.refs.$borderWidthRange.val() )
+                    borderWidth: pxUnit( borderWidthValue )
                 })
-                this.refs.$borderWidth.val(this.refs.$borderWidthRange.val())
+                this.refs.$borderWidth.val(borderWidthValue)
             }
             
         })

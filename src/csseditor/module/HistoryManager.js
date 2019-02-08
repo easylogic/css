@@ -55,7 +55,7 @@ export default class HistoryManager extends BaseModule {
     setHistory($store) {
         if (!$store.historyOriginal) {
             $store.historyOriginal = { 
-                items: clone($store.items), 
+                items: {...$store.items}, 
                 selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
             }
             $store.histories = [] 
@@ -73,7 +73,7 @@ export default class HistoryManager extends BaseModule {
 
             histories.push({ 
                 title, 
-                items: clone($store.items),
+                items: {...$store.items},
                 selection: $store.selection || $store.read(SELECTION_INITIALIZE_DATA)
             });
 

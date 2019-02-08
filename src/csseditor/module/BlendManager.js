@@ -23,20 +23,20 @@ export default class BlendManager extends BaseModule {
 
     [GETTER(BLEND_LAYER_TO_STRING)] ($store, item, mixBlend = EMPTY_STRING, withStyle = true) {
 
-        item = clone(item);
+        var newItem = {...item};
 
-        item.mixBlendMode = mixBlend;
+        newItem.mixBlendMode = mixBlend;
 
-        return $store.read(LAYER_TO_STRING, item, withStyle)
+        return $store.read(LAYER_TO_STRING, newItem, withStyle)
     }    
 
     [GETTER(BLEND_IMAGE_TO_STRING)] ($store, item, blend = EMPTY_STRING, withStyle = true) {
 
-        item = clone(item);
+        var newItem = {...item};
 
-        item.backgroundBlendMode = blend;
+        newItem.backgroundBlendMode = blend;
 
-        return $store.read(IMAGE_TO_STRING, item, withStyle)
+        return $store.read(IMAGE_TO_STRING, newItem, withStyle)
     }        
 
     [GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION)] ($store, item, mixBlend = EMPTY_STRING) {

@@ -5,12 +5,12 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 import { BLEND_LIST } from '../../../../types/BlendTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../../types/SelectionTypes';
-import { EMPTY_STRING } from '../../../../../util/css/types';
+import { html } from '../../../../../util/functions/func';
 
 export default class BackgroundBlend extends BasePropertyItem {
 
     template () { 
-        return `
+        return html`
         <div class='property-item blend show'>
             <div class='items max-height'>         
                 <div>
@@ -19,7 +19,7 @@ export default class BackgroundBlend extends BasePropertyItem {
                         <select ref="$blend">
                         ${this.read(BLEND_LIST).map(blend => {
                             return `<option value="${blend}">${blend}</option>`
-                        }).join(EMPTY_STRING)}
+                        })}
                         </select>
                     </div>
                 </div>

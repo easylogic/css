@@ -4,7 +4,7 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
 import { CLICK, INPUT, CHANGEINPUT, LOAD } from "../../../../../util/Event";
-import { isUndefined, clone } from "../../../../../util/functions/func";
+import { isUndefined, clone, html } from "../../../../../util/functions/func";
 import { BACKDROP_GET, BACKDROP_LIST } from "../../../../types/BackdropTypes";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
@@ -46,7 +46,7 @@ export default class BackdropList extends BasePropertyItem {
                 </div>
             `
         } else if (viewObject.type == 'multi') {
-            return `
+            return html`
             <div class='filter'>
                 <span class="area"></span>
                 <span class="checkbox">
@@ -82,7 +82,7 @@ export default class BackdropList extends BasePropertyItem {
                         `
                     }
 
-                }).join(EMPTY_STRING)}
+                })}
             </div>
             `
         }
@@ -142,7 +142,7 @@ export default class BackdropList extends BasePropertyItem {
 
         this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id; 
-            var value = layer[key] || clone(BACKDROP_DEFAULT_OBJECT[key]);
+            var value = layer[key] || {...BACKDROP_DEFAULT_OBJECT[key]};
             value.value = lastValue 
 
             this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })
@@ -153,7 +153,7 @@ export default class BackdropList extends BasePropertyItem {
 
         this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id;             
-            var value = layer[key] || clone(BACKDROP_DEFAULT_OBJECT[key]);
+            var value = layer[key] || {...BACKDROP_DEFAULT_OBJECT[key]};
             value.checked = checked 
 
             this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })

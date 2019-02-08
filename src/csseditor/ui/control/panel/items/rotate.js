@@ -40,11 +40,13 @@ export default class Rotate extends BasePropertyItem {
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
 
             if (type == 'rotate') {
-                this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate: this.refs.$rotate.val()})
-                this.refs.$rotateRange.val(this.refs.$rotate.val())
+                var rotate = this.refs.$rotate.val();
+                this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate})
+                this.refs.$rotateRange.val(rotate)
             } else if (type == 'range') {
-                this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate: this.refs.$rotateRange.val()})
-                this.refs.$rotate.val(this.refs.$rotateRange.val())
+                var rotate = this.refs.$rotateRange.val()
+                this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate})
+                this.refs.$rotate.val(rotate)
             }
             
         })

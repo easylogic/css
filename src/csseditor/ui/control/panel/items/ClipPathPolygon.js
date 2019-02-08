@@ -9,7 +9,7 @@ import {
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { CLIP_PATH_TYPE_POLYGON } from "../../../../types/ItemTypes";
-import { defaultValue, isUndefined } from "../../../../../util/functions/func";
+import { defaultValue, isUndefined, html } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIPPATH_SAMPLE_LIST, CLIPPATH_SAMPLE_GET } from "../../../../types/ClipPathTypes";
@@ -18,7 +18,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
     template () {
         var list = this.read(CLIPPATH_SAMPLE_LIST)
         
-        return `
+        return html`
             <div class='property-item clip-path-polygon'>
                 <div class="items">
                     <div>
@@ -33,7 +33,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
                         return `${stringUnit(point.x)} ${stringUnit(point.y)}`
                     }).join(', ');
                     return `<div class='clip-path-item' data-index='${index}' style='clip-path: polygon(${values})'></div>`
-                }).join(EMPTY_STRING)}</div> 
+                })}</div> 
                 <div class='items' ref='$polygonList'></div>
             </div>
         `

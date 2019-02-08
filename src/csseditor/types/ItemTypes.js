@@ -87,9 +87,11 @@ export const ITEM_SET_ALL = 'item/set/all';
 export const ITEM_SORT = 'item/sort';
 export const ITEM_REMOVE_CHILDREN = 'item/remove/children';
 export const ITEM_REMOVE = 'item/remove';
+export const ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
 export const ITEM_REMOVE_ALL = 'item/remove/all';
 export const ITEM_FOCUS = 'item/focus';
 export const ITEM_LOAD = 'item/load';
+export const ITEM_INIT_CHILDREN = 'item/init/children'
 
 /* page is equal to artboard */ 
 export const PAGE_DEFAULT_OBJECT = {
@@ -187,16 +189,16 @@ export const LAYER_DEFAULT_OBJECT = {
 }
 
 
-export const CIRCLE_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+export const CIRCLE_DEFAULT_OBJECT = {...LAYER_DEFAULT_OBJECT, 
     type: SHAPE_TYPE_CIRCLE,
     borderRadius: percentUnit(100), 
     fixedRadius: true
-})
+}
 
-export const POLYGON_DEFAULT_OBJECT = Object.assign({}, LAYER_DEFAULT_OBJECT, {
+export const POLYGON_DEFAULT_OBJECT = {...LAYER_DEFAULT_OBJECT, 
     type: SHAPE_TYPE_POLYGON,
     fixedShape: true
-})
+}
 
 export const GROUP_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_GROUP,
@@ -285,3 +287,10 @@ export const KEYFRAME_DEFAULT_OBJECT = {
     iteration: 1, 
     direction: 'alternate'
 }
+export const DEFAULT_TOOL_SIZE = {
+    'board.offset': { left: 0, top : 0},
+    'page.offset': { left: 0, top : 0},
+    'board.scrollTop': 0,
+    'board.scrollLeft': 0
+}
+

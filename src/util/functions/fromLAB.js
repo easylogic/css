@@ -91,9 +91,3 @@ export function LABtoRGB(l, a, b) {
     }
     return XYZtoRGB(LABtoXYZ(l, a, b));
 }
-
-export default {
-    XYZtoRGB,
-    LABtoRGB,
-    LABtoXYZ
-}

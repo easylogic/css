@@ -222,7 +222,14 @@ export default class Dom {
         if (arguments.length == 0) {
             return this.el.textContent;
         } else {
-            this.el.textContent = value; 
+
+            var tempText = value; 
+
+            if (value instanceof Dom) {
+                tempText = value.text();
+            } 
+            
+            this.el.textContent = tempText; 
             return this; 
         }
         
@@ -368,7 +375,14 @@ export default class Dom {
         if (arguments.length == 0) {
             return this.el.value;
         } else if (arguments.length == 1) {
-            this.el.value = value;
+
+            var tempValue = value; 
+
+            if (value instanceof Dom) {
+                tempValue = value.val()
+            }
+
+            this.el.value = tempValue;
         }
     
         return this;
@@ -501,6 +515,12 @@ export default class Dom {
         this.el.checked = !!isChecked;
 
         return this;
+    }
+
+    focus () {
+        this.el.focus()
+
+        return this; 
     }
 }
 

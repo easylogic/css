@@ -23,6 +23,7 @@ $layer-item-padding: 4px;
             background-color: rgba(0, 0, 0, 0.2);     
             display: inline-block;
             vertical-align: middle;   
+            overflow: hidden;
             
             &.hide {
                 display: none;

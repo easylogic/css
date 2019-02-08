@@ -14,6 +14,7 @@ export default class LayerTabView extends BaseTab {
             <div class="tab-header no-border" ref="$header">
                 <div class="tab-item" data-id="page">Page</div>
                 <div class="tab-item selected" data-id="property">Property</div>
+                <div class="tab-item" data-id="border">Border</div>       
                 <div class="tab-item" data-id="fill">Fill</div>       
                 <div class="tab-item" data-id="text">Text</div>
                 <div class="tab-item small-font" data-id="clip-path">Clip Path</div>
@@ -32,9 +33,17 @@ export default class LayerTabView extends BaseTab {
                     </div>
                     <div class='scroll' ref="$layerInfoScroll">
                        <LayerProperty></LayerProperty>
-                       <LayerBorderProperty></LayerBorderProperty>    
                     </div>
                 </div>
+                <div class="tab-content flex" data-id="border">
+                    <div class='fixed'>
+                        <LayerBorderColorPickerPanel></LayerBorderColorPickerPanel>
+                    </div>
+                    <div class='scroll' ref="$layerBorderScroll">
+                        <LayerBorderProperty></LayerBorderProperty>    
+                        <LayerBorderRadiusProperty></LayerBorderRadiusProperty>    
+                    </div>
+                </div>                
                 <div class="tab-content flex" data-id="text">
                     <div class='fixed'>
                         <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    
@@ -78,6 +87,10 @@ export default class LayerTabView extends BaseTab {
     [SCROLL('$layerInfoScroll')] (e) {
         this.setScrollTabTitle(this.refs.$layerInfoScroll)
     }
+
+    [SCROLL('$layerBorderScroll')] (e) {
+        this.setScrollTabTitle(this.refs.$layerBorderScroll)
+    }    
 
     [SCROLL('$layerTextScroll')] (e) {
         this.setScrollTabTitle(this.refs.$layerTextScroll)

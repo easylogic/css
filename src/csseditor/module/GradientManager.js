@@ -33,7 +33,7 @@ export default class GradientManager extends BaseModule {
 
         if (type == 'all') {
             results.push(...gradientList.map(it => {
-                return clone(it)
+                return {...it}
             }));
         }
 

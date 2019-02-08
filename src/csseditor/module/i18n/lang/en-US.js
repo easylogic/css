@@ -1,4 +1,12 @@
 export default {
-    'app.title': 'EASYLOGIC',
-    'app.counting': `{index}`
+
+    app: {
+        title: 'EASYLOGIC',
+        counting: `{index}`
+    },
+    label: {
+        pattern: {
+            cloneCount: 'Clone'
+        }
+    }
 }

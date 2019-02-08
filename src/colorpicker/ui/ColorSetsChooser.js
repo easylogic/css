@@ -1,23 +1,21 @@
 import UIElement, { EVENT } from '../UIElement';
 import { CLICK, LOAD } from '../../util/Event';
-import { EMPTY_STRING } from '../../util/css/types';
+import { html } from '../../util/functions/func';
 
 const DATA_COLORSETS_INDEX = 'data-colorsets-index';
 
 export default class ColorSetsChooser extends UIElement {
 
     template () {
-        return `
-            <div class="color-chooser">
-                <div class="color-chooser-container">
-                    <div class="colorsets-item colorsets-item-header">
-                        <h1 class="title">Color Palettes</h1>
-                        <span ref="$toggleButton" class="items">&times;</span>
-                    </div>
-                    <div ref="$colorsetsList" class="colorsets-list"></div>
+        return `<div class="color-chooser">
+            <div class="color-chooser-container">
+                <div class="colorsets-item colorsets-item-header">
+                    <h1 class="title">Color Palettes</h1>
+                    <span ref="$toggleButton" class="items">&times;</span>
                 </div>
+                <div ref="$colorsetsList" class="colorsets-list"></div>
             </div>
-        `
+        </div>`
     }
 
     refresh () {
@@ -37,10 +35,10 @@ export default class ColorSetsChooser extends UIElement {
         // colorsets 
         const colorSets = this.read('getColorSetsList');
 
-        return `
+        return html`
             <div>
                 ${colorSets.map( (element, index) => {
-                    return `
+                    return html`
                         <div class="colorsets-item" data-colorsets-index="${index}" >
                             <h1 class="title">${element.name}</h1>
                             <div class="items">
@@ -50,11 +48,11 @@ export default class ColorSetsChooser extends UIElement {
                                         return  `<div class="color-item" title="${color}">
                                                 <div class="color-view" style="background-color: ${color}"></div>
                                             </div>`
-                                    }).join(EMPTY_STRING)}
+                                    })}
                                 </div>
                             </div>
                         </div>`
-                }).join(EMPTY_STRING)}
+                })}
             </div>
         `
     }

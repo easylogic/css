@@ -6,9 +6,9 @@ import { stringUnit, EMPTY_STRING } from "../../util/css/types";
 import { isNotUndefined, isArray, cleanObject, combineKeyArray, clone } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
-import { CSS_TO_STRING } from "../types/CssTypes";
+import { CSS_TO_STRING, CSS_GENERATE } from "../types/CssTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS, LAYER_MAKE_MAP_IMAGE, LAYER_MAKE_BORDER } from "../types/LayerTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_TRANSFORM_ROTATE, LAYER_MAKE_TRANSFORM, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_BORDER_RADIUS, LAYER_BOUND_TO_CSS, LAYER_MAKE_MAP_IMAGE, LAYER_MAKE_BORDER, LAYER_MAKE_BORDER_COLOR, LAYER_MAKE_BORDER_STYLE, LAYER_BORDER_PREVIEW } from "../types/LayerTypes";
 import { IMAGE_TO_CSS} from "../types/ImageTypes";
 import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN, ITEM_EACH_TYPE_CHILDREN, ITEM_MAP_IMAGE_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
@@ -20,7 +20,7 @@ export default class LayerManager extends BaseModule {
  
         var results = [] 
 
-        results = layerList.map(it => Object.assign({}, it))
+        results = layerList.map(it => ({...it}))
 
         return results;
     }
@@ -89,7 +89,7 @@ export default class LayerManager extends BaseModule {
         var results = {}
 
         images.forEach(item => {
-            var image = Object.assign({}, item.image, {colorsteps: item.colorsteps})
+            var image = {...item.image, colorsteps: item.colorsteps}
             var css = $store.read(IMAGE_TO_CSS, image);
 
             Object.keys(css).forEach(key => {
@@ -106,7 +106,7 @@ export default class LayerManager extends BaseModule {
 
     [GETTER(LAYER_IMAGE_TO_IMAGE_CSS)] ($store, image) {    
         var images = this.generateImagePattern($store, [image]);        
-        return $store.read('css/generate', this.generateImageCSS($store, images));
+        return $store.read(CSS_GENERATE, this.generateImageCSS($store, images));
     }    
 
     [GETTER(LAYER_MAKE_MAP)] ($store, layer, itemType, isExport) {
@@ -176,7 +176,9 @@ export default class LayerManager extends BaseModule {
 
 
     [GETTER(LAYER_MAKE_MAP_IMAGE)] ($store, layer, isExport) {
-        var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id));
+        var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(it => {
+            return it.visible;
+        }));
 
         return this.generateImageCSS($store, images, isExport);
     }
@@ -337,87 +339,70 @@ export default class LayerManager extends BaseModule {
         return items.length ? items[0] : null;
     }
 
-    isFixedRadius (layer) {
-        if (layer.fixedRadius && layer.borderRadius) {
-            return [ stringUnit(layer.borderRadius)]; 
-        }
-
-        if (!layer.borderTopLeftRadius) return []
-
-        if (layer.borderTopLeftRadius.value == layer.borderTopRightRadius.value 
-            && layer.borderTopRightRadius.value == layer.borderBottomRightRadius.value
-            && layer.borderBottomRightRadius.value == layer.borderBottomLeftRadius.value
-        ) {
-            return [ stringUnit(layer.borderTopLeftRadius) ]
-        }
-
-        return []
-    }
-
-    isFixedBorderWidth (layer) {
-        if (layer.fixedBorderWidth && layer.borderWidth) {
-            return [ stringUnit(layer.borderWidth)]; 
-        }
-
-        if (!layer.borderTopWidth) return []
-
-        if (layer.borderLeftWidth.value == layer.borderRightWidth.value 
-            && layer.borderTopWidth.value == layer.borderBottomWidth.value
-            && layer.borderBottomWidth.value == layer.borderLeftWidth.value
-        ) {
-            return [ stringUnit(layer.borderTopWidth) ]
-        }
-
-        return []
-    }    
-
     [GETTER(LAYER_MAKE_BORDER_RADIUS)] ($store, layer) {
         var css = {};
-        var isFixedRadius = this.isFixedRadius(layer);
-        if (isFixedRadius.length) {
-            css['border-radius'] = isFixedRadius[0]
-        } else {
 
-            if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
-            if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
-            if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
-            if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
-        }
+        if (layer.borderRadius) css['border-radius'] = stringUnit(layer.borderRadius)
+        if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
+        if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
+        if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
+        if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);        
 
         return css;
     }
 
+    [GETTER(LAYER_MAKE_BORDER_COLOR)] ($store, layer) {
+        var css = {};
+
+        if (layer.borderColor) css['border-color'] = layer.borderColor
+        if (layer.borderTopColor) css['border-top-color'] = layer.borderTopColor;
+        if (layer.borderRightColor) css['border-right-color'] = layer.borderRightColor;
+        if (layer.borderBottomColor) css['border-bottom-color'] = layer.borderBottomColor;
+        if (layer.borderLeftColor) css['border-left-color'] = layer.borderLeftColor;        
+
+        return css;
+    }
+
+    [GETTER(LAYER_MAKE_BORDER_STYLE)] ($store, layer) {
+        var css = {};
+
+        if (layer.borderStyle) css['border-style'] = layer.borderStyle
+        if (layer.borderTopStyle) css['border-top-style'] = layer.borderTopStyle;
+        if (layer.borderRightStyle) css['border-right-style'] = layer.borderRightStyle;
+        if (layer.borderBottomStyle) css['border-bottom-style'] = layer.borderBottomStyle;
+        if (layer.borderLeftStyle) css['border-left-style'] = layer.borderLeftStyle;
+
+        return css;
+    }
+
+
     [GETTER(LAYER_MAKE_BORDER)] ($store, layer) {
         var css = {};
-        var isFixedBorderWidth = this.isFixedBorderWidth(layer);
-        if (isFixedBorderWidth.length) {
-            css['border-width'] = isFixedBorderWidth[0]
-            css['border-style'] = 'solid';         
-        } else {
 
-            if (layer.borderTopWidth) {
-                css['border-top-width'] = stringUnit(layer.borderTopWidth);
-                css['border-top-style'] = 'solid';
-            }
-
-            if (layer.borderRightWidth) {
-                css['border-right-width'] = stringUnit(layer.borderRightWidth);
-                css['border-right-style'] = 'solid';
-            }
-
-            if (layer.borderLeftWidth) {
-                css['border-left-width'] = stringUnit(layer.borderLeftWidth);
-                css['border-left-style'] = 'solid'
-            }
-
-            if (layer.borderBottomWidth) {
-                css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
-                css['border-bottom-style'] = 'solid'
-            }
+        if (layer.borderWidth) {
+            css['border-width'] = stringUnit(layer.borderWidth)
+            css['border-style'] = 'solid';
         }
 
+        if (layer.borderTopWidth) {
+            css['border-top-width'] = stringUnit(layer.borderTopWidth);
+            css['border-top-style'] = 'solid';
+        }
 
+        if (layer.borderRightWidth) {
+            css['border-right-width'] = stringUnit(layer.borderRightWidth);
+            css['border-right-style'] = 'solid';
+        }
 
+        if (layer.borderLeftWidth) {
+            css['border-left-width'] = stringUnit(layer.borderLeftWidth);
+            css['border-left-style'] = 'solid'
+        }
+
+        if (layer.borderBottomWidth) {
+            css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
+            css['border-bottom-style'] = 'solid'
+        }
         return css;
     }
 
@@ -439,10 +424,11 @@ export default class LayerManager extends BaseModule {
         var css = {};
 
         if (withStyle) {
-            css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
+            css = {...css, ...$store.read(LAYER_BOUND_TO_CSS, layer)};
         }
 
         css['box-sizing'] = layer.boxSizing || 'border-box';        
+        css['visibility'] = layer.visible ? 'visible' : 'hidden';        
 
         if (layer.backgroundColor) {
             css['background-color'] = layer.backgroundColor
@@ -451,7 +437,6 @@ export default class LayerManager extends BaseModule {
         if (layer.mixBlendMode) {
             css['mix-blend-mode'] = layer.mixBlendMode || ""
         }
-
 
         if (layer.backgroundClip && !layer.clipText) {
             css['background-clip'] = layer.backgroundClip || ""
@@ -462,30 +447,35 @@ export default class LayerManager extends BaseModule {
             css['opacity'] = layer.opacity;
         }
 
-        var results = Object.assign(css, 
-            $store.read(LAYER_MAKE_BORDER, layer),
-            $store.read(LAYER_MAKE_BORDER_RADIUS, layer),
-            $store.read(LAYER_MAKE_TRANSFORM, layer),
-            $store.read(LAYER_MAKE_CLIPPATH, layer),
-            $store.read(LAYER_MAKE_FILTER, layer),
-            $store.read(LAYER_MAKE_BACKDROP, layer),            
-            $store.read(LAYER_MAKE_FONT, layer),            
-            $store.read(LAYER_MAKE_BOXSHADOW, layer),
-            $store.read(LAYER_MAKE_TEXTSHADOW, layer),
-            (image) ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport)
-        )
+        var imageCSS = (image) ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport)
+
+        var results = {...css, 
+            ...$store.read(LAYER_MAKE_BORDER, layer),
+            ...$store.read(LAYER_MAKE_BORDER_RADIUS, layer),
+            ...$store.read(LAYER_MAKE_BORDER_COLOR, layer),
+            ...$store.read(LAYER_MAKE_BORDER_STYLE, layer),
+            ...$store.read(LAYER_MAKE_TRANSFORM, layer),
+            ...$store.read(LAYER_MAKE_CLIPPATH, layer),
+            ...$store.read(LAYER_MAKE_FILTER, layer),
+            ...$store.read(LAYER_MAKE_BACKDROP, layer),            
+            ...$store.read(LAYER_MAKE_FONT, layer),            
+            ...$store.read(LAYER_MAKE_BOXSHADOW, layer),
+            ...$store.read(LAYER_MAKE_TEXTSHADOW, layer),
+            ...imageCSS
+        }
 
         return cleanObject(results);
     }
 
 
     [GETTER(LAYER_CACHE_TO_CSS)] ($store, item = null) {
-        var layer = Object.assign({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
+        var layer = {...$store.read(ITEM_CONVERT_STYLE, item.layer),  images: item.images };
         var css = {}
 
-        css = Object.assign(css, $store.read(LAYER_BOUND_TO_CSS, layer));
+        css = {...$store.read(LAYER_BOUND_TO_CSS, layer)}
 
         css['box-sizing'] = layer.boxSizing || 'border-box';
+        css['visibility'] = layer.visible ? 'visible' : 'hidden';        
 
         if (layer.backgroundColor) {
             css['background-color'] = layer.backgroundColor
@@ -504,20 +494,41 @@ export default class LayerManager extends BaseModule {
             css['opacity'] = layer.opacity;
         }
 
-        var results = Object.assign(css, 
-            $store.read(LAYER_MAKE_BORDER, layer),
-            $store.read(LAYER_MAKE_BORDER_RADIUS, layer),
-            $store.read(LAYER_MAKE_TRANSFORM, layer),
-            $store.read(LAYER_MAKE_CLIPPATH, layer),
-            $store.read(LAYER_MAKE_FILTER, layer),
-            $store.read(LAYER_MAKE_BACKDROP, layer),            
-            $store.read(LAYER_MAKE_FONT, layer),            
-            $store.read(LAYER_MAKE_BOXSHADOW, layer),
-            $store.read(LAYER_MAKE_TEXTSHADOW, layer),
-            $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images)
-        )
+        var results = {
+            ...css, 
+            ...$store.read(LAYER_MAKE_BORDER, layer),
+            ...$store.read(LAYER_MAKE_BORDER_RADIUS, layer),
+            ...$store.read(LAYER_MAKE_BORDER_COLOR, layer),
+            ...$store.read(LAYER_MAKE_BORDER_STYLE, layer),            
+            ...$store.read(LAYER_MAKE_TRANSFORM, layer),
+            ...$store.read(LAYER_MAKE_CLIPPATH, layer),
+            ...$store.read(LAYER_MAKE_FILTER, layer),
+            ...$store.read(LAYER_MAKE_BACKDROP, layer),            
+            ...$store.read(LAYER_MAKE_FONT, layer),            
+            ...$store.read(LAYER_MAKE_BOXSHADOW, layer),
+            ...$store.read(LAYER_MAKE_TEXTSHADOW, layer),
+            ...$store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images)
+        }
 
         return cleanObject(results);
+    }
+
+
+    [GETTER(LAYER_BORDER_PREVIEW)] ($store, layer = null) {
+        var css = {}
+
+        css['box-sizing'] = 'border-box';
+
+
+        var results = {
+            ...css, 
+            ...$store.read(LAYER_MAKE_BORDER, layer),
+            ...$store.read(LAYER_MAKE_BORDER_RADIUS, layer),
+            ...$store.read(LAYER_MAKE_BORDER_COLOR, layer),
+            ...$store.read(LAYER_MAKE_BORDER_STYLE, layer)
+        }
+
+        return $store.read(CSS_TO_STRING, cleanObject(results));
     }
 
 }

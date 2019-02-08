@@ -38,9 +38,7 @@ export function ImageToRGB(url, callbackOrOption = {}, callback) {
 }
 
 export function ImageToCanvas (url, filter, callback, opt = { frameTimer: 'full' }) {
-    ImageToURL(url, filter, callback, Object.assign({
-        returnTo: 'canvas'
-    }, opt))
+    ImageToURL(url, filter, callback, { returnTo: 'canvas', ...opt})
 }
 
 export function ImageToURL(url, filter, callback, opt = { frameTimer : 'full'}) {
@@ -132,15 +130,4 @@ export function ImageToHistogram(url, callback, opt = { width: 200, height: 100 
             if (isFunction( callback )) callback(canvas.toDataURL('image/png'));
         }, opt)
     })
-}
-
-export default {
-    palette,
-    ImageToCanvas,
-    ImageToHistogram,
-    ImageToRGB,
-    ImageToURL,
-    GLToCanvas,
-    histogram,
-    histogramToPoints
 }

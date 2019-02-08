@@ -5,11 +5,11 @@ import { CLICK, INPUT, CHANGE } from "../../../../../../util/Event";
 import { EVENT } from "../../../../../../colorpicker/UIElement";
 import { PATTERN_GET, PATTERN_SET } from "../../../../../types/PatternTypes";
 import { BLEND_LIST } from "../../../../../types/BlendTypes";
-import { EMPTY_STRING } from "../../../../../../util/css/types";
+import { html } from "../../../../../../util/functions/func";
 
 export default class RotatePattern extends BasePropertyItem {
     template () {
-        return `
+        return html`
             <div class='property-item rotate-pattern show'>
                 <div class='items'>            
                     <div>
@@ -32,10 +32,17 @@ export default class RotatePattern extends BasePropertyItem {
                             <select ref="$blend">
                             ${this.read(BLEND_LIST).map(blend => {
                                 return `<option value="${blend}">${blend}</option>`
-                            }).join(EMPTY_STRING)}
+                            })}
                             </select>
                         </div>
-                    </div>                    
+                    </div>          
+                    <div>
+                        <label>Random</label>
+                        <div>
+                            <label><input type="checkbox" ref="$randomPosition" /> Position</label>
+                            <label><input type="checkbox" ref="$randomSize" /> Size</label>
+                        </div>                        
+                    </div>  
                 </div>
             </div>
         ` 
@@ -56,6 +63,8 @@ export default class RotatePattern extends BasePropertyItem {
                 this.refs.$cloneCountRange.val(rotate.clone || 1);
                 this.refs.$cloneCount.val(rotate.clone || 1);
                 this.refs.$blend.val(rotate.blend || 'normal');
+                this.refs.$randomPosition.checked(rotate.randomPosition || false)
+                this.refs.$randomSize.checked(rotate.randomSize || false)
             }
         });
     }
@@ -65,7 +74,9 @@ export default class RotatePattern extends BasePropertyItem {
             this.run(PATTERN_SET, image, 'rotate', {
                 enable: this.refs.$enable.checked(),
                 clone: this.refs.$cloneCount.int(),
-                blend: this.refs.$blend.val()
+                blend: this.refs.$blend.val(),
+                randomPosition: this.refs.$randomPosition.checked(),
+                randomSize: this.refs.$randomSize.checked()
             });
 
             this.emit(CHANGE_IMAGE)
@@ -73,12 +84,14 @@ export default class RotatePattern extends BasePropertyItem {
     }
 
     [CLICK('$enable')] () { this.changePatternValue(); }
+    [CLICK('$randomPosition')] () { this.changePatternValue(); }
+    [CLICK('$randomSize')] () { this.changePatternValue(); }
     [INPUT('$cloneCount')] () { 
-        this.refs.$cloneCountRange.val(this.refs.$cloneCount.val())
+        this.refs.$cloneCountRange.val(this.refs.$cloneCount)
         this.changePatternValue(); 
     }
     [INPUT('$cloneCountRange')] () { 
-        this.refs.$cloneCount.val(this.refs.$cloneCountRange.val())
+        this.refs.$cloneCount.val(this.refs.$cloneCountRange)
         this.changePatternValue(); 
     }
     [CHANGE('$blend')] () {

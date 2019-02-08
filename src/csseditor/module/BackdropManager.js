@@ -35,14 +35,16 @@ export default class BackdropManager extends BaseModule {
     }    
 
     [GETTER(BACKDROP_LIST)] ($store, layerId) {
-        var layer = $store.read(ITEM_GET, layerId);
+        const [ get ] = $store.mapGetters(ITEM_GET);
+
+        var layer = get(layerId);
         var realFilters = {}
         
         BACKDROP_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign( clone(BACKDROP_DEFAULT_OBJECT), realFilters)
+        realFilters = {...BACKDROP_DEFAULT_OBJECT, ...realFilters}
 
         var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}
@@ -63,7 +65,7 @@ export default class BackdropManager extends BaseModule {
             realFilters[key] = layer[key]
         })
 
-        realFilters = Object.assign( clone(BACKDROP_DEFAULT_OBJECT), realFilters)
+        realFilters = {...BACKDROP_DEFAULT_OBJECT, ...realFilters}
 
         var filterList = BACKDROP_DEFAULT_OBJECT_KEYS.map(key => {
             return {key, ...realFilters[key]}

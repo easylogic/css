@@ -153,17 +153,3 @@ scale.bone = function (count) {
 scale.copper = function (count) {
     return scale(['#000000', '#3d2618', '#9d623e', '#ffa167', '#ffc77f'], count);
 }
-
-export default {
-    interpolateRGB,
-    blend,
-    mix,
-    scale,
-    contrast,
-    contrastColor,
-    gradient,
-    scaleHSV,
-    scaleH,
-    scaleS,
-    scaleV
-}

@@ -8,11 +8,13 @@ export default class BackgroundColor extends BasePropertyItem {
     template () {
         return `
             <div class='property-item background-color show'>
-                <div class='title' ref="$title">Background Color</div>            
                 <div class='items'>            
                     <div>
+                        <label > Background Color</label>                    
                         <div style='cursor:pointer;' ref="$colorview" title="Click me!!">
-                            <span class='color' ref="$color"></span>
+                            <span class='background-transparent'>
+                                <span class='color' ref='$color'></span>
+                            </span>
                             <span class='color-text' ref="$colortext"></span>
                         </div>
                     </div> 
@@ -38,7 +40,9 @@ export default class BackgroundColor extends BasePropertyItem {
     }
 
     [CLICK('$colorview')] () {
-        this.emit('toggleLayerColorPicker')
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
+            this.emit('selectLayerColor', layer.backgroundColor, 'backgroundColor', CHANGE_LAYER_BACKGROUND_COLOR);
+        })
     }
 
 }

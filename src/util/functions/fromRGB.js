@@ -177,17 +177,3 @@ export function RGBtoLAB(r, g, b) {
     }
     return XYZtoLAB(RGBtoXYZ(r, g, b));
 }
-
-export default {
-    RGBtoCMYK,
-    RGBtoGray,
-    RGBtoHSL,
-    RGBtoHSV,
-    RGBtoLAB,
-    RGBtoSimpleGray,
-    RGBtoXYZ,
-    RGBtoYCrCb,
-    c,
-    brightness,
-    gray
-}

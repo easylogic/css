@@ -1,5 +1,6 @@
 import { IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR } from "../../types/ItemTypes";
-import { clone, isNotUndefined } from "../../../util/functions/func";
+import { clone, isNotUndefined, repeat } from "../../../util/functions/func";
+import { percentUnit } from "../../../util/css/types";
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -32,18 +33,52 @@ export default class rotate {
 
         var count = opt.clone || 1; 
         var blend = opt.blend || 'normal';
+        var randomPosition = opt.randomPosition || false; 
+        var randomSize = opt.randomSize || false; 
         
         if (count < 2) return results;
 
         var degree = 360 / count;
 
-        return [...Array(count-1)].map( (_, index) => {
-            var newItem = clone(image);
+        return repeat(count-1).map( (_, index) => {
+            var newItem = {...image};
             newItem.angle = this.caculateAngle(newItem, (index + 1) * degree)
+
+            if (randomPosition) {
+                newItem.backgroundPositionX = this.getBackgroundPositionX(index)
+                newItem.backgroundPositionY = this.getBackgroundPositionY(index)
+            }
+
+            if (randomSize) {
+                newItem.backgroundSizeWidth = this.getBackgroundSizeWidth(index);
+                newItem.backgroundSizeHeight = this.getBackgroundSizeHeight(index);    
+            }
+
             newItem.backgroundBlendMode = blend;
 
             return newItem
         })
+    }
+
+    getBackgroundSizeWidth (index) {
+        var value = Math.random() * 100; 
+        return percentUnit(value);
+    }
+
+
+    getBackgroundSizeHeight (index) {
+        var value = Math.random() * 100; 
+        return percentUnit(value);
+    }
+
+    getBackgroundPositionX (index) {
+        var value = Math.random() * 100; 
+        return percentUnit(value);
+    }
+
+    getBackgroundPositionY (index) {
+        var value = Math.random() * 100; 
+        return percentUnit(value);
     }
 
     caculateAngle (image, plusAngle = 0) {

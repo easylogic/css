@@ -1,4 +1,3 @@
-import BaseCSSEditor from '../BaseCSSEditor';
 import FeatureControl from '../ui/control/FeatureControl';
 
 import LayerToolbar from '../ui/view/LayerToolbar';
@@ -13,17 +12,21 @@ import { CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
-import { EVENT } from '../../colorpicker/UIElement';
 import Alignment from '../ui/control/Alignment';
 import { ITEM_ADD_PAGE } from '../types/ItemCreateTypes';
 import { ITEM_LOAD } from '../types/ItemTypes';
 import { STORAGE_LOAD } from '../types/StorageTypes';
 import HotKey from '../ui/control/HotKey';
+import { LOAD_START } from '../types/LoadTypes';
+import UIElement, { EVENT } from '../../colorpicker/UIElement';
+import { RESIZE } from '../../util/Event';
+import { RESIZE_WINDOW } from '../types/ToolTypes';
 
-export default class CSSEditor extends BaseCSSEditor {
+export default class CSSEditor extends UIElement {
 
     afterRender() { 
         setTimeout(() => {
+            this.emit(RESIZE_WINDOW)
             this.emit(CHANGE_EDITOR);
         }, 100)
     }
@@ -80,7 +83,43 @@ export default class CSSEditor extends BaseCSSEditor {
         }
     } 
 
-    loadStart (isAdd) {
+    [EVENT(CHANGE_EDITOR)] () {
+        /*
+        this.read(SELECTION_CURRENT_LAYER, (layer) => {
+            var self = this; 
+            var obj = layer.style
+            var aniObject = Animation.createTimeline([{
+                duration: 1000, 
+                obj,
+                timing: 'ease-out-sine',
+                iteration: 3, 
+                direction: 'alternate',
+                keyframes : {
+                    '0%': {
+                        'x': '0px',
+                        'background-color': 'rgba(255, 255, 255, 0.5)',
+                    },
+                    '100%': {
+                        'x': '250px',
+                        'background-color': 'rgba(255, 0, 255, 1)'
+                    }
+                } 
+
+            }], {
+                callback() {
+                    self.run('item/set', layer);
+                    self.emit('animationEditor')
+                }
+            });
+
+            aniObject.start();
+    
+        })
+        */
+
+    }
+
+    [EVENT(LOAD_START)] (isAdd) {
         this.dispatch(STORAGE_LOAD, (isLoaded) => {
             if (!isLoaded && isAdd) { 
                 this.dispatch(ITEM_ADD_PAGE, true)
@@ -95,19 +134,15 @@ export default class CSSEditor extends BaseCSSEditor {
         this.$el.toggleClass('show-timeline')
     } 
 
-    [EVENT('updateLayout')] (layout) {
-        // screenModes.filter(key => key != layout).forEach(key => {
-        //     this.refs.$layoutMain.removeClass(`${key}-mode`)
-        // })
-
-        // this.refs.$layoutMain.addClass(`${layout}-mode`)
-    }
-
     [EVENT('togglePagePanel')] () {
         this.$el.toggleClass('has-page-panel')
     }
 
     [EVENT('toggleLayerPanel')] () {
         this.$el.toggleClass('has-layer-panel')
+    }
+
+    [RESIZE('window')] (e) {
+        this.emit(RESIZE_WINDOW)
     }
 }

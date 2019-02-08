@@ -343,14 +343,24 @@
                     margin-left: 4px; 
                     margin-right: 10px;
                     vertical-align: middle;
+                    box-sizing: border-box;
 
-                    &.color {
-                        display:  block;
-                        height: 100%;
-                        width: 40px;
-                        margin-right: 0px;
-                        border: 1px solid $border-color;
+                    &.background-transparent {
+                        height: 30px;
+                        width: 30px;
+                        @include transparent-background();
+                        margin:0px;
+
+                        .color {
+                            display:  block;
+                            height: 100%;
+                            width: 100%;
+                            border: 1px solid $border-color;
+                            box-sizing: border-box;               
+                        }
                     }
+
+                  
 
                     &.color-text {
                         display:  inline-block;

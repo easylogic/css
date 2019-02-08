@@ -6,6 +6,7 @@ import { LAYER_LIST_SAMPLE, LAYER_CACHE_TO_STRING } from "../../../types/LayerTy
 import { COLLECT_LAYER_ONE } from "../../../types/CollectTypes";
 import { ITEM_ADD_CACHE } from "../../../types/ItemRecoverTypes";
 import { STORAGE_LOAD_LAYER, STORAGE_LAYERS, STORAGE_REMOVE_LAYER, STORAGE_ADD_LAYER } from "../../../types/StorageTypes";
+import { repeat } from "../../../../util/functions/func";
 
 export default class LayerSampleList extends UIElement {
  
@@ -29,10 +30,12 @@ export default class LayerSampleList extends UIElement {
     }
  
     [LOAD('$cachedList')] () {
+
+        const [ cache_to_string, storage_layers] = this.mapGetters(LAYER_CACHE_TO_STRING, STORAGE_LAYERS)
         
         var list = this.list.map( (item, index) => {
 
-            var data = this.read(LAYER_CACHE_TO_STRING, item)
+            var data = cache_to_string(item)
 
             var rateX = 60 / unitValue(data.obj.width);
             var rateY = 62 / unitValue(data.obj.height);
@@ -49,8 +52,8 @@ export default class LayerSampleList extends UIElement {
             </div>`
         })
 
-        var storageList = this.read(STORAGE_LAYERS).map( item => {
-            var data = this.read(LAYER_CACHE_TO_STRING, item)
+        var storageList = storage_layers().map( item => {
+            var data = cache_to_string(item)
 
             var rateX = 60 / unitValue(item.layer.width);
             var rateY = 62 / unitValue(item.layer.height);
@@ -79,7 +82,7 @@ export default class LayerSampleList extends UIElement {
 
         var emptyCount = 5 - results.length % 5 
         
-        var arr = [...Array(emptyCount)];
+        var arr = repeat(emptyCount);
 
         arr.forEach(it => {
             results.push(`<div class='empty'></div>`)

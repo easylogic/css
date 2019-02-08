@@ -89,6 +89,42 @@ export function combineKeyArray (obj) {
     return obj;
 }
 
-export default {
-    debounce
+export function flatKeyValue (obj, rootKey = '') {
+    var values = {};
+
+    Object.keys(obj).forEach(key => {
+        var realKey = key; 
+        if (rootKey !== '') {
+            realKey = `${rootKey}.${key}`
+        }
+
+        if (isObject(obj[key])) {
+            values = {...values, ...flatKeyValue(obj[key], realKey) }
+        } else {
+            values[realKey] = obj[key];
+        }
+    })
+
+    return values; 
+}
+
+export function repeat (count) {
+    return [...Array(count)];
+}
+
+
+export const html = (strings, ...args) => {
+
+    return strings.map((it, index) => {
+        
+        var results = args[index] || ''
+
+        if (isFunction(results)) {
+            results = results()
+        } else if (isArray(results)) {
+            results = results.join('')
+        }
+
+        return it + results;
+    }).join('')
 }

@@ -1,15 +1,15 @@
-import formatter from "./functions/formatter";
-import math from './functions/math'
-import fromRGB from './functions/fromRGB'
-import fromCMYK from './functions/fromCMYK'
-import fromLAB from './functions/fromLAB'
-import fromHSV from './functions/fromHSV'
-import fromHSL from './functions/fromHSL'
-import fromYCrCb from './functions/fromYCrCb'
-import mixin from "./functions/mixin";
-import parser from "./functions/parser";
-import image from "./functions/image";
-import func from './functions/func';
+import * as formatter from "./functions/formatter";
+import * as math from './functions/math'
+import * as fromRGB from './functions/fromRGB'
+import * as fromCMYK from './functions/fromCMYK'
+import * as fromLAB from './functions/fromLAB'
+import * as fromHSV from './functions/fromHSV'
+import * as fromHSL from './functions/fromHSL'
+import * as fromYCrCb from './functions/fromYCrCb'
+import * as mixin from "./functions/mixin";
+import * as parser from "./functions/parser";
+import * as image from "./functions/image";
+import * as func from './functions/func';
 
 export default {
     ...formatter, 

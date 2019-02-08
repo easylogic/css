@@ -43,10 +43,11 @@ export default class ColorSetsList extends BaseModule {
                     element._colors = makeCallback;
                 }
 
-                return Object.assign({ 
+                return { 
                     name: `color-${index}`,
-                    colors : [] 
-                }, element)
+                    colors : [],
+                    ...element
+                }
             })
 
             $store.emit('changeUserList');

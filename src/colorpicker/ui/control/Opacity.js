@@ -28,7 +28,7 @@ export default class Opacity extends BaseSlider {
     }
 
     setOpacityColorBar() {
-        var rgb = Object.assign({}, this.$store.rgb);
+        var rgb = {...this.$store.rgb};
     
         rgb.a = 0;
         var start = Color.format(rgb, 'rgb');

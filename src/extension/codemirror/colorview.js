@@ -83,7 +83,7 @@ export default class ColorView {
         if (isBoolean(opt)){
             opt = { mode : 'edit' };
         } else {
-            opt = Object.assign({ mode: 'edit' }, opt || {});
+            opt = { mode: 'edit', ...(opt || {}) };
         }
 
         this.opt = opt;

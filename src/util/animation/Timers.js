@@ -10,15 +10,16 @@ export const DIRECTION_ALTERNATE_REVERSE = 'alternate-reverse';
 
 const Timers = {
     parse (opt) {
-        var ani = Object.assign({
+        var ani = {
             name: 'sample' + Date.now(),
             iteration: 1,
             duration: 1000,
             delay: 0,
             timing: Timing.linear,
             direction: DIRECTION_NORMAL, // reverse, alternate, alternate-reverse
-            keyframes: {}
-        }, opt);
+            keyframes: {},
+            ...opt
+        };
 
         if (ani.iteration == 'infinite') {
             ani.iteration = Number.MAX_SAFE_INTEGER;
