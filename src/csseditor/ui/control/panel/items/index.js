@@ -50,8 +50,7 @@ import BorderFixed from "./border-fixed";
 import BoxSizing from "./BoxSizing";
 import BorderWidth from "./BorderWidth";
 import BorderColorFixed from "./BorderColorFixed";
-
-
+import LayerBorderPreview from "./LayerBorderPreview";
 
 
 var patterns = {
@@ -60,6 +59,7 @@ var patterns = {
 
 export default {
     ...patterns,
+    LayerBorderPreview,
     LayerBorderColorPickerPanel,
     BorderColorFixed,
     BoxSizing,

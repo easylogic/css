@@ -14635,6 +14635,7 @@ var LAYER_MAKE_BORDER = 'layer/make/border';
 var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
 var LAYER_MAKE_BORDER_COLOR = 'layer/make/border-color';
 var LAYER_MAKE_BORDER_STYLE = 'layer/make/border-style';
+var LAYER_BORDER_PREVIEW = 'layer/border/preview';
 
 var LayerCode = function (_BasePropertyItem) {
     inherits(LayerCode, _BasePropertyItem);
@@ -16070,6 +16071,39 @@ var BorderColorFixed = function (_BasePropertyItem) {
     return BorderColorFixed;
 }(BasePropertyItem);
 
+var _templateObject$11 = taggedTemplateLiteral(['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview">\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview">\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+
+var LayerBorderPreview = function (_BasePropertyItem) {
+    inherits(LayerBorderPreview, _BasePropertyItem);
+
+    function LayerBorderPreview() {
+        classCallCheck(this, LayerBorderPreview);
+        return possibleConstructorReturn(this, (LayerBorderPreview.__proto__ || Object.getPrototypeOf(LayerBorderPreview)).apply(this, arguments));
+    }
+
+    createClass(LayerBorderPreview, [{
+        key: 'template',
+        value: function template() {
+            return html(_templateObject$11);
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER, function (layer) {
+                _this2.refs.$borderPreview.cssText('width: 100%;height: 100px; ' + _this2.read(LAYER_BORDER_PREVIEW, layer));
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return LayerBorderPreview;
+}(BasePropertyItem);
+
 var _babelHelpers$extends;
 
 var patterns = {
@@ -16077,6 +16111,7 @@ var patterns = {
 };
 
 var items = _extends({}, patterns, (_babelHelpers$extends = {
+    LayerBorderPreview: LayerBorderPreview,
     LayerBorderColorPickerPanel: LayerBorderColorPickerPanel,
     BorderColorFixed: BorderColorFixed,
     BoxSizing: BoxSizing,
@@ -16673,7 +16708,7 @@ var LayerBorderProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <BorderFixed></BorderFixed>\n            <BorderWidth></BorderWidth>\n            <BorderColorFixed></BorderColorFixed>\n        ";
+            return "\n            <LayerBorderPreview></LayerBorderPreview>\n            <BorderFixed></BorderFixed>\n            <BorderWidth></BorderWidth>\n            <BorderColorFixed></BorderColorFixed>\n        ";
         }
     }]);
     return LayerBorderProperty;
@@ -22205,7 +22240,7 @@ var SHAPE_GET = 'shape/get';
 
 var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
 
-var _templateObject$11 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
+var _templateObject$12 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
 
 var ShapeListView = function (_UIElement) {
     inherits(ShapeListView, _UIElement);
@@ -22220,7 +22255,7 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return html(_templateObject$11, this.read(SHAPE_LIST).map(function (key) {
+            return html(_templateObject$12, this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
             }));
         }
@@ -22241,7 +22276,7 @@ var ShapeListView = function (_UIElement) {
     return ShapeListView;
 }(UIElement);
 
-var _templateObject$12 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject$13 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
 var _templateObject2$1 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
@@ -22279,7 +22314,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
-                return html(_templateObject$12, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject$13, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), index);
@@ -22471,7 +22506,7 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var _templateObject$13 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$14 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -22509,7 +22544,7 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return html(_templateObject$13, selected, item.id, index + 1, item.name || "Layer ", item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$14, selected, item.id, index + 1, item.name || "Layer ", item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -24235,6 +24270,19 @@ var LayerManager = function (_BaseModule) {
             var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
 
             return cleanObject(results);
+        }
+    }, {
+        key: GETTER(LAYER_BORDER_PREVIEW),
+        value: function value$$1($store) {
+            var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+            var css = {};
+
+            css['box-sizing'] = 'border-box';
+
+            var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer));
+
+            return $store.read(CSS_TO_STRING, cleanObject(results));
         }
     }]);
     return LayerManager;
