@@ -6,7 +6,7 @@ import {
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC } from '../../../types/ImageTypes';
+import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC } from '../../../../util/css/make';
 
 export default class PredefinedLinearGradientAngle extends UIElement {
 
@@ -36,8 +36,8 @@ export default class PredefinedLinearGradientAngle extends UIElement {
 
         if (!image) { return false; }
 
-        var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, image.type);
-        var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
+        var isLinear = IMAGE_TYPE_IS_LINEAR(image.type);
+        var isConic = IMAGE_TYPE_IS_CONIC(image.type);
 
         return this.config('guide.angle') && (isLinear || isConic);
     }

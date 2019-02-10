@@ -23,64 +23,31 @@ export default class LayerTabView extends BaseTab {
                 <div class="tab-item" data-id="css">CSS</div>
             </div>
             <div class="tab-body" ref="$body">
-                <div class="tab-content" data-id="page">
-                    <PageProperty></PageProperty>
-                </div>
-
+                <div class="tab-content" data-id="page"><PageProperty /></div>
                 <div class="tab-content selected flex" data-id="property">
-                    <div class='fixed'>
-                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    
-                    </div>
-                    <div class='scroll' ref="$layerInfoScroll">
-                       <LayerProperty></LayerProperty>
-                    </div>
+                    <div class='fixed'><LayerInfoColorPickerPanel /></div>
+                    <div class='scroll' ref="$layerInfoScroll"><LayerProperty /></div>
                 </div>
                 <div class="tab-content flex" data-id="border">
-                    <div class='fixed'>
-                        <LayerBorderColorPickerPanel></LayerBorderColorPickerPanel>
-                    </div>
-                    <div class='scroll' ref="$layerBorderScroll">
-                        <LayerBorderProperty></LayerBorderProperty>    
-                        <LayerBorderRadiusProperty></LayerBorderRadiusProperty>    
-                    </div>
+                    <div class='fixed'><LayerBorderColorPickerPanel /></div>
+                    <div class='scroll' ref="$layerBorderScroll"><LayerBorderProperty /><LayerBorderRadiusProperty /></div>
                 </div>                
                 <div class="tab-content flex" data-id="text">
-                    <div class='fixed'>
-                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    
-                    </div>
-                    <div class='scroll' ref="$layerTextScroll">
-                        <LayerFontProperty></LayerFontProperty>
-                        <LayerTextProperty></LayerTextProperty>
-                        <TextShadowProperty></TextShadowProperty>
-                    </div>
+                    <div class='fixed'><LayerTextColorPickerPanel /></div>
+                    <div class='scroll' ref="$layerTextScroll"><LayerFontProperty /><LayerTextProperty /><TextShadowProperty /></div>
                 </div>
                 <div class="tab-content flex" data-id="fill">
-                    <div class='fixed'>
-                        <FillColorPickerPanel></FillColorPickerPanel>
-                    </div>
+                    <div class='fixed'><FillColorPickerPanel /></div>
                     <div class='scroll' ref="$layerFillScroll">
-                        <BoxShadowProperty></BoxShadowProperty>
-                        <FilterProperty></FilterProperty>    
-                        <BackdropProperty></BackdropProperty>   
-                        <EmptyArea height="100px"></EmptyArea>      
+                        <BoxShadowProperty /><FilterProperty /><BackdropProperty /><EmptyArea height="100px" />      
                     </div>
                 </div>                
-                <div class="tab-content" data-id="shape">
-                    <ClipPathProperty></ClipPathProperty>
-                </div>
-                <div class="tab-content" data-id="transform">
-                    <Transform2DProperty></Transform2DProperty>
-                </div>
-                <div class="tab-content" data-id="transform3d">
-                    <Transform3DProperty></Transform3DProperty>
-                </div>               
-                <div class="tab-content" data-id="css">
-                    <LayerCodeProperty></LayerCodeProperty>
-                </div>               
+                <div class="tab-content" data-id="shape"><ClipPathProperty /></div>
+                <div class="tab-content" data-id="transform"><Transform2DProperty /></div>
+                <div class="tab-content" data-id="transform3d"><Transform3DProperty /></div>
+                <div class="tab-content" data-id="css"><LayerCodeProperty/></div>
             </div>
-        </div>
-
-        `
+        </div>`
     }
 
     [SCROLL('$layerInfoScroll')] (e) {

@@ -9,7 +9,7 @@ import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../
 import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../types/ItemTypes';
 import { isString } from '../../../../util/functions/func';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../types/ImageTypes';
+import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../../util/css/make';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
@@ -47,8 +47,8 @@ export default class GradientPosition extends UIElement {
         if (!item) return false; 
 
 
-        var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, item.type);
-        var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type);
+        var isRadial = IMAGE_TYPE_IS_RADIAL(item.type);
+        var isConic = IMAGE_TYPE_IS_CONIC(item.type);
 
         if (isRadial == false && isConic == false) {    // radial , conic 만 보여주기 
             return false; 

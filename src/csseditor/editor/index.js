@@ -35,32 +35,26 @@ export default class CSSEditor extends UIElement {
         return `
             <div class="layout-main expertor-mode" ref="$layoutMain">
                 <div class="layout-header">
-                    <div class="page-tab-menu">
-                        <ToolMenu></ToolMenu>
-                    </div>
+                    <div class="page-tab-menu"><ToolMenu /></div>
                 </div>
-                <div class="layout-top">
-                
-                </div>
+                <div class="layout-top"></div>
                 <div class="layout-left">      
-                    <SelectLayerView></SelectLayerView>
+                    <SelectLayerView/>
                 </div>
                 <div class="layout-body">
-                    <LayerToolbar></LayerToolbar>                
-                    <VerticalColorStep></VerticalColorStep>
-                    <HandleView></HandleView>                      
+                    <LayerToolbar />
+                    <VerticalColorStep />
+                    <HandleView />
                 </div>                
                 <div class="layout-right">
-                    <Alignment></Alignment>
-                    <FeatureControl></FeatureControl>
-                    <ClipPathImageList></ClipPathImageList>
+                    <Alignment />
+                    <FeatureControl />
+                    <ClipPathImageList />
                 </div>
                 <div class="layout-footer">
-                    <Timeline></Timeline>
+                    <Timeline />
                 </div>
-                <ExportWindow></ExportWindow>
-                <DropView></DropView>
-                <HotKey></HotKey>
+                <ExportWindow/><DropView /><HotKey />
             </div>
         `
     }

@@ -1,5 +1,6 @@
 import { SUBMIT } from "../../../../util/Event";
 import MenuItem from "./MenuItem";
+import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "../../../types/ExportTpyes";
 
 export default class ExportCodePen extends MenuItem {
 
@@ -16,8 +17,8 @@ export default class ExportCodePen extends MenuItem {
     }
 
     [SUBMIT()] () {
-        var generateCode = this.read('export/generate/code');
-        this.refs.$codepen.val(this.read('export/codepen/code', {
+        var generateCode = this.read(EXPORT_GENERATE_CODE);
+        this.refs.$codepen.val(this.read(EXPORT_CODEPEN_CODE, {
             html: generateCode.html, 
             css: generateCode.css 
         }))

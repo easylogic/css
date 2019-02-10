@@ -45,11 +45,12 @@ import {
 import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD, SCROLL } from '../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../types/SelectionTypes';
-import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH, LAYER_BOUND_TO_CSS } from '../../types/LayerTypes';
+import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH } from '../../types/LayerTypes';
 import { ITEM_MAP_CHILDREN, ITEM_COUNT_CHILDREN } from '../../types/ItemSearchTypes';
 import { PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS } from '../../types/PageTypes';
 import { ITEM_TYPE_PAGE } from '../../types/ItemTypes';
 import { RESIZE_WINDOW } from '../../types/ToolTypes';
+import { BOUND_TO_CSS, BOUND_TO_CSS_ARRAY } from '../../../util/css/make';
 
 
 
@@ -70,14 +71,14 @@ export default class GradientView extends UIElement {
                         <div class="gradient-color-view-container" ref="$page">
                             <div class="gradient-color-view" ref="$colorview"></div>
                         </div>       
-                        <PredefinedPageResizer></PredefinedPageResizer>
-                        <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>
-                        <LayerShapeEditor></LayerShapeEditor>
-                        <MoveGuide></MoveGuide>
+                        <PredefinedPageResizer />
+                        <PredefinedGroupLayerResizer />
+                        <LayerShapeEditor />
+                        <MoveGuide />
                         <div ref="$dragArea"></div>                     
                     </div>          
                 </div>
-                <SubFeatureControl></SubFeatureControl>
+                <SubFeatureControl />
             </div>
         `
     }     
@@ -173,7 +174,7 @@ export default class GradientView extends UIElement {
 
                 // this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
-                this.layerItems[item.id].css(this.read(LAYER_BOUND_TO_CSS, item))            
+                this.layerItems[item.id].cssArray(BOUND_TO_CSS_ARRAY(item))
             })
         })
     }    

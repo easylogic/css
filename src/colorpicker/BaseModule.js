@@ -26,4 +26,20 @@ export default class BaseModule {
         });
     }
 
+    get (id) {
+        return this.$store.items[id] || {}
+    }
+
+    set (id, opt) {
+        this.$store.items[id] = opt; 
+    }
+
+    config (key, defaultValue) {
+        return isUndefined(this.$store.tool[key]) ? defaultValue : this.$store.tool[key]
+    }   
+    
+    initConfig (key, value) {
+        this.$store.tool[key] = value;
+    }
+
 }

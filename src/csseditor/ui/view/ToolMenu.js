@@ -12,27 +12,22 @@ export default class ToolMenu extends UIElement {
         return `
             <div class='tool-menu'>
                 <div class='items left'>
-                    <Undo></Undo>
-                    <Redo></Redo>
-
+                    <Undo /><Redo />
                 </div>
                 <div class="items left">
-                    <ShowGrid></ShowGrid>                         
-                    <ShowClipPath></ShowClipPath>                         
-                    <ShowBackgroundImageSize></ShowBackgroundImageSize>
+                    <ShowGrid />
+                    <ShowClipPath />
+                    <ShowBackgroundImageSize />
                 </div>
-
                 <div class='items flex-2'>
-                    <Rect></Rect>
-                    <Circle></Circle>
+                    <Rect /><Circle />
                 </div>
-                
                 <div class='items  right'>
-                    <Save></Save>                
-                    <Export></Export>
-                    <ExportCodePen></ExportCodePen>
-                    <ExportJSFiddle></ExportJSFiddle>
-                    <Github></Github>                    
+                    <Save />
+                    <Export />
+                    <ExportCodePen />
+                    <ExportJSFiddle />
+                    <Github />
                 </div>                
             </div>
         `

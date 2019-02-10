@@ -52,7 +52,7 @@ export default class GradientManager extends BaseModule {
             $store.run(ITEM_REMOVE, image.id);
         } else {
             var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID))
-            var newImage = $store.read(ITEM_GET, newImageId);
+            var newImage = this.get(newImageId);
             $store.run(ITEM_SET, newImage);
 
         }
@@ -86,7 +86,7 @@ export default class GradientManager extends BaseModule {
             $store.run(ITEM_MOVE_IN, image.id, newImageId);
         } else {
             var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId)
-            var newImage = $store.read(ITEM_GET, newImageId);
+            var newImage = this.get(newImageId);
             $store.run(ITEM_SET, newImage);
         }
     }    

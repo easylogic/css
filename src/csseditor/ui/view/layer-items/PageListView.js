@@ -23,7 +23,7 @@ export default class PageListView extends UIElement {
     }
 
     makeItemNode (node, index) {
-        var item = this.read(ITEM_GET, node.id);
+        var item = this.get( node.id);
 
         var page = this.read(SELECTION_CURRENT_PAGE)
 

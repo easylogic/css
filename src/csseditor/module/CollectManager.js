@@ -18,7 +18,7 @@ export default class CollectManager extends BaseModule {
     }
 
     [GETTER(COLLECT_ONE)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
 
         switch(item.itemType) {
         case ITEM_TYPE_PAGE: 

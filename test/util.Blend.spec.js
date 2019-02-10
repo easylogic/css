@@ -10,6 +10,4 @@ test('Blend - normal', () => {
     expect(rgb).toEqual({ r : 0x25, g : 0x50, b: 0xff, a : 1 });
 
     rgb = Blender.multiply(back, source);
-
-    console.log(rgb);
 });

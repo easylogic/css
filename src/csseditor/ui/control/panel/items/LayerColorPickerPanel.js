@@ -7,7 +7,7 @@ export default class LayerColorPickerPanel extends UIElement {
             <div class='property-item layer-colorpicker show'>
                 <div class='title' ref="$title">Background Color</div>
                 <div class='items'>            
-                    <LayerColorPicker></LayerColorPicker>
+                    <LayerColorPicker />
                 </div>
             </div>
         `

@@ -2,7 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { isFunction, isUndefined } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
-import { CLONE, TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE } from "../types/ToolTypes";
+import { TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE } from "../types/ToolTypes";
 import { CHANGE_TOOL } from "../types/event";
 
 export default class ToolManager extends BaseModule {
@@ -20,10 +20,6 @@ export default class ToolManager extends BaseModule {
             'guide.position': true
         }
     } 
-
-    [GETTER(CLONE)] ($store, object) {
-        return JSON.parse(JSON.stringify(object))
-    }
 
     [GETTER(TOOL_COLOR_SOURCE)] ($store) {
         return $store.tool.colorSource

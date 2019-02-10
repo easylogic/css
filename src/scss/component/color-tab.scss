@@ -6,14 +6,14 @@
     border: 1px solid #ececec;
 
     &.xd {
-        height: 260px;
+        height: 250px;
     }
 
     .color-tab-header {
         flex: none; 
         display: flex; 
         flex-direction: row; 
-        height: 30px;
+        height: 20px;
 
         .color-tab-item {
             flex:1 1 auto; 

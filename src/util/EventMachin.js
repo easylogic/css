@@ -12,7 +12,7 @@ import Event, {
 } from './Event'
 import Dom from './Dom'
 import State from './State'
-import { debounce, isFunction, isArray } from './functions/func';
+import { debounce, isFunction, isArray, html } from './functions/func';
 import { EMPTY_STRING } from './css/types';
 
 const checkGroup = /\>(\W*)\</g
@@ -30,7 +30,7 @@ export default class EventMachin {
   }
 
   render ($container) {
-    this.$el = this.parseTemplate(this.template())
+    this.$el = this.parseTemplate(html`${this.template()}`)
     this.refs.$el = this.$el;   
 
     if ($container) $container.html(this.$el)

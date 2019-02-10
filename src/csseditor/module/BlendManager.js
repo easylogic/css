@@ -1,7 +1,6 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
 import { BLEND_LAYER_TO_STRING, BLEND_IMAGE_TO_STRING, BLEND_TO_STRING_WITHOUT_DIMENSION, BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE, BLEND_LIST } from "../types/BlendTypes";
-import { clone } from "../../util/functions/func";
 import { LAYER_TO_STRING } from "../types/LayerTypes";
 import { IMAGE_TO_STRING } from "../types/ImageTypes";
 import { EMPTY_STRING } from "../../util/css/types";

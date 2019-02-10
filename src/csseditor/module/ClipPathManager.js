@@ -191,8 +191,6 @@ export default class ClipPathManager extends BaseModule {
             clipPath = $store.read(CLIPPATH_MAKE_SVG, layer);
         }
 
-        // console.log(layer.clipPathType, clipPath);
-
         return {
             'clip-path': clipPath
         }

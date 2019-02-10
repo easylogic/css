@@ -8,5 +8,5 @@ test('gray filter', () => {
 
     Filter.grayscale(testData);
 
-    expect(testData).toEqual([ 71, 71, 71 ]);
+    expect(testData).toEqual([ 37, 80, 80 ]);
 });

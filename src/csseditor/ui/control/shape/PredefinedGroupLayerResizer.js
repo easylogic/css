@@ -30,13 +30,12 @@ import {
     ITEM_GET,
     DEFAULT_TOOL_SIZE
 } from '../../../types/ItemTypes';
-import { CSS_TO_STRING } from '../../../types/CssTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT } from '../../../types/SelectionTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_TYPE, SELECTION_IS_NOT_EMPTY } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
-import { IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../types/ImageTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
 import { TOOL_SET } from '../../../types/ToolTypes';
 import { GUIDE_SNAP_CACULATE } from '../../../types/GuideTypes';
+import { CSS_TO_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../../util/css/make';
 
 const SNAP_GRID = 20; 
 
@@ -66,16 +65,16 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             if (image == 'image') {
                 var backgroundImage = this.read(SELECTION_CURRENT_IMAGE);
 
-                backgroundCSS = this.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
+                backgroundCSS = IMAGE_BACKGROUND_SIZE_TO_CSS(backgroundImage);
             }
             
             var title = `${1 + (item.index/100)}. ${item.name || 'Layer'}`
 
             
             return ` 
-                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${this.read(CSS_TO_STRING, css)}" title="${title}" >
+                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${CSS_TO_STRING(css)}" title="${title}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
-                    <div class="image-panel" style="display:none;${this.read(CSS_TO_STRING, backgroundCSS)}"></div>
+                    <div class="image-panel" style="display:none;${CSS_TO_STRING(backgroundCSS)}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>
@@ -110,7 +109,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         // var transform = "none"; 
         
         if (id) {
-            // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
+            // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.get( id));
         }
 
         return { width, height, left, top}
@@ -118,7 +117,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     refresh () {
         var isShow = this.isShow();
-        this.$el.toggle(isShow).attr('line-type', this.read('selection/type'))
+        this.$el.toggle(isShow).attr('line-type', this.read(SELECTION_TYPE))
 
         if (isShow) {
             this.load()
@@ -137,7 +136,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }    
 
     isShow () {
-        return this.read('selection/is/not/empty')
+        return this.read(SELECTION_IS_NOT_EMPTY)
     }
 
     [EVENT(
@@ -228,9 +227,9 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     setPosition() {
         this.$el.children().forEach($el => {
-            var item = this.read(ITEM_GET, $el.attr('predefined-layer-id'));
+            var item = this.get( $el.attr('predefined-layer-id'));
 
-            $el.cssText(this.read(CSS_TO_STRING, this.setRectangle(item)));
+            $el.cssText(CSS_TO_STRING(this.setRectangle(item)));
         })
     }
 
@@ -357,7 +356,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.currentType = type; 
         var layerId = e.$delegateTarget.parent().attr('predefined-layer-id')
         this.$dom = this.read(ITEM_DOM, layerId);
-        this.$selectLayer = this.read(ITEM_GET, layerId);
+        this.$selectLayer = this.get( layerId);
 
         if (this.$dom) {
             var rect = this.$dom.rect()

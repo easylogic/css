@@ -12,7 +12,7 @@ export default class MatrixManager extends BaseModule {
     }
 
     [ACTION('matrix/move')] ($store, newValue) {
-        var item = $store.read(ITEM_GET, newValue.id)        
+        var item = this.get(newValue.id)        
 
         Object.keys(newValue).filter(key => key != 'id').forEach(key => {
             item[key] = pxUnit(unitValue(item[key]) + newValue[key])

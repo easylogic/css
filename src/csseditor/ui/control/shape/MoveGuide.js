@@ -11,6 +11,7 @@ import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
 import { GUIDE_TYPE_HORIZONTAL } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { GUIDE_SNAP_LAYER } from '../../../types/GuideTypes';
+import { EMPTY_STRING } from '../../../../util/css/types';
 
 export default class MoveGuide extends UIElement {
 
@@ -23,6 +24,9 @@ export default class MoveGuide extends UIElement {
         var layer = this.read(SELECTION_CURRENT_LAYER);
         if (!layer) return []; 
         var toolSize = this.config('tool.size')
+
+        if (!toolSize) return EMPTY_STRING; 
+
         var list = this.read(GUIDE_SNAP_LAYER, 3);
 
         var bo = toolSize['board.offset']
@@ -56,7 +60,6 @@ export default class MoveGuide extends UIElement {
 
     [EVENT(
         CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_ROTATE,
         CHANGE_LAYER_MOVE,
         CHANGE_LAYER_POSITION,
         CHANGE_EDITOR,

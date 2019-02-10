@@ -2,7 +2,7 @@ import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import ColorPicker  from "./color/ColorPicker";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
-import { IMAGE_TYPE_IS_IMAGE } from "../../../../types/ImageTypes";
+import { IMAGE_TYPE_IS_IMAGE } from "../../../../../util/css/make";
 
 
 
@@ -37,7 +37,7 @@ export default class ColorPickerPanel extends UIElement {
 
         if (!item) return false; 
 
-        return this.read(IMAGE_TYPE_IS_IMAGE, item.type) == false; 
+        return IMAGE_TYPE_IS_IMAGE(item.type) == false; 
     }
 
 

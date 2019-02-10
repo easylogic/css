@@ -31,8 +31,8 @@ export default class ExportWindow extends UIElement {
                                 <div class="tool-item" data-type="css" ref="$cssTitle">CSS</div>
                             </div>
                             <div class="buttons">
-                                <ExportCodePenButton></ExportCodePenButton>
-                                <ExportJSFiddleButton></ExportJSFiddleButton>
+                                <ExportCodePenButton />
+                                <ExportJSFiddleButton />
                             </div>
                         </div>
                         <div class="codeview">

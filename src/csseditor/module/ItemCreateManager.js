@@ -178,7 +178,7 @@ export default class ItemCreateManager extends BaseModule {
     }
 
     [GETTER(ITEM_COPY)] ($store, id) {
-        var copyObject = {...$store.read(ITEM_GET, id)};
+        var copyObject = {...this.get(id)};
 
         return $store.read(ITEM_CREATE, copyObject.itemType, copyObject);
     }    
@@ -186,7 +186,7 @@ export default class ItemCreateManager extends BaseModule {
 
     [ACTION(ITEM_ADD)] ($store, itemType, isSelected = false, parentId = EMPTY_STRING) {
         var id = $store.read(ITEM_CREATE, itemType);
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.parentId = parentId; 
 
         item.index = Number.MAX_SAFE_INTEGER; 
@@ -199,7 +199,7 @@ export default class ItemCreateManager extends BaseModule {
         var rect = $store.read(SELECTION_RECT);
 
         var id = $store.read(ITEM_CREATE, itemType);
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width)/2);
         item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height)/2);
 
@@ -215,7 +215,7 @@ export default class ItemCreateManager extends BaseModule {
         var rect = $store.read(SELECTION_RECT);
 
         var id = $store.read(ITEM_CREATE, ITEM_TYPE_LAYER, shapeObject);
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width)/2);
         item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height)/2);
 
@@ -235,7 +235,7 @@ export default class ItemCreateManager extends BaseModule {
 
     [ACTION(ITEM_ADD_IMAGE)] ($store, imageType, isSelected = false, parentId = EMPTY_STRING, index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read(ITEM_CREATE_IMAGE_WITH_COLORSTEP, { type : imageType });
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.type = imageType; 
         item.parentId = parentId; 
         item.index = index; 
@@ -250,7 +250,7 @@ export default class ItemCreateManager extends BaseModule {
 
     [ACTION(ITEM_ADD_IMAGE_FILE)] ($store, img, isSelected = false, parentId = EMPTY_STRING, index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read(ITEM_CREATE_IMAGE, {type: IMAGE_ITEM_TYPE_IMAGE});
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.parentId = parentId; 
         item.index = index;
         item.fileType = img.fileType;
@@ -263,7 +263,7 @@ export default class ItemCreateManager extends BaseModule {
     }     
 
     [ACTION(ITEM_SET_IMAGE_FILE)] ($store, id, img) {        
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.fileType = img.fileType || 'svg';
         if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg; 
         if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId; 
@@ -280,7 +280,7 @@ export default class ItemCreateManager extends BaseModule {
 
     [ACTION(ITEM_ADD_IMAGE_URL)] ($store, img, isSelected = false, parentId = EMPTY_STRING, index = Number.MAX_SAFE_INTEGER) {
         var id = $store.read(ITEM_CREATE_IMAGE, {type: IMAGE_ITEM_TYPE_IMAGE});
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.parentId = parentId; 
         item.index = index;     
         item.fileType = img.fileType;
@@ -297,19 +297,19 @@ export default class ItemCreateManager extends BaseModule {
         var imageId = $store.read(ITEM_CREATE_IMAGE);
 
         // 페이지 생성 
-        var page = $store.read(ITEM_GET, pageId);
+        var page = this.get(pageId);
         page.index = Number.MAX_SAFE_INTEGER;  
         $store.run(ITEM_SET, page);
 
         // 레이어 생성 
-        var layer = $store.read(ITEM_GET, layerId);
+        var layer = this.get(layerId);
         layer.parentId = pageId; 
         layer.width = {...page.width};
         layer.height = {...page.height}; 
         $store.run(ITEM_SET, layer);
 
         // 이미지 생성 
-        var image = $store.read(ITEM_GET, imageId);
+        var image = this.get(imageId);
         image.parentId = layerId; 
         $store.run(ITEM_SET, image, isSelected);      
         

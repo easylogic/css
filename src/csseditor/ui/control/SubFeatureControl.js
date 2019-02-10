@@ -11,9 +11,9 @@ import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
 import PerspectiveOriginPosition from "./shape/PerspectiveOriginPosition";
 import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_IS_LAYER } from "../../types/SelectionTypes";
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_RADIAL } from "../../types/ImageTypes";
 import LayerAngle from "./shape/LayerAngle";
 import PredefinedLayerAngle from "./shape/PredefinedLayerAngle";
+import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_RADIAL } from "../../../util/css/make";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -23,25 +23,25 @@ export default class SubFeatureControl extends UIElement {
             <div class='sub-feature-control'>         
                 <div class='feature'>
                     <div class="property-view" ref="$perspective">
-                        <PredefinedPerspectiveOriginPosition></PredefinedPerspectiveOriginPosition>
-                        <PerspectiveOriginPosition></PerspectiveOriginPosition>
+                        <PredefinedPerspectiveOriginPosition />
+                        <PerspectiveOriginPosition />
                     </div>
                     <div class="property-view" ref="$backgroundSize">
-                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>
-                        <BackgroundResizer></BackgroundResizer>
+                        <PredefinedBackgroundPosition />
+                        <BackgroundResizer />
                     </div>
                     <div class="property-view linear" ref="$linear">
-                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>
-                        <GradientAngle></GradientAngle>                            
+                        <PredefinedLinearGradientAngle />
+                        <GradientAngle />
                     </div>
                     <div class="property-view radial" ref="$radial">
-                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>
-                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>
-                        <GradientPosition></GradientPosition>
+                        <PredefinedRadialGradientAngle />
+                        <PredefinedRadialGradientPosition />
+                        <GradientPosition />
                     </div>
                     <div class="property-view layer" ref="$layer">
-                        <PredefinedLayerAngle></PredefinedLayerAngle>
-                        <LayerAngle></LayerAngle>
+                        <PredefinedLayerAngle />
+                        <LayerAngle />
                     </div>                    
                 </div>
             </div>
@@ -105,8 +105,8 @@ export default class SubFeatureControl extends UIElement {
 
         if (!item) return false; 
 
-        var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, item.type)
-        var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type)
+        var isLinear = IMAGE_TYPE_IS_LINEAR(item.type)
+        var isConic = IMAGE_TYPE_IS_CONIC(item.type)
 
         if (isLinear == false && isConic == false) {
             return false; 
@@ -121,8 +121,8 @@ export default class SubFeatureControl extends UIElement {
         var item = this.read(SELECTION_CURRENT_IMAGE)
         if (!item) return false; 
 
-        var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, item.type)
-        var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type)
+        var isRadial = IMAGE_TYPE_IS_RADIAL(item.type)
+        var isConic = IMAGE_TYPE_IS_CONIC(item.type)
 
         if (isRadial == false && isConic == false) {
             return false; 

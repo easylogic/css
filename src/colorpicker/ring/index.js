@@ -15,18 +15,18 @@ export default class RingColorPicker extends BaseColorPicker {
     template () {
         return `
             <div class='colorpicker-body'>
-                <ColorRing></ColorRing>
-                <Palette></Palette> 
+                <ColorRing />
+                <Palette />
                 <div class="control">
-                    <Value></Value>
-                    <Opacity></Opacity>
+                    <Value />
+                    <Opacity />
                     <div class="empty"></div>
-                    <ColorView></ColorView>
+                    <ColorView />
                 </div>
-                <Information></Information>
-                <CurrentColorSets></CurrentColorSets>
-                <ColorSetsChooser></ColorSetsChooser>
-                <ContextMenu></ContextMenu>
+                <Information />
+                <CurrentColorSets />
+                <ColorSetsChooser />
+                <ContextMenu />
             </div>
         `
     }

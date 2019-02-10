@@ -14,17 +14,17 @@ export default class MacOSColorPicker extends BaseColorPicker {
     template () {
         return `
             <div class='colorpicker-body'>
-                <ColorWheel></ColorWheel>
+                <ColorWheel />
                 <div class="control">
-                    <Value></Value>
-                    <Opacity></Opacity>
+                    <Value />
+                    <Opacity />
                     <div class="empty"></div>
-                    <ColorView></ColorView>
+                    <ColorView />
                 </div>
-                <Information></Information>
-                <CurrentColorSets></CurrentColorSets>
-                <ColorSetsChooser></ColorSetsChooser>
-                <ContextMenu></ContextMenu>                
+                <Information />
+                <CurrentColorSets />
+                <ColorSetsChooser >
+                <ContextMenu />
             </div> 
         `
     }

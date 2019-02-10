@@ -1,7 +1,7 @@
 import BaseProperty from "./BaseProperty";
 import { CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
-import { ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_BOXSHADOW } from "../../../../types/ItemTypes";
+import { ITEM_TYPE_BOXSHADOW } from "../../../../types/ItemTypes";
 import { HISTORY_PUSH } from "../../../../types/HistoryTypes";
 import { ITEM_ADD } from "../../../../types/ItemCreateTypes";
 
@@ -12,9 +12,7 @@ export default class BoxShadowProperty extends BaseProperty {
         return `<button type="button" ref="$add">+</button>`;
     }
     getBody () {
-        return `
-            <BoxShadow ></BoxShadow>
-        `
+        return `<BoxShadow />`
     }
 
     [CLICK('$add')] (e) {

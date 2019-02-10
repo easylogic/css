@@ -3,9 +3,10 @@ import { CHANGE_SELECTION, CHANGE_IMAGE, CHANGE_EDITOR } from "../../../../../ty
 import { SELECTION_CURRENT_IMAGE } from "../../../../../types/SelectionTypes";
 import { CLICK, INPUT, CHANGE } from "../../../../../../util/Event";
 import { EVENT } from "../../../../../../colorpicker/UIElement";
-import { PATTERN_GET, PATTERN_SET } from "../../../../../types/PatternTypes";
+import { PATTERN_SET } from "../../../../../types/PatternTypes";
 import { BLEND_LIST } from "../../../../../types/BlendTypes";
 import { html } from "../../../../../../util/functions/func";
+import { PATTERN_GET } from "../../../../../../util/css/make";
 
 export default class RotatePattern extends BasePropertyItem {
     template () {
@@ -57,7 +58,7 @@ export default class RotatePattern extends BasePropertyItem {
 
     refresh() {
         this.read(SELECTION_CURRENT_IMAGE, (image) => {
-            var rotate = this.read(PATTERN_GET, image, 'rotate');
+            var rotate = PATTERN_GET(image, 'rotate');
             if (rotate ) {
                 this.refs.$enable.checked(rotate.enable || false);    
                 this.refs.$cloneCountRange.val(rotate.clone || 1);

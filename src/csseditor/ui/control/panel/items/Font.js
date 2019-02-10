@@ -68,7 +68,7 @@ export default class Font extends BasePropertyItem {
                             min="1" max="300" step="1" value="13" unit="${UNIT_PX}"
                             maxValueFunction="getMaxFontSize"
                             updateFunction="updateFontSize"
-                        ></UnitRange>
+                        />
                     </div>      
                     <div>
                         <label>Line Height</label>
@@ -77,7 +77,7 @@ export default class Font extends BasePropertyItem {
                             min="1" max="100" step="0.01" value="1" unit="${UNIT_PX}"
                             maxValueFunction="getMaxLineHeight"
                             updateFunction="updateLineHeight"
-                        ></UnitRange>
+                        />
                     </div>                           
                 </div>
             </div>

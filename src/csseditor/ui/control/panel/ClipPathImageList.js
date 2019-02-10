@@ -10,13 +10,7 @@ import { SVG_LIST, SVG_GET } from "../../../types/SVGTypes";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
-        return `
-            <div class='image-resource'>
-                <div class='items' ref="$imageList">
-
-                </div>
-            </div>
-        `
+        return `<div class='image-resource'><div class='items' ref="$imageList"></div></div>`
     }
 
     [LOAD('$imageList')] () {

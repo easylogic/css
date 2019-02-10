@@ -2,7 +2,7 @@ import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_SELECTION, CHANGE_TOOL } from '../../../types/event';
 import { CLICK } from '../../../../util/Event';
 import { SELECTION_CURRENT_IMAGE_ID, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../types/ImageTypes';
+import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../../util/css/make';
 
 
 export default class PredefinedRadialGradientPosition extends UIElement {
@@ -34,8 +34,8 @@ export default class PredefinedRadialGradientPosition extends UIElement {
 
         if (!image) { return false; }
 
-        var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, image.type);
-        var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
+        var isRadial = IMAGE_TYPE_IS_RADIAL(image.type);
+        var isConic = IMAGE_TYPE_IS_CONIC(image.type);
 
         return this.config('guide.angle') && (isRadial || isConic);
     }

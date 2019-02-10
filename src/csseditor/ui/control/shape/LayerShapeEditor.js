@@ -56,7 +56,7 @@ export default class LayerShapeEditor extends UIElement {
         // var transform = "none"; 
         
         // if (id) {
-        //     // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
+        //     // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.get( id));
         // }
 
         return { width, height, left, top}

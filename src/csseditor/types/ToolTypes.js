@@ -1,5 +1,4 @@
 
-export const CLONE = 'clone'
 export const TOOL_COLOR_SOURCE = 'tool/colorSource'
 export const TOOL_GET = 'tool/get'
 export const TOOL_SET_COLOR_SOURCE = 'tool/setColorSource'

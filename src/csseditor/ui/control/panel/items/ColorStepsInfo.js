@@ -2,7 +2,7 @@ import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
 import GradientInfo from "../../colorsteps/GradientInfo";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
-import { IMAGE_TYPE_IS_GRADIENT } from "../../../../types/ImageTypes";
+import { IMAGE_TYPE_IS_GRADIENT } from "../../../../../util/css/make";
 
 export default class ColorStepsInfo extends UIElement {
     template () {
@@ -32,6 +32,6 @@ export default class ColorStepsInfo extends UIElement {
         var item = this.read(SELECTION_CURRENT_IMAGE)
         if (!item) return false; 
 
-        return this.read(IMAGE_TYPE_IS_GRADIENT, item.type)
+        return IMAGE_TYPE_IS_GRADIENT(item.type)
     }
 }
