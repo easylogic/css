@@ -11,7 +11,7 @@ import { unitValue, pxUnit, EMPTY_STRING } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "../types/SelectionTypes";
-import { ITEM_FILTER, ITEM_PATH } from "../types/ItemSearchTypes";
+import { ITEM_FILTER, ITEM_PATH, ITEM_LIST_PAGE } from "../types/ItemSearchTypes";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -216,6 +216,11 @@ export default class SelectionManager extends BaseModule {
     [GETTER(SELECTION_CURRENT_PAGE)] ($store, callback) {
         var page = this.get($store.selection.pageId)
 
+        if (!page) {
+            var pages = $store.read(ITEM_LIST_PAGE)
+            page = pages[0]
+        }
+
         if (page ) {
             if (isFunction(callback)) callback (page)
             return page
@@ -228,6 +233,11 @@ export default class SelectionManager extends BaseModule {
     [GETTER(SELECTION_CURRENT_PAGE_ID)] ($store, callback) {
        
         var pageId = $store.selection.pageId
+
+        if (!pageId) {
+            var pages = $store.read(ITEM_LIST_PAGE)
+            pageId = (pages[0] || {}).pageId
+        }
 
         if (pageId ) {
             if (isFunction(callback)) callback (pageId)
@@ -348,7 +358,9 @@ export default class SelectionManager extends BaseModule {
     [ACTION(SELECTION_CHANGE)] ($store, itemType) {
         if (itemType == ITEM_TYPE_PAGE) {
             $store.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-                $store.run(SELECTION_ONE, id);
+                if (id) {
+                    $store.run(SELECTION_ONE, id);
+                }
             })
         }
     }

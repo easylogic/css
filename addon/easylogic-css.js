@@ -21954,14 +21954,15 @@ var HandleView = function (_GradientView) {
                 _this2.refreshLayer();
             });
         }
-    }, {
-        key: 'selectPageMode',
-        value: function selectPageMode() {
 
-            if (!this.dragArea) {
-                this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE);
-            }
-        }
+        // selectPageMode () {
+
+        //     if (!this.dragArea) {
+        //         this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE) ;
+        //     }
+
+        // }
+
     }, {
         key: 'isDownCheck',
         value: function isDownCheck() {
@@ -25744,7 +25745,6 @@ var PageManager = function (_BaseModule) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-            console.log(sample, page);
             var css = {
                 overflow: sample.clip ? 'hidden' : EMPTY_STRING,
                 'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
@@ -26191,6 +26191,11 @@ var SelectionManager = function (_BaseModule) {
         value: function value$$1($store, callback) {
             var page = this.get($store.selection.pageId);
 
+            if (!page) {
+                var pages = $store.read(ITEM_LIST_PAGE);
+                page = pages[0];
+            }
+
             if (page) {
                 if (isFunction(callback)) callback(page);
                 return page;
@@ -26203,6 +26208,11 @@ var SelectionManager = function (_BaseModule) {
         value: function value$$1($store, callback) {
 
             var pageId = $store.selection.pageId;
+
+            if (!pageId) {
+                var pages = $store.read(ITEM_LIST_PAGE);
+                pageId = (pages[0] || {}).pageId;
+            }
 
             if (pageId) {
                 if (isFunction(callback)) callback(pageId);
@@ -26340,7 +26350,9 @@ var SelectionManager = function (_BaseModule) {
         value: function value$$1($store, itemType) {
             if (itemType == ITEM_TYPE_PAGE) {
                 $store.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    $store.run(SELECTION_ONE, id);
+                    if (id) {
+                        $store.run(SELECTION_ONE, id);
+                    }
                 });
             }
         }

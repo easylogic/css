@@ -29,13 +29,13 @@ export default class HandleView extends GradientView {
 
     
 
-    selectPageMode () {
+    // selectPageMode () {
         
-        if (!this.dragArea) {
-            this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE) ;
-        }
+    //     if (!this.dragArea) {
+    //         this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE) ;
+    //     }
 
-    }
+    // }
 
     isDownCheck () {
         return this.isDown
