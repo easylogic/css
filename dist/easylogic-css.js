@@ -521,283 +521,6 @@ var toConsumableArray = function (arr) {
   }
 };
 
-var _SEGMENT_CHECK;
-
-var ITEM_TYPE_PAGE = 'page';
-var ITEM_TYPE_LAYER = 'layer';
-var ITEM_TYPE_CIRCLE = 'circle';
-
-var ITEM_TYPE_GROUP = 'group';
-var ITEM_TYPE_IMAGE = 'image';
-var ITEM_TYPE_BOXSHADOW = 'boxshadow';
-var ITEM_TYPE_TEXTSHADOW$1 = 'textshadow';
-var ITEM_TYPE_COLORSTEP = 'colorstep';
-var ITEM_TYPE_TIMELINE = 'timeline';
-var ITEM_TYPE_KEYFRAME = 'keyframe';
-
-var IS_OBJECT = 'object';
-var IS_ATTRIBUTE = 'attribute';
-
-var SHAPE_TYPE_RECT = 'rect';
-var SHAPE_TYPE_CIRCLE = 'circle';
-var SHAPE_TYPE_POLYGON = 'polygon';
-
-var IMAGE_ITEM_TYPE_LINEAR = 'linear';
-var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
-var IMAGE_ITEM_TYPE_RADIAL = 'radial';
-var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
-var IMAGE_ITEM_TYPE_CONIC = 'conic';
-var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
-var IMAGE_ITEM_TYPE_STATIC = 'static';
-
-var IMAGE_ITEM_TYPE_IMAGE = 'image';
-
-var CLIP_PATH_TYPE_NONE = 'none';
-var CLIP_PATH_TYPE_CIRCLE = 'circle';
-var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
-var CLIP_PATH_TYPE_INSET = 'inset';
-var CLIP_PATH_TYPE_POLYGON = 'polygon';
-var CLIP_PATH_TYPE_SVG = 'svg';
-
-var CLIP_PATH_SIDE_TYPE_NONE = 'none';
-var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
-var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
-
-var POSITION_TOP = 'top';
-var POSITION_LEFT = 'left';
-var POSITION_RIGHT = 'right';
-var POSITION_BOTTOM = 'bottom';
-var POSITION_CENTER = 'center';
-
-var IMAGE_FILE_TYPE_JPG = 'jpg';
-var IMAGE_FILE_TYPE_GIF = 'gif';
-var IMAGE_FILE_TYPE_PNG = 'png';
-var IMAGE_FILE_TYPE_SVG = 'svg';
-
-var GUIDE_TYPE_VERTICAL = '|';
-var GUIDE_TYPE_HORIZONTAL = '-';
-
-var SEGMENT_TYPE_ROTATE = 'rotate';
-var SEGMENT_TYPE_MOVE = 'move';
-var SEGMENT_TYPE_TOP = 'to top';
-var SEGMENT_TYPE_LEFT = 'to left';
-var SEGMENT_TYPE_RIGHT = 'to right';
-var SEGMENT_TYPE_BOTTOM = 'to bottom';
-var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-var SEGMENT_TYPE_TOP_LEFT = 'to top left';
-var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
-
-var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
-
-var ITEM_SET = 'item/set';
-var ITEM_GET = 'item/get';
-var ITEM_CONVERT_STYLE = 'item/convert/style';
-var ITEM_SET_ALL = 'item/set/all';
-var ITEM_SORT = 'item/sort';
-var ITEM_REMOVE_CHILDREN = 'item/remove/children';
-var ITEM_REMOVE = 'item/remove';
-var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
-var ITEM_REMOVE_ALL = 'item/remove/all';
-var ITEM_FOCUS = 'item/focus';
-var ITEM_LOAD = 'item/load';
-var ITEM_INIT_CHILDREN = 'item/init/children';
-
-/* page is equal to artboard */
-var PAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_PAGE,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    index: 0,
-    width: pxUnit(400),
-    height: pxUnit(300)
-};
-
-var FILTER_DEFAULT_OBJECT = {
-    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
-    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
-    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
-    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
-    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
-    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
-    'filterDropshadow': { index: 60 },
-    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
-    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
-    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
-    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
-    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
-    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
-    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
-};
-
-var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
-    return isNotUndefined(FILTER_DEFAULT_OBJECT[key].index);
-});
-
-var BACKDROP_DEFAULT_OBJECT = {
-    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
-    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
-    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
-    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
-    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
-    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
-    'backdropDropshadow': { index: 60 },
-    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
-    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
-    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
-    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
-    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
-    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
-    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
-};
-
-var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
-    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index);
-});
-
-var CLIP_PATH_DEFAULT_OBJECT = {
-    clipPathType: 'none',
-    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
-    clipPathSvg: EMPTY_STRING,
-    fitClipPathSize: false,
-    clipText: false,
-    clipPathRadiusX: undefined,
-    clipPathRadiusY: undefined,
-    clipPathCenterX: undefined,
-    clipPathCenterY: undefined
-
-    /* layer can has children layers. */
-};var LAYER_DEFAULT_OBJECT = _extends({
-    itemType: ITEM_TYPE_LAYER,
-    is: IS_OBJECT,
-    type: SHAPE_TYPE_RECT,
-    name: EMPTY_STRING,
-    index: 0,
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    parentId: EMPTY_STRING,
-    mixBlendMode: 'normal',
-    selected: true,
-    visible: true,
-    x: pxUnit(0),
-    y: pxUnit(0),
-    width: pxUnit(200),
-    height: pxUnit(200),
-    rotate: 0,
-    opacity: 1,
-    fontFamily: 'serif',
-    fontSize: '13px',
-    fontWeight: 400,
-    wordBreak: 'break-word',
-    wordWrap: 'break-word',
-    lineHeight: 1.6,
-    content: EMPTY_STRING
-}, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
-
-var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
-    type: SHAPE_TYPE_CIRCLE,
-    borderRadius: percentUnit(100),
-    fixedRadius: true
-});
-
-var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
-    type: SHAPE_TYPE_POLYGON,
-    fixedShape: true
-});
-
-var GROUP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_GROUP,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    index: 0,
-    parentId: EMPTY_STRING,
-    selected: true,
-    visible: true,
-    x: pxUnit(0),
-    y: pxUnit(0)
-};
-
-var IMAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_IMAGE,
-    is: IS_ATTRIBUTE,
-    type: IMAGE_ITEM_TYPE_STATIC,
-    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
-    index: 0,
-    parentId: EMPTY_STRING,
-    angle: 90,
-    color: 'red',
-    radialType: 'ellipse',
-    radialPosition: POSITION_CENTER,
-    visible: true,
-    isClipPath: false,
-    pattern: {},
-    backgroundRepeat: null,
-    backgroundSize: null,
-    backgroundSizeWidth: 0,
-    backgroundSizeHeight: 0,
-    backgroundOrigin: null,
-    backgroundPositionX: undefined,
-    backgroundPositionY: undefined,
-    backgroundBlendMode: 'normal',
-    backgroundColor: null,
-    backgroundAttachment: null,
-    backgroundClip: null,
-    backgroundImage: null,
-    backgroundImageDataURI: null
-};
-
-var BOXSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_BOXSHADOW,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    inset: false,
-    blurRadius: pxUnit(0),
-    spreadRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var TEXTSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TEXTSHADOW$1,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    blurRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var COLORSTEP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_COLORSTEP,
-    is: IS_ATTRIBUTE,
-    parentId: EMPTY_STRING,
-    percent: 0,
-    color: 'rgba(0, 0, 0, 0)'
-};
-
-var TIMELINE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TIMELINE,
-    targetId: EMPTY_STRING,
-    parentId: EMPTY_STRING
-};
-
-var KEYFRAME_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_KEYFRAME,
-    targetId: EMPTY_STRING,
-    attribute: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    delay: 0,
-    duration: 1000,
-    timing: 'linear',
-    iteration: 1,
-    direction: 'alternate'
-};
-var DEFAULT_TOOL_SIZE = {
-    'board.offset': { left: 0, top: 0 },
-    'page.offset': { left: 0, top: 0 },
-    'board.scrollTop': 0,
-    'board.scrollLeft': 0
-};
-
 function rotateDegree(angle) {
     var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : POSITION_CENTER;
     var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : POSITION_CENTER;
@@ -3105,6 +2828,7 @@ function partial(area) {
 }
 
 var _UNIT_STRINGS;
+var _SEGMENT_CHECK;
 
 var EMPTY_STRING = '';
 
@@ -3266,6 +2990,73 @@ function convertPercentUnit(obj) {
 
     return obj;
 }
+
+var ITEM_TYPE_PAGE = 'page';
+var ITEM_TYPE_LAYER = 'layer';
+var ITEM_TYPE_CIRCLE = 'circle';
+
+var ITEM_TYPE_GROUP = 'group';
+var ITEM_TYPE_IMAGE = 'image';
+var ITEM_TYPE_BOXSHADOW = 'boxshadow';
+var ITEM_TYPE_TEXTSHADOW = 'textshadow';
+var ITEM_TYPE_COLORSTEP = 'colorstep';
+var ITEM_TYPE_TIMELINE = 'timeline';
+var ITEM_TYPE_KEYFRAME = 'keyframe';
+
+var IS_OBJECT = 'object';
+var IS_ATTRIBUTE = 'attribute';
+
+var SHAPE_TYPE_RECT = 'rect';
+var SHAPE_TYPE_CIRCLE = 'circle';
+var SHAPE_TYPE_POLYGON = 'polygon';
+
+var IMAGE_ITEM_TYPE_LINEAR = 'linear';
+var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
+var IMAGE_ITEM_TYPE_RADIAL = 'radial';
+var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
+var IMAGE_ITEM_TYPE_CONIC = 'conic';
+var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
+var IMAGE_ITEM_TYPE_STATIC$1 = 'static';
+
+var IMAGE_ITEM_TYPE_IMAGE$1 = 'image';
+
+var CLIP_PATH_TYPE_NONE = 'none';
+var CLIP_PATH_TYPE_CIRCLE = 'circle';
+var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
+var CLIP_PATH_TYPE_INSET = 'inset';
+var CLIP_PATH_TYPE_POLYGON = 'polygon';
+var CLIP_PATH_TYPE_SVG = 'svg';
+
+var CLIP_PATH_SIDE_TYPE_NONE = 'none';
+var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
+var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
+
+var POSITION_TOP = 'top';
+var POSITION_LEFT = 'left';
+var POSITION_RIGHT = 'right';
+var POSITION_BOTTOM = 'bottom';
+var POSITION_CENTER = 'center';
+
+var IMAGE_FILE_TYPE_JPG = 'jpg';
+var IMAGE_FILE_TYPE_GIF = 'gif';
+var IMAGE_FILE_TYPE_PNG = 'png';
+var IMAGE_FILE_TYPE_SVG = 'svg';
+
+var GUIDE_TYPE_VERTICAL = '|';
+var GUIDE_TYPE_HORIZONTAL = '-';
+
+
+var SEGMENT_TYPE_MOVE = 'move';
+var SEGMENT_TYPE_TOP = 'to top';
+var SEGMENT_TYPE_LEFT = 'to left';
+var SEGMENT_TYPE_RIGHT = 'to right';
+var SEGMENT_TYPE_BOTTOM = 'to bottom';
+var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+var SEGMENT_TYPE_TOP_LEFT = 'to top left';
+var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
+var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
 
 function debounce(callback, delay) {
 
@@ -7963,6 +7754,213 @@ var EventMachin = function () {
   return EventMachin;
 }();
 
+var ITEM_SET = 'item/set';
+var ITEM_GET = 'item/get';
+var ITEM_CONVERT_STYLE = 'item/convert/style';
+var ITEM_SET_ALL = 'item/set/all';
+var ITEM_SORT = 'item/sort';
+var ITEM_REMOVE_CHILDREN = 'item/remove/children';
+var ITEM_REMOVE = 'item/remove';
+var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
+var ITEM_REMOVE_ALL = 'item/remove/all';
+var ITEM_FOCUS = 'item/focus';
+var ITEM_LOAD = 'item/load';
+var ITEM_INIT_CHILDREN = 'item/init/children';
+
+/* page is equal to artboard */
+var PAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_PAGE,
+    is: IS_OBJECT,
+    name: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    index: 0,
+    width: pxUnit(400),
+    height: pxUnit(300)
+};
+var FILTER_DEFAULT_OBJECT = {
+    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'filterDropshadow': { index: 60 },
+    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
+    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
+    return isNotUndefined(FILTER_DEFAULT_OBJECT[key].index);
+});
+
+var BACKDROP_DEFAULT_OBJECT = {
+    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'backdropDropshadow': { index: 60 },
+    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
+    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
+    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
+    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
+    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index);
+});
+
+var CLIP_PATH_DEFAULT_OBJECT = {
+    clipPathType: 'none',
+    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
+    clipPathSvg: EMPTY_STRING,
+    fitClipPathSize: false,
+    clipText: false,
+    clipPathRadiusX: undefined,
+    clipPathRadiusY: undefined,
+    clipPathCenterX: undefined,
+    clipPathCenterY: undefined
+
+    /* layer can has children layers. */
+};var LAYER_DEFAULT_OBJECT = _extends({
+    itemType: ITEM_TYPE_LAYER,
+    is: IS_OBJECT,
+    type: SHAPE_TYPE_RECT,
+    name: EMPTY_STRING,
+    index: 0,
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    parentId: EMPTY_STRING,
+    mixBlendMode: 'normal',
+    selected: true,
+    visible: true,
+    x: pxUnit(0),
+    y: pxUnit(0),
+    width: pxUnit(200),
+    height: pxUnit(200),
+    rotate: 0,
+    opacity: 1,
+    fontFamily: 'serif',
+    fontSize: '13px',
+    fontWeight: 400,
+    wordBreak: 'break-word',
+    wordWrap: 'break-word',
+    lineHeight: 1.6,
+    content: EMPTY_STRING
+}, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
+
+var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_CIRCLE,
+    borderRadius: percentUnit(100),
+    fixedRadius: true
+});
+
+var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_POLYGON,
+    fixedShape: true
+});
+
+var GROUP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_GROUP,
+    is: IS_OBJECT,
+    name: EMPTY_STRING,
+    index: 0,
+    parentId: EMPTY_STRING,
+    selected: true,
+    visible: true,
+    x: pxUnit(0),
+    y: pxUnit(0)
+};
+
+var IMAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_IMAGE,
+    is: IS_ATTRIBUTE,
+    type: IMAGE_ITEM_TYPE_STATIC$1,
+    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    index: 0,
+    parentId: EMPTY_STRING,
+    angle: 90,
+    color: 'red',
+    radialType: 'ellipse',
+    radialPosition: POSITION_CENTER,
+    visible: true,
+    isClipPath: false,
+    pattern: {},
+    backgroundRepeat: null,
+    backgroundSize: null,
+    backgroundSizeWidth: 0,
+    backgroundSizeHeight: 0,
+    backgroundOrigin: null,
+    backgroundPositionX: undefined,
+    backgroundPositionY: undefined,
+    backgroundBlendMode: 'normal',
+    backgroundColor: null,
+    backgroundAttachment: null,
+    backgroundClip: null,
+    backgroundImage: null,
+    backgroundImageDataURI: null
+};
+
+var BOXSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_BOXSHADOW,
+    is: IS_ATTRIBUTE,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    inset: false,
+    blurRadius: pxUnit(0),
+    spreadRadius: pxUnit(0),
+    color: 'rgb(0, 0, 0)'
+};
+
+var TEXTSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TEXTSHADOW,
+    is: IS_ATTRIBUTE,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    blurRadius: pxUnit(0),
+    color: 'rgb(0, 0, 0)'
+};
+
+var COLORSTEP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_COLORSTEP,
+    is: IS_ATTRIBUTE,
+    parentId: EMPTY_STRING,
+    percent: 0,
+    color: 'rgba(0, 0, 0, 0)'
+};
+
+var TIMELINE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TIMELINE,
+    targetId: EMPTY_STRING,
+    parentId: EMPTY_STRING
+};
+
+var KEYFRAME_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_KEYFRAME,
+    targetId: EMPTY_STRING,
+    attribute: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    delay: 0,
+    duration: 1000,
+    timing: 'linear',
+    iteration: 1,
+    direction: 'alternate'
+};
+var DEFAULT_TOOL_SIZE = {
+    'board.offset': { left: 0, top: 0 },
+    'page.offset': { left: 0, top: 0 },
+    'board.scrollTop': 0,
+    'board.scrollLeft': 0
+};
+
 var TOOL_COLOR_SOURCE = 'tool/colorSource';
 var TOOL_GET = 'tool/get';
 var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
@@ -10774,8 +10772,8 @@ var SELECTION_IS_IMAGE = 'selection/is/image';
 var SELECTION_IS_PAGE = 'selection/is/page';
 var SELECTION_IS_BOXSHADOW = 'selection/is/boxshadow';
 var SELECTION_IS_TEXTSHADOW = 'selection/is/textshadow';
-var SELECTION_IS_FILTER = 'selection/is/filter';
-var SELECTION_IS_BACKDROP_FILTER = 'selection/is/backdrop-filter';
+
+
 var SELECTION_IS_ONE = 'selection/is/one';
 var SELECTION_IS_GROUP = 'selection/is/group';
 var SELECTION_IS_AREA = 'selection/is/area';
@@ -11248,7 +11246,9 @@ function IS_PAGE(item) {
 function IS_LAYER(item) {
     return item.itemType == ITEM_TYPE_LAYER;
 }
-
+function IS_CIRCLE(item) {
+    return item.itemType == ITEM_TYPE_CIRCLE;
+}
 
 
 function IS_IMAGE(item) {
@@ -11258,7 +11258,7 @@ function IS_BOXSHADOW(item) {
     return item.itemType == ITEM_TYPE_BOXSHADOW;
 }
 function IS_TEXTSHADOW(item) {
-    return item.itemType == ITEM_TYPE_TEXTSHADOW$1;
+    return item.itemType == ITEM_TYPE_TEXTSHADOW;
 }
 
 
@@ -11866,8 +11866,8 @@ function IMAGE_TO_CSS$1() {
 var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
 var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
 var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
-var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
+var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE$1];
+var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC$1];
 
 function IMAGE_TYPE_IS_LINEAR(type) {
     return LINEAR_GRADIENT_LIST.includes(type);
@@ -13952,7 +13952,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -13967,7 +13967,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: CHANGE('$clipType'),
-        value: function value() {
+        value: function value$$1() {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -13979,7 +13979,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$showClipPathEditor'),
-        value: function value() {
+        value: function value$$1() {
             var _this4 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -14270,7 +14270,7 @@ var RadiusFixed = function (_BasePropertyItem) {
             var layer = this.read(SELECTION_CURRENT_LAYER);
 
             if (!layer) return false;
-            if (layer.type == ITEM_TYPE_CIRCLE) return false;
+            if (IS_CIRCLE(layer)) return false;
 
             return true;
         }
@@ -14578,7 +14578,7 @@ var ClipPathSide = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -14609,12 +14609,12 @@ var ClipPathSide = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT('toggleClipPathSideType'),
-        value: function value() {
+        value: function value$$1() {
             this.$el.toggleClass('show');
         }
     }, {
         key: CHANGE('$clipSideType'),
-        value: function value() {
+        value: function value$$1() {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -17582,11 +17582,11 @@ var TextShadowProperty = function (_BaseProperty) {
         }
     }, {
         key: CLICK('$add'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this2.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW$1, false, id);
+                _this2.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, false, id);
                 _this2.dispatch(HISTORY_PUSH, "Add Text Shadow");
             });
         }
@@ -17619,7 +17619,7 @@ var BoxShadowProperty = function (_BaseProperty) {
         }
     }, {
         key: CLICK('$add'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -19086,12 +19086,12 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
         }
     }, {
         key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_EDITOR$1, CHANGE_SELECTION),
-        value: function value() {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
         key: CHANGE('$select'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
@@ -19100,7 +19100,7 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
         }
     }, {
         key: CLICK('$center'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this4 = this;
 
             this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
@@ -20655,7 +20655,7 @@ var TimelineObjectList = function (_UIElement) {
         key: "makeTimelineRow",
         value: function makeTimelineRow(timeline, index) {
 
-            var targetItem = this.read(ITEM_GET, timeline.targetId);
+            var targetItem = this.get(timeline.targetId);
 
             if (IS_LAYER(targetItem)) {
                 return this.makeTimelineObjectForLayer(timeline, targetItem, index);
@@ -20747,7 +20747,7 @@ var KeyframeObjectList = function (_UIElement) {
     }, {
         key: "makeTimelineObjectForLayer",
         value: function makeTimelineObjectForLayer(timeline, targetItem, index) {
-            return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>\n                    <div class='keyframe-collapse row' data-property='transform'></div>\n                    <div class='keyframe-property-list' data-property='transform'>\n                        <div class='keyfame-property row' data-property='translateX'>\n                            <div class='keyframe-item line' style='left: 50px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                        </div>    \n                        <div class='keyfame-property row' data-property='translateY'></div>    \n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>\n                    <div class='keyframe-collapse row' data-property='transform'></div>\n                    <div class='keyframe-property-list' data-property='transform'>\n                        <div class='keyfame-property row' data-property='translateX'>\n                            <div class='keyframe-item line' style='left: 50px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                            <div class='keyframe-item line' style='left: 350px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                            <div class='keyframe-item line' style='left: 650px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                            <div class='keyframe-item line' style='left: 950px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>                            \n                        </div>    \n                        <div class='keyfame-property row' data-property='translateY'></div>    \n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
@@ -20766,18 +20766,74 @@ var KeyframeObjectList = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: POINTERSTART('$el .keyframe-item') + SELF,
+        key: POINTERSTART('$el .bar') + SELF,
         value: function value(e) {
+            this.selectedClass = 'bar';
+            this.selectedElement = e.$delegateTarget.parent();
+            this.selectedStartX = this.selectedElement.cssFloat('left');
+            this.xy = e.xy;
             // console.log('start', e.xy);
         }
     }, {
-        key: POINTERMOVE('$el .keyframe-item'),
+        key: POINTERSTART('$el .start') + SELF,
         value: function value(e) {
-            // console.log('move', e.xy);
+            this.selectedClass = 'start';
+            if (this.selectedEl) {
+                this.selectedEl.removeClass('selected');
+            }
+            this.selectedEl = e.$delegateTarget;
+            this.selectedEl.addClass('selected');
+            this.selectedElement = e.$delegateTarget.parent();
+            this.selectedStartX = this.selectedElement.cssFloat('left');
+            this.selectedStartWidth = this.selectedElement.cssFloat('width');
+            this.selectedEndX = this.selectedStartX + this.selectedStartWidth;
+            this.xy = e.xy;
+            // console.log('start', e.xy);
         }
     }, {
-        key: POINTEREND('$el .keyframe-item'),
+        key: POINTERSTART('$el .end') + SELF,
         value: function value(e) {
+            this.selectedClass = 'end';
+            if (this.selectedEl) {
+                this.selectedEl.removeClass('selected');
+            }
+            this.selectedEl = e.$delegateTarget;
+            this.selectedEl.addClass('selected');
+            this.selectedElement = e.$delegateTarget.parent();
+            this.selectedStartX = this.selectedElement.cssFloat('left');
+            this.selectedStartWidth = this.selectedElement.cssFloat('width');
+            this.selectedEndX = this.selectedStartX + this.selectedStartWidth;
+            this.xy = e.xy;
+            // console.log('start', e.xy);
+        }
+    }, {
+        key: "isSelectedClass",
+        value: function isSelectedClass() {
+            return this.selectedClass != '';
+        }
+    }, {
+        key: POINTERMOVE('document') + CHECKER('isSelectedClass'),
+        value: function value(e) {
+            if (this.selectedClass == 'bar') {
+                var newX = Math.max(0, this.selectedStartX + (e.xy.x - this.xy.x));
+                this.selectedElement.px('left', newX);
+            } else if (this.selectedClass == 'start') {
+                var dx = e.xy.x - this.xy.x;
+                var newX = Math.min(Math.max(0, this.selectedStartX + dx), this.selectedEndX);
+                var newWidth = this.selectedStartWidth - (newX - this.selectedStartX);
+                this.selectedElement.px('left', newX);
+                this.selectedElement.px('width', newWidth);
+            } else if (this.selectedClass == 'end') {
+                var dx = e.xy.x - this.xy.x;
+                var newWidth = Math.max(0, this.selectedStartWidth + dx);
+                this.selectedElement.px('width', newWidth);
+            }
+        }
+    }, {
+        key: POINTEREND('document'),
+        value: function value(e) {
+            this.selectedClass = '';
+            this.selectedElement = null;
             // console.log('end', e.xy);
         }
     }]);
@@ -24569,7 +24625,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/><DropView /><HotKey />\n            </div>\n        ';
+            return '\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/><DropView /><HotKey />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -24941,7 +24997,7 @@ var ImageManager = function (_BaseModule) {
 
     createClass(ImageManager, [{
         key: GETTER(IMAGE_GET_FILE),
-        value: function value($store, files, callback) {
+        value: function value$$1($store, files, callback) {
             var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
 
             (files || []).forEach(function (file) {
@@ -24966,7 +25022,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_GET_URL),
-        value: function value($store, urls, callback) {
+        value: function value$$1($store, urls, callback) {
             var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
 
             (urls || []).forEach(function (url) {
@@ -24987,7 +25043,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_GET_BLOB),
-        value: function value($store, blobs, callback) {
+        value: function value$$1($store, blobs, callback) {
             (blobs || []).forEach(function (file) {
                 if (isFunction(callback)) {
                     new ImageLoader(file, {
@@ -25015,7 +25071,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_TO_STRING),
-        value: function value($store) {
+        value: function value$$1($store) {
             var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
             var newItem = _extends({}, image);
@@ -25028,7 +25084,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_TO_LINEAR_RIGHT),
-        value: function value($store, image) {
+        value: function value$$1($store, image) {
             var colorsteps = image.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, image.id);
             return IMAGE_TO_LINEAR(_extends({}, image, { type: 'linear', angle: 'to right', colorsteps: colorsteps }));
         }
@@ -25270,7 +25326,7 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_MAKE_TEXTSHADOW),
         value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
+            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW, isExport);
         }
     }, {
         key: GETTER(LAYER_TO_STRING_CLIPPATH),
@@ -25655,7 +25711,7 @@ var silence = {
 var circle = {
     image: {
         type: 'radial',
-        radialPosition: POSITION_CENTER,
+        radialPosition: 'center',
         radialType: 'circle'
     },
     colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'black', percent: 50, index: 100 }]
@@ -26732,7 +26788,7 @@ var CollectManager = function (_BaseModule) {
 
     createClass(CollectManager, [{
         key: GETTER(COLLECT_COLORSTEPS),
-        value: function value($store, imageId) {
+        value: function value$$1($store, imageId) {
             return $store.read(ITEM_MAP_CHILDREN, imageId, function (colorstep) {
                 var colorstep = _extends({}, $store.items[colorstep.id]);
                 delete colorstep.id;
@@ -26743,7 +26799,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_ONE),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var item = this.get(id);
 
             switch (item.itemType) {
@@ -26763,7 +26819,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_IMAGE_ONE),
-        value: function value($store, imageId) {
+        value: function value$$1($store, imageId) {
             var image = _extends({}, $store.items[imageId]);
             delete image.id;
             delete image.parentId;
@@ -26775,7 +26831,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_BOXSHADOW_ONE),
-        value: function value($store, boxshadowId) {
+        value: function value$$1($store, boxshadowId) {
             var boxshadow = _extends({}, $store.items[boxshadowId]);
             delete boxshadow.id;
             delete boxshadow.parentId;
@@ -26784,7 +26840,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_TEXTSHADOW_ONE),
-        value: function value($store, textshadowId) {
+        value: function value$$1($store, textshadowId) {
             var textshadow = _extends({}, $store.items[textshadowId]);
             delete textshadow.id;
             delete textshadow.parentId;
@@ -26793,28 +26849,28 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_IMAGES),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             return $store.read(ITEM_MAP_IMAGE_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_IMAGE_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_BOXSHADOWS),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             return $store.read(ITEM_MAP_BOXSHADOW_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_BOXSHADOW_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_TEXTSHADOWS),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             return $store.read(ITEM_MAP_TEXTSHADOW_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_TEXTSHADOW_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_LAYER_ONE),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             var results = {};
 
             if (!$store.items[layerId]) {
@@ -26834,14 +26890,14 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_LAYERS),
-        value: function value($store, pageId) {
+        value: function value$$1($store, pageId) {
             return $store.read(ITEM_MAP_CHILDREN, pageId, function (layer) {
                 return $store.read(COLLECT_LAYER_ONE, layer.id);
             });
         }
     }, {
         key: GETTER(COLLECT_PAGE_ONE),
-        value: function value($store, pageId) {
+        value: function value$$1($store, pageId) {
             var results = {};
 
             if (!$store.items[pageId]) {
@@ -27282,12 +27338,12 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_CURRENT_TEXTSHADOW),
         value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW, callback);
         }
     }, {
         key: GETTER(SELECTION_CURRENT_TEXTSHADOW_ID),
         value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW, callback);
         }
     }, {
         key: GETTER(SELECTION_CURRENT_LAYER),
@@ -27413,16 +27469,6 @@ var SelectionManager = function (_BaseModule) {
         key: GETTER(SELECTION_IS_TEXTSHADOW),
         value: function value$$1($store, type) {
             return IS_TEXTSHADOW($store.selection);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_FILTER),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_FILTER;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_BACKDROP_FILTER),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_BACKDROP;
         }
     }, {
         key: GETTER(SELECTION_IS_ONE),
@@ -28544,7 +28590,7 @@ var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_IT
 var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 
-var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_TIMELINE, ITEM_CREATE_TIMELINE), defineProperty(_itemCreateActions, ITEM_TYPE_KEYFRAME, ITEM_CREATE_KEYFRAME), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
+var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_TIMELINE, ITEM_CREATE_TIMELINE), defineProperty(_itemCreateActions, ITEM_TYPE_KEYFRAME, ITEM_CREATE_KEYFRAME), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
 
 var ItemCreateManager = function (_BaseModule) {
     inherits(ItemCreateManager, _BaseModule);
@@ -28924,6 +28970,8 @@ var ItemCreateManager = function (_BaseModule) {
             image.parentId = layerId;
             $store.run(ITEM_SET, image, isSelected);
 
+            $store.run(SELECTION_ONE, pageId);
+            $store.emit(RESIZE_WINDOW);
             $store.run(HISTORY_INITIALIZE);
         }
     }]);
@@ -29375,7 +29423,7 @@ var ItemSearchManager = function (_BaseModule) {
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW, callback);
         }
     }, {
         key: GETTER(ITEM_FILTER_CHILDREN),
