@@ -2,7 +2,7 @@ import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../types/SelectionTypes";
-import { IMAGE_TYPE_IS_GRADIENT } from "../../types/ImageTypes";
+import { IMAGE_TYPE_IS_GRADIENT } from "../../../util/css/make";
 
 export default class VerticalColorStep extends UIElement {
 
@@ -16,7 +16,7 @@ export default class VerticalColorStep extends UIElement {
         return `
             <div class='vertical-colorstep-container'>
                 <div class='vertical-colorstep' ref="$verticalColorstep">
-                    <GradientSteps></GradientSteps>
+                    <GradientSteps />
                 </div>
             </div>
         `
@@ -37,7 +37,7 @@ export default class VerticalColorStep extends UIElement {
 
         if (!item) return false; 
 
-        return this.read(IMAGE_TYPE_IS_GRADIENT, item.type)
+        return IMAGE_TYPE_IS_GRADIENT(item.type)
     }    
 
 }

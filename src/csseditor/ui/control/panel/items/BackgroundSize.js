@@ -31,7 +31,7 @@ export default class BackgroundSize extends UIElement {
                             min="-100" max="1000" step="1" value="0" unit="${UNIT_PX}"
                             maxValueFunction="getMaxX"
                             updateFunction="updateX"
-                        ></UnitRange>
+                        />
                     </div>
                     <div>
                         <label>y</label>
@@ -40,7 +40,7 @@ export default class BackgroundSize extends UIElement {
                             min="-100" max="1000" step="1" value="0" unit="${UNIT_PX}"
                             maxValueFunction="getMaxY"
                             updateFunction="updateY"
-                        ></UnitRange>
+                        />
                     </div>
                     <div>
                         <label>width</label>
@@ -49,7 +49,7 @@ export default class BackgroundSize extends UIElement {
                             min="0" max="1000" step="1" value="0" unit="${UNIT_PX}"
                             maxValueFunction="getMaxWidth"
                             updateFunction="updateWidth"
-                        ></UnitRange>
+                        />
                     </div>
                     <div>
                         <label>height</label>
@@ -58,7 +58,7 @@ export default class BackgroundSize extends UIElement {
                             min="0" max="1000" step="1" value="0" unit="${UNIT_PX}"
                             maxValueFunction="getMaxHeight"
                             updateFunction="updateHeight"
-                        ></UnitRange>
+                        />
                     </div>                    
                     <div>
                         <label>repeat</label>
@@ -100,12 +100,9 @@ export default class BackgroundSize extends UIElement {
                                 <span></span>
                                 <span></span>
                                 <span></span>                                                                
-                            </button>                            
-                            
+                            </button>
                         </div>
-                 
                     </div>
-
                 </div>
             </div>
         `

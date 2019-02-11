@@ -5,14 +5,13 @@ import {
     ITEM_TYPE_LAYER, 
     ITEM_TYPE_BOXSHADOW, 
     ITEM_TYPE_TEXTSHADOW, 
-    ITEM_TYPE_PAGE, 
-    ITEM_GET
+    ITEM_TYPE_PAGE
 } from "../types/ItemTypes";
 import { unitValue, pxUnit, EMPTY_STRING } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "../types/SelectionTypes";
-import { ITEM_FILTER, ITEM_PATH } from "../types/ItemSearchTypes";
+import { ITEM_FILTER, ITEM_PATH, ITEM_LIST_PAGE } from "../types/ItemSearchTypes";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -37,6 +36,7 @@ export default class SelectionManager extends BaseModule {
             type: SELECT_MODE_ONE,
             ids: [],
             items: [],
+            pageId: '',
             itemType: EMPTY_STRING
         }
     }
@@ -63,6 +63,7 @@ export default class SelectionManager extends BaseModule {
             type: SELECT_MODE_ONE,
             ids: [],
             items: [],
+            pageId: '',
             itemType: EMPTY_STRING
         }
     }
@@ -181,17 +182,8 @@ export default class SelectionManager extends BaseModule {
     }       
 
     [GETTER(SELECTION_CURRENT_LAYER)] ($store, callback) {
-        var layers = null
+        var layers = ($store.selection.layers || [] ).map( id => this.get(id)) ;
 
-        if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-            var layers = $store.read(SELECTION_CURRENT)
-        } else if (
-            $store.selection.itemType == ITEM_TYPE_IMAGE 
-            || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
-            || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
-        ) {
-            var layers = $store.read(SELECTION_CURRENT).map(item => $store.items[item.parentId]) 
-        }
         if (Array.isArray(layers) && layers.length) {
             if ($store.read(SELECTION_IS_ONE)) {
                 if (isFunction(callback)) callback (layers[0])
@@ -206,25 +198,15 @@ export default class SelectionManager extends BaseModule {
     }
 
     [GETTER(SELECTION_CURRENT_LAYER_ID)] ($store, callback) {
-        var layers = null
-
-        if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-            var layers = $store.read(SELECTION_CURRENT)
-        } else if (
-                $store.selection.itemType == ITEM_TYPE_IMAGE 
-                || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
-                || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
-        ) {
-            var layers = $store.read(SELECTION_CURRENT).map(item => $store.items[item.parentId]) 
-        }
+        var layers = $store.selection.layers || [] ;
 
         if (Array.isArray(layers) && layers.length) {
             if ($store.read(SELECTION_IS_ONE) ) {
-                if (isFunction(callback)) callback (layers[0].id)
-                return layers[0].id
+                if (isFunction(callback)) callback (layers[0])
+                return layers[0]
             } else {
-                if (isFunction(callback)) callback (layers.map(it => it.id))
-                return layers.map(it => it.id)
+                if (isFunction(callback)) callback (layers)
+                return layers
             }        
         }
 
@@ -232,15 +214,16 @@ export default class SelectionManager extends BaseModule {
     }
     
     [GETTER(SELECTION_CURRENT_PAGE)] ($store, callback) {
+        var page = this.get($store.selection.pageId)
 
-        var pages = $store.read(SELECTION_CURRENT).map(it => {
-            var path = $store.read(ITEM_PATH, it.id)
-            return $store.read(ITEM_GET, path[path.length-1])
-        });
+        if (!page) {
+            var pages = $store.read(ITEM_LIST_PAGE)
+            page = pages[0]
+        }
 
-        if (Array.isArray(pages) && pages.length ) {
-            if (isFunction(callback)) callback (pages[0])
-            return pages[0]
+        if (page ) {
+            if (isFunction(callback)) callback (page)
+            return page
         }
 
         return null;
@@ -249,14 +232,16 @@ export default class SelectionManager extends BaseModule {
 
     [GETTER(SELECTION_CURRENT_PAGE_ID)] ($store, callback) {
        
-        var pages = $store.read(SELECTION_CURRENT).map(it => {
-            var path = $store.read(ITEM_PATH, it.id)
-            return $store.read(ITEM_GET, path[path.length-1])
-        });
+        var pageId = $store.selection.pageId
 
-        if (Array.isArray(pages) && pages.length ) {
-            if (isFunction(callback)) callback (pages[0].id)
-            return pages[0].id
+        if (!pageId) {
+            var pages = $store.read(ITEM_LIST_PAGE)
+            pageId = (pages[0] || {}).pageId
+        }
+
+        if (pageId ) {
+            if (isFunction(callback)) callback (pageId)
+            return pageId
         }
 
         return null;
@@ -287,7 +272,7 @@ export default class SelectionManager extends BaseModule {
 
         if (type) {
             if ($store.selection.ids.length ) {
-                var item = $store.read(ITEM_GET, $store.selection.ids[0]);
+                var item = this.get($store.selection.ids[0]);
 
                 isTypeCheck = item.type == type
             }
@@ -351,12 +336,33 @@ export default class SelectionManager extends BaseModule {
             ids: [selectedId],
             itemType: $store.items[selectedId].itemType
         }
+
+        var path = $store.read(ITEM_PATH, selectedId)
+        $store.selection.pageId = path[path.length-1];
+
+        console.log($store.selection);
+
+        var layers = [] 
+
+        if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+            layers = [selectedId]
+        } else if (
+            $store.selection.itemType == ITEM_TYPE_IMAGE 
+            || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
+            || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
+        ) {
+            layers = [this.get(selectedId).parentId]
+        }        
+
+        $store.selection.layers = layers; 
     }    
 
     [ACTION(SELECTION_CHANGE)] ($store, itemType) {
         if (itemType == ITEM_TYPE_PAGE) {
             $store.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-                $store.run(SELECTION_ONE, id);
+                if (id) {
+                    $store.run(SELECTION_ONE, id);
+                }
             })
         }
     }
@@ -383,6 +389,23 @@ export default class SelectionManager extends BaseModule {
                 ids: selectItems,
                 itemType: ITEM_TYPE_LAYER
             }
+            var path = $store.read(ITEM_PATH, $store.selection.ids[0])
+            $store.selection.pageId = path[path.length-1];          
+
+            var layers = [] 
+
+            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+                layers = [...selectItems]
+            } else if (
+                $store.selection.itemType == ITEM_TYPE_IMAGE 
+                || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
+                || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
+            ) {
+                layers = selectItems.map(id => this.get(id).parentId)
+            }        
+    
+            $store.selection.layers = layers; 
+
         } else {
             $store.run(SELECTION_CHANGE, ITEM_TYPE_PAGE)
         }        

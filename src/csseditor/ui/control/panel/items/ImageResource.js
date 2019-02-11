@@ -3,9 +3,10 @@ import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { isObject } from "../../../../../util/functions/func";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { IMAGE_TYPE_IS_IMAGE, IMAGE_GET_BLOB } from "../../../../types/ImageTypes";
+import { IMAGE_GET_BLOB } from "../../../../types/ImageTypes";
 import { ITEM_SET_IMAGE_FILE } from "../../../../types/ItemCreateTypes";
 import { SVG_LIST, SVG_GET_BLOB } from "../../../../types/SVGTypes";
+import { IMAGE_TYPE_IS_IMAGE } from "../../../../../util/css/make";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -52,7 +53,7 @@ export default class ImageResource extends BasePropertyItem {
 
         if (!item) return false; 
 
-        return this.read(IMAGE_TYPE_IS_IMAGE, item.type); 
+        return IMAGE_TYPE_IS_IMAGE(item.type); 
     }
 
     [CLICK('$imageList .svg-item')] (e) {

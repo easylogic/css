@@ -8,12 +8,10 @@ import {
     TEXT_FILL_COLOR
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { ITEM_TYPE_TEXTSHADOW } from '../../../../types/ItemTypes';
-import { px, unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
+import { unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD, POINTERMOVE, POINTEREND, POINTERSTART } from '../../../../../util/Event';
-import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../types/ItemCreateTypes';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../types/SelectionTypes';
-import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
+import { ITEM_INITIALIZE } from '../../../../types/ItemCreateTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../types/SelectionTypes';
 import { ITEM_MAP_TEXTSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
 
 export default class TextShadow extends BasePropertyItem {
@@ -58,7 +56,7 @@ export default class TextShadow extends BasePropertyItem {
                 </div>
                 <div class='empty'></div>        
                 <div>
-                    <label>Blur Radius</label>                
+                    <label>Blur</label>                
                     <div class="input">
                         <input type="number" min="0" max="100" data-type='blurRadius' value="${blurRadius}" />                    
                         <input type="range" min="0" max="100" data-type='blurRadiusRange' value="${blurRadius}" />

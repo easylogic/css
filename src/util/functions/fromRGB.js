@@ -1,4 +1,5 @@
 import { round } from './math'
+import { XYZtoLAB } from './fromLAB';
 
 /**
  * @method RGBtoHSV

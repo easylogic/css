@@ -4,8 +4,6 @@ export default class BackgroundCodeProperty extends BaseProperty {
 
     getTitle () { return 'CSS Code'; }
     getBody () {
-        return `
-            <BackgroundCode ></BackgroundCode>
-        `
+        return `<BackgroundCode />`
     }
 }

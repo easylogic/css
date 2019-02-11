@@ -12,7 +12,6 @@ export default class Page3D extends UIElement {
                 <div class='items'>
                     <div>
                         <label> 3D </label>
-                        
                         <div>
                             <label><input type='checkbox' ref="$preserve"> preserve-3d </label>
                         </div>
@@ -26,7 +25,6 @@ export default class Page3D extends UIElement {
                     </div>                                 
                     <div>
                         <label>Origin  X </label>
-                        
                         <div>
                             <input type="range" ref="$xRange" min="-100" max="100" />                         
                             <input type="number" ref="$x" /> <span class='unit'>${unitString(UNIT_PERCENT)}</span>
@@ -34,7 +32,6 @@ export default class Page3D extends UIElement {
                     </div>                                            
                     <div>
                         <label>Origin Y </label>
-                        
                         <div>
                             <input type="range" ref="$yRange" min="-100" max="100" />                                                 
                             <input type="number" ref="$y" /> <span class='unit'>${unitString(UNIT_PERCENT)}</span>

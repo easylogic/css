@@ -5,7 +5,7 @@ import { EVENT } from '../../../../../colorpicker/UIElement';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../types/SelectionTypes';
 import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../../../types/ColorStepTypes';
 import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
-import { IMAGE_TYPE_IS_IMAGE } from '../../../../types/ImageTypes';
+import { IMAGE_TYPE_IS_IMAGE } from '../../../../../util/css/make';
 
 export default class ImageSorting extends BasePropertyItem {
 
@@ -54,7 +54,7 @@ export default class ImageSorting extends BasePropertyItem {
 
         if (!image) return false;
 
-        if (this.read(IMAGE_TYPE_IS_IMAGE, image.type)) {
+        if (IMAGE_TYPE_IS_IMAGE(image.type)) {
             return false; 
         }
 

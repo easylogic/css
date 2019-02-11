@@ -8,7 +8,7 @@ export default class LayerToolbar extends UIElement {
         return `
             <div class='layer-toolbar'>            
                 <div style="display:inline-block;vertical-align:middle;">       
-                    <ImageListView></ImageListView>               
+                    <ImageListView />
                 </div>    
             </div>
         `

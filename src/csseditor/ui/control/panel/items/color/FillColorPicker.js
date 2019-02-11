@@ -46,7 +46,7 @@ export default class FillColorPicker extends UIElement {
 
     [EVENT('fillColorId')] (id, eventType) {
         this.changeColorId = id;
-        this.itemType = this.read(ITEM_GET, id).itemType;
+        this.itemType = this.get( id).itemType;
         this.eventType = eventType;
 
         this.color = null;
@@ -72,7 +72,7 @@ export default class FillColorPicker extends UIElement {
 
     refresh() {
         if (this.changeColorId) {
-            var item = this.read(ITEM_GET, this.changeColorId);
+            var item = this.get( this.changeColorId);
             this.colorPicker.initColorWithoutChangeEvent(item.color);
         } else if (this.callback) {
             this.colorPicker.initColorWithoutChangeEvent(this.color);

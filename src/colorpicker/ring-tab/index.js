@@ -23,25 +23,24 @@ export default class RingTabColorPicker extends BaseColorPicker {
                     </div>
                     <div class='color-tab-body' ref="$tabBody">
                         <div class='color-tab-content active'  item-id="color">
-                            <ColorRing></ColorRing>
-                            <Palette></Palette> 
+                            <ColorRing />
+                            <Palette />
                             <div class="control">
-                                <Value></Value>
-                                <Opacity></Opacity>
+                                <Value />
+                                <Opacity />
                                 <div class="empty"></div>
-                                <ColorView></ColorView>
+                                <ColorView />
                             </div>
-                            <Information></Information>
+                            <Information />
                         </div>
                         <div class='color-tab-content' item-id="swatch">
-                            <CurrentColorSets></CurrentColorSets>
-                            <ContextMenu></ContextMenu>
+                            <CurrentColorSets />
+                            <ContextMenu />
                         </div>
                         <div class='color-tab-content' item-id="colorset">
-                            <ColorSetsChooser></ColorSetsChooser>                    
+                            <ColorSetsChooser />
                         </div>                        
                     </div>
-
             </div>
         `
     }

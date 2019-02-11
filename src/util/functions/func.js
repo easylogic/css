@@ -1,3 +1,5 @@
+import { EMPTY_STRING } from "../css/types";
+
 export function debounce (callback, delay) {
 
     var t = undefined;
@@ -113,18 +115,38 @@ export function repeat (count) {
 }
 
 
+const short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim
+
 export const html = (strings, ...args) => {
 
-    return strings.map((it, index) => {
+    var results =  strings.map((it, index) => {
         
         var results = args[index] || ''
 
         if (isFunction(results)) {
             results = results()
-        } else if (isArray(results)) {
-            results = results.join('')
         }
 
+        if (!isArray(results)) {
+            results = [results]
+        }
+
+        results = results.map(r => {
+            if (isObject(r)) {
+                return Object.keys(r).map(key => {
+                    return `${key}="${r[key]}"`
+                }).join(' ')
+            }
+
+            return r
+        }).join(EMPTY_STRING)
+
         return it + results;
-    }).join('')
+    }).join('');
+
+    results = results.replace(short_tag_regexp, function (match, p1) {
+        return match.replace('/>', `></${p1}>`)
+    })
+
+    return results; 
 }

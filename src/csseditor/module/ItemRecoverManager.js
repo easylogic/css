@@ -94,23 +94,23 @@ export default class ItemRecoverManager extends BaseModule {
 
 
     [ACTION(ITEM_ADD_CACHE)] ($store, item, sourceId) {
-        var currentItem = $store.read(ITEM_GET, sourceId);
+        var currentItem = this.get(sourceId);
         $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, item, currentItem.parentId)); 
     }
 
     [ACTION(ITEM_ADD_COPY)] ($store, sourceId) {
-        var currentItem = $store.read(ITEM_GET, sourceId);
+        var currentItem = this.get(sourceId);
         $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), currentItem.parentId)); 
     }    
 
     [ACTION(ITEM_COPY_IN)] ($store, destId, sourceId) {
-        var destItem = $store.read(ITEM_GET, destId);
+        var destItem = this.get(destId);
         var newImageId = $store.read(ITEM_RECOVER, 
             $store.read(COLLECT_ONE, sourceId), 
             destItem.parentId
         );
 
-        var newImageItem = $store.read(ITEM_GET, newImageId);
+        var newImageItem = this.get(newImageId);
         newImageItem.index = destItem.index - COPY_INDEX_DIST;
 
         $store.run(ITEM_SET, sourceItem, true);
@@ -119,13 +119,13 @@ export default class ItemRecoverManager extends BaseModule {
 
 
     [ACTION(ITEM_COPY_IN_LAYER)] ($store, destId, sourceId) {
-        var destItem = $store.read(ITEM_GET, destId);  /* layer */ 
+        var destItem = this.get(destId);  /* layer */ 
         var newImageId = $store.read(ITEM_RECOVER, 
             $store.read(COLLECT_ONE, sourceId), 
             destItem.parentId
         );
 
-        var newImageItem = $store.read(ITEM_GET, newImageId);
+        var newImageItem = this.get(newImageId);
         newImageItem.index = Number.MAX_SAFE_INTEGER;
 
         $store.run(ITEM_SET, newImageItem, true);        

@@ -12,9 +12,7 @@ export default class TextShadowProperty extends BaseProperty {
         return `<button type="button" ref="$add">+</button>`;
     }
     getBody () {
-        return `
-            <TextShadow ref="$textShadow" ></TextShadow>
-        `
+        return `<TextShadow ref="$textShadow" />`
     }
 
     [CLICK('$add')] (e) {

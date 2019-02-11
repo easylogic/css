@@ -13,17 +13,17 @@ export default class ChromeDevToolColorPicker extends BaseColorPicker {
 
     template () {
         return `<div class='colorpicker-body'>
-            <Palette></Palette> 
+            <Palette />
             <div class="control">
-                <Hue></Hue>
-                <Opacity></Opacity>
+                <Hue />
+                <Opacity />
                 <div class="empty"></div>
-                <ColorView></ColorView>
+                <ColorView />
             </div>
-            <Information></Information>
-            <CurrentColorSets></CurrentColorSets>
-            <ColorSetsChooser></ColorSetsChooser>
-            <ContextMenu></ContextMenu>
+            <Information />
+            <CurrentColorSets />
+            <ColorSetsChooser />
+            <ContextMenu />
         </div>`
     }
 

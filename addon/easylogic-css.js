@@ -2,6 +2,318 @@
 var EasyLogicCSS = (function () {
 'use strict';
 
+function each$1(len, callback) {
+    for (var i = 0; i < len; i += 4) {
+        callback(i);
+    }
+}
+
+function pack$1(bitmap, callback) {
+
+    each$1(bitmap.pixels.length, function (i) {
+        callback(bitmap.pixels, i);
+    });
+}
+
+var Canvas = {
+    create: function create(width, height) {
+        var canvas = document.createElement('canvas');
+        canvas.width = width || 0;
+        canvas.height = height || 0;
+
+        return canvas;
+    },
+    drawPixels: function drawPixels(bitmap) {
+        var canvas = this.create(bitmap.width, bitmap.height);
+
+        var context = canvas.getContext('2d');
+        var imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
+
+        imagedata.data.set(bitmap.pixels);
+
+        context.putImageData(imagedata, 0, 0);
+
+        return canvas;
+    },
+    createHistogram: function createHistogram(width, height, histogram, callback) {
+        var opt = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : { black: true, red: false, green: false, blue: false };
+
+        var canvas = this.create(width, height);
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "white";
+        context.fillRect(0, 0, width, height);
+        context.globalAlpha = 0.7;
+
+        var omit = { black: false };
+        if (opt.black) {
+            omit.black = false;
+        } else {
+            omit.black = true;
+        }
+        if (opt.red) {
+            omit.red = false;
+        } else {
+            omit.red = true;
+        }
+        if (opt.green) {
+            omit.green = false;
+        } else {
+            omit.green = true;
+        }
+        if (opt.blue) {
+            omit.blue = false;
+        } else {
+            omit.blue = true;
+        }
+
+        Object.keys(histogram).forEach(function (color) {
+
+            if (!omit[color]) {
+
+                var array = histogram[color];
+                var ymax = Math.max.apply(Math, array);
+                var unitWith = width / array.length;
+
+                context.fillStyle = color;
+                array.forEach(function (it, index) {
+                    var currentHeight = height * (it / ymax);
+                    var x = index * unitWith;
+
+                    context.fillRect(x, height - currentHeight, unitWith, currentHeight);
+                });
+            }
+        });
+
+        if (isFunction(callback)) callback(canvas);
+    },
+    getHistogram: function getHistogram(bitmap) {
+        var black = new Array(256);
+        var red = new Array(256);
+        var green = new Array(256);
+        var blue = new Array(256);
+        for (var i = 0; i < 256; i++) {
+            black[i] = 0;
+            red[i] = 0;
+            green[i] = 0;
+            blue[i] = 0;
+        }
+
+        pack$1(bitmap, function (pixels, i) {
+            // gray scale 
+            var grayIndex = Math.round(Color$1.brightness(pixels[i], pixels[i + 1], pixels[i + 2]));
+            black[grayIndex]++;
+
+            red[pixels[i]]++;
+            green[pixels[i + 1]]++;
+            blue[pixels[i + 2]]++;
+        });
+
+        return { black: black, red: red, green: green, blue: blue };
+    },
+    getBitmap: function getBitmap(bitmap, area) {
+        var canvas = this.drawPixels(bitmap);
+
+        var context = canvas.getContext('2d');
+        var pixels = context.getImageData(area.x || 0, area.y || 0, area.width || canvas.width, area.height || canvas.height).data;
+
+        return { pixels: pixels, width: area.width, height: area.height };
+    },
+    putBitmap: function putBitmap(bitmap, subBitmap, area) {
+
+        var canvas = this.drawPixels(bitmap);
+        var subCanvas = this.drawPixels(subBitmap);
+
+        var context = canvas.getContext('2d');
+        context.drawImage(subCanvas, area.x, area.y);
+
+        bitmap.pixels = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
+
+        return bitmap;
+    }
+};
+
+var CONSTANT = {
+    identity: function identity() {
+        return [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    },
+    stretching: function stretching(k) {
+        return [k, 0, 0, 0, 1, 0, 0, 0, 1];
+    },
+    squeezing: function squeezing(k) {
+        return [k, 0, 0, 0, 1 / k, 0, 0, 0, 1];
+    },
+    scale: function scale() {
+        var sx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+        var sy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        sx = sx || sx === 0 ? sx : 1;
+        sy = sy || sy === 0 ? sy : 1;
+        return [sx, 0, 0, 0, sy, 0, 0, 0, 1];
+    },
+    scaleX: function scaleX(sx) {
+        return this.scale(sx);
+    },
+    scaleY: function scaleY(sy) {
+        return this.scale(1, sy);
+    },
+    translate: function translate(tx, ty) {
+        return [1, 0, tx, 0, 1, ty, 0, 0, 1];
+    },
+    rotate: function rotate(angle) {
+        var r = this.radian(angle);
+        return [Math.cos(r), -Math.sin(r), 0, Math.sin(r), Math.cos(r), 0, 0, 0, 1];
+    },
+    rotate90: function rotate90() {
+        return [0, -1, 0, 1, 0, 0, 0, 0, 1];
+    },
+    rotate180: function rotate180() {
+        return [-1, 0, 0, 0, -1, 0, 0, 0, 1];
+    },
+    rotate270: function rotate270() {
+        return [0, 1, 0, -1, 0, 0, 0, 0, 1];
+    },
+    radian: function radian(degree) {
+        return degree * Math.PI / 180;
+    },
+    skew: function skew(degreeX, degreeY) {
+        var radianX = this.radian(degreeX);
+        var radianY = this.radian(degreeY);
+        return [1, Math.tan(radianX), 0, Math.tan(radianY), 1, 0, 0, 0, 1];
+    },
+    skewX: function skewX(degreeX) {
+        var radianX = this.radian(degreeX);
+
+        return [1, Math.tan(radianX), 0, 0, 1, 0, 0, 0, 1];
+    },
+    skewY: function skewY(degreeY) {
+        var radianY = this.radian(degreeY);
+
+        return [1, 0, 0, Math.tan(radianY), 1, 0, 0, 0, 1];
+    },
+    shear1: function shear1(angle) {
+        return [1, -Math.tan(this.radian(angle) / 2), 0, 0, 1, 0, 0, 0, 1];
+    },
+    shear2: function shear2(angle) {
+        return [1, 0, 0, Math.sin(this.radian(angle)), 1, 0, 0, 0, 1];
+    }
+};
+
+var Matrix = {
+    CONSTANT: CONSTANT,
+
+    radian: function radian(angle) {
+        return CONSTANT.radian(angle);
+    },
+    multiply: function multiply(A, C) {
+        // console.log(JSON.stringify(A), JSON.stringify(C))
+        return [A[0] * C[0] + A[1] * C[1] + A[2] * C[2], A[3] * C[0] + A[4] * C[1] + A[5] * C[2], A[6] * C[0] + A[7] * C[1] + A[8] * C[2]];
+    },
+    identity: function identity(B) {
+        return this.multiply(CONSTANT.identity(), B);
+    },
+    translate: function translate(x, y, B) {
+        return this.multiply(CONSTANT.translate(x, y), B);
+    },
+    rotate: function rotate(angle, B) {
+        return this.multiply(CONSTANT.rotate(angle), B);
+    },
+    shear1: function shear1(angle, B) {
+        return this.multiply(CONSTANT.shear1(angle), B);
+    },
+    shear2: function shear2(angle, B) {
+        return this.multiply(CONSTANT.shear2(angle), B);
+    },
+    rotateShear: function rotateShear(angle, B) {
+
+        var arr = B;
+
+        arr = this.shear1(angle, arr);
+        arr = this.shear2(angle, arr);
+        arr = this.shear1(angle, arr);
+
+        return arr;
+    }
+};
+
+function crop() {
+    var startX = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var startY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var width = arguments[2];
+    var height = arguments[3];
+
+
+    var newBitmap = createBitmap(width * height * 4, width, height);
+
+    return function (bitmap, done) {
+        for (var y = startY, realY = 0; y < height; y++, realY++) {
+            for (var x = startX, realX = 0; x < width; x++, realX++) {
+                newBitmap.pixels[realY * width * realX] = bitmap.pixels[y * width * x];
+            }
+        }
+
+        done(newBitmap);
+    };
+}
+
+function resize(dstWidth, dstHeight) {
+    return function (bitmap, done) {
+        var c = Canvas.drawPixels(bitmap);
+        var context = c.getContext('2d');
+
+        c.width = dstWidth;
+        c.height = dstHeight;
+
+        done({
+            pixels: new Uint8ClampedArray(context.getImageData(0, 0, dstWidth, dstHeight).data),
+            width: dstWidth,
+            height: dstHeight
+        });
+    };
+}
+
+function flipV() {
+    return function (bitmap, done) {
+        var width = bitmap.width;
+        var height = bitmap.height;
+        var isCenter = height % 2 == 1 ? 1 : 0;
+
+        var halfHeight = isCenter ? Math.floor(height / 2) : height / 2;
+
+        for (var y = 0; y < halfHeight; y++) {
+            for (var x = 0; x < width; x++) {
+
+                var startIndex = y * width + x << 2;
+                var endIndex = (height - 1 - y) * width + x << 2;
+                swapColor(bitmap.pixels, startIndex, endIndex);
+            }
+        }
+
+        done(bitmap);
+    };
+}
+
+function flipH() {
+    return function (bitmap, done) {
+        var width = bitmap.width;
+        var height = bitmap.height;
+        var isCenter = width % 2 == 1 ? 1 : 0;
+
+        var halfWidth = isCenter ? Math.floor(width / 2) : width / 2;
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < halfWidth; x++) {
+
+                var startIndex = y * width + x << 2;
+                var endIndex = y * width + (width - 1 - x) << 2;
+                swapColor(bitmap.pixels, startIndex, endIndex);
+            }
+        }
+
+        done(bitmap);
+    };
+}
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
@@ -205,2219 +517,6 @@ var toConsumableArray = function (arr) {
     return Array.from(arr);
   }
 };
-
-function debounce(callback, delay) {
-
-    var t = undefined;
-
-    return function () {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        if (t) {
-            clearTimeout(t);
-        }
-
-        t = setTimeout(function () {
-            callback.apply(undefined, args);
-        }, delay || 300);
-    };
-}
-
-function get(obj, key, callback) {
-
-    var returnValue = defaultValue(obj[key], key);
-
-    if (isFunction(callback)) {
-        return callback(returnValue);
-    }
-
-    return returnValue;
-}
-
-function defaultValue(value, defaultValue) {
-    return typeof value == 'undefined' ? defaultValue : value;
-}
-
-function isUndefined(value) {
-    return typeof value == 'undefined' || value == null;
-}
-
-function isNotUndefined(value) {
-    return isUndefined(value) === false;
-}
-
-function isArray(value) {
-    return Array.isArray(value);
-}
-
-function isBoolean(value) {
-    return typeof value == 'boolean';
-}
-
-function isString(value) {
-    return typeof value == 'string';
-}
-
-function isNotString(value) {
-    return isString(value) === false;
-}
-
-function isObject(value) {
-    return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object' && !isArray(value) && value !== null;
-}
-
-function isFunction(value) {
-    return typeof value == 'function';
-}
-
-function isNumber(value) {
-    return typeof value == 'number';
-}
-
-function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
-
-function cleanObject(obj) {
-    var realObject = {};
-    Object.keys(obj).filter(function (key) {
-        return !!obj[key];
-    }).forEach(function (key) {
-        realObject[key] = obj[key];
-    });
-
-    return realObject;
-}
-
-function combineKeyArray(obj) {
-    Object.keys(obj).forEach(function (key) {
-        if (Array.isArray(obj[key])) {
-            obj[key] = obj[key].join(', ');
-        }
-    });
-
-    return obj;
-}
-
-function flatKeyValue(obj) {
-    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-    var values = {};
-
-    Object.keys(obj).forEach(function (key) {
-        var realKey = key;
-        if (rootKey !== '') {
-            realKey = rootKey + '.' + key;
-        }
-
-        if (isObject(obj[key])) {
-            values = _extends({}, values, flatKeyValue(obj[key], realKey));
-        } else {
-            values[realKey] = obj[key];
-        }
-    });
-
-    return values;
-}
-
-function repeat(count) {
-    return [].concat(toConsumableArray(Array(count)));
-}
-
-var html = function html(strings) {
-    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-    }
-
-    return strings.map(function (it, index) {
-
-        var results = args[index] || '';
-
-        if (isFunction(results)) {
-            results = results();
-        } else if (isArray(results)) {
-            results = results.join('');
-        }
-
-        return it + results;
-    }).join('');
-};
-
-
-
-var func = Object.freeze({
-	debounce: debounce,
-	get: get,
-	defaultValue: defaultValue,
-	isUndefined: isUndefined,
-	isNotUndefined: isNotUndefined,
-	isArray: isArray,
-	isBoolean: isBoolean,
-	isString: isString,
-	isNotString: isNotString,
-	isObject: isObject,
-	isFunction: isFunction,
-	isNumber: isNumber,
-	clone: clone,
-	cleanObject: cleanObject,
-	combineKeyArray: combineKeyArray,
-	flatKeyValue: flatKeyValue,
-	repeat: repeat,
-	html: html
-});
-
-function format(obj, type) {
-    var defaultColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(0, 0, 0, 0)';
-
-
-    if (Array.isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    if (type == 'hex') {
-        return hex(obj);
-    } else if (type == 'rgb') {
-        return rgb(obj, defaultColor);
-    } else if (type == 'hsl') {
-        return hsl(obj);
-    }
-
-    return obj;
-}
-
-function hex(obj) {
-    if (Array.isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    var r = obj.r.toString(16);
-    if (obj.r < 16) r = "0" + r;
-
-    var g = obj.g.toString(16);
-    if (obj.g < 16) g = "0" + g;
-
-    var b = obj.b.toString(16);
-    if (obj.b < 16) b = "0" + b;
-
-    return '#' + r + g + b;
-}
-
-function rgb(obj) {
-    var defaultColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'rgba(0, 0, 0, 0)';
-
-    if (isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    if (isUndefined(obj)) {
-        return undefined;
-    }
-
-    if (obj.a == 1 || isUndefined(obj.a)) {
-        if (isNaN(obj.r)) {
-            return defaultColor;
-        }
-        return 'rgb(' + obj.r + ',' + obj.g + ',' + obj.b + ')';
-    } else {
-        return 'rgba(' + obj.r + ',' + obj.g + ',' + obj.b + ',' + obj.a + ')';
-    }
-}
-
-function hsl(obj) {
-    if (isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    if (obj.a == 1 || isUndefined(obj.a)) {
-        return 'hsl(' + obj.h + ',' + obj.s + '%,' + obj.l + '%)';
-    } else {
-        return 'hsla(' + obj.h + ',' + obj.s + '%,' + obj.l + '%,' + obj.a + ')';
-    }
-}
-
-var formatter = Object.freeze({
-	format: format,
-	hex: hex,
-	rgb: rgb,
-	hsl: hsl
-});
-
-function round(n, k) {
-    k = isUndefined(k) ? 1 : k;
-    return Math.round(n * k) / k;
-}
-
-function degreeToRadian(degrees) {
-    return degrees * Math.PI / 180;
-}
-
-/**
- * 
- * convert radian to degree 
- * 
- * @param {*} radian 
- * @returns {Number} 0..360
- */
-function radianToDegree(radian) {
-    var angle = radian * 180 / Math.PI;
-
-    if (angle < 0) {
-        // 각도가 0보다 작으면 360 에서 반전시킨다. 
-        angle = 360 + angle;
-    }
-
-    return angle;
-}
-
-function getXInCircle(angle, radius) {
-    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-    return centerX + radius * Math.cos(degreeToRadian(angle));
-}
-
-function getYInCircle(angle, radius) {
-    var centerY = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-    return centerY + radius * Math.sin(degreeToRadian(angle));
-}
-
-function getXYInCircle(angle, radius) {
-    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-    return {
-        x: getXInCircle(angle, radius, centerX),
-        y: getYInCircle(angle, radius, centerY)
-    };
-}
-
-function getDist(x, y) {
-    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-    return Math.sqrt(Math.pow(Math.abs(centerX - x), 2) + Math.pow(Math.abs(centerY - y), 2));
-}
-
-function caculateAngle(rx, ry) {
-    return radianToDegree(Math.atan2(ry, rx));
-}
-
-function uuid() {
-    var dt = new Date().getTime();
-    var uuid = 'xxx12-xx-34xx'.replace(/[xy]/g, function (c) {
-        var r = (dt + Math.random() * 16) % 16 | 0;
-        dt = Math.floor(dt / 16);
-        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
-    });
-    return uuid;
-}
-
-var bezierCalc = {
-    B1: function B1(t) {
-        return t * t * t;
-    },
-    B2: function B2(t) {
-        return 3 * t * t * (1 - t);
-    },
-    B3: function B3(t) {
-        return 3 * t * (1 - t) * (1 - t);
-    },
-    B4: function B4(t) {
-        return (1 - t) * (1 - t) * (1 - t);
-    }
-};
-
-function cubicBezier(x1, y1, x2, y2) {
-    var C2 = { x: x1, y: y1 };
-    var C3 = { x: x2, y: y2 };
-    return function (progress) {
-        // var x = C1.x * bezierCalc.B1(p) + C2.x*bezierCalc.B2(p) + C3.x*bezierCalc.B3(p) + C4.x*bezierCalc.B4(p);
-        // var y = C1.y * bezierCalc.B1(progress) + C2.y*bezierCalc.B2(progress) + C3.y*bezierCalc.B3(progress) + C4.y*bezierCalc.B4(progress);
-
-        var y = C2.y * bezierCalc.B2(progress) + C3.y * bezierCalc.B3(progress) + bezierCalc.B4(progress);
-
-        return 1 - y;
-    };
-}
-
-function getGradientLine(angle, box) {
-    var length = Math.abs(box.width * Math.sin(angle)) + Math.abs(box.height * Math.cos(angle));
-    var center = {
-        x: box.x + box.width / 2,
-        y: box.y + box.height / 2
-    };
-
-    var yDiff = Math.sin(angle - Math.PI / 2) * length / 2;
-    var xDiff = Math.cos(angle - Math.PI / 2) * length / 2;
-
-    return {
-        length: length,
-        center: center,
-        start: {
-            x: center.x - xDiff,
-            y: center.y - yDiff
-        },
-        end: {
-            x: center.x + xDiff,
-            y: center.y + yDiff
-        }
-    };
-}
-
-var math = Object.freeze({
-	round: round,
-	degreeToRadian: degreeToRadian,
-	radianToDegree: radianToDegree,
-	getXInCircle: getXInCircle,
-	getYInCircle: getYInCircle,
-	getXYInCircle: getXYInCircle,
-	getDist: getDist,
-	caculateAngle: caculateAngle,
-	uuid: uuid,
-	cubicBezier: cubicBezier,
-	getGradientLine: getGradientLine
-});
-
-function RGBtoHSV(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            r = _arguments$.r,
-            g = _arguments$.g,
-            b = _arguments$.b;
-    }
-
-    var R1 = r / 255;
-    var G1 = g / 255;
-    var B1 = b / 255;
-
-    var MaxC = Math.max(R1, G1, B1);
-    var MinC = Math.min(R1, G1, B1);
-
-    var DeltaC = MaxC - MinC;
-
-    var H = 0;
-
-    if (DeltaC == 0) {
-        H = 0;
-    } else if (MaxC == R1) {
-        H = 60 * ((G1 - B1) / DeltaC % 6);
-    } else if (MaxC == G1) {
-        H = 60 * ((B1 - R1) / DeltaC + 2);
-    } else if (MaxC == B1) {
-        H = 60 * ((R1 - G1) / DeltaC + 4);
-    }
-
-    if (H < 0) {
-        H = 360 + H;
-    }
-
-    var S = 0;
-
-    if (MaxC == 0) S = 0;else S = DeltaC / MaxC;
-
-    var V = MaxC;
-
-    return { h: H, s: S, v: V };
-}
-
-function RGBtoCMYK(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            r = _arguments$2.r,
-            g = _arguments$2.g,
-            b = _arguments$2.b;
-    }
-
-    var R1 = r / 255;
-    var G1 = g / 255;
-    var B1 = b / 255;
-
-    var K = 1 - Math.max(R1, G1, B1);
-    var C = (1 - R1 - K) / (1 - K);
-    var M = (1 - G1 - K) / (1 - K);
-    var Y = (1 - B1 - K) / (1 - K);
-
-    return { c: C, m: M, y: Y, k: K };
-}
-
-function RGBtoHSL(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$3 = arguments[0],
-            r = _arguments$3.r,
-            g = _arguments$3.g,
-            b = _arguments$3.b;
-    }
-
-    r /= 255, g /= 255, b /= 255;
-    var max = Math.max(r, g, b),
-        min = Math.min(r, g, b);
-    var h,
-        s,
-        l = (max + min) / 2;
-
-    if (max == min) {
-        h = s = 0; // achromatic
-    } else {
-        var d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r:
-                h = (g - b) / d + (g < b ? 6 : 0);break;
-            case g:
-                h = (b - r) / d + 2;break;
-            case b:
-                h = (r - g) / d + 4;break;
-        }
-        h /= 6;
-    }
-
-    return { h: round(h * 360), s: round(s * 100), l: round(l * 100) };
-}
-
-function c(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$4 = arguments[0],
-            r = _arguments$4.r,
-            g = _arguments$4.g,
-            b = _arguments$4.b;
-    }
-    return gray((r + g + b) / 3 > 90 ? 0 : 255);
-}
-
-function gray(gray) {
-    return { r: gray, g: gray, b: gray };
-}
-
-function RGBtoSimpleGray(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$5 = arguments[0],
-            r = _arguments$5.r,
-            g = _arguments$5.g,
-            b = _arguments$5.b;
-    }
-    return gray(Math.ceil((r + g + b) / 3));
-}
-
-function RGBtoGray(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$6 = arguments[0],
-            r = _arguments$6.r,
-            g = _arguments$6.g,
-            b = _arguments$6.b;
-    }
-    return gray(RGBtoYCrCb(r, g, b).y);
-}
-
-function brightness(r, g, b) {
-    return Math.ceil(r * 0.2126 + g * 0.7152 + b * 0.0722);
-}
-
-function RGBtoYCrCb(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$7 = arguments[0],
-            r = _arguments$7.r,
-            g = _arguments$7.g,
-            b = _arguments$7.b;
-    }
-    var Y = brightness(r, g, b);
-    var Cb = 0.564 * (b - Y);
-    var Cr = 0.713 * (r - Y);
-
-    return { y: Y, cr: Cr, cb: Cb };
-}
-
-function PivotRGB(n) {
-    return (n > 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92) * 100;
-}
-
-function RGBtoXYZ(r, g, b) {
-    //sR, sG and sB (Standard RGB) input range = 0 ÷ 255
-    //X, Y and Z output refer to a D65/2° standard illuminant.
-    if (arguments.length == 1) {
-        var _arguments$8 = arguments[0],
-            r = _arguments$8.r,
-            g = _arguments$8.g,
-            b = _arguments$8.b;
-    }
-
-    var R = r / 255;
-    var G = g / 255;
-    var B = b / 255;
-
-    R = PivotRGB(R);
-    G = PivotRGB(G);
-    B = PivotRGB(B);
-
-    var x = R * 0.4124 + G * 0.3576 + B * 0.1805;
-    var y = R * 0.2126 + G * 0.7152 + B * 0.0722;
-    var z = R * 0.0193 + G * 0.1192 + B * 0.9505;
-
-    return { x: x, y: y, z: z };
-}
-
-function RGBtoLAB(r, g, b) {
-    if (arguments.length == 1) {
-        var _arguments$9 = arguments[0],
-            r = _arguments$9.r,
-            g = _arguments$9.g,
-            b = _arguments$9.b;
-    }
-    return XYZtoLAB(RGBtoXYZ(r, g, b));
-}
-
-var fromRGB = Object.freeze({
-	RGBtoHSV: RGBtoHSV,
-	RGBtoCMYK: RGBtoCMYK,
-	RGBtoHSL: RGBtoHSL,
-	c: c,
-	gray: gray,
-	RGBtoSimpleGray: RGBtoSimpleGray,
-	RGBtoGray: RGBtoGray,
-	brightness: brightness,
-	RGBtoYCrCb: RGBtoYCrCb,
-	PivotRGB: PivotRGB,
-	RGBtoXYZ: RGBtoXYZ,
-	RGBtoLAB: RGBtoLAB
-});
-
-function CMYKtoRGB(c, m, y, k) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            c = _arguments$.c,
-            m = _arguments$.m,
-            y = _arguments$.y,
-            k = _arguments$.k;
-    }
-
-    var R = 255 * (1 - c) * (1 - k);
-    var G = 255 * (1 - m) * (1 - k);
-    var B = 255 * (1 - y) * (1 - k);
-
-    return { r: R, g: G, b: B };
-}
-
-var fromCMYK = Object.freeze({
-	CMYKtoRGB: CMYKtoRGB
-});
-
-function ReverseXyz(n) {
-    return Math.pow(n, 3) > 0.008856 ? Math.pow(n, 3) : (n - 16 / 116) / 7.787;
-}
-
-function ReverseRGB(n) {
-    return n > 0.0031308 ? 1.055 * Math.pow(n, 1 / 2.4) - 0.055 : 12.92 * n;
-}
-
-function XYZtoRGB(x, y, z) {
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            x = _arguments$.x,
-            y = _arguments$.y,
-            z = _arguments$.z;
-    }
-    //X, Y and Z input refer to a D65/2° standard illuminant.
-    //sR, sG and sB (standard RGB) output range = 0 ÷ 255
-
-    var X = x / 100.0;
-    var Y = y / 100.0;
-    var Z = z / 100.0;
-
-    var R = X * 3.2406 + Y * -1.5372 + Z * -0.4986;
-    var G = X * -0.9689 + Y * 1.8758 + Z * 0.0415;
-    var B = X * 0.0557 + Y * -0.2040 + Z * 1.0570;
-
-    R = ReverseRGB(R);
-    G = ReverseRGB(G);
-    B = ReverseRGB(B);
-
-    var r = round(R * 255);
-    var g = round(G * 255);
-    var b = round(B * 255);
-
-    return { r: r, g: g, b: b };
-}
-
-function LABtoXYZ(l, a, b) {
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            l = _arguments$2.l,
-            a = _arguments$2.a,
-            b = _arguments$2.b;
-    }
-    //Reference-X, Y and Z refer to specific illuminants and observers.
-    //Common reference values are available below in this same page.
-
-    var Y = (l + 16) / 116;
-    var X = a / 500 + Y;
-    var Z = Y - b / 200;
-
-    Y = ReverseXyz(Y);
-    X = ReverseXyz(X);
-    Z = ReverseXyz(Z);
-
-    var x = X * 95.047;
-    var y = Y * 100.000;
-    var z = Z * 108.883;
-
-    return { x: x, y: y, z: z };
-}
-
-function PivotXyz(n) {
-    return n > 0.008856 ? Math.pow(n, 1 / 3) : (7.787 * n + 16) / 116;
-}
-
-function XYZtoLAB$1(x, y, z) {
-    if (arguments.length == 1) {
-        var _arguments$3 = arguments[0],
-            x = _arguments$3.x,
-            y = _arguments$3.y,
-            z = _arguments$3.z;
-    }
-
-    //Reference-X, Y and Z refer to specific illuminants and observers.
-    //Common reference values are available below in this same page.
-    // Observer= 2°, Illuminant= D65
-
-    var X = x / 95.047;
-    var Y = y / 100.00;
-    var Z = z / 108.883;
-
-    X = PivotXyz(X);
-    Y = PivotXyz(Y);
-    Z = PivotXyz(Z);
-
-    var l = 116 * Y - 16;
-    var a = 500 * (X - Y);
-    var b = 200 * (Y - Z);
-
-    return { l: l, a: a, b: b };
-}
-
-function LABtoRGB(l, a, b) {
-    if (arguments.length == 1) {
-        var _arguments$4 = arguments[0],
-            l = _arguments$4.l,
-            a = _arguments$4.a,
-            b = _arguments$4.b;
-    }
-    return XYZtoRGB(LABtoXYZ(l, a, b));
-}
-
-var fromLAB = Object.freeze({
-	ReverseXyz: ReverseXyz,
-	ReverseRGB: ReverseRGB,
-	XYZtoRGB: XYZtoRGB,
-	LABtoXYZ: LABtoXYZ,
-	PivotXyz: PivotXyz,
-	XYZtoLAB: XYZtoLAB$1,
-	LABtoRGB: LABtoRGB
-});
-
-function HSVtoRGB(h, s, v) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            h = _arguments$.h,
-            s = _arguments$.s,
-            v = _arguments$.v;
-    }
-
-    var H = h;
-    var S = s;
-    var V = v;
-
-    if (H >= 360) {
-        H = 0;
-    }
-
-    var C = S * V;
-    var X = C * (1 - Math.abs(H / 60 % 2 - 1));
-    var m = V - C;
-
-    var temp = [];
-
-    if (0 <= H && H < 60) {
-        temp = [C, X, 0];
-    } else if (60 <= H && H < 120) {
-        temp = [X, C, 0];
-    } else if (120 <= H && H < 180) {
-        temp = [0, C, X];
-    } else if (180 <= H && H < 240) {
-        temp = [0, X, C];
-    } else if (240 <= H && H < 300) {
-        temp = [X, 0, C];
-    } else if (300 <= H && H < 360) {
-        temp = [C, 0, X];
-    }
-
-    return {
-        r: round((temp[0] + m) * 255),
-        g: round((temp[1] + m) * 255),
-        b: round((temp[2] + m) * 255)
-    };
-}
-
-function HSVtoHSL(h, s, v) {
-
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            h = _arguments$2.h,
-            s = _arguments$2.s,
-            v = _arguments$2.v;
-    }
-
-    var rgb = HSVtoRGB(h, s, v);
-
-    return RGBtoHSL(rgb.r, rgb.g, rgb.b);
-}
-
-var fromHSV = Object.freeze({
-	HSVtoRGB: HSVtoRGB,
-	HSVtoHSL: HSVtoHSL
-});
-
-function HUEtoRGB(p, q, t) {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-}
-
-function HSLtoHSV(h, s, l) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            h = _arguments$.h,
-            s = _arguments$.s,
-            l = _arguments$.l;
-    }
-    var rgb = HSLtoRGB(h, s, l);
-
-    return RGBtoHSV(rgb.r, rgb.g, rgb.b);
-}
-
-function HSLtoRGB(h, s, l) {
-
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            h = _arguments$2.h,
-            s = _arguments$2.s,
-            l = _arguments$2.l;
-    }
-
-    var r, g, b;
-
-    h /= 360;
-    s /= 100;
-    l /= 100;
-
-    if (s == 0) {
-        r = g = b = l; // achromatic
-    } else {
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
-        r = HUEtoRGB(p, q, h + 1 / 3);
-        g = HUEtoRGB(p, q, h);
-        b = HUEtoRGB(p, q, h - 1 / 3);
-    }
-
-    return { r: round(r * 255), g: round(g * 255), b: round(b * 255) };
-}
-
-var fromHSL = Object.freeze({
-	HUEtoRGB: HUEtoRGB,
-	HSLtoHSV: HSLtoHSV,
-	HSLtoRGB: HSLtoRGB
-});
-
-function YCrCbtoRGB(y, cr, cb, bit) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            y = _arguments$.y,
-            cr = _arguments$.cr,
-            cb = _arguments$.cb,
-            bit = _arguments$.bit;
-
-        bit = bit || 0;
-    }
-    var R = y + 1.402 * (cr - bit);
-    var G = y - 0.344 * (cb - bit) - 0.714 * (cr - bit);
-    var B = y + 1.772 * (cb - bit);
-
-    return { r: Math.ceil(R), g: Math.ceil(G), b: Math.ceil(B) };
-}
-
-var fromYCrCb = Object.freeze({
-	YCrCbtoRGB: YCrCbtoRGB
-});
-
-var color_names = { aliceblue: "rgb(240, 248, 255)", antiquewhite: "rgb(250, 235, 215)", aqua: "rgb(0, 255, 255)", aquamarine: "rgb(127, 255, 212)", azure: "rgb(240, 255, 255)", beige: "rgb(245, 245, 220)", bisque: "rgb(255, 228, 196)", black: "rgb(0, 0, 0)", blanchedalmond: "rgb(255, 235, 205)", blue: "rgb(0, 0, 255)", blueviolet: "rgb(138, 43, 226)", brown: "rgb(165, 42, 42)", burlywood: "rgb(222, 184, 135)", cadetblue: "rgb(95, 158, 160)", chartreuse: "rgb(127, 255, 0)", chocolate: "rgb(210, 105, 30)", coral: "rgb(255, 127, 80)", cornflowerblue: "rgb(100, 149, 237)", cornsilk: "rgb(255, 248, 220)", crimson: "rgb(237, 20, 61)", cyan: "rgb(0, 255, 255)", darkblue: "rgb(0, 0, 139)", darkcyan: "rgb(0, 139, 139)", darkgoldenrod: "rgb(184, 134, 11)", darkgray: "rgb(169, 169, 169)", darkgrey: "rgb(169, 169, 169)", darkgreen: "rgb(0, 100, 0)", darkkhaki: "rgb(189, 183, 107)", darkmagenta: "rgb(139, 0, 139)", darkolivegreen: "rgb(85, 107, 47)", darkorange: "rgb(255, 140, 0)", darkorchid: "rgb(153, 50, 204)", darkred: "rgb(139, 0, 0)", darksalmon: "rgb(233, 150, 122)", darkseagreen: "rgb(143, 188, 143)", darkslateblue: "rgb(72, 61, 139)", darkslategray: "rgb(47, 79, 79)", darkslategrey: "rgb(47, 79, 79)", darkturquoise: "rgb(0, 206, 209)", darkviolet: "rgb(148, 0, 211)", deeppink: "rgb(255, 20, 147)", deepskyblue: "rgb(0, 191, 255)", dimgray: "rgb(105, 105, 105)", dimgrey: "rgb(105, 105, 105)", dodgerblue: "rgb(30, 144, 255)", firebrick: "rgb(178, 34, 34)", floralwhite: "rgb(255, 250, 240)", forestgreen: "rgb(34, 139, 34)", fuchsia: "rgb(255, 0, 255)", gainsboro: "rgb(220, 220, 220)", ghostwhite: "rgb(248, 248, 255)", gold: "rgb(255, 215, 0)", goldenrod: "rgb(218, 165, 32)", gray: "rgb(128, 128, 128)", grey: "rgb(128, 128, 128)", green: "rgb(0, 128, 0)", greenyellow: "rgb(173, 255, 47)", honeydew: "rgb(240, 255, 240)", hotpink: "rgb(255, 105, 180)", indianred: "rgb(205, 92, 92)", indigo: "rgb(75, 0, 130)", ivory: "rgb(255, 255, 240)", khaki: "rgb(240, 230, 140)", lavender: "rgb(230, 230, 250)", lavenderblush: "rgb(255, 240, 245)", lawngreen: "rgb(124, 252, 0)", lemonchiffon: "rgb(255, 250, 205)", lightblue: "rgb(173, 216, 230)", lightcoral: "rgb(240, 128, 128)", lightcyan: "rgb(224, 255, 255)", lightgoldenrodyellow: "rgb(250, 250, 210)", lightgreen: "rgb(144, 238, 144)", lightgray: "rgb(211, 211, 211)", lightgrey: "rgb(211, 211, 211)", lightpink: "rgb(255, 182, 193)", lightsalmon: "rgb(255, 160, 122)", lightseagreen: "rgb(32, 178, 170)", lightskyblue: "rgb(135, 206, 250)", lightslategray: "rgb(119, 136, 153)", lightslategrey: "rgb(119, 136, 153)", lightsteelblue: "rgb(176, 196, 222)", lightyellow: "rgb(255, 255, 224)", lime: "rgb(0, 255, 0)", limegreen: "rgb(50, 205, 50)", linen: "rgb(250, 240, 230)", magenta: "rgb(255, 0, 255)", maroon: "rgb(128, 0, 0)", mediumaquamarine: "rgb(102, 205, 170)", mediumblue: "rgb(0, 0, 205)", mediumorchid: "rgb(186, 85, 211)", mediumpurple: "rgb(147, 112, 219)", mediumseagreen: "rgb(60, 179, 113)", mediumslateblue: "rgb(123, 104, 238)", mediumspringgreen: "rgb(0, 250, 154)", mediumturquoise: "rgb(72, 209, 204)", mediumvioletred: "rgb(199, 21, 133)", midnightblue: "rgb(25, 25, 112)", mintcream: "rgb(245, 255, 250)", mistyrose: "rgb(255, 228, 225)", moccasin: "rgb(255, 228, 181)", navajowhite: "rgb(255, 222, 173)", navy: "rgb(0, 0, 128)", oldlace: "rgb(253, 245, 230)", olive: "rgb(128, 128, 0)", olivedrab: "rgb(107, 142, 35)", orange: "rgb(255, 165, 0)", orangered: "rgb(255, 69, 0)", orchid: "rgb(218, 112, 214)", palegoldenrod: "rgb(238, 232, 170)", palegreen: "rgb(152, 251, 152)", paleturquoise: "rgb(175, 238, 238)", palevioletred: "rgb(219, 112, 147)", papayawhip: "rgb(255, 239, 213)", peachpuff: "rgb(255, 218, 185)", peru: "rgb(205, 133, 63)", pink: "rgb(255, 192, 203)", plum: "rgb(221, 160, 221)", powderblue: "rgb(176, 224, 230)", purple: "rgb(128, 0, 128)", rebeccapurple: "rgb(102, 51, 153)", red: "rgb(255, 0, 0)", rosybrown: "rgb(188, 143, 143)", royalblue: "rgb(65, 105, 225)", saddlebrown: "rgb(139, 69, 19)", salmon: "rgb(250, 128, 114)", sandybrown: "rgb(244, 164, 96)", seagreen: "rgb(46, 139, 87)", seashell: "rgb(255, 245, 238)", sienna: "rgb(160, 82, 45)", silver: "rgb(192, 192, 192)", skyblue: "rgb(135, 206, 235)", slateblue: "rgb(106, 90, 205)", slategray: "rgb(112, 128, 144)", slategrey: "rgb(112, 128, 144)", snow: "rgb(255, 250, 250)", springgreen: "rgb(0, 255, 127)", steelblue: "rgb(70, 130, 180)", tan: "rgb(210, 180, 140)", teal: "rgb(0, 128, 128)", thistle: "rgb(216, 191, 216)", tomato: "rgb(255, 99, 71)", turquoise: "rgb(64, 224, 208)", violet: "rgb(238, 130, 238)", wheat: "rgb(245, 222, 179)", white: "rgb(255, 255, 255)", whitesmoke: "rgb(245, 245, 245)", yellow: "rgb(255, 255, 0)", yellowgreen: "rgb(154, 205, 50)", transparent: "rgba(0, 0, 0, 0)" };
-
-function isColorName(name) {
-    return !!color_names[name];
-}
-
-function getColorByName(name) {
-    return color_names[name];
-}
-
-var ColorNames = {
-    isColorName: isColorName,
-    getColorByName: getColorByName
-};
-
-var color_regexp = /(#(?:[\da-f]{3}){1,2}|rgb\((?:\s*\d{1,3},\s*){2}\d{1,3}\s*\)|rgba\((?:\s*\d{1,3},\s*){3}\d*\.?\d+\s*\)|hsl\(\s*\d{1,3}(?:,\s*\d{1,3}%){2}\s*\)|hsla\(\s*\d{1,3}(?:,\s*\d{1,3}%){2},\s*\d*\.?\d+\s*\)|([\w_\-]+))/gi;
-function matches(str) {
-    var matches = str.match(color_regexp);
-    var result = [];
-
-    if (!matches) {
-        return result;
-    }
-
-    for (var i = 0, len = matches.length; i < len; i++) {
-
-        if (matches[i].indexOf('#') > -1 || matches[i].indexOf('rgb') > -1 || matches[i].indexOf('hsl') > -1) {
-            result.push({ color: matches[i] });
-        } else {
-            var nameColor = ColorNames.getColorByName(matches[i]);
-
-            if (nameColor) {
-                result.push({ color: matches[i], nameColor: nameColor });
-            }
-        }
-    }
-
-    var pos = { next: 0 };
-    result.forEach(function (item) {
-        var startIndex = str.indexOf(item.color, pos.next);
-
-        item.startIndex = startIndex;
-        item.endIndex = startIndex + item.color.length;
-
-        pos.next = item.endIndex;
-    });
-
-    return result;
-}
-
-function convertMatches(str) {
-    var m = matches(str);
-
-    m.forEach(function (it, index) {
-        str = str.replace(it.color, '@' + index);
-    });
-
-    return { str: str, matches: m };
-}
-
-function convertMatchesArray(str) {
-    var splitStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
-
-    var ret = convertMatches(str);
-    return ret.str.split(splitStr).map(function (it, index) {
-        it = trim(it);
-
-        if (ret.matches[index]) {
-            it = it.replace('@' + index, ret.matches[index].color);
-        }
-
-        return it;
-    });
-}
-
-function reverseMatches(str, matches) {
-    matches.forEach(function (it, index) {
-        str = str.replace('@' + index, it.color);
-    });
-
-    return str;
-}
-
-function trim(str) {
-    return str.replace(/^\s+|\s+$/g, '');
-}
-
-/**
- * @method rgb
- *
- * parse string to rgb color
- *
- * 		color.parse("#FF0000") === { r : 255, g : 0, b : 0 }
- *
- * 		color.parse("rgb(255, 0, 0)") == { r : 255, g : 0, b :0 }
- * 		color.parse(0xff0000) == { r : 255, g : 0, b : 0 }
- * 		color.parse(0xff000000) == { r : 255, g : 0, b : 0, a: 0 }
- *
- * @param {String} str color string
- * @returns {Object}  rgb object
- */
-function parse(str) {
-    if (isString(str)) {
-
-        if (ColorNames.isColorName(str)) {
-            str = ColorNames.getColorByName(str);
-        }
-
-        if (str.indexOf("rgb(") > -1) {
-            var arr = str.replace("rgb(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-                arr[i] = parseInt(trim(arr[i]), 10);
-            }
-
-            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: 1 };
-
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        } else if (str.indexOf("rgba(") > -1) {
-            var arr = str.replace("rgba(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-
-                if (len - 1 == i) {
-                    arr[i] = parseFloat(trim(arr[i]));
-                } else {
-                    arr[i] = parseInt(trim(arr[i]), 10);
-                }
-            }
-
-            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: arr[3] };
-
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        } else if (str.indexOf("hsl(") > -1) {
-            var arr = str.replace("hsl(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-                arr[i] = parseFloat(trim(arr[i]));
-            }
-
-            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: 1 };
-
-            obj = _extends({}, obj, HSLtoRGB(obj));
-
-            return obj;
-        } else if (str.indexOf("hsla(") > -1) {
-            var arr = str.replace("hsla(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-
-                if (len - 1 == i) {
-                    arr[i] = parseFloat(trim(arr[i]));
-                } else {
-                    arr[i] = parseInt(trim(arr[i]), 10);
-                }
-            }
-
-            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: arr[3] };
-
-            obj = _extends({}, obj, HSLtoRGB(obj));
-
-            return obj;
-        } else if (str.indexOf("#") == 0) {
-
-            str = str.replace("#", "");
-
-            var arr = [];
-            if (str.length == 3) {
-                for (var i = 0, len = str.length; i < len; i++) {
-                    var char = str.substr(i, 1);
-                    arr.push(parseInt(char + char, 16));
-                }
-            } else {
-                for (var i = 0, len = str.length; i < len; i += 2) {
-                    arr.push(parseInt(str.substr(i, 2), 16));
-                }
-            }
-
-            var obj = { type: 'hex', r: arr[0], g: arr[1], b: arr[2], a: 1 };
-
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        }
-    } else if (isNumber(str)) {
-        if (0x000000 <= str && str <= 0xffffff) {
-            var r = (str & 0xff0000) >> 16;
-            var g = (str & 0x00ff00) >> 8;
-            var b = (str & 0x0000ff) >> 0;
-
-            var obj = { type: 'hex', r: r, g: g, b: b, a: 1 };
-            obj = _extends({}, obj, RGBtoHSL(obj));
-            return obj;
-        } else if (0x00000000 <= str && str <= 0xffffffff) {
-            var _r = (str & 0xff000000) >> 24;
-            var _g = (str & 0x00ff0000) >> 16;
-            var _b = (str & 0x0000ff00) >> 8;
-            var a = (str & 0x000000ff) / 255;
-
-            var obj = { type: 'hex', r: _r, g: _g, b: _b, a: a };
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        }
-    }
-
-    return str;
-}
-
-function parseGradient(colors) {
-    if (isString(colors)) {
-        colors = convertMatchesArray(colors);
-    }
-
-    colors = colors.map(function (it) {
-        if (isString(it)) {
-            var ret = convertMatches(it);
-            var arr = trim(ret.str).split(' ');
-
-            if (arr[1]) {
-                if (arr[1].includes('%')) {
-                    arr[1] = parseFloat(arr[1].replace(/%/, '')) / 100;
-                } else {
-                    arr[1] = parseFloat(arr[1]);
-                }
-            } else {
-                arr[1] = '*';
-            }
-
-            arr[0] = reverseMatches(arr[0], ret.matches);
-
-            return arr;
-        } else if (Array.isArray(it)) {
-
-            if (!it[1]) {
-                it[1] = '*';
-            } else if (isString(it[1])) {
-                if (it[1].includes('%')) {
-                    it[1] = parseFloat(it[1].replace(/%/, '')) / 100;
-                } else {
-                    it[1] = +it[1];
-                }
-            }
-
-            return [].concat(toConsumableArray(it));
-        }
-    });
-
-    var count = colors.filter(function (it) {
-        return it[1] === '*';
-    }).length;
-
-    if (count > 0) {
-        var sum = colors.filter(function (it) {
-            return it[1] != '*' && it[1] != 1;
-        }).map(function (it) {
-            return it[1];
-        }).reduce(function (total, cur) {
-            return total + cur;
-        }, 0);
-
-        var dist = (1 - sum) / count;
-        colors.forEach(function (it, index) {
-            if (it[1] == '*' && index > 0) {
-                if (colors.length - 1 == index) {
-                    // it[1] = 1 
-                } else {
-                    it[1] = dist;
-                }
-            }
-        });
-    }
-
-    return colors;
-}
-
-
-
-var parser = Object.freeze({
-	matches: matches,
-	convertMatches: convertMatches,
-	convertMatchesArray: convertMatchesArray,
-	reverseMatches: reverseMatches,
-	trim: trim,
-	parse: parse,
-	parseGradient: parseGradient
-});
-
-function interpolateRGB(startColor, endColor) {
-    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
-
-    var obj = interpolateRGBObject(startColor, endColor, t);
-
-    return format(obj, obj.a < 1 ? 'rgb' : exportFormat);
-}
-
-function interpolateRGBObject(startColor, endColor) {
-    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-
-    return {
-        r: round(startColor.r + (endColor.r - startColor.r) * t),
-        g: round(startColor.g + (endColor.g - startColor.g) * t),
-        b: round(startColor.b + (endColor.b - startColor.b) * t),
-        a: round(startColor.a + (endColor.a - startColor.a) * t, 100)
-    };
-}
-
-function scale(scale) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
-
-    if (!scale) return [];
-
-    if (isString(scale)) {
-        scale = convertMatchesArray(scale);
-    }
-
-    scale = scale || [];
-    var len = scale.length;
-
-    var colors = [];
-    for (var i = 0; i < len - 1; i++) {
-        for (var index = 0; index < count; index++) {
-            colors.push(blend(scale[i], scale[i + 1], index / count));
-        }
-    }
-    return colors;
-}
-
-function blend(startColor, endColor) {
-    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
-
-    var s = parse(startColor);
-    var e = parse(endColor);
-
-    return interpolateRGB(s, e, ratio, format$$1);
-}
-
-function mix(startcolor, endColor) {
-    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
-
-    return blend(startcolor, endColor, ratio, format$$1);
-}
-
-/**
- * 
- * @param {Color|String} c 
- */
-function contrast(c$$1) {
-    c$$1 = parse(c$$1);
-    return (Math.round(c$$1.r * 299) + Math.round(c$$1.g * 587) + Math.round(c$$1.b * 114)) / 1000;
-}
-
-function contrastColor(c$$1) {
-    return contrast(c$$1) >= 128 ? 'black' : 'white';
-}
-
-function gradient(colors) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
-
-    colors = parseGradient(colors);
-
-    var newColors = [];
-    var maxCount = count - (colors.length - 1);
-    var allCount = maxCount;
-
-    for (var i = 1, len = colors.length; i < len; i++) {
-
-        var startColor = colors[i - 1][0];
-        var endColor = colors[i][0];
-
-        // if it is second color
-        var rate = i == 1 ? colors[i][1] : colors[i][1] - colors[i - 1][1];
-
-        // if it is last color 
-        var colorCount = i == colors.length - 1 ? allCount : Math.floor(rate * maxCount);
-
-        newColors = newColors.concat(scale([startColor, endColor], colorCount), [endColor]);
-
-        allCount -= colorCount;
-    }
-    return newColors;
-}
-
-function scaleHSV(color) {
-    var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'h';
-    var count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 9;
-    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'rgb';
-    var min = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-    var max = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1;
-    var dist = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 100;
-
-    var colorObj = parse(color);
-    var hsv = RGBtoHSV(colorObj);
-    var unit = (max - min) * dist / count;
-
-    var results = [];
-    for (var i = 1; i <= count; i++) {
-        hsv[target] = Math.abs((dist - unit * i) / dist);
-        results.push(format(HSVtoRGB(hsv), exportFormat));
-    }
-
-    return results;
-}
-
-function scaleH(color) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
-    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 360;
-
-    return scaleHSV(color, 'h', count, exportFormat, min, max, 1);
-}
-
-function scaleS(color) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
-    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
-
-    return scaleHSV(color, 's', count, exportFormat, min, max, 100);
-}
-
-function scaleV(color) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
-    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
-
-    return scaleHSV(color, 'v', count, exportFormat, min, max, 100);
-}
-
-/* predefined scale colors */
-scale.parula = function (count) {
-    return scale(['#352a87', '#0f5cdd', '#00b5a6', '#ffc337', '#fdff00'], count);
-};
-
-scale.jet = function (count) {
-    return scale(['#00008f', '#0020ff', '#00ffff', '#51ff77', '#fdff00', '#ff0000', '#800000'], count);
-};
-
-scale.hsv = function (count) {
-    return scale(['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ff0000'], count);
-};
-
-scale.hot = function (count) {
-    return scale(['#0b0000', '#ff0000', '#ffff00', '#ffffff'], count);
-};
-scale.pink = function (count) {
-    return scale(['#1e0000', '#bd7b7b', '#e7e5b2', '#ffffff'], count);
-};
-
-scale.bone = function (count) {
-    return scale(['#000000', '#4a4a68', '#a6c6c6', '#ffffff'], count);
-};
-
-scale.copper = function (count) {
-    return scale(['#000000', '#3d2618', '#9d623e', '#ffa167', '#ffc77f'], count);
-};
-
-var mixin = Object.freeze({
-	interpolateRGB: interpolateRGB,
-	interpolateRGBObject: interpolateRGBObject,
-	scale: scale,
-	blend: blend,
-	mix: mix,
-	contrast: contrast,
-	contrastColor: contrastColor,
-	gradient: gradient,
-	scaleHSV: scaleHSV,
-	scaleH: scaleH,
-	scaleS: scaleS,
-	scaleV: scaleV
-});
-
-function array_equals(v1, v2) {
-    if (v1.length !== v2.length) return false;
-    for (var i = 0, len = v1.length; i < len; ++i) {
-        if (v1[i] !== v2[i]) return false;
-    }
-    return true;
-}
-
-function euclidean(v1, v2) {
-    var total = 0;
-
-    for (var i = 0, len = v1.length; i < len; i++) {
-        total += Math.pow(v2[i] - v1[i], 2);
-    }
-
-    return Math.sqrt(total);
-}
-
-function manhattan(v1, v2) {
-    var total = 0;
-
-    for (var i = 0, len = v1.length; i < len; i++) {
-        total += Math.abs(v2[i] - v1[i]);
-    }
-
-    return total;
-}
-
-function max(v1, v2) {
-    var max = 0;
-    for (var i = 0, len = v1.length; i < len; i++) {
-        max = Math.max(max, Math.abs(v2[i] - v1[i]));
-    }
-
-    return max;
-}
-
-var distances = {
-    euclidean: euclidean,
-    manhattan: manhattan,
-    max: max
-};
-
-var create_random_number = {
-    linear: function linear(num, count) {
-        var centeroids = [];
-        var start = Math.round(Math.random() * num);
-        var dist = Math.floor(num / count);
-
-        do {
-
-            centeroids.push(start);
-
-            start = (start + dist) % num;
-        } while (centeroids.length < count);
-
-        return centeroids;
-    },
-
-    shuffle: function shuffle(num, count) {
-        var centeroids = [];
-
-        while (centeroids.length < count) {
-
-            var index = Math.round(Math.random() * num);
-
-            if (centeroids.indexOf(index) == -1) {
-                centeroids.push(index);
-            }
-        }
-
-        return centeroids;
-    }
-
-};
-
-function randomCentroids(points, k) {
-    var method = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
-
-
-    var centeroids = create_random_number[method](points.length, k);
-
-    return centeroids.map(function (i) {
-        return points[i];
-    });
-
-    // var centeroids = points.slice(0);
-
-    // centeroids.sort(function () {
-    //     return (Math.round(Math.random()) - 0.5);
-    // })
-
-    // return centeroids.slice(0, k); 
-}
-
-function closestCenteroid(point, centeroids, distance) {
-    var min = Infinity,
-        kIndex = 0;
-
-    centeroids.forEach(function (center, i) {
-        var dist = distance(point, center);
-
-        if (dist < min) {
-            min = dist;
-            kIndex = i;
-        }
-    });
-
-    return kIndex;
-}
-
-function getCenteroid(assigned) {
-
-    if (!assigned.length) return [];
-
-    // initialize centeroid list 
-    var centeroid = new Array(assigned[0].length);
-    for (var i = 0, len = centeroid.length; i < len; i++) {
-        centeroid[i] = 0;
-    }
-
-    for (var index = 0, len = assigned.length; index < len; index++) {
-        var it = assigned[index];
-
-        var last = index + 1;
-
-        for (var j = 0, jLen = it.length; j < jLen; j++) {
-            centeroid[j] += (it[j] - centeroid[j]) / last;
-        }
-    }
-
-    centeroid = centeroid.map(function (it) {
-        return Math.floor(it);
-    });
-
-    return centeroid;
-}
-
-function unique_array(arrays) {
-    return arrays;
-    var set = {};
-    var count = arrays.length;
-    var it = null;
-    while (count--) {
-        it = arrays[count];
-        set[JSON.stringify(it)] = it;
-    }
-
-    return Object.values(set);
-}
-
-function splitK(k, points, centeroids, distance) {
-    var assignment = new Array(k);
-
-    for (var i = 0; i < k; i++) {
-        assignment[i] = [];
-    }
-
-    for (var idx = 0, pointLength = points.length; idx < pointLength; idx++) {
-        var point = points[idx];
-        var index = closestCenteroid(point, centeroids, distance);
-        assignment[index].push(point);
-    }
-
-    return assignment;
-}
-
-function setNewCenteroid(k, points, assignment, centeroids, movement, randomFunction) {
-
-    for (var i = 0; i < k; i++) {
-        var assigned = assignment[i];
-
-        var centeroid = centeroids[i];
-        var newCenteroid = new Array(centeroid.length);
-
-        if (assigned.length > 0) {
-            newCenteroid = getCenteroid(assigned);
-        } else {
-            var idx = Math.floor(randomFunction() * points.length);
-            newCenteroid = points[idx];
-        }
-
-        if (array_equals(newCenteroid, centeroid)) {
-            movement = false;
-        } else {
-            movement = true;
-        }
-
-        centeroids[i] = newCenteroid;
-    }
-
-    return movement;
-}
-
-function kmeans(points, k, distanceFunction) {
-    var period = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
-    var initialRandom = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'linear';
-
-    points = unique_array(points);
-
-    k = k || Math.max(2, Math.ceil(Math.sqrt(points.length / 2)));
-
-    var distance = distanceFunction || 'euclidean';
-    if (isString(distance)) {
-        distance = distances[distance];
-    }
-
-    var rng_seed = 0;
-    var random = function random() {
-        rng_seed = (rng_seed * 9301 + 49297) % 233280;
-        return rng_seed / 233280;
-    };
-
-    var centeroids = randomCentroids(points, k, initialRandom);
-
-    var movement = true;
-    var iterations = 0;
-    while (movement) {
-        var assignment = splitK(k, points, centeroids, distance);
-
-        movement = setNewCenteroid(k, points, assignment, centeroids, false, random);
-
-        iterations++;
-
-        if (iterations % period == 0) {
-            break;
-        }
-    }
-
-    return centeroids;
-}
-
-function each(len, callback) {
-    for (var i = 0; i < len; i += 4) {
-        callback(i);
-    }
-}
-
-function pack(bitmap, callback) {
-
-    each(bitmap.pixels.length, function (i) {
-        callback(bitmap.pixels, i);
-    });
-}
-
-var Canvas = {
-    create: function create(width, height) {
-        var canvas = document.createElement('canvas');
-        canvas.width = width || 0;
-        canvas.height = height || 0;
-
-        return canvas;
-    },
-    drawPixels: function drawPixels(bitmap) {
-        var canvas = this.create(bitmap.width, bitmap.height);
-
-        var context = canvas.getContext('2d');
-        var imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
-
-        imagedata.data.set(bitmap.pixels);
-
-        context.putImageData(imagedata, 0, 0);
-
-        return canvas;
-    },
-    createHistogram: function createHistogram(width, height, histogram, callback) {
-        var opt = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : { black: true, red: false, green: false, blue: false };
-
-        var canvas = this.create(width, height);
-        var context = canvas.getContext('2d');
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = "white";
-        context.fillRect(0, 0, width, height);
-        context.globalAlpha = 0.7;
-
-        var omit = { black: false };
-        if (opt.black) {
-            omit.black = false;
-        } else {
-            omit.black = true;
-        }
-        if (opt.red) {
-            omit.red = false;
-        } else {
-            omit.red = true;
-        }
-        if (opt.green) {
-            omit.green = false;
-        } else {
-            omit.green = true;
-        }
-        if (opt.blue) {
-            omit.blue = false;
-        } else {
-            omit.blue = true;
-        }
-
-        Object.keys(histogram).forEach(function (color) {
-
-            if (!omit[color]) {
-
-                var array = histogram[color];
-                var ymax = Math.max.apply(Math, array);
-                var unitWith = width / array.length;
-
-                context.fillStyle = color;
-                array.forEach(function (it, index) {
-                    var currentHeight = height * (it / ymax);
-                    var x = index * unitWith;
-
-                    context.fillRect(x, height - currentHeight, unitWith, currentHeight);
-                });
-            }
-        });
-
-        if (isFunction(callback)) callback(canvas);
-    },
-    getHistogram: function getHistogram(bitmap) {
-        var black = new Array(256);
-        var red = new Array(256);
-        var green = new Array(256);
-        var blue = new Array(256);
-        for (var i = 0; i < 256; i++) {
-            black[i] = 0;
-            red[i] = 0;
-            green[i] = 0;
-            blue[i] = 0;
-        }
-
-        pack(bitmap, function (pixels, i) {
-            // gray scale 
-            var grayIndex = Math.round(Color$1.brightness(pixels[i], pixels[i + 1], pixels[i + 2]));
-            black[grayIndex]++;
-
-            red[pixels[i]]++;
-            green[pixels[i + 1]]++;
-            blue[pixels[i + 2]]++;
-        });
-
-        return { black: black, red: red, green: green, blue: blue };
-    },
-    getBitmap: function getBitmap(bitmap, area) {
-        var canvas = this.drawPixels(bitmap);
-
-        var context = canvas.getContext('2d');
-        var pixels = context.getImageData(area.x || 0, area.y || 0, area.width || canvas.width, area.height || canvas.height).data;
-
-        return { pixels: pixels, width: area.width, height: area.height };
-    },
-    putBitmap: function putBitmap(bitmap, subBitmap, area) {
-
-        var canvas = this.drawPixels(bitmap);
-        var subCanvas = this.drawPixels(subBitmap);
-
-        var context = canvas.getContext('2d');
-        context.drawImage(subCanvas, area.x, area.y);
-
-        bitmap.pixels = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
-
-        return bitmap;
-    }
-};
-
-var ImageLoader = function () {
-    function ImageLoader(url) {
-        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        classCallCheck(this, ImageLoader);
-
-        this.isLoaded = false;
-        this.imageUrl = url;
-        this.opt = opt;
-        this.initialize();
-    }
-
-    createClass(ImageLoader, [{
-        key: 'initialize',
-        value: function initialize() {
-            this.canvas = this.createCanvas();
-            this.context = this.canvas.getContext('2d');
-        }
-    }, {
-        key: 'createCanvas',
-        value: function createCanvas() {
-            return document.createElement('canvas');
-        }
-    }, {
-        key: 'load',
-        value: function load(callback) {
-            this.loadImage(callback);
-        }
-    }, {
-        key: 'loadImage',
-        value: function loadImage(callback) {
-            var _this = this;
-
-            this.getImage(function (img) {
-                var ctx = _this.context;
-                var ratio = img.height / img.width;
-
-                if (_this.opt.canvasWidth && _this.opt.canvasHeight) {
-                    _this.canvas.width = _this.opt.canvasWidth;
-                    _this.canvas.height = _this.opt.canvasHeight;
-                } else {
-                    _this.canvas.width = _this.opt.maxWidth ? _this.opt.maxWidth : img.width;
-                    _this.canvas.height = _this.canvas.width * ratio;
-                }
-
-                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, _this.canvas.width, _this.canvas.height);
-                _this.isLoaded = true;
-                callback && callback();
-            });
-        }
-    }, {
-        key: 'getImage',
-        value: function getImage(callback) {
-
-            this.newImage = new Image();
-            var img = this.newImage;
-            img.onload = function () {
-                callback && callback(img);
-            };
-
-            img.onerror = function (e) {
-                console.log(e, img.src);
-            };
-
-            this.getImageUrl(function (url) {
-                img.src = url;
-            });
-        }
-    }, {
-        key: 'load',
-        value: function load(callback) {
-            var _this2 = this;
-
-            this.newImage = new Image();
-            var img = this.newImage;
-            img.crossOrigin = "Anonymous";
-            img.onload = function () {
-                _this2.isLoaded = true;
-                callback && callback();
-            };
-
-            this.getImageUrl(function (url) {
-                img.src = url;
-            });
-        }
-    }, {
-        key: 'getImageUrl',
-        value: function getImageUrl(callback) {
-            if (isString(this.imageUrl)) {
-                return callback(this.imageUrl);
-            } else if (this.imageUrl instanceof Blob) {
-                var reader = new FileReader();
-
-                reader.onload = function (ev) {
-                    callback(ev.target.result);
-                };
-
-                reader.readAsDataURL(this.imageUrl);
-            }
-        }
-    }, {
-        key: 'getRGBA',
-        value: function getRGBA(r, g, b, a) {
-            return [r, g, b, a];
-        }
-    }, {
-        key: 'toArray',
-        value: function toArray$$1(filter, callback) {
-            var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-            var width = imagedata.width;
-            var height = imagedata.height;
-
-            var pixels = new Uint8ClampedArray(imagedata.data);
-
-            var bitmap = { pixels: pixels, width: width, height: height };
-
-            if (!filter) {
-                filter = function () {
-                    return function (bitmap, done) {
-                        done(bitmap);
-                    };
-                }();
-            }
-
-            filter(bitmap, function (newBitmap) {
-                var tmpCanvas = Canvas.drawPixels(newBitmap);
-
-                if (opt.returnTo == 'canvas') {
-                    callback(tmpCanvas);
-                } else {
-                    callback(tmpCanvas.toDataURL(opt.outputFormat || 'image/png'));
-                }
-            }, opt);
-        }
-    }, {
-        key: 'toHistogram',
-        value: function toHistogram(opt) {
-            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-            var width = imagedata.width;
-            var height = imagedata.height;
-
-            var pixels = new Uint8ClampedArray(imagedata.data);
-
-            var bitmap = { pixels: pixels, width: width, height: height };
-
-            return Canvas.getHistogram(bitmap);
-        }
-    }, {
-        key: 'toRGB',
-        value: function toRGB() {
-            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-
-            var rgba = imagedata.data;
-            var results = [];
-            for (var i = 0, len = rgba.length; i < len; i += 4) {
-                results[results.length] = [rgba[i + 0], rgba[i + 1], rgba[i + 2], rgba[i + 3]];
-            }
-
-            return results;
-        }
-    }]);
-    return ImageLoader;
-}();
-
-var CONSTANT = {
-    identity: function identity() {
-        return [1, 0, 0, 0, 1, 0, 0, 0, 1];
-    },
-    stretching: function stretching(k) {
-        return [k, 0, 0, 0, 1, 0, 0, 0, 1];
-    },
-    squeezing: function squeezing(k) {
-        return [k, 0, 0, 0, 1 / k, 0, 0, 0, 1];
-    },
-    scale: function scale() {
-        var sx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-        var sy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-
-        sx = sx || sx === 0 ? sx : 1;
-        sy = sy || sy === 0 ? sy : 1;
-        return [sx, 0, 0, 0, sy, 0, 0, 0, 1];
-    },
-    scaleX: function scaleX(sx) {
-        return this.scale(sx);
-    },
-    scaleY: function scaleY(sy) {
-        return this.scale(1, sy);
-    },
-    translate: function translate(tx, ty) {
-        return [1, 0, tx, 0, 1, ty, 0, 0, 1];
-    },
-    rotate: function rotate(angle) {
-        var r = this.radian(angle);
-        return [Math.cos(r), -Math.sin(r), 0, Math.sin(r), Math.cos(r), 0, 0, 0, 1];
-    },
-    rotate90: function rotate90() {
-        return [0, -1, 0, 1, 0, 0, 0, 0, 1];
-    },
-    rotate180: function rotate180() {
-        return [-1, 0, 0, 0, -1, 0, 0, 0, 1];
-    },
-    rotate270: function rotate270() {
-        return [0, 1, 0, -1, 0, 0, 0, 0, 1];
-    },
-    radian: function radian(degree) {
-        return degree * Math.PI / 180;
-    },
-    skew: function skew(degreeX, degreeY) {
-        var radianX = this.radian(degreeX);
-        var radianY = this.radian(degreeY);
-        return [1, Math.tan(radianX), 0, Math.tan(radianY), 1, 0, 0, 0, 1];
-    },
-    skewX: function skewX(degreeX) {
-        var radianX = this.radian(degreeX);
-
-        return [1, Math.tan(radianX), 0, 0, 1, 0, 0, 0, 1];
-    },
-    skewY: function skewY(degreeY) {
-        var radianY = this.radian(degreeY);
-
-        return [1, 0, 0, Math.tan(radianY), 1, 0, 0, 0, 1];
-    },
-    shear1: function shear1(angle) {
-        return [1, -Math.tan(this.radian(angle) / 2), 0, 0, 1, 0, 0, 0, 1];
-    },
-    shear2: function shear2(angle) {
-        return [1, 0, 0, Math.sin(this.radian(angle)), 1, 0, 0, 0, 1];
-    }
-};
-
-var Matrix = {
-    CONSTANT: CONSTANT,
-
-    radian: function radian(angle) {
-        return CONSTANT.radian(angle);
-    },
-    multiply: function multiply(A, C) {
-        // console.log(JSON.stringify(A), JSON.stringify(C))
-        return [A[0] * C[0] + A[1] * C[1] + A[2] * C[2], A[3] * C[0] + A[4] * C[1] + A[5] * C[2], A[6] * C[0] + A[7] * C[1] + A[8] * C[2]];
-    },
-    identity: function identity(B) {
-        return this.multiply(CONSTANT.identity(), B);
-    },
-    translate: function translate(x, y, B) {
-        return this.multiply(CONSTANT.translate(x, y), B);
-    },
-    rotate: function rotate(angle, B) {
-        return this.multiply(CONSTANT.rotate(angle), B);
-    },
-    shear1: function shear1(angle, B) {
-        return this.multiply(CONSTANT.shear1(angle), B);
-    },
-    shear2: function shear2(angle, B) {
-        return this.multiply(CONSTANT.shear2(angle), B);
-    },
-    rotateShear: function rotateShear(angle, B) {
-
-        var arr = B;
-
-        arr = this.shear1(angle, arr);
-        arr = this.shear2(angle, arr);
-        arr = this.shear1(angle, arr);
-
-        return arr;
-    }
-};
-
-function crop() {
-    var startX = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var startY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-    var width = arguments[2];
-    var height = arguments[3];
-
-
-    var newBitmap = createBitmap(width * height * 4, width, height);
-
-    return function (bitmap, done) {
-        for (var y = startY, realY = 0; y < height; y++, realY++) {
-            for (var x = startX, realX = 0; x < width; x++, realX++) {
-                newBitmap.pixels[realY * width * realX] = bitmap.pixels[y * width * x];
-            }
-        }
-
-        done(newBitmap);
-    };
-}
-
-function resize(dstWidth, dstHeight) {
-    return function (bitmap, done) {
-        var c = Canvas.drawPixels(bitmap);
-        var context = c.getContext('2d');
-
-        c.width = dstWidth;
-        c.height = dstHeight;
-
-        done({
-            pixels: new Uint8ClampedArray(context.getImageData(0, 0, dstWidth, dstHeight).data),
-            width: dstWidth,
-            height: dstHeight
-        });
-    };
-}
-
-function flipV() {
-    return function (bitmap, done) {
-        var width = bitmap.width;
-        var height = bitmap.height;
-        var isCenter = height % 2 == 1 ? 1 : 0;
-
-        var halfHeight = isCenter ? Math.floor(height / 2) : height / 2;
-
-        for (var y = 0; y < halfHeight; y++) {
-            for (var x = 0; x < width; x++) {
-
-                var startIndex = y * width + x << 2;
-                var endIndex = (height - 1 - y) * width + x << 2;
-                swapColor(bitmap.pixels, startIndex, endIndex);
-            }
-        }
-
-        done(bitmap);
-    };
-}
-
-function flipH() {
-    return function (bitmap, done) {
-        var width = bitmap.width;
-        var height = bitmap.height;
-        var isCenter = width % 2 == 1 ? 1 : 0;
-
-        var halfWidth = isCenter ? Math.floor(width / 2) : width / 2;
-
-        for (var y = 0; y < height; y++) {
-            for (var x = 0; x < halfWidth; x++) {
-
-                var startIndex = y * width + x << 2;
-                var endIndex = y * width + (width - 1 - x) << 2;
-                swapColor(bitmap.pixels, startIndex, endIndex);
-            }
-        }
-
-        done(bitmap);
-    };
-}
-
-var _UNIT_STRINGS;
-
-var EMPTY_STRING = '';
-
-var UNIT_VALUE = 'value';
-var UNIT_PX = 'px';
-var UNIT_EM = 'em';
-var UNIT_PERCENT = 'percent';
-var UNIT_DEG = 'deg';
-var UNIT_COLOR = 'color';
-
-var UNIT_VALUE_STRING = EMPTY_STRING;
-var UNIT_PX_STRING = 'px';
-var UNIT_EM_STRING = 'em';
-var UNIT_PERCENT_STRING = '%';
-
-var UNIT_COLOR_STRING = EMPTY_STRING;
-
-var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_VALUE, UNIT_VALUE_STRING), defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
-
-
-function px$1(value) {
-    return value + UNIT_PX_STRING;
-}
-function em(value) {
-    return value + UNIT_EM_STRING;
-}
-function percent(value) {
-    return value + UNIT_PERCENT_STRING;
-}
-
-
-
-function isPX(unit) {
-    return unit === UNIT_PX;
-}
-function isEM(unit) {
-    return unit === UNIT_EM;
-}
-function isPercent(unit) {
-    return unit === UNIT_PERCENT;
-}
-
-
-
-function unitString(unit) {
-    var defaultString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-    return UNIT_STRINGS[unit] || defaultString;
-}
-
-function unit(value, unit) {
-    return value + unitString(unit);
-}
-
-function stringUnit() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
-
-    return unit(obj.value, obj.unit);
-}
-
-function unitValue() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
-
-    if (isNumber(obj)) return obj;
-    return obj.value;
-}
-
-function isUnit(obj, unit) {
-    return obj && obj.unit == unit;
-}
-
-function isPxUnit(obj) {
-    return isUnit(obj, UNIT_PX);
-}
-
-function isPercentUnit(obj) {
-    return isUnit(obj, UNIT_PERCENT);
-}
-
-function isEmUnit(obj) {
-    return isUnit(obj, UNIT_EM);
-}
-
-function isColorUnit(obj) {
-    return isUnit(obj, UNIT_COLOR);
-}
-
-
-
-function isValueUnit(obj) {
-    return isUnit(obj, UNIT_VALUE);
-}
-
-function unitObject(value, unit) {
-    return { unit: unit, value: value };
-}
-
-function valueUnit(value) {
-    return { unit: UNIT_VALUE, value: value };
-}
-
-function percentUnit(value) {
-    return { unit: UNIT_PERCENT, value: value };
-}
-
-function pxUnit(value) {
-    return { unit: UNIT_PX, value: value };
-}
-
-function degUnit(value) {
-    return { unit: UNIT_DEG, value: value };
-}
-
-function emUnit(value) {
-    return { unit: UNIT_EM, value: value };
-}
-
-
-
-function string2unit(str) {
-    if (isNotString(str)) return str;
-    if (str.includes(UNIT_PX)) {
-        return pxUnit(parseParamNumber$1(str));
-    } else if (str.includes(UNIT_PERCENT_STRING)) {
-        return percentUnit(parseParamNumber$1(str));
-    } else if (str.includes(UNIT_EM)) {
-        return emUnit(parseParamNumber$1(str));
-    } else if (str.includes(UNIT_DEG)) {
-        return degUnit(parseParamNumber$1(str));
-    }
-
-    return pxUnit(parseParamNumber$1(str));
-}
-
-function value2px(obj, maxValue) {
-    var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
-
-    if (isPxUnit(obj)) {
-        return obj.value;
-    } else if (isPercentUnit(obj)) {
-        return percent2px(obj.value, maxValue);
-    } else if (isEmUnit(obj)) {
-        return em2px(obj.value, maxValue, fontSize);
-    }
-}
-
-
-
-
-
-function convertPercentUnit(obj) {
-    if (isValueUnit(obj)) {
-        if (obj.value == 'left' || obj.value == 'top') {
-            return percentUnit(0);
-        } else if (obj.value == 'right' || obj.value == 'bottom') {
-            return percentUnit(100);
-        } else if (obj.value == 'center') {
-            return percentUnit(50);
-        }
-    }
-
-    return obj;
-}
 
 var _SEGMENT_CHECK;
 
@@ -2766,7 +865,7 @@ function rotate() {
     };
 }
 
-function histogram$1() {
+function histogram() {
     var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'gray';
     var points = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
@@ -2812,14 +911,14 @@ function histogram$1() {
     }
 }
 
-var image$1 = {
+var image = {
     crop: crop,
     resize: resize,
     flipH: flipH,
     flipV: flipV,
     rotate: rotate,
     rotateDegree: rotateDegree,
-    histogram: histogram$1,
+    histogram: histogram,
     'rotate-degree': rotateDegree
 };
 
@@ -2844,7 +943,7 @@ function bitonal(darkColor, lightColor) {
     });
 }
 
-function brightness$1() {
+function brightness() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
     amount = parseParamNumber$1(amount);
@@ -2885,7 +984,7 @@ function clip() {
     }, { $C: $C });
 }
 
-function contrast$1() {
+function contrast() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
     amount = parseParamNumber$1(amount);
@@ -2909,7 +1008,7 @@ function gamma() {
     }, { $C: $C });
 }
 
-function gradient$1() {
+function gradient() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
 
@@ -2962,7 +1061,9 @@ function gradient$1() {
     }, {}, { $colors: $colors, $scale: $scale });
 }
 
-function grayscale(amount) {
+function grayscale() {
+    var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
+
     amount = parseParamNumber$1(amount);
     var C = amount / 100;
 
@@ -3265,12 +1366,12 @@ function tint () {
 
 var pixel$1 = {
     bitonal: bitonal,
-    brightness: brightness$1,
+    brightness: brightness,
     brownie: brownie,
     clip: clip,
-    contrast: contrast$1,
+    contrast: contrast,
     gamma: gamma,
-    gradient: gradient$1,
+    gradient: gradient,
     grayscale: grayscale,
     hue: hue,
     invert: invert,
@@ -3934,43 +2035,179 @@ var matrix$1 = {
 };
 
 function kirsch() {
-    return filter$1('kirsch-horizontal kirsch-vertical');
+    return filter('kirsch-horizontal kirsch-vertical');
 }
 
 function sobel() {
-    return filter$1('sobel-horizontal sobel-vertical');
+    return filter('sobel-horizontal sobel-vertical');
 }
 
 function vintage() {
-    return filter$1('brightness(15) saturation(-20) gamma(1.8)');
+    return filter('brightness(15) saturation(-20) gamma(1.8)');
 }
 
-var multi$2 = {
+var multi$1 = {
     kirsch: kirsch,
     sobel: sobel,
     vintage: vintage
 };
 
-var FilterList = _extends({}, image$1, pixel$1, matrix$1, multi$2);
+var FilterList = _extends({}, image, pixel$1, matrix$1, multi$1);
+
+function round(n, k) {
+    k = isUndefined$1(k) ? 1 : k;
+    return Math.round(n * k) / k;
+}
+
+function degreeToRadian(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+/**
+ * 
+ * convert radian to degree 
+ * 
+ * @param {*} radian 
+ * @returns {Number} 0..360
+ */
+function radianToDegree(radian) {
+    var angle = radian * 180 / Math.PI;
+
+    if (angle < 0) {
+        // 각도가 0보다 작으면 360 에서 반전시킨다. 
+        angle = 360 + angle;
+    }
+
+    return angle;
+}
+
+function getXInCircle(angle, radius) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    return centerX + radius * Math.cos(degreeToRadian(angle));
+}
+
+function getYInCircle(angle, radius) {
+    var centerY = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    return centerY + radius * Math.sin(degreeToRadian(angle));
+}
+
+function getXYInCircle(angle, radius) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+    return {
+        x: getXInCircle(angle, radius, centerX),
+        y: getYInCircle(angle, radius, centerY)
+    };
+}
+
+function getDist(x, y) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+    return Math.sqrt(Math.pow(Math.abs(centerX - x), 2) + Math.pow(Math.abs(centerY - y), 2));
+}
+
+function caculateAngle(rx, ry) {
+    return radianToDegree(Math.atan2(ry, rx));
+}
+
+function uuid() {
+    var dt = new Date().getTime();
+    var uuid = 'xxx12-xx-34xx'.replace(/[xy]/g, function (c) {
+        var r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+    });
+    return uuid;
+}
+
+var bezierCalc = {
+    B1: function B1(t) {
+        return t * t * t;
+    },
+    B2: function B2(t) {
+        return 3 * t * t * (1 - t);
+    },
+    B3: function B3(t) {
+        return 3 * t * (1 - t) * (1 - t);
+    },
+    B4: function B4(t) {
+        return (1 - t) * (1 - t) * (1 - t);
+    }
+};
+
+function cubicBezier(x1, y1, x2, y2) {
+    var C2 = { x: x1, y: y1 };
+    var C3 = { x: x2, y: y2 };
+    return function (progress) {
+        // var x = C1.x * bezierCalc.B1(p) + C2.x*bezierCalc.B2(p) + C3.x*bezierCalc.B3(p) + C4.x*bezierCalc.B4(p);
+        // var y = C1.y * bezierCalc.B1(progress) + C2.y*bezierCalc.B2(progress) + C3.y*bezierCalc.B3(progress) + C4.y*bezierCalc.B4(progress);
+
+        var y = C2.y * bezierCalc.B2(progress) + C3.y * bezierCalc.B3(progress) + bezierCalc.B4(progress);
+
+        return 1 - y;
+    };
+}
+
+function getGradientLine(angle, box) {
+    var length = Math.abs(box.width * Math.sin(angle)) + Math.abs(box.height * Math.cos(angle));
+    var center = {
+        x: box.x + box.width / 2,
+        y: box.y + box.height / 2
+    };
+
+    var yDiff = Math.sin(angle - Math.PI / 2) * length / 2;
+    var xDiff = Math.cos(angle - Math.PI / 2) * length / 2;
+
+    return {
+        length: length,
+        center: center,
+        start: {
+            x: center.x - xDiff,
+            y: center.y - yDiff
+        },
+        end: {
+            x: center.x + xDiff,
+            y: center.y + yDiff
+        }
+    };
+}
+
+var math = Object.freeze({
+	round: round,
+	degreeToRadian: degreeToRadian,
+	radianToDegree: radianToDegree,
+	getXInCircle: getXInCircle,
+	getYInCircle: getYInCircle,
+	getXYInCircle: getXYInCircle,
+	getDist: getDist,
+	caculateAngle: caculateAngle,
+	uuid: uuid,
+	cubicBezier: cubicBezier,
+	getGradientLine: getGradientLine
+});
 
 var _functions;
 
 var makeId = 0;
 
-var functions$1 = (_functions = {
+var functions = (_functions = {
     partial: partial,
-    multi: multi$1,
-    merge: merge$1,
+    multi: multi,
+    merge: merge,
     weight: weight,
     repeat: repeat$1,
     colorMatrix: colorMatrix,
-    each: each$1,
+    each: each,
     eachXY: eachXY,
     createRandomCount: createRandomCount,
     createRandRange: createRandRange,
     createBitmap: createBitmap,
     createBlurMatrix: createBlurMatrix,
-    pack: pack$1,
+    pack: pack,
     packXY: packXY,
     pixel: pixel,
     getBitmap: getBitmap,
@@ -3984,13 +2221,13 @@ var functions$1 = (_functions = {
     em2px: em2px,
     percent2em: percent2em,
     percent2px: percent2px,
-    filter: filter$1,
+    filter: filter,
     clamp: clamp$1,
     fillColor: fillColor,
     fillPixelColor: fillPixelColor
-}, defineProperty(_functions, 'multi', multi$1), defineProperty(_functions, 'merge', merge$1), defineProperty(_functions, 'matches', matches$1), defineProperty(_functions, 'parseFilter', parseFilter), defineProperty(_functions, 'partial', partial), _functions);
+}, defineProperty(_functions, 'multi', multi), defineProperty(_functions, 'merge', merge), defineProperty(_functions, 'matches', matches), defineProperty(_functions, 'parseFilter', parseFilter), defineProperty(_functions, 'partial', partial), _functions);
 
-var LocalFilter = functions$1;
+var LocalFilter = functions;
 
 var ROUND_MAX = 1000;
 
@@ -4124,7 +2361,7 @@ function forLoop(max) {
     runCallback();
 }
 
-function each$1(len, callback, done) {
+function each(len, callback, done) {
     var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
 
@@ -4297,9 +2534,9 @@ function percent2em(percent$$1, maxValue) {
 }
 
 var filter_regexp = /(([\w_\-]+)(\(([^\)]*)\))?)+/gi;
-function pack$1(callback) {
+function pack(callback) {
     return function (bitmap, done) {
-        each$1(bitmap.pixels.length, function (i, xyIndex) {
+        each(bitmap.pixels.length, function (i, xyIndex) {
             callback(bitmap.pixels, i, xyIndex, bitmap.pixels[i], bitmap.pixels[i + 1], bitmap.pixels[i + 2], bitmap.pixels[i + 3]);
         }, function () {
             done(bitmap);
@@ -4591,7 +2828,7 @@ function convolution(weights) {
     };
 }
 
-function matches$1(str) {
+function matches(str) {
     var ret = Color$1.convertMatches(str);
     var matches = ret.str.match(filter_regexp);
     var result = [];
@@ -4662,13 +2899,13 @@ function clamp$1(num) {
     return Math.min(255, num);
 }
 
-function filter$1(str) {
-    return merge$1(matches$1(str).map(function (it) {
+function filter(str) {
+    return merge(matches(str).map(function (it) {
         return it.arr;
     }));
 }
 
-function makeGroupedFilter$1() {
+function makeGroupedFilter() {
     var filters = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
     var groupedFilter = [];
@@ -4723,7 +2960,7 @@ function makeGroupedFilter$1() {
  * ImageFilter.multi('blur', 'grayscale', 'sharpen', ['blur', 3], function (bitmap) {  return bitmap });
  * 
  */
-function multi$1() {
+function multi() {
     for (var _len = arguments.length, filters = Array(_len), _key = 0; _key < _len; _key++) {
         filters[_key] = arguments[_key];
     }
@@ -4734,7 +2971,7 @@ function multi$1() {
         return f;
     });
 
-    filters = makeGroupedFilter$1(filters);
+    filters = makeGroupedFilter(filters);
 
     var max = filters.length;
 
@@ -4768,8 +3005,8 @@ function multi$1() {
     };
 }
 
-function merge$1(filters) {
-    return multi$1.apply(undefined, toConsumableArray(filters));
+function merge(filters) {
+    return multi.apply(undefined, toConsumableArray(filters));
 }
 
 /**
@@ -4789,9 +3026,9 @@ function partial(area) {
     }
 
     if (filters.length == 1 && isString(filters[0])) {
-        allFilter = filter$1(filters[0]);
+        allFilter = filter(filters[0]);
     } else {
-        allFilter = merge$1(filters);
+        allFilter = merge(filters);
     }
 
     return function (bitmap, done) {
@@ -4802,6 +3039,1789 @@ function partial(area) {
         }, opt);
     };
 }
+
+var _UNIT_STRINGS;
+
+var EMPTY_STRING = '';
+
+var UNIT_VALUE = 'value';
+var UNIT_PX = 'px';
+var UNIT_EM = 'em';
+var UNIT_PERCENT = 'percent';
+var UNIT_DEG = 'deg';
+var UNIT_COLOR = 'color';
+
+var UNIT_VALUE_STRING = EMPTY_STRING;
+var UNIT_PX_STRING = 'px';
+var UNIT_EM_STRING = 'em';
+var UNIT_PERCENT_STRING = '%';
+
+var UNIT_COLOR_STRING = EMPTY_STRING;
+
+var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_VALUE, UNIT_VALUE_STRING), defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
+
+
+function px$1(value) {
+    return value + UNIT_PX_STRING;
+}
+
+function percent(value) {
+    return value + UNIT_PERCENT_STRING;
+}
+
+
+
+function isPX(unit) {
+    return unit === UNIT_PX;
+}
+function isEM(unit) {
+    return unit === UNIT_EM;
+}
+function isPercent(unit) {
+    return unit === UNIT_PERCENT;
+}
+
+
+
+function unitString(unit) {
+    var defaultString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+
+    return UNIT_STRINGS[unit] || defaultString;
+}
+
+function unit(value, unit) {
+    return value + unitString(unit);
+}
+
+function stringUnit() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
+
+    return unit(obj.value, obj.unit);
+}
+
+function unitValue() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
+
+    if (isNumber(obj)) return obj;
+    return obj.value;
+}
+
+function isUnit(obj, unit) {
+    return obj && obj.unit == unit;
+}
+
+function isPxUnit(obj) {
+    return isUnit(obj, UNIT_PX);
+}
+
+function isPercentUnit(obj) {
+    return isUnit(obj, UNIT_PERCENT);
+}
+
+function isEmUnit(obj) {
+    return isUnit(obj, UNIT_EM);
+}
+
+function isColorUnit(obj) {
+    return isUnit(obj, UNIT_COLOR);
+}
+
+
+
+function isValueUnit(obj) {
+    return isUnit(obj, UNIT_VALUE);
+}
+
+function unitObject(value, unit) {
+    return { unit: unit, value: value };
+}
+
+function valueUnit(value) {
+    return { unit: UNIT_VALUE, value: value };
+}
+
+function percentUnit(value) {
+    return { unit: UNIT_PERCENT, value: value };
+}
+
+function pxUnit(value) {
+    return { unit: UNIT_PX, value: value };
+}
+
+function degUnit(value) {
+    return { unit: UNIT_DEG, value: value };
+}
+
+function emUnit(value) {
+    return { unit: UNIT_EM, value: value };
+}
+
+
+
+function string2unit(str) {
+    if (isNotString(str)) return str;
+    if (str.includes(UNIT_PX)) {
+        return pxUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_PERCENT_STRING)) {
+        return percentUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_EM)) {
+        return emUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_DEG)) {
+        return degUnit(parseParamNumber$1(str));
+    }
+
+    return pxUnit(parseParamNumber$1(str));
+}
+
+function value2px(obj, maxValue) {
+    var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
+
+    if (isPxUnit(obj)) {
+        return obj.value;
+    } else if (isPercentUnit(obj)) {
+        return percent2px(obj.value, maxValue);
+    } else if (isEmUnit(obj)) {
+        return em2px(obj.value, maxValue, fontSize);
+    }
+}
+
+
+
+
+
+function convertPercentUnit(obj) {
+    if (isValueUnit(obj)) {
+        if (obj.value == 'left' || obj.value == 'top') {
+            return percentUnit(0);
+        } else if (obj.value == 'right' || obj.value == 'bottom') {
+            return percentUnit(100);
+        } else if (obj.value == 'center') {
+            return percentUnit(50);
+        }
+    }
+
+    return obj;
+}
+
+function debounce(callback, delay) {
+
+    var t = undefined;
+
+    return function () {
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        if (t) {
+            clearTimeout(t);
+        }
+
+        t = setTimeout(function () {
+            callback.apply(undefined, args);
+        }, delay || 300);
+    };
+}
+
+function get(obj, key, callback) {
+
+    var returnValue = defaultValue(obj[key], key);
+
+    if (isFunction(callback)) {
+        return callback(returnValue);
+    }
+
+    return returnValue;
+}
+
+function defaultValue(value$$1, defaultValue) {
+    return typeof value$$1 == 'undefined' ? defaultValue : value$$1;
+}
+
+function isUndefined$1(value$$1) {
+    return typeof value$$1 == 'undefined' || value$$1 == null;
+}
+
+function isNotUndefined(value$$1) {
+    return isUndefined$1(value$$1) === false;
+}
+
+function isArray(value$$1) {
+    return Array.isArray(value$$1);
+}
+
+function isBoolean(value$$1) {
+    return typeof value$$1 == 'boolean';
+}
+
+function isString(value$$1) {
+    return typeof value$$1 == 'string';
+}
+
+function isNotString(value$$1) {
+    return isString(value$$1) === false;
+}
+
+function isObject(value$$1) {
+    return (typeof value$$1 === 'undefined' ? 'undefined' : _typeof(value$$1)) == 'object' && !isArray(value$$1) && value$$1 !== null;
+}
+
+function isFunction(value$$1) {
+    return typeof value$$1 == 'function';
+}
+
+function isNumber(value$$1) {
+    return typeof value$$1 == 'number';
+}
+
+function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+function cleanObject(obj) {
+    var realObject = {};
+    Object.keys(obj).filter(function (key) {
+        return !!obj[key];
+    }).forEach(function (key) {
+        realObject[key] = obj[key];
+    });
+
+    return realObject;
+}
+
+function combineKeyArray(obj) {
+    Object.keys(obj).forEach(function (key) {
+        if (Array.isArray(obj[key])) {
+            obj[key] = obj[key].join(', ');
+        }
+    });
+
+    return obj;
+}
+
+function flatKeyValue(obj) {
+    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+    var values = {};
+
+    Object.keys(obj).forEach(function (key) {
+        var realKey = key;
+        if (rootKey !== '') {
+            realKey = rootKey + '.' + key;
+        }
+
+        if (isObject(obj[key])) {
+            values = _extends({}, values, flatKeyValue(obj[key], realKey));
+        } else {
+            values[realKey] = obj[key];
+        }
+    });
+
+    return values;
+}
+
+function repeat(count) {
+    return [].concat(toConsumableArray(Array(count)));
+}
+
+var short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
+
+var html = function html(strings) {
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+    }
+
+    var results = strings.map(function (it, index) {
+
+        var results = args[index] || '';
+
+        if (isFunction(results)) {
+            results = results();
+        }
+
+        if (!isArray(results)) {
+            results = [results];
+        }
+
+        results = results.map(function (r) {
+            if (isObject(r)) {
+                return Object.keys(r).map(function (key) {
+                    return key + '="' + r[key] + '"';
+                }).join(' ');
+            }
+
+            return r;
+        }).join(EMPTY_STRING);
+
+        return it + results;
+    }).join('');
+
+    results = results.replace(short_tag_regexp, function (match, p1) {
+        return match.replace('/>', '></' + p1 + '>');
+    });
+
+    return results;
+};
+
+
+
+var func = Object.freeze({
+	debounce: debounce,
+	get: get,
+	defaultValue: defaultValue,
+	isUndefined: isUndefined$1,
+	isNotUndefined: isNotUndefined,
+	isArray: isArray,
+	isBoolean: isBoolean,
+	isString: isString,
+	isNotString: isNotString,
+	isObject: isObject,
+	isFunction: isFunction,
+	isNumber: isNumber,
+	clone: clone,
+	cleanObject: cleanObject,
+	combineKeyArray: combineKeyArray,
+	flatKeyValue: flatKeyValue,
+	repeat: repeat,
+	html: html
+});
+
+function format(obj, type) {
+    var defaultColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(0, 0, 0, 0)';
+
+
+    if (Array.isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    if (type == 'hex') {
+        return hex(obj);
+    } else if (type == 'rgb') {
+        return rgb(obj, defaultColor);
+    } else if (type == 'hsl') {
+        return hsl(obj);
+    }
+
+    return obj;
+}
+
+function hex(obj) {
+    if (Array.isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    var r = obj.r.toString(16);
+    if (obj.r < 16) r = "0" + r;
+
+    var g = obj.g.toString(16);
+    if (obj.g < 16) g = "0" + g;
+
+    var b = obj.b.toString(16);
+    if (obj.b < 16) b = "0" + b;
+
+    return '#' + r + g + b;
+}
+
+function rgb(obj) {
+    var defaultColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'rgba(0, 0, 0, 0)';
+
+    if (isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    if (isUndefined$1(obj)) {
+        return undefined;
+    }
+
+    if (obj.a == 1 || isUndefined$1(obj.a)) {
+        if (isNaN(obj.r)) {
+            return defaultColor;
+        }
+        return 'rgb(' + obj.r + ',' + obj.g + ',' + obj.b + ')';
+    } else {
+        return 'rgba(' + obj.r + ',' + obj.g + ',' + obj.b + ',' + obj.a + ')';
+    }
+}
+
+function hsl(obj) {
+    if (isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    if (obj.a == 1 || isUndefined$1(obj.a)) {
+        return 'hsl(' + obj.h + ',' + obj.s + '%,' + obj.l + '%)';
+    } else {
+        return 'hsla(' + obj.h + ',' + obj.s + '%,' + obj.l + '%,' + obj.a + ')';
+    }
+}
+
+var formatter = Object.freeze({
+	format: format,
+	hex: hex,
+	rgb: rgb,
+	hsl: hsl
+});
+
+function ReverseXyz(n) {
+    return Math.pow(n, 3) > 0.008856 ? Math.pow(n, 3) : (n - 16 / 116) / 7.787;
+}
+
+function ReverseRGB(n) {
+    return n > 0.0031308 ? 1.055 * Math.pow(n, 1 / 2.4) - 0.055 : 12.92 * n;
+}
+
+function XYZtoRGB(x, y, z) {
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            x = _arguments$.x,
+            y = _arguments$.y,
+            z = _arguments$.z;
+    }
+    //X, Y and Z input refer to a D65/2° standard illuminant.
+    //sR, sG and sB (standard RGB) output range = 0 ÷ 255
+
+    var X = x / 100.0;
+    var Y = y / 100.0;
+    var Z = z / 100.0;
+
+    var R = X * 3.2406 + Y * -1.5372 + Z * -0.4986;
+    var G = X * -0.9689 + Y * 1.8758 + Z * 0.0415;
+    var B = X * 0.0557 + Y * -0.2040 + Z * 1.0570;
+
+    R = ReverseRGB(R);
+    G = ReverseRGB(G);
+    B = ReverseRGB(B);
+
+    var r = round(R * 255);
+    var g = round(G * 255);
+    var b = round(B * 255);
+
+    return { r: r, g: g, b: b };
+}
+
+function LABtoXYZ(l, a, b) {
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            l = _arguments$2.l,
+            a = _arguments$2.a,
+            b = _arguments$2.b;
+    }
+    //Reference-X, Y and Z refer to specific illuminants and observers.
+    //Common reference values are available below in this same page.
+
+    var Y = (l + 16) / 116;
+    var X = a / 500 + Y;
+    var Z = Y - b / 200;
+
+    Y = ReverseXyz(Y);
+    X = ReverseXyz(X);
+    Z = ReverseXyz(Z);
+
+    var x = X * 95.047;
+    var y = Y * 100.000;
+    var z = Z * 108.883;
+
+    return { x: x, y: y, z: z };
+}
+
+function PivotXyz(n) {
+    return n > 0.008856 ? Math.pow(n, 1 / 3) : (7.787 * n + 16) / 116;
+}
+
+function XYZtoLAB(x, y, z) {
+    if (arguments.length == 1) {
+        var _arguments$3 = arguments[0],
+            x = _arguments$3.x,
+            y = _arguments$3.y,
+            z = _arguments$3.z;
+    }
+
+    //Reference-X, Y and Z refer to specific illuminants and observers.
+    //Common reference values are available below in this same page.
+    // Observer= 2°, Illuminant= D65
+
+    var X = x / 95.047;
+    var Y = y / 100.00;
+    var Z = z / 108.883;
+
+    X = PivotXyz(X);
+    Y = PivotXyz(Y);
+    Z = PivotXyz(Z);
+
+    var l = 116 * Y - 16;
+    var a = 500 * (X - Y);
+    var b = 200 * (Y - Z);
+
+    return { l: l, a: a, b: b };
+}
+
+function LABtoRGB(l, a, b) {
+    if (arguments.length == 1) {
+        var _arguments$4 = arguments[0],
+            l = _arguments$4.l,
+            a = _arguments$4.a,
+            b = _arguments$4.b;
+    }
+    return XYZtoRGB(LABtoXYZ(l, a, b));
+}
+
+var fromLAB = Object.freeze({
+	ReverseXyz: ReverseXyz,
+	ReverseRGB: ReverseRGB,
+	XYZtoRGB: XYZtoRGB,
+	LABtoXYZ: LABtoXYZ,
+	PivotXyz: PivotXyz,
+	XYZtoLAB: XYZtoLAB,
+	LABtoRGB: LABtoRGB
+});
+
+function RGBtoHSV(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            r = _arguments$.r,
+            g = _arguments$.g,
+            b = _arguments$.b;
+    }
+
+    var R1 = r / 255;
+    var G1 = g / 255;
+    var B1 = b / 255;
+
+    var MaxC = Math.max(R1, G1, B1);
+    var MinC = Math.min(R1, G1, B1);
+
+    var DeltaC = MaxC - MinC;
+
+    var H = 0;
+
+    if (DeltaC == 0) {
+        H = 0;
+    } else if (MaxC == R1) {
+        H = 60 * ((G1 - B1) / DeltaC % 6);
+    } else if (MaxC == G1) {
+        H = 60 * ((B1 - R1) / DeltaC + 2);
+    } else if (MaxC == B1) {
+        H = 60 * ((R1 - G1) / DeltaC + 4);
+    }
+
+    if (H < 0) {
+        H = 360 + H;
+    }
+
+    var S = 0;
+
+    if (MaxC == 0) S = 0;else S = DeltaC / MaxC;
+
+    var V = MaxC;
+
+    return { h: H, s: S, v: V };
+}
+
+function RGBtoCMYK(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            r = _arguments$2.r,
+            g = _arguments$2.g,
+            b = _arguments$2.b;
+    }
+
+    var R1 = r / 255;
+    var G1 = g / 255;
+    var B1 = b / 255;
+
+    var K = 1 - Math.max(R1, G1, B1);
+    var C = (1 - R1 - K) / (1 - K);
+    var M = (1 - G1 - K) / (1 - K);
+    var Y = (1 - B1 - K) / (1 - K);
+
+    return { c: C, m: M, y: Y, k: K };
+}
+
+function RGBtoHSL(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$3 = arguments[0],
+            r = _arguments$3.r,
+            g = _arguments$3.g,
+            b = _arguments$3.b;
+    }
+
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
+    var h,
+        s,
+        l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0; // achromatic
+    } else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);break;
+            case g:
+                h = (b - r) / d + 2;break;
+            case b:
+                h = (r - g) / d + 4;break;
+        }
+        h /= 6;
+    }
+
+    return { h: round(h * 360), s: round(s * 100), l: round(l * 100) };
+}
+
+function c(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$4 = arguments[0],
+            r = _arguments$4.r,
+            g = _arguments$4.g,
+            b = _arguments$4.b;
+    }
+    return gray((r + g + b) / 3 > 90 ? 0 : 255);
+}
+
+function gray(gray) {
+    return { r: gray, g: gray, b: gray };
+}
+
+function RGBtoSimpleGray(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$5 = arguments[0],
+            r = _arguments$5.r,
+            g = _arguments$5.g,
+            b = _arguments$5.b;
+    }
+    return gray(Math.ceil((r + g + b) / 3));
+}
+
+function RGBtoGray(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$6 = arguments[0],
+            r = _arguments$6.r,
+            g = _arguments$6.g,
+            b = _arguments$6.b;
+    }
+    return gray(RGBtoYCrCb(r, g, b).y);
+}
+
+function brightness$1(r, g, b) {
+    return Math.ceil(r * 0.2126 + g * 0.7152 + b * 0.0722);
+}
+
+function RGBtoYCrCb(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$7 = arguments[0],
+            r = _arguments$7.r,
+            g = _arguments$7.g,
+            b = _arguments$7.b;
+    }
+    var Y = brightness$1(r, g, b);
+    var Cb = 0.564 * (b - Y);
+    var Cr = 0.713 * (r - Y);
+
+    return { y: Y, cr: Cr, cb: Cb };
+}
+
+function PivotRGB(n) {
+    return (n > 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92) * 100;
+}
+
+function RGBtoXYZ(r, g, b) {
+    //sR, sG and sB (Standard RGB) input range = 0 ÷ 255
+    //X, Y and Z output refer to a D65/2° standard illuminant.
+    if (arguments.length == 1) {
+        var _arguments$8 = arguments[0],
+            r = _arguments$8.r,
+            g = _arguments$8.g,
+            b = _arguments$8.b;
+    }
+
+    var R = r / 255;
+    var G = g / 255;
+    var B = b / 255;
+
+    R = PivotRGB(R);
+    G = PivotRGB(G);
+    B = PivotRGB(B);
+
+    var x = R * 0.4124 + G * 0.3576 + B * 0.1805;
+    var y = R * 0.2126 + G * 0.7152 + B * 0.0722;
+    var z = R * 0.0193 + G * 0.1192 + B * 0.9505;
+
+    return { x: x, y: y, z: z };
+}
+
+function RGBtoLAB(r, g, b) {
+    if (arguments.length == 1) {
+        var _arguments$9 = arguments[0],
+            r = _arguments$9.r,
+            g = _arguments$9.g,
+            b = _arguments$9.b;
+    }
+    return XYZtoLAB(RGBtoXYZ(r, g, b));
+}
+
+var fromRGB = Object.freeze({
+	RGBtoHSV: RGBtoHSV,
+	RGBtoCMYK: RGBtoCMYK,
+	RGBtoHSL: RGBtoHSL,
+	c: c,
+	gray: gray,
+	RGBtoSimpleGray: RGBtoSimpleGray,
+	RGBtoGray: RGBtoGray,
+	brightness: brightness$1,
+	RGBtoYCrCb: RGBtoYCrCb,
+	PivotRGB: PivotRGB,
+	RGBtoXYZ: RGBtoXYZ,
+	RGBtoLAB: RGBtoLAB
+});
+
+function CMYKtoRGB(c, m, y, k) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            c = _arguments$.c,
+            m = _arguments$.m,
+            y = _arguments$.y,
+            k = _arguments$.k;
+    }
+
+    var R = 255 * (1 - c) * (1 - k);
+    var G = 255 * (1 - m) * (1 - k);
+    var B = 255 * (1 - y) * (1 - k);
+
+    return { r: R, g: G, b: B };
+}
+
+var fromCMYK = Object.freeze({
+	CMYKtoRGB: CMYKtoRGB
+});
+
+function HSVtoRGB(h, s, v) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            h = _arguments$.h,
+            s = _arguments$.s,
+            v = _arguments$.v;
+    }
+
+    var H = h;
+    var S = s;
+    var V = v;
+
+    if (H >= 360) {
+        H = 0;
+    }
+
+    var C = S * V;
+    var X = C * (1 - Math.abs(H / 60 % 2 - 1));
+    var m = V - C;
+
+    var temp = [];
+
+    if (0 <= H && H < 60) {
+        temp = [C, X, 0];
+    } else if (60 <= H && H < 120) {
+        temp = [X, C, 0];
+    } else if (120 <= H && H < 180) {
+        temp = [0, C, X];
+    } else if (180 <= H && H < 240) {
+        temp = [0, X, C];
+    } else if (240 <= H && H < 300) {
+        temp = [X, 0, C];
+    } else if (300 <= H && H < 360) {
+        temp = [C, 0, X];
+    }
+
+    return {
+        r: round((temp[0] + m) * 255),
+        g: round((temp[1] + m) * 255),
+        b: round((temp[2] + m) * 255)
+    };
+}
+
+function HSVtoHSL(h, s, v) {
+
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            h = _arguments$2.h,
+            s = _arguments$2.s,
+            v = _arguments$2.v;
+    }
+
+    var rgb = HSVtoRGB(h, s, v);
+
+    return RGBtoHSL(rgb.r, rgb.g, rgb.b);
+}
+
+var fromHSV = Object.freeze({
+	HSVtoRGB: HSVtoRGB,
+	HSVtoHSL: HSVtoHSL
+});
+
+function HUEtoRGB(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+}
+
+function HSLtoHSV(h, s, l) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            h = _arguments$.h,
+            s = _arguments$.s,
+            l = _arguments$.l;
+    }
+    var rgb = HSLtoRGB(h, s, l);
+
+    return RGBtoHSV(rgb.r, rgb.g, rgb.b);
+}
+
+function HSLtoRGB(h, s, l) {
+
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            h = _arguments$2.h,
+            s = _arguments$2.s,
+            l = _arguments$2.l;
+    }
+
+    var r, g, b;
+
+    h /= 360;
+    s /= 100;
+    l /= 100;
+
+    if (s == 0) {
+        r = g = b = l; // achromatic
+    } else {
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = HUEtoRGB(p, q, h + 1 / 3);
+        g = HUEtoRGB(p, q, h);
+        b = HUEtoRGB(p, q, h - 1 / 3);
+    }
+
+    return { r: round(r * 255), g: round(g * 255), b: round(b * 255) };
+}
+
+var fromHSL = Object.freeze({
+	HUEtoRGB: HUEtoRGB,
+	HSLtoHSV: HSLtoHSV,
+	HSLtoRGB: HSLtoRGB
+});
+
+function YCrCbtoRGB(y, cr, cb, bit) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            y = _arguments$.y,
+            cr = _arguments$.cr,
+            cb = _arguments$.cb,
+            bit = _arguments$.bit;
+
+        bit = bit || 0;
+    }
+    var R = y + 1.402 * (cr - bit);
+    var G = y - 0.344 * (cb - bit) - 0.714 * (cr - bit);
+    var B = y + 1.772 * (cb - bit);
+
+    return { r: Math.ceil(R), g: Math.ceil(G), b: Math.ceil(B) };
+}
+
+var fromYCrCb = Object.freeze({
+	YCrCbtoRGB: YCrCbtoRGB
+});
+
+var color_names = { aliceblue: "rgb(240, 248, 255)", antiquewhite: "rgb(250, 235, 215)", aqua: "rgb(0, 255, 255)", aquamarine: "rgb(127, 255, 212)", azure: "rgb(240, 255, 255)", beige: "rgb(245, 245, 220)", bisque: "rgb(255, 228, 196)", black: "rgb(0, 0, 0)", blanchedalmond: "rgb(255, 235, 205)", blue: "rgb(0, 0, 255)", blueviolet: "rgb(138, 43, 226)", brown: "rgb(165, 42, 42)", burlywood: "rgb(222, 184, 135)", cadetblue: "rgb(95, 158, 160)", chartreuse: "rgb(127, 255, 0)", chocolate: "rgb(210, 105, 30)", coral: "rgb(255, 127, 80)", cornflowerblue: "rgb(100, 149, 237)", cornsilk: "rgb(255, 248, 220)", crimson: "rgb(237, 20, 61)", cyan: "rgb(0, 255, 255)", darkblue: "rgb(0, 0, 139)", darkcyan: "rgb(0, 139, 139)", darkgoldenrod: "rgb(184, 134, 11)", darkgray: "rgb(169, 169, 169)", darkgrey: "rgb(169, 169, 169)", darkgreen: "rgb(0, 100, 0)", darkkhaki: "rgb(189, 183, 107)", darkmagenta: "rgb(139, 0, 139)", darkolivegreen: "rgb(85, 107, 47)", darkorange: "rgb(255, 140, 0)", darkorchid: "rgb(153, 50, 204)", darkred: "rgb(139, 0, 0)", darksalmon: "rgb(233, 150, 122)", darkseagreen: "rgb(143, 188, 143)", darkslateblue: "rgb(72, 61, 139)", darkslategray: "rgb(47, 79, 79)", darkslategrey: "rgb(47, 79, 79)", darkturquoise: "rgb(0, 206, 209)", darkviolet: "rgb(148, 0, 211)", deeppink: "rgb(255, 20, 147)", deepskyblue: "rgb(0, 191, 255)", dimgray: "rgb(105, 105, 105)", dimgrey: "rgb(105, 105, 105)", dodgerblue: "rgb(30, 144, 255)", firebrick: "rgb(178, 34, 34)", floralwhite: "rgb(255, 250, 240)", forestgreen: "rgb(34, 139, 34)", fuchsia: "rgb(255, 0, 255)", gainsboro: "rgb(220, 220, 220)", ghostwhite: "rgb(248, 248, 255)", gold: "rgb(255, 215, 0)", goldenrod: "rgb(218, 165, 32)", gray: "rgb(128, 128, 128)", grey: "rgb(128, 128, 128)", green: "rgb(0, 128, 0)", greenyellow: "rgb(173, 255, 47)", honeydew: "rgb(240, 255, 240)", hotpink: "rgb(255, 105, 180)", indianred: "rgb(205, 92, 92)", indigo: "rgb(75, 0, 130)", ivory: "rgb(255, 255, 240)", khaki: "rgb(240, 230, 140)", lavender: "rgb(230, 230, 250)", lavenderblush: "rgb(255, 240, 245)", lawngreen: "rgb(124, 252, 0)", lemonchiffon: "rgb(255, 250, 205)", lightblue: "rgb(173, 216, 230)", lightcoral: "rgb(240, 128, 128)", lightcyan: "rgb(224, 255, 255)", lightgoldenrodyellow: "rgb(250, 250, 210)", lightgreen: "rgb(144, 238, 144)", lightgray: "rgb(211, 211, 211)", lightgrey: "rgb(211, 211, 211)", lightpink: "rgb(255, 182, 193)", lightsalmon: "rgb(255, 160, 122)", lightseagreen: "rgb(32, 178, 170)", lightskyblue: "rgb(135, 206, 250)", lightslategray: "rgb(119, 136, 153)", lightslategrey: "rgb(119, 136, 153)", lightsteelblue: "rgb(176, 196, 222)", lightyellow: "rgb(255, 255, 224)", lime: "rgb(0, 255, 0)", limegreen: "rgb(50, 205, 50)", linen: "rgb(250, 240, 230)", magenta: "rgb(255, 0, 255)", maroon: "rgb(128, 0, 0)", mediumaquamarine: "rgb(102, 205, 170)", mediumblue: "rgb(0, 0, 205)", mediumorchid: "rgb(186, 85, 211)", mediumpurple: "rgb(147, 112, 219)", mediumseagreen: "rgb(60, 179, 113)", mediumslateblue: "rgb(123, 104, 238)", mediumspringgreen: "rgb(0, 250, 154)", mediumturquoise: "rgb(72, 209, 204)", mediumvioletred: "rgb(199, 21, 133)", midnightblue: "rgb(25, 25, 112)", mintcream: "rgb(245, 255, 250)", mistyrose: "rgb(255, 228, 225)", moccasin: "rgb(255, 228, 181)", navajowhite: "rgb(255, 222, 173)", navy: "rgb(0, 0, 128)", oldlace: "rgb(253, 245, 230)", olive: "rgb(128, 128, 0)", olivedrab: "rgb(107, 142, 35)", orange: "rgb(255, 165, 0)", orangered: "rgb(255, 69, 0)", orchid: "rgb(218, 112, 214)", palegoldenrod: "rgb(238, 232, 170)", palegreen: "rgb(152, 251, 152)", paleturquoise: "rgb(175, 238, 238)", palevioletred: "rgb(219, 112, 147)", papayawhip: "rgb(255, 239, 213)", peachpuff: "rgb(255, 218, 185)", peru: "rgb(205, 133, 63)", pink: "rgb(255, 192, 203)", plum: "rgb(221, 160, 221)", powderblue: "rgb(176, 224, 230)", purple: "rgb(128, 0, 128)", rebeccapurple: "rgb(102, 51, 153)", red: "rgb(255, 0, 0)", rosybrown: "rgb(188, 143, 143)", royalblue: "rgb(65, 105, 225)", saddlebrown: "rgb(139, 69, 19)", salmon: "rgb(250, 128, 114)", sandybrown: "rgb(244, 164, 96)", seagreen: "rgb(46, 139, 87)", seashell: "rgb(255, 245, 238)", sienna: "rgb(160, 82, 45)", silver: "rgb(192, 192, 192)", skyblue: "rgb(135, 206, 235)", slateblue: "rgb(106, 90, 205)", slategray: "rgb(112, 128, 144)", slategrey: "rgb(112, 128, 144)", snow: "rgb(255, 250, 250)", springgreen: "rgb(0, 255, 127)", steelblue: "rgb(70, 130, 180)", tan: "rgb(210, 180, 140)", teal: "rgb(0, 128, 128)", thistle: "rgb(216, 191, 216)", tomato: "rgb(255, 99, 71)", turquoise: "rgb(64, 224, 208)", violet: "rgb(238, 130, 238)", wheat: "rgb(245, 222, 179)", white: "rgb(255, 255, 255)", whitesmoke: "rgb(245, 245, 245)", yellow: "rgb(255, 255, 0)", yellowgreen: "rgb(154, 205, 50)", transparent: "rgba(0, 0, 0, 0)" };
+
+function isColorName(name) {
+    return !!color_names[name];
+}
+
+function getColorByName(name) {
+    return color_names[name];
+}
+
+var ColorNames = {
+    isColorName: isColorName,
+    getColorByName: getColorByName
+};
+
+var color_regexp = /(#(?:[\da-f]{3}){1,2}|rgb\((?:\s*\d{1,3},\s*){2}\d{1,3}\s*\)|rgba\((?:\s*\d{1,3},\s*){3}\d*\.?\d+\s*\)|hsl\(\s*\d{1,3}(?:,\s*\d{1,3}%){2}\s*\)|hsla\(\s*\d{1,3}(?:,\s*\d{1,3}%){2},\s*\d*\.?\d+\s*\)|([\w_\-]+))/gi;
+function matches$1(str) {
+    var matches = str.match(color_regexp);
+    var result = [];
+
+    if (!matches) {
+        return result;
+    }
+
+    for (var i = 0, len = matches.length; i < len; i++) {
+
+        if (matches[i].indexOf('#') > -1 || matches[i].indexOf('rgb') > -1 || matches[i].indexOf('hsl') > -1) {
+            result.push({ color: matches[i] });
+        } else {
+            var nameColor = ColorNames.getColorByName(matches[i]);
+
+            if (nameColor) {
+                result.push({ color: matches[i], nameColor: nameColor });
+            }
+        }
+    }
+
+    var pos = { next: 0 };
+    result.forEach(function (item) {
+        var startIndex = str.indexOf(item.color, pos.next);
+
+        item.startIndex = startIndex;
+        item.endIndex = startIndex + item.color.length;
+
+        pos.next = item.endIndex;
+    });
+
+    return result;
+}
+
+function convertMatches(str) {
+    var m = matches$1(str);
+
+    m.forEach(function (it, index) {
+        str = str.replace(it.color, '@' + index);
+    });
+
+    return { str: str, matches: m };
+}
+
+function convertMatchesArray(str) {
+    var splitStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+
+    var ret = convertMatches(str);
+    return ret.str.split(splitStr).map(function (it, index) {
+        it = trim(it);
+
+        if (ret.matches[index]) {
+            it = it.replace('@' + index, ret.matches[index].color);
+        }
+
+        return it;
+    });
+}
+
+function reverseMatches(str, matches) {
+    matches.forEach(function (it, index) {
+        str = str.replace('@' + index, it.color);
+    });
+
+    return str;
+}
+
+function trim(str) {
+    return str.replace(/^\s+|\s+$/g, '');
+}
+
+/**
+ * @method rgb
+ *
+ * parse string to rgb color
+ *
+ * 		color.parse("#FF0000") === { r : 255, g : 0, b : 0 }
+ *
+ * 		color.parse("rgb(255, 0, 0)") == { r : 255, g : 0, b :0 }
+ * 		color.parse(0xff0000) == { r : 255, g : 0, b : 0 }
+ * 		color.parse(0xff000000) == { r : 255, g : 0, b : 0, a: 0 }
+ *
+ * @param {String} str color string
+ * @returns {Object}  rgb object
+ */
+function parse(str) {
+    if (isString(str)) {
+
+        if (ColorNames.isColorName(str)) {
+            str = ColorNames.getColorByName(str);
+        }
+
+        if (str.indexOf("rgb(") > -1) {
+            var arr = str.replace("rgb(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+                arr[i] = parseInt(trim(arr[i]), 10);
+            }
+
+            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: 1 };
+
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        } else if (str.indexOf("rgba(") > -1) {
+            var arr = str.replace("rgba(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+
+                if (len - 1 == i) {
+                    arr[i] = parseFloat(trim(arr[i]));
+                } else {
+                    arr[i] = parseInt(trim(arr[i]), 10);
+                }
+            }
+
+            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: arr[3] };
+
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        } else if (str.indexOf("hsl(") > -1) {
+            var arr = str.replace("hsl(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+                arr[i] = parseFloat(trim(arr[i]));
+            }
+
+            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: 1 };
+
+            obj = _extends({}, obj, HSLtoRGB(obj));
+
+            return obj;
+        } else if (str.indexOf("hsla(") > -1) {
+            var arr = str.replace("hsla(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+
+                if (len - 1 == i) {
+                    arr[i] = parseFloat(trim(arr[i]));
+                } else {
+                    arr[i] = parseInt(trim(arr[i]), 10);
+                }
+            }
+
+            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: arr[3] };
+
+            obj = _extends({}, obj, HSLtoRGB(obj));
+
+            return obj;
+        } else if (str.indexOf("#") == 0) {
+
+            str = str.replace("#", "");
+
+            var arr = [];
+            if (str.length == 3) {
+                for (var i = 0, len = str.length; i < len; i++) {
+                    var char = str.substr(i, 1);
+                    arr.push(parseInt(char + char, 16));
+                }
+            } else {
+                for (var i = 0, len = str.length; i < len; i += 2) {
+                    arr.push(parseInt(str.substr(i, 2), 16));
+                }
+            }
+
+            var obj = { type: 'hex', r: arr[0], g: arr[1], b: arr[2], a: 1 };
+
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        }
+    } else if (isNumber(str)) {
+        if (0x000000 <= str && str <= 0xffffff) {
+            var r = (str & 0xff0000) >> 16;
+            var g = (str & 0x00ff00) >> 8;
+            var b = (str & 0x0000ff) >> 0;
+
+            var obj = { type: 'hex', r: r, g: g, b: b, a: 1 };
+            obj = _extends({}, obj, RGBtoHSL(obj));
+            return obj;
+        } else if (0x00000000 <= str && str <= 0xffffffff) {
+            var _r = (str & 0xff000000) >> 24;
+            var _g = (str & 0x00ff0000) >> 16;
+            var _b = (str & 0x0000ff00) >> 8;
+            var a = (str & 0x000000ff) / 255;
+
+            var obj = { type: 'hex', r: _r, g: _g, b: _b, a: a };
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        }
+    }
+
+    return str;
+}
+
+function parseGradient(colors) {
+    if (isString(colors)) {
+        colors = convertMatchesArray(colors);
+    }
+
+    colors = colors.map(function (it) {
+        if (isString(it)) {
+            var ret = convertMatches(it);
+            var arr = trim(ret.str).split(' ');
+
+            if (arr[1]) {
+                if (arr[1].includes('%')) {
+                    arr[1] = parseFloat(arr[1].replace(/%/, '')) / 100;
+                } else {
+                    arr[1] = parseFloat(arr[1]);
+                }
+            } else {
+                arr[1] = '*';
+            }
+
+            arr[0] = reverseMatches(arr[0], ret.matches);
+
+            return arr;
+        } else if (Array.isArray(it)) {
+
+            if (!it[1]) {
+                it[1] = '*';
+            } else if (isString(it[1])) {
+                if (it[1].includes('%')) {
+                    it[1] = parseFloat(it[1].replace(/%/, '')) / 100;
+                } else {
+                    it[1] = +it[1];
+                }
+            }
+
+            return [].concat(toConsumableArray(it));
+        }
+    });
+
+    var count = colors.filter(function (it) {
+        return it[1] === '*';
+    }).length;
+
+    if (count > 0) {
+        var sum = colors.filter(function (it) {
+            return it[1] != '*' && it[1] != 1;
+        }).map(function (it) {
+            return it[1];
+        }).reduce(function (total, cur) {
+            return total + cur;
+        }, 0);
+
+        var dist = (1 - sum) / count;
+        colors.forEach(function (it, index) {
+            if (it[1] == '*' && index > 0) {
+                if (colors.length - 1 == index) {
+                    // it[1] = 1 
+                } else {
+                    it[1] = dist;
+                }
+            }
+        });
+    }
+
+    return colors;
+}
+
+
+
+var parser = Object.freeze({
+	matches: matches$1,
+	convertMatches: convertMatches,
+	convertMatchesArray: convertMatchesArray,
+	reverseMatches: reverseMatches,
+	trim: trim,
+	parse: parse,
+	parseGradient: parseGradient
+});
+
+function interpolateRGB(startColor, endColor) {
+    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
+
+    var obj = interpolateRGBObject(startColor, endColor, t);
+
+    return format(obj, obj.a < 1 ? 'rgb' : exportFormat);
+}
+
+function interpolateRGBObject(startColor, endColor) {
+    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+
+    return {
+        r: round(startColor.r + (endColor.r - startColor.r) * t),
+        g: round(startColor.g + (endColor.g - startColor.g) * t),
+        b: round(startColor.b + (endColor.b - startColor.b) * t),
+        a: round(startColor.a + (endColor.a - startColor.a) * t, 100)
+    };
+}
+
+function scale(scale) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+
+    if (!scale) return [];
+
+    if (isString(scale)) {
+        scale = convertMatchesArray(scale);
+    }
+
+    scale = scale || [];
+    var len = scale.length;
+
+    var colors = [];
+    for (var i = 0; i < len - 1; i++) {
+        for (var index = 0; index < count; index++) {
+            colors.push(blend(scale[i], scale[i + 1], index / count));
+        }
+    }
+    return colors;
+}
+
+function blend(startColor, endColor) {
+    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
+
+    var s = parse(startColor);
+    var e = parse(endColor);
+
+    return interpolateRGB(s, e, ratio, format$$1);
+}
+
+function mix(startcolor, endColor) {
+    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
+
+    return blend(startcolor, endColor, ratio, format$$1);
+}
+
+/**
+ * 
+ * @param {Color|String} c 
+ */
+function contrast$1(c$$1) {
+    c$$1 = parse(c$$1);
+    return (Math.round(c$$1.r * 299) + Math.round(c$$1.g * 587) + Math.round(c$$1.b * 114)) / 1000;
+}
+
+function contrastColor(c$$1) {
+    return contrast$1(c$$1) >= 128 ? 'black' : 'white';
+}
+
+function gradient$1(colors) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+
+    colors = parseGradient(colors);
+
+    var newColors = [];
+    var maxCount = count - (colors.length - 1);
+    var allCount = maxCount;
+
+    for (var i = 1, len = colors.length; i < len; i++) {
+
+        var startColor = colors[i - 1][0];
+        var endColor = colors[i][0];
+
+        // if it is second color
+        var rate = i == 1 ? colors[i][1] : colors[i][1] - colors[i - 1][1];
+
+        // if it is last color 
+        var colorCount = i == colors.length - 1 ? allCount : Math.floor(rate * maxCount);
+
+        newColors = newColors.concat(scale([startColor, endColor], colorCount), [endColor]);
+
+        allCount -= colorCount;
+    }
+    return newColors;
+}
+
+function scaleHSV(color) {
+    var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'h';
+    var count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 9;
+    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'rgb';
+    var min = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+    var max = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1;
+    var dist = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 100;
+
+    var colorObj = parse(color);
+    var hsv = RGBtoHSV(colorObj);
+    var unit = (max - min) * dist / count;
+
+    var results = [];
+    for (var i = 1; i <= count; i++) {
+        hsv[target] = Math.abs((dist - unit * i) / dist);
+        results.push(format(HSVtoRGB(hsv), exportFormat));
+    }
+
+    return results;
+}
+
+function scaleH(color) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
+    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 360;
+
+    return scaleHSV(color, 'h', count, exportFormat, min, max, 1);
+}
+
+function scaleS(color) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
+    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
+
+    return scaleHSV(color, 's', count, exportFormat, min, max, 100);
+}
+
+function scaleV(color) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
+    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
+
+    return scaleHSV(color, 'v', count, exportFormat, min, max, 100);
+}
+
+/* predefined scale colors */
+scale.parula = function (count) {
+    return scale(['#352a87', '#0f5cdd', '#00b5a6', '#ffc337', '#fdff00'], count);
+};
+
+scale.jet = function (count) {
+    return scale(['#00008f', '#0020ff', '#00ffff', '#51ff77', '#fdff00', '#ff0000', '#800000'], count);
+};
+
+scale.hsv = function (count) {
+    return scale(['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ff0000'], count);
+};
+
+scale.hot = function (count) {
+    return scale(['#0b0000', '#ff0000', '#ffff00', '#ffffff'], count);
+};
+scale.pink = function (count) {
+    return scale(['#1e0000', '#bd7b7b', '#e7e5b2', '#ffffff'], count);
+};
+
+scale.bone = function (count) {
+    return scale(['#000000', '#4a4a68', '#a6c6c6', '#ffffff'], count);
+};
+
+scale.copper = function (count) {
+    return scale(['#000000', '#3d2618', '#9d623e', '#ffa167', '#ffc77f'], count);
+};
+
+var mixin = Object.freeze({
+	interpolateRGB: interpolateRGB,
+	interpolateRGBObject: interpolateRGBObject,
+	scale: scale,
+	blend: blend,
+	mix: mix,
+	contrast: contrast$1,
+	contrastColor: contrastColor,
+	gradient: gradient$1,
+	scaleHSV: scaleHSV,
+	scaleH: scaleH,
+	scaleS: scaleS,
+	scaleV: scaleV
+});
+
+function array_equals(v1, v2) {
+    if (v1.length !== v2.length) return false;
+    for (var i = 0, len = v1.length; i < len; ++i) {
+        if (v1[i] !== v2[i]) return false;
+    }
+    return true;
+}
+
+function euclidean(v1, v2) {
+    var total = 0;
+
+    for (var i = 0, len = v1.length; i < len; i++) {
+        total += Math.pow(v2[i] - v1[i], 2);
+    }
+
+    return Math.sqrt(total);
+}
+
+function manhattan(v1, v2) {
+    var total = 0;
+
+    for (var i = 0, len = v1.length; i < len; i++) {
+        total += Math.abs(v2[i] - v1[i]);
+    }
+
+    return total;
+}
+
+function max(v1, v2) {
+    var max = 0;
+    for (var i = 0, len = v1.length; i < len; i++) {
+        max = Math.max(max, Math.abs(v2[i] - v1[i]));
+    }
+
+    return max;
+}
+
+var distances = {
+    euclidean: euclidean,
+    manhattan: manhattan,
+    max: max
+};
+
+var create_random_number = {
+    linear: function linear(num, count) {
+        var centeroids = [];
+        var start = Math.round(Math.random() * num);
+        var dist = Math.floor(num / count);
+
+        do {
+
+            centeroids.push(start);
+
+            start = (start + dist) % num;
+        } while (centeroids.length < count);
+
+        return centeroids;
+    },
+
+    shuffle: function shuffle(num, count) {
+        var centeroids = [];
+
+        while (centeroids.length < count) {
+
+            var index = Math.round(Math.random() * num);
+
+            if (centeroids.indexOf(index) == -1) {
+                centeroids.push(index);
+            }
+        }
+
+        return centeroids;
+    }
+
+};
+
+function randomCentroids(points, k) {
+    var method = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
+
+
+    var centeroids = create_random_number[method](points.length, k);
+
+    return centeroids.map(function (i) {
+        return points[i];
+    });
+
+    // var centeroids = points.slice(0);
+
+    // centeroids.sort(function () {
+    //     return (Math.round(Math.random()) - 0.5);
+    // })
+
+    // return centeroids.slice(0, k); 
+}
+
+function closestCenteroid(point, centeroids, distance) {
+    var min = Infinity,
+        kIndex = 0;
+
+    centeroids.forEach(function (center, i) {
+        var dist = distance(point, center);
+
+        if (dist < min) {
+            min = dist;
+            kIndex = i;
+        }
+    });
+
+    return kIndex;
+}
+
+function getCenteroid(assigned) {
+
+    if (!assigned.length) return [];
+
+    // initialize centeroid list 
+    var centeroid = new Array(assigned[0].length);
+    for (var i = 0, len = centeroid.length; i < len; i++) {
+        centeroid[i] = 0;
+    }
+
+    for (var index = 0, len = assigned.length; index < len; index++) {
+        var it = assigned[index];
+
+        var last = index + 1;
+
+        for (var j = 0, jLen = it.length; j < jLen; j++) {
+            centeroid[j] += (it[j] - centeroid[j]) / last;
+        }
+    }
+
+    centeroid = centeroid.map(function (it) {
+        return Math.floor(it);
+    });
+
+    return centeroid;
+}
+
+function unique_array(arrays) {
+    return arrays;
+    var set = {};
+    var count = arrays.length;
+    var it = null;
+    while (count--) {
+        it = arrays[count];
+        set[JSON.stringify(it)] = it;
+    }
+
+    return Object.values(set);
+}
+
+function splitK(k, points, centeroids, distance) {
+    var assignment = new Array(k);
+
+    for (var i = 0; i < k; i++) {
+        assignment[i] = [];
+    }
+
+    for (var idx = 0, pointLength = points.length; idx < pointLength; idx++) {
+        var point = points[idx];
+        var index = closestCenteroid(point, centeroids, distance);
+        assignment[index].push(point);
+    }
+
+    return assignment;
+}
+
+function setNewCenteroid(k, points, assignment, centeroids, movement, randomFunction) {
+
+    for (var i = 0; i < k; i++) {
+        var assigned = assignment[i];
+
+        var centeroid = centeroids[i];
+        var newCenteroid = new Array(centeroid.length);
+
+        if (assigned.length > 0) {
+            newCenteroid = getCenteroid(assigned);
+        } else {
+            var idx = Math.floor(randomFunction() * points.length);
+            newCenteroid = points[idx];
+        }
+
+        if (array_equals(newCenteroid, centeroid)) {
+            movement = false;
+        } else {
+            movement = true;
+        }
+
+        centeroids[i] = newCenteroid;
+    }
+
+    return movement;
+}
+
+function kmeans(points, k, distanceFunction) {
+    var period = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
+    var initialRandom = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'linear';
+
+    points = unique_array(points);
+
+    k = k || Math.max(2, Math.ceil(Math.sqrt(points.length / 2)));
+
+    var distance = distanceFunction || 'euclidean';
+    if (isString(distance)) {
+        distance = distances[distance];
+    }
+
+    var rng_seed = 0;
+    var random = function random() {
+        rng_seed = (rng_seed * 9301 + 49297) % 233280;
+        return rng_seed / 233280;
+    };
+
+    var centeroids = randomCentroids(points, k, initialRandom);
+
+    var movement = true;
+    var iterations = 0;
+    while (movement) {
+        var assignment = splitK(k, points, centeroids, distance);
+
+        movement = setNewCenteroid(k, points, assignment, centeroids, false, random);
+
+        iterations++;
+
+        if (iterations % period == 0) {
+            break;
+        }
+    }
+
+    return centeroids;
+}
+
+var ImageLoader = function () {
+    function ImageLoader(url) {
+        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        classCallCheck(this, ImageLoader);
+
+        this.isLoaded = false;
+        this.imageUrl = url;
+        this.opt = opt;
+        this.initialize();
+    }
+
+    createClass(ImageLoader, [{
+        key: 'initialize',
+        value: function initialize() {
+            this.canvas = this.createCanvas();
+            this.context = this.canvas.getContext('2d');
+        }
+    }, {
+        key: 'createCanvas',
+        value: function createCanvas() {
+            return document.createElement('canvas');
+        }
+    }, {
+        key: 'load',
+        value: function load(callback) {
+            this.loadImage(callback);
+        }
+    }, {
+        key: 'loadImage',
+        value: function loadImage(callback) {
+            var _this = this;
+
+            this.getImage(function (img) {
+                var ctx = _this.context;
+                var ratio = img.height / img.width;
+
+                if (_this.opt.canvasWidth && _this.opt.canvasHeight) {
+                    _this.canvas.width = _this.opt.canvasWidth;
+                    _this.canvas.height = _this.opt.canvasHeight;
+                } else {
+                    _this.canvas.width = _this.opt.maxWidth ? _this.opt.maxWidth : img.width;
+                    _this.canvas.height = _this.canvas.width * ratio;
+                }
+
+                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, _this.canvas.width, _this.canvas.height);
+                _this.isLoaded = true;
+                callback && callback();
+            });
+        }
+    }, {
+        key: 'getImage',
+        value: function getImage(callback) {
+
+            this.newImage = new Image();
+            var img = this.newImage;
+            img.onload = function () {
+                callback && callback(img);
+            };
+
+            img.onerror = function (e) {
+                console.log(e, img.src);
+            };
+
+            this.getImageUrl(function (url) {
+                img.src = url;
+            });
+        }
+    }, {
+        key: 'load',
+        value: function load(callback) {
+            var _this2 = this;
+
+            this.newImage = new Image();
+            var img = this.newImage;
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                _this2.isLoaded = true;
+                callback && callback();
+            };
+
+            this.getImageUrl(function (url) {
+                img.src = url;
+            });
+        }
+    }, {
+        key: 'getImageUrl',
+        value: function getImageUrl(callback) {
+            if (isString(this.imageUrl)) {
+                return callback(this.imageUrl);
+            } else if (this.imageUrl instanceof Blob) {
+                var reader = new FileReader();
+
+                reader.onload = function (ev) {
+                    callback(ev.target.result);
+                };
+
+                reader.readAsDataURL(this.imageUrl);
+            }
+        }
+    }, {
+        key: 'getRGBA',
+        value: function getRGBA(r, g, b, a) {
+            return [r, g, b, a];
+        }
+    }, {
+        key: 'toArray',
+        value: function toArray$$1(filter, callback) {
+            var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+            var width = imagedata.width;
+            var height = imagedata.height;
+
+            var pixels = new Uint8ClampedArray(imagedata.data);
+
+            var bitmap = { pixels: pixels, width: width, height: height };
+
+            if (!filter) {
+                filter = function () {
+                    return function (bitmap, done) {
+                        done(bitmap);
+                    };
+                }();
+            }
+
+            filter(bitmap, function (newBitmap) {
+                var tmpCanvas = Canvas.drawPixels(newBitmap);
+
+                if (opt.returnTo == 'canvas') {
+                    callback(tmpCanvas);
+                } else {
+                    callback(tmpCanvas.toDataURL(opt.outputFormat || 'image/png'));
+                }
+            }, opt);
+        }
+    }, {
+        key: 'toHistogram',
+        value: function toHistogram(opt) {
+            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+            var width = imagedata.width;
+            var height = imagedata.height;
+
+            var pixels = new Uint8ClampedArray(imagedata.data);
+
+            var bitmap = { pixels: pixels, width: width, height: height };
+
+            return Canvas.getHistogram(bitmap);
+        }
+    }, {
+        key: 'toRGB',
+        value: function toRGB() {
+            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+            var rgba = imagedata.data;
+            var results = [];
+            for (var i = 0, len = rgba.length; i < len; i += 4) {
+                results[results.length] = [rgba[i + 0], rgba[i + 1], rgba[i + 2], rgba[i + 3]];
+            }
+
+            return results;
+        }
+    }]);
+    return ImageLoader;
+}();
 
 function parseParamNumber$2(param) {
     if (isString(param)) {
@@ -5972,8 +5992,8 @@ var GL$1 = {
     GLCanvas: GLCanvas
 };
 
-var functions = {
-    filter: filter
+var functions$1 = {
+    filter: filter$1
 };
 
 
@@ -6004,7 +6024,7 @@ function flatFilter(filterString) {
     var filter_list = [];
 
     if (isString(filterString)) {
-        filter_list = matches$1(filterString);
+        filter_list = matches(filterString);
     } else if (Array.isArray(filterString)) {
         filter_list = filterString;
     }
@@ -6032,7 +6052,7 @@ function flatFilter(filterString) {
     return allFilter;
 }
 
-function filter(img, filterString, callback, opt) {
+function filter$1(img, filterString, callback, opt) {
 
     var canvas = new GL$1.GLCanvas({
         width: opt.width || img.width,
@@ -6047,7 +6067,7 @@ function filter(img, filterString, callback, opt) {
     });
 }
 
-var GL = _extends({}, GL$1, functions);
+var GL = _extends({}, GL$1, functions$1);
 
 function palette(colors) {
     var k = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 6;
@@ -6117,7 +6137,7 @@ function GLToCanvas(url, filter, callback) {
     });
 }
 
-function histogram(url, callback) {
+function histogram$1(url, callback) {
     var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var img = new ImageLoader(url);
@@ -6190,18 +6210,18 @@ function ImageToHistogram(url, callback) {
 
 
 
-var image = Object.freeze({
+var image$1 = Object.freeze({
 	palette: palette,
 	ImageToRGB: ImageToRGB,
 	ImageToCanvas: ImageToCanvas,
 	ImageToURL: ImageToURL,
 	GLToCanvas: GLToCanvas,
-	histogram: histogram,
+	histogram: histogram$1,
 	histogramToPoints: histogramToPoints,
 	ImageToHistogram: ImageToHistogram
 });
 
-var Color$1 = _extends({}, formatter, math, mixin, parser, fromYCrCb, fromRGB, fromCMYK, fromHSV, fromHSL, fromLAB, image, func);
+var Color$1 = _extends({}, formatter, math, mixin, parser, fromYCrCb, fromRGB, fromCMYK, fromHSV, fromHSL, fromLAB, image$1, func);
 
 var hue_color = [{ rgb: '#ff0000', start: .0 }, { rgb: '#ffff00', start: .17 }, { rgb: '#00ff00', start: .33 }, { rgb: '#00ffff', start: .50 }, { rgb: '#0000ff', start: .67 }, { rgb: '#ff00ff', start: .83 }, { rgb: '#ff0000', start: 1 }];
 
@@ -6243,7 +6263,7 @@ var HueColor = {
 };
 
 // TODO: worker run 
-var ImageFilter = _extends({}, FilterList, functions$1);
+var ImageFilter = _extends({}, FilterList, functions);
 
 var GETTER_PREFIX = '*/';
 var ACTION_PREFIX = '/';
@@ -6286,7 +6306,7 @@ var BaseStore = function () {
             var _this = this;
 
             this.modules.forEach(function (ModuleClass) {
-                var instance = _this.addModule(ModuleClass);
+                _this.addModule(ModuleClass);
             });
         }
     }, {
@@ -6407,11 +6427,6 @@ var BaseStore = function () {
             } else {
                 throw new Error('getter : ' + action + ' is not a valid.');
             }
-        }
-    }, {
-        key: "clone",
-        value: function clone$$1(action, $1, $2, $3, $4, $5) {
-            return JSON.parse(JSON.stringify(this.read(action, $1, $2, $3, $4, $5)));
         }
     }, {
         key: "addModule",
@@ -6737,11 +6752,20 @@ var Dom = function () {
     }, {
         key: "cssText",
         value: function cssText(value$$1) {
-            if (isUndefined(value$$1)) {
+            if (isUndefined$1(value$$1)) {
                 return this.el.style.cssText;
             }
 
             this.el.style.cssText = value$$1;
+
+            return this;
+        }
+    }, {
+        key: "cssArray",
+        value: function cssArray(arr) {
+            for (var i = 0, len = arr.length; i < len; i += 2) {
+                this.el.style[arr[i]] = arr[i + 1];
+            }
 
             return this;
         }
@@ -7255,6 +7279,8 @@ var State = function () {
   return State;
 }();
 
+var _templateObject = taggedTemplateLiteral(['', ''], ['', '']);
+
 var META_KEYS = [KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
 var REFERENCE_PROPERTY = 'ref';
 
@@ -7271,7 +7297,7 @@ var EventMachin = function () {
   createClass(EventMachin, [{
     key: 'render',
     value: function render($container) {
-      this.$el = this.parseTemplate(this.template());
+      this.$el = this.parseTemplate(html(_templateObject, this.template()));
       this.refs.$el = this.$el;
 
       if ($container) $container.html(this.$el);
@@ -7733,7 +7759,6 @@ var EventMachin = function () {
   return EventMachin;
 }();
 
-var CLONE = 'clone';
 var TOOL_COLOR_SOURCE = 'tool/colorSource';
 var TOOL_GET = 'tool/get';
 var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
@@ -7836,6 +7861,11 @@ var UIElement = function (_EventMachin) {
             });
         }
     }, {
+        key: "get",
+        value: function get(id) {
+            return this.$store.items[id] || {};
+        }
+    }, {
         key: "read",
         value: function read($1, $2, $3, $4, $5) {
             return this.$store.read($1, $2, $3, $4, $5);
@@ -7870,15 +7900,15 @@ var UIElement = function (_EventMachin) {
         key: "config",
         value: function config($1, $2, $3, $4, $5) {
             if (arguments.length == 1) {
-                return this.read(TOOL_GET, $1);
+                return this.$store.tool[$1];
             }
 
             this.dispatch(TOOL_SET, $1, $2, $3, $4, $5);
         }
     }, {
         key: "initConfig",
-        value: function initConfig($1, $2, $3, $4, $5) {
-            this.run(TOOL_SET, $1, $2, $3, $4, $5);
+        value: function initConfig($1, $2) {
+            this.$store.tool[$1] = $2;
         }
     }, {
         key: "run",
@@ -8017,6 +8047,26 @@ var BaseModule = function () {
                 return key.startsWith(pattern);
             });
         }
+    }, {
+        key: "get",
+        value: function get(id) {
+            return this.$store.items[id] || {};
+        }
+    }, {
+        key: "set",
+        value: function set$$1(id, opt) {
+            this.$store.items[id] = opt;
+        }
+    }, {
+        key: "config",
+        value: function config(key, defaultValue) {
+            return isUndefined(this.$store.tool[key]) ? defaultValue : this.$store.tool[key];
+        }
+    }, {
+        key: "initConfig",
+        value: function initConfig(key, value) {
+            this.$store.tool[key] = value;
+        }
     }]);
     return BaseModule;
 }();
@@ -8077,7 +8127,7 @@ var ColorSetsList = function (_BaseModule) {
 
             var _list = $store.read('list');
 
-            if (isUndefined(nameOrIndex)) {
+            if (isUndefined$1(nameOrIndex)) {
                 $store.currentColorSets = _list[0];
             } else if (isNumber(nameOrIndex)) {
                 $store.currentColorSets = _list[nameOrIndex];
@@ -8214,7 +8264,7 @@ var ColorManager = function (_BaseModule) {
 
             colorObj.source = colorObj.source || source;
 
-            $store.alpha = isUndefined(colorObj.a) ? $store.alpha : colorObj.a;
+            $store.alpha = isUndefined$1(colorObj.a) ? $store.alpha : colorObj.a;
             $store.format = colorObj.type != 'hsv' ? colorObj.type || $store.format : $store.format;
 
             if ($store.format == 'hex' && $store.alpha < 1) {
@@ -9468,7 +9518,7 @@ var ColorInformation = function (_UIElement) {
     return ColorInformation;
 }(UIElement);
 
-var _templateObject = taggedTemplateLiteral(['\n            <div>\n                ', '\n            </div>\n        '], ['\n            <div>\n                ', '\n            </div>\n        ']);
+var _templateObject$1 = taggedTemplateLiteral(['\n            <div>\n                ', '\n            </div>\n        '], ['\n            <div>\n                ', '\n            </div>\n        ']);
 var _templateObject2 = taggedTemplateLiteral(['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>'], ['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>']);
 
 var DATA_COLORSETS_INDEX = 'data-colorsets-index';
@@ -9510,7 +9560,7 @@ var ColorSetsChooser = function (_UIElement) {
             // colorsets 
             var colorSets = this.read('getColorSetsList');
 
-            return html(_templateObject, colorSets.map(function (element, index) {
+            return html(_templateObject$1, colorSets.map(function (element, index) {
                 return html(_templateObject2, index, element.name, element.colors.filter(function (color, i) {
                     return i < 5;
                 }).map(function (color) {
@@ -9665,7 +9715,7 @@ var CurrentColorSetsContextMenu = function (_UIElement) {
             this.$el.addClass('show');
             this.selectedColorIndex = index;
 
-            if (isUndefined(this.selectedColorIndex)) {
+            if (isUndefined$1(this.selectedColorIndex)) {
                 this.$el.addClass('small');
             } else {
                 this.$el.removeClass('small');
@@ -9719,7 +9769,7 @@ var MacOSColorPicker = function (_BaseColorPicker) {
     createClass(MacOSColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <ColorWheel></ColorWheel>\n                <div class="control">\n                    <Value></Value>\n                    <Opacity></Opacity>\n                    <div class="empty"></div>\n                    <ColorView></ColorView>\n                </div>\n                <Information></Information>\n                <CurrentColorSets></CurrentColorSets>\n                <ColorSetsChooser></ColorSetsChooser>\n                <ContextMenu></ContextMenu>                \n            </div> \n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <ColorWheel />\n                <div class="control">\n                    <Value />\n                    <Opacity />\n                    <div class="empty"></div>\n                    <ColorView />\n                </div>\n                <Information />\n                <CurrentColorSets />\n                <ColorSetsChooser >\n                <ContextMenu />\n            </div> \n        ';
         }
     }, {
         key: 'components',
@@ -9902,7 +9952,7 @@ var ChromeDevToolColorPicker = function (_BaseColorPicker) {
     createClass(ChromeDevToolColorPicker, [{
         key: 'template',
         value: function template() {
-            return '<div class=\'colorpicker-body\'>\n            <Palette></Palette> \n            <div class="control">\n                <Hue></Hue>\n                <Opacity></Opacity>\n                <div class="empty"></div>\n                <ColorView></ColorView>\n            </div>\n            <Information></Information>\n            <CurrentColorSets></CurrentColorSets>\n            <ColorSetsChooser></ColorSetsChooser>\n            <ContextMenu></ContextMenu>\n        </div>';
+            return '<div class=\'colorpicker-body\'>\n            <Palette />\n            <div class="control">\n                <Hue />\n                <Opacity />\n                <div class="empty"></div>\n                <ColorView />\n            </div>\n            <Information />\n            <CurrentColorSets />\n            <ColorSetsChooser />\n            <ContextMenu />\n        </div>';
         }
     }, {
         key: 'components',
@@ -9931,7 +9981,7 @@ var MiniColorPicker = function (_BaseColorPicker) {
     createClass(MiniColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <Palette></Palette>\n                <div class="control">\n                    <Hue></Hue>\n                    <Opacity></Opacity>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <Palette />\n                <div class="control">\n                    <Hue />\n                    <Opacity />\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -10125,7 +10175,7 @@ var MiniColorPicker$2 = function (_BaseColorPicker) {
     createClass(MiniColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <Palette></Palette><div class="control"><Hue></Hue><Opacity></Opacity></div>\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <Palette /><div class="control"><Hue /><Opacity /></div>\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -10227,7 +10277,7 @@ var RingColorPicker = function (_BaseColorPicker) {
     createClass(RingColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <ColorRing></ColorRing>\n                <Palette></Palette> \n                <div class="control">\n                    <Value></Value>\n                    <Opacity></Opacity>\n                    <div class="empty"></div>\n                    <ColorView></ColorView>\n                </div>\n                <Information></Information>\n                <CurrentColorSets></CurrentColorSets>\n                <ColorSetsChooser></ColorSetsChooser>\n                <ContextMenu></ContextMenu>\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <ColorRing />\n                <Palette />\n                <div class="control">\n                    <Value />\n                    <Opacity />\n                    <div class="empty"></div>\n                    <ColorView />\n                </div>\n                <Information />\n                <CurrentColorSets />\n                <ColorSetsChooser />\n                <ContextMenu />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -10259,7 +10309,7 @@ var XDColorPicker = function (_BaseColorPicker) {
     createClass(XDColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <palette></palette> \n                <div class="control">\n                    <Hue></Hue>\n                    <Opacity></Opacity>\n                </div>\n                <information></information>\n                <currentColorSets></currentColorSets>\n                <colorSetsChooser></colorSetsChooser>\n                <contextMenu></contextMenu>\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <palette />\n                <div class="control">\n                    <Hue />\n                    <Opacity />\n                </div>\n                <information />\n                <currentColorSets />\n                <colorSetsChooser />\n                <contextMenu />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -10289,7 +10339,7 @@ var RingTabColorPicker = function (_BaseColorPicker) {
     createClass(RingTabColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing></ColorRing>\n                            <Palette></Palette> \n                            <div class="control">\n                                <Value></Value>\n                                <Opacity></Opacity>\n                                <div class="empty"></div>\n                                <ColorView></ColorView>\n                            </div>\n                            <Information></Information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing />\n                            <Palette />\n                            <div class="control">\n                                <Value />\n                                <Opacity />\n                                <div class="empty"></div>\n                                <ColorView />\n                            </div>\n                            <Information />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets />\n                            <ContextMenu />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser />\n                        </div>                        \n                    </div>\n            </div>\n        ';
         }
     }, {
         key: CLICK('$tabHeader .color-tab-item'),
@@ -10335,7 +10385,7 @@ var XDTabColorPicker = function (_BaseColorPicker) {
     createClass(XDTabColorPicker, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette></palette> \n                            <div class="control">\n                                <Hue></Hue>\n                                <Opacity></Opacity>\n                            </div>\n                            <information></information>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets></CurrentColorSets>\n                            <ContextMenu></ContextMenu>\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser></ColorSetsChooser>                    \n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette />\n                            <div class="control">\n                                <Hue />\n                                <Opacity />\n                            </div>\n                            <information />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets />\n                            <ContextMenu />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser />\n                        </div>                        \n                    </div>\n\n            </div>\n        ';
         }
     }, {
         key: CLICK('$tabHeader .color-tab-item'),
@@ -10925,34 +10975,16 @@ var HISTORY_SELECTED_CHECK = 'history/selected/check';
 var IMAGE_GET_FILE = 'image/get/file';
 var IMAGE_GET_URL = 'image/get/url';
 var IMAGE_GET_BLOB = 'image/get/blob';
-var IMAGE_TYPE_IS_GRADIENT = 'image/type/isGradient';
-var IMAGE_TYPE_IS_NOT_GRADIENT = 'image/type/isNotGradient';
-var IMAGE_TYPE_IS_LINEAR = 'image/type/isLinear';
-var IMAGE_TYPE_IS_RADIAL = 'image/type/isRadial';
-var IMAGE_TYPE_IS_CONIC = 'image/type/isConic';
-var IMAGE_TYPE_IS_IMAGE = 'image/type/isImage';
-var IMAGE_TYPE_IS_STATIC = 'image/type/isStatic';
-var IMAGE_ANGLE = 'image/angle';
-var IMAGE_RADIAL_POSITION = 'image/radialPosition';
-var IMAGE_BACKGROUND_SIZE_TO_CSS = 'image/backgroundSize/toCSS';
-var IMAGE_TO_CSS = 'image/toCSS';
-var IMAGE_CACHE_TO_CSS = 'image/cache/toCSS';
+
+
+
+
 var IMAGE_TO_STRING = 'image/toString';
-var IMAGE_TO_IMAGE_STRING = 'image/toImageString';
-var IMAGE_TO_BACKGROUND_SIZE_STRING = 'image/toBackgroundSizeString';
-var IMAGE_TO_BACKGROUND_POSITION_STRING = 'image/toBackgroundPositionString';
-var IMAGE_TO_BACKGROUND_REPEAT_STRING = 'image/toBackgroundRepeatString';
-var IMAGE_TO_BACKGROUND_BLEND_MODE_STRING = 'image/toBackgroundBlendModeString';
-var IMAGE_GET_UNIT_VALUE = 'image/get/unitValue';
-var IMAGE_GET_STEP_VALUE = 'image/get/stepValue';
-var IMAGE_TO_ITEM_STRING = 'image/toItemString';
-var IMAGE_TO_CONIC_ITEM_STRING = 'image/toConicItemString';
-var IMAGE_TO_LINEAR = 'image/toLinear';
-var IMAGE_TO_STATIC = 'image/toStatic';
+
+
+
+
 var IMAGE_TO_LINEAR_RIGHT = 'image/toLinearRight';
-var IMAGE_TO_RADIAL = 'image/toRadial';
-var IMAGE_TO_CONIC = 'image/toConic';
-var IMAGE_TO_IMAGE = 'image/toImage';
 
 var ITEM_GET_ALL = 'item/get/all';
 var ITEM_LIST = 'item/list';
@@ -10992,6 +11024,693 @@ var COLORSTEP_UNIT_VALUE = 'colorstep/unit/value';
 var COLORSTEP_ORDERING_EQUALS = 'colorstep/ordering/equals';
 var COLORSTEP_ORDERING_EQUALS_LEFT = 'colorstep/ordering/equals/left';
 var COLORSTEP_ORDERING_EQUALS_RIGHT = 'colorstep/ordering/equals/right';
+
+var _DEFINED_POSITIONS;
+
+function MAKE_BORDER_RADIUS(layer) {
+    var css = {};
+    if (layer.fixedRadius) {
+        css['border-radius'] = stringUnit(layer.borderRadius);
+    } else {
+        if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
+        if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
+        if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
+        if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
+    }
+
+    return css;
+}
+
+function MAKE_BORDER_COLOR(layer) {
+    var css = {};
+
+    if (layer.borderColor) {
+        css['border-color'] = layer.borderColor;
+    } else {
+        if (layer.borderTopColor) css['border-top-color'] = layer.borderTopColor;
+        if (layer.borderRightColor) css['border-right-color'] = layer.borderRightColor;
+        if (layer.borderBottomColor) css['border-bottom-color'] = layer.borderBottomColor;
+        if (layer.borderLeftColor) css['border-left-color'] = layer.borderLeftColor;
+    }
+
+    return css;
+}
+
+function MAKE_BORDER_STYLE(layer) {
+    var css = {};
+
+    if (layer.borderStyle) css['border-style'] = layer.borderStyle;
+    if (layer.borderTopStyle) css['border-top-style'] = layer.borderTopStyle;
+    if (layer.borderRightStyle) css['border-right-style'] = layer.borderRightStyle;
+    if (layer.borderBottomStyle) css['border-bottom-style'] = layer.borderBottomStyle;
+    if (layer.borderLeftStyle) css['border-left-style'] = layer.borderLeftStyle;
+
+    return css;
+}
+
+function MAKE_BORDER_WIDTH(layer) {
+    var css = {};
+
+    if (layer.fixedBorderWidth) {
+        css['border-width'] = stringUnit(layer.borderWidth);
+        css['border-style'] = 'solid';
+    } else {
+
+        if (layer.borderTopWidth) {
+            css['border-top-width'] = stringUnit(layer.borderTopWidth);
+            css['border-top-style'] = 'solid';
+        }
+
+        if (layer.borderRightWidth) {
+            css['border-right-width'] = stringUnit(layer.borderRightWidth);
+            css['border-right-style'] = 'solid';
+        }
+
+        if (layer.borderLeftWidth) {
+            css['border-left-width'] = stringUnit(layer.borderLeftWidth);
+            css['border-left-style'] = 'solid';
+        }
+
+        if (layer.borderBottomWidth) {
+            css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
+            css['border-bottom-style'] = 'solid';
+        }
+    }
+
+    return css;
+}
+
+function MAKE_TRANSFORM(layer) {
+
+    var results = [];
+
+    if (layer.perspective) {
+        results.push("perspective(" + layer.perspective + "px)");
+    }
+
+    if (layer.rotate) {
+        results.push("rotate(" + layer.rotate + "deg)");
+    }
+
+    if (layer.skewX) {
+        results.push("skewX(" + layer.skewX + "deg)");
+    }
+
+    if (layer.skewY) {
+        results.push("skewY(" + layer.skewY + "deg)");
+    }
+
+    if (layer.scale) {
+        results.push("scale(" + layer.scale + ")");
+    }
+
+    if (layer.translateX) {
+        results.push("translateX(" + layer.translateX + "px)");
+    }
+
+    if (layer.translateY) {
+        results.push("translateY(" + layer.translateY + "px)");
+    }
+
+    if (layer.translateZ) {
+        results.push("translateZ(" + layer.translateZ + "px)");
+    }
+
+    if (layer.rotateX) {
+        results.push("rotateX(" + layer.rotateX + "deg)");
+    }
+
+    if (layer.rotateY) {
+        results.push("rotateY(" + layer.rotateY + "deg)");
+    }
+
+    if (layer.rotateZ) {
+        results.push("rotateZ(" + layer.rotateZ + "deg)");
+    }
+
+    if (layer.scaleX) {
+        results.push("scaleX(" + layer.scaleX + ")");
+    }
+
+    if (layer.scaleY) {
+        results.push("scaleY(" + layer.scaleY + ")");
+    }
+
+    if (layer.scaleZ) {
+        results.push("scaleZ(" + layer.scaleZ + ")");
+    }
+
+    return {
+        transform: results.length ? results.join(' ') : 'none'
+    };
+}
+
+function BOUND_TO_CSS(layer) {
+    var css = {};
+
+    if (!layer) return css;
+
+    css.left = stringUnit(layer.x);
+    css.top = stringUnit(layer.y);
+    css.width = stringUnit(layer.width);
+    css.height = stringUnit(layer.height);
+    css['z-index'] = layer.index;
+
+    return css;
+}
+
+var css = ['left', '0px', 'top', '0px', 'width', '0px', 'height', '0px', 'z-index', '0'];
+
+function BOUND_TO_CSS_ARRAY(layer) {
+    if (!layer) return [];
+
+    css[1] = stringUnit(layer.x);
+    css[3] = stringUnit(layer.y);
+    css[5] = stringUnit(layer.width);
+    css[7] = stringUnit(layer.height);
+    css[9] = layer.index;
+
+    return css;
+}
+
+function CSS_FILTERING(style) {
+    var newStyle = style;
+
+    if (newStyle['background-blend-mode'] == 'normal') {
+        delete newStyle['background-blend-mode'];
+    }
+
+    if (newStyle['mix-blend-mode'] == 'normal') {
+        delete newStyle['mix-blend-mode'];
+    }
+
+    if (newStyle['background-size'] == 'auto') {
+        delete newStyle['background-size'];
+    }
+
+    if (newStyle['background-position'] == 'center center') {
+        delete newStyle['background-position'];
+    }
+
+    if (parseParamNumber$1(newStyle.opacity) == 1) {
+        delete newStyle.opacity;
+    }
+
+    if (parseParamNumber$1(newStyle.left) == 0) {
+        delete newStyle.left;
+    }
+
+    if (parseParamNumber$1(newStyle.top) == 0) {
+        delete newStyle.top;
+    }
+
+    if (newStyle.transform == 'none') {
+        delete newStyle.transform;
+    }
+
+    if (newStyle['transform-style'] == 'float') {
+        delete newStyle['transform-style'];
+    }
+
+    return newStyle;
+}
+
+function CSS_GENERATE(css) {
+    var results = {};
+
+    Object.keys(css).forEach(function (key) {
+        if (!results[key]) {
+            results[key] = [];
+        }
+
+        results[key].push(css[key]);
+    });
+
+    Object.keys(results).forEach(function (key) {
+        if (Array.isArray(results[key])) {
+            results[key] = results[key].join(', ');
+        }
+    });
+
+    return CSS_FILTERING(results);
+}
+
+var ordering = {
+    'position': 1,
+    'left': 2,
+    'top': 2,
+    'right': 2,
+    'bottom': 2,
+    'width': 3,
+    'height': 3,
+
+    'font-size': 4,
+    'font-family': 4,
+
+    'opacity': 10,
+    'border-radius': 10,
+
+    'box-shadow': 15,
+    'text-shadow': 15,
+    'filter': 15,
+
+    'background-clip': 50,
+    '-webkit-background-clip': 50,
+
+    'background-repeat': 100,
+    'background-blend-mode': 100,
+    'background-image': 100,
+    'background-size': 100,
+    'background-position': 100,
+
+    'transform': 1000
+
+};
+
+function CSS_SORTING(style) {
+
+    style = CSS_FILTERING(style);
+
+    var keys = Object.keys(style);
+
+    keys.sort(function (a, b) {
+        var aN = ordering[a] || Number.MAX_SAFE_INTEGER;
+        var bN = ordering[b] || Number.MAX_SAFE_INTEGER;
+
+        if (aN == bN) return 0;
+
+        return aN < bN ? -1 : 1;
+    });
+
+    var newStyle = {};
+    keys.forEach(function (key) {
+        newStyle[key] = style[key];
+    });
+
+    return newStyle;
+}
+
+function CSS_TO_STRING(style) {
+    var newStyle = CSS_SORTING(style);
+
+    return Object.keys(newStyle).filter(function (key) {
+        return !!newStyle[key];
+    }).map(function (key) {
+        return key + ": " + newStyle[key];
+    }).join(';');
+}
+
+function IMAGE_TO_IMAGE() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+    var url = image.backgroundImage;
+
+    if (!isExport && url) {
+        return "url(" + url + ")";
+    } else if (isExport) {
+        return "url(" + image.backgroundImageDataURI + ")";
+    }
+
+    return null;
+}
+
+function IMAGE_TO_BACKGROUND_SIZE_STRING(image) {
+
+    if (image.backgroundSize == 'contain' || image.backgroundSize == 'cover') {
+        return image.backgroundSize;
+    } else if (image.backgroundSizeWidth && image.backgroundSizeHeight) {
+        return [stringUnit(image.backgroundSizeWidth), stringUnit(image.backgroundSizeHeight)].join(' ');
+    } else if (image.backgroundSizeWidth) {
+        return stringUnit(image.backgroundSizeWidth);
+    }
+
+    return 'auto';
+}
+
+function IMAGE_TO_BACKGROUND_POSITION_STRING(image) {
+
+    var x = defaultValue(image.backgroundPositionX, valueUnit('center'));
+    var y = defaultValue(image.backgroundPositionY, valueUnit('center'));
+
+    if (x === 0) x = percentUnit(0);
+    if (y === 0) y = percentUnit(0);
+
+    return stringUnit(x) + " " + stringUnit(y);
+}
+
+function IMAGE_BACKGROUND_SIZE_TO_CSS() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+
+    var results = {};
+    var backgroundPosition = IMAGE_TO_BACKGROUND_POSITION_STRING(image, isExport);
+    var backgroundSize = IMAGE_TO_BACKGROUND_SIZE_STRING(image, isExport);
+    if (backgroundSize) {
+        results['background-size'] = backgroundSize;
+    }
+
+    if (backgroundPosition) {
+        results['background-position'] = backgroundPosition;
+    }
+    results['background-image'] = 'linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))';
+    results['background-repeat'] = 'no-repeat';
+
+    return results;
+}
+
+function IMAGE_TO_BACKGROUND_REPEAT_STRING$1(image) {
+    if (image.backgroundRepeat) {
+        return image.backgroundRepeat;
+    }
+}
+
+function IMAGE_TO_BACKGROUND_BLEND_MODE_STRING$1(image) {
+    if (image.backgroundBlendMode) {
+        return image.backgroundBlendMode || 'normal';
+    }
+}
+
+function IMAGE_TO_ITEM_STRING$1() {
+    var colorsteps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+    if (!colorsteps) return EMPTY_STRING;
+
+    var colors = [].concat(toConsumableArray(colorsteps));
+    if (!colors.length) return EMPTY_STRING;
+
+    var newColors = [];
+    colors.forEach(function (c, index) {
+        if (c.cut && index > 0) {
+            newColors.push({
+                color: c.color,
+                unit: colors[index - 1].unit,
+                percent: colors[index - 1].percent,
+                px: colors[index - 1].px,
+                em: colors[index - 1].em
+            });
+        }
+
+        newColors.push(c);
+    });
+
+    colors = newColors.map(function (f) {
+
+        var value$$1 = stringUnit(percentUnit(f.percent));
+        return f.color + " " + value$$1;
+    }).join(',');
+
+    return colors;
+}
+
+function IMAGE_TO_CONIC_ITEM_STRING$1() {
+    var colorsteps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
+
+
+    if (!colorsteps) return EMPTY_STRING;
+
+    var colors = [].concat(toConsumableArray(colorsteps)).map(function (it, index) {
+        it.index = index;
+        return it;
+    });
+    if (!colors.length) return EMPTY_STRING;
+
+    colors.sort(function (a, b) {
+        if (a.percent == b.percent) {
+            if (a.index > b.index) return 1;
+            if (a.index < b.index) return 0;
+            return 0;
+        }
+        return a.percent > b.percent ? 1 : -1;
+    });
+
+    var newColors = [];
+    colors.forEach(function (c, index) {
+        if (c.cut && index > 0) {
+            newColors.push(_extends({}, c, { percent: colors[index - 1].percent }));
+        }
+
+        newColors.push(c);
+    });
+
+    colors = newColors.map(function (f) {
+        var deg$$1 = Math.floor(f.percent * 3.6);
+        return f.color + " " + deg$$1 + "deg";
+    }).join(',');
+
+    return colors;
+}
+
+function IMAGE_TO_LINEAR() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var colors = IMAGE_TO_ITEM_STRING$1(image.colorsteps);
+
+    if (colors == EMPTY_STRING) return EMPTY_STRING;
+
+    var opt = EMPTY_STRING;
+    var angle = image.angle;
+    var gradientType = image.type;
+
+    opt = angle;
+
+    if (isNumber(opt)) {
+        opt = DEFINED_DIRECTIONS["" + opt] || opt;
+    }
+
+    if (isNumber(opt)) {
+        opt = opt > 360 ? opt % 360 : opt;
+
+        opt = opt + "deg";
+    }
+
+    return gradientType + "-gradient(" + opt + ", " + colors + ")";
+}
+
+var DEFINED_DIRECTIONS = {
+    '0': 'to top',
+    '45': 'to top right',
+    '90': 'to right',
+    '135': 'to bottom right',
+    '180': 'to bottom',
+    '225': 'to bottom left',
+    '270': 'to left',
+    '315': 'to top left'
+};
+
+var DEFINED_ANGLES = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITIONS, 'center', true), defineProperty(_DEFINED_POSITIONS, 'top', true), defineProperty(_DEFINED_POSITIONS, 'left', true), defineProperty(_DEFINED_POSITIONS, 'right', true), defineProperty(_DEFINED_POSITIONS, 'bottom', true), _DEFINED_POSITIONS);
+
+function IMAGE_TO_RADIAL() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var colors = IMAGE_TO_ITEM_STRING$1(image.colorsteps);
+
+    if (colors == EMPTY_STRING) return EMPTY_STRING;
+    var opt = EMPTY_STRING;
+    var radialType = image.radialType;
+    var radialPosition = image.radialPosition || ['center', 'center'];
+    var gradientType = image.type;
+
+    radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(' ');
+
+    opt = radialPosition ? radialType + " at " + radialPosition : radialType;
+
+    return gradientType + "-gradient(" + opt + ", " + colors + ")";
+}
+
+function IMAGE_TO_CONIC() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var colors = IMAGE_TO_CONIC_ITEM_STRING$1(image.colorsteps);
+
+    if (colors == EMPTY_STRING) return EMPTY_STRING;
+    var opt = [];
+    var conicAngle = image.angle;
+    var conicPosition = image.radialPosition || ['center', 'center'];
+    var gradientType = image.type;
+
+    conicPosition = DEFINED_POSITIONS[conicPosition] ? conicPosition : conicPosition.join(' ');
+
+    if (isNotUndefined(conicAngle)) {
+        conicAngle = get(DEFINED_ANGLES, conicAngle, function (it) {
+            return +it;
+        });
+        opt.push("from " + conicAngle + "deg");
+    }
+
+    if (conicPosition) {
+        opt.push("at " + conicPosition);
+    }
+
+    var optString = opt.length ? opt.join(' ') + ',' : EMPTY_STRING;
+
+    return gradientType + "-gradient(" + optString + " " + colors + ")";
+}
+
+function IMAGE_TO_STATIC() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    return IMAGE_TO_LINEAR({
+        type: 'linear',
+        angle: 0,
+        colorsteps: [{ color: image.color, percent: 0 }, { color: image.color, percent: 100 }]
+    });
+}
+
+function IMAGE_TO_IMAGE_STRING(image) {
+    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+    var type = image.type;
+
+    if (type == 'linear' || type == 'repeating-linear') {
+        return IMAGE_TO_LINEAR(image, isExport);
+    } else if (type == 'radial' || type == 'repeating-radial') {
+        return IMAGE_TO_RADIAL(image, isExport);
+    } else if (type == 'conic' || type == 'repeating-conic') {
+        return IMAGE_TO_CONIC(image, isExport);
+    } else if (type == 'image') {
+        return IMAGE_TO_IMAGE(image, isExport);
+    } else if (type == 'static') {
+        return IMAGE_TO_STATIC(image, isExport);
+    }
+}
+
+function IMAGE_TO_CSS$1() {
+    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+
+    var results = {};
+
+    var backgroundImage = IMAGE_TO_IMAGE_STRING(image, isExport);
+    var backgroundPosition = IMAGE_TO_BACKGROUND_POSITION_STRING(image, isExport);
+    var backgroundSize = IMAGE_TO_BACKGROUND_SIZE_STRING(image, isExport);
+    var backgroundRepeat = IMAGE_TO_BACKGROUND_REPEAT_STRING$1(image, isExport);
+    var backgroundBlendMode = IMAGE_TO_BACKGROUND_BLEND_MODE_STRING$1(image, isExport);
+
+    if (backgroundImage) {
+        results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
+    }
+
+    if (backgroundSize) {
+        results['background-size'] = backgroundSize;
+    }
+
+    if (backgroundPosition) {
+        results['background-position'] = backgroundPosition;
+    }
+
+    if (backgroundRepeat) {
+        results['background-repeat'] = backgroundRepeat;
+    }
+
+    if (backgroundBlendMode) {
+        results['background-blend-mode'] = backgroundBlendMode;
+    }
+
+    return results;
+}
+
+
+
+var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
+var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
+var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
+var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
+var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
+
+function IMAGE_TYPE_IS_LINEAR(type) {
+    return LINEAR_GRADIENT_LIST.includes(type);
+}
+
+function IMAGE_TYPE_IS_RADIAL(type) {
+    return RADIAL_GRADIENT_LIST.includes(type);
+}
+
+function IMAGE_TYPE_IS_CONIC(type) {
+    return CONIC_GRADIENT_LIST.includes(type);
+}
+
+function IMAGE_TYPE_IS_IMAGE(type) {
+    return IMAGE_GRADIENT_LIST.includes(type);
+}
+
+function IMAGE_TYPE_IS_STATIC(type) {
+    return STATIC_GRADIENT_LIST.includes(type);
+}
+
+function IMAGE_ANGLE$1() {
+    var angle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EMPTY_STRING;
+
+    return isUndefined$1(DEFINED_ANGLES[angle]) ? angle : DEFINED_ANGLES[angle] || 0;
+}
+
+
+
+function IMAGE_TYPE_IS_GRADIENT(type) {
+    return IMAGE_TYPE_IS_LINEAR(type) || IMAGE_TYPE_IS_RADIAL(type) || IMAGE_TYPE_IS_CONIC(type);
+}
+
+function IMAGE_TYPE_IS_NOT_GRADIENT(type) {
+    return IMAGE_TYPE_IS_GRADIENT(type) == false;
+}
+
+function PATTERN_MAKE(item) {
+    var patternOption = item.pattern || {};
+    var patternList = Object.keys(patternOption);
+
+    if (!patternList.length) {
+        return null;
+    }
+
+    var results = [];
+    patternList.filter(function (name) {
+        return patterns[name];
+    }).forEach(function (patternName) {
+
+        if (patternOption[patternName].enable) {
+            results.push.apply(results, toConsumableArray(patterns[patternName].make(item, patternOption[patternName])));
+        }
+    });
+
+    results.push(item);
+
+    return results;
+}
+
+function PATTERN_GET(item, patternName) {
+    var pattern = item.pattern || {};
+
+    return pattern[patternName] || {};
+}
+
+function generateImagePattern(images) {
+    var results = [];
+
+    images.forEach(function (item) {
+        var patternedItems = PATTERN_MAKE(item);
+        if (patternedItems) {
+            results.push.apply(results, toConsumableArray(patternedItems));
+        } else {
+            results.push(item);
+        }
+    });
+
+    return results;
+}
 
 var GradientSteps = function (_UIElement) {
     inherits(GradientSteps, _UIElement);
@@ -11067,7 +11786,7 @@ var GradientSteps = function (_UIElement) {
             return this.read(ITEM_MAP_CHILDREN, item.id, function (step) {
 
                 var cut = step.cut ? 'cut' : EMPTY_STRING;
-                var unitValue$$1 = _this2.read('colorstep/unit/value', step, _this2.getMaxValue());
+                var unitValue$$1 = _this2.read(COLORSTEP_UNIT_VALUE, step, _this2.getMaxValue());
                 return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : EMPTY_STRING) + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + _this2.getUnitName(step) + '">\n                        <input type="number" class="' + UNIT_PERCENT + '" min="-100" max="100" step="0.1"  value="' + unitValue$$1.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_PX + '" min="-100" max="1000" step="1"  value="' + unitValue$$1.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="' + UNIT_EM + '" min="-100" max="500" step="0.1"  value="' + unitValue$$1.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
             });
         }
@@ -11081,7 +11800,7 @@ var GradientSteps = function (_UIElement) {
 
             item = item[0];
 
-            if (!this.read(IMAGE_TYPE_IS_GRADIENT, item.type)) {
+            if (!IMAGE_TYPE_IS_GRADIENT(item.type)) {
                 return false;
             }
 
@@ -11101,7 +11820,7 @@ var GradientSteps = function (_UIElement) {
             this.read(SELECTION_CURRENT_IMAGE$1, function (item) {
                 var type = item ? item.type : EMPTY_STRING;
 
-                if (_this3.read(IMAGE_TYPE_IS_GRADIENT, type)) {
+                if (IMAGE_TYPE_IS_GRADIENT(type)) {
                     _this3.load();
                     _this3.setColorUI();
                 }
@@ -11173,7 +11892,7 @@ var GradientSteps = function (_UIElement) {
                 this.currentStepBox.px('left', px);
                 // var percent = Math.floor((current - min) / (max - min) * 100)
 
-                var item = this.read(ITEM_GET, this.currentStepBox.attr('id'));
+                var item = this.get(this.currentStepBox.attr('id'));
 
                 if (item) {
 
@@ -11197,12 +11916,12 @@ var GradientSteps = function (_UIElement) {
         key: EVENT('changeColor'),
         value: function value$$1() {
 
-            if (this.read(IMAGE_TYPE_IS_NOT_GRADIENT, this.read(SELECTION_CURRENT_IMAGE$1))) return;
+            if (IMAGE_TYPE_IS_NOT_GRADIENT(this.read(SELECTION_CURRENT_IMAGE$1))) return;
             if (this.read(TOOL_COLOR_SOURCE) != this.read(COLORSTEP_COLOR_SOURCE)) return;
 
             if (this.currentStep) {
 
-                var item = this.read(ITEM_GET, this.currentStep.attr('id'));
+                var item = this.get(this.currentStep.attr('id'));
 
                 if (item) {
                     var color$$1 = this.config('color');
@@ -11214,7 +11933,7 @@ var GradientSteps = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -11290,7 +12009,7 @@ var GradientSteps = function (_UIElement) {
             var _this4 = this;
 
             var parent = e.$delegateTarget.parent();
-            var item = this.read(ITEM_GET, parent.attr('id'));
+            var item = this.get(parent.attr('id'));
 
             this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
@@ -11328,7 +12047,7 @@ var GradientSteps = function (_UIElement) {
         key: CLICK('$steps .guide-change'),
         value: function value$$1(e) {
             var id = e.$delegateTarget.attr('data-colorstep-id');
-            var item = this.read(ITEM_GET, id);
+            var item = this.get(id);
 
             if (item.id) {
                 // var cut = !item.cut;
@@ -11346,7 +12065,7 @@ var GradientSteps = function (_UIElement) {
             var unit$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 step.unit = unit$$1;
@@ -11371,7 +12090,7 @@ var GradientSteps = function (_UIElement) {
             var percent$$1 = +e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
 
@@ -11402,7 +12121,7 @@ var GradientSteps = function (_UIElement) {
             var px = +e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 var newValue = {
@@ -11414,7 +12133,6 @@ var GradientSteps = function (_UIElement) {
 
                 this.currentStepBox.px('left', newValue.px);
                 this.currentUnitPercent.val(newValue.percent);
-                // this.currentUnitPx.val(item.px);
                 this.currentUnitEm.val(newValue.em);
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
@@ -11432,7 +12150,7 @@ var GradientSteps = function (_UIElement) {
             var em$$1 = +e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 var newValue = {
@@ -11546,13 +12264,13 @@ var ColorSteps = function (_BasePropertyItem) {
 
             if (!item) return false;
 
-            return this.read(IMAGE_TYPE_IS_GRADIENT, item.type);
+            return IMAGE_TYPE_IS_GRADIENT(item.type);
         }
     }]);
     return ColorSteps;
 }(BasePropertyItem);
 
-var _templateObject$1 = taggedTemplateLiteral(["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"], ["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"]);
+var _templateObject$2 = taggedTemplateLiteral(["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"], ["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"]);
 
 function checkPxEm(unit$$1) {
     return [UNIT_PX, UNIT_EM].includes(unit$$1);
@@ -11580,7 +12298,7 @@ var GradientInfo = function (_UIElement) {
                 return unit$$1;
             }
 
-            return 'percent';
+            return UNIT_PERCENT;
         }
     }, {
         key: "getUnitSelect",
@@ -11627,9 +12345,9 @@ var GradientInfo = function (_UIElement) {
 
             if (!item) return EMPTY_STRING;
 
-            var colorsteps = this.read('colorstep/sort/list', item.id);
+            var colorsteps = this.read(COLORSTEP_SORT_LIST, item.id);
 
-            return html(_templateObject$1, colorsteps.map(function (step) {
+            return html(_templateObject$2, colorsteps.map(function (step) {
                 var cut = step.cut ? 'cut' : EMPTY_STRING;
                 var unitValue$$1 = _this2.getUnitValue(step);
                 return "\n                            <div class='color-step " + (step.selected ? 'selected' : EMPTY_STRING) + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + _this2.getUnitName(step) + "\">\n                                    <input type=\"number\" class=\"" + UNIT_PERCENT + "\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue$$1.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_PX + "\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue$$1.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"" + UNIT_EM + "\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue$$1.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
@@ -11641,7 +12359,7 @@ var GradientInfo = function (_UIElement) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -11655,7 +12373,7 @@ var GradientInfo = function (_UIElement) {
         value: function selectStep(e) {
             var _this3 = this;
 
-            var item = this.read(ITEM_GET, e.$delegateTarget.attr('colorstep-id'));
+            var item = this.get(e.$delegateTarget.attr('colorstep-id'));
 
             this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
@@ -11685,7 +12403,7 @@ var GradientInfo = function (_UIElement) {
             var color$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 var newValue = { id: step.id, color: color$$1 };
@@ -11708,7 +12426,7 @@ var GradientInfo = function (_UIElement) {
             var unit$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 var newValue = { id: step.id, unit: unit$$1 };
@@ -11729,7 +12447,7 @@ var GradientInfo = function (_UIElement) {
             var percent$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 // percent; 
@@ -11751,7 +12469,7 @@ var GradientInfo = function (_UIElement) {
             var px = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 // step.px = px; 
@@ -11772,7 +12490,7 @@ var GradientInfo = function (_UIElement) {
             var em$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
-            var step = this.read(ITEM_GET, id);
+            var step = this.get(id);
 
             if (step) {
                 // step.em = em; 
@@ -11791,7 +12509,7 @@ var GradientInfo = function (_UIElement) {
 
             var id = e.$delegateTarget.attr('colorstep-id');
 
-            this.run('colorstep/remove', id);
+            this.run(COLORSTEP_REMOVE, id);
             this.emit(REMOVE_COLOR_STEP, id);
             this.refresh();
         }
@@ -11799,7 +12517,7 @@ var GradientInfo = function (_UIElement) {
         key: CLICK('$colorsteps .guide-change'),
         value: function value$$1(e) {
             var id = e.$delegateTarget.attr('colorstep-id');
-            var item = this.read(ITEM_GET, id);
+            var item = this.get(id);
 
             if (item.id) {
                 this.commit(CHANGE_COLOR_STEP, { id: item.id, cut: !item.cut });
@@ -11844,7 +12562,7 @@ var ColorStepsInfo = function (_UIElement) {
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
             if (!item) return false;
 
-            return this.read(IMAGE_TYPE_IS_GRADIENT, item.type);
+            return IMAGE_TYPE_IS_GRADIENT(item.type);
         }
     }]);
     return ColorStepsInfo;
@@ -11897,9 +12615,9 @@ var ColorPickerLayer = function (_UIElement) {
 
             if (this.read(SELECTION_IS_IMAGE)) {
 
-                if (this.read(IMAGE_TYPE_IS_STATIC, item.type)) {
+                if (IMAGE_TYPE_IS_STATIC(item.type)) {
                     this.commit(CHANGE_IMAGE_COLOR, { id: item.id, color: color });
-                } else if (this.read(IMAGE_TYPE_IS_GRADIENT, item.type)) {
+                } else if (IMAGE_TYPE_IS_GRADIENT(item.type)) {
 
                     this.read(ITEM_EACH_CHILDREN, item.id, function (step) {
                         if (step.selected) {
@@ -11933,9 +12651,9 @@ var ColorPickerLayer = function (_UIElement) {
 
             if (this.read(SELECTION_IS_IMAGE)) {
                 this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
-                    if (_this4.read(IMAGE_TYPE_IS_STATIC, image.type)) {
+                    if (IMAGE_TYPE_IS_STATIC(image.type)) {
                         _this4.colorPicker.initColorWithoutChangeEvent(image.color);
-                    } else if (_this4.read(IMAGE_TYPE_IS_GRADIENT, image.type)) {}
+                    } else if (IMAGE_TYPE_IS_GRADIENT(image.type)) {}
                 });
             }
         }
@@ -11978,7 +12696,7 @@ var ColorPickerPanel = function (_UIElement) {
 
             if (!item) return false;
 
-            return this.read(IMAGE_TYPE_IS_IMAGE, item.type) == false;
+            return IMAGE_TYPE_IS_IMAGE(item.type) == false;
         }
     }]);
     return ColorPickerPanel;
@@ -12353,7 +13071,7 @@ var BackgroundSize = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        ></UnitRange>\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        ></UnitRange>\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>                            \n                            \n                        </div>\n                 \n                    </div>\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background show'>\n                <div class='items'>\n                    <div>\n                        <label>size</label>\n                        <div class='size-list' ref=\"$size\">\n                            <button type=\"button\" value=\"contain\" title=\"contain\" ></button>\n                            <button type=\"button\" value=\"cover\" title=\"cover\"></button>\n                            <button type=\"button\" value=\"auto\" title=\"auto\"></button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>x</label>\n                        <UnitRange \n                            ref=\"$x\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxX\"\n                            updateFunction=\"updateX\"\n                        />\n                    </div>\n                    <div>\n                        <label>y</label>\n                        <UnitRange \n                            ref=\"$y\" \n                            min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxY\"\n                            updateFunction=\"updateY\"\n                        />\n                    </div>\n                    <div>\n                        <label>width</label>\n                        <UnitRange \n                            ref=\"$width\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxWidth\"\n                            updateFunction=\"updateWidth\"\n                        />\n                    </div>\n                    <div>\n                        <label>height</label>\n                        <UnitRange \n                            ref=\"$height\" \n                            min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                            maxValueFunction=\"getMaxHeight\"\n                            updateFunction=\"updateHeight\"\n                        />\n                    </div>                    \n                    <div>\n                        <label>repeat</label>\n                        <div class='flex repeat-list' ref=\"$repeat\">\n                            <button type=\"button\" value='no-repeat' title=\"no-repeat\">\n                                <span></span>\n                            </button>                        \n                            <button type=\"button\" value='repeat' title=\"repeat\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-x' title=\"repeat-x\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='repeat-y' title=\"repeat-y\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                            </button>\n                            <button type=\"button\" value='space' title=\"space\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                \n                            </button>\n                            <button type=\"button\" value='round' title=\"round\">\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>\n                                <span></span>                                                                \n                            </button>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "updateWidth",
@@ -12640,7 +13358,7 @@ var PageExport = function (_UIElement) {
     createClass(PageExport, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item export'>\n                <div class='items no-padding'>\n                    <div>\n                        <label>Export</label>\n                        <button type=\"button\" ref=\"$exportCSS\">CSS</button>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item export'>\n                <div class='items no-padding'>\n                    <div>\n                        <label>Export</label>\n                        <button type=\"button\" ref=\"$exportCSS\">CSS</button>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: CLICK('$exportCSS'),
@@ -12655,7 +13373,7 @@ var FILTER_GET = 'filter/get';
 var FILTER_LIST = 'filter/list';
 var FILTER_TO_CSS = 'filter/toCSS';
 
-var _templateObject$2 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
+var _templateObject$3 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
 
 var DROPSHADOW_FILTER_KEYS = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
 
@@ -12680,16 +13398,16 @@ var FilterList$1 = function (_BasePropertyItem) {
             var value$$1 = dataObject[key] ? dataObject[key].value : undefined;
 
             if (viewObject.type == 'range') {
-                if (isUndefined(value$$1)) {
+                if (isUndefined$1(value$$1)) {
                     value$$1 = viewObject.defaultValue;
                 }
 
                 return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
-                return html(_templateObject$2, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS.map(function (subkey) {
+                return html(_templateObject$3, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS.map(function (subkey) {
 
                     var it = _this2.read(FILTER_GET, subkey);
-                    var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
+                    var value$$1 = isUndefined$1(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value$$1 + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value$$1 + "</span>\n                            </span>\n                        </div>\n                        ";
@@ -12939,7 +13657,7 @@ var ImageResource = function (_BasePropertyItem) {
 
             if (!item) return false;
 
-            return this.read(IMAGE_TYPE_IS_IMAGE, item.type);
+            return IMAGE_TYPE_IS_IMAGE(item.type);
         }
     }, {
         key: CLICK('$imageList .svg-item'),
@@ -12972,7 +13690,7 @@ var ImageResource = function (_BasePropertyItem) {
     return ImageResource;
 }(BasePropertyItem);
 
-var _templateObject$3 = taggedTemplateLiteral(["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "]);
+var _templateObject$4 = taggedTemplateLiteral(["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "]);
 
 var CLIP_PATH_TYPES = [CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_SVG];
 
@@ -12987,7 +13705,7 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$3, CLIP_PATH_TYPES.map(function (type) {
+            return html(_templateObject$4, CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }));
         }
@@ -13111,7 +13829,7 @@ var BLEND_TO_STRING_WITHOUT_DIMENSION = 'blend/toStringWithoutDimension';
 var BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE = 'blend/toStringWithoutDimensionForImage';
 var BLEND_LIST = 'blend/list';
 
-var _templateObject$4 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+var _templateObject$5 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
 
 var BackgroundBlend = function (_BasePropertyItem) {
     inherits(BackgroundBlend, _BasePropertyItem);
@@ -13124,7 +13842,7 @@ var BackgroundBlend = function (_BasePropertyItem) {
     createClass(BackgroundBlend, [{
         key: 'template',
         value: function template() {
-            return html(_templateObject$4, this.read(BLEND_LIST).map(function (blend) {
+            return html(_templateObject$5, this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }));
         }
@@ -13160,7 +13878,7 @@ var BackgroundBlend = function (_BasePropertyItem) {
     return BackgroundBlend;
 }(BasePropertyItem);
 
-var _templateObject$5 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+var _templateObject$6 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
 
 var LayerBlend = function (_BasePropertyItem) {
     inherits(LayerBlend, _BasePropertyItem);
@@ -13173,7 +13891,7 @@ var LayerBlend = function (_BasePropertyItem) {
     createClass(LayerBlend, [{
         key: 'template',
         value: function template() {
-            return html(_templateObject$5, this.read(BLEND_LIST).map(function (blend) {
+            return html(_templateObject$6, this.read(BLEND_LIST).map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }));
         }
@@ -13517,7 +14235,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     }, {
         key: EVENT('toggleClipPathSVG'),
         value: function value$$1(isShow) {
-            if (isUndefined(isShow)) {
+            if (isUndefined$1(isShow)) {
                 this.$el.toggleClass('show');
             } else {
                 this.$el.toggleClass('show', isShow);
@@ -13598,7 +14316,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     return ClipPathSVG;
 }(BasePropertyItem);
 
-var _templateObject$6 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
+var _templateObject$7 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
 
 var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
 
@@ -13613,7 +14331,7 @@ var ClipPathSide = function (_BasePropertyItem) {
     createClass(ClipPathSide, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$6, CLIP_PATH_SIDE_TYPES.map(function (type) {
+            return html(_templateObject$7, CLIP_PATH_SIDE_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }));
         }
@@ -13678,7 +14396,7 @@ var CLIPPATH_MAKE_POLYGON = 'clip-path/make/polygon';
 var CLIPPATH_MAKE_SVG = 'clip-path/make/svg';
 var CLIPPATH_TO_CSS = 'clip-path/toCSS';
 
-var _templateObject$7 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>", "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>", "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "]);
+var _templateObject$8 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>", "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>", "</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "]);
 
 var ClipPathPolygon = function (_BasePropertyItem) {
     inherits(ClipPathPolygon, _BasePropertyItem);
@@ -13693,7 +14411,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         value: function template() {
             var list = this.read(CLIPPATH_SAMPLE_LIST);
 
-            return html(_templateObject$7, list.map(function (it, index) {
+            return html(_templateObject$8, list.map(function (it, index) {
                 var values = it.clipPathPolygonPoints.map(function (point) {
                     return stringUnit(point.x) + " " + stringUnit(point.y);
                 }).join(', ');
@@ -13771,7 +14489,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
         key: EVENT('toggleClipPathPolygon'),
         value: function value$$1(isShow) {
 
-            if (isUndefined(isShow)) {
+            if (isUndefined$1(isShow)) {
                 this.$el.toggleClass('show');
             } else {
                 this.$el.toggleClass('show', isShow);
@@ -14072,7 +14790,7 @@ var TextShadow = function (_BasePropertyItem) {
             var blurRadius = unitValue(item.blurRadius);
             var checked = this.read(SELECTION_CHECK, item.id) ? 'checked' : EMPTY_STRING;
 
-            return '\n            <div class=\'text-shadow-item ' + checked + '\' text-shadow-id="' + item.id + '">  \n                <div>\n                    <label>Color</label>\n                    <div class=\'value-field\'>\n                        <div class="color" style="background-color: ' + item.color + ';"></div>\n                        <button type="button" class=\'delete-boxshadow\'>&times;</button>   \n                    </div>                                          \n                </div>                            \n                <div>\n                    <label>X offset</label>\n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                    </div>\n                </div>\n                <div>\n                    <label>Y Offset</label>                \n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                    </div>\n                </div>\n                <div class=\'empty\'></div>        \n                <div>\n                    <label>Blur Radius</label>                \n                    <div class="input">\n                        <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />                    \n                        <input type="range" min="0" max="100" data-type=\'blurRadiusRange\' value="' + blurRadius + '" />\n                    </div>\n                </div>\n                <div class=\'drag-area\'><div class=\'drag-pointer\' style=\'left: ' + (offsetX + 40) + 'px; top: ' + (offsetY + 40) + 'px;\'></div></div>\n            </div>\n        ';
+            return '\n            <div class=\'text-shadow-item ' + checked + '\' text-shadow-id="' + item.id + '">  \n                <div>\n                    <label>Color</label>\n                    <div class=\'value-field\'>\n                        <div class="color" style="background-color: ' + item.color + ';"></div>\n                        <button type="button" class=\'delete-boxshadow\'>&times;</button>   \n                    </div>                                          \n                </div>                            \n                <div>\n                    <label>X offset</label>\n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetX\' value="' + offsetX + '" />\n                    </div>\n                </div>\n                <div>\n                    <label>Y Offset</label>                \n                    <div class="input">\n                        <input type="number" min="-100" max="100" data-type=\'offsetY\' value="' + offsetY + '" />\n                    </div>\n                </div>\n                <div class=\'empty\'></div>        \n                <div>\n                    <label>Blur</label>                \n                    <div class="input">\n                        <input type="number" min="0" max="100" data-type=\'blurRadius\' value="' + blurRadius + '" />                    \n                        <input type="range" min="0" max="100" data-type=\'blurRadiusRange\' value="' + blurRadius + '" />\n                    </div>\n                </div>\n                <div class=\'drag-area\'><div class=\'drag-pointer\' style=\'left: ' + (offsetX + 40) + 'px; top: ' + (offsetY + 40) + 'px;\'></div></div>\n            </div>\n        ';
         }
     }, {
         key: LOAD('$textShadowList'),
@@ -14286,7 +15004,7 @@ var FillColorPicker = function (_UIElement) {
         key: EVENT('fillColorId'),
         value: function value(id, eventType) {
             this.changeColorId = id;
-            this.itemType = this.read(ITEM_GET, id).itemType;
+            this.itemType = this.get(id).itemType;
             this.eventType = eventType;
 
             this.color = null;
@@ -14314,7 +15032,7 @@ var FillColorPicker = function (_UIElement) {
         key: 'refresh',
         value: function refresh() {
             if (this.changeColorId) {
-                var item = this.read(ITEM_GET, this.changeColorId);
+                var item = this.get(this.changeColorId);
                 this.colorPicker.initColorWithoutChangeEvent(item.color);
             } else if (this.callback) {
                 this.colorPicker.initColorWithoutChangeEvent(this.color);
@@ -14472,17 +15190,17 @@ var LAYER_MAKE_BOXSHADOW = 'layer/make/box-shadow';
 var LAYER_MAKE_FONT = 'layer/make/font';
 var LAYER_MAKE_IMAGE = 'layer/make/image';
 var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
-var LAYER_MAKE_TRANSFORM_ROTATE = 'layer/make/transform/rotate';
-var LAYER_MAKE_TRANSFORM = 'layer/make/transform';
+
+
 var LAYER_TO_STRING_CLIPPATH = 'layer/toStringClipPath';
 var LAYER_GET_CLIPPATH = 'layer/getClipPath';
-var LAYER_BOUND_TO_CSS = 'layer/bound/toCSS';
+
 var LAYER_TO_CSS = 'layer/toCSS';
 var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
-var LAYER_MAKE_BORDER = 'layer/make/border';
-var LAYER_MAKE_BORDER_RADIUS = 'layer/make/border-radius';
-var LAYER_MAKE_BORDER_COLOR = 'layer/make/border-color';
-var LAYER_MAKE_BORDER_STYLE = 'layer/make/border-style';
+
+
+
+
 var LAYER_BORDER_PREVIEW = 'layer/border/preview';
 
 var LayerCode = function (_BasePropertyItem) {
@@ -14604,7 +15322,7 @@ var BackgroundCode = function (_BasePropertyItem) {
     return BackgroundCode;
 }(BasePropertyItem);
 
-var _templateObject$8 = taggedTemplateLiteral(["\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"", "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"", "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        "], ["\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"", "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        ></UnitRange>\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"", "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        ></UnitRange>\n                    </div>                           \n                </div>\n            </div>\n        "]);
+var _templateObject$9 = taggedTemplateLiteral(["\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"", "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        />\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"", "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        />\n                    </div>                           \n                </div>\n            </div>\n        "], ["\n            <div class='property-item font show'>\n                <div class='items'>\n                    <div>\n                        <label>Family</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontFamily\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Weight</label>   \n                        <div class='full-size'>\n                            <select ref=\"$fontWeight\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Size</label>\n                        <UnitRange \n                            ref=\"$fontSize\" \n                            min=\"1\" max=\"300\" step=\"1\" value=\"13\" unit=\"", "\"\n                            maxValueFunction=\"getMaxFontSize\"\n                            updateFunction=\"updateFontSize\"\n                        />\n                    </div>      \n                    <div>\n                        <label>Line Height</label>\n                        <UnitRange \n                            ref=\"$lineHeight\" \n                            min=\"1\" max=\"100\" step=\"0.01\" value=\"1\" unit=\"", "\"\n                            maxValueFunction=\"getMaxLineHeight\"\n                            updateFunction=\"updateLineHeight\"\n                        />\n                    </div>                           \n                </div>\n            </div>\n        "]);
 
 var fontFamilyList = ['Georgia', "Times New Roman", 'serif', 'sans-serif'];
 
@@ -14624,7 +15342,7 @@ var Font = function (_BasePropertyItem) {
     createClass(Font, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$8, fontFamilyList.map(function (f) {
+            return html(_templateObject$9, fontFamilyList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
             }), fontWeightList.map(function (f) {
                 return "<option value=\"" + f + "\">" + f + "</option>";
@@ -14803,7 +15521,7 @@ var TextFillColorPicker = function (_UIElement) {
         key: EVENT(TEXT_FILL_COLOR),
         value: function value(id, eventType) {
             this.changeColorId = id;
-            this.itemType = this.read(ITEM_GET, id).itemType;
+            this.itemType = this.get(id).itemType;
             this.eventType = eventType;
 
             this.refresh();
@@ -14817,7 +15535,7 @@ var TextFillColorPicker = function (_UIElement) {
         key: 'refresh',
         value: function refresh() {
             if (this.changeColorId) {
-                var item = this.read(ITEM_GET, this.changeColorId);
+                var item = this.get(this.changeColorId);
                 this.colorPicker.initColorWithoutChangeEvent(item.color);
             }
         }
@@ -14836,7 +15554,7 @@ var LayerTextColorPickerPanel = function (_UIElement) {
     createClass(LayerTextColorPickerPanel, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <TextFillColorPicker></TextFillColorPicker>\n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <TextFillColorPicker />\n                </div>\n                <div class='items bar'></div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -14945,7 +15663,7 @@ var LayerInfoColorPickerPanel = function (_UIElement) {
     createClass(LayerInfoColorPickerPanel, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <InfoFillColorPicker></InfoFillColorPicker>\n                </div>\n                <div class=\"items bar\"></div>\n            </div>\n        ";
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <InfoFillColorPicker />\n                </div>\n                <div class=\"items bar\"></div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -15052,7 +15770,7 @@ var LayerBorderColorPickerPanel = function (_UIElement) {
     createClass(LayerBorderColorPickerPanel, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <BorderFillColorPicker></BorderFillColorPicker>\n                </div>\n                <div class=\"items bar\"></div>\n            </div>\n        ";
+            return "\n            <div class='property-item text-colorpicker show'>\n                <div class='items'>            \n                    <BorderFillColorPicker />\n                </div>\n                <div class=\"items bar\"></div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -15067,7 +15785,7 @@ var BACKDROP_GET = 'backdrop/get';
 var BACKDROP_LIST = 'backdrop/list';
 var BACKDROP_TO_CSS = 'backdrop/toCSS';
 
-var _templateObject$9 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
+var _templateObject$10 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
 
 var DROPSHADOW_FILTER_KEYS$1 = ['backdropDropshadowOffsetX', 'backdropDropshadowOffsetY', 'backdropDropshadowBlurRadius', 'backdropDropshadowColor'];
 
@@ -15092,16 +15810,16 @@ var BackdropList = function (_BasePropertyItem) {
             var value$$1 = dataObject[key] ? dataObject[key].value : undefined;
 
             if (viewObject.type == 'range') {
-                if (isUndefined(value$$1)) {
+                if (isUndefined$1(value$$1)) {
                     value$$1 = viewObject.defaultValue;
                 }
 
                 return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
-                return html(_templateObject$9, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
+                return html(_templateObject$10, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS$1.map(function (subkey) {
 
                     var it = _this2.read(BACKDROP_GET, subkey);
-                    var value$$1 = isUndefined(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
+                    var value$$1 = isUndefined$1(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
 
                     if (isColorUnit(it)) {
                         return "\n                        <div>\n                            <span class='title'>" + it.title + "</span>\n                            <span class='color'>\n                                <span class=\"color-view drop-shadow\" ref=\"$dropShadowColor\" style=\"background-color: " + value$$1 + "\" data-key=\"" + subkey + "\" ></span>\n                                <span class=\"color-text\" ref=\"$dropShadowColorText\">" + value$$1 + "</span>\n                            </span>\n                        </div>\n                        ";
@@ -15258,7 +15976,7 @@ var Page3D = function (_UIElement) {
     createClass(Page3D, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        \n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"range\" ref=\"$perspectiveRange\" min=\"-2000\" max=\"2000\" /> \n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        \n                        <div>\n                            <input type=\"range\" ref=\"$xRange\" min=\"-100\" max=\"100\" />                         \n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        \n                        <div>\n                            <input type=\"range\" ref=\"$yRange\" min=\"-100\" max=\"100\" />                                                 \n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"range\" ref=\"$perspectiveRange\" min=\"-2000\" max=\"2000\" /> \n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        <div>\n                            <input type=\"range\" ref=\"$xRange\" min=\"-100\" max=\"100\" />                         \n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        <div>\n                            <input type=\"range\" ref=\"$yRange\" min=\"-100\" max=\"100\" />                                                 \n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM),
@@ -15416,7 +16134,7 @@ var ImageSorting = function (_BasePropertyItem) {
 
             if (!image) return false;
 
-            if (this.read(IMAGE_TYPE_IS_IMAGE, image.type)) {
+            if (IMAGE_TYPE_IS_IMAGE(image.type)) {
                 return false;
             }
 
@@ -15516,11 +16234,9 @@ var BackgroundImage = function (_BasePropertyItem) {
     return BackgroundImage;
 }(BasePropertyItem);
 
-var PATTERN_MAKE = 'pattern/make';
-var PATTERN_GET = 'pattern/get';
 var PATTERN_SET = 'pattern/set';
 
-var _templateObject$10 = taggedTemplateLiteral(["\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            ", "\n                            </select>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Random</label>\n                        <div>\n                            <label><input type=\"checkbox\" ref=\"$randomPosition\" /> Position</label>\n                            <label><input type=\"checkbox\" ref=\"$randomSize\" /> Size</label>\n                        </div>                        \n                    </div>  \n                </div>\n            </div>\n        "], ["\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            ", "\n                            </select>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Random</label>\n                        <div>\n                            <label><input type=\"checkbox\" ref=\"$randomPosition\" /> Position</label>\n                            <label><input type=\"checkbox\" ref=\"$randomSize\" /> Size</label>\n                        </div>                        \n                    </div>  \n                </div>\n            </div>\n        "]);
+var _templateObject$11 = taggedTemplateLiteral(["\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            ", "\n                            </select>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Random</label>\n                        <div>\n                            <label><input type=\"checkbox\" ref=\"$randomPosition\" /> Position</label>\n                            <label><input type=\"checkbox\" ref=\"$randomSize\" /> Size</label>\n                        </div>                        \n                    </div>  \n                </div>\n            </div>\n        "], ["\n            <div class='property-item rotate-pattern show'>\n                <div class='items'>            \n                    <div>\n                        <label>Enable</label>\n                        <div>\n                            <input type=\"checkbox\" ref=\"$enable\" /> \n                            Only Linear Gradient\n                        </div>\n                    </div>   \n                    <div>\n                        <label>Clone</label>\n                        <div >\n                            <input type='range' ref=\"$cloneCountRange\" min=\"0\" max=\"100\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"100\" ref=\"$cloneCount\"> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Blend</label>\n                        <div>\n                            <select ref=\"$blend\">\n                            ", "\n                            </select>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Random</label>\n                        <div>\n                            <label><input type=\"checkbox\" ref=\"$randomPosition\" /> Position</label>\n                            <label><input type=\"checkbox\" ref=\"$randomSize\" /> Size</label>\n                        </div>                        \n                    </div>  \n                </div>\n            </div>\n        "]);
 
 var RotatePattern = function (_BasePropertyItem) {
     inherits(RotatePattern, _BasePropertyItem);
@@ -15533,7 +16249,7 @@ var RotatePattern = function (_BasePropertyItem) {
     createClass(RotatePattern, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$10, this.read(BLEND_LIST).map(function (blend) {
+            return html(_templateObject$11, this.read(BLEND_LIST).map(function (blend) {
                 return "<option value=\"" + blend + "\">" + blend + "</option>";
             }));
         }
@@ -15548,7 +16264,7 @@ var RotatePattern = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
-                var rotate = _this2.read(PATTERN_GET, image, 'rotate');
+                var rotate = PATTERN_GET(image, 'rotate');
                 if (rotate) {
                     _this2.refs.$enable.checked(rotate.enable || false);
                     _this2.refs.$cloneCountRange.val(rotate.clone || 1);
@@ -15684,12 +16400,12 @@ var BorderFixed = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: INPUT('$borderWidthRange'),
+        key: CHANGEINPUT('$borderWidthRange'),
         value: function value$$1() {
             this.updateTransform('range');
         }
     }, {
-        key: INPUT('$borderWidth'),
+        key: CHANGEINPUT('$borderWidth'),
         value: function value$$1() {
             this.updateTransform('border');
         }
@@ -15919,7 +16635,7 @@ var BorderColorFixed = function (_BasePropertyItem) {
     return BorderColorFixed;
 }(BasePropertyItem);
 
-var _templateObject$11 = taggedTemplateLiteral(['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview">\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview">\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+var _templateObject$12 = taggedTemplateLiteral(['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview"></div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview"></div>\n                </div>\n            </div>\n        </div>\n        ']);
 
 var LayerBorderPreview = function (_BasePropertyItem) {
     inherits(LayerBorderPreview, _BasePropertyItem);
@@ -15932,7 +16648,7 @@ var LayerBorderPreview = function (_BasePropertyItem) {
     createClass(LayerBorderPreview, [{
         key: 'template',
         value: function template() {
-            return html(_templateObject$11);
+            return html(_templateObject$12);
         }
     }, {
         key: 'refresh',
@@ -15954,11 +16670,11 @@ var LayerBorderPreview = function (_BasePropertyItem) {
 
 var _babelHelpers$extends;
 
-var patterns = {
+var patterns$1 = {
     RotatePattern: RotatePattern
 };
 
-var items = _extends({}, patterns, (_babelHelpers$extends = {
+var items = _extends({}, patterns$1, (_babelHelpers$extends = {
     LayerBorderPreview: LayerBorderPreview,
     LayerBorderColorPickerPanel: LayerBorderColorPickerPanel,
     BorderColorFixed: BorderColorFixed,
@@ -16128,6 +16844,21 @@ var BaseProperty = function (_UIElement) {
             return this.$el.hasClass('show');
         }
     }, {
+        key: "toggle",
+        value: function toggle(isShow) {
+            this.$el.toggle(isShow);
+        }
+    }, {
+        key: "hide",
+        value: function hide() {
+            this.$el.hide();
+        }
+    }, {
+        key: "show",
+        value: function show() {
+            this.$el.show();
+        }
+    }, {
         key: "components",
         value: function components() {
             return items;
@@ -16152,7 +16883,7 @@ var PageProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <PageName></PageName>\n            <PageSize></PageSize>\n            <clip></clip>           \n            <Page3D></Page3D>       \n        ";
+            return "<PageName /><PageSize /><clip /><Page3D />";
         }
     }]);
     return PageProperty;
@@ -16174,7 +16905,7 @@ var LayerProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <Name></Name>\n            <size></size>            \n            <Rotate></Rotate>\n            <opacity></opacity>         \n            <LayerBlend></LayerBlend>     \n        ";
+            return "<Name /><size /><Rotate /><opacity /><LayerBlend />";
         }
     }]);
     return LayerProperty;
@@ -16196,7 +16927,7 @@ var LayerFontProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <Font></Font>\n        ";
+            return "<Font />";
         }
     }]);
     return LayerFontProperty;
@@ -16218,7 +16949,7 @@ var LayerTextProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <Text></Text>\n        ";
+            return "<Text />";
         }
     }]);
     return LayerTextProperty;
@@ -16245,7 +16976,7 @@ var TextShadowProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <TextShadow ref=\"$textShadow\" ></TextShadow>\n        ";
+            return "<TextShadow ref=\"$textShadow\" />";
         }
     }, {
         key: CLICK('$add'),
@@ -16282,7 +17013,7 @@ var BoxShadowProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <BoxShadow ></BoxShadow>\n        ";
+            return "<BoxShadow />";
         }
     }, {
         key: CLICK('$add'),
@@ -16314,7 +17045,7 @@ var FilterProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <FilterList ></FilterList>\n        ";
+            return "<FilterList />";
         }
     }]);
     return FilterProperty;
@@ -16336,7 +17067,7 @@ var BackdropProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <BackdropList ></BackdropList>\n        ";
+            return "<BackdropList />";
         }
     }]);
     return BackdropProperty;
@@ -16358,7 +17089,7 @@ var ClipPathProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <ClipPath></ClipPath>   \n            <ClipPathSide></ClipPathSide>\n            <ClipPathPolygon></ClipPathPolygon>\n            <ClipPathSVG></ClipPathSVG>\n        ";
+            return "<ClipPath /><ClipPathSide /><ClipPathPolygon /><ClipPathSVG />";
         }
     }]);
     return ClipPathProperty;
@@ -16380,7 +17111,7 @@ var Transform2DProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "<transform ></transform>";
+            return "<transform />";
         }
     }]);
     return Transform2DProperty;
@@ -16402,7 +17133,7 @@ var Transform3DProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "<transform3d ></transform3d>";
+            return "<transform3d />";
         }
     }]);
     return Transform3DProperty;
@@ -16424,7 +17155,7 @@ var LayerCodeProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <LayerCode ></LayerCode>\n        ";
+            return "<LayerCode />";
         }
     }]);
     return LayerCodeProperty;
@@ -16446,7 +17177,26 @@ var ImageSortingProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <ImageSorting ></ImageSorting>\n        ";
+            return "<ImageSorting />";
+        }
+    }, {
+        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR),
+        value: function value() {
+            var isShow = this.isShow();
+
+            this.toggle(isShow);
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var image = this.read(SELECTION_CURRENT_IMAGE$1);
+            if (image) {
+                if (IMAGE_TYPE_IS_STATIC(image.type) || IMAGE_TYPE_IS_IMAGE(image.type)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }]);
     return ImageSortingProperty;
@@ -16468,7 +17218,26 @@ var ColorStepProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <ColorStepsInfo ></ColorStepsInfo>\n        ";
+            return "<ColorStepsInfo />";
+        }
+    }, {
+        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR),
+        value: function value() {
+            var isShow = this.isShow();
+
+            this.toggle(isShow);
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+            var image = this.read(SELECTION_CURRENT_IMAGE$1);
+            if (image) {
+                if (IMAGE_TYPE_IS_STATIC(image.type) || IMAGE_TYPE_IS_IMAGE(image.type)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }]);
     return ColorStepProperty;
@@ -16490,7 +17259,7 @@ var BackgroundCodeProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <BackgroundCode ></BackgroundCode>\n        ";
+            return "<BackgroundCode />";
         }
     }]);
     return BackgroundCodeProperty;
@@ -16512,7 +17281,7 @@ var BackgroundProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <BackgroundInfo></BackgroundInfo>\n            <BackgroundBlend></BackgroundBlend>\n            <div class='sub-feature'>\n                <BackgroundSize></BackgroundSize>\n            </div>\n        ";
+            return "<BackgroundInfo /><BackgroundBlend /><div class='sub-feature'><BackgroundSize /></div>";
         }
     }]);
     return BackgroundProperty;
@@ -16534,7 +17303,7 @@ var RotatePatternProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <RotatePattern ></RotatePattern>\n        ";
+            return "<RotatePattern />";
         }
     }]);
     return RotatePatternProperty;
@@ -16556,7 +17325,7 @@ var LayerBorderProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <LayerBorderPreview></LayerBorderPreview>\n            <BorderFixed></BorderFixed>\n            <BorderWidth></BorderWidth>\n            <BorderColorFixed></BorderColorFixed>\n        ";
+            return "<LayerBorderPreview /><BorderFixed /><BorderWidth /><BorderColorFixed />";
         }
     }]);
     return LayerBorderProperty;
@@ -16578,7 +17347,7 @@ var LayerBorderRadiusProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <RadiusFixed></RadiusFixed>\n            <radius></radius>\n        ";
+            return "<RadiusFixed /><radius />";
         }
     }]);
     return LayerBorderRadiusProperty;
@@ -16617,7 +17386,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty></PageProperty>\n                </div>\n\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'>\n                        <LayerInfoColorPickerPanel></LayerInfoColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                       <LayerProperty></LayerProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <div class=\'fixed\'>\n                        <LayerBorderColorPickerPanel></LayerBorderColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerBorderScroll">\n                        <LayerBorderProperty></LayerBorderProperty>    \n                        <LayerBorderRadiusProperty></LayerBorderRadiusProperty>    \n                    </div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'>\n                        <LayerTextColorPickerPanel></LayerTextColorPickerPanel>                    \n                    </div>\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty></LayerFontProperty>\n                        <LayerTextProperty></LayerTextProperty>\n                        <TextShadowProperty></TextShadowProperty>\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'>\n                        <FillColorPickerPanel></FillColorPickerPanel>\n                    </div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty></BoxShadowProperty>\n                        <FilterProperty></FilterProperty>    \n                        <BackdropProperty></BackdropProperty>   \n                        <EmptyArea height="100px"></EmptyArea>      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape">\n                    <ClipPathProperty></ClipPathProperty>\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty></Transform2DProperty>\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty></Transform3DProperty>\n                </div>               \n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty></LayerCodeProperty>\n                </div>               \n            </div>\n        </div>\n\n        ';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page"><PageProperty /></div>\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'><LayerInfoColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerInfoScroll"><LayerProperty /></div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <div class=\'fixed\'><LayerBorderColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerBorderScroll"><LayerBorderProperty /><LayerBorderRadiusProperty /></div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'><LayerTextColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerTextScroll"><LayerFontProperty /><LayerTextProperty /><TextShadowProperty /></div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'><FillColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty /><FilterProperty /><BackdropProperty /><EmptyArea height="100px" />      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape"><ClipPathProperty /></div>\n                <div class="tab-content" data-id="transform"><Transform2DProperty /></div>\n                <div class="tab-content" data-id="transform3d"><Transform3DProperty /></div>\n                <div class="tab-content" data-id="css"><LayerCodeProperty/></div>\n            </div>\n        </div>';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -16665,7 +17434,7 @@ var LayerView = function (_UIElement) {
     createClass(LayerView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <LayerTabView></LayerTabView>\n            </div> \n        ";
+            return "<div class='property-view'><LayerTabView /></div>";
         }
     }, {
         key: "components",
@@ -16687,7 +17456,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'>\n                            <ColorPickerPanel></ColorPickerPanel>                        \n                        </div>\n                        <div class=\'scroll\'>\n                            <ImageSortingProperty></ImageSortingProperty>\n                            <ColorStepProperty></ColorStepProperty>    \n                        </div>    \n\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'>\n                            <BackgroundProperty></BackgroundProperty>\n                        </div>\n                        <div class=\'scroll\'>\n                            <RotatePatternProperty></RotatePatternProperty>\n                        </div>    \n\n                    </div>                    \n                    <div class="tab-content" data-id="css">\n                        <BackgroundCodeProperty></BackgroundCodeProperty>\n                    </div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'><BackgroundProperty /></div>\n                        <div class=\'scroll\'><RotatePatternProperty /></div>    \n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
@@ -16715,7 +17484,7 @@ var ImageView = function (_UIElement) {
     createClass(ImageView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-view'>\n                <ImageTabView></ImageTabView> \n            </div>  \n        ";
+            return "<div class='property-view'><ImageTabView /></div>";
         }
     }, {
         key: "components",
@@ -16739,7 +17508,7 @@ var FeatureControl = function (_UIElement) {
     createClass(FeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='feature-control'>     \n                <div class='feature layer-feature' data-type='layer'>\n                    <LayerView></LayerView>\n                </div>                              \n                <div class='feature image-feature' data-type='image'>\n                    <ImageView></ImageView>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='feature-control'>     \n                <div class='feature layer-feature' data-type='layer'>\n                    <LayerView />\n                </div>                              \n                <div class='feature image-feature' data-type='image'>\n                    <ImageView />\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -16910,7 +17679,7 @@ var LayerToolbar = function (_UIElement) {
     createClass(LayerToolbar, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'layer-toolbar\'>            \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView></ImageListView>               \n                </div>    \n            </div>\n        ';
+            return '\n            <div class=\'layer-toolbar\'>            \n                <div style="display:inline-block;vertical-align:middle;">       \n                    <ImageListView />\n                </div>    \n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -16955,8 +17724,8 @@ var GradientAngle = function (_UIElement) {
 
             if (!item) return false;
 
-            var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, item.type);
-            var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type);
+            var isLinear = IMAGE_TYPE_IS_LINEAR(item.type);
+            var isConic = IMAGE_TYPE_IS_CONIC(item.type);
 
             if (isLinear == false && isConic == false) {
                 return false;
@@ -16993,7 +17762,7 @@ var GradientAngle = function (_UIElement) {
             var image = this.read(SELECTION_CURRENT_IMAGE$1);
             if (!image) return 0;
 
-            var angle = this.read(IMAGE_ANGLE, image.angle);
+            var angle = IMAGE_ANGLE$1(image.angle);
             return angle - 90;
         }
     }, {
@@ -17053,7 +17822,7 @@ var GradientAngle = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: EVENT('changeTool'),
+        key: EVENT(CHANGE_TOOL),
         value: function value() {
             this.$el.toggle(this.isShow());
         }
@@ -17133,8 +17902,8 @@ var GradientPosition = function (_UIElement) {
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
             if (!item) return false;
 
-            var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, item.type);
-            var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type);
+            var isRadial = IMAGE_TYPE_IS_RADIAL(item.type);
+            var isConic = IMAGE_TYPE_IS_CONIC(item.type);
 
             if (isRadial == false && isConic == false) {
                 // radial , conic 만 보여주기 
@@ -17333,8 +18102,8 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
                 return false;
             }
 
-            var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, image.type);
-            var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
+            var isLinear = IMAGE_TYPE_IS_LINEAR(image.type);
+            var isConic = IMAGE_TYPE_IS_CONIC(image.type);
 
             return this.config('guide.angle') && (isLinear || isConic);
         }
@@ -17399,8 +18168,8 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
                 return false;
             }
 
-            var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, image.type);
-            var isConic = this.read(IMAGE_TYPE_IS_CONIC, image.type);
+            var isRadial = IMAGE_TYPE_IS_RADIAL(image.type);
+            var isConic = IMAGE_TYPE_IS_CONIC(image.type);
 
             return this.config('guide.angle') && (isRadial || isConic);
         }
@@ -18016,7 +18785,6 @@ var LayerAngle = function (_UIElement) {
 
             if (this.isShow()) {
                 this.$el.show();
-
                 this.refreshUI();
             } else {
                 this.$el.hide();
@@ -18057,7 +18825,7 @@ var LayerAngle = function (_UIElement) {
         value: function getDefaultValue() {
             var layer = this.read(SELECTION_CURRENT_LAYER);
             if (!layer) return -90;
-            if (isUndefined(layer.rotate)) return -90;
+            if (isUndefined$1(layer.rotate)) return -90;
 
             return layer.rotate - 90;
         }
@@ -18113,7 +18881,7 @@ var LayerAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18161,7 +18929,7 @@ var LayerAngle = function (_UIElement) {
     return LayerAngle;
 }(UIElement);
 
-var DEFINED_ANGLES = {
+var DEFINED_ANGLES$1 = {
     'to top': 0,
     'to top right': 45,
     'to right': 90,
@@ -18204,7 +18972,7 @@ var PredefinedLayerAngle = function (_UIElement) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                var rotate = DEFINED_ANGLES[e.$delegateTarget.attr('data-value')];
+                var rotate = DEFINED_ANGLES$1[e.$delegateTarget.attr('data-value')];
                 _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
             });
         }
@@ -18233,7 +19001,7 @@ var SubFeatureControl = function (_UIElement) {
     createClass(SubFeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$perspective\">\n                        <PredefinedPerspectiveOriginPosition></PredefinedPerspectiveOriginPosition>\n                        <PerspectiveOriginPosition></PerspectiveOriginPosition>\n                    </div>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                        <BackgroundResizer></BackgroundResizer>\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle></PredefinedLinearGradientAngle>\n                        <GradientAngle></GradientAngle>                            \n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle></PredefinedRadialGradientAngle>\n                        <PredefinedRadialGradientPosition></PredefinedRadialGradientPosition>\n                        <GradientPosition></GradientPosition>\n                    </div>\n                    <div class=\"property-view layer\" ref=\"$layer\">\n                        <PredefinedLayerAngle></PredefinedLayerAngle>\n                        <LayerAngle></LayerAngle>\n                    </div>                    \n                </div>\n            </div>\n        ";
+            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$perspective\">\n                        <PredefinedPerspectiveOriginPosition />\n                        <PerspectiveOriginPosition />\n                    </div>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition />\n                        <BackgroundResizer />\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle />\n                        <GradientAngle />\n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle />\n                        <PredefinedRadialGradientPosition />\n                        <GradientPosition />\n                    </div>\n                    <div class=\"property-view layer\" ref=\"$layer\">\n                        <PredefinedLayerAngle />\n                        <LayerAngle />\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -18297,8 +19065,8 @@ var SubFeatureControl = function (_UIElement) {
 
             if (!item) return false;
 
-            var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, item.type);
-            var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type);
+            var isLinear = IMAGE_TYPE_IS_LINEAR(item.type);
+            var isConic = IMAGE_TYPE_IS_CONIC(item.type);
 
             if (isLinear == false && isConic == false) {
                 return false;
@@ -18314,8 +19082,8 @@ var SubFeatureControl = function (_UIElement) {
             var item = this.read(SELECTION_CURRENT_IMAGE$1);
             if (!item) return false;
 
-            var isRadial = this.read(IMAGE_TYPE_IS_RADIAL, item.type);
-            var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type);
+            var isRadial = IMAGE_TYPE_IS_RADIAL(item.type);
+            var isConic = IMAGE_TYPE_IS_CONIC(item.type);
 
             if (isRadial == false && isConic == false) {
                 return false;
@@ -18859,7 +19627,7 @@ var ExportWindow = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlTitle\">Full HTML</div>\n                                <div class=\"tool-item\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                            <div class=\"buttons\">\n                                <ExportCodePenButton></ExportCodePenButton>\n                                <ExportJSFiddleButton></ExportJSFiddleButton>\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlContent\">\n                                <textarea ref=\"$fullhtml\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>                            \n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='export-view'>\n                <div class=\"color-view\">\n                    <div class=\"close\" ref=\"$close\">&times;</div>        \n                    <div class=\"codeview-container\">\n                        <div class=\"title\">\n                            <div class=\"tools\" ref=\"$title\">\n                                <div class=\"tool-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlTitle\">Full HTML</div>\n                                <div class=\"tool-item\" data-type=\"html\" ref=\"$htmlTitle\">HTML</div>\n                                <div class=\"tool-item\" data-type=\"css\" ref=\"$cssTitle\">CSS</div>\n                            </div>\n                            <div class=\"buttons\">\n                                <ExportCodePenButton />\n                                <ExportJSFiddleButton />\n                            </div>\n                        </div>\n                        <div class=\"codeview\">\n                            <div class=\"content-item selected\" data-type=\"fullhtml\" ref=\"$fullhtmlContent\">\n                                <textarea ref=\"$fullhtml\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"html\" ref=\"$htmlContent\">\n                                <textarea ref=\"$html\"></textarea>\n                            </div>\n                            <div class=\"content-item\" data-type=\"css\" ref=\"$cssContent\">\n                                <textarea ref=\"$css\"></textarea>\n                            </div>                            \n                        </div>\n                    </div>\n                    <div class=\"preview-container\">\n                        <div class=\"title\">Preview</div>\n                        <div class='preview' ref=\"$preview\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "afterRender",
@@ -19124,7 +19892,7 @@ var VerticalColorStep = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='vertical-colorstep-container'>\n                <div class='vertical-colorstep' ref=\"$verticalColorstep\">\n                    <GradientSteps></GradientSteps>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='vertical-colorstep-container'>\n                <div class='vertical-colorstep' ref=\"$verticalColorstep\">\n                    <GradientSteps />\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
@@ -19144,7 +19912,7 @@ var VerticalColorStep = function (_UIElement) {
 
             if (!item) return false;
 
-            return this.read(IMAGE_TYPE_IS_GRADIENT, item.type);
+            return IMAGE_TYPE_IS_GRADIENT(item.type);
         }
     }]);
     return VerticalColorStep;
@@ -19212,7 +19980,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
     createClass(ClipPathImageList, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='image-resource'>\n                <div class='items' ref=\"$imageList\">\n\n                </div>\n            </div>\n        ";
+            return "<div class='image-resource'><div class='items' ref=\"$imageList\"></div></div>";
         }
     }, {
         key: LOAD('$imageList'),
@@ -19238,7 +20006,7 @@ var ClipPathImageList = function (_BasePropertyItem) {
     }, {
         key: "toggle",
         value: function toggle(isShow) {
-            if (isUndefined(isShow)) {
+            if (isUndefined$1(isShow)) {
                 this.$el.toggleClass('show');
             } else {
                 this.$el.toggleClass('show', isShow);
@@ -19519,11 +20287,6 @@ var PredefinedPageResizer = function (_UIElement) {
     return PredefinedPageResizer;
 }(UIElement);
 
-var CSS_FILTERING = 'css/filtering';
-var CSS_SORTING = 'css/sorting';
-var CSS_TO_STRING = 'css/toString';
-var CSS_GENERATE = 'css/generate';
-
 var GUIDE_RECT_POINT = 'guide/rect/point';
 var GUIDE_COMPARE = 'guide/compare';
 var GUIDE_SNAP_LAYER = 'guide/snap/layer';
@@ -19567,12 +20330,12 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 if (image == 'image') {
                     var backgroundImage = _this2.read(SELECTION_CURRENT_IMAGE$1);
 
-                    backgroundCSS = _this2.read(IMAGE_BACKGROUND_SIZE_TO_CSS, backgroundImage);
+                    backgroundCSS = IMAGE_BACKGROUND_SIZE_TO_CSS(backgroundImage);
                 }
 
                 var title = 1 + item.index / 100 + '. ' + (item.name || 'Layer');
 
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + _this2.read(CSS_TO_STRING, css) + '" title="' + title + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + _this2.read(CSS_TO_STRING, backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + CSS_TO_STRING(css) + '" title="' + title + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + CSS_TO_STRING(backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                </div> \n            ';
             });
         }
     }, {
@@ -19606,7 +20369,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         key: 'refresh',
         value: function refresh() {
             var isShow = this.isShow();
-            this.$el.toggle(isShow).attr('line-type', this.read('selection/type'));
+            this.$el.toggle(isShow).attr('line-type', this.read(SELECTION_TYPE));
 
             if (isShow) {
                 this.load();
@@ -19630,7 +20393,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }, {
         key: 'isShow',
         value: function isShow() {
-            return this.read('selection/is/not/empty');
+            return this.read(SELECTION_IS_NOT_EMPTY);
         }
     }, {
         key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_BORDER, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_SIZE),
@@ -19728,9 +20491,9 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             var _this3 = this;
 
             this.$el.children().forEach(function ($el) {
-                var item = _this3.read(ITEM_GET, $el.attr('predefined-layer-id'));
+                var item = _this3.get($el.attr('predefined-layer-id'));
 
-                $el.cssText(_this3.read(CSS_TO_STRING, _this3.setRectangle(item)));
+                $el.cssText(CSS_TO_STRING(_this3.setRectangle(item)));
             });
         }
     }, {
@@ -19903,7 +20666,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.currentType = type;
             var layerId = e.$delegateTarget.parent().attr('predefined-layer-id');
             this.$dom = this.read(ITEM_DOM, layerId);
-            this.$selectLayer = this.read(ITEM_GET, layerId);
+            this.$selectLayer = this.get(layerId);
 
             if (this.$dom) {
                 var rect = this.$dom.rect();
@@ -20819,7 +21582,7 @@ var LayerShapeEditor = function (_UIElement) {
             // var transform = "none"; 
 
             // if (id) {
-            //     // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.read(ITEM_GET, id));
+            //     // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.get( id));
             // }
 
             return { width: width, height: height, left: left, top: top };
@@ -20863,10 +21626,13 @@ var MoveGuide = function (_UIElement) {
         }
     }, {
         key: LOAD(),
-        value: function value() {
+        value: function value$$1() {
             var layer = this.read(SELECTION_CURRENT_LAYER);
             if (!layer) return [];
             var toolSize = this.config('tool.size');
+
+            if (!toolSize) return EMPTY_STRING;
+
             var list = this.read(GUIDE_SNAP_LAYER, 3);
 
             var bo = toolSize['board.offset'];
@@ -20900,13 +21666,13 @@ var MoveGuide = function (_UIElement) {
             return this.config('moving');
         }
     }, {
-        key: EVENT(CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
+        key: EVENT(CHANGE_LAYER_SIZE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value$$1() {
             this.refresh();
         }
     }, {
         key: RESIZE('window') + DEBOUNCE(300),
-        value: function value(e) {
+        value: function value$$1(e) {
             this.refresh();
         }
     }]);
@@ -20938,7 +21704,7 @@ var GradientView = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>\n                        </div>       \n                        <PredefinedPageResizer></PredefinedPageResizer>\n                        <PredefinedGroupLayerResizer></PredefinedGroupLayerResizer>\n                        <LayerShapeEditor></LayerShapeEditor>\n                        <MoveGuide></MoveGuide>\n                        <div ref="$dragArea"></div>                     \n                    </div>          \n                </div>\n                <SubFeatureControl></SubFeatureControl>\n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-canvas" ref="$canvas">\n                        <div class="gradient-color-view-container" ref="$page">\n                            <div class="gradient-color-view" ref="$colorview"></div>\n                        </div>       \n                        <PredefinedPageResizer />\n                        <PredefinedGroupLayerResizer />\n                        <LayerShapeEditor />\n                        <MoveGuide />\n                        <div ref="$dragArea"></div>                     \n                    </div>          \n                </div>\n                <SubFeatureControl />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -21038,7 +21804,7 @@ var GradientView = function (_UIElement) {
 
                     // this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
-                    _this4.layerItems[item.id].css(_this4.read(LAYER_BOUND_TO_CSS, item));
+                    _this4.layerItems[item.id].cssArray(BOUND_TO_CSS_ARRAY(item));
                 });
             });
         }
@@ -21196,14 +21962,15 @@ var HandleView = function (_GradientView) {
                 _this2.refreshLayer();
             });
         }
-    }, {
-        key: 'selectPageMode',
-        value: function selectPageMode() {
 
-            if (!this.dragArea) {
-                this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE);
-            }
-        }
+        // selectPageMode () {
+
+        //     if (!this.dragArea) {
+        //         this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE) ;
+        //     }
+
+        // }
+
     }, {
         key: 'isDownCheck',
         value: function isDownCheck() {
@@ -21594,8 +22361,8 @@ var ExportCodePen = function (_MenuItem) {
     }, {
         key: SUBMIT(),
         value: function value() {
-            var generateCode = this.read('export/generate/code');
-            this.refs.$codepen.val(this.read('export/codepen/code', {
+            var generateCode = this.read(EXPORT_GENERATE_CODE);
+            this.refs.$codepen.val(this.read(EXPORT_CODEPEN_CODE, {
                 html: generateCode.html,
                 css: generateCode.css
             }));
@@ -21789,7 +22556,7 @@ var ToolMenu = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'tool-menu\'>\n                <div class=\'items left\'>\n                    <Undo></Undo>\n                    <Redo></Redo>\n\n                </div>\n                <div class="items left">\n                    <ShowGrid></ShowGrid>                         \n                    <ShowClipPath></ShowClipPath>                         \n                    <ShowBackgroundImageSize></ShowBackgroundImageSize>\n                </div>\n\n                <div class=\'items flex-2\'>\n                    <Rect></Rect>\n                    <Circle></Circle>\n                </div>\n                \n                <div class=\'items  right\'>\n                    <Save></Save>                \n                    <Export></Export>\n                    <ExportCodePen></ExportCodePen>\n                    <ExportJSFiddle></ExportJSFiddle>\n                    <Github></Github>                    \n                </div>                \n            </div>\n        ';
+            return '\n            <div class=\'tool-menu\'>\n                <div class=\'items left\'>\n                    <Undo /><Redo />\n                </div>\n                <div class="items left">\n                    <ShowGrid />\n                    <ShowClipPath />\n                    <ShowBackgroundImageSize />\n                </div>\n                <div class=\'items flex-2\'>\n                    <Rect /><Circle />\n                </div>\n                <div class=\'items  right\'>\n                    <Save />\n                    <Export />\n                    <ExportCodePen />\n                    <ExportJSFiddle />\n                    <Github />\n                </div>                \n            </div>\n        ';
         }
     }]);
     return ToolMenu;
@@ -22089,7 +22856,7 @@ var SHAPE_GET = 'shape/get';
 
 var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
 
-var _templateObject$12 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
+var _templateObject$13 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
 
 var ShapeListView = function (_UIElement) {
     inherits(ShapeListView, _UIElement);
@@ -22104,7 +22871,7 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return html(_templateObject$12, this.read(SHAPE_LIST).map(function (key) {
+            return html(_templateObject$13, this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
             }));
         }
@@ -22125,7 +22892,7 @@ var ShapeListView = function (_UIElement) {
     return ShapeListView;
 }(UIElement);
 
-var _templateObject$13 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject$14 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
 var _templateObject2$1 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
@@ -22163,7 +22930,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
-                return html(_templateObject$13, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject$14, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), index);
@@ -22275,12 +23042,12 @@ var PageListView = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n            <PageSampleList></PageSampleList>\n        </div>";
+            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n            <PageSampleList />\n        </div>";
         }
     }, {
         key: "makeItemNode",
         value: function makeItemNode(node, index) {
-            var item = this.read(ITEM_GET, node.id);
+            var item = this.get(node.id);
 
             var page = this.read(SELECTION_CURRENT_PAGE);
 
@@ -22355,7 +23122,7 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var _templateObject$14 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$15 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -22373,7 +23140,7 @@ var LayerListView = function (_UIElement) {
     }, {
         key: "makeItemNode",
         value: function makeItemNode(node, index) {
-            var item = this.read(ITEM_GET, node.id);
+            var item = this.get(node.id);
 
             if (item.itemType == 'layer') {
                 return this.makeItemNodeLayer(item, index);
@@ -22393,7 +23160,7 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return html(_templateObject$14, selected, item.id, index + 1, item.name || "Layer ", item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$15, selected, item.id, index + 1, item.name || "Layer ", item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -22475,8 +23242,8 @@ var LayerListView = function (_UIElement) {
             var destId = e.$delegateTarget.attr('id');
             var sourceId = this.draggedLayer.attr('id');
 
-            var sourceItem = this.read(ITEM_GET, sourceId);
-            var destItem = this.read(ITEM_GET, destId);
+            var sourceItem = this.get(sourceId);
+            var destItem = this.get(destId);
 
             this.draggedLayer = null;
             if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {
@@ -22609,7 +23376,7 @@ var SelectLayerView = function (_BaseTab) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item small-font\" data-id=\"history\">History</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageListView></PageListView>                            \n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <LayerListView></LayerListView>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView></ShapeListView>                    \n                        <LayerSampleList></LayerSampleList>\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradient\">\n                        <BasicGradient></BasicGradient>\n                        <GradientSampleList></GradientSampleList>\n                    </div> \n                    <div class=\"tab-content\" data-id=\"history\">\n                        <HistoryListView></HistoryListView>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item small-font\" data-id=\"history\">History</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageListView />\n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <LayerListView />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView />\n                        <LayerSampleList />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradient\">\n                        <BasicGradient />\n                        <GradientSampleList />\n                    </div> \n                    <div class=\"tab-content\" data-id=\"history\">\n                        <HistoryListView />\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -22693,7 +23460,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu">\n                        <ToolMenu></ToolMenu>\n                    </div>\n                </div>\n                <div class="layout-top">\n                \n                </div>\n                <div class="layout-left">      \n                    <SelectLayerView></SelectLayerView>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar></LayerToolbar>                \n                    <VerticalColorStep></VerticalColorStep>\n                    <HandleView></HandleView>                      \n                </div>                \n                <div class="layout-right">\n                    <Alignment></Alignment>\n                    <FeatureControl></FeatureControl>\n                    <ClipPathImageList></ClipPathImageList>\n                </div>\n                <div class="layout-footer">\n                    <Timeline></Timeline>\n                </div>\n                <ExportWindow></ExportWindow>\n                <DropView></DropView>\n                <HotKey></HotKey>\n            </div>\n        ';
+            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/><DropView /><HotKey />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -22818,7 +23585,7 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: GETTER(COLORSTEP_CURRENT),
         value: function value$$1($store, index) {
-            if (!isUndefined(index)) {
+            if (!isUndefined$1(index)) {
                 return $store.read(COLORSTEP_LIST)[index] || $store.read(ITEM_CREATE_COLORSTEP);
             } else {
                 return $store.read(COLORSTEP_LIST).filter(function (item) {
@@ -22891,9 +23658,10 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: ACTION(COLORSTEP_SORT),
         value: function value$$1($store, id, sortedList) {
+            var _this2 = this;
 
             sortedList.forEach(function (stepId, index) {
-                var item = $store.read(ITEM_GET, stepId);
+                var item = _this2.get(stepId);
                 item.index = index * 100;
 
                 $store.run(ITEM_SET, item);
@@ -22930,7 +23698,7 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: GETTER(COLORSTEP_CURRENT_INDEX),
         value: function value$$1($store, index) {
-            if (isUndefined(index)) {
+            if (isUndefined$1(index)) {
                 return $store.read(COLORSTEP_LIST).map(function (step, index) {
                     return { step: step, index: index };
                 }).filter(function (item) {
@@ -22944,10 +23712,10 @@ var ColorStepManager = function (_BaseModule) {
         key: ACTION(COLORSTEP_CUT_OFF),
         value: function value$$1($store, id) {
             var list = [];
-            if (isUndefined(id)) {
+            if (isUndefined$1(id)) {
                 list = $store.read(COLORSTEP_LIST);
             } else {
-                list = [$store.read(ITEM_GET, id)];
+                list = [this.get(id)];
             }
             list.forEach(function (item) {
                 item.cut = false;
@@ -22958,10 +23726,10 @@ var ColorStepManager = function (_BaseModule) {
         key: ACTION(COLORSTEP_CUT_ON),
         value: function value$$1($store, id) {
             var list = [];
-            if (isUndefined(id)) {
+            if (isUndefined$1(id)) {
                 list = $store.read(COLORSTEP_LIST);
             } else {
-                list = [$store.read(ITEM_GET, id)];
+                list = [this.get(id)];
             }
             list.forEach(function (item) {
                 item.cut = true;
@@ -22978,7 +23746,7 @@ var ColorStepManager = function (_BaseModule) {
         value: function getUnitValue(step, maxValue) {
 
             if (isPX(step.unit)) {
-                if (isUndefined(step.px)) {
+                if (isUndefined$1(step.px)) {
                     step.px = percent2px(step.percent, maxValue);
                 }
 
@@ -22988,7 +23756,7 @@ var ColorStepManager = function (_BaseModule) {
                     em: px2em(step.px, maxValue)
                 };
             } else if (isEM(step.unit)) {
-                if (isUndefined(step.em)) {
+                if (isUndefined$1(step.em)) {
                     step.em = percent2em(step.percent, maxValue);
                 }
                 return {
@@ -23012,14 +23780,14 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: ACTION(COLORSTEP_ORDERING_EQUALS),
         value: function value$$1($store) {
-            var _this2 = this;
+            var _this3 = this;
 
             var firstIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
             var lastIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Number.MAX_SAFE_INTEGER;
 
 
             var list = $store.read(COLORSTEP_LIST).map(function (step) {
-                return _extends({}, step, $store.read(COLORSTEP_UNIT_VALUE, step, _this2.getMaxValue()));
+                return _extends({}, step, $store.read(COLORSTEP_UNIT_VALUE, step, _this3.getMaxValue()));
             });
 
             if (lastIndex > list.length - 1) {
@@ -23052,40 +23820,7 @@ var ColorStepManager = function (_BaseModule) {
     return ColorStepManager;
 }(BaseModule);
 
-var _DEFINED_POSITIONS;
-
-var DEFINED_ANGLES$1 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var DEFINED_DIRECTIONS = {
-    '0': 'to top',
-    '45': 'to top right',
-    '90': 'to right',
-    '135': 'to bottom right',
-    '180': 'to bottom',
-    '225': 'to bottom left',
-    '270': 'to left',
-    '315': 'to top left'
-};
-
-var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITIONS, POSITION_CENTER, true), defineProperty(_DEFINED_POSITIONS, POSITION_TOP, true), defineProperty(_DEFINED_POSITIONS, POSITION_LEFT, true), defineProperty(_DEFINED_POSITIONS, POSITION_RIGHT, true), defineProperty(_DEFINED_POSITIONS, POSITION_BOTTOM, true), _DEFINED_POSITIONS);
-
 var IMAGE_LIST = [IMAGE_FILE_TYPE_JPG, IMAGE_FILE_TYPE_PNG, IMAGE_FILE_TYPE_GIF, IMAGE_FILE_TYPE_SVG];
-
-var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
-var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
-var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
-var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
 
 var ImageManager = function (_BaseModule) {
     inherits(ImageManager, _BaseModule);
@@ -23097,7 +23832,7 @@ var ImageManager = function (_BaseModule) {
 
     createClass(ImageManager, [{
         key: GETTER(IMAGE_GET_FILE),
-        value: function value$$1($store, files, callback) {
+        value: function value($store, files, callback) {
             var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
 
             (files || []).forEach(function (file) {
@@ -23122,7 +23857,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_GET_URL),
-        value: function value$$1($store, urls, callback) {
+        value: function value($store, urls, callback) {
             var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
 
             (urls || []).forEach(function (url) {
@@ -23143,7 +23878,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_GET_BLOB),
-        value: function value$$1($store, blobs, callback) {
+        value: function value($store, blobs, callback) {
             (blobs || []).forEach(function (file) {
                 if (isFunction(callback)) {
                     new ImageLoader(file, {
@@ -23170,431 +23905,23 @@ var ImageManager = function (_BaseModule) {
             });
         }
     }, {
-        key: GETTER(IMAGE_TYPE_IS_GRADIENT),
-        value: function value$$1($store, type) {
-            return $store.read(IMAGE_TYPE_IS_LINEAR, type) || $store.read(IMAGE_TYPE_IS_RADIAL, type) || $store.read(IMAGE_TYPE_IS_CONIC, type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_NOT_GRADIENT),
-        value: function value$$1($store, type) {
-            return $store.read(IMAGE_TYPE_IS_GRADIENT, type) == false;
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_LINEAR),
-        value: function value$$1($store, type) {
-            return LINEAR_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_RADIAL),
-        value: function value$$1($store, type) {
-            return RADIAL_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_CONIC),
-        value: function value$$1($store, type) {
-            return CONIC_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_IMAGE),
-        value: function value$$1($store, type) {
-            return IMAGE_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_TYPE_IS_STATIC),
-        value: function value$$1($store, type) {
-            return STATIC_GRADIENT_LIST.includes(type);
-        }
-    }, {
-        key: GETTER(IMAGE_ANGLE),
-        value: function value$$1($store) {
-            var angle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-            return isUndefined(DEFINED_ANGLES$1[angle]) ? angle : DEFINED_ANGLES$1[angle] || 0;
-        }
-    }, {
-        key: GETTER(IMAGE_RADIAL_POSITION),
-        value: function value$$1($store) {
-            var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-            return position; //|| $store.read('image/get', 'radialPosition');
-        }
-    }, {
-        key: GETTER(IMAGE_BACKGROUND_SIZE_TO_CSS),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image, isExport);
-            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image, isExport);
-            if (backgroundSize) {
-                results['background-size'] = backgroundSize;
-            }
-
-            if (backgroundPosition) {
-                results['background-position'] = backgroundPosition;
-            }
-            results['background-image'] = 'linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))';
-            results['background-repeat'] = 'no-repeat';
-
-            return results;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_CSS),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image, isExport);
-            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image, isExport);
-            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image, isExport);
-            var backgroundRepeat = $store.read(IMAGE_TO_BACKGROUND_REPEAT_STRING, image, isExport);
-            var backgroundBlendMode = $store.read(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, image, isExport);
-
-            if (backgroundImage) {
-                results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
-            }
-
-            if (backgroundSize) {
-                results['background-size'] = backgroundSize;
-            }
-
-            if (backgroundPosition) {
-                results['background-position'] = backgroundPosition;
-            }
-
-            if (backgroundRepeat) {
-                results['background-repeat'] = backgroundRepeat;
-            }
-
-            if (backgroundBlendMode) {
-                results['background-blend-mode'] = backgroundBlendMode;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER(IMAGE_CACHE_TO_CSS),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var image = _extends({}, item.image, { colorsteps: item.colorsteps });
-
-            var results = {};
-            var backgroundImage = $store.read(IMAGE_TO_IMAGE_STRING, image);
-            var backgroundPosition = $store.read(IMAGE_TO_BACKGROUND_POSITION_STRING, image);
-            var backgroundSize = $store.read(IMAGE_TO_BACKGROUND_SIZE_STRING, image);
-            var backgroundRepeat = $store.read(IMAGE_TO_BACKGROUND_REPEAT_STRING, image);
-            var backgroundBlendMode = $store.read(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING, image);
-
-            if (backgroundImage) {
-                results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
-            }
-
-            if (backgroundSize) {
-                results['background-size'] = backgroundSize;
-            }
-
-            if (backgroundPosition) {
-                results['background-position'] = backgroundPosition;
-            }
-
-            if (backgroundRepeat) {
-                results['background-repeat'] = backgroundRepeat;
-            }
-
-            if (backgroundBlendMode) {
-                results['background-blend-mode'] = backgroundBlendMode;
-            }
-
-            return results;
-        }
-    }, {
         key: GETTER(IMAGE_TO_STRING),
-        value: function value$$1($store) {
+        value: function value($store) {
             var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
-
-            var obj = $store.read(IMAGE_TO_CSS, image);
+            var newItem = _extends({}, image);
+            newItem.colorsteps = newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id);
+            var obj = IMAGE_TO_CSS$1(newItem);
 
             return Object.keys(obj).map(function (key) {
                 return key + ': ' + obj[key] + ';';
             }).join(' ');
         }
     }, {
-        key: GETTER(IMAGE_TO_IMAGE_STRING),
-        value: function value$$1($store, image) {
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var type = image.type;
-
-            if (type == IMAGE_ITEM_TYPE_LINEAR || type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
-                return $store.read(IMAGE_TO_LINEAR, image, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_RADIAL || type == IMAGE_ITEM_TYPE_REPEATING_RADIAL) {
-                return $store.read(IMAGE_TO_RADIAL, image, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_CONIC || type == IMAGE_ITEM_TYPE_REPEATING_CONIC) {
-                return $store.read(IMAGE_TO_CONIC, image, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_IMAGE) {
-                return $store.read(IMAGE_TO_IMAGE, image, isExport);
-            } else if (type == IMAGE_ITEM_TYPE_STATIC) {
-                return $store.read(IMAGE_TO_STATIC, image, isExport);
-            }
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_SIZE_STRING),
-        value: function value$$1($store, image) {
-
-            if (image.backgroundSize == 'contain' || image.backgroundSize == 'cover') {
-                return image.backgroundSize;
-            } else if (image.backgroundSizeWidth && image.backgroundSizeHeight) {
-                return [stringUnit(image.backgroundSizeWidth), stringUnit(image.backgroundSizeHeight)].join(' ');
-            } else if (image.backgroundSizeWidth) {
-                return stringUnit(image.backgroundSizeWidth);
-            }
-
-            return 'auto';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_POSITION_STRING),
-        value: function value$$1($store, image) {
-
-            var x = defaultValue(image.backgroundPositionX, valueUnit(POSITION_CENTER));
-            var y = defaultValue(image.backgroundPositionY, valueUnit(POSITION_CENTER));
-
-            if (x === 0) x = percentUnit(0);
-            if (y === 0) y = percentUnit(0);
-
-            return stringUnit(x) + ' ' + stringUnit(y);
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_REPEAT_STRING),
-        value: function value$$1($store, image) {
-            if (image.backgroundRepeat) {
-                return image.backgroundRepeat;
-            }
-        }
-    }, {
-        key: GETTER(IMAGE_TO_BACKGROUND_BLEND_MODE_STRING),
-        value: function value$$1($store, image) {
-            if (image.backgroundBlendMode) {
-                return image.backgroundBlendMode || 'normal';
-            }
-        }
-    }, {
-        key: GETTER(IMAGE_GET_UNIT_VALUE),
-        value: function value$$1($store, step) {
-            if (isPX(step.unit)) {
-                return px$1(step.px);
-            } else if (isEM(step.unit)) {
-                return em(step.em);
-            }
-
-            return percent(step.percent);
-        }
-    }, {
-        key: GETTER(IMAGE_GET_STEP_VALUE),
-        value: function value$$1($store, step) {
-            if (isPX(step.unit)) {
-                return step.px;
-            } else if (isEM(step.unit)) {
-                return step.em;
-            }
-
-            return step.percent;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_ITEM_STRING),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!image) return EMPTY_STRING;
-
-            var colorsteps = image.colorsteps || $store.read(ITEM_MAP_CHILDREN, image.id);
-
-            if (!colorsteps) return EMPTY_STRING;
-
-            var colors = [].concat(toConsumableArray(colorsteps));
-            if (!colors.length) return EMPTY_STRING;
-
-            var newColors = [];
-            colors.forEach(function (c, index) {
-                if (c.cut && index > 0) {
-                    newColors.push({
-                        color: c.color,
-                        unit: colors[index - 1].unit,
-                        percent: colors[index - 1].percent,
-                        px: colors[index - 1].px,
-                        em: colors[index - 1].em
-                    });
-                }
-
-                newColors.push(c);
-            });
-
-            colors = newColors.map(function (f) {
-
-                var value$$1 = stringUnit(percentUnit(f.percent));
-                return f.color + ' ' + value$$1;
-            }).join(',');
-
-            return colors;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_CONIC_ITEM_STRING),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!image) return EMPTY_STRING;
-
-            var colorsteps = image.colorsteps || $store.read(ITEM_MAP_CHILDREN, image.id, function (step) {
-                return step;
-            });
-
-            if (!colorsteps) return EMPTY_STRING;
-
-            var colors = [].concat(toConsumableArray(colorsteps)).map(function (it, index) {
-                it.index = index;
-                return it;
-            });
-            if (!colors.length) return EMPTY_STRING;
-
-            colors.sort(function (a, b) {
-                if (a.percent == b.percent) {
-                    if (a.index > b.index) return 1;
-                    if (a.index < b.index) return 0;
-                    return 0;
-                }
-                return a.percent > b.percent ? 1 : -1;
-            });
-
-            var newColors = [];
-            colors.forEach(function (c, index) {
-                if (c.cut && index > 0) {
-                    newColors.push(_extends({}, c, { percent: colors[index - 1].percent }));
-                }
-
-                newColors.push(c);
-            });
-
-            colors = newColors.map(function (f) {
-                var deg$$1 = Math.floor(f.percent * 3.6);
-                return f.color + ' ' + deg$$1 + 'deg';
-            }).join(',');
-
-            return colors;
-        }
-    }, {
-        key: GETTER(IMAGE_TO_LINEAR),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var colors = $store.read(IMAGE_TO_ITEM_STRING, image);
-
-            if (colors == EMPTY_STRING) return EMPTY_STRING;
-
-            var opt = EMPTY_STRING;
-            var angle = image.angle;
-            var gradientType = image.type;
-
-            opt = angle;
-
-            if (isNumber(opt)) {
-                opt = DEFINED_DIRECTIONS['' + opt] || opt;
-            }
-
-            if (isNumber(opt)) {
-                opt = opt > 360 ? opt % 360 : opt;
-
-                opt = opt + 'deg';
-            }
-
-            return gradientType + '-gradient(' + opt + ', ' + colors + ')';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_STATIC),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(IMAGE_TO_LINEAR, {
-                type: 'linear',
-                angle: 0,
-                colorsteps: [{ color: image.color, percent: 0 }, { color: image.color, percent: 100 }]
-            });
-        }
-    }, {
         key: GETTER(IMAGE_TO_LINEAR_RIGHT),
-        value: function value$$1($store, image) {
-            return $store.read(IMAGE_TO_LINEAR, _extends({}, image, { type: 'linear', angle: 'to right' }));
-        }
-    }, {
-        key: GETTER(IMAGE_TO_RADIAL),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var colors = $store.read(IMAGE_TO_ITEM_STRING, image);
-
-            if (colors == EMPTY_STRING) return EMPTY_STRING;
-            var opt = EMPTY_STRING;
-            var radialType = image.radialType;
-            var radialPosition = image.radialPosition || [POSITION_CENTER, POSITION_CENTER];
-            var gradientType = image.type;
-
-            radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(' ');
-
-            opt = radialPosition ? radialType + ' at ' + radialPosition : radialType;
-
-            return gradientType + '-gradient(' + opt + ', ' + colors + ')';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_CONIC),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var colors = $store.read(IMAGE_TO_CONIC_ITEM_STRING, image);
-
-            if (colors == EMPTY_STRING) return EMPTY_STRING;
-            var opt = [];
-            var conicAngle = image.angle;
-            var conicPosition = image.radialPosition || [POSITION_CENTER, POSITION_CENTER];
-            var gradientType = image.type;
-
-            conicPosition = DEFINED_POSITIONS[conicPosition] ? conicPosition : conicPosition.join(' ');
-
-            if (isNotUndefined(conicAngle)) {
-                conicAngle = get(DEFINED_ANGLES$1, conicAngle, function (it) {
-                    return +it;
-                });
-                opt.push('from ' + conicAngle + 'deg');
-            }
-
-            if (conicPosition) {
-                opt.push('at ' + conicPosition);
-            }
-
-            var optString = opt.length ? opt.join(' ') + ',' : EMPTY_STRING;
-
-            return gradientType + '-gradient(' + optString + ' ' + colors + ')';
-        }
-    }, {
-        key: GETTER(IMAGE_TO_IMAGE),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var url = image.backgroundImage;
-
-            if (!isExport && url) {
-                return 'url(' + url + ')';
-            } else if (isExport) {
-                return 'url(' + image.backgroundImageDataURI + ')';
-            }
-
-            return null;
+        value: function value($store, image) {
+            var colorsteps = image.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, image.id);
+            return IMAGE_TO_LINEAR(_extends({}, image, { type: 'linear', angle: 'to right', colorsteps: colorsteps }));
         }
     }]);
     return ImageManager;
@@ -23638,7 +23965,7 @@ var LayerManager = function (_BaseModule) {
                 delete obj['filter'];
             }
 
-            return $store.read(CSS_TO_STRING, obj);
+            return CSS_TO_STRING(obj);
         }
     }, {
         key: GETTER(LAYER_CACHE_TO_STRING),
@@ -23646,7 +23973,7 @@ var LayerManager = function (_BaseModule) {
             var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
             obj.position = 'absolute';
             return {
-                css: $store.read(CSS_TO_STRING, obj),
+                css: CSS_TO_STRING(obj),
                 obj: obj
             };
         }
@@ -23659,7 +23986,7 @@ var LayerManager = function (_BaseModule) {
             var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
             obj.position = obj.position || 'absolute';
 
-            return $store.read(CSS_TO_STRING, obj);
+            return CSS_TO_STRING(obj);
         }
     }, {
         key: GETTER(LAYER_MAKE_CLIPPATH),
@@ -23682,8 +24009,11 @@ var LayerManager = function (_BaseModule) {
             var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
             var results = {};
-            $store.read(ITEM_EACH_CHILDREN, layer.id, function (item) {
-                var css = $store.read(IMAGE_TO_CSS, item, isExport);
+            $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id, function (item) {
+                var newItem = _extends({}, item);
+                newItem.colorsteps = newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id);
+
+                var css = IMAGE_TO_CSS$1(newItem, isExport);
 
                 Object.keys(css).forEach(function (key) {
                     if (!results[key]) {
@@ -23703,7 +24033,7 @@ var LayerManager = function (_BaseModule) {
 
             images.forEach(function (item) {
                 var image = _extends({}, item.image, { colorsteps: item.colorsteps });
-                var css = $store.read(IMAGE_TO_CSS, image);
+                var css = IMAGE_TO_CSS$1(image);
 
                 Object.keys(css).forEach(function (key) {
                     if (!results[key]) {
@@ -23719,8 +24049,8 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
         value: function value$$1($store, image) {
-            var images = this.generateImagePattern($store, [image]);
-            return $store.read(CSS_GENERATE, this.generateImageCSS($store, images));
+            var images = generateImagePattern([image]);
+            return CSS_GENERATE(this.generateImageCSS($store, images));
         }
     }, {
         key: GETTER(LAYER_MAKE_MAP),
@@ -23752,8 +24082,9 @@ var LayerManager = function (_BaseModule) {
             var results = {};
 
             images.forEach(function (item) {
-
-                var css = $store.read(IMAGE_TO_CSS, item, isExport);
+                var newItem = _extends({}, item);
+                newItem.colorsteps = newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id);
+                var css = IMAGE_TO_CSS$1(newItem, isExport);
 
                 Object.keys(css).forEach(function (key) {
                     if (!results[key]) {
@@ -23773,25 +24104,9 @@ var LayerManager = function (_BaseModule) {
             return results;
         }
     }, {
-        key: "generateImagePattern",
-        value: function generateImagePattern($store, images) {
-            var results = [];
-
-            images.forEach(function (item) {
-                var patternedItems = $store.read(PATTERN_MAKE, item);
-                if (patternedItems) {
-                    results.push.apply(results, toConsumableArray(patternedItems));
-                } else {
-                    results.push(item);
-                }
-            });
-
-            return results;
-        }
-    }, {
         key: GETTER(LAYER_MAKE_MAP_IMAGE),
         value: function value$$1($store, layer, isExport) {
-            var images = this.generateImagePattern($store, $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(function (it) {
+            var images = generateImagePattern($store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(function (it) {
                 return it.visible;
             }));
 
@@ -23849,86 +24164,6 @@ var LayerManager = function (_BaseModule) {
             return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
         }
     }, {
-        key: GETTER(LAYER_MAKE_TRANSFORM_ROTATE),
-        value: function value$$1($store, layer) {
-
-            var results = [];
-
-            if (layer.rotate) {
-                results.push("rotate(" + layer.rotate + "deg)");
-            }
-
-            return {
-                transform: results.length ? results.join(' ') : 'none'
-            };
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_TRANSFORM),
-        value: function value$$1($store, layer) {
-
-            var results = [];
-
-            if (layer.perspective) {
-                results.push("perspective(" + layer.perspective + "px)");
-            }
-
-            if (layer.rotate) {
-                results.push("rotate(" + layer.rotate + "deg)");
-            }
-
-            if (layer.skewX) {
-                results.push("skewX(" + layer.skewX + "deg)");
-            }
-
-            if (layer.skewY) {
-                results.push("skewY(" + layer.skewY + "deg)");
-            }
-
-            if (layer.scale) {
-                results.push("scale(" + layer.scale + ")");
-            }
-
-            if (layer.translateX) {
-                results.push("translateX(" + layer.translateX + "px)");
-            }
-
-            if (layer.translateY) {
-                results.push("translateY(" + layer.translateY + "px)");
-            }
-
-            if (layer.translateZ) {
-                results.push("translateZ(" + layer.translateZ + "px)");
-            }
-
-            if (layer.rotateX) {
-                results.push("rotateX(" + layer.rotateX + "deg)");
-            }
-
-            if (layer.rotateY) {
-                results.push("rotateY(" + layer.rotateY + "deg)");
-            }
-
-            if (layer.rotateZ) {
-                results.push("rotateZ(" + layer.rotateZ + "deg)");
-            }
-
-            if (layer.scaleX) {
-                results.push("scaleX(" + layer.scaleX + ")");
-            }
-
-            if (layer.scaleY) {
-                results.push("scaleY(" + layer.scaleY + ")");
-            }
-
-            if (layer.scaleZ) {
-                results.push("scaleZ(" + layer.scaleZ + ")");
-            }
-
-            return {
-                transform: results.length ? results.join(' ') : 'none'
-            };
-        }
-    }, {
         key: GETTER(LAYER_TO_STRING_CLIPPATH),
         value: function value$$1($store, layer) {
 
@@ -23962,91 +24197,6 @@ var LayerManager = function (_BaseModule) {
             return items.length ? items[0] : null;
         }
     }, {
-        key: GETTER(LAYER_MAKE_BORDER_RADIUS),
-        value: function value$$1($store, layer) {
-            var css = {};
-
-            if (layer.borderRadius) css['border-radius'] = stringUnit(layer.borderRadius);
-            if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
-            if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
-            if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
-            if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
-
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BORDER_COLOR),
-        value: function value$$1($store, layer) {
-            var css = {};
-
-            if (layer.borderColor) css['border-color'] = layer.borderColor;
-            if (layer.borderTopColor) css['border-top-color'] = layer.borderTopColor;
-            if (layer.borderRightColor) css['border-right-color'] = layer.borderRightColor;
-            if (layer.borderBottomColor) css['border-bottom-color'] = layer.borderBottomColor;
-            if (layer.borderLeftColor) css['border-left-color'] = layer.borderLeftColor;
-
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BORDER_STYLE),
-        value: function value$$1($store, layer) {
-            var css = {};
-
-            if (layer.borderStyle) css['border-style'] = layer.borderStyle;
-            if (layer.borderTopStyle) css['border-top-style'] = layer.borderTopStyle;
-            if (layer.borderRightStyle) css['border-right-style'] = layer.borderRightStyle;
-            if (layer.borderBottomStyle) css['border-bottom-style'] = layer.borderBottomStyle;
-            if (layer.borderLeftStyle) css['border-left-style'] = layer.borderLeftStyle;
-
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BORDER),
-        value: function value$$1($store, layer) {
-            var css = {};
-
-            if (layer.borderWidth) {
-                css['border-width'] = stringUnit(layer.borderWidth);
-                css['border-style'] = 'solid';
-            }
-
-            if (layer.borderTopWidth) {
-                css['border-top-width'] = stringUnit(layer.borderTopWidth);
-                css['border-top-style'] = 'solid';
-            }
-
-            if (layer.borderRightWidth) {
-                css['border-right-width'] = stringUnit(layer.borderRightWidth);
-                css['border-right-style'] = 'solid';
-            }
-
-            if (layer.borderLeftWidth) {
-                css['border-left-width'] = stringUnit(layer.borderLeftWidth);
-                css['border-left-style'] = 'solid';
-            }
-
-            if (layer.borderBottomWidth) {
-                css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
-                css['border-bottom-style'] = 'solid';
-            }
-            return css;
-        }
-    }, {
-        key: GETTER(LAYER_BOUND_TO_CSS),
-        value: function value$$1($store, layer) {
-            var css = {};
-
-            if (!layer) return css;
-
-            css.left = stringUnit(layer.x);
-            css.top = stringUnit(layer.y);
-            css.width = stringUnit(layer.width);
-            css.height = stringUnit(layer.height);
-            css['z-index'] = layer.index;
-
-            return css;
-        }
-    }, {
         key: GETTER(LAYER_TO_CSS),
         value: function value$$1($store) {
             var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -24057,7 +24207,7 @@ var LayerManager = function (_BaseModule) {
             var css = {};
 
             if (withStyle) {
-                css = _extends({}, css, $store.read(LAYER_BOUND_TO_CSS, layer));
+                css = _extends({}, css, BOUND_TO_CSS(layer));
             }
 
             css['box-sizing'] = layer.boxSizing || 'border-box';
@@ -24082,7 +24232,7 @@ var LayerManager = function (_BaseModule) {
 
             var imageCSS = image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport);
 
-            var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), imageCSS);
+            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), imageCSS);
 
             return cleanObject(results);
         }
@@ -24094,7 +24244,7 @@ var LayerManager = function (_BaseModule) {
             var layer = _extends({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
             var css = {};
 
-            css = _extends({}, $store.read(LAYER_BOUND_TO_CSS, layer));
+            css = _extends({}, BOUND_TO_CSS(layer));
 
             css['box-sizing'] = layer.boxSizing || 'border-box';
             css['visibility'] = layer.visible ? 'visible' : 'hidden';
@@ -24116,7 +24266,7 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer), $store.read(LAYER_MAKE_TRANSFORM, layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
+            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
 
             return cleanObject(results);
         }
@@ -24129,9 +24279,9 @@ var LayerManager = function (_BaseModule) {
 
             css['box-sizing'] = 'border-box';
 
-            var results = _extends({}, css, $store.read(LAYER_MAKE_BORDER, layer), $store.read(LAYER_MAKE_BORDER_RADIUS, layer), $store.read(LAYER_MAKE_BORDER_COLOR, layer), $store.read(LAYER_MAKE_BORDER_STYLE, layer));
+            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer));
 
-            return $store.read(CSS_TO_STRING, cleanObject(results));
+            return CSS_TO_STRING(cleanObject(results));
         }
     }]);
     return LayerManager;
@@ -24161,11 +24311,6 @@ var ToolManager = function (_BaseModule) {
             };
         }
     }, {
-        key: GETTER(CLONE),
-        value: function value$$1($store, object) {
-            return JSON.parse(JSON.stringify(object));
-        }
-    }, {
         key: GETTER(TOOL_COLOR_SOURCE),
         value: function value$$1($store) {
             return $store.tool.colorSource;
@@ -24173,7 +24318,7 @@ var ToolManager = function (_BaseModule) {
     }, {
         key: GETTER(TOOL_GET),
         value: function value$$1($store, key, defaultValue$$1) {
-            return isUndefined($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
+            return isUndefined$1($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
         }
     }, {
         key: ACTION(TOOL_SET_COLOR_SOURCE),
@@ -24474,7 +24619,7 @@ var GradientManager = function (_BaseModule) {
                 $store.run(ITEM_REMOVE, image.id);
             } else {
                 var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
-                var newImage = $store.read(ITEM_GET, newImageId);
+                var newImage = this.get(newImageId);
                 $store.run(ITEM_SET, newImage);
             }
         }
@@ -24509,7 +24654,7 @@ var GradientManager = function (_BaseModule) {
                 $store.run(ITEM_MOVE_IN, image.id, newImageId);
             } else {
                 var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
-                var newImage = $store.read(ITEM_GET, newImageId);
+                var newImage = this.get(newImageId);
                 $store.run(ITEM_SET, newImage);
             }
         }
@@ -24634,7 +24779,7 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_TOGGLE_VISIBLE),
         value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
 
             var visible = !item.visible;
 
@@ -24664,7 +24809,7 @@ var ItemManager = function (_BaseModule) {
         value: function value$$1($store, id) {
             if (id) {
 
-                var item = $store.read(ITEM_GET, id);
+                var item = this.get(id);
                 var itemType = item.itemType;
 
                 if (item.parentId) {
@@ -25290,14 +25435,18 @@ var StorageManager = function (_BaseModule) {
             var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
 
             if (obj.items) $store.items = obj.items;
-            if (obj.selectedId) $store.selectedId = obj.selectedId;
-            if (obj.selectedMode) $store.selectedMode = obj.selectedMode;
             if (obj.selection) $store.selection = obj.selection;
+
+            if (obj.selectedId) {
+                if (!$store.selection.ids.length) {
+                    $store.selection.ids = [obj.selectedId];
+                }
+            }
 
             $store.run(ITEM_KEYS_GENERATE);
 
-            if ($store.selectedId) {
-                $store.run(SELECTION_ONE, $store.selectedId);
+            if ($store.selection.ids && $store.selection.ids.length) {
+                $store.run(SELECTION_ONE, $store.selection.ids[0]);
             }
 
             if (isFunction(callback)) {
@@ -25306,151 +25455,6 @@ var StorageManager = function (_BaseModule) {
         }
     }]);
     return StorageManager;
-}(BaseModule);
-
-var ordering = {
-    'position': 1,
-    'left': 2,
-    'top': 2,
-    'right': 2,
-    'bottom': 2,
-    'width': 3,
-    'height': 3,
-
-    'font-size': 4,
-    'font-family': 4,
-
-    'opacity': 10,
-    'border-radius': 10,
-
-    'box-shadow': 15,
-    'text-shadow': 15,
-    'filter': 15,
-
-    'background-clip': 50,
-    '-webkit-background-clip': 50,
-
-    'background-repeat': 100,
-    'background-blend-mode': 100,
-    'background-image': 100,
-    'background-size': 100,
-    'background-position': 100,
-
-    'transform': 1000
-
-};
-
-var MAX_ORDER = Number.MAX_SAFE_INTEGER;
-
-var CssManager = function (_BaseModule) {
-    inherits(CssManager, _BaseModule);
-
-    function CssManager() {
-        classCallCheck(this, CssManager);
-        return possibleConstructorReturn(this, (CssManager.__proto__ || Object.getPrototypeOf(CssManager)).apply(this, arguments));
-    }
-
-    createClass(CssManager, [{
-        key: GETTER(CSS_FILTERING),
-        value: function value($store, style) {
-            var newStyle = style;
-
-            if (newStyle['background-blend-mode'] == 'normal') {
-                delete newStyle['background-blend-mode'];
-            }
-
-            if (newStyle['mix-blend-mode'] == 'normal') {
-                delete newStyle['mix-blend-mode'];
-            }
-
-            if (newStyle['background-size'] == 'auto') {
-                delete newStyle['background-size'];
-            }
-
-            if (newStyle['background-position'] == 'center center') {
-                delete newStyle['background-position'];
-            }
-
-            if (parseParamNumber$2(newStyle.opacity) == 1) {
-                delete newStyle.opacity;
-            }
-
-            if (parseParamNumber$2(newStyle.left) == 0) {
-                delete newStyle.left;
-            }
-
-            if (parseParamNumber$2(newStyle.top) == 0) {
-                delete newStyle.top;
-            }
-
-            if (newStyle.transform == 'none') {
-                delete newStyle.transform;
-            }
-
-            if (newStyle['transform-style'] == 'float') {
-                delete newStyle['transform-style'];
-            }
-
-            return newStyle;
-        }
-    }, {
-        key: GETTER(CSS_SORTING),
-        value: function value($store, style) {
-
-            style = $store.read(CSS_FILTERING, style);
-
-            var keys = Object.keys(style);
-
-            keys.sort(function (a, b) {
-                var aN = ordering[a] || MAX_ORDER;
-                var bN = ordering[b] || MAX_ORDER;
-
-                if (aN == bN) return 0;
-
-                return aN < bN ? -1 : 1;
-            });
-
-            var newStyle = {};
-            keys.forEach(function (key) {
-                newStyle[key] = style[key];
-            });
-
-            return newStyle;
-        }
-    }, {
-        key: GETTER(CSS_TO_STRING),
-        value: function value($store, style) {
-            var newStyle = $store.read(CSS_SORTING, style);
-
-            return Object.keys(newStyle).filter(function (key) {
-                return !!newStyle[key];
-            }).map(function (key) {
-                return key + ": " + newStyle[key];
-            }).join(';');
-        }
-    }, {
-        key: GETTER(CSS_GENERATE),
-        value: function value($store, css) {
-            var results = {};
-
-            Object.keys(css).forEach(function (key) {
-                if (!results[key]) {
-                    results[key] = [];
-                }
-
-                results[key].push(css[key]);
-            });
-
-            Object.keys(results).forEach(function (key) {
-                if (Array.isArray(results[key])) {
-                    results[key] = results[key].join(', ');
-                }
-            });
-
-            return $store.read(CSS_FILTERING, results);
-        }
-    }]);
-    return CssManager;
 }(BaseModule);
 
 var EXTERNAL_PASTE = 'external/paste';
@@ -25611,7 +25615,7 @@ var CollectManager = function (_BaseModule) {
     }, {
         key: GETTER(COLLECT_ONE),
         value: function value($store, id) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
 
             switch (item.itemType) {
                 case ITEM_TYPE_PAGE:
@@ -25740,7 +25744,7 @@ var PageManager = function (_BaseModule) {
         key: GETTER(PAGE_TO_STRING),
         value: function value$$1($store, id) {
 
-            var page = $store.read(ITEM_GET, id);
+            var page = this.get(id);
             var obj = $store.read(PAGE_TO_CSS, page) || {};
 
             return Object.keys(obj).map(function (key) {
@@ -25753,7 +25757,6 @@ var PageManager = function (_BaseModule) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
             var css = {
                 overflow: sample.clip ? 'hidden' : EMPTY_STRING,
                 'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
@@ -25769,7 +25772,7 @@ var PageManager = function (_BaseModule) {
                 css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
             }
 
-            return $store.read('css/sorting', css);
+            return CSS_SORTING(css);
         }
     }, {
         key: GETTER(PAGE_COLORVIEW_TO_CSS),
@@ -25790,7 +25793,7 @@ var PageManager = function (_BaseModule) {
                 css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
             }
 
-            return $store.read('css/sorting', css);
+            return CSS_SORTING(css);
         }
     }, {
         key: GETTER(PAGE_CACHE_TO_CSS),
@@ -25814,7 +25817,7 @@ var PageManager = function (_BaseModule) {
                 css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
             }
 
-            return $store.read('css/sorting', css);
+            return CSS_SORTING(css);
         }
     }, {
         key: GETTER(PAGE_CACHE_TO_STRING),
@@ -25822,7 +25825,7 @@ var PageManager = function (_BaseModule) {
             var obj = $store.read(PAGE_CACHE_TO_CSS, page) || {};
 
             return {
-                css: $store.read(CSS_TO_STRING, obj),
+                css: CSS_TO_STRING(obj),
                 obj: obj
             };
         }
@@ -25975,6 +25978,7 @@ var SelectionManager = function (_BaseModule) {
                 type: SELECT_MODE_ONE,
                 ids: [],
                 items: [],
+                pageId: '',
                 itemType: EMPTY_STRING
             };
         }
@@ -26015,6 +26019,7 @@ var SelectionManager = function (_BaseModule) {
                 type: SELECT_MODE_ONE,
                 ids: [],
                 items: [],
+                pageId: '',
                 itemType: EMPTY_STRING
             };
         }
@@ -26158,15 +26163,12 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_CURRENT_LAYER),
         value: function value$$1($store, callback) {
-            var layers = null;
+            var _this2 = this;
 
-            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-                var layers = $store.read(SELECTION_CURRENT);
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
-                var layers = $store.read(SELECTION_CURRENT).map(function (item) {
-                    return $store.items[item.parentId];
-                });
-            }
+            var layers = ($store.selection.layers || []).map(function (id) {
+                return _this2.get(id);
+            });
+
             if (Array.isArray(layers) && layers.length) {
                 if ($store.read(SELECTION_IS_ONE)) {
                     if (isFunction(callback)) callback(layers[0]);
@@ -26182,27 +26184,15 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_CURRENT_LAYER_ID),
         value: function value$$1($store, callback) {
-            var layers = null;
-
-            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
-                var layers = $store.read(SELECTION_CURRENT);
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
-                var layers = $store.read(SELECTION_CURRENT).map(function (item) {
-                    return $store.items[item.parentId];
-                });
-            }
+            var layers = $store.selection.layers || [];
 
             if (Array.isArray(layers) && layers.length) {
                 if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(layers[0].id);
-                    return layers[0].id;
+                    if (isFunction(callback)) callback(layers[0]);
+                    return layers[0];
                 } else {
-                    if (isFunction(callback)) callback(layers.map(function (it) {
-                        return it.id;
-                    }));
-                    return layers.map(function (it) {
-                        return it.id;
-                    });
+                    if (isFunction(callback)) callback(layers);
+                    return layers;
                 }
             }
 
@@ -26211,15 +26201,16 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_CURRENT_PAGE),
         value: function value$$1($store, callback) {
+            var page = this.get($store.selection.pageId);
 
-            var pages = $store.read(SELECTION_CURRENT).map(function (it) {
-                var path = $store.read(ITEM_PATH, it.id);
-                return $store.read(ITEM_GET, path[path.length - 1]);
-            });
+            if (!page) {
+                var pages = $store.read(ITEM_LIST_PAGE);
+                page = pages[0];
+            }
 
-            if (Array.isArray(pages) && pages.length) {
-                if (isFunction(callback)) callback(pages[0]);
-                return pages[0];
+            if (page) {
+                if (isFunction(callback)) callback(page);
+                return page;
             }
 
             return null;
@@ -26228,14 +26219,16 @@ var SelectionManager = function (_BaseModule) {
         key: GETTER(SELECTION_CURRENT_PAGE_ID),
         value: function value$$1($store, callback) {
 
-            var pages = $store.read(SELECTION_CURRENT).map(function (it) {
-                var path = $store.read(ITEM_PATH, it.id);
-                return $store.read(ITEM_GET, path[path.length - 1]);
-            });
+            var pageId = $store.selection.pageId;
 
-            if (Array.isArray(pages) && pages.length) {
-                if (isFunction(callback)) callback(pages[0].id);
-                return pages[0].id;
+            if (!pageId) {
+                var pages = $store.read(ITEM_LIST_PAGE);
+                pageId = (pages[0] || {}).pageId;
+            }
+
+            if (pageId) {
+                if (isFunction(callback)) callback(pageId);
+                return pageId;
             }
 
             return null;
@@ -26269,7 +26262,7 @@ var SelectionManager = function (_BaseModule) {
 
             if (type) {
                 if ($store.selection.ids.length) {
-                    var item = $store.read(ITEM_GET, $store.selection.ids[0]);
+                    var item = this.get($store.selection.ids[0]);
 
                     isTypeCheck = item.type == type;
                 }
@@ -26350,20 +26343,37 @@ var SelectionManager = function (_BaseModule) {
                 ids: [selectedId],
                 itemType: $store.items[selectedId].itemType
             };
+
+            var path = $store.read(ITEM_PATH, selectedId);
+            $store.selection.pageId = path[path.length - 1];
+
+            console.log($store.selection);
+
+            var layers = [];
+
+            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+                layers = [selectedId];
+            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+                layers = [this.get(selectedId).parentId];
+            }
+
+            $store.selection.layers = layers;
         }
     }, {
         key: ACTION(SELECTION_CHANGE),
         value: function value$$1($store, itemType) {
             if (itemType == ITEM_TYPE_PAGE) {
                 $store.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    $store.run(SELECTION_ONE, id);
+                    if (id) {
+                        $store.run(SELECTION_ONE, id);
+                    }
                 });
             }
         }
     }, {
         key: ACTION(SELECTION_AREA),
         value: function value$$1($store, _ref) {
-            var _this2 = this;
+            var _this3 = this;
 
             var x = _ref.x,
                 y = _ref.y,
@@ -26380,7 +26390,7 @@ var SelectionManager = function (_BaseModule) {
             var selectItems = [];
             layers.forEach(function (it) {
 
-                if (_this2.checkInArea(area, it)) {
+                if (_this3.checkInArea(area, it)) {
                     selectItems.push(it.id);
                 }
             });
@@ -26391,6 +26401,20 @@ var SelectionManager = function (_BaseModule) {
                     ids: selectItems,
                     itemType: ITEM_TYPE_LAYER
                 };
+                var path = $store.read(ITEM_PATH, $store.selection.ids[0]);
+                $store.selection.pageId = path[path.length - 1];
+
+                var layers = [];
+
+                if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+                    layers = [].concat(selectItems);
+                } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+                    layers = selectItems.map(function (id) {
+                        return _this3.get(id).parentId;
+                    });
+                }
+
+                $store.selection.layers = layers;
             } else {
                 $store.run(SELECTION_CHANGE, ITEM_TYPE_PAGE);
             }
@@ -26712,7 +26736,7 @@ var MatrixManager = function (_BaseModule) {
     }, {
         key: ACTION('matrix/move'),
         value: function value$$1($store, newValue) {
-            var item = $store.read(ITEM_GET, newValue.id);
+            var item = this.get(newValue.id);
 
             Object.keys(newValue).filter(function (key) {
                 return key != 'id';
@@ -26903,7 +26927,7 @@ var FilterManager = function (_BaseModule) {
     }, {
         key: GETTER(FILTER_LIST),
         value: function value$$1($store, layerId) {
-            var layer = $store.read(ITEM_GET, layerId);
+            var layer = this.get(layerId);
             var realFilters = {};
 
             FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
@@ -27009,9 +27033,9 @@ var BackdropManager = function (_BaseModule) {
         value: function value$$1($store, layerId) {
             var _$store$mapGetters = $store.mapGetters(ITEM_GET),
                 _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 1),
-                get$$1 = _$store$mapGetters2[0];
+                get = _$store$mapGetters2[0];
 
-            var layer = get$$1(layerId);
+            var layer = get(layerId);
             var realFilters = {};
 
             BACKDROP_DEFAULT_OBJECT_KEYS.filter(function (key) {
@@ -27379,8 +27403,6 @@ var ClipPathManager = function (_BaseModule) {
                 clipPath = $store.read(CLIPPATH_MAKE_SVG, layer);
             }
 
-            // console.log(layer.clipPathType, clipPath);
-
             return {
                 'clip-path': clipPath
             };
@@ -27556,7 +27578,7 @@ var ItemCreateManager = function (_BaseModule) {
     }, {
         key: GETTER(ITEM_COPY),
         value: function value$$1($store, id) {
-            var copyObject = _extends({}, $store.read(ITEM_GET, id));
+            var copyObject = _extends({}, this.get(id));
 
             return $store.read(ITEM_CREATE, copyObject.itemType, copyObject);
         }
@@ -27567,7 +27589,7 @@ var ItemCreateManager = function (_BaseModule) {
             var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
 
             var id = $store.read(ITEM_CREATE, itemType);
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.parentId = parentId;
 
             item.index = Number.MAX_SAFE_INTEGER;
@@ -27584,7 +27606,7 @@ var ItemCreateManager = function (_BaseModule) {
             var rect = $store.read(SELECTION_RECT);
 
             var id = $store.read(ITEM_CREATE, itemType);
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
             item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
 
@@ -27604,7 +27626,7 @@ var ItemCreateManager = function (_BaseModule) {
             var rect = $store.read(SELECTION_RECT);
 
             var id = $store.read(ITEM_CREATE, ITEM_TYPE_LAYER, shapeObject);
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
             item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
 
@@ -27631,7 +27653,7 @@ var ItemCreateManager = function (_BaseModule) {
             var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
 
             var id = $store.read(ITEM_CREATE_IMAGE_WITH_COLORSTEP, { type: imageType });
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.type = imageType;
             item.parentId = parentId;
             item.index = index;
@@ -27655,7 +27677,7 @@ var ItemCreateManager = function (_BaseModule) {
             var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
 
             var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.parentId = parentId;
             item.index = index;
             item.fileType = img.fileType;
@@ -27669,7 +27691,7 @@ var ItemCreateManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_SET_IMAGE_FILE),
         value: function value$$1($store, id, img) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.fileType = img.fileType || 'svg';
             if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
             if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
@@ -27695,7 +27717,7 @@ var ItemCreateManager = function (_BaseModule) {
             var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
 
             var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.parentId = parentId;
             item.index = index;
             item.fileType = img.fileType;
@@ -27715,19 +27737,19 @@ var ItemCreateManager = function (_BaseModule) {
             var imageId = $store.read(ITEM_CREATE_IMAGE);
 
             // 페이지 생성 
-            var page = $store.read(ITEM_GET, pageId);
+            var page = this.get(pageId);
             page.index = Number.MAX_SAFE_INTEGER;
             $store.run(ITEM_SET, page);
 
             // 레이어 생성 
-            var layer = $store.read(ITEM_GET, layerId);
+            var layer = this.get(layerId);
             layer.parentId = pageId;
             layer.width = _extends({}, page.width);
             layer.height = _extends({}, page.height);
             $store.run(ITEM_SET, layer);
 
             // 이미지 생성 
-            var image = $store.read(ITEM_GET, imageId);
+            var image = this.get(imageId);
             image.parentId = layerId;
             $store.run(ITEM_SET, image, isSelected);
 
@@ -27759,9 +27781,9 @@ var ItemMoveManager = function (_BaseModule) {
         key: ACTION(ITEM_MOVE_TO),
         value: function value$$1($store, sourceId, newItemId) {
 
-            var currentItem = $store.read(ITEM_GET, sourceId);
+            var currentItem = this.get(sourceId);
 
-            var newItem = $store.read(ITEM_GET, newItemId);
+            var newItem = this.get(newItemId);
             newItem.index = currentItem.index + COPY_INDEX_DIST;
 
             $store.run(ITEM_SET, newItem, true);
@@ -27770,7 +27792,7 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_NEXT),
         value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.index = $store.read(ITEM_NEXT_INDEX, id);
 
             $store.run(ITEM_SET, item, item.selected);
@@ -27779,7 +27801,7 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_LAST),
         value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.index = Number.MAX_SAFE_INTEGER;
 
             $store.run(ITEM_SET, item, item.selected);
@@ -27788,7 +27810,7 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_FIRST),
         value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.index = -1 * COPY_INDEX_DIST;
 
             $store.run(ITEM_SET, item, item.selected);
@@ -27797,8 +27819,8 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_IN),
         value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId);
-            var sourceItem = $store.read(ITEM_GET, sourceId);
+            var destItem = this.get(destId);
+            var sourceItem = this.get(sourceId);
             sourceItem.parentId = destItem.parentId;
             sourceItem.index = destItem.index - COPY_INDEX_DIST;
 
@@ -27808,8 +27830,8 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_IN_LAYER),
         value: function value$$1($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId); /* layer */
-            var sourceItem = $store.read(ITEM_GET, sourceId);
+            var destItem = this.get(destId); /* layer */
+            var sourceItem = this.get(sourceId);
 
             sourceItem.parentId = destItem.id;
             sourceItem.index = Number.MAX_SAFE_INTEGER;
@@ -27820,7 +27842,7 @@ var ItemMoveManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_MOVE_PREV),
         value: function value$$1($store, id) {
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             item.index = $store.read(ITEM_PREV_INDEX, id);
 
             $store.run(ITEM_SET, item, item.selected);
@@ -27970,22 +27992,22 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_ADD_CACHE),
         value: function value($store, item, sourceId) {
-            var currentItem = $store.read(ITEM_GET, sourceId);
+            var currentItem = this.get(sourceId);
             $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, item, currentItem.parentId));
         }
     }, {
         key: ACTION(ITEM_ADD_COPY),
         value: function value($store, sourceId) {
-            var currentItem = $store.read(ITEM_GET, sourceId);
+            var currentItem = this.get(sourceId);
             $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
         }
     }, {
         key: ACTION(ITEM_COPY_IN),
         value: function value($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId);
+            var destItem = this.get(destId);
             var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
 
-            var newImageItem = $store.read(ITEM_GET, newImageId);
+            var newImageItem = this.get(newImageId);
             newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
 
             $store.run(ITEM_SET, sourceItem, true);
@@ -27994,10 +28016,10 @@ var ItemRecoverManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_COPY_IN_LAYER),
         value: function value($store, destId, sourceId) {
-            var destItem = $store.read(ITEM_GET, destId); /* layer */
+            var destItem = this.get(destId); /* layer */
             var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
 
-            var newImageItem = $store.read(ITEM_GET, newImageId);
+            var newImageItem = this.get(newImageId);
             newImageItem.index = Number.MAX_SAFE_INTEGER;
 
             $store.run(ITEM_SET, newImageItem, true);
@@ -28091,7 +28113,7 @@ var ItemSearchManager = function (_BaseModule) {
         value: function value$$1($store, parentId) {
             var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
 
-            if (isUndefined(itemType)) {
+            if (isUndefined$1(itemType)) {
                 return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
             } else {
                 return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
@@ -28116,7 +28138,7 @@ var ItemSearchManager = function (_BaseModule) {
         value: function getChildrenMapForType($store, parentId, itemType) {
             var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
 
-            var parent = $store.read(ITEM_GET, parentId);
+            var parent = this.get(parentId);
 
             if (!parent.children) {
                 parent.children = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
@@ -28178,7 +28200,15 @@ var ItemSearchManager = function (_BaseModule) {
     }, {
         key: GETTER(ITEM_EACH_CHILDREN),
         value: function value$$1($store, parentId, callback) {
-            return $store.read(ITEM_LIST_CHILDREN, parentId).forEach(function (id, index) {
+            var parent = this.get(parentId);
+
+            var children = parent.children;
+
+            if (!children) {
+                children = $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
+            }
+
+            return children.forEach(function (id, index) {
                 callback($store.items[id], index);
             });
         }
@@ -28241,7 +28271,7 @@ var ItemSearchManager = function (_BaseModule) {
             var targetId = id;
 
             do {
-                var item = $store.read(ITEM_GET, targetId);
+                var item = this.get(targetId);
 
                 if (item.parentId == EMPTY_STRING) {
                     results.push(item.id);
@@ -28281,7 +28311,7 @@ var ExportManager = function (_BaseModule) {
 
             var css = _extends({ position: 'relative' }, $store.read(PAGE_TO_CSS, page));
 
-            return $store.read(CSS_TO_STRING, css);
+            return CSS_TO_STRING(css);
         }
     }, {
         key: "getClassName",
@@ -28505,7 +28535,7 @@ var rotate$1 = function () {
     return rotate;
 }();
 
-var patterns$1 = {
+{
     rotate: new rotate$1()
 };
 
@@ -28518,37 +28548,6 @@ var PatternManager = function (_BaseModule) {
     }
 
     createClass(PatternManager, [{
-        key: GETTER(PATTERN_MAKE),
-        value: function value($store, item) {
-            var patternOption = item.pattern || {};
-            var patternList = Object.keys(patternOption);
-
-            if (!patternList.length) {
-                return null;
-            }
-
-            var results = [];
-            patternList.filter(function (name) {
-                return patterns$1[name];
-            }).forEach(function (patternName) {
-
-                if (patternOption[patternName].enable) {
-                    results.push.apply(results, toConsumableArray(patterns$1[patternName].make(item, patternOption[patternName])));
-                }
-            });
-
-            results.push(item);
-
-            return results;
-        }
-    }, {
-        key: GETTER(PATTERN_GET),
-        value: function value($store, item, patternName) {
-            var pattern = item.pattern || {};
-
-            return pattern[patternName] || {};
-        }
-    }, {
         key: ACTION(PATTERN_SET),
         value: function value($store, item, patternName, patternOption) {
             var pattern = item.pattern || {};
@@ -28828,7 +28827,7 @@ var HotkeyManager = function (_BaseModule) {
     return HotkeyManager;
 }(BaseModule);
 
-var modules = [HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, CssManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var modules = [HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var CSSEditor = {
     createCSSEditor: function createCSSEditor() {

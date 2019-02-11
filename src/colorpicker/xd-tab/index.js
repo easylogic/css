@@ -22,19 +22,19 @@ export default class XDTabColorPicker extends BaseColorPicker {
                     </div>
                     <div class='color-tab-body' ref="$tabBody">
                         <div class='color-tab-content active'  item-id="color">
-                            <palette></palette> 
+                            <palette />
                             <div class="control">
-                                <Hue></Hue>
-                                <Opacity></Opacity>
+                                <Hue />
+                                <Opacity />
                             </div>
-                            <information></information>
+                            <information />
                         </div>
                         <div class='color-tab-content' item-id="swatch">
-                            <CurrentColorSets></CurrentColorSets>
-                            <ContextMenu></ContextMenu>
+                            <CurrentColorSets />
+                            <ContextMenu />
                         </div>
                         <div class='color-tab-content' item-id="colorset">
-                            <ColorSetsChooser></ColorSetsChooser>                    
+                            <ColorSetsChooser />
                         </div>                        
                     </div>
 

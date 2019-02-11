@@ -2,8 +2,8 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { isFunction, isUndefined, clone } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
-import { CLONE, TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE, TOOL_SAVE_DATA, TOOL_RESTORE_DATA } from "../types/ToolTypes";
-import { CHANGE_TOOL, CHANGE_EDITOR } from "../types/event";
+import { TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE, TOOL_SAVE_DATA, TOOL_RESTORE_DATA } from "../types/ToolTypes";
+import { CHANGE_TOOL } from "../types/event";
 
 export default class ToolManager extends BaseModule {
 
@@ -22,10 +22,6 @@ export default class ToolManager extends BaseModule {
 
         this.$store.toolStack = []
     } 
-
-    [GETTER(CLONE)] ($store, object) {
-        return JSON.parse(JSON.stringify(object))
-    }
 
     [GETTER(TOOL_COLOR_SOURCE)] ($store) {
         return $store.tool.colorSource

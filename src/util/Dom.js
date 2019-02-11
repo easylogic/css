@@ -274,6 +274,14 @@ export default class Dom {
         return this; 
     }
 
+    cssArray (arr) {
+        for (var i = 0, len = arr.length; i < len; i += 2) {
+            this.el.style[arr[i]] = arr[i+1];
+        }
+
+        return this; 
+    }
+
     cssFloat (key) {
         return parseFloat(this.css(key));
     }

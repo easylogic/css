@@ -8,7 +8,7 @@ import {
 import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
-import { CLICK, INPUT } from "../../../../../util/Event";
+import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class BorderFixed extends BasePropertyItem {
@@ -83,8 +83,8 @@ export default class BorderFixed extends BasePropertyItem {
         })
     }
 
-    [INPUT('$borderWidthRange')] () { this.updateTransform('range'); }
-    [INPUT('$borderWidth')] () { this.updateTransform('border'); }
+    [CHANGEINPUT('$borderWidthRange')] () { this.updateTransform('range'); }
+    [CHANGEINPUT('$borderWidth')] () { this.updateTransform('border'); }
     [CLICK('$borderLabel')] () {
         this.emit('toggleBorderWidth');
     }

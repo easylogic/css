@@ -16,21 +16,21 @@ export default class SelectLayerView extends BaseTab {
                 </div>
                 <div class="tab-body" ref="$body">
                     <div class="tab-content" data-id="page">
-                        <PageListView></PageListView>                            
+                        <PageListView />
                     </div> 
                     <div class="tab-content selected" data-id="outline">
-                        <LayerListView></LayerListView>
+                        <LayerListView />
                     </div>
                     <div class="tab-content" data-id="layers">
-                        <ShapeListView></ShapeListView>                    
-                        <LayerSampleList></LayerSampleList>
+                        <ShapeListView />
+                        <LayerSampleList />
                     </div>
                     <div class="tab-content" data-id="gradient">
-                        <BasicGradient></BasicGradient>
-                        <GradientSampleList></GradientSampleList>
+                        <BasicGradient />
+                        <GradientSampleList />
                     </div> 
                     <div class="tab-content" data-id="history">
-                        <HistoryListView></HistoryListView>
+                        <HistoryListView />
                     </div>
                 </div>
             </div>

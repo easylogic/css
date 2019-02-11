@@ -6,7 +6,7 @@ export default class LayerTextColorPickerPanel extends UIElement {
         return `
             <div class='property-item text-colorpicker show'>
                 <div class='items'>            
-                    <TextFillColorPicker></TextFillColorPicker>
+                    <TextFillColorPicker />
                 </div>
                 <div class='items bar'></div>
             </div>

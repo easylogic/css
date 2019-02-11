@@ -11,10 +11,10 @@ export default class FeatureControl extends UIElement {
         return `
             <div class='feature-control'>     
                 <div class='feature layer-feature' data-type='layer'>
-                    <LayerView></LayerView>
+                    <LayerView />
                 </div>                              
                 <div class='feature image-feature' data-type='image'>
-                    <ImageView></ImageView>
+                    <ImageView />
                 </div>
             </div>
         `

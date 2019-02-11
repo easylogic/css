@@ -79,6 +79,10 @@ class UIElement extends EventMachin {
         })
     }
 
+    get (id) {
+        return this.$store.items[id] || {}
+    }
+
     read ($1, $2, $3, $4, $5) {
         return this.$store.read($1, $2, $3, $4, $5)
     }
@@ -100,15 +104,15 @@ class UIElement extends EventMachin {
     }
 
     config ($1, $2, $3, $4, $5) {
-        if (arguments.length == 1) {
-            return this.read(TOOL_GET, $1);
+        if (arguments.length == 1) { 
+            return this.$store.tool[$1]
         }
 
         this.dispatch(TOOL_SET, $1, $2, $3, $4, $5);
     }
 
-    initConfig ($1, $2, $3, $4, $5) {
-        this.run(TOOL_SET, $1, $2, $3, $4, $5);
+    initConfig ($1, $2) {
+        this.$store.tool[$1] = $2
     }    
 
     run ($1, $2, $3, $4, $5) {

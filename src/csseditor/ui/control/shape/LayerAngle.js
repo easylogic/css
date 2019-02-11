@@ -1,9 +1,8 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL, CHANGE_LAYER_TRANSFORM } from '../../../types/event';
 import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_ANGLE } from '../../../types/ImageTypes';
+import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { isUndefined } from '../../../../util/functions/func';
 
 export default class LayerAngle extends UIElement {
@@ -23,7 +22,6 @@ export default class LayerAngle extends UIElement {
 
         if (this.isShow()) {
             this.$el.show();
-
             this.refreshUI()            
         } else {
             this.$el.hide();
@@ -100,7 +98,7 @@ export default class LayerAngle extends UIElement {
     }
 
     [EVENT(
-        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER_TRANSFORM,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

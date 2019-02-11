@@ -5,11 +5,7 @@ import items  from './items/index'
 export default class GroupView extends UIElement {
 
     template () {
-        return `
-            <div class='property-view'>
-                <GroupAlign></GroupAlign>
-            </div> 
-        `
+        return `<div class='property-view'><GroupAlign /></div>`
     }
 
     components () {

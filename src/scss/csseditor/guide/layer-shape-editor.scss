@@ -54,12 +54,12 @@
         top: 0px;
         bottom: 0px;
 
-        > .drag-item {
-            background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-            background-size: 1px 1px;
-            background-position: center 0px, 0px center;
-            background-repeat: repeat-y, repeat-x;
-        }
+        // > .drag-item {
+        //     background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+        //     background-size: 1px 1px;
+        //     background-position: center 0px, 0px center;
+        //     background-repeat: repeat-y, repeat-x;
+        // }
 
         .top {
             position: absolute;

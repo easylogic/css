@@ -98,7 +98,7 @@ export default class ItemManager extends BaseModule {
     }
 
     [ACTION(ITEM_TOGGLE_VISIBLE)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
 
         var visible =  !item.visible;
 
@@ -124,7 +124,7 @@ export default class ItemManager extends BaseModule {
     [ACTION(ITEM_REMOVE)] ($store, id) {
         if (id) {
 
-            var item = $store.read(ITEM_GET, id);
+            var item = this.get(id);
             var itemType = item.itemType; 
 
             if (item.parentId) {

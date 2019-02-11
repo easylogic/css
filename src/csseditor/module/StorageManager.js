@@ -193,14 +193,18 @@ export default class StorageManager extends BaseModule {
         var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
 
         if (obj.items) $store.items = obj.items 
-        if (obj.selectedId) $store.selectedId = obj.selectedId
-        if (obj.selectedMode) $store.selectedMode = obj.selectedMode
         if (obj.selection) $store.selection = obj.selection
+
+        if (obj.selectedId) {
+            if (!$store.selection.ids.length) {
+                $store.selection.ids = [obj.selectedId]
+            }
+        }
 
         $store.run(ITEM_KEYS_GENERATE);
 
-        if ($store.selectedId) {
-            $store.run(SELECTION_ONE, $store.selectedId);
+        if ($store.selection.ids && $store.selection.ids.length) {
+            $store.run(SELECTION_ONE, $store.selection.ids[0]);
         }
 
         if (isFunction(callback)) {

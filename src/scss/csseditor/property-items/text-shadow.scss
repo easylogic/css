@@ -6,13 +6,20 @@
             position: relative;
             display: block;
             margin-top: 2px;
-            padding: 2px 0px;
+            padding: 2px 4px;
             box-sizing: border-box;
+            box-shadow: inset 0px 0px 0px 1px $border-color;            
 
             > div {
                 height: 28px;                
                 display: grid;
                 grid-template-columns: 1fr 2fr; 
+                line-height: 2.4;
+
+                label {
+                    text-align: right;
+                    padding-right: 10px;
+                }
 
                 .input {
                     display: inline-block;

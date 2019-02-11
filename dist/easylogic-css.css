@@ -109,7 +109,7 @@
             box-sizing: border-box;
     border: 1px solid #ececec; }
     .codemirror-colorpicker .colorpicker-body .color-tab.xd {
-      height: 260px; }
+      height: 250px; }
     .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header {
       -webkit-box-flex: 0;
           -ms-flex: none;
@@ -121,7 +121,7 @@
       -webkit-box-direction: normal;
           -ms-flex-direction: row;
               flex-direction: row;
-      height: 30px; }
+      height: 20px; }
       .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header .color-tab-item {
         -webkit-box-flex: 1;
             -ms-flex: 1 1 auto;
@@ -2603,7 +2603,7 @@ html, body {
         display: block; }
     .csseditor .feature-control .image-feature .color-tab {
       bottom: auto;
-      height: 325px; }
+      height: 310px; }
     .csseditor .feature-control .image-feature .color-steps-tab {
       top: 620px; }
   .csseditor .sub-feature-control {
@@ -2611,7 +2611,8 @@ html, body {
     bottom: 10px;
     left: 10px;
     right: 10px;
-    z-index: 100; }
+    z-index: 100;
+    pointer-events: none; }
     .csseditor .sub-feature-control > .feature {
       height: 100%;
       text-align: center;
@@ -2623,7 +2624,8 @@ html, body {
         background-color: rgba(0, 0, 0, 0.2);
         display: inline-block;
         vertical-align: middle;
-        overflow: hidden; }
+        overflow: hidden;
+        pointer-events: all; }
         .csseditor .sub-feature-control > .feature > .property-view.hide {
           display: none; }
         .csseditor .sub-feature-control > .feature > .property-view > .property-item {
@@ -3767,12 +3769,6 @@ html, body {
         right: 0px;
         top: 0px;
         bottom: 0px; }
-        .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor > .drag-item {
-          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-          background-size: 1px 1px;
-          background-position: center 0px, 0px center;
-          background-repeat: repeat-y, repeat-x; }
         .csseditor .page-view .layer-shape-editor .layer-shape-inset-editor .top {
           position: absolute;
           width: 16px;
@@ -5519,13 +5515,19 @@ html, body {
           position: relative;
           display: block;
           margin-top: 2px;
-          padding: 2px 0px;
+          padding: 2px 4px;
           -webkit-box-sizing: border-box;
-                  box-sizing: border-box; }
+                  box-sizing: border-box;
+          -webkit-box-shadow: inset 0px 0px 0px 1px #cccccc;
+                  box-shadow: inset 0px 0px 0px 1px #cccccc; }
           .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div {
             height: 28px;
             display: grid;
-            grid-template-columns: 1fr 2fr; }
+            grid-template-columns: 1fr 2fr;
+            line-height: 2.4; }
+            .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div label {
+              text-align: right;
+              padding-right: 10px; }
             .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input {
               display: inline-block; }
               .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input input[type=number] {

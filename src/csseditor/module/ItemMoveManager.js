@@ -20,9 +20,9 @@ export default class ItemMoveManager extends BaseModule {
 
     [ACTION(ITEM_MOVE_TO)] ($store, sourceId, newItemId) {
 
-        var currentItem = $store.read(ITEM_GET, sourceId);
+        var currentItem = this.get(sourceId);
 
-        var newItem = $store.read(ITEM_GET, newItemId);
+        var newItem = this.get(newItemId);
         newItem.index = currentItem.index + COPY_INDEX_DIST;
 
         $store.run(ITEM_SET, newItem, true);
@@ -31,7 +31,7 @@ export default class ItemMoveManager extends BaseModule {
     }    
 
     [ACTION(ITEM_MOVE_NEXT)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.index = $store.read(ITEM_NEXT_INDEX, id);
 
         $store.run(ITEM_SET, item, item.selected);
@@ -39,7 +39,7 @@ export default class ItemMoveManager extends BaseModule {
     }
 
     [ACTION(ITEM_MOVE_LAST)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.index = Number.MAX_SAFE_INTEGER;
 
         $store.run(ITEM_SET, item, item.selected);
@@ -47,7 +47,7 @@ export default class ItemMoveManager extends BaseModule {
     }   
     
     [ACTION(ITEM_MOVE_FIRST)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.index = -1 * COPY_INDEX_DIST;
 
         $store.run(ITEM_SET, item, item.selected);
@@ -55,8 +55,8 @@ export default class ItemMoveManager extends BaseModule {
     }       
 
     [ACTION(ITEM_MOVE_IN)] ($store, destId, sourceId) {
-        var destItem = $store.read(ITEM_GET, destId);
-        var sourceItem = $store.read(ITEM_GET, sourceId);
+        var destItem = this.get(destId);
+        var sourceItem = this.get(sourceId);
         sourceItem.parentId = destItem.parentId;
         sourceItem.index = destItem.index - COPY_INDEX_DIST;
 
@@ -66,8 +66,8 @@ export default class ItemMoveManager extends BaseModule {
 
 
     [ACTION(ITEM_MOVE_IN_LAYER)] ($store, destId, sourceId) {
-        var destItem = $store.read(ITEM_GET, destId);  /* layer */ 
-        var sourceItem = $store.read(ITEM_GET, sourceId);
+        var destItem = this.get(destId);  /* layer */ 
+        var sourceItem = this.get(sourceId);
 
         sourceItem.parentId = destItem.id; 
         sourceItem.index = Number.MAX_SAFE_INTEGER;
@@ -78,7 +78,7 @@ export default class ItemMoveManager extends BaseModule {
      
 
     [ACTION(ITEM_MOVE_PREV)] ($store, id) {
-        var item = $store.read(ITEM_GET, id);
+        var item = this.get(id);
         item.index = $store.read(ITEM_PREV_INDEX, id);
 
         $store.run(ITEM_SET, item, item.selected);

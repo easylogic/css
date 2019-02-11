@@ -17,24 +17,17 @@ export default class ImageTabView extends BaseTab {
                 </div>
                 <div class="tab-body" ref="$body">
                     <div class="tab-content flex selected" data-id="gradient">
-                        <div class='fixed'>
-                            <ColorPickerPanel></ColorPickerPanel>                        
-                        </div>
-                        <div class='scroll'>
-                            <ImageSortingProperty></ImageSortingProperty>
-                            <ColorStepProperty></ColorStepProperty>    
-                        </div>    
-
+                        <div class='fixed'><ColorPickerPanel /></div>
+                        <div class='scroll'><ImageSortingProperty /><ColorStepProperty /></div>    
                     </div>
                     <div class="tab-content flex" data-id="background">
                         <BackgroundProperty></BackgroundProperty>
                     </div>
                     <div class="tab-content flex" data-id="pattern">
-                        <RotatePatternProperty></RotatePatternProperty>
+                        <div class='fixed'><BackgroundProperty /></div>
+                        <div class='scroll'><RotatePatternProperty /></div>    
                     </div>                    
-                    <div class="tab-content" data-id="css">
-                        <BackgroundCodeProperty></BackgroundCodeProperty>
-                    </div>
+                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>
                 </div>
             </div> 
         `

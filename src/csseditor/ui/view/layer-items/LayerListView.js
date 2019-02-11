@@ -17,7 +17,7 @@ export default class LayerListView extends UIElement {
     }
 
     makeItemNode (node, index) {
-        var item = this.read(ITEM_GET, node.id);
+        var item = this.get( node.id);
 
         if (item.itemType == 'layer') {
             return this.makeItemNodeLayer(item, index);
@@ -127,8 +127,8 @@ export default class LayerListView extends UIElement {
         var destId = e.$delegateTarget.attr('id')
         var sourceId = this.draggedLayer.attr('id')
 
-        var sourceItem = this.read(ITEM_GET, sourceId);
-        var destItem = this.read(ITEM_GET, destId);
+        var sourceItem = this.get( sourceId);
+        var destItem = this.get( destId);
 
         this.draggedLayer = null;         
         if (destItem.itemType == 'layer' && sourceItem.itemType == 'image') {

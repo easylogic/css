@@ -1,9 +1,9 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_TOOL } from '../../../types/event';
 import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_ANGLE } from '../../../types/ImageTypes';
+import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_ANGLE } from '../../../../util/css/make';
 
 export default class GradientAngle extends UIElement {
 
@@ -36,8 +36,8 @@ export default class GradientAngle extends UIElement {
 
         if (!item) return false; 
 
-        var isLinear = this.read(IMAGE_TYPE_IS_LINEAR, item.type)
-        var isConic = this.read(IMAGE_TYPE_IS_CONIC, item.type)
+        var isLinear = IMAGE_TYPE_IS_LINEAR(item.type)
+        var isConic = IMAGE_TYPE_IS_CONIC(item.type)
 
         if (isLinear == false && isConic == false) {
             return false; 
@@ -67,7 +67,7 @@ export default class GradientAngle extends UIElement {
         var image = this.read(SELECTION_CURRENT_IMAGE);
         if (!image) return 0 
 
-        var angle = this.read(IMAGE_ANGLE, image.angle) 
+        var angle = IMAGE_ANGLE(image.angle) 
         return angle - 90
     }
 
@@ -114,7 +114,7 @@ export default class GradientAngle extends UIElement {
         CHANGE_SELECTION
     )] () { this.refresh() }
 
-    [EVENT('changeTool')] () {
+    [EVENT(CHANGE_TOOL)] () {
         this.$el.toggle(this.isShow())
     }
 

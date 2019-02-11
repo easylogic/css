@@ -35,7 +35,7 @@ export default class FilterManager extends BaseModule {
     }    
 
     [GETTER(FILTER_LIST)] ($store, layerId) {
-        var layer = $store.read(ITEM_GET, layerId);
+        var layer = this.get(layerId);
         var realFilters = {}
         
         FILTER_DEFAULT_OBJECT_KEYS.filter(key => layer[key]).forEach(key => {

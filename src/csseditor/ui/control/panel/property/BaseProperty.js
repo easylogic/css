@@ -42,6 +42,18 @@ export default class BaseProperty extends UIElement {
         return this.$el.hasClass('show');
     }
 
+    toggle (isShow) {
+       this.$el.toggle(isShow);
+    }
+
+    hide ( ) {
+        this.$el.hide();
+    }
+
+    show () {
+        this.$el.show();
+    }
+
     components () {
         return items
     }

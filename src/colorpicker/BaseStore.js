@@ -24,7 +24,7 @@ export default class BaseStore {
 
     initializeModule () {
         this.modules.forEach(ModuleClass => {
-            var instance = this.addModule(ModuleClass);
+            this.addModule(ModuleClass);
         })
     } 
 
@@ -114,10 +114,6 @@ export default class BaseStore {
         } else {
             throw new Error('getter : ' + action + ' is not a valid.')            
         }
-    }
-
-    clone (action, $1, $2, $3, $4, $5) {
-        return JSON.parse(JSON.stringify(this.read(action, $1, $2, $3, $4, $5)))
     }
 
     addModule (ModuleClass) {

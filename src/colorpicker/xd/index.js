@@ -13,15 +13,15 @@ export default class XDColorPicker extends BaseColorPicker {
     template () { 
         return `
             <div class='colorpicker-body'>
-                <palette></palette> 
+                <palette />
                 <div class="control">
-                    <Hue></Hue>
-                    <Opacity></Opacity>
+                    <Hue />
+                    <Opacity />
                 </div>
-                <information></information>
-                <currentColorSets></currentColorSets>
-                <colorSetsChooser></colorSetsChooser>
-                <contextMenu></contextMenu>
+                <information />
+                <currentColorSets />
+                <colorSetsChooser />
+                <contextMenu />
             </div>
         `
     }

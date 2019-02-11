@@ -9,8 +9,7 @@ export default class PageExport extends UIElement {
                     <div>
                         <label>Export</label>
                         <button type="button" ref="$exportCSS">CSS</button>
-                    </div>   
-                                 
+                    </div>
                 </div>
             </div>
         ` 

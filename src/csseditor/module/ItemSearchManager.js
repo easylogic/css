@@ -122,7 +122,7 @@ export default class ItemSearchManager extends BaseModule {
     }    
 
     getChildrenMapForType ($store, parentId, itemType, callback = DEFAULT_FUNCTION) {
-        var parent = $store.read(ITEM_GET, parentId);
+        var parent = this.get(parentId);
 
         if (!parent.children) {
             parent.children = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType))
@@ -176,7 +176,15 @@ export default class ItemSearchManager extends BaseModule {
     }  
 
     [GETTER(ITEM_EACH_CHILDREN)] ($store, parentId, callback) {
-        return $store.read(ITEM_LIST_CHILDREN, parentId).forEach(function (id, index) { 
+        var parent = this.get(parentId);
+
+        var children = parent.children;
+
+        if (!children) {
+            children = $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId))
+        }
+
+        return children.forEach(function (id, index) { 
             callback($store.items[id], index)
         });
     }        
@@ -230,7 +238,7 @@ export default class ItemSearchManager extends BaseModule {
         var targetId = id; 
 
         do {
-            var item = $store.read(ITEM_GET, targetId);
+            var item = this.get(targetId);
 
             if (item.parentId == EMPTY_STRING) {
                 results.push(item.id);

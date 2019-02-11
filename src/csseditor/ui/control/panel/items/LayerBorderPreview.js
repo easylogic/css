@@ -13,8 +13,7 @@ export default class LayerBorderPreview extends BasePropertyItem {
         <div class='property-item border-preview show'>
             <div class='items'>         
                 <div style='margin-bottom:10px'>
-                    <div class='border-preview' ref="$borderPreview">
-                    </div>
+                    <div class='border-preview' ref="$borderPreview"></div>
                 </div>
             </div>
         </div>

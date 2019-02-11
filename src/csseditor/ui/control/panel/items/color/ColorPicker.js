@@ -10,8 +10,8 @@ import {
 } from '../../../../../types/event';
 import { isNotUndefined } from '../../../../../../util/functions/func';
 import { SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_GRADIENT } from '../../../../../types/ImageTypes';
 import { ITEM_EACH_CHILDREN } from '../../../../../types/ItemSearchTypes';
+import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TYPE_IS_STATIC } from '../../../../../../util/css/make';
 
 export default class ColorPickerLayer extends UIElement {
 
@@ -47,9 +47,9 @@ export default class ColorPickerLayer extends UIElement {
 
         if (this.read(SELECTION_IS_IMAGE)) {
             
-            if (this.read(IMAGE_TYPE_IS_STATIC, item.type)) {
+            if (IMAGE_TYPE_IS_STATIC(item.type)) {
                 this.commit(CHANGE_IMAGE_COLOR, {id: item.id, color})
-            } else if (this.read(IMAGE_TYPE_IS_GRADIENT,item.type)) {
+            } else if (IMAGE_TYPE_IS_GRADIENT(item.type)) {
 
                 this.read(ITEM_EACH_CHILDREN, item.id, (step) => {
                     if (step.selected) {
@@ -80,9 +80,9 @@ export default class ColorPickerLayer extends UIElement {
     refresh() {
         if (this.read(SELECTION_IS_IMAGE)) {
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
-                if (this.read(IMAGE_TYPE_IS_STATIC, image.type)) {
+                if (IMAGE_TYPE_IS_STATIC(image.type)) {
                     this.colorPicker.initColorWithoutChangeEvent(image.color);
-                } else if (this.read(IMAGE_TYPE_IS_GRADIENT, image.type)) {
+                } else if (IMAGE_TYPE_IS_GRADIENT(image.type)) {
                     
                 }
             })

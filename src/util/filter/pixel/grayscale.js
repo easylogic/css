@@ -3,7 +3,7 @@ import {
     pixel
 } from '../functions'
 
-export default function grayscale (amount) { 
+export default function grayscale (amount = 100) { 
     amount = parseParamNumber(amount)          
     let C = amount / 100;
 

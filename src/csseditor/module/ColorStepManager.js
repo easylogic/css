@@ -103,7 +103,7 @@ export default class ColorStepManager extends BaseModule {
     [ACTION(COLORSTEP_SORT)] ($store, id, sortedList) {
         
         sortedList.forEach( (stepId, index) => {
-            var item = $store.read(ITEM_GET, stepId);
+            var item = this.get(stepId);
             item.index = index * 100; 
             
             $store.run(ITEM_SET, item);
@@ -153,7 +153,7 @@ export default class ColorStepManager extends BaseModule {
         if (isUndefined(id)) {
             list = $store.read(COLORSTEP_LIST);
         } else {
-            list = [ $store.read(ITEM_GET, id) ]
+            list = [ this.get(id) ]
         }
         list.forEach(item => {
             item.cut = false; 
@@ -166,7 +166,7 @@ export default class ColorStepManager extends BaseModule {
         if (isUndefined(id)) {
             list = $store.read(COLORSTEP_LIST);
         } else {
-            list = [ $store.read(ITEM_GET, id) ]
+            list = [ this.get(id) ]
         }
         list.forEach(item => {
             item.cut = true; 
