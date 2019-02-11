@@ -1,3 +1,5 @@
+import { EMPTY_STRING } from "../css/types";
+
 export function debounce (callback, delay) {
 
     var t = undefined;
@@ -124,12 +126,20 @@ export const html = (strings, ...args) => {
         if (isFunction(results)) {
             results = results()
         }
-        
-        if (isObject(results)) {
-            results = Object.keys(results).map(key => {
-                return `${key}="${results[key]}"`
-            }).join(' ')
+
+        if (!isArray(results)) {
+            results = [results]
         }
+
+        results = results.map(r => {
+            if (isObject(r)) {
+                return Object.keys(r).map(key => {
+                    return `${key}="${r[key]}"`
+                }).join(' ')
+            }
+
+            return r
+        }).join(EMPTY_STRING)
 
         return it + results;
     }).join('');

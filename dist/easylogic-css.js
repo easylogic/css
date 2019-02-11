@@ -4,6 +4,319 @@
 	(global.EasyLogicCSS = factory());
 }(this, (function () { 'use strict';
 
+function each$1(len, callback) {
+    for (var i = 0; i < len; i += 4) {
+        callback(i);
+    }
+}
+
+function pack$1(bitmap, callback) {
+
+    each$1(bitmap.pixels.length, function (i) {
+        callback(bitmap.pixels, i);
+    });
+}
+
+var Canvas = {
+    create: function create(width, height) {
+        var canvas = document.createElement('canvas');
+        canvas.width = width || 0;
+        canvas.height = height || 0;
+
+        return canvas;
+    },
+    drawPixels: function drawPixels(bitmap) {
+        var canvas = this.create(bitmap.width, bitmap.height);
+
+        var context = canvas.getContext('2d');
+        var imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
+
+        imagedata.data.set(bitmap.pixels);
+
+        context.putImageData(imagedata, 0, 0);
+
+        return canvas;
+    },
+    createHistogram: function createHistogram(width, height, histogram, callback) {
+        var opt = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : { black: true, red: false, green: false, blue: false };
+
+        var canvas = this.create(width, height);
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "white";
+        context.fillRect(0, 0, width, height);
+        context.globalAlpha = 0.7;
+
+        var omit = { black: false };
+        if (opt.black) {
+            omit.black = false;
+        } else {
+            omit.black = true;
+        }
+        if (opt.red) {
+            omit.red = false;
+        } else {
+            omit.red = true;
+        }
+        if (opt.green) {
+            omit.green = false;
+        } else {
+            omit.green = true;
+        }
+        if (opt.blue) {
+            omit.blue = false;
+        } else {
+            omit.blue = true;
+        }
+
+        Object.keys(histogram).forEach(function (color) {
+
+            if (!omit[color]) {
+
+                var array = histogram[color];
+                var ymax = Math.max.apply(Math, array);
+                var unitWith = width / array.length;
+
+                context.fillStyle = color;
+                array.forEach(function (it, index) {
+                    var currentHeight = height * (it / ymax);
+                    var x = index * unitWith;
+
+                    context.fillRect(x, height - currentHeight, unitWith, currentHeight);
+                });
+            }
+        });
+
+        if (isFunction(callback)) callback(canvas);
+    },
+    getHistogram: function getHistogram(bitmap) {
+        var black = new Array(256);
+        var red = new Array(256);
+        var green = new Array(256);
+        var blue = new Array(256);
+        for (var i = 0; i < 256; i++) {
+            black[i] = 0;
+            red[i] = 0;
+            green[i] = 0;
+            blue[i] = 0;
+        }
+
+        pack$1(bitmap, function (pixels, i) {
+            // gray scale 
+            var grayIndex = Math.round(Color$1.brightness(pixels[i], pixels[i + 1], pixels[i + 2]));
+            black[grayIndex]++;
+
+            red[pixels[i]]++;
+            green[pixels[i + 1]]++;
+            blue[pixels[i + 2]]++;
+        });
+
+        return { black: black, red: red, green: green, blue: blue };
+    },
+    getBitmap: function getBitmap(bitmap, area) {
+        var canvas = this.drawPixels(bitmap);
+
+        var context = canvas.getContext('2d');
+        var pixels = context.getImageData(area.x || 0, area.y || 0, area.width || canvas.width, area.height || canvas.height).data;
+
+        return { pixels: pixels, width: area.width, height: area.height };
+    },
+    putBitmap: function putBitmap(bitmap, subBitmap, area) {
+
+        var canvas = this.drawPixels(bitmap);
+        var subCanvas = this.drawPixels(subBitmap);
+
+        var context = canvas.getContext('2d');
+        context.drawImage(subCanvas, area.x, area.y);
+
+        bitmap.pixels = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
+
+        return bitmap;
+    }
+};
+
+var CONSTANT = {
+    identity: function identity() {
+        return [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    },
+    stretching: function stretching(k) {
+        return [k, 0, 0, 0, 1, 0, 0, 0, 1];
+    },
+    squeezing: function squeezing(k) {
+        return [k, 0, 0, 0, 1 / k, 0, 0, 0, 1];
+    },
+    scale: function scale() {
+        var sx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+        var sy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+        sx = sx || sx === 0 ? sx : 1;
+        sy = sy || sy === 0 ? sy : 1;
+        return [sx, 0, 0, 0, sy, 0, 0, 0, 1];
+    },
+    scaleX: function scaleX(sx) {
+        return this.scale(sx);
+    },
+    scaleY: function scaleY(sy) {
+        return this.scale(1, sy);
+    },
+    translate: function translate(tx, ty) {
+        return [1, 0, tx, 0, 1, ty, 0, 0, 1];
+    },
+    rotate: function rotate(angle) {
+        var r = this.radian(angle);
+        return [Math.cos(r), -Math.sin(r), 0, Math.sin(r), Math.cos(r), 0, 0, 0, 1];
+    },
+    rotate90: function rotate90() {
+        return [0, -1, 0, 1, 0, 0, 0, 0, 1];
+    },
+    rotate180: function rotate180() {
+        return [-1, 0, 0, 0, -1, 0, 0, 0, 1];
+    },
+    rotate270: function rotate270() {
+        return [0, 1, 0, -1, 0, 0, 0, 0, 1];
+    },
+    radian: function radian(degree) {
+        return degree * Math.PI / 180;
+    },
+    skew: function skew(degreeX, degreeY) {
+        var radianX = this.radian(degreeX);
+        var radianY = this.radian(degreeY);
+        return [1, Math.tan(radianX), 0, Math.tan(radianY), 1, 0, 0, 0, 1];
+    },
+    skewX: function skewX(degreeX) {
+        var radianX = this.radian(degreeX);
+
+        return [1, Math.tan(radianX), 0, 0, 1, 0, 0, 0, 1];
+    },
+    skewY: function skewY(degreeY) {
+        var radianY = this.radian(degreeY);
+
+        return [1, 0, 0, Math.tan(radianY), 1, 0, 0, 0, 1];
+    },
+    shear1: function shear1(angle) {
+        return [1, -Math.tan(this.radian(angle) / 2), 0, 0, 1, 0, 0, 0, 1];
+    },
+    shear2: function shear2(angle) {
+        return [1, 0, 0, Math.sin(this.radian(angle)), 1, 0, 0, 0, 1];
+    }
+};
+
+var Matrix = {
+    CONSTANT: CONSTANT,
+
+    radian: function radian(angle) {
+        return CONSTANT.radian(angle);
+    },
+    multiply: function multiply(A, C) {
+        // console.log(JSON.stringify(A), JSON.stringify(C))
+        return [A[0] * C[0] + A[1] * C[1] + A[2] * C[2], A[3] * C[0] + A[4] * C[1] + A[5] * C[2], A[6] * C[0] + A[7] * C[1] + A[8] * C[2]];
+    },
+    identity: function identity(B) {
+        return this.multiply(CONSTANT.identity(), B);
+    },
+    translate: function translate(x, y, B) {
+        return this.multiply(CONSTANT.translate(x, y), B);
+    },
+    rotate: function rotate(angle, B) {
+        return this.multiply(CONSTANT.rotate(angle), B);
+    },
+    shear1: function shear1(angle, B) {
+        return this.multiply(CONSTANT.shear1(angle), B);
+    },
+    shear2: function shear2(angle, B) {
+        return this.multiply(CONSTANT.shear2(angle), B);
+    },
+    rotateShear: function rotateShear(angle, B) {
+
+        var arr = B;
+
+        arr = this.shear1(angle, arr);
+        arr = this.shear2(angle, arr);
+        arr = this.shear1(angle, arr);
+
+        return arr;
+    }
+};
+
+function crop() {
+    var startX = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var startY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var width = arguments[2];
+    var height = arguments[3];
+
+
+    var newBitmap = createBitmap(width * height * 4, width, height);
+
+    return function (bitmap, done) {
+        for (var y = startY, realY = 0; y < height; y++, realY++) {
+            for (var x = startX, realX = 0; x < width; x++, realX++) {
+                newBitmap.pixels[realY * width * realX] = bitmap.pixels[y * width * x];
+            }
+        }
+
+        done(newBitmap);
+    };
+}
+
+// Image manupulate 
+function resize(dstWidth, dstHeight) {
+    return function (bitmap, done) {
+        var c = Canvas.drawPixels(bitmap);
+        var context = c.getContext('2d');
+
+        c.width = dstWidth;
+        c.height = dstHeight;
+
+        done({
+            pixels: new Uint8ClampedArray(context.getImageData(0, 0, dstWidth, dstHeight).data),
+            width: dstWidth,
+            height: dstHeight
+        });
+    };
+}
+
+function flipV() {
+    return function (bitmap, done) {
+        var width = bitmap.width;
+        var height = bitmap.height;
+        var isCenter = height % 2 == 1 ? 1 : 0;
+
+        var halfHeight = isCenter ? Math.floor(height / 2) : height / 2;
+
+        for (var y = 0; y < halfHeight; y++) {
+            for (var x = 0; x < width; x++) {
+
+                var startIndex = y * width + x << 2;
+                var endIndex = (height - 1 - y) * width + x << 2;
+                swapColor(bitmap.pixels, startIndex, endIndex);
+            }
+        }
+
+        done(bitmap);
+    };
+}
+
+function flipH() {
+    return function (bitmap, done) {
+        var width = bitmap.width;
+        var height = bitmap.height;
+        var isCenter = width % 2 == 1 ? 1 : 0;
+
+        var halfWidth = isCenter ? Math.floor(width / 2) : width / 2;
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < halfWidth; x++) {
+
+                var startIndex = y * width + x << 2;
+                var endIndex = y * width + (width - 1 - x) << 2;
+                swapColor(bitmap.pixels, startIndex, endIndex);
+            }
+        }
+
+        done(bitmap);
+    };
+}
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
@@ -207,2281 +520,6 @@ var toConsumableArray = function (arr) {
     return Array.from(arr);
   }
 };
-
-function debounce(callback, delay) {
-
-    var t = undefined;
-
-    return function () {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        if (t) {
-            clearTimeout(t);
-        }
-
-        t = setTimeout(function () {
-            callback.apply(undefined, args);
-        }, delay || 300);
-    };
-}
-
-function get(obj, key, callback) {
-
-    var returnValue = defaultValue(obj[key], key);
-
-    if (isFunction(callback)) {
-        return callback(returnValue);
-    }
-
-    return returnValue;
-}
-
-function defaultValue(value, defaultValue) {
-    return typeof value == 'undefined' ? defaultValue : value;
-}
-
-function isUndefined$1(value) {
-    return typeof value == 'undefined' || value == null;
-}
-
-function isNotUndefined(value) {
-    return isUndefined$1(value) === false;
-}
-
-function isArray(value) {
-    return Array.isArray(value);
-}
-
-function isBoolean(value) {
-    return typeof value == 'boolean';
-}
-
-function isString(value) {
-    return typeof value == 'string';
-}
-
-function isNotString(value) {
-    return isString(value) === false;
-}
-
-function isObject(value) {
-    return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object' && !isArray(value) && value !== null;
-}
-
-function isFunction(value) {
-    return typeof value == 'function';
-}
-
-function isNumber(value) {
-    return typeof value == 'number';
-}
-
-function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
-
-function cleanObject(obj) {
-    var realObject = {};
-    Object.keys(obj).filter(function (key) {
-        return !!obj[key];
-    }).forEach(function (key) {
-        realObject[key] = obj[key];
-    });
-
-    return realObject;
-}
-
-function combineKeyArray(obj) {
-    Object.keys(obj).forEach(function (key) {
-        if (Array.isArray(obj[key])) {
-            obj[key] = obj[key].join(', ');
-        }
-    });
-
-    return obj;
-}
-
-function flatKeyValue(obj) {
-    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-    var values = {};
-
-    Object.keys(obj).forEach(function (key) {
-        var realKey = key;
-        if (rootKey !== '') {
-            realKey = rootKey + '.' + key;
-        }
-
-        if (isObject(obj[key])) {
-            values = _extends({}, values, flatKeyValue(obj[key], realKey));
-        } else {
-            values[realKey] = obj[key];
-        }
-    });
-
-    return values;
-}
-
-function repeat(count) {
-    return [].concat(toConsumableArray(Array(count)));
-}
-
-var short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
-
-var html = function html(strings) {
-    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-    }
-
-    var results = strings.map(function (it, index) {
-
-        var results = args[index] || '';
-
-        if (isFunction(results)) {
-            results = results();
-        }
-
-        if (isObject(results)) {
-            results = Object.keys(results).map(function (key) {
-                return key + '="' + results[key] + '"';
-            }).join(' ');
-        }
-
-        return it + results;
-    }).join('');
-
-    results = results.replace(short_tag_regexp, function (match, p1) {
-        return match.replace('/>', '></' + p1 + '>');
-    });
-
-    return results;
-};
-
-
-
-var func = Object.freeze({
-	debounce: debounce,
-	get: get,
-	defaultValue: defaultValue,
-	isUndefined: isUndefined$1,
-	isNotUndefined: isNotUndefined,
-	isArray: isArray,
-	isBoolean: isBoolean,
-	isString: isString,
-	isNotString: isNotString,
-	isObject: isObject,
-	isFunction: isFunction,
-	isNumber: isNumber,
-	clone: clone,
-	cleanObject: cleanObject,
-	combineKeyArray: combineKeyArray,
-	flatKeyValue: flatKeyValue,
-	repeat: repeat,
-	html: html
-});
-
-/**
- * @method format
- *
- * convert color to format string
- *
- *     // hex
- *     color.format({ r : 255, g : 255, b : 255 }, 'hex')  // #FFFFFF
- *
- *     // rgb
- *     color.format({ r : 255, g : 255, b : 255 }, 'rgb') // rgba(255, 255, 255, 0.5);
- *
- *     // rgba
- *     color.format({ r : 255, g : 255, b : 255, a : 0.5 }, 'rgb') // rgba(255, 255, 255, 0.5);
- *
- * @param {Object} obj  obj has r, g, b and a attributes
- * @param {"hex"/"rgb"} type  format string type
- * @returns {*}
- */
-function format(obj, type) {
-    var defaultColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(0, 0, 0, 0)';
-
-
-    if (Array.isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    if (type == 'hex') {
-        return hex(obj);
-    } else if (type == 'rgb') {
-        return rgb(obj, defaultColor);
-    } else if (type == 'hsl') {
-        return hsl(obj);
-    }
-
-    return obj;
-}
-
-function hex(obj) {
-    if (Array.isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    var r = obj.r.toString(16);
-    if (obj.r < 16) r = "0" + r;
-
-    var g = obj.g.toString(16);
-    if (obj.g < 16) g = "0" + g;
-
-    var b = obj.b.toString(16);
-    if (obj.b < 16) b = "0" + b;
-
-    return '#' + r + g + b;
-}
-
-function rgb(obj) {
-    var defaultColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'rgba(0, 0, 0, 0)';
-
-    if (isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    if (isUndefined$1(obj)) {
-        return undefined;
-    }
-
-    if (obj.a == 1 || isUndefined$1(obj.a)) {
-        if (isNaN(obj.r)) {
-            return defaultColor;
-        }
-        return 'rgb(' + obj.r + ',' + obj.g + ',' + obj.b + ')';
-    } else {
-        return 'rgba(' + obj.r + ',' + obj.g + ',' + obj.b + ',' + obj.a + ')';
-    }
-}
-
-function hsl(obj) {
-    if (isArray(obj)) {
-        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
-    }
-
-    if (obj.a == 1 || isUndefined$1(obj.a)) {
-        return 'hsl(' + obj.h + ',' + obj.s + '%,' + obj.l + '%)';
-    } else {
-        return 'hsla(' + obj.h + ',' + obj.s + '%,' + obj.l + '%,' + obj.a + ')';
-    }
-}
-
-var formatter = Object.freeze({
-	format: format,
-	hex: hex,
-	rgb: rgb,
-	hsl: hsl
-});
-
-function round(n, k) {
-    k = isUndefined$1(k) ? 1 : k;
-    return Math.round(n * k) / k;
-}
-
-function degreeToRadian(degrees) {
-    return degrees * Math.PI / 180;
-}
-
-/**
- * 
- * convert radian to degree 
- * 
- * @param {*} radian 
- * @returns {Number} 0..360
- */
-function radianToDegree(radian) {
-    var angle = radian * 180 / Math.PI;
-
-    if (angle < 0) {
-        // 각도가 0보다 작으면 360 에서 반전시킨다. 
-        angle = 360 + angle;
-    }
-
-    return angle;
-}
-
-function getXInCircle(angle, radius) {
-    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-    return centerX + radius * Math.cos(degreeToRadian(angle));
-}
-
-function getYInCircle(angle, radius) {
-    var centerY = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-    return centerY + radius * Math.sin(degreeToRadian(angle));
-}
-
-function getXYInCircle(angle, radius) {
-    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-    return {
-        x: getXInCircle(angle, radius, centerX),
-        y: getYInCircle(angle, radius, centerY)
-    };
-}
-
-function getDist(x, y) {
-    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-    return Math.sqrt(Math.pow(Math.abs(centerX - x), 2) + Math.pow(Math.abs(centerY - y), 2));
-}
-
-function caculateAngle(rx, ry) {
-    return radianToDegree(Math.atan2(ry, rx));
-}
-
-function uuid() {
-    var dt = new Date().getTime();
-    var uuid = 'xxx12-xx-34xx'.replace(/[xy]/g, function (c) {
-        var r = (dt + Math.random() * 16) % 16 | 0;
-        dt = Math.floor(dt / 16);
-        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
-    });
-    return uuid;
-}
-
-var bezierCalc = {
-    B1: function B1(t) {
-        return t * t * t;
-    },
-    B2: function B2(t) {
-        return 3 * t * t * (1 - t);
-    },
-    B3: function B3(t) {
-        return 3 * t * (1 - t) * (1 - t);
-    },
-    B4: function B4(t) {
-        return (1 - t) * (1 - t) * (1 - t);
-    }
-};
-
-function cubicBezier(x1, y1, x2, y2) {
-    var C2 = { x: x1, y: y1 };
-    var C3 = { x: x2, y: y2 };
-    return function (progress) {
-        // var x = C1.x * bezierCalc.B1(p) + C2.x*bezierCalc.B2(p) + C3.x*bezierCalc.B3(p) + C4.x*bezierCalc.B4(p);
-        // var y = C1.y * bezierCalc.B1(progress) + C2.y*bezierCalc.B2(progress) + C3.y*bezierCalc.B3(progress) + C4.y*bezierCalc.B4(progress);
-
-        var y = C2.y * bezierCalc.B2(progress) + C3.y * bezierCalc.B3(progress) + bezierCalc.B4(progress);
-
-        return 1 - y;
-    };
-}
-
-function getGradientLine(angle, box) {
-    var length = Math.abs(box.width * Math.sin(angle)) + Math.abs(box.height * Math.cos(angle));
-    var center = {
-        x: box.x + box.width / 2,
-        y: box.y + box.height / 2
-    };
-
-    var yDiff = Math.sin(angle - Math.PI / 2) * length / 2;
-    var xDiff = Math.cos(angle - Math.PI / 2) * length / 2;
-
-    return {
-        length: length,
-        center: center,
-        start: {
-            x: center.x - xDiff,
-            y: center.y - yDiff
-        },
-        end: {
-            x: center.x + xDiff,
-            y: center.y + yDiff
-        }
-    };
-}
-
-var math = Object.freeze({
-	round: round,
-	degreeToRadian: degreeToRadian,
-	radianToDegree: radianToDegree,
-	getXInCircle: getXInCircle,
-	getYInCircle: getYInCircle,
-	getXYInCircle: getXYInCircle,
-	getDist: getDist,
-	caculateAngle: caculateAngle,
-	uuid: uuid,
-	cubicBezier: cubicBezier,
-	getGradientLine: getGradientLine
-});
-
-function ReverseXyz(n) {
-    return Math.pow(n, 3) > 0.008856 ? Math.pow(n, 3) : (n - 16 / 116) / 7.787;
-}
-
-function ReverseRGB(n) {
-    return n > 0.0031308 ? 1.055 * Math.pow(n, 1 / 2.4) - 0.055 : 12.92 * n;
-}
-
-function XYZtoRGB(x, y, z) {
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            x = _arguments$.x,
-            y = _arguments$.y,
-            z = _arguments$.z;
-    }
-    //X, Y and Z input refer to a D65/2° standard illuminant.
-    //sR, sG and sB (standard RGB) output range = 0 ÷ 255
-
-    var X = x / 100.0;
-    var Y = y / 100.0;
-    var Z = z / 100.0;
-
-    var R = X * 3.2406 + Y * -1.5372 + Z * -0.4986;
-    var G = X * -0.9689 + Y * 1.8758 + Z * 0.0415;
-    var B = X * 0.0557 + Y * -0.2040 + Z * 1.0570;
-
-    R = ReverseRGB(R);
-    G = ReverseRGB(G);
-    B = ReverseRGB(B);
-
-    var r = round(R * 255);
-    var g = round(G * 255);
-    var b = round(B * 255);
-
-    return { r: r, g: g, b: b };
-}
-
-function LABtoXYZ(l, a, b) {
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            l = _arguments$2.l,
-            a = _arguments$2.a,
-            b = _arguments$2.b;
-    }
-    //Reference-X, Y and Z refer to specific illuminants and observers.
-    //Common reference values are available below in this same page.
-
-    var Y = (l + 16) / 116;
-    var X = a / 500 + Y;
-    var Z = Y - b / 200;
-
-    Y = ReverseXyz(Y);
-    X = ReverseXyz(X);
-    Z = ReverseXyz(Z);
-
-    var x = X * 95.047;
-    var y = Y * 100.000;
-    var z = Z * 108.883;
-
-    return { x: x, y: y, z: z };
-}
-
-function PivotXyz(n) {
-    return n > 0.008856 ? Math.pow(n, 1 / 3) : (7.787 * n + 16) / 116;
-}
-
-function XYZtoLAB(x, y, z) {
-    if (arguments.length == 1) {
-        var _arguments$3 = arguments[0],
-            x = _arguments$3.x,
-            y = _arguments$3.y,
-            z = _arguments$3.z;
-    }
-
-    //Reference-X, Y and Z refer to specific illuminants and observers.
-    //Common reference values are available below in this same page.
-    // Observer= 2°, Illuminant= D65
-
-    var X = x / 95.047;
-    var Y = y / 100.00;
-    var Z = z / 108.883;
-
-    X = PivotXyz(X);
-    Y = PivotXyz(Y);
-    Z = PivotXyz(Z);
-
-    var l = 116 * Y - 16;
-    var a = 500 * (X - Y);
-    var b = 200 * (Y - Z);
-
-    return { l: l, a: a, b: b };
-}
-
-function LABtoRGB(l, a, b) {
-    if (arguments.length == 1) {
-        var _arguments$4 = arguments[0],
-            l = _arguments$4.l,
-            a = _arguments$4.a,
-            b = _arguments$4.b;
-    }
-    return XYZtoRGB(LABtoXYZ(l, a, b));
-}
-
-var fromLAB = Object.freeze({
-	ReverseXyz: ReverseXyz,
-	ReverseRGB: ReverseRGB,
-	XYZtoRGB: XYZtoRGB,
-	LABtoXYZ: LABtoXYZ,
-	PivotXyz: PivotXyz,
-	XYZtoLAB: XYZtoLAB,
-	LABtoRGB: LABtoRGB
-});
-
-/**
- * @method RGBtoHSV
- *
- * convert rgb to hsv
- *
- * 		color.RGBtoHSV(0, 0, 255) === { h : 240, s : 1, v : 1 } === '#FFFF00'
- *
- * @param {Number} R  red color value
- * @param {Number} G  green color value
- * @param {Number} B  blue color value
- * @return {Object}  hsv color code
- */
-function RGBtoHSV(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            r = _arguments$.r,
-            g = _arguments$.g,
-            b = _arguments$.b;
-    }
-
-    var R1 = r / 255;
-    var G1 = g / 255;
-    var B1 = b / 255;
-
-    var MaxC = Math.max(R1, G1, B1);
-    var MinC = Math.min(R1, G1, B1);
-
-    var DeltaC = MaxC - MinC;
-
-    var H = 0;
-
-    if (DeltaC == 0) {
-        H = 0;
-    } else if (MaxC == R1) {
-        H = 60 * ((G1 - B1) / DeltaC % 6);
-    } else if (MaxC == G1) {
-        H = 60 * ((B1 - R1) / DeltaC + 2);
-    } else if (MaxC == B1) {
-        H = 60 * ((R1 - G1) / DeltaC + 4);
-    }
-
-    if (H < 0) {
-        H = 360 + H;
-    }
-
-    var S = 0;
-
-    if (MaxC == 0) S = 0;else S = DeltaC / MaxC;
-
-    var V = MaxC;
-
-    return { h: H, s: S, v: V };
-}
-
-function RGBtoCMYK(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            r = _arguments$2.r,
-            g = _arguments$2.g,
-            b = _arguments$2.b;
-    }
-
-    var R1 = r / 255;
-    var G1 = g / 255;
-    var B1 = b / 255;
-
-    var K = 1 - Math.max(R1, G1, B1);
-    var C = (1 - R1 - K) / (1 - K);
-    var M = (1 - G1 - K) / (1 - K);
-    var Y = (1 - B1 - K) / (1 - K);
-
-    return { c: C, m: M, y: Y, k: K };
-}
-
-function RGBtoHSL(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$3 = arguments[0],
-            r = _arguments$3.r,
-            g = _arguments$3.g,
-            b = _arguments$3.b;
-    }
-
-    r /= 255, g /= 255, b /= 255;
-    var max = Math.max(r, g, b),
-        min = Math.min(r, g, b);
-    var h,
-        s,
-        l = (max + min) / 2;
-
-    if (max == min) {
-        h = s = 0; // achromatic
-    } else {
-        var d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-            case r:
-                h = (g - b) / d + (g < b ? 6 : 0);break;
-            case g:
-                h = (b - r) / d + 2;break;
-            case b:
-                h = (r - g) / d + 4;break;
-        }
-        h /= 6;
-    }
-
-    return { h: round(h * 360), s: round(s * 100), l: round(l * 100) };
-}
-
-function c(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$4 = arguments[0],
-            r = _arguments$4.r,
-            g = _arguments$4.g,
-            b = _arguments$4.b;
-    }
-    return gray((r + g + b) / 3 > 90 ? 0 : 255);
-}
-
-function gray(gray) {
-    return { r: gray, g: gray, b: gray };
-}
-
-function RGBtoSimpleGray(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$5 = arguments[0],
-            r = _arguments$5.r,
-            g = _arguments$5.g,
-            b = _arguments$5.b;
-    }
-    return gray(Math.ceil((r + g + b) / 3));
-}
-
-function RGBtoGray(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$6 = arguments[0],
-            r = _arguments$6.r,
-            g = _arguments$6.g,
-            b = _arguments$6.b;
-    }
-    return gray(RGBtoYCrCb(r, g, b).y);
-}
-
-function brightness(r, g, b) {
-    return Math.ceil(r * 0.2126 + g * 0.7152 + b * 0.0722);
-}
-
-function RGBtoYCrCb(r, g, b) {
-
-    if (arguments.length == 1) {
-        var _arguments$7 = arguments[0],
-            r = _arguments$7.r,
-            g = _arguments$7.g,
-            b = _arguments$7.b;
-    }
-    var Y = brightness(r, g, b);
-    var Cb = 0.564 * (b - Y);
-    var Cr = 0.713 * (r - Y);
-
-    return { y: Y, cr: Cr, cb: Cb };
-}
-
-function PivotRGB(n) {
-    return (n > 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92) * 100;
-}
-
-function RGBtoXYZ(r, g, b) {
-    //sR, sG and sB (Standard RGB) input range = 0 ÷ 255
-    //X, Y and Z output refer to a D65/2° standard illuminant.
-    if (arguments.length == 1) {
-        var _arguments$8 = arguments[0],
-            r = _arguments$8.r,
-            g = _arguments$8.g,
-            b = _arguments$8.b;
-    }
-
-    var R = r / 255;
-    var G = g / 255;
-    var B = b / 255;
-
-    R = PivotRGB(R);
-    G = PivotRGB(G);
-    B = PivotRGB(B);
-
-    var x = R * 0.4124 + G * 0.3576 + B * 0.1805;
-    var y = R * 0.2126 + G * 0.7152 + B * 0.0722;
-    var z = R * 0.0193 + G * 0.1192 + B * 0.9505;
-
-    return { x: x, y: y, z: z };
-}
-
-function RGBtoLAB(r, g, b) {
-    if (arguments.length == 1) {
-        var _arguments$9 = arguments[0],
-            r = _arguments$9.r,
-            g = _arguments$9.g,
-            b = _arguments$9.b;
-    }
-    return XYZtoLAB(RGBtoXYZ(r, g, b));
-}
-
-var fromRGB = Object.freeze({
-	RGBtoHSV: RGBtoHSV,
-	RGBtoCMYK: RGBtoCMYK,
-	RGBtoHSL: RGBtoHSL,
-	c: c,
-	gray: gray,
-	RGBtoSimpleGray: RGBtoSimpleGray,
-	RGBtoGray: RGBtoGray,
-	brightness: brightness,
-	RGBtoYCrCb: RGBtoYCrCb,
-	PivotRGB: PivotRGB,
-	RGBtoXYZ: RGBtoXYZ,
-	RGBtoLAB: RGBtoLAB
-});
-
-function CMYKtoRGB(c, m, y, k) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            c = _arguments$.c,
-            m = _arguments$.m,
-            y = _arguments$.y,
-            k = _arguments$.k;
-    }
-
-    var R = 255 * (1 - c) * (1 - k);
-    var G = 255 * (1 - m) * (1 - k);
-    var B = 255 * (1 - y) * (1 - k);
-
-    return { r: R, g: G, b: B };
-}
-
-var fromCMYK = Object.freeze({
-	CMYKtoRGB: CMYKtoRGB
-});
-
-/**
- * @method HSVtoRGB
- *
- * convert hsv to rgb
- *
- * 		color.HSVtoRGB(0,0,1) === #FFFFF === { r : 255, g : 0, b : 0 }
- *
- * @param {Number} H  hue color number  (min : 0, max : 360)
- * @param {Number} S  Saturation number  (min : 0, max : 1)
- * @param {Number} V  Value number 		(min : 0, max : 1 )
- * @returns {Object}
- */
-function HSVtoRGB(h, s, v) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            h = _arguments$.h,
-            s = _arguments$.s,
-            v = _arguments$.v;
-    }
-
-    var H = h;
-    var S = s;
-    var V = v;
-
-    if (H >= 360) {
-        H = 0;
-    }
-
-    var C = S * V;
-    var X = C * (1 - Math.abs(H / 60 % 2 - 1));
-    var m = V - C;
-
-    var temp = [];
-
-    if (0 <= H && H < 60) {
-        temp = [C, X, 0];
-    } else if (60 <= H && H < 120) {
-        temp = [X, C, 0];
-    } else if (120 <= H && H < 180) {
-        temp = [0, C, X];
-    } else if (180 <= H && H < 240) {
-        temp = [0, X, C];
-    } else if (240 <= H && H < 300) {
-        temp = [X, 0, C];
-    } else if (300 <= H && H < 360) {
-        temp = [C, 0, X];
-    }
-
-    return {
-        r: round((temp[0] + m) * 255),
-        g: round((temp[1] + m) * 255),
-        b: round((temp[2] + m) * 255)
-    };
-}
-
-function HSVtoHSL(h, s, v) {
-
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            h = _arguments$2.h,
-            s = _arguments$2.s,
-            v = _arguments$2.v;
-    }
-
-    var rgb = HSVtoRGB(h, s, v);
-
-    return RGBtoHSL(rgb.r, rgb.g, rgb.b);
-}
-
-var fromHSV = Object.freeze({
-	HSVtoRGB: HSVtoRGB,
-	HSVtoHSL: HSVtoHSL
-});
-
-function HUEtoRGB(p, q, t) {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-}
-
-function HSLtoHSV(h, s, l) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            h = _arguments$.h,
-            s = _arguments$.s,
-            l = _arguments$.l;
-    }
-    var rgb = HSLtoRGB(h, s, l);
-
-    return RGBtoHSV(rgb.r, rgb.g, rgb.b);
-}
-
-function HSLtoRGB(h, s, l) {
-
-    if (arguments.length == 1) {
-        var _arguments$2 = arguments[0],
-            h = _arguments$2.h,
-            s = _arguments$2.s,
-            l = _arguments$2.l;
-    }
-
-    var r, g, b;
-
-    h /= 360;
-    s /= 100;
-    l /= 100;
-
-    if (s == 0) {
-        r = g = b = l; // achromatic
-    } else {
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
-        r = HUEtoRGB(p, q, h + 1 / 3);
-        g = HUEtoRGB(p, q, h);
-        b = HUEtoRGB(p, q, h - 1 / 3);
-    }
-
-    return { r: round(r * 255), g: round(g * 255), b: round(b * 255) };
-}
-
-var fromHSL = Object.freeze({
-	HUEtoRGB: HUEtoRGB,
-	HSLtoHSV: HSLtoHSV,
-	HSLtoRGB: HSLtoRGB
-});
-
-function YCrCbtoRGB(y, cr, cb, bit) {
-
-    if (arguments.length == 1) {
-        var _arguments$ = arguments[0],
-            y = _arguments$.y,
-            cr = _arguments$.cr,
-            cb = _arguments$.cb,
-            bit = _arguments$.bit;
-
-        bit = bit || 0;
-    }
-    var R = y + 1.402 * (cr - bit);
-    var G = y - 0.344 * (cb - bit) - 0.714 * (cr - bit);
-    var B = y + 1.772 * (cb - bit);
-
-    return { r: Math.ceil(R), g: Math.ceil(G), b: Math.ceil(B) };
-}
-
-var fromYCrCb = Object.freeze({
-	YCrCbtoRGB: YCrCbtoRGB
-});
-
-var color_names = { aliceblue: "rgb(240, 248, 255)", antiquewhite: "rgb(250, 235, 215)", aqua: "rgb(0, 255, 255)", aquamarine: "rgb(127, 255, 212)", azure: "rgb(240, 255, 255)", beige: "rgb(245, 245, 220)", bisque: "rgb(255, 228, 196)", black: "rgb(0, 0, 0)", blanchedalmond: "rgb(255, 235, 205)", blue: "rgb(0, 0, 255)", blueviolet: "rgb(138, 43, 226)", brown: "rgb(165, 42, 42)", burlywood: "rgb(222, 184, 135)", cadetblue: "rgb(95, 158, 160)", chartreuse: "rgb(127, 255, 0)", chocolate: "rgb(210, 105, 30)", coral: "rgb(255, 127, 80)", cornflowerblue: "rgb(100, 149, 237)", cornsilk: "rgb(255, 248, 220)", crimson: "rgb(237, 20, 61)", cyan: "rgb(0, 255, 255)", darkblue: "rgb(0, 0, 139)", darkcyan: "rgb(0, 139, 139)", darkgoldenrod: "rgb(184, 134, 11)", darkgray: "rgb(169, 169, 169)", darkgrey: "rgb(169, 169, 169)", darkgreen: "rgb(0, 100, 0)", darkkhaki: "rgb(189, 183, 107)", darkmagenta: "rgb(139, 0, 139)", darkolivegreen: "rgb(85, 107, 47)", darkorange: "rgb(255, 140, 0)", darkorchid: "rgb(153, 50, 204)", darkred: "rgb(139, 0, 0)", darksalmon: "rgb(233, 150, 122)", darkseagreen: "rgb(143, 188, 143)", darkslateblue: "rgb(72, 61, 139)", darkslategray: "rgb(47, 79, 79)", darkslategrey: "rgb(47, 79, 79)", darkturquoise: "rgb(0, 206, 209)", darkviolet: "rgb(148, 0, 211)", deeppink: "rgb(255, 20, 147)", deepskyblue: "rgb(0, 191, 255)", dimgray: "rgb(105, 105, 105)", dimgrey: "rgb(105, 105, 105)", dodgerblue: "rgb(30, 144, 255)", firebrick: "rgb(178, 34, 34)", floralwhite: "rgb(255, 250, 240)", forestgreen: "rgb(34, 139, 34)", fuchsia: "rgb(255, 0, 255)", gainsboro: "rgb(220, 220, 220)", ghostwhite: "rgb(248, 248, 255)", gold: "rgb(255, 215, 0)", goldenrod: "rgb(218, 165, 32)", gray: "rgb(128, 128, 128)", grey: "rgb(128, 128, 128)", green: "rgb(0, 128, 0)", greenyellow: "rgb(173, 255, 47)", honeydew: "rgb(240, 255, 240)", hotpink: "rgb(255, 105, 180)", indianred: "rgb(205, 92, 92)", indigo: "rgb(75, 0, 130)", ivory: "rgb(255, 255, 240)", khaki: "rgb(240, 230, 140)", lavender: "rgb(230, 230, 250)", lavenderblush: "rgb(255, 240, 245)", lawngreen: "rgb(124, 252, 0)", lemonchiffon: "rgb(255, 250, 205)", lightblue: "rgb(173, 216, 230)", lightcoral: "rgb(240, 128, 128)", lightcyan: "rgb(224, 255, 255)", lightgoldenrodyellow: "rgb(250, 250, 210)", lightgreen: "rgb(144, 238, 144)", lightgray: "rgb(211, 211, 211)", lightgrey: "rgb(211, 211, 211)", lightpink: "rgb(255, 182, 193)", lightsalmon: "rgb(255, 160, 122)", lightseagreen: "rgb(32, 178, 170)", lightskyblue: "rgb(135, 206, 250)", lightslategray: "rgb(119, 136, 153)", lightslategrey: "rgb(119, 136, 153)", lightsteelblue: "rgb(176, 196, 222)", lightyellow: "rgb(255, 255, 224)", lime: "rgb(0, 255, 0)", limegreen: "rgb(50, 205, 50)", linen: "rgb(250, 240, 230)", magenta: "rgb(255, 0, 255)", maroon: "rgb(128, 0, 0)", mediumaquamarine: "rgb(102, 205, 170)", mediumblue: "rgb(0, 0, 205)", mediumorchid: "rgb(186, 85, 211)", mediumpurple: "rgb(147, 112, 219)", mediumseagreen: "rgb(60, 179, 113)", mediumslateblue: "rgb(123, 104, 238)", mediumspringgreen: "rgb(0, 250, 154)", mediumturquoise: "rgb(72, 209, 204)", mediumvioletred: "rgb(199, 21, 133)", midnightblue: "rgb(25, 25, 112)", mintcream: "rgb(245, 255, 250)", mistyrose: "rgb(255, 228, 225)", moccasin: "rgb(255, 228, 181)", navajowhite: "rgb(255, 222, 173)", navy: "rgb(0, 0, 128)", oldlace: "rgb(253, 245, 230)", olive: "rgb(128, 128, 0)", olivedrab: "rgb(107, 142, 35)", orange: "rgb(255, 165, 0)", orangered: "rgb(255, 69, 0)", orchid: "rgb(218, 112, 214)", palegoldenrod: "rgb(238, 232, 170)", palegreen: "rgb(152, 251, 152)", paleturquoise: "rgb(175, 238, 238)", palevioletred: "rgb(219, 112, 147)", papayawhip: "rgb(255, 239, 213)", peachpuff: "rgb(255, 218, 185)", peru: "rgb(205, 133, 63)", pink: "rgb(255, 192, 203)", plum: "rgb(221, 160, 221)", powderblue: "rgb(176, 224, 230)", purple: "rgb(128, 0, 128)", rebeccapurple: "rgb(102, 51, 153)", red: "rgb(255, 0, 0)", rosybrown: "rgb(188, 143, 143)", royalblue: "rgb(65, 105, 225)", saddlebrown: "rgb(139, 69, 19)", salmon: "rgb(250, 128, 114)", sandybrown: "rgb(244, 164, 96)", seagreen: "rgb(46, 139, 87)", seashell: "rgb(255, 245, 238)", sienna: "rgb(160, 82, 45)", silver: "rgb(192, 192, 192)", skyblue: "rgb(135, 206, 235)", slateblue: "rgb(106, 90, 205)", slategray: "rgb(112, 128, 144)", slategrey: "rgb(112, 128, 144)", snow: "rgb(255, 250, 250)", springgreen: "rgb(0, 255, 127)", steelblue: "rgb(70, 130, 180)", tan: "rgb(210, 180, 140)", teal: "rgb(0, 128, 128)", thistle: "rgb(216, 191, 216)", tomato: "rgb(255, 99, 71)", turquoise: "rgb(64, 224, 208)", violet: "rgb(238, 130, 238)", wheat: "rgb(245, 222, 179)", white: "rgb(255, 255, 255)", whitesmoke: "rgb(245, 245, 245)", yellow: "rgb(255, 255, 0)", yellowgreen: "rgb(154, 205, 50)", transparent: "rgba(0, 0, 0, 0)" };
-
-function isColorName(name) {
-    return !!color_names[name];
-}
-
-function getColorByName(name) {
-    return color_names[name];
-}
-
-var ColorNames = {
-    isColorName: isColorName,
-    getColorByName: getColorByName
-};
-
-var color_regexp = /(#(?:[\da-f]{3}){1,2}|rgb\((?:\s*\d{1,3},\s*){2}\d{1,3}\s*\)|rgba\((?:\s*\d{1,3},\s*){3}\d*\.?\d+\s*\)|hsl\(\s*\d{1,3}(?:,\s*\d{1,3}%){2}\s*\)|hsla\(\s*\d{1,3}(?:,\s*\d{1,3}%){2},\s*\d*\.?\d+\s*\)|([\w_\-]+))/gi;
-function matches(str) {
-    var matches = str.match(color_regexp);
-    var result = [];
-
-    if (!matches) {
-        return result;
-    }
-
-    for (var i = 0, len = matches.length; i < len; i++) {
-
-        if (matches[i].indexOf('#') > -1 || matches[i].indexOf('rgb') > -1 || matches[i].indexOf('hsl') > -1) {
-            result.push({ color: matches[i] });
-        } else {
-            var nameColor = ColorNames.getColorByName(matches[i]);
-
-            if (nameColor) {
-                result.push({ color: matches[i], nameColor: nameColor });
-            }
-        }
-    }
-
-    var pos = { next: 0 };
-    result.forEach(function (item) {
-        var startIndex = str.indexOf(item.color, pos.next);
-
-        item.startIndex = startIndex;
-        item.endIndex = startIndex + item.color.length;
-
-        pos.next = item.endIndex;
-    });
-
-    return result;
-}
-
-function convertMatches(str) {
-    var m = matches(str);
-
-    m.forEach(function (it, index) {
-        str = str.replace(it.color, '@' + index);
-    });
-
-    return { str: str, matches: m };
-}
-
-function convertMatchesArray(str) {
-    var splitStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
-
-    var ret = convertMatches(str);
-    return ret.str.split(splitStr).map(function (it, index) {
-        it = trim(it);
-
-        if (ret.matches[index]) {
-            it = it.replace('@' + index, ret.matches[index].color);
-        }
-
-        return it;
-    });
-}
-
-function reverseMatches(str, matches) {
-    matches.forEach(function (it, index) {
-        str = str.replace('@' + index, it.color);
-    });
-
-    return str;
-}
-
-function trim(str) {
-    return str.replace(/^\s+|\s+$/g, '');
-}
-
-/**
- * @method rgb
- *
- * parse string to rgb color
- *
- * 		color.parse("#FF0000") === { r : 255, g : 0, b : 0 }
- *
- * 		color.parse("rgb(255, 0, 0)") == { r : 255, g : 0, b :0 }
- * 		color.parse(0xff0000) == { r : 255, g : 0, b : 0 }
- * 		color.parse(0xff000000) == { r : 255, g : 0, b : 0, a: 0 }
- *
- * @param {String} str color string
- * @returns {Object}  rgb object
- */
-function parse(str) {
-    if (isString(str)) {
-
-        if (ColorNames.isColorName(str)) {
-            str = ColorNames.getColorByName(str);
-        }
-
-        if (str.indexOf("rgb(") > -1) {
-            var arr = str.replace("rgb(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-                arr[i] = parseInt(trim(arr[i]), 10);
-            }
-
-            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: 1 };
-
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        } else if (str.indexOf("rgba(") > -1) {
-            var arr = str.replace("rgba(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-
-                if (len - 1 == i) {
-                    arr[i] = parseFloat(trim(arr[i]));
-                } else {
-                    arr[i] = parseInt(trim(arr[i]), 10);
-                }
-            }
-
-            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: arr[3] };
-
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        } else if (str.indexOf("hsl(") > -1) {
-            var arr = str.replace("hsl(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-                arr[i] = parseFloat(trim(arr[i]));
-            }
-
-            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: 1 };
-
-            obj = _extends({}, obj, HSLtoRGB(obj));
-
-            return obj;
-        } else if (str.indexOf("hsla(") > -1) {
-            var arr = str.replace("hsla(", "").replace(")", "").split(",");
-
-            for (var i = 0, len = arr.length; i < len; i++) {
-
-                if (len - 1 == i) {
-                    arr[i] = parseFloat(trim(arr[i]));
-                } else {
-                    arr[i] = parseInt(trim(arr[i]), 10);
-                }
-            }
-
-            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: arr[3] };
-
-            obj = _extends({}, obj, HSLtoRGB(obj));
-
-            return obj;
-        } else if (str.indexOf("#") == 0) {
-
-            str = str.replace("#", "");
-
-            var arr = [];
-            if (str.length == 3) {
-                for (var i = 0, len = str.length; i < len; i++) {
-                    var char = str.substr(i, 1);
-                    arr.push(parseInt(char + char, 16));
-                }
-            } else {
-                for (var i = 0, len = str.length; i < len; i += 2) {
-                    arr.push(parseInt(str.substr(i, 2), 16));
-                }
-            }
-
-            var obj = { type: 'hex', r: arr[0], g: arr[1], b: arr[2], a: 1 };
-
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        }
-    } else if (isNumber(str)) {
-        if (0x000000 <= str && str <= 0xffffff) {
-            var r = (str & 0xff0000) >> 16;
-            var g = (str & 0x00ff00) >> 8;
-            var b = (str & 0x0000ff) >> 0;
-
-            var obj = { type: 'hex', r: r, g: g, b: b, a: 1 };
-            obj = _extends({}, obj, RGBtoHSL(obj));
-            return obj;
-        } else if (0x00000000 <= str && str <= 0xffffffff) {
-            var _r = (str & 0xff000000) >> 24;
-            var _g = (str & 0x00ff0000) >> 16;
-            var _b = (str & 0x0000ff00) >> 8;
-            var a = (str & 0x000000ff) / 255;
-
-            var obj = { type: 'hex', r: _r, g: _g, b: _b, a: a };
-            obj = _extends({}, obj, RGBtoHSL(obj));
-
-            return obj;
-        }
-    }
-
-    return str;
-}
-
-function parseGradient(colors) {
-    if (isString(colors)) {
-        colors = convertMatchesArray(colors);
-    }
-
-    colors = colors.map(function (it) {
-        if (isString(it)) {
-            var ret = convertMatches(it);
-            var arr = trim(ret.str).split(' ');
-
-            if (arr[1]) {
-                if (arr[1].includes('%')) {
-                    arr[1] = parseFloat(arr[1].replace(/%/, '')) / 100;
-                } else {
-                    arr[1] = parseFloat(arr[1]);
-                }
-            } else {
-                arr[1] = '*';
-            }
-
-            arr[0] = reverseMatches(arr[0], ret.matches);
-
-            return arr;
-        } else if (Array.isArray(it)) {
-
-            if (!it[1]) {
-                it[1] = '*';
-            } else if (isString(it[1])) {
-                if (it[1].includes('%')) {
-                    it[1] = parseFloat(it[1].replace(/%/, '')) / 100;
-                } else {
-                    it[1] = +it[1];
-                }
-            }
-
-            return [].concat(toConsumableArray(it));
-        }
-    });
-
-    var count = colors.filter(function (it) {
-        return it[1] === '*';
-    }).length;
-
-    if (count > 0) {
-        var sum = colors.filter(function (it) {
-            return it[1] != '*' && it[1] != 1;
-        }).map(function (it) {
-            return it[1];
-        }).reduce(function (total, cur) {
-            return total + cur;
-        }, 0);
-
-        var dist = (1 - sum) / count;
-        colors.forEach(function (it, index) {
-            if (it[1] == '*' && index > 0) {
-                if (colors.length - 1 == index) {
-                    // it[1] = 1 
-                } else {
-                    it[1] = dist;
-                }
-            }
-        });
-    }
-
-    return colors;
-}
-
-
-
-var parser = Object.freeze({
-	matches: matches,
-	convertMatches: convertMatches,
-	convertMatchesArray: convertMatchesArray,
-	reverseMatches: reverseMatches,
-	trim: trim,
-	parse: parse,
-	parseGradient: parseGradient
-});
-
-/**
- * @deprecated 
- * 
- * instead of this,  use blend function 
- *  
- * @param {*} startColor 
- * @param {*} endColor 
- * @param {*} t 
- */
-function interpolateRGB(startColor, endColor) {
-    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
-
-    var obj = interpolateRGBObject(startColor, endColor, t);
-
-    return format(obj, obj.a < 1 ? 'rgb' : exportFormat);
-}
-
-function interpolateRGBObject(startColor, endColor) {
-    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-
-    return {
-        r: round(startColor.r + (endColor.r - startColor.r) * t),
-        g: round(startColor.g + (endColor.g - startColor.g) * t),
-        b: round(startColor.b + (endColor.b - startColor.b) * t),
-        a: round(startColor.a + (endColor.a - startColor.a) * t, 100)
-    };
-}
-
-function scale(scale) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
-
-    if (!scale) return [];
-
-    if (isString(scale)) {
-        scale = convertMatchesArray(scale);
-    }
-
-    scale = scale || [];
-    var len = scale.length;
-
-    var colors = [];
-    for (var i = 0; i < len - 1; i++) {
-        for (var index = 0; index < count; index++) {
-            colors.push(blend(scale[i], scale[i + 1], index / count));
-        }
-    }
-    return colors;
-}
-
-function blend(startColor, endColor) {
-    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
-
-    var s = parse(startColor);
-    var e = parse(endColor);
-
-    return interpolateRGB(s, e, ratio, format$$1);
-}
-
-function mix(startcolor, endColor) {
-    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
-    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
-
-    return blend(startcolor, endColor, ratio, format$$1);
-}
-
-/**
- * 
- * @param {Color|String} c 
- */
-function contrast(c$$1) {
-    c$$1 = parse(c$$1);
-    return (Math.round(c$$1.r * 299) + Math.round(c$$1.g * 587) + Math.round(c$$1.b * 114)) / 1000;
-}
-
-function contrastColor(c$$1) {
-    return contrast(c$$1) >= 128 ? 'black' : 'white';
-}
-
-function gradient(colors) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
-
-    colors = parseGradient(colors);
-
-    var newColors = [];
-    var maxCount = count - (colors.length - 1);
-    var allCount = maxCount;
-
-    for (var i = 1, len = colors.length; i < len; i++) {
-
-        var startColor = colors[i - 1][0];
-        var endColor = colors[i][0];
-
-        // if it is second color
-        var rate = i == 1 ? colors[i][1] : colors[i][1] - colors[i - 1][1];
-
-        // if it is last color 
-        var colorCount = i == colors.length - 1 ? allCount : Math.floor(rate * maxCount);
-
-        newColors = newColors.concat(scale([startColor, endColor], colorCount), [endColor]);
-
-        allCount -= colorCount;
-    }
-    return newColors;
-}
-
-function scaleHSV(color) {
-    var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'h';
-    var count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 9;
-    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'rgb';
-    var min = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-    var max = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1;
-    var dist = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 100;
-
-    var colorObj = parse(color);
-    var hsv = RGBtoHSV(colorObj);
-    var unit = (max - min) * dist / count;
-
-    var results = [];
-    for (var i = 1; i <= count; i++) {
-        hsv[target] = Math.abs((dist - unit * i) / dist);
-        results.push(format(HSVtoRGB(hsv), exportFormat));
-    }
-
-    return results;
-}
-
-function scaleH(color) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
-    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 360;
-
-    return scaleHSV(color, 'h', count, exportFormat, min, max, 1);
-}
-
-function scaleS(color) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
-    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
-
-    return scaleHSV(color, 's', count, exportFormat, min, max, 100);
-}
-
-function scaleV(color) {
-    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
-    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
-    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
-
-    return scaleHSV(color, 'v', count, exportFormat, min, max, 100);
-}
-
-/* predefined scale colors */
-scale.parula = function (count) {
-    return scale(['#352a87', '#0f5cdd', '#00b5a6', '#ffc337', '#fdff00'], count);
-};
-
-scale.jet = function (count) {
-    return scale(['#00008f', '#0020ff', '#00ffff', '#51ff77', '#fdff00', '#ff0000', '#800000'], count);
-};
-
-scale.hsv = function (count) {
-    return scale(['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ff0000'], count);
-};
-
-scale.hot = function (count) {
-    return scale(['#0b0000', '#ff0000', '#ffff00', '#ffffff'], count);
-};
-scale.pink = function (count) {
-    return scale(['#1e0000', '#bd7b7b', '#e7e5b2', '#ffffff'], count);
-};
-
-scale.bone = function (count) {
-    return scale(['#000000', '#4a4a68', '#a6c6c6', '#ffffff'], count);
-};
-
-scale.copper = function (count) {
-    return scale(['#000000', '#3d2618', '#9d623e', '#ffa167', '#ffc77f'], count);
-};
-
-var mixin = Object.freeze({
-	interpolateRGB: interpolateRGB,
-	interpolateRGBObject: interpolateRGBObject,
-	scale: scale,
-	blend: blend,
-	mix: mix,
-	contrast: contrast,
-	contrastColor: contrastColor,
-	gradient: gradient,
-	scaleHSV: scaleHSV,
-	scaleH: scaleH,
-	scaleS: scaleS,
-	scaleV: scaleV
-});
-
-function array_equals(v1, v2) {
-    if (v1.length !== v2.length) return false;
-    for (var i = 0, len = v1.length; i < len; ++i) {
-        if (v1[i] !== v2[i]) return false;
-    }
-    return true;
-}
-
-function euclidean(v1, v2) {
-    var total = 0;
-
-    for (var i = 0, len = v1.length; i < len; i++) {
-        total += Math.pow(v2[i] - v1[i], 2);
-    }
-
-    return Math.sqrt(total);
-}
-
-function manhattan(v1, v2) {
-    var total = 0;
-
-    for (var i = 0, len = v1.length; i < len; i++) {
-        total += Math.abs(v2[i] - v1[i]);
-    }
-
-    return total;
-}
-
-function max(v1, v2) {
-    var max = 0;
-    for (var i = 0, len = v1.length; i < len; i++) {
-        max = Math.max(max, Math.abs(v2[i] - v1[i]));
-    }
-
-    return max;
-}
-
-var distances = {
-    euclidean: euclidean,
-    manhattan: manhattan,
-    max: max
-};
-
-var create_random_number = {
-    linear: function linear(num, count) {
-        var centeroids = [];
-        var start = Math.round(Math.random() * num);
-        var dist = Math.floor(num / count);
-
-        do {
-
-            centeroids.push(start);
-
-            start = (start + dist) % num;
-        } while (centeroids.length < count);
-
-        return centeroids;
-    },
-
-    shuffle: function shuffle(num, count) {
-        var centeroids = [];
-
-        while (centeroids.length < count) {
-
-            var index = Math.round(Math.random() * num);
-
-            if (centeroids.indexOf(index) == -1) {
-                centeroids.push(index);
-            }
-        }
-
-        return centeroids;
-    }
-
-};
-
-function randomCentroids(points, k) {
-    var method = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
-
-
-    var centeroids = create_random_number[method](points.length, k);
-
-    return centeroids.map(function (i) {
-        return points[i];
-    });
-
-    // var centeroids = points.slice(0);
-
-    // centeroids.sort(function () {
-    //     return (Math.round(Math.random()) - 0.5);
-    // })
-
-    // return centeroids.slice(0, k); 
-}
-
-function closestCenteroid(point, centeroids, distance) {
-    var min = Infinity,
-        kIndex = 0;
-
-    centeroids.forEach(function (center, i) {
-        var dist = distance(point, center);
-
-        if (dist < min) {
-            min = dist;
-            kIndex = i;
-        }
-    });
-
-    return kIndex;
-}
-
-function getCenteroid(assigned) {
-
-    if (!assigned.length) return [];
-
-    // initialize centeroid list 
-    var centeroid = new Array(assigned[0].length);
-    for (var i = 0, len = centeroid.length; i < len; i++) {
-        centeroid[i] = 0;
-    }
-
-    for (var index = 0, len = assigned.length; index < len; index++) {
-        var it = assigned[index];
-
-        var last = index + 1;
-
-        for (var j = 0, jLen = it.length; j < jLen; j++) {
-            centeroid[j] += (it[j] - centeroid[j]) / last;
-        }
-    }
-
-    centeroid = centeroid.map(function (it) {
-        return Math.floor(it);
-    });
-
-    return centeroid;
-}
-
-function unique_array(arrays) {
-    return arrays;
-    var set = {};
-    var count = arrays.length;
-    var it = null;
-    while (count--) {
-        it = arrays[count];
-        set[JSON.stringify(it)] = it;
-    }
-
-    return Object.values(set);
-}
-
-function splitK(k, points, centeroids, distance) {
-    var assignment = new Array(k);
-
-    for (var i = 0; i < k; i++) {
-        assignment[i] = [];
-    }
-
-    for (var idx = 0, pointLength = points.length; idx < pointLength; idx++) {
-        var point = points[idx];
-        var index = closestCenteroid(point, centeroids, distance);
-        assignment[index].push(point);
-    }
-
-    return assignment;
-}
-
-function setNewCenteroid(k, points, assignment, centeroids, movement, randomFunction) {
-
-    for (var i = 0; i < k; i++) {
-        var assigned = assignment[i];
-
-        var centeroid = centeroids[i];
-        var newCenteroid = new Array(centeroid.length);
-
-        if (assigned.length > 0) {
-            newCenteroid = getCenteroid(assigned);
-        } else {
-            var idx = Math.floor(randomFunction() * points.length);
-            newCenteroid = points[idx];
-        }
-
-        if (array_equals(newCenteroid, centeroid)) {
-            movement = false;
-        } else {
-            movement = true;
-        }
-
-        centeroids[i] = newCenteroid;
-    }
-
-    return movement;
-}
-
-function kmeans(points, k, distanceFunction) {
-    var period = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
-    var initialRandom = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'linear';
-
-    points = unique_array(points);
-
-    k = k || Math.max(2, Math.ceil(Math.sqrt(points.length / 2)));
-
-    var distance = distanceFunction || 'euclidean';
-    if (isString(distance)) {
-        distance = distances[distance];
-    }
-
-    var rng_seed = 0;
-    var random = function random() {
-        rng_seed = (rng_seed * 9301 + 49297) % 233280;
-        return rng_seed / 233280;
-    };
-
-    var centeroids = randomCentroids(points, k, initialRandom);
-
-    var movement = true;
-    var iterations = 0;
-    while (movement) {
-        var assignment = splitK(k, points, centeroids, distance);
-
-        movement = setNewCenteroid(k, points, assignment, centeroids, false, random);
-
-        iterations++;
-
-        if (iterations % period == 0) {
-            break;
-        }
-    }
-
-    return centeroids;
-}
-
-function each(len, callback) {
-    for (var i = 0; i < len; i += 4) {
-        callback(i);
-    }
-}
-
-function pack(bitmap, callback) {
-
-    each(bitmap.pixels.length, function (i) {
-        callback(bitmap.pixels, i);
-    });
-}
-
-var Canvas = {
-    create: function create(width, height) {
-        var canvas = document.createElement('canvas');
-        canvas.width = width || 0;
-        canvas.height = height || 0;
-
-        return canvas;
-    },
-    drawPixels: function drawPixels(bitmap) {
-        var canvas = this.create(bitmap.width, bitmap.height);
-
-        var context = canvas.getContext('2d');
-        var imagedata = context.getImageData(0, 0, canvas.width, canvas.height);
-
-        imagedata.data.set(bitmap.pixels);
-
-        context.putImageData(imagedata, 0, 0);
-
-        return canvas;
-    },
-    createHistogram: function createHistogram(width, height, histogram, callback) {
-        var opt = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : { black: true, red: false, green: false, blue: false };
-
-        var canvas = this.create(width, height);
-        var context = canvas.getContext('2d');
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = "white";
-        context.fillRect(0, 0, width, height);
-        context.globalAlpha = 0.7;
-
-        var omit = { black: false };
-        if (opt.black) {
-            omit.black = false;
-        } else {
-            omit.black = true;
-        }
-        if (opt.red) {
-            omit.red = false;
-        } else {
-            omit.red = true;
-        }
-        if (opt.green) {
-            omit.green = false;
-        } else {
-            omit.green = true;
-        }
-        if (opt.blue) {
-            omit.blue = false;
-        } else {
-            omit.blue = true;
-        }
-
-        Object.keys(histogram).forEach(function (color) {
-
-            if (!omit[color]) {
-
-                var array = histogram[color];
-                var ymax = Math.max.apply(Math, array);
-                var unitWith = width / array.length;
-
-                context.fillStyle = color;
-                array.forEach(function (it, index) {
-                    var currentHeight = height * (it / ymax);
-                    var x = index * unitWith;
-
-                    context.fillRect(x, height - currentHeight, unitWith, currentHeight);
-                });
-            }
-        });
-
-        if (isFunction(callback)) callback(canvas);
-    },
-    getHistogram: function getHistogram(bitmap) {
-        var black = new Array(256);
-        var red = new Array(256);
-        var green = new Array(256);
-        var blue = new Array(256);
-        for (var i = 0; i < 256; i++) {
-            black[i] = 0;
-            red[i] = 0;
-            green[i] = 0;
-            blue[i] = 0;
-        }
-
-        pack(bitmap, function (pixels, i) {
-            // gray scale 
-            var grayIndex = Math.round(Color$1.brightness(pixels[i], pixels[i + 1], pixels[i + 2]));
-            black[grayIndex]++;
-
-            red[pixels[i]]++;
-            green[pixels[i + 1]]++;
-            blue[pixels[i + 2]]++;
-        });
-
-        return { black: black, red: red, green: green, blue: blue };
-    },
-    getBitmap: function getBitmap(bitmap, area) {
-        var canvas = this.drawPixels(bitmap);
-
-        var context = canvas.getContext('2d');
-        var pixels = context.getImageData(area.x || 0, area.y || 0, area.width || canvas.width, area.height || canvas.height).data;
-
-        return { pixels: pixels, width: area.width, height: area.height };
-    },
-    putBitmap: function putBitmap(bitmap, subBitmap, area) {
-
-        var canvas = this.drawPixels(bitmap);
-        var subCanvas = this.drawPixels(subBitmap);
-
-        var context = canvas.getContext('2d');
-        context.drawImage(subCanvas, area.x, area.y);
-
-        bitmap.pixels = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
-
-        return bitmap;
-    }
-};
-
-var ImageLoader = function () {
-    function ImageLoader(url) {
-        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        classCallCheck(this, ImageLoader);
-
-        this.isLoaded = false;
-        this.imageUrl = url;
-        this.opt = opt;
-        this.initialize();
-    }
-
-    createClass(ImageLoader, [{
-        key: 'initialize',
-        value: function initialize() {
-            this.canvas = this.createCanvas();
-            this.context = this.canvas.getContext('2d');
-        }
-    }, {
-        key: 'createCanvas',
-        value: function createCanvas() {
-            return document.createElement('canvas');
-        }
-    }, {
-        key: 'load',
-        value: function load(callback) {
-            this.loadImage(callback);
-        }
-    }, {
-        key: 'loadImage',
-        value: function loadImage(callback) {
-            var _this = this;
-
-            this.getImage(function (img) {
-                var ctx = _this.context;
-                var ratio = img.height / img.width;
-
-                if (_this.opt.canvasWidth && _this.opt.canvasHeight) {
-                    _this.canvas.width = _this.opt.canvasWidth;
-                    _this.canvas.height = _this.opt.canvasHeight;
-                } else {
-                    _this.canvas.width = _this.opt.maxWidth ? _this.opt.maxWidth : img.width;
-                    _this.canvas.height = _this.canvas.width * ratio;
-                }
-
-                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, _this.canvas.width, _this.canvas.height);
-                _this.isLoaded = true;
-                callback && callback();
-            });
-        }
-    }, {
-        key: 'getImage',
-        value: function getImage(callback) {
-
-            this.newImage = new Image();
-            var img = this.newImage;
-            img.onload = function () {
-                callback && callback(img);
-            };
-
-            img.onerror = function (e) {
-                console.log(e, img.src);
-            };
-
-            this.getImageUrl(function (url) {
-                img.src = url;
-            });
-        }
-    }, {
-        key: 'load',
-        value: function load(callback) {
-            var _this2 = this;
-
-            this.newImage = new Image();
-            var img = this.newImage;
-            img.crossOrigin = "Anonymous";
-            img.onload = function () {
-                _this2.isLoaded = true;
-                callback && callback();
-            };
-
-            this.getImageUrl(function (url) {
-                img.src = url;
-            });
-        }
-    }, {
-        key: 'getImageUrl',
-        value: function getImageUrl(callback) {
-            if (isString(this.imageUrl)) {
-                return callback(this.imageUrl);
-            } else if (this.imageUrl instanceof Blob) {
-                var reader = new FileReader();
-
-                reader.onload = function (ev) {
-                    callback(ev.target.result);
-                };
-
-                reader.readAsDataURL(this.imageUrl);
-            }
-        }
-    }, {
-        key: 'getRGBA',
-        value: function getRGBA(r, g, b, a) {
-            return [r, g, b, a];
-        }
-    }, {
-        key: 'toArray',
-        value: function toArray$$1(filter, callback) {
-            var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-            var width = imagedata.width;
-            var height = imagedata.height;
-
-            var pixels = new Uint8ClampedArray(imagedata.data);
-
-            var bitmap = { pixels: pixels, width: width, height: height };
-
-            if (!filter) {
-                filter = function () {
-                    return function (bitmap, done) {
-                        done(bitmap);
-                    };
-                }();
-            }
-
-            filter(bitmap, function (newBitmap) {
-                var tmpCanvas = Canvas.drawPixels(newBitmap);
-
-                if (opt.returnTo == 'canvas') {
-                    callback(tmpCanvas);
-                } else {
-                    callback(tmpCanvas.toDataURL(opt.outputFormat || 'image/png'));
-                }
-            }, opt);
-        }
-    }, {
-        key: 'toHistogram',
-        value: function toHistogram(opt) {
-            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-            var width = imagedata.width;
-            var height = imagedata.height;
-
-            var pixels = new Uint8ClampedArray(imagedata.data);
-
-            var bitmap = { pixels: pixels, width: width, height: height };
-
-            return Canvas.getHistogram(bitmap);
-        }
-    }, {
-        key: 'toRGB',
-        value: function toRGB() {
-            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-
-            var rgba = imagedata.data;
-            var results = [];
-            for (var i = 0, len = rgba.length; i < len; i += 4) {
-                results[results.length] = [rgba[i + 0], rgba[i + 1], rgba[i + 2], rgba[i + 3]];
-            }
-
-            return results;
-        }
-    }]);
-    return ImageLoader;
-}();
-
-var CONSTANT = {
-    identity: function identity() {
-        return [1, 0, 0, 0, 1, 0, 0, 0, 1];
-    },
-    stretching: function stretching(k) {
-        return [k, 0, 0, 0, 1, 0, 0, 0, 1];
-    },
-    squeezing: function squeezing(k) {
-        return [k, 0, 0, 0, 1 / k, 0, 0, 0, 1];
-    },
-    scale: function scale() {
-        var sx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-        var sy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-
-        sx = sx || sx === 0 ? sx : 1;
-        sy = sy || sy === 0 ? sy : 1;
-        return [sx, 0, 0, 0, sy, 0, 0, 0, 1];
-    },
-    scaleX: function scaleX(sx) {
-        return this.scale(sx);
-    },
-    scaleY: function scaleY(sy) {
-        return this.scale(1, sy);
-    },
-    translate: function translate(tx, ty) {
-        return [1, 0, tx, 0, 1, ty, 0, 0, 1];
-    },
-    rotate: function rotate(angle) {
-        var r = this.radian(angle);
-        return [Math.cos(r), -Math.sin(r), 0, Math.sin(r), Math.cos(r), 0, 0, 0, 1];
-    },
-    rotate90: function rotate90() {
-        return [0, -1, 0, 1, 0, 0, 0, 0, 1];
-    },
-    rotate180: function rotate180() {
-        return [-1, 0, 0, 0, -1, 0, 0, 0, 1];
-    },
-    rotate270: function rotate270() {
-        return [0, 1, 0, -1, 0, 0, 0, 0, 1];
-    },
-    radian: function radian(degree) {
-        return degree * Math.PI / 180;
-    },
-    skew: function skew(degreeX, degreeY) {
-        var radianX = this.radian(degreeX);
-        var radianY = this.radian(degreeY);
-        return [1, Math.tan(radianX), 0, Math.tan(radianY), 1, 0, 0, 0, 1];
-    },
-    skewX: function skewX(degreeX) {
-        var radianX = this.radian(degreeX);
-
-        return [1, Math.tan(radianX), 0, 0, 1, 0, 0, 0, 1];
-    },
-    skewY: function skewY(degreeY) {
-        var radianY = this.radian(degreeY);
-
-        return [1, 0, 0, Math.tan(radianY), 1, 0, 0, 0, 1];
-    },
-    shear1: function shear1(angle) {
-        return [1, -Math.tan(this.radian(angle) / 2), 0, 0, 1, 0, 0, 0, 1];
-    },
-    shear2: function shear2(angle) {
-        return [1, 0, 0, Math.sin(this.radian(angle)), 1, 0, 0, 0, 1];
-    }
-};
-
-var Matrix = {
-    CONSTANT: CONSTANT,
-
-    radian: function radian(angle) {
-        return CONSTANT.radian(angle);
-    },
-    multiply: function multiply(A, C) {
-        // console.log(JSON.stringify(A), JSON.stringify(C))
-        return [A[0] * C[0] + A[1] * C[1] + A[2] * C[2], A[3] * C[0] + A[4] * C[1] + A[5] * C[2], A[6] * C[0] + A[7] * C[1] + A[8] * C[2]];
-    },
-    identity: function identity(B) {
-        return this.multiply(CONSTANT.identity(), B);
-    },
-    translate: function translate(x, y, B) {
-        return this.multiply(CONSTANT.translate(x, y), B);
-    },
-    rotate: function rotate(angle, B) {
-        return this.multiply(CONSTANT.rotate(angle), B);
-    },
-    shear1: function shear1(angle, B) {
-        return this.multiply(CONSTANT.shear1(angle), B);
-    },
-    shear2: function shear2(angle, B) {
-        return this.multiply(CONSTANT.shear2(angle), B);
-    },
-    rotateShear: function rotateShear(angle, B) {
-
-        var arr = B;
-
-        arr = this.shear1(angle, arr);
-        arr = this.shear2(angle, arr);
-        arr = this.shear1(angle, arr);
-
-        return arr;
-    }
-};
-
-function crop() {
-    var startX = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-    var startY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-    var width = arguments[2];
-    var height = arguments[3];
-
-
-    var newBitmap = createBitmap(width * height * 4, width, height);
-
-    return function (bitmap, done) {
-        for (var y = startY, realY = 0; y < height; y++, realY++) {
-            for (var x = startX, realX = 0; x < width; x++, realX++) {
-                newBitmap.pixels[realY * width * realX] = bitmap.pixels[y * width * x];
-            }
-        }
-
-        done(newBitmap);
-    };
-}
-
-// Image manupulate 
-function resize(dstWidth, dstHeight) {
-    return function (bitmap, done) {
-        var c = Canvas.drawPixels(bitmap);
-        var context = c.getContext('2d');
-
-        c.width = dstWidth;
-        c.height = dstHeight;
-
-        done({
-            pixels: new Uint8ClampedArray(context.getImageData(0, 0, dstWidth, dstHeight).data),
-            width: dstWidth,
-            height: dstHeight
-        });
-    };
-}
-
-function flipV() {
-    return function (bitmap, done) {
-        var width = bitmap.width;
-        var height = bitmap.height;
-        var isCenter = height % 2 == 1 ? 1 : 0;
-
-        var halfHeight = isCenter ? Math.floor(height / 2) : height / 2;
-
-        for (var y = 0; y < halfHeight; y++) {
-            for (var x = 0; x < width; x++) {
-
-                var startIndex = y * width + x << 2;
-                var endIndex = (height - 1 - y) * width + x << 2;
-                swapColor(bitmap.pixels, startIndex, endIndex);
-            }
-        }
-
-        done(bitmap);
-    };
-}
-
-function flipH() {
-    return function (bitmap, done) {
-        var width = bitmap.width;
-        var height = bitmap.height;
-        var isCenter = width % 2 == 1 ? 1 : 0;
-
-        var halfWidth = isCenter ? Math.floor(width / 2) : width / 2;
-
-        for (var y = 0; y < height; y++) {
-            for (var x = 0; x < halfWidth; x++) {
-
-                var startIndex = y * width + x << 2;
-                var endIndex = y * width + (width - 1 - x) << 2;
-                swapColor(bitmap.pixels, startIndex, endIndex);
-            }
-        }
-
-        done(bitmap);
-    };
-}
-
-var _UNIT_STRINGS;
-
-var EMPTY_STRING = '';
-
-var UNIT_VALUE = 'value';
-var UNIT_PX = 'px';
-var UNIT_EM = 'em';
-var UNIT_PERCENT = 'percent';
-var UNIT_DEG = 'deg';
-var UNIT_COLOR = 'color';
-
-var UNIT_VALUE_STRING = EMPTY_STRING;
-var UNIT_PX_STRING = 'px';
-var UNIT_EM_STRING = 'em';
-var UNIT_PERCENT_STRING = '%';
-
-var UNIT_COLOR_STRING = EMPTY_STRING;
-
-var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_VALUE, UNIT_VALUE_STRING), defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
-
-
-function px$1(value) {
-    return value + UNIT_PX_STRING;
-}
-
-function percent(value) {
-    return value + UNIT_PERCENT_STRING;
-}
-
-
-
-function isPX(unit) {
-    return unit === UNIT_PX;
-}
-function isEM(unit) {
-    return unit === UNIT_EM;
-}
-function isPercent(unit) {
-    return unit === UNIT_PERCENT;
-}
-
-
-
-function unitString(unit) {
-    var defaultString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-    return UNIT_STRINGS[unit] || defaultString;
-}
-
-function unit(value, unit) {
-    return value + unitString(unit);
-}
-
-function stringUnit() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
-
-    return unit(obj.value, obj.unit);
-}
-
-function unitValue() {
-    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
-
-    if (isNumber(obj)) return obj;
-    return obj.value;
-}
-
-function isUnit(obj, unit) {
-    return obj && obj.unit == unit;
-}
-
-function isPxUnit(obj) {
-    return isUnit(obj, UNIT_PX);
-}
-
-function isPercentUnit(obj) {
-    return isUnit(obj, UNIT_PERCENT);
-}
-
-function isEmUnit(obj) {
-    return isUnit(obj, UNIT_EM);
-}
-
-function isColorUnit(obj) {
-    return isUnit(obj, UNIT_COLOR);
-}
-
-
-
-function isValueUnit(obj) {
-    return isUnit(obj, UNIT_VALUE);
-}
-
-function unitObject(value, unit) {
-    return { unit: unit, value: value };
-}
-
-function valueUnit(value) {
-    return { unit: UNIT_VALUE, value: value };
-}
-
-function percentUnit(value) {
-    return { unit: UNIT_PERCENT, value: value };
-}
-
-function pxUnit(value) {
-    return { unit: UNIT_PX, value: value };
-}
-
-function degUnit(value) {
-    return { unit: UNIT_DEG, value: value };
-}
-
-function emUnit(value) {
-    return { unit: UNIT_EM, value: value };
-}
-
-
-
-function string2unit(str) {
-    if (isNotString(str)) return str;
-    if (str.includes(UNIT_PX)) {
-        return pxUnit(parseParamNumber$1(str));
-    } else if (str.includes(UNIT_PERCENT_STRING)) {
-        return percentUnit(parseParamNumber$1(str));
-    } else if (str.includes(UNIT_EM)) {
-        return emUnit(parseParamNumber$1(str));
-    } else if (str.includes(UNIT_DEG)) {
-        return degUnit(parseParamNumber$1(str));
-    }
-
-    return pxUnit(parseParamNumber$1(str));
-}
-
-function value2px(obj, maxValue) {
-    var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
-
-    if (isPxUnit(obj)) {
-        return obj.value;
-    } else if (isPercentUnit(obj)) {
-        return percent2px(obj.value, maxValue);
-    } else if (isEmUnit(obj)) {
-        return em2px(obj.value, maxValue, fontSize);
-    }
-}
-
-
-
-
-
-function convertPercentUnit(obj) {
-    if (isValueUnit(obj)) {
-        if (obj.value == 'left' || obj.value == 'top') {
-            return percentUnit(0);
-        } else if (obj.value == 'right' || obj.value == 'bottom') {
-            return percentUnit(100);
-        } else if (obj.value == 'center') {
-            return percentUnit(50);
-        }
-    }
-
-    return obj;
-}
 
 var _SEGMENT_CHECK;
 
@@ -2830,7 +868,7 @@ function rotate() {
     };
 }
 
-function histogram$1() {
+function histogram() {
     var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'gray';
     var points = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
@@ -2876,14 +914,14 @@ function histogram$1() {
     }
 }
 
-var image$1 = {
+var image = {
     crop: crop,
     resize: resize,
     flipH: flipH,
     flipV: flipV,
     rotate: rotate,
     rotateDegree: rotateDegree,
-    histogram: histogram$1,
+    histogram: histogram,
     'rotate-degree': rotateDegree
 };
 
@@ -2911,7 +949,7 @@ function bitonal(darkColor, lightColor) {
 /*
  * @param {Number} amount  -100..100  ,  value < 0  is darken, value > 0 is brighten 
  */
-function brightness$1() {
+function brightness() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
     amount = parseParamNumber$1(amount);
@@ -2960,7 +998,7 @@ function clip() {
  * 
  * @param {*} amount   min = -128, max = 128 
  */
-function contrast$1() {
+function contrast() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
     amount = parseParamNumber$1(amount);
@@ -2988,7 +1026,7 @@ function gamma() {
  * F.gradient('red', 'blue', 'yellow', 'white', 10)
  * F.gradient('red, blue, yellow, white, 10')
  */
-function gradient$1() {
+function gradient() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
 
@@ -3368,12 +1406,12 @@ function tint () {
 
 var pixel$1 = {
     bitonal: bitonal,
-    brightness: brightness$1,
+    brightness: brightness,
     brownie: brownie,
     clip: clip,
-    contrast: contrast$1,
+    contrast: contrast,
     gamma: gamma,
-    gradient: gradient$1,
+    gradient: gradient,
     grayscale: grayscale,
     hue: hue,
     invert: invert,
@@ -4042,43 +2080,179 @@ var matrix$1 = {
 };
 
 function kirsch() {
-    return filter$1('kirsch-horizontal kirsch-vertical');
+    return filter('kirsch-horizontal kirsch-vertical');
 }
 
 function sobel() {
-    return filter$1('sobel-horizontal sobel-vertical');
+    return filter('sobel-horizontal sobel-vertical');
 }
 
 function vintage() {
-    return filter$1('brightness(15) saturation(-20) gamma(1.8)');
+    return filter('brightness(15) saturation(-20) gamma(1.8)');
 }
 
-var multi$2 = {
+var multi$1 = {
     kirsch: kirsch,
     sobel: sobel,
     vintage: vintage
 };
 
-var FilterList = _extends({}, image$1, pixel$1, matrix$1, multi$2);
+var FilterList = _extends({}, image, pixel$1, matrix$1, multi$1);
+
+function round(n, k) {
+    k = isUndefined$1(k) ? 1 : k;
+    return Math.round(n * k) / k;
+}
+
+function degreeToRadian(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+/**
+ * 
+ * convert radian to degree 
+ * 
+ * @param {*} radian 
+ * @returns {Number} 0..360
+ */
+function radianToDegree(radian) {
+    var angle = radian * 180 / Math.PI;
+
+    if (angle < 0) {
+        // 각도가 0보다 작으면 360 에서 반전시킨다. 
+        angle = 360 + angle;
+    }
+
+    return angle;
+}
+
+function getXInCircle(angle, radius) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    return centerX + radius * Math.cos(degreeToRadian(angle));
+}
+
+function getYInCircle(angle, radius) {
+    var centerY = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    return centerY + radius * Math.sin(degreeToRadian(angle));
+}
+
+function getXYInCircle(angle, radius) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+    return {
+        x: getXInCircle(angle, radius, centerX),
+        y: getYInCircle(angle, radius, centerY)
+    };
+}
+
+function getDist(x, y) {
+    var centerX = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    var centerY = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+    return Math.sqrt(Math.pow(Math.abs(centerX - x), 2) + Math.pow(Math.abs(centerY - y), 2));
+}
+
+function caculateAngle(rx, ry) {
+    return radianToDegree(Math.atan2(ry, rx));
+}
+
+function uuid() {
+    var dt = new Date().getTime();
+    var uuid = 'xxx12-xx-34xx'.replace(/[xy]/g, function (c) {
+        var r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+    });
+    return uuid;
+}
+
+var bezierCalc = {
+    B1: function B1(t) {
+        return t * t * t;
+    },
+    B2: function B2(t) {
+        return 3 * t * t * (1 - t);
+    },
+    B3: function B3(t) {
+        return 3 * t * (1 - t) * (1 - t);
+    },
+    B4: function B4(t) {
+        return (1 - t) * (1 - t) * (1 - t);
+    }
+};
+
+function cubicBezier(x1, y1, x2, y2) {
+    var C2 = { x: x1, y: y1 };
+    var C3 = { x: x2, y: y2 };
+    return function (progress) {
+        // var x = C1.x * bezierCalc.B1(p) + C2.x*bezierCalc.B2(p) + C3.x*bezierCalc.B3(p) + C4.x*bezierCalc.B4(p);
+        // var y = C1.y * bezierCalc.B1(progress) + C2.y*bezierCalc.B2(progress) + C3.y*bezierCalc.B3(progress) + C4.y*bezierCalc.B4(progress);
+
+        var y = C2.y * bezierCalc.B2(progress) + C3.y * bezierCalc.B3(progress) + bezierCalc.B4(progress);
+
+        return 1 - y;
+    };
+}
+
+function getGradientLine(angle, box) {
+    var length = Math.abs(box.width * Math.sin(angle)) + Math.abs(box.height * Math.cos(angle));
+    var center = {
+        x: box.x + box.width / 2,
+        y: box.y + box.height / 2
+    };
+
+    var yDiff = Math.sin(angle - Math.PI / 2) * length / 2;
+    var xDiff = Math.cos(angle - Math.PI / 2) * length / 2;
+
+    return {
+        length: length,
+        center: center,
+        start: {
+            x: center.x - xDiff,
+            y: center.y - yDiff
+        },
+        end: {
+            x: center.x + xDiff,
+            y: center.y + yDiff
+        }
+    };
+}
+
+var math = Object.freeze({
+	round: round,
+	degreeToRadian: degreeToRadian,
+	radianToDegree: radianToDegree,
+	getXInCircle: getXInCircle,
+	getYInCircle: getYInCircle,
+	getXYInCircle: getXYInCircle,
+	getDist: getDist,
+	caculateAngle: caculateAngle,
+	uuid: uuid,
+	cubicBezier: cubicBezier,
+	getGradientLine: getGradientLine
+});
 
 var _functions;
 
 var makeId = 0;
 
-var functions$1 = (_functions = {
+var functions = (_functions = {
     partial: partial,
-    multi: multi$1,
-    merge: merge$1,
+    multi: multi,
+    merge: merge,
     weight: weight,
     repeat: repeat$1,
     colorMatrix: colorMatrix,
-    each: each$1,
+    each: each,
     eachXY: eachXY,
     createRandomCount: createRandomCount,
     createRandRange: createRandRange,
     createBitmap: createBitmap,
     createBlurMatrix: createBlurMatrix,
-    pack: pack$1,
+    pack: pack,
     packXY: packXY,
     pixel: pixel,
     getBitmap: getBitmap,
@@ -4092,13 +2266,13 @@ var functions$1 = (_functions = {
     em2px: em2px,
     percent2em: percent2em,
     percent2px: percent2px,
-    filter: filter$1,
+    filter: filter,
     clamp: clamp$1,
     fillColor: fillColor,
     fillPixelColor: fillPixelColor
-}, defineProperty(_functions, 'multi', multi$1), defineProperty(_functions, 'merge', merge$1), defineProperty(_functions, 'matches', matches$1), defineProperty(_functions, 'parseFilter', parseFilter), defineProperty(_functions, 'partial', partial), _functions);
+}, defineProperty(_functions, 'multi', multi), defineProperty(_functions, 'merge', merge), defineProperty(_functions, 'matches', matches), defineProperty(_functions, 'parseFilter', parseFilter), defineProperty(_functions, 'partial', partial), _functions);
 
-var LocalFilter = functions$1;
+var LocalFilter = functions;
 
 var ROUND_MAX = 1000;
 
@@ -4232,7 +2406,7 @@ function forLoop(max) {
     runCallback();
 }
 
-function each$1(len, callback, done) {
+function each(len, callback, done) {
     var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
 
@@ -4405,9 +2579,9 @@ function percent2em(percent$$1, maxValue) {
 }
 
 var filter_regexp = /(([\w_\-]+)(\(([^\)]*)\))?)+/gi;
-function pack$1(callback) {
+function pack(callback) {
     return function (bitmap, done) {
-        each$1(bitmap.pixels.length, function (i, xyIndex) {
+        each(bitmap.pixels.length, function (i, xyIndex) {
             callback(bitmap.pixels, i, xyIndex, bitmap.pixels[i], bitmap.pixels[i + 1], bitmap.pixels[i + 2], bitmap.pixels[i + 3]);
         }, function () {
             done(bitmap);
@@ -4699,7 +2873,7 @@ function convolution(weights) {
     };
 }
 
-function matches$1(str) {
+function matches(str) {
     var ret = Color$1.convertMatches(str);
     var matches = ret.str.match(filter_regexp);
     var result = [];
@@ -4770,13 +2944,13 @@ function clamp$1(num) {
     return Math.min(255, num);
 }
 
-function filter$1(str) {
-    return merge$1(matches$1(str).map(function (it) {
+function filter(str) {
+    return merge(matches(str).map(function (it) {
         return it.arr;
     }));
 }
 
-function makeGroupedFilter$1() {
+function makeGroupedFilter() {
     var filters = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
     var groupedFilter = [];
@@ -4831,7 +3005,7 @@ function makeGroupedFilter$1() {
  * ImageFilter.multi('blur', 'grayscale', 'sharpen', ['blur', 3], function (bitmap) {  return bitmap });
  * 
  */
-function multi$1() {
+function multi() {
     for (var _len = arguments.length, filters = Array(_len), _key = 0; _key < _len; _key++) {
         filters[_key] = arguments[_key];
     }
@@ -4842,7 +3016,7 @@ function multi$1() {
         return f;
     });
 
-    filters = makeGroupedFilter$1(filters);
+    filters = makeGroupedFilter(filters);
 
     var max = filters.length;
 
@@ -4876,8 +3050,8 @@ function multi$1() {
     };
 }
 
-function merge$1(filters) {
-    return multi$1.apply(undefined, toConsumableArray(filters));
+function merge(filters) {
+    return multi.apply(undefined, toConsumableArray(filters));
 }
 
 /**
@@ -4897,9 +3071,9 @@ function partial(area) {
     }
 
     if (filters.length == 1 && isString(filters[0])) {
-        allFilter = filter$1(filters[0]);
+        allFilter = filter(filters[0]);
     } else {
-        allFilter = merge$1(filters);
+        allFilter = merge(filters);
     }
 
     return function (bitmap, done) {
@@ -4910,6 +3084,1840 @@ function partial(area) {
         }, opt);
     };
 }
+
+var _UNIT_STRINGS;
+
+var EMPTY_STRING = '';
+
+var UNIT_VALUE = 'value';
+var UNIT_PX = 'px';
+var UNIT_EM = 'em';
+var UNIT_PERCENT = 'percent';
+var UNIT_DEG = 'deg';
+var UNIT_COLOR = 'color';
+
+var UNIT_VALUE_STRING = EMPTY_STRING;
+var UNIT_PX_STRING = 'px';
+var UNIT_EM_STRING = 'em';
+var UNIT_PERCENT_STRING = '%';
+
+var UNIT_COLOR_STRING = EMPTY_STRING;
+
+var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_VALUE, UNIT_VALUE_STRING), defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
+
+
+function px$1(value) {
+    return value + UNIT_PX_STRING;
+}
+
+function percent(value) {
+    return value + UNIT_PERCENT_STRING;
+}
+
+
+
+function isPX(unit) {
+    return unit === UNIT_PX;
+}
+function isEM(unit) {
+    return unit === UNIT_EM;
+}
+function isPercent(unit) {
+    return unit === UNIT_PERCENT;
+}
+
+
+
+function unitString(unit) {
+    var defaultString = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+
+    return UNIT_STRINGS[unit] || defaultString;
+}
+
+function unit(value, unit) {
+    return value + unitString(unit);
+}
+
+function stringUnit() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
+
+    return unit(obj.value, obj.unit);
+}
+
+function unitValue() {
+    var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : pxUnit(0);
+
+    if (isNumber(obj)) return obj;
+    return obj.value;
+}
+
+function isUnit(obj, unit) {
+    return obj && obj.unit == unit;
+}
+
+function isPxUnit(obj) {
+    return isUnit(obj, UNIT_PX);
+}
+
+function isPercentUnit(obj) {
+    return isUnit(obj, UNIT_PERCENT);
+}
+
+function isEmUnit(obj) {
+    return isUnit(obj, UNIT_EM);
+}
+
+function isColorUnit(obj) {
+    return isUnit(obj, UNIT_COLOR);
+}
+
+
+
+function isValueUnit(obj) {
+    return isUnit(obj, UNIT_VALUE);
+}
+
+function unitObject(value, unit) {
+    return { unit: unit, value: value };
+}
+
+function valueUnit(value) {
+    return { unit: UNIT_VALUE, value: value };
+}
+
+function percentUnit(value) {
+    return { unit: UNIT_PERCENT, value: value };
+}
+
+function pxUnit(value) {
+    return { unit: UNIT_PX, value: value };
+}
+
+function degUnit(value) {
+    return { unit: UNIT_DEG, value: value };
+}
+
+function emUnit(value) {
+    return { unit: UNIT_EM, value: value };
+}
+
+
+
+function string2unit(str) {
+    if (isNotString(str)) return str;
+    if (str.includes(UNIT_PX)) {
+        return pxUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_PERCENT_STRING)) {
+        return percentUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_EM)) {
+        return emUnit(parseParamNumber$1(str));
+    } else if (str.includes(UNIT_DEG)) {
+        return degUnit(parseParamNumber$1(str));
+    }
+
+    return pxUnit(parseParamNumber$1(str));
+}
+
+function value2px(obj, maxValue) {
+    var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
+
+    if (isPxUnit(obj)) {
+        return obj.value;
+    } else if (isPercentUnit(obj)) {
+        return percent2px(obj.value, maxValue);
+    } else if (isEmUnit(obj)) {
+        return em2px(obj.value, maxValue, fontSize);
+    }
+}
+
+
+
+
+
+function convertPercentUnit(obj) {
+    if (isValueUnit(obj)) {
+        if (obj.value == 'left' || obj.value == 'top') {
+            return percentUnit(0);
+        } else if (obj.value == 'right' || obj.value == 'bottom') {
+            return percentUnit(100);
+        } else if (obj.value == 'center') {
+            return percentUnit(50);
+        }
+    }
+
+    return obj;
+}
+
+function debounce(callback, delay) {
+
+    var t = undefined;
+
+    return function () {
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
+
+        if (t) {
+            clearTimeout(t);
+        }
+
+        t = setTimeout(function () {
+            callback.apply(undefined, args);
+        }, delay || 300);
+    };
+}
+
+function get(obj, key, callback) {
+
+    var returnValue = defaultValue(obj[key], key);
+
+    if (isFunction(callback)) {
+        return callback(returnValue);
+    }
+
+    return returnValue;
+}
+
+function defaultValue(value$$1, defaultValue) {
+    return typeof value$$1 == 'undefined' ? defaultValue : value$$1;
+}
+
+function isUndefined$1(value$$1) {
+    return typeof value$$1 == 'undefined' || value$$1 == null;
+}
+
+function isNotUndefined(value$$1) {
+    return isUndefined$1(value$$1) === false;
+}
+
+function isArray(value$$1) {
+    return Array.isArray(value$$1);
+}
+
+function isBoolean(value$$1) {
+    return typeof value$$1 == 'boolean';
+}
+
+function isString(value$$1) {
+    return typeof value$$1 == 'string';
+}
+
+function isNotString(value$$1) {
+    return isString(value$$1) === false;
+}
+
+function isObject(value$$1) {
+    return (typeof value$$1 === 'undefined' ? 'undefined' : _typeof(value$$1)) == 'object' && !isArray(value$$1) && value$$1 !== null;
+}
+
+function isFunction(value$$1) {
+    return typeof value$$1 == 'function';
+}
+
+function isNumber(value$$1) {
+    return typeof value$$1 == 'number';
+}
+
+function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+function cleanObject(obj) {
+    var realObject = {};
+    Object.keys(obj).filter(function (key) {
+        return !!obj[key];
+    }).forEach(function (key) {
+        realObject[key] = obj[key];
+    });
+
+    return realObject;
+}
+
+function combineKeyArray(obj) {
+    Object.keys(obj).forEach(function (key) {
+        if (Array.isArray(obj[key])) {
+            obj[key] = obj[key].join(', ');
+        }
+    });
+
+    return obj;
+}
+
+function flatKeyValue(obj) {
+    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+    var values = {};
+
+    Object.keys(obj).forEach(function (key) {
+        var realKey = key;
+        if (rootKey !== '') {
+            realKey = rootKey + '.' + key;
+        }
+
+        if (isObject(obj[key])) {
+            values = _extends({}, values, flatKeyValue(obj[key], realKey));
+        } else {
+            values[realKey] = obj[key];
+        }
+    });
+
+    return values;
+}
+
+function repeat(count) {
+    return [].concat(toConsumableArray(Array(count)));
+}
+
+var short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
+
+var html = function html(strings) {
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+    }
+
+    var results = strings.map(function (it, index) {
+
+        var results = args[index] || '';
+
+        if (isFunction(results)) {
+            results = results();
+        }
+
+        if (!isArray(results)) {
+            results = [results];
+        }
+
+        results = results.map(function (r) {
+            if (isObject(r)) {
+                return Object.keys(r).map(function (key) {
+                    return key + '="' + r[key] + '"';
+                }).join(' ');
+            }
+
+            return r;
+        }).join(EMPTY_STRING);
+
+        return it + results;
+    }).join('');
+
+    results = results.replace(short_tag_regexp, function (match, p1) {
+        return match.replace('/>', '></' + p1 + '>');
+    });
+
+    return results;
+};
+
+
+
+var func = Object.freeze({
+	debounce: debounce,
+	get: get,
+	defaultValue: defaultValue,
+	isUndefined: isUndefined$1,
+	isNotUndefined: isNotUndefined,
+	isArray: isArray,
+	isBoolean: isBoolean,
+	isString: isString,
+	isNotString: isNotString,
+	isObject: isObject,
+	isFunction: isFunction,
+	isNumber: isNumber,
+	clone: clone,
+	cleanObject: cleanObject,
+	combineKeyArray: combineKeyArray,
+	flatKeyValue: flatKeyValue,
+	repeat: repeat,
+	html: html
+});
+
+/**
+ * @method format
+ *
+ * convert color to format string
+ *
+ *     // hex
+ *     color.format({ r : 255, g : 255, b : 255 }, 'hex')  // #FFFFFF
+ *
+ *     // rgb
+ *     color.format({ r : 255, g : 255, b : 255 }, 'rgb') // rgba(255, 255, 255, 0.5);
+ *
+ *     // rgba
+ *     color.format({ r : 255, g : 255, b : 255, a : 0.5 }, 'rgb') // rgba(255, 255, 255, 0.5);
+ *
+ * @param {Object} obj  obj has r, g, b and a attributes
+ * @param {"hex"/"rgb"} type  format string type
+ * @returns {*}
+ */
+function format(obj, type) {
+    var defaultColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(0, 0, 0, 0)';
+
+
+    if (Array.isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    if (type == 'hex') {
+        return hex(obj);
+    } else if (type == 'rgb') {
+        return rgb(obj, defaultColor);
+    } else if (type == 'hsl') {
+        return hsl(obj);
+    }
+
+    return obj;
+}
+
+function hex(obj) {
+    if (Array.isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    var r = obj.r.toString(16);
+    if (obj.r < 16) r = "0" + r;
+
+    var g = obj.g.toString(16);
+    if (obj.g < 16) g = "0" + g;
+
+    var b = obj.b.toString(16);
+    if (obj.b < 16) b = "0" + b;
+
+    return '#' + r + g + b;
+}
+
+function rgb(obj) {
+    var defaultColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'rgba(0, 0, 0, 0)';
+
+    if (isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    if (isUndefined$1(obj)) {
+        return undefined;
+    }
+
+    if (obj.a == 1 || isUndefined$1(obj.a)) {
+        if (isNaN(obj.r)) {
+            return defaultColor;
+        }
+        return 'rgb(' + obj.r + ',' + obj.g + ',' + obj.b + ')';
+    } else {
+        return 'rgba(' + obj.r + ',' + obj.g + ',' + obj.b + ',' + obj.a + ')';
+    }
+}
+
+function hsl(obj) {
+    if (isArray(obj)) {
+        obj = { r: obj[0], g: obj[1], b: obj[2], a: obj[3] };
+    }
+
+    if (obj.a == 1 || isUndefined$1(obj.a)) {
+        return 'hsl(' + obj.h + ',' + obj.s + '%,' + obj.l + '%)';
+    } else {
+        return 'hsla(' + obj.h + ',' + obj.s + '%,' + obj.l + '%,' + obj.a + ')';
+    }
+}
+
+var formatter = Object.freeze({
+	format: format,
+	hex: hex,
+	rgb: rgb,
+	hsl: hsl
+});
+
+function ReverseXyz(n) {
+    return Math.pow(n, 3) > 0.008856 ? Math.pow(n, 3) : (n - 16 / 116) / 7.787;
+}
+
+function ReverseRGB(n) {
+    return n > 0.0031308 ? 1.055 * Math.pow(n, 1 / 2.4) - 0.055 : 12.92 * n;
+}
+
+function XYZtoRGB(x, y, z) {
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            x = _arguments$.x,
+            y = _arguments$.y,
+            z = _arguments$.z;
+    }
+    //X, Y and Z input refer to a D65/2° standard illuminant.
+    //sR, sG and sB (standard RGB) output range = 0 ÷ 255
+
+    var X = x / 100.0;
+    var Y = y / 100.0;
+    var Z = z / 100.0;
+
+    var R = X * 3.2406 + Y * -1.5372 + Z * -0.4986;
+    var G = X * -0.9689 + Y * 1.8758 + Z * 0.0415;
+    var B = X * 0.0557 + Y * -0.2040 + Z * 1.0570;
+
+    R = ReverseRGB(R);
+    G = ReverseRGB(G);
+    B = ReverseRGB(B);
+
+    var r = round(R * 255);
+    var g = round(G * 255);
+    var b = round(B * 255);
+
+    return { r: r, g: g, b: b };
+}
+
+function LABtoXYZ(l, a, b) {
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            l = _arguments$2.l,
+            a = _arguments$2.a,
+            b = _arguments$2.b;
+    }
+    //Reference-X, Y and Z refer to specific illuminants and observers.
+    //Common reference values are available below in this same page.
+
+    var Y = (l + 16) / 116;
+    var X = a / 500 + Y;
+    var Z = Y - b / 200;
+
+    Y = ReverseXyz(Y);
+    X = ReverseXyz(X);
+    Z = ReverseXyz(Z);
+
+    var x = X * 95.047;
+    var y = Y * 100.000;
+    var z = Z * 108.883;
+
+    return { x: x, y: y, z: z };
+}
+
+function PivotXyz(n) {
+    return n > 0.008856 ? Math.pow(n, 1 / 3) : (7.787 * n + 16) / 116;
+}
+
+function XYZtoLAB(x, y, z) {
+    if (arguments.length == 1) {
+        var _arguments$3 = arguments[0],
+            x = _arguments$3.x,
+            y = _arguments$3.y,
+            z = _arguments$3.z;
+    }
+
+    //Reference-X, Y and Z refer to specific illuminants and observers.
+    //Common reference values are available below in this same page.
+    // Observer= 2°, Illuminant= D65
+
+    var X = x / 95.047;
+    var Y = y / 100.00;
+    var Z = z / 108.883;
+
+    X = PivotXyz(X);
+    Y = PivotXyz(Y);
+    Z = PivotXyz(Z);
+
+    var l = 116 * Y - 16;
+    var a = 500 * (X - Y);
+    var b = 200 * (Y - Z);
+
+    return { l: l, a: a, b: b };
+}
+
+function LABtoRGB(l, a, b) {
+    if (arguments.length == 1) {
+        var _arguments$4 = arguments[0],
+            l = _arguments$4.l,
+            a = _arguments$4.a,
+            b = _arguments$4.b;
+    }
+    return XYZtoRGB(LABtoXYZ(l, a, b));
+}
+
+var fromLAB = Object.freeze({
+	ReverseXyz: ReverseXyz,
+	ReverseRGB: ReverseRGB,
+	XYZtoRGB: XYZtoRGB,
+	LABtoXYZ: LABtoXYZ,
+	PivotXyz: PivotXyz,
+	XYZtoLAB: XYZtoLAB,
+	LABtoRGB: LABtoRGB
+});
+
+/**
+ * @method RGBtoHSV
+ *
+ * convert rgb to hsv
+ *
+ * 		color.RGBtoHSV(0, 0, 255) === { h : 240, s : 1, v : 1 } === '#FFFF00'
+ *
+ * @param {Number} R  red color value
+ * @param {Number} G  green color value
+ * @param {Number} B  blue color value
+ * @return {Object}  hsv color code
+ */
+function RGBtoHSV(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            r = _arguments$.r,
+            g = _arguments$.g,
+            b = _arguments$.b;
+    }
+
+    var R1 = r / 255;
+    var G1 = g / 255;
+    var B1 = b / 255;
+
+    var MaxC = Math.max(R1, G1, B1);
+    var MinC = Math.min(R1, G1, B1);
+
+    var DeltaC = MaxC - MinC;
+
+    var H = 0;
+
+    if (DeltaC == 0) {
+        H = 0;
+    } else if (MaxC == R1) {
+        H = 60 * ((G1 - B1) / DeltaC % 6);
+    } else if (MaxC == G1) {
+        H = 60 * ((B1 - R1) / DeltaC + 2);
+    } else if (MaxC == B1) {
+        H = 60 * ((R1 - G1) / DeltaC + 4);
+    }
+
+    if (H < 0) {
+        H = 360 + H;
+    }
+
+    var S = 0;
+
+    if (MaxC == 0) S = 0;else S = DeltaC / MaxC;
+
+    var V = MaxC;
+
+    return { h: H, s: S, v: V };
+}
+
+function RGBtoCMYK(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            r = _arguments$2.r,
+            g = _arguments$2.g,
+            b = _arguments$2.b;
+    }
+
+    var R1 = r / 255;
+    var G1 = g / 255;
+    var B1 = b / 255;
+
+    var K = 1 - Math.max(R1, G1, B1);
+    var C = (1 - R1 - K) / (1 - K);
+    var M = (1 - G1 - K) / (1 - K);
+    var Y = (1 - B1 - K) / (1 - K);
+
+    return { c: C, m: M, y: Y, k: K };
+}
+
+function RGBtoHSL(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$3 = arguments[0],
+            r = _arguments$3.r,
+            g = _arguments$3.g,
+            b = _arguments$3.b;
+    }
+
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
+    var h,
+        s,
+        l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0; // achromatic
+    } else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r:
+                h = (g - b) / d + (g < b ? 6 : 0);break;
+            case g:
+                h = (b - r) / d + 2;break;
+            case b:
+                h = (r - g) / d + 4;break;
+        }
+        h /= 6;
+    }
+
+    return { h: round(h * 360), s: round(s * 100), l: round(l * 100) };
+}
+
+function c(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$4 = arguments[0],
+            r = _arguments$4.r,
+            g = _arguments$4.g,
+            b = _arguments$4.b;
+    }
+    return gray((r + g + b) / 3 > 90 ? 0 : 255);
+}
+
+function gray(gray) {
+    return { r: gray, g: gray, b: gray };
+}
+
+function RGBtoSimpleGray(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$5 = arguments[0],
+            r = _arguments$5.r,
+            g = _arguments$5.g,
+            b = _arguments$5.b;
+    }
+    return gray(Math.ceil((r + g + b) / 3));
+}
+
+function RGBtoGray(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$6 = arguments[0],
+            r = _arguments$6.r,
+            g = _arguments$6.g,
+            b = _arguments$6.b;
+    }
+    return gray(RGBtoYCrCb(r, g, b).y);
+}
+
+function brightness$1(r, g, b) {
+    return Math.ceil(r * 0.2126 + g * 0.7152 + b * 0.0722);
+}
+
+function RGBtoYCrCb(r, g, b) {
+
+    if (arguments.length == 1) {
+        var _arguments$7 = arguments[0],
+            r = _arguments$7.r,
+            g = _arguments$7.g,
+            b = _arguments$7.b;
+    }
+    var Y = brightness$1(r, g, b);
+    var Cb = 0.564 * (b - Y);
+    var Cr = 0.713 * (r - Y);
+
+    return { y: Y, cr: Cr, cb: Cb };
+}
+
+function PivotRGB(n) {
+    return (n > 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92) * 100;
+}
+
+function RGBtoXYZ(r, g, b) {
+    //sR, sG and sB (Standard RGB) input range = 0 ÷ 255
+    //X, Y and Z output refer to a D65/2° standard illuminant.
+    if (arguments.length == 1) {
+        var _arguments$8 = arguments[0],
+            r = _arguments$8.r,
+            g = _arguments$8.g,
+            b = _arguments$8.b;
+    }
+
+    var R = r / 255;
+    var G = g / 255;
+    var B = b / 255;
+
+    R = PivotRGB(R);
+    G = PivotRGB(G);
+    B = PivotRGB(B);
+
+    var x = R * 0.4124 + G * 0.3576 + B * 0.1805;
+    var y = R * 0.2126 + G * 0.7152 + B * 0.0722;
+    var z = R * 0.0193 + G * 0.1192 + B * 0.9505;
+
+    return { x: x, y: y, z: z };
+}
+
+function RGBtoLAB(r, g, b) {
+    if (arguments.length == 1) {
+        var _arguments$9 = arguments[0],
+            r = _arguments$9.r,
+            g = _arguments$9.g,
+            b = _arguments$9.b;
+    }
+    return XYZtoLAB(RGBtoXYZ(r, g, b));
+}
+
+var fromRGB = Object.freeze({
+	RGBtoHSV: RGBtoHSV,
+	RGBtoCMYK: RGBtoCMYK,
+	RGBtoHSL: RGBtoHSL,
+	c: c,
+	gray: gray,
+	RGBtoSimpleGray: RGBtoSimpleGray,
+	RGBtoGray: RGBtoGray,
+	brightness: brightness$1,
+	RGBtoYCrCb: RGBtoYCrCb,
+	PivotRGB: PivotRGB,
+	RGBtoXYZ: RGBtoXYZ,
+	RGBtoLAB: RGBtoLAB
+});
+
+function CMYKtoRGB(c, m, y, k) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            c = _arguments$.c,
+            m = _arguments$.m,
+            y = _arguments$.y,
+            k = _arguments$.k;
+    }
+
+    var R = 255 * (1 - c) * (1 - k);
+    var G = 255 * (1 - m) * (1 - k);
+    var B = 255 * (1 - y) * (1 - k);
+
+    return { r: R, g: G, b: B };
+}
+
+var fromCMYK = Object.freeze({
+	CMYKtoRGB: CMYKtoRGB
+});
+
+/**
+ * @method HSVtoRGB
+ *
+ * convert hsv to rgb
+ *
+ * 		color.HSVtoRGB(0,0,1) === #FFFFF === { r : 255, g : 0, b : 0 }
+ *
+ * @param {Number} H  hue color number  (min : 0, max : 360)
+ * @param {Number} S  Saturation number  (min : 0, max : 1)
+ * @param {Number} V  Value number 		(min : 0, max : 1 )
+ * @returns {Object}
+ */
+function HSVtoRGB(h, s, v) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            h = _arguments$.h,
+            s = _arguments$.s,
+            v = _arguments$.v;
+    }
+
+    var H = h;
+    var S = s;
+    var V = v;
+
+    if (H >= 360) {
+        H = 0;
+    }
+
+    var C = S * V;
+    var X = C * (1 - Math.abs(H / 60 % 2 - 1));
+    var m = V - C;
+
+    var temp = [];
+
+    if (0 <= H && H < 60) {
+        temp = [C, X, 0];
+    } else if (60 <= H && H < 120) {
+        temp = [X, C, 0];
+    } else if (120 <= H && H < 180) {
+        temp = [0, C, X];
+    } else if (180 <= H && H < 240) {
+        temp = [0, X, C];
+    } else if (240 <= H && H < 300) {
+        temp = [X, 0, C];
+    } else if (300 <= H && H < 360) {
+        temp = [C, 0, X];
+    }
+
+    return {
+        r: round((temp[0] + m) * 255),
+        g: round((temp[1] + m) * 255),
+        b: round((temp[2] + m) * 255)
+    };
+}
+
+function HSVtoHSL(h, s, v) {
+
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            h = _arguments$2.h,
+            s = _arguments$2.s,
+            v = _arguments$2.v;
+    }
+
+    var rgb = HSVtoRGB(h, s, v);
+
+    return RGBtoHSL(rgb.r, rgb.g, rgb.b);
+}
+
+var fromHSV = Object.freeze({
+	HSVtoRGB: HSVtoRGB,
+	HSVtoHSL: HSVtoHSL
+});
+
+function HUEtoRGB(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+}
+
+function HSLtoHSV(h, s, l) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            h = _arguments$.h,
+            s = _arguments$.s,
+            l = _arguments$.l;
+    }
+    var rgb = HSLtoRGB(h, s, l);
+
+    return RGBtoHSV(rgb.r, rgb.g, rgb.b);
+}
+
+function HSLtoRGB(h, s, l) {
+
+    if (arguments.length == 1) {
+        var _arguments$2 = arguments[0],
+            h = _arguments$2.h,
+            s = _arguments$2.s,
+            l = _arguments$2.l;
+    }
+
+    var r, g, b;
+
+    h /= 360;
+    s /= 100;
+    l /= 100;
+
+    if (s == 0) {
+        r = g = b = l; // achromatic
+    } else {
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = HUEtoRGB(p, q, h + 1 / 3);
+        g = HUEtoRGB(p, q, h);
+        b = HUEtoRGB(p, q, h - 1 / 3);
+    }
+
+    return { r: round(r * 255), g: round(g * 255), b: round(b * 255) };
+}
+
+var fromHSL = Object.freeze({
+	HUEtoRGB: HUEtoRGB,
+	HSLtoHSV: HSLtoHSV,
+	HSLtoRGB: HSLtoRGB
+});
+
+function YCrCbtoRGB(y, cr, cb, bit) {
+
+    if (arguments.length == 1) {
+        var _arguments$ = arguments[0],
+            y = _arguments$.y,
+            cr = _arguments$.cr,
+            cb = _arguments$.cb,
+            bit = _arguments$.bit;
+
+        bit = bit || 0;
+    }
+    var R = y + 1.402 * (cr - bit);
+    var G = y - 0.344 * (cb - bit) - 0.714 * (cr - bit);
+    var B = y + 1.772 * (cb - bit);
+
+    return { r: Math.ceil(R), g: Math.ceil(G), b: Math.ceil(B) };
+}
+
+var fromYCrCb = Object.freeze({
+	YCrCbtoRGB: YCrCbtoRGB
+});
+
+var color_names = { aliceblue: "rgb(240, 248, 255)", antiquewhite: "rgb(250, 235, 215)", aqua: "rgb(0, 255, 255)", aquamarine: "rgb(127, 255, 212)", azure: "rgb(240, 255, 255)", beige: "rgb(245, 245, 220)", bisque: "rgb(255, 228, 196)", black: "rgb(0, 0, 0)", blanchedalmond: "rgb(255, 235, 205)", blue: "rgb(0, 0, 255)", blueviolet: "rgb(138, 43, 226)", brown: "rgb(165, 42, 42)", burlywood: "rgb(222, 184, 135)", cadetblue: "rgb(95, 158, 160)", chartreuse: "rgb(127, 255, 0)", chocolate: "rgb(210, 105, 30)", coral: "rgb(255, 127, 80)", cornflowerblue: "rgb(100, 149, 237)", cornsilk: "rgb(255, 248, 220)", crimson: "rgb(237, 20, 61)", cyan: "rgb(0, 255, 255)", darkblue: "rgb(0, 0, 139)", darkcyan: "rgb(0, 139, 139)", darkgoldenrod: "rgb(184, 134, 11)", darkgray: "rgb(169, 169, 169)", darkgrey: "rgb(169, 169, 169)", darkgreen: "rgb(0, 100, 0)", darkkhaki: "rgb(189, 183, 107)", darkmagenta: "rgb(139, 0, 139)", darkolivegreen: "rgb(85, 107, 47)", darkorange: "rgb(255, 140, 0)", darkorchid: "rgb(153, 50, 204)", darkred: "rgb(139, 0, 0)", darksalmon: "rgb(233, 150, 122)", darkseagreen: "rgb(143, 188, 143)", darkslateblue: "rgb(72, 61, 139)", darkslategray: "rgb(47, 79, 79)", darkslategrey: "rgb(47, 79, 79)", darkturquoise: "rgb(0, 206, 209)", darkviolet: "rgb(148, 0, 211)", deeppink: "rgb(255, 20, 147)", deepskyblue: "rgb(0, 191, 255)", dimgray: "rgb(105, 105, 105)", dimgrey: "rgb(105, 105, 105)", dodgerblue: "rgb(30, 144, 255)", firebrick: "rgb(178, 34, 34)", floralwhite: "rgb(255, 250, 240)", forestgreen: "rgb(34, 139, 34)", fuchsia: "rgb(255, 0, 255)", gainsboro: "rgb(220, 220, 220)", ghostwhite: "rgb(248, 248, 255)", gold: "rgb(255, 215, 0)", goldenrod: "rgb(218, 165, 32)", gray: "rgb(128, 128, 128)", grey: "rgb(128, 128, 128)", green: "rgb(0, 128, 0)", greenyellow: "rgb(173, 255, 47)", honeydew: "rgb(240, 255, 240)", hotpink: "rgb(255, 105, 180)", indianred: "rgb(205, 92, 92)", indigo: "rgb(75, 0, 130)", ivory: "rgb(255, 255, 240)", khaki: "rgb(240, 230, 140)", lavender: "rgb(230, 230, 250)", lavenderblush: "rgb(255, 240, 245)", lawngreen: "rgb(124, 252, 0)", lemonchiffon: "rgb(255, 250, 205)", lightblue: "rgb(173, 216, 230)", lightcoral: "rgb(240, 128, 128)", lightcyan: "rgb(224, 255, 255)", lightgoldenrodyellow: "rgb(250, 250, 210)", lightgreen: "rgb(144, 238, 144)", lightgray: "rgb(211, 211, 211)", lightgrey: "rgb(211, 211, 211)", lightpink: "rgb(255, 182, 193)", lightsalmon: "rgb(255, 160, 122)", lightseagreen: "rgb(32, 178, 170)", lightskyblue: "rgb(135, 206, 250)", lightslategray: "rgb(119, 136, 153)", lightslategrey: "rgb(119, 136, 153)", lightsteelblue: "rgb(176, 196, 222)", lightyellow: "rgb(255, 255, 224)", lime: "rgb(0, 255, 0)", limegreen: "rgb(50, 205, 50)", linen: "rgb(250, 240, 230)", magenta: "rgb(255, 0, 255)", maroon: "rgb(128, 0, 0)", mediumaquamarine: "rgb(102, 205, 170)", mediumblue: "rgb(0, 0, 205)", mediumorchid: "rgb(186, 85, 211)", mediumpurple: "rgb(147, 112, 219)", mediumseagreen: "rgb(60, 179, 113)", mediumslateblue: "rgb(123, 104, 238)", mediumspringgreen: "rgb(0, 250, 154)", mediumturquoise: "rgb(72, 209, 204)", mediumvioletred: "rgb(199, 21, 133)", midnightblue: "rgb(25, 25, 112)", mintcream: "rgb(245, 255, 250)", mistyrose: "rgb(255, 228, 225)", moccasin: "rgb(255, 228, 181)", navajowhite: "rgb(255, 222, 173)", navy: "rgb(0, 0, 128)", oldlace: "rgb(253, 245, 230)", olive: "rgb(128, 128, 0)", olivedrab: "rgb(107, 142, 35)", orange: "rgb(255, 165, 0)", orangered: "rgb(255, 69, 0)", orchid: "rgb(218, 112, 214)", palegoldenrod: "rgb(238, 232, 170)", palegreen: "rgb(152, 251, 152)", paleturquoise: "rgb(175, 238, 238)", palevioletred: "rgb(219, 112, 147)", papayawhip: "rgb(255, 239, 213)", peachpuff: "rgb(255, 218, 185)", peru: "rgb(205, 133, 63)", pink: "rgb(255, 192, 203)", plum: "rgb(221, 160, 221)", powderblue: "rgb(176, 224, 230)", purple: "rgb(128, 0, 128)", rebeccapurple: "rgb(102, 51, 153)", red: "rgb(255, 0, 0)", rosybrown: "rgb(188, 143, 143)", royalblue: "rgb(65, 105, 225)", saddlebrown: "rgb(139, 69, 19)", salmon: "rgb(250, 128, 114)", sandybrown: "rgb(244, 164, 96)", seagreen: "rgb(46, 139, 87)", seashell: "rgb(255, 245, 238)", sienna: "rgb(160, 82, 45)", silver: "rgb(192, 192, 192)", skyblue: "rgb(135, 206, 235)", slateblue: "rgb(106, 90, 205)", slategray: "rgb(112, 128, 144)", slategrey: "rgb(112, 128, 144)", snow: "rgb(255, 250, 250)", springgreen: "rgb(0, 255, 127)", steelblue: "rgb(70, 130, 180)", tan: "rgb(210, 180, 140)", teal: "rgb(0, 128, 128)", thistle: "rgb(216, 191, 216)", tomato: "rgb(255, 99, 71)", turquoise: "rgb(64, 224, 208)", violet: "rgb(238, 130, 238)", wheat: "rgb(245, 222, 179)", white: "rgb(255, 255, 255)", whitesmoke: "rgb(245, 245, 245)", yellow: "rgb(255, 255, 0)", yellowgreen: "rgb(154, 205, 50)", transparent: "rgba(0, 0, 0, 0)" };
+
+function isColorName(name) {
+    return !!color_names[name];
+}
+
+function getColorByName(name) {
+    return color_names[name];
+}
+
+var ColorNames = {
+    isColorName: isColorName,
+    getColorByName: getColorByName
+};
+
+var color_regexp = /(#(?:[\da-f]{3}){1,2}|rgb\((?:\s*\d{1,3},\s*){2}\d{1,3}\s*\)|rgba\((?:\s*\d{1,3},\s*){3}\d*\.?\d+\s*\)|hsl\(\s*\d{1,3}(?:,\s*\d{1,3}%){2}\s*\)|hsla\(\s*\d{1,3}(?:,\s*\d{1,3}%){2},\s*\d*\.?\d+\s*\)|([\w_\-]+))/gi;
+function matches$1(str) {
+    var matches = str.match(color_regexp);
+    var result = [];
+
+    if (!matches) {
+        return result;
+    }
+
+    for (var i = 0, len = matches.length; i < len; i++) {
+
+        if (matches[i].indexOf('#') > -1 || matches[i].indexOf('rgb') > -1 || matches[i].indexOf('hsl') > -1) {
+            result.push({ color: matches[i] });
+        } else {
+            var nameColor = ColorNames.getColorByName(matches[i]);
+
+            if (nameColor) {
+                result.push({ color: matches[i], nameColor: nameColor });
+            }
+        }
+    }
+
+    var pos = { next: 0 };
+    result.forEach(function (item) {
+        var startIndex = str.indexOf(item.color, pos.next);
+
+        item.startIndex = startIndex;
+        item.endIndex = startIndex + item.color.length;
+
+        pos.next = item.endIndex;
+    });
+
+    return result;
+}
+
+function convertMatches(str) {
+    var m = matches$1(str);
+
+    m.forEach(function (it, index) {
+        str = str.replace(it.color, '@' + index);
+    });
+
+    return { str: str, matches: m };
+}
+
+function convertMatchesArray(str) {
+    var splitStr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+
+    var ret = convertMatches(str);
+    return ret.str.split(splitStr).map(function (it, index) {
+        it = trim(it);
+
+        if (ret.matches[index]) {
+            it = it.replace('@' + index, ret.matches[index].color);
+        }
+
+        return it;
+    });
+}
+
+function reverseMatches(str, matches) {
+    matches.forEach(function (it, index) {
+        str = str.replace('@' + index, it.color);
+    });
+
+    return str;
+}
+
+function trim(str) {
+    return str.replace(/^\s+|\s+$/g, '');
+}
+
+/**
+ * @method rgb
+ *
+ * parse string to rgb color
+ *
+ * 		color.parse("#FF0000") === { r : 255, g : 0, b : 0 }
+ *
+ * 		color.parse("rgb(255, 0, 0)") == { r : 255, g : 0, b :0 }
+ * 		color.parse(0xff0000) == { r : 255, g : 0, b : 0 }
+ * 		color.parse(0xff000000) == { r : 255, g : 0, b : 0, a: 0 }
+ *
+ * @param {String} str color string
+ * @returns {Object}  rgb object
+ */
+function parse(str) {
+    if (isString(str)) {
+
+        if (ColorNames.isColorName(str)) {
+            str = ColorNames.getColorByName(str);
+        }
+
+        if (str.indexOf("rgb(") > -1) {
+            var arr = str.replace("rgb(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+                arr[i] = parseInt(trim(arr[i]), 10);
+            }
+
+            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: 1 };
+
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        } else if (str.indexOf("rgba(") > -1) {
+            var arr = str.replace("rgba(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+
+                if (len - 1 == i) {
+                    arr[i] = parseFloat(trim(arr[i]));
+                } else {
+                    arr[i] = parseInt(trim(arr[i]), 10);
+                }
+            }
+
+            var obj = { type: 'rgb', r: arr[0], g: arr[1], b: arr[2], a: arr[3] };
+
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        } else if (str.indexOf("hsl(") > -1) {
+            var arr = str.replace("hsl(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+                arr[i] = parseFloat(trim(arr[i]));
+            }
+
+            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: 1 };
+
+            obj = _extends({}, obj, HSLtoRGB(obj));
+
+            return obj;
+        } else if (str.indexOf("hsla(") > -1) {
+            var arr = str.replace("hsla(", "").replace(")", "").split(",");
+
+            for (var i = 0, len = arr.length; i < len; i++) {
+
+                if (len - 1 == i) {
+                    arr[i] = parseFloat(trim(arr[i]));
+                } else {
+                    arr[i] = parseInt(trim(arr[i]), 10);
+                }
+            }
+
+            var obj = { type: 'hsl', h: arr[0], s: arr[1], l: arr[2], a: arr[3] };
+
+            obj = _extends({}, obj, HSLtoRGB(obj));
+
+            return obj;
+        } else if (str.indexOf("#") == 0) {
+
+            str = str.replace("#", "");
+
+            var arr = [];
+            if (str.length == 3) {
+                for (var i = 0, len = str.length; i < len; i++) {
+                    var char = str.substr(i, 1);
+                    arr.push(parseInt(char + char, 16));
+                }
+            } else {
+                for (var i = 0, len = str.length; i < len; i += 2) {
+                    arr.push(parseInt(str.substr(i, 2), 16));
+                }
+            }
+
+            var obj = { type: 'hex', r: arr[0], g: arr[1], b: arr[2], a: 1 };
+
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        }
+    } else if (isNumber(str)) {
+        if (0x000000 <= str && str <= 0xffffff) {
+            var r = (str & 0xff0000) >> 16;
+            var g = (str & 0x00ff00) >> 8;
+            var b = (str & 0x0000ff) >> 0;
+
+            var obj = { type: 'hex', r: r, g: g, b: b, a: 1 };
+            obj = _extends({}, obj, RGBtoHSL(obj));
+            return obj;
+        } else if (0x00000000 <= str && str <= 0xffffffff) {
+            var _r = (str & 0xff000000) >> 24;
+            var _g = (str & 0x00ff0000) >> 16;
+            var _b = (str & 0x0000ff00) >> 8;
+            var a = (str & 0x000000ff) / 255;
+
+            var obj = { type: 'hex', r: _r, g: _g, b: _b, a: a };
+            obj = _extends({}, obj, RGBtoHSL(obj));
+
+            return obj;
+        }
+    }
+
+    return str;
+}
+
+function parseGradient(colors) {
+    if (isString(colors)) {
+        colors = convertMatchesArray(colors);
+    }
+
+    colors = colors.map(function (it) {
+        if (isString(it)) {
+            var ret = convertMatches(it);
+            var arr = trim(ret.str).split(' ');
+
+            if (arr[1]) {
+                if (arr[1].includes('%')) {
+                    arr[1] = parseFloat(arr[1].replace(/%/, '')) / 100;
+                } else {
+                    arr[1] = parseFloat(arr[1]);
+                }
+            } else {
+                arr[1] = '*';
+            }
+
+            arr[0] = reverseMatches(arr[0], ret.matches);
+
+            return arr;
+        } else if (Array.isArray(it)) {
+
+            if (!it[1]) {
+                it[1] = '*';
+            } else if (isString(it[1])) {
+                if (it[1].includes('%')) {
+                    it[1] = parseFloat(it[1].replace(/%/, '')) / 100;
+                } else {
+                    it[1] = +it[1];
+                }
+            }
+
+            return [].concat(toConsumableArray(it));
+        }
+    });
+
+    var count = colors.filter(function (it) {
+        return it[1] === '*';
+    }).length;
+
+    if (count > 0) {
+        var sum = colors.filter(function (it) {
+            return it[1] != '*' && it[1] != 1;
+        }).map(function (it) {
+            return it[1];
+        }).reduce(function (total, cur) {
+            return total + cur;
+        }, 0);
+
+        var dist = (1 - sum) / count;
+        colors.forEach(function (it, index) {
+            if (it[1] == '*' && index > 0) {
+                if (colors.length - 1 == index) {
+                    // it[1] = 1 
+                } else {
+                    it[1] = dist;
+                }
+            }
+        });
+    }
+
+    return colors;
+}
+
+
+
+var parser = Object.freeze({
+	matches: matches$1,
+	convertMatches: convertMatches,
+	convertMatchesArray: convertMatchesArray,
+	reverseMatches: reverseMatches,
+	trim: trim,
+	parse: parse,
+	parseGradient: parseGradient
+});
+
+/**
+ * @deprecated 
+ * 
+ * instead of this,  use blend function 
+ *  
+ * @param {*} startColor 
+ * @param {*} endColor 
+ * @param {*} t 
+ */
+function interpolateRGB(startColor, endColor) {
+    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
+
+    var obj = interpolateRGBObject(startColor, endColor, t);
+
+    return format(obj, obj.a < 1 ? 'rgb' : exportFormat);
+}
+
+function interpolateRGBObject(startColor, endColor) {
+    var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+
+    return {
+        r: round(startColor.r + (endColor.r - startColor.r) * t),
+        g: round(startColor.g + (endColor.g - startColor.g) * t),
+        b: round(startColor.b + (endColor.b - startColor.b) * t),
+        a: round(startColor.a + (endColor.a - startColor.a) * t, 100)
+    };
+}
+
+function scale(scale) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
+
+    if (!scale) return [];
+
+    if (isString(scale)) {
+        scale = convertMatchesArray(scale);
+    }
+
+    scale = scale || [];
+    var len = scale.length;
+
+    var colors = [];
+    for (var i = 0; i < len - 1; i++) {
+        for (var index = 0; index < count; index++) {
+            colors.push(blend(scale[i], scale[i + 1], index / count));
+        }
+    }
+    return colors;
+}
+
+function blend(startColor, endColor) {
+    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
+
+    var s = parse(startColor);
+    var e = parse(endColor);
+
+    return interpolateRGB(s, e, ratio, format$$1);
+}
+
+function mix(startcolor, endColor) {
+    var ratio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
+    var format$$1 = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
+
+    return blend(startcolor, endColor, ratio, format$$1);
+}
+
+/**
+ * 
+ * @param {Color|String} c 
+ */
+function contrast$1(c$$1) {
+    c$$1 = parse(c$$1);
+    return (Math.round(c$$1.r * 299) + Math.round(c$$1.g * 587) + Math.round(c$$1.b * 114)) / 1000;
+}
+
+function contrastColor(c$$1) {
+    return contrast$1(c$$1) >= 128 ? 'black' : 'white';
+}
+
+function gradient$1(colors) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+
+    colors = parseGradient(colors);
+
+    var newColors = [];
+    var maxCount = count - (colors.length - 1);
+    var allCount = maxCount;
+
+    for (var i = 1, len = colors.length; i < len; i++) {
+
+        var startColor = colors[i - 1][0];
+        var endColor = colors[i][0];
+
+        // if it is second color
+        var rate = i == 1 ? colors[i][1] : colors[i][1] - colors[i - 1][1];
+
+        // if it is last color 
+        var colorCount = i == colors.length - 1 ? allCount : Math.floor(rate * maxCount);
+
+        newColors = newColors.concat(scale([startColor, endColor], colorCount), [endColor]);
+
+        allCount -= colorCount;
+    }
+    return newColors;
+}
+
+function scaleHSV(color) {
+    var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'h';
+    var count = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 9;
+    var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'rgb';
+    var min = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+    var max = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1;
+    var dist = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 100;
+
+    var colorObj = parse(color);
+    var hsv = RGBtoHSV(colorObj);
+    var unit = (max - min) * dist / count;
+
+    var results = [];
+    for (var i = 1; i <= count; i++) {
+        hsv[target] = Math.abs((dist - unit * i) / dist);
+        results.push(format(HSVtoRGB(hsv), exportFormat));
+    }
+
+    return results;
+}
+
+function scaleH(color) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
+    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 360;
+
+    return scaleHSV(color, 'h', count, exportFormat, min, max, 1);
+}
+
+function scaleS(color) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
+    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
+
+    return scaleHSV(color, 's', count, exportFormat, min, max, 100);
+}
+
+function scaleV(color) {
+    var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 9;
+    var exportFormat = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgb';
+    var min = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var max = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1;
+
+    return scaleHSV(color, 'v', count, exportFormat, min, max, 100);
+}
+
+/* predefined scale colors */
+scale.parula = function (count) {
+    return scale(['#352a87', '#0f5cdd', '#00b5a6', '#ffc337', '#fdff00'], count);
+};
+
+scale.jet = function (count) {
+    return scale(['#00008f', '#0020ff', '#00ffff', '#51ff77', '#fdff00', '#ff0000', '#800000'], count);
+};
+
+scale.hsv = function (count) {
+    return scale(['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ff0000'], count);
+};
+
+scale.hot = function (count) {
+    return scale(['#0b0000', '#ff0000', '#ffff00', '#ffffff'], count);
+};
+scale.pink = function (count) {
+    return scale(['#1e0000', '#bd7b7b', '#e7e5b2', '#ffffff'], count);
+};
+
+scale.bone = function (count) {
+    return scale(['#000000', '#4a4a68', '#a6c6c6', '#ffffff'], count);
+};
+
+scale.copper = function (count) {
+    return scale(['#000000', '#3d2618', '#9d623e', '#ffa167', '#ffc77f'], count);
+};
+
+var mixin = Object.freeze({
+	interpolateRGB: interpolateRGB,
+	interpolateRGBObject: interpolateRGBObject,
+	scale: scale,
+	blend: blend,
+	mix: mix,
+	contrast: contrast$1,
+	contrastColor: contrastColor,
+	gradient: gradient$1,
+	scaleHSV: scaleHSV,
+	scaleH: scaleH,
+	scaleS: scaleS,
+	scaleV: scaleV
+});
+
+function array_equals(v1, v2) {
+    if (v1.length !== v2.length) return false;
+    for (var i = 0, len = v1.length; i < len; ++i) {
+        if (v1[i] !== v2[i]) return false;
+    }
+    return true;
+}
+
+function euclidean(v1, v2) {
+    var total = 0;
+
+    for (var i = 0, len = v1.length; i < len; i++) {
+        total += Math.pow(v2[i] - v1[i], 2);
+    }
+
+    return Math.sqrt(total);
+}
+
+function manhattan(v1, v2) {
+    var total = 0;
+
+    for (var i = 0, len = v1.length; i < len; i++) {
+        total += Math.abs(v2[i] - v1[i]);
+    }
+
+    return total;
+}
+
+function max(v1, v2) {
+    var max = 0;
+    for (var i = 0, len = v1.length; i < len; i++) {
+        max = Math.max(max, Math.abs(v2[i] - v1[i]));
+    }
+
+    return max;
+}
+
+var distances = {
+    euclidean: euclidean,
+    manhattan: manhattan,
+    max: max
+};
+
+var create_random_number = {
+    linear: function linear(num, count) {
+        var centeroids = [];
+        var start = Math.round(Math.random() * num);
+        var dist = Math.floor(num / count);
+
+        do {
+
+            centeroids.push(start);
+
+            start = (start + dist) % num;
+        } while (centeroids.length < count);
+
+        return centeroids;
+    },
+
+    shuffle: function shuffle(num, count) {
+        var centeroids = [];
+
+        while (centeroids.length < count) {
+
+            var index = Math.round(Math.random() * num);
+
+            if (centeroids.indexOf(index) == -1) {
+                centeroids.push(index);
+            }
+        }
+
+        return centeroids;
+    }
+
+};
+
+function randomCentroids(points, k) {
+    var method = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
+
+
+    var centeroids = create_random_number[method](points.length, k);
+
+    return centeroids.map(function (i) {
+        return points[i];
+    });
+
+    // var centeroids = points.slice(0);
+
+    // centeroids.sort(function () {
+    //     return (Math.round(Math.random()) - 0.5);
+    // })
+
+    // return centeroids.slice(0, k); 
+}
+
+function closestCenteroid(point, centeroids, distance) {
+    var min = Infinity,
+        kIndex = 0;
+
+    centeroids.forEach(function (center, i) {
+        var dist = distance(point, center);
+
+        if (dist < min) {
+            min = dist;
+            kIndex = i;
+        }
+    });
+
+    return kIndex;
+}
+
+function getCenteroid(assigned) {
+
+    if (!assigned.length) return [];
+
+    // initialize centeroid list 
+    var centeroid = new Array(assigned[0].length);
+    for (var i = 0, len = centeroid.length; i < len; i++) {
+        centeroid[i] = 0;
+    }
+
+    for (var index = 0, len = assigned.length; index < len; index++) {
+        var it = assigned[index];
+
+        var last = index + 1;
+
+        for (var j = 0, jLen = it.length; j < jLen; j++) {
+            centeroid[j] += (it[j] - centeroid[j]) / last;
+        }
+    }
+
+    centeroid = centeroid.map(function (it) {
+        return Math.floor(it);
+    });
+
+    return centeroid;
+}
+
+function unique_array(arrays) {
+    return arrays;
+    var set = {};
+    var count = arrays.length;
+    var it = null;
+    while (count--) {
+        it = arrays[count];
+        set[JSON.stringify(it)] = it;
+    }
+
+    return Object.values(set);
+}
+
+function splitK(k, points, centeroids, distance) {
+    var assignment = new Array(k);
+
+    for (var i = 0; i < k; i++) {
+        assignment[i] = [];
+    }
+
+    for (var idx = 0, pointLength = points.length; idx < pointLength; idx++) {
+        var point = points[idx];
+        var index = closestCenteroid(point, centeroids, distance);
+        assignment[index].push(point);
+    }
+
+    return assignment;
+}
+
+function setNewCenteroid(k, points, assignment, centeroids, movement, randomFunction) {
+
+    for (var i = 0; i < k; i++) {
+        var assigned = assignment[i];
+
+        var centeroid = centeroids[i];
+        var newCenteroid = new Array(centeroid.length);
+
+        if (assigned.length > 0) {
+            newCenteroid = getCenteroid(assigned);
+        } else {
+            var idx = Math.floor(randomFunction() * points.length);
+            newCenteroid = points[idx];
+        }
+
+        if (array_equals(newCenteroid, centeroid)) {
+            movement = false;
+        } else {
+            movement = true;
+        }
+
+        centeroids[i] = newCenteroid;
+    }
+
+    return movement;
+}
+
+function kmeans(points, k, distanceFunction) {
+    var period = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
+    var initialRandom = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'linear';
+
+    points = unique_array(points);
+
+    k = k || Math.max(2, Math.ceil(Math.sqrt(points.length / 2)));
+
+    var distance = distanceFunction || 'euclidean';
+    if (isString(distance)) {
+        distance = distances[distance];
+    }
+
+    var rng_seed = 0;
+    var random = function random() {
+        rng_seed = (rng_seed * 9301 + 49297) % 233280;
+        return rng_seed / 233280;
+    };
+
+    var centeroids = randomCentroids(points, k, initialRandom);
+
+    var movement = true;
+    var iterations = 0;
+    while (movement) {
+        var assignment = splitK(k, points, centeroids, distance);
+
+        movement = setNewCenteroid(k, points, assignment, centeroids, false, random);
+
+        iterations++;
+
+        if (iterations % period == 0) {
+            break;
+        }
+    }
+
+    return centeroids;
+}
+
+var ImageLoader = function () {
+    function ImageLoader(url) {
+        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        classCallCheck(this, ImageLoader);
+
+        this.isLoaded = false;
+        this.imageUrl = url;
+        this.opt = opt;
+        this.initialize();
+    }
+
+    createClass(ImageLoader, [{
+        key: 'initialize',
+        value: function initialize() {
+            this.canvas = this.createCanvas();
+            this.context = this.canvas.getContext('2d');
+        }
+    }, {
+        key: 'createCanvas',
+        value: function createCanvas() {
+            return document.createElement('canvas');
+        }
+    }, {
+        key: 'load',
+        value: function load(callback) {
+            this.loadImage(callback);
+        }
+    }, {
+        key: 'loadImage',
+        value: function loadImage(callback) {
+            var _this = this;
+
+            this.getImage(function (img) {
+                var ctx = _this.context;
+                var ratio = img.height / img.width;
+
+                if (_this.opt.canvasWidth && _this.opt.canvasHeight) {
+                    _this.canvas.width = _this.opt.canvasWidth;
+                    _this.canvas.height = _this.opt.canvasHeight;
+                } else {
+                    _this.canvas.width = _this.opt.maxWidth ? _this.opt.maxWidth : img.width;
+                    _this.canvas.height = _this.canvas.width * ratio;
+                }
+
+                ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, _this.canvas.width, _this.canvas.height);
+                _this.isLoaded = true;
+                callback && callback();
+            });
+        }
+    }, {
+        key: 'getImage',
+        value: function getImage(callback) {
+
+            this.newImage = new Image();
+            var img = this.newImage;
+            img.onload = function () {
+                callback && callback(img);
+            };
+
+            img.onerror = function (e) {
+                console.log(e, img.src);
+            };
+
+            this.getImageUrl(function (url) {
+                img.src = url;
+            });
+        }
+    }, {
+        key: 'load',
+        value: function load(callback) {
+            var _this2 = this;
+
+            this.newImage = new Image();
+            var img = this.newImage;
+            img.crossOrigin = "Anonymous";
+            img.onload = function () {
+                _this2.isLoaded = true;
+                callback && callback();
+            };
+
+            this.getImageUrl(function (url) {
+                img.src = url;
+            });
+        }
+    }, {
+        key: 'getImageUrl',
+        value: function getImageUrl(callback) {
+            if (isString(this.imageUrl)) {
+                return callback(this.imageUrl);
+            } else if (this.imageUrl instanceof Blob) {
+                var reader = new FileReader();
+
+                reader.onload = function (ev) {
+                    callback(ev.target.result);
+                };
+
+                reader.readAsDataURL(this.imageUrl);
+            }
+        }
+    }, {
+        key: 'getRGBA',
+        value: function getRGBA(r, g, b, a) {
+            return [r, g, b, a];
+        }
+    }, {
+        key: 'toArray',
+        value: function toArray$$1(filter, callback) {
+            var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+            var width = imagedata.width;
+            var height = imagedata.height;
+
+            var pixels = new Uint8ClampedArray(imagedata.data);
+
+            var bitmap = { pixels: pixels, width: width, height: height };
+
+            if (!filter) {
+                filter = function () {
+                    return function (bitmap, done) {
+                        done(bitmap);
+                    };
+                }();
+            }
+
+            filter(bitmap, function (newBitmap) {
+                var tmpCanvas = Canvas.drawPixels(newBitmap);
+
+                if (opt.returnTo == 'canvas') {
+                    callback(tmpCanvas);
+                } else {
+                    callback(tmpCanvas.toDataURL(opt.outputFormat || 'image/png'));
+                }
+            }, opt);
+        }
+    }, {
+        key: 'toHistogram',
+        value: function toHistogram(opt) {
+            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+            var width = imagedata.width;
+            var height = imagedata.height;
+
+            var pixels = new Uint8ClampedArray(imagedata.data);
+
+            var bitmap = { pixels: pixels, width: width, height: height };
+
+            return Canvas.getHistogram(bitmap);
+        }
+    }, {
+        key: 'toRGB',
+        value: function toRGB() {
+            var imagedata = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+            var rgba = imagedata.data;
+            var results = [];
+            for (var i = 0, len = rgba.length; i < len; i += 4) {
+                results[results.length] = [rgba[i + 0], rgba[i + 1], rgba[i + 2], rgba[i + 3]];
+            }
+
+            return results;
+        }
+    }]);
+    return ImageLoader;
+}();
 
 function parseParamNumber$2(param) {
     if (isString(param)) {
@@ -6135,8 +6143,8 @@ var GL$1 = {
     GLCanvas: GLCanvas
 };
 
-var functions = {
-    filter: filter
+var functions$1 = {
+    filter: filter$1
 };
 
 
@@ -6167,7 +6175,7 @@ function flatFilter(filterString) {
     var filter_list = [];
 
     if (isString(filterString)) {
-        filter_list = matches$1(filterString);
+        filter_list = matches(filterString);
     } else if (Array.isArray(filterString)) {
         filter_list = filterString;
     }
@@ -6195,7 +6203,7 @@ function flatFilter(filterString) {
     return allFilter;
 }
 
-function filter(img, filterString, callback, opt) {
+function filter$1(img, filterString, callback, opt) {
 
     var canvas = new GL$1.GLCanvas({
         width: opt.width || img.width,
@@ -6210,7 +6218,7 @@ function filter(img, filterString, callback, opt) {
     });
 }
 
-var GL = _extends({}, GL$1, functions);
+var GL = _extends({}, GL$1, functions$1);
 
 function palette(colors) {
     var k = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 6;
@@ -6280,7 +6288,7 @@ function GLToCanvas(url, filter, callback) {
     });
 }
 
-function histogram(url, callback) {
+function histogram$1(url, callback) {
     var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var img = new ImageLoader(url);
@@ -6353,18 +6361,18 @@ function ImageToHistogram(url, callback) {
 
 
 
-var image = Object.freeze({
+var image$1 = Object.freeze({
 	palette: palette,
 	ImageToRGB: ImageToRGB,
 	ImageToCanvas: ImageToCanvas,
 	ImageToURL: ImageToURL,
 	GLToCanvas: GLToCanvas,
-	histogram: histogram,
+	histogram: histogram$1,
 	histogramToPoints: histogramToPoints,
 	ImageToHistogram: ImageToHistogram
 });
 
-var Color$1 = _extends({}, formatter, math, mixin, parser, fromYCrCb, fromRGB, fromCMYK, fromHSV, fromHSL, fromLAB, image, func);
+var Color$1 = _extends({}, formatter, math, mixin, parser, fromYCrCb, fromRGB, fromCMYK, fromHSV, fromHSL, fromLAB, image$1, func);
 
 var hue_color = [{ rgb: '#ff0000', start: .0 }, { rgb: '#ffff00', start: .17 }, { rgb: '#00ff00', start: .33 }, { rgb: '#00ffff', start: .50 }, { rgb: '#0000ff', start: .67 }, { rgb: '#ff00ff', start: .83 }, { rgb: '#ff0000', start: 1 }];
 
@@ -6406,7 +6414,7 @@ var HueColor = {
 };
 
 // TODO: worker run 
-var ImageFilter = _extends({}, FilterList, functions$1);
+var ImageFilter = _extends({}, FilterList, functions);
 
 var GETTER_PREFIX = '*/';
 var ACTION_PREFIX = '/';
