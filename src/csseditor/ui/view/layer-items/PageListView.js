@@ -18,7 +18,7 @@ export default class PageListView extends UIElement {
     template () { 
         return `<div class='pages'>         
             <div class="page-list" ref="$pageList"></div>
-            <PageSampleList></PageSampleList>
+            <PageSampleList />
         </div>`
     }
 

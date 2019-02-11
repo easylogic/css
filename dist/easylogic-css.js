@@ -23193,7 +23193,7 @@ var PageListView = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n            <PageSampleList></PageSampleList>\n        </div>";
+            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n            <PageSampleList />\n        </div>";
         }
     }, {
         key: "makeItemNode",
@@ -26493,6 +26493,8 @@ var SelectionManager = function (_BaseModule) {
 
             var path = $store.read(ITEM_PATH, selectedId);
             $store.selection.pageId = path[path.length - 1];
+
+            console.log($store.selection);
 
             var layers = [];
 

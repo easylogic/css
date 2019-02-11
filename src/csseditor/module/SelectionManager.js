@@ -340,6 +340,8 @@ export default class SelectionManager extends BaseModule {
         var path = $store.read(ITEM_PATH, selectedId)
         $store.selection.pageId = path[path.length-1];
 
+        console.log($store.selection);
+
         var layers = [] 
 
         if ($store.selection.itemType == ITEM_TYPE_LAYER) {
