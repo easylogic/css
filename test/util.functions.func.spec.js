@@ -16,3 +16,15 @@ test('func - html short tag ', () => {
     expect(str).toEqual(`<Image a='1' ></Image> <Image b='2' ></Image>`);
 });
 
+test('func - html object import', () => {
+    var Obj = {b: 10}
+    var str = html`<Image a='1' ${Obj} />`
+    expect(str).toEqual(`<Image a='1' b="10" ></Image>`);
+})
+
+test('func - html function import', () => {
+    var Obj = {b: 10}
+    var str = html`<Image a='1' ${() => Obj} />`
+    expect(str).toEqual(`<Image a='1' b="10" ></Image>`);
+})
+

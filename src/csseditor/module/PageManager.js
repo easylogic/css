@@ -19,7 +19,7 @@ export default class PageManager extends BaseModule {
 
     [GETTER(PAGE_TO_CSS)] ($store, page = {}) {
         var sample = $store.read(ITEM_CONVERT_STYLE, page || {}) 
-
+        console.log(sample, page);
         var css ={
             overflow: sample.clip ? 'hidden' : EMPTY_STRING,
             'transform-style': sample.preserve ? 'preserve-3d' : 'flat',

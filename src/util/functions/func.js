@@ -123,8 +123,12 @@ export const html = (strings, ...args) => {
 
         if (isFunction(results)) {
             results = results()
-        } else if (isArray(results)) {
-            results = results.join('')
+        }
+        
+        if (isObject(results)) {
+            results = Object.keys(results).map(key => {
+                return `${key}="${results[key]}"`
+            }).join(' ')
         }
 
         return it + results;

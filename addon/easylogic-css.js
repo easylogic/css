@@ -339,8 +339,12 @@ var html = function html(strings) {
 
         if (isFunction(results)) {
             results = results();
-        } else if (isArray(results)) {
-            results = results.join('');
+        }
+
+        if (isObject(results)) {
+            results = Object.keys(results).map(function (key) {
+                return key + '="' + results[key] + '"';
+            }).join(' ');
         }
 
         return it + results;
@@ -25740,7 +25744,7 @@ var PageManager = function (_BaseModule) {
             var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
+            console.log(sample, page);
             var css = {
                 overflow: sample.clip ? 'hidden' : EMPTY_STRING,
                 'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
