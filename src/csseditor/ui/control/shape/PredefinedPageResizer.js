@@ -4,6 +4,7 @@ import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_IS_PAGE } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
+import { RESIZE_WINDOW } from '../../../types/ToolTypes';
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -77,6 +78,7 @@ export default class PredefinedPageResizer extends UIElement {
         var page = this.read(SELECTION_CURRENT_PAGE)
         page = {...page, ...style}
         this.commit(CHANGE_PAGE_SIZE, page)
+        this.emit(RESIZE_WINDOW)
         this.refresh();
     }
 

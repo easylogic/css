@@ -4,7 +4,7 @@ import { unitValue, pxUnit, SEGMENT_TYPE_MOVE, GUIDE_TYPE_VERTICAL, GUIDE_TYPE_H
 import { ITEM_SET } from "../types/ItemTypes";
 import { isNotUndefined } from "../../util/functions/func";
 import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "../types/SelectionTypes";
-import { ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_EACH_CHILDREN, ITEM_MAP_LAYER_CHILDREN } from "../types/ItemSearchTypes";
 import { GUIDE_RECT_POINT, GUIDE_COMPARE, GUIDE_SNAP_LAYER, GUIDE_SNAP_CACULATE } from "../types/GuideTypes";
 
 var MAX_DIST = 1; 
@@ -138,7 +138,7 @@ export default class GuideManager extends BaseModule {
         })
 
         var layers = [] 
-        $store.read(ITEM_EACH_CHILDREN, page.id, (item) => {
+        $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, (item) => {
             if ($store.read(SELECTION_CHECK, item.id) == false) { 
                 layers.push($store.read(GUIDE_RECT_POINT, item))
             }

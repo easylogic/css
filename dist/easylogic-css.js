@@ -3045,7 +3045,7 @@ var IMAGE_FILE_TYPE_SVG = 'svg';
 var GUIDE_TYPE_VERTICAL = '|';
 var GUIDE_TYPE_HORIZONTAL = '-';
 
-
+var SEGMENT_TYPE_ROTATE = 'rotate';
 var SEGMENT_TYPE_MOVE = 'move';
 var SEGMENT_TYPE_TOP = 'to top';
 var SEGMENT_TYPE_LEFT = 'to left';
@@ -21330,6 +21330,7 @@ var PredefinedPageResizer = function (_UIElement) {
             var page = this.read(SELECTION_CURRENT_PAGE);
             page = _extends({}, page, style);
             this.commit(CHANGE_PAGE_SIZE, page);
+            this.emit(RESIZE_WINDOW);
             this.refresh();
         }
     }, {
@@ -26274,7 +26275,7 @@ var GuideManager = function (_BaseModule) {
             });
 
             var layers = [];
-            $store.read(ITEM_EACH_CHILDREN, page.id, function (item) {
+            $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item) {
                 if ($store.read(SELECTION_CHECK, item.id) == false) {
                     layers.push($store.read(GUIDE_RECT_POINT, item));
                 }
