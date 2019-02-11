@@ -11310,7 +11310,7 @@ function CSS_SORTING(style) {
     return newStyle;
 }
 
-function CSS_TO_STRING$1(style) {
+function CSS_TO_STRING(style) {
     var newStyle = CSS_SORTING(style);
 
     return Object.keys(newStyle).filter(function (key) {
@@ -20335,7 +20335,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
                 var title = 1 + item.index / 100 + '. ' + (item.name || 'Layer');
 
-                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + CSS_TO_STRING$1(css) + '" title="' + title + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + CSS_TO_STRING$1(backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                </div> \n            ';
+                return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + CSS_TO_STRING(css) + '" title="' + title + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + CSS_TO_STRING(backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                </div> \n            ';
             });
         }
     }, {
@@ -20493,7 +20493,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.$el.children().forEach(function ($el) {
                 var item = _this3.get($el.attr('predefined-layer-id'));
 
-                $el.cssText(CSS_TO_STRING$1(_this3.setRectangle(item)));
+                $el.cssText(CSS_TO_STRING(_this3.setRectangle(item)));
             });
         }
     }, {
@@ -23965,7 +23965,7 @@ var LayerManager = function (_BaseModule) {
                 delete obj['filter'];
             }
 
-            return CSS_TO_STRING$1(obj);
+            return CSS_TO_STRING(obj);
         }
     }, {
         key: GETTER(LAYER_CACHE_TO_STRING),
@@ -23973,7 +23973,7 @@ var LayerManager = function (_BaseModule) {
             var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
             obj.position = 'absolute';
             return {
-                css: CSS_TO_STRING$1(obj),
+                css: CSS_TO_STRING(obj),
                 obj: obj
             };
         }
@@ -23986,7 +23986,7 @@ var LayerManager = function (_BaseModule) {
             var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
             obj.position = obj.position || 'absolute';
 
-            return CSS_TO_STRING$1(obj);
+            return CSS_TO_STRING(obj);
         }
     }, {
         key: GETTER(LAYER_MAKE_CLIPPATH),
@@ -24281,7 +24281,7 @@ var LayerManager = function (_BaseModule) {
 
             var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer));
 
-            return CSS_TO_STRING$1(cleanObject(results));
+            return CSS_TO_STRING(cleanObject(results));
         }
     }]);
     return LayerManager;
@@ -25825,7 +25825,7 @@ var PageManager = function (_BaseModule) {
             var obj = $store.read(PAGE_CACHE_TO_CSS, page) || {};
 
             return {
-                css: CSS_TO_STRING$1(obj),
+                css: CSS_TO_STRING(obj),
                 obj: obj
             };
         }

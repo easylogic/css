@@ -6,6 +6,7 @@ import { LAYER_TO_STRING_CLIPPATH, LAYER_TOEXPORT } from "../types/LayerTypes";
 import { EMPTY_STRING } from "../../util/css/types";
 import { ITEM_MAP_CHILDREN } from "../types/ItemSearchTypes";
 import { PAGE_TO_CSS } from "../types/PageTypes";
+import { CSS_TO_STRING } from "../../util/css/make";
 
 
 export default class ExportManager extends BaseModule {
