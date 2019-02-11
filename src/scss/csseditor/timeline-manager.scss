@@ -1,8 +1,10 @@
-$timeline-property-width: 600px;
-$timeline-title-padding: 30px;
+$timeline-property-width: 300px;
+$timeline-title-padding: 50px;
 $timeline-row-height: 30px;
 $timeline-keyframe-border-color: rgba($border-color, 0.3);
 $timeline-keyframe-time-color: rgba($border-color, 0.7);
+$pointer-size: 10px;
+
 
 .timeline-view {
     position: absolute;
@@ -71,6 +73,16 @@ $timeline-keyframe-time-color: rgba($border-color, 0.7);
         position: relative;
         flex: 1 1 auto;
 
+        .row {
+            position: relative;
+            box-sizing: border-box;
+            display: block;
+            height: $timeline-row-height;
+            border-bottom: 1px solid $border-color;
+            padding: 5px 0px;
+            font-size: 11px;
+        }
+
         .timeline-list {
             position: absolute;
             left: 0px;
@@ -80,35 +92,54 @@ $timeline-keyframe-time-color: rgba($border-color, 0.7);
             border-right:1px solid $border-color;
             box-sizing: border-box;
             overflow:auto;
-            background-color: yellow;
 
             .timeline-object {
-                height: $timeline-row-height;
-                border-bottom: 1px solid $border-color;
-                box-sizing: border-box;
-                display: grid;
-                grid-template-columns: 60px 2fr 120px 60px 60px;
+                position: relative;
 
-                .title {
-                    box-sizing: border-box;
+                .timeline-object-title {
+                    padding-left: $timeline-title-padding * 0.5;
                 }
 
-                &.group {
-                    .title {
-                        padding-left: $timeline-title-padding;
+                .timeline-group {
+
+                    .timeline-collapse {
+
+                        .property-title {
+                            padding-left: $timeline-title-padding * 1.5;
+                        }
+
+                        .timeline-property {
+                            padding-left: $timeline-title-padding * 2.5;
+
+                            label {
+                                margin-right: 20px;
+                                display: inline-block;
+                                vertical-align: middle;
+                            }
+
+                            input, select {
+                                appearance: none;
+                                background-color: transparent;
+                                display: inline-block;
+                                height: 20px;
+                                border: 1px solid $border-color;
+                                vertical-align: middle;
+                                box-sizing: border-box;
+                            } 
+
+                            input {
+                                width: 50px;
+                            }
+
+                            select {
+                                width: 150px;
+                            }
+                        }
+
                     }
-                }
 
-                &.property {
-
-                    display: none; 
-
-                    &.show {
-                        display: grid;
-                    }
-
-                    .title {
-                        padding-left: $timeline-title-padding * 2;
+                    .timeline-property {
+                        padding-left: 100px;
                     }
                 }
             }            
@@ -133,10 +164,73 @@ $timeline-keyframe-time-color: rgba($border-color, 0.7);
                 background-image: linear-gradient(to right, $timeline-keyframe-border-color 1px, transparent 1px);
 
                 .keyframe-object {
-                    height: $timeline-row-height;
-                    border-bottom: 1px solid $border-color;
-                    box-sizing: border-box;
                     position: relative;
+
+                    .keyfame-property {
+                        position: relative;
+
+                        .keyframe-item {
+                            position: absolute;
+                            top: 0px;
+                            bottom: 0px;
+                            box-sizing: border-box;
+                            z-index: 1;
+
+                            .bar {
+                                position: absolute;
+                                left: 0px;
+                                right: 0px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                                height: 3px;
+                                background-color: $border-color;
+                                cursor: move;      
+                                box-sizing: border-box;                          
+                            }
+
+                            .start {
+                                position: absolute;
+                                left: 0px;
+                                top: 50%;                                
+                                transform: translateX(-50%) translateY(-50%);
+                                width: $pointer-size;
+                                height: $pointer-size;
+                                box-sizing: border-box;
+                                background-color: rgba(255, 0, 0, 1);
+                                border: 1px solid white;
+                                box-shadow: 0 0 1px 1px $border-color;
+                                border-radius: 100%;
+                                z-index: 3;
+                                cursor: w-resize;
+
+                                &.selected {
+                                    width: $pointer-size * 1.4;
+                                    height: $pointer-size * 1.4;
+                                }                                
+                            }
+
+                            .end {
+                                position: absolute;
+                                left: 100%;
+                                top: 50%;
+                                transform: translateX(-50%) translateY(-50%);
+                                width: $pointer-size;
+                                height: $pointer-size;
+                                box-sizing: border-box;
+                                background-color: rgba(69, 216, 69, 1);
+                                border: 1px solid white;
+                                box-shadow: 0 0 1px 2px $border-color;
+                                border-radius: 100%;   
+                                z-index: 2;                                     
+                                cursor: e-resize;
+
+                                &.selected {
+                                    width: $pointer-size * 1.4;
+                                    height: $pointer-size * 1.4;
+                                }
+                            }                            
+                        }
+                    }
                 }
             }
 

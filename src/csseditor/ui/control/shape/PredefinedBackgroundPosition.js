@@ -5,8 +5,7 @@ import {
     CHANGE_IMAGE
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { valueUnit } from '../../../../util/css/types';
-import { POSITION_CENTER, POSITION_RIGHT, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../types/ItemTypes';
+import { valueUnit, POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../../util/css/types';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
 
 const defined_position = {

@@ -4,14 +4,12 @@ import {
     CHANGE_LAYER_SIZE, 
     CHANGE_LAYER_MOVE,
     CHANGE_LAYER_POSITION, 
-    CHANGE_SELECTION,
-    CHANGE_LAYER_ROTATE
+    CHANGE_SELECTION
 } from '../../../types/event';
 import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
-import { GUIDE_TYPE_HORIZONTAL } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { GUIDE_SNAP_LAYER } from '../../../types/GuideTypes';
-import { EMPTY_STRING } from '../../../../util/css/types';
+import { EMPTY_STRING, GUIDE_TYPE_HORIZONTAL } from '../../../../util/css/types';
 
 export default class MoveGuide extends UIElement {
 

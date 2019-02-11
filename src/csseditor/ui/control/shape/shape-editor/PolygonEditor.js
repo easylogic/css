@@ -9,11 +9,10 @@ import {
     CHANGE_LAYER_CLIPPATH_POLYGON, 
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
 } from "../../../../types/event";
-import { CLIP_PATH_TYPE_POLYGON } from "../../../../types/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
-import { percentUnit, stringUnit, EMPTY_STRING } from "../../../../../util/css/types";
-import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CHECKER, CAPTURE, LOAD } from "../../../../../util/Event";
+import { percentUnit, stringUnit, EMPTY_STRING, CLIP_PATH_TYPE_POLYGON } from "../../../../../util/css/types";
+import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CAPTURE, LOAD } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 

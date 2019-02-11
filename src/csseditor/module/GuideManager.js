@@ -1,7 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
-import { unitValue, pxUnit } from "../../util/css/types";
-import { GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_MOVE, SEGMENT_CHECK, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_RIGHT, ITEM_SET } from "../types/ItemTypes";
+import { unitValue, pxUnit, SEGMENT_TYPE_MOVE, GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_RIGHT, SEGMENT_CHECK } from "../../util/css/types";
+import { ITEM_SET } from "../types/ItemTypes";
 import { isNotUndefined } from "../../util/functions/func";
 import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "../types/SelectionTypes";
 import { ITEM_EACH_CHILDREN } from "../types/ItemSearchTypes";
@@ -180,7 +180,7 @@ export default class GuideManager extends BaseModule {
 
             if (
                 segmentType == SEGMENT_TYPE_TOP 
-                || segmentType == SEGMENT_TYPE_TOP_LEFT 
+                || segmentType == SEGMENT_TYPE_TOP_LEFT
                 || segmentType == SEGMENT_TYPE_TOP_RIGHT
             ) {
                 y = rect.y;
@@ -189,7 +189,7 @@ export default class GuideManager extends BaseModule {
                 positionObject = { id: rect.sourceId, y: pxUnit(y), height: pxUnit(height) };
             }  else if (                
                 segmentType == SEGMENT_TYPE_BOTTOM
-                || segmentType == SEGMENT_TYPE_BOTTOM_LEFT 
+                || segmentType == SEGMENT_TYPE_BOTTOM_LEFT
                 || segmentType == SEGMENT_TYPE_BOTTOM_RIGHT
             ) {
                 var height = rect.y - rect.sourceY; 

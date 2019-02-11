@@ -1,10 +1,11 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, DROP, INPUT, CLICK } from "../../../../util/Event";
-import { ITEM_TYPE_LAYER, ITEM_GET } from "../../../types/ItemTypes";
+import { ITEM_GET } from "../../../types/ItemTypes";
 import { TIMELINE_LIST } from "../../../types/TimelineTypes";
 import { CHANGE_TIMELINE, ADD_TIMELINE } from "../../../types/event";
-import { EMPTY_STRING } from "../../../../util/css/types";
+import { EMPTY_STRING, UNIT_PX } from "../../../../util/css/types";
 import { defaultValue } from "../../../../util/functions/func";
+import { IS_LAYER } from "../../../../util/css/make";
 
 
 const LAYER_TRANSFORM_PROPERTY = [
@@ -33,9 +34,9 @@ export default class TimelineObjectList extends UIElement {
 
     makeTimelineRow (timeline, index) {
 
-        var targetItem = this.read(ITEM_GET, timeline.targetId);
+        var targetItem = this.get(timeline.targetId);
 
-        if (targetItem.itemType === ITEM_TYPE_LAYER) {
+        if (IS_LAYER(targetItem)) {
             return this.makeTimelineObjectForLayer(timeline, targetItem, index);
         } 
 
@@ -48,24 +49,27 @@ export default class TimelineObjectList extends UIElement {
 
     makeTimelineObjectForLayer (timeline, targetItem, index) {
         return `
-            <div class='timeline-object'>
-                <div class='icon'></div>
-                <div class='title'>${targetItem.name || 'Layer'}</div>
-            </div>
-            <div class='timeline-object group'>
-                <div class='icon'></div>
-                <div class='title' id='${timeline.id}Transform'>Transform</div>
-            </div>
-            ${LAYER_TRANSFORM_PROPERTY.map(property => {
-                return `
-                <div class='timeline-object property' group-id='${timeline.id}Transform'>
-                    <div class='icon'></div>
-                    <div class='title'>${property}</div>
-                    <div class='value'>
-                        <input type='text' timeline-id='${timeline.id}' property-type='${property}' value='${this.getPropertyValue(targetItem, property)}' />px
+            <div class='timeline-object' data-type='layer'>
+                <div class='timeline-object-title row'>
+                    <div class='icon'></div>    
+                    <div class='title'>${targetItem.name ||  ((targetItem.index/100) + 1) + '. Layer'}</div>
+                </div>
+                <div class='timeline-group'>
+                    <div class='timeline-collapse' data-property='transform'>
+                        <div class='property-title row' >Transform</div>
+                        <div class='timeline-property-list' data-property='transform'>
+                            <div class='timeline-property row' data-property='translateX'>
+                                <label>translateX</label>
+                                <input type='number' data-type='translateX' /> <span class='unit'>${UNIT_PX}</span>
+                            </div>    
+                            <div class='timeline-property row' data-property='translateY'>
+                                <label>translateY</label>
+                                <input type='number' data-type='translateY' /> <span class='unit'>${UNIT_PX}</span>
+                            </div>    
+                        </div>
                     </div>
-                </div>`
-            }).join(EMPTY_STRING)}
+                </div>
+            </div>
         `
     }
 
@@ -77,14 +81,8 @@ export default class TimelineObjectList extends UIElement {
         this.refresh();
     }
 
-    appendTimeline (id) {
-        var timeline = this.read(ITEM_GET, id);
-        var str = this.makeTimelineRow(timeline);
-        this.$el.appendHTML(str);
-    }
-
     [EVENT(ADD_TIMELINE)] (id) {
-        this.appendTimeline(id);
+        this.refresh();
     }
 
     [CLICK('$el .group .title')] (e) {

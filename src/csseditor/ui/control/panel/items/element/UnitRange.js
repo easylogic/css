@@ -5,9 +5,8 @@ import {
     em2percent, em2px 
 } from "../../../../../../util/filter/functions";
 import { parseParamNumber } from "../../../../../../util/gl/filter/util";
-import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unit, unitObject, isPxUnit, isPercentUnit, isEmUnit, EMPTY_STRING } from "../../../../../../util/css/types";
+import { UNIT_PX, UNIT_PERCENT, UNIT_EM, isPercent, isPX, isEM, unitString, unitObject, isPxUnit, isPercentUnit, isEmUnit, EMPTY_STRING, POSITION_LEFT, POSITION_TOP, POSITION_RIGHT, POSITION_BOTTOM, POSITION_CENTER } from "../../../../../../util/css/types";
 import { INPUT, CLICK } from "../../../../../../util/Event";
-import { POSITION_LEFT, POSITION_TOP, POSITION_RIGHT, POSITION_BOTTOM, POSITION_CENTER } from "../../../../../types/ItemTypes";
 
 const position_list = [
     POSITION_LEFT, 

@@ -1,19 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
-import { 
-    ITEM_TYPE_IMAGE,
-    ITEM_TYPE_COLORSTEP,
-    ITEM_TYPE_BOXSHADOW,
-    ITEM_TYPE_TEXTSHADOW,
-    ITEM_TYPE_LAYER,
-    ITEM_GET,
-    ITEM_TYPE_PAGE,
-    ITEM_TYPE_TIMELINE,
-    ITEM_TYPE_KEYFRAME
-} from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
 import { isUndefined, clone } from "../../util/functions/func";
-import { EMPTY_STRING } from "../../util/css/types";
+import { EMPTY_STRING, ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, ITEM_TYPE_IMAGE, ITEM_TYPE_COLORSTEP, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
 import { 
     ITEM_MAP_PAGE, 
     ITEM_LIST_PAGE, 
@@ -124,11 +113,13 @@ export default class ItemSearchManager extends BaseModule {
     getChildrenMapForType ($store, parentId, itemType, callback = DEFAULT_FUNCTION) {
         var parent = this.get(parentId);
 
-        if (!parent.children) {
-            parent.children = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType))
+        parent.children = parent.children || {}
+
+        if (!parent.children[itemType]) {
+            parent.children[itemType] = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType))
         }
 
-        return parent.children.map(function (id, index) { 
+        return parent.children[itemType].map(function (id, index) { 
             return callback($store.items[id], index)
         });
     }
@@ -142,15 +133,11 @@ export default class ItemSearchManager extends BaseModule {
     }
 
     [GETTER(ITEM_MAP_TIMELINE_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_TIMELINE)).map(function (id, index) { 
-            return callback($store.items[id], index)
-        });        
+        return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TIMELINE, callback)
     }    
 
     [GETTER(ITEM_MAP_KEYFRAME_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, ITEM_TYPE_KEYFRAME)).map(function (id, index) { 
-            return callback($store.items[id], index)
-        });        
+        return this.getChildrenMapForType($store, parentId, ITEM_TYPE_KEYFRAME, callback)        
     }        
 
     [GETTER(ITEM_MAP_IMAGE_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {

@@ -6,16 +6,10 @@ import {
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { 
-    CLIP_PATH_TYPE_CIRCLE, 
-    CLIP_PATH_TYPE_ELLIPSE, 
-    CLIP_PATH_SIDE_TYPE_NONE,
-    CLIP_PATH_SIDE_TYPE_CLOSEST,
-    CLIP_PATH_SIDE_TYPE_FARTHEST
-} from "../../../../types/ItemTypes";
 import { CHANGE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { html } from "../../../../../util/functions/func";
+import { CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE } from "../../../../../util/css/types";
 
 const CLIP_PATH_SIDE_TYPES = [
     CLIP_PATH_SIDE_TYPE_NONE,

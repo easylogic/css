@@ -1,8 +1,8 @@
 import MenuItem from "./MenuItem";
-import { ITEM_TYPE_LAYER } from "../../../types/ItemTypes";
 import { ITEM_ADD_LAYER } from "../../../types/ItemCreateTypes";
 import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
 import { HISTORY_PUSH } from "../../../types/HistoryTypes";
+import { ITEM_TYPE_LAYER } from "../../../../util/css/types";
 
 export default class Rect extends MenuItem {
     getIcon() { return 'rect'; }

@@ -1,6 +1,5 @@
-import { CLIP_PATH_TYPE_POLYGON, SHAPE_TYPE_POLYGON } from "../../types/ItemTypes";
 import trapezoid from "../clip-path/trapezoid";
-
+import { SHAPE_TYPE_POLYGON, CLIP_PATH_TYPE_POLYGON } from "../../../util/css/types";
 
 export default {
     type: SHAPE_TYPE_POLYGON,

@@ -2,12 +2,11 @@ import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION } from "../../../../types/event";
-import { CLIP_PATH_TYPE_SVG } from "../../../../types/ItemTypes";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
-import { EMPTY_STRING } from "../../../../../util/css/types";
+import { EMPTY_STRING, CLIP_PATH_TYPE_SVG } from "../../../../../util/css/types";
 import { SVG_LIST, SVG_GET } from "../../../../types/SVGTypes";
 
 export default class ClipPathSVG extends BasePropertyItem {

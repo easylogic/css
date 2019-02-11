@@ -1,5 +1,5 @@
-import { SHAPE_TYPE_CIRCLE } from "../../types/ItemTypes";
-import { percentUnit } from "../../../util/css/types";
+
+import { percentUnit, SHAPE_TYPE_CIRCLE } from "../../../util/css/types";
 
 export default {
     type: SHAPE_TYPE_CIRCLE,

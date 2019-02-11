@@ -1,16 +1,16 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
-import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_CONVERT_STYLE } from "../types/ItemTypes";
-import { stringUnit, EMPTY_STRING } from "../../util/css/types";
+import { stringUnit, EMPTY_STRING, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
 import { isNotUndefined, isArray, cleanObject, combineKeyArray } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
 import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_MAP_IMAGE, LAYER_BORDER_PREVIEW } from "../types/LayerTypes";
-import { ITEM_FILTER_CHILDREN, ITEM_EACH_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_FILTER_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
 import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, PATTERN_MAKE, generateImagePattern } from "../../util/css/make";
+import { ITEM_CONVERT_STYLE } from "../types/ItemTypes";
 
 export default class LayerManager extends BaseModule {
    

@@ -5,9 +5,8 @@ import {
     CHANGE_PAGE_TRANSFORM
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { percentUnit, valueUnit } from '../../../../util/css/types';
-import { POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../types/ItemTypes';
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../types/SelectionTypes';
+import { percentUnit, valueUnit, POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../../util/css/types';
+import { SELECTION_CURRENT_PAGE } from '../../../types/SelectionTypes';
 
 const defined_position = {
     'to right': { 

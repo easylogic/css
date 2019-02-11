@@ -1,16 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { 
-    CLIP_PATH_TYPE_NONE, 
-    CLIP_PATH_TYPE_CIRCLE, 
-    CLIP_PATH_TYPE_ELLIPSE, 
-    CLIP_PATH_TYPE_POLYGON,
-    CLIP_PATH_TYPE_SVG, 
-    CLIP_PATH_SIDE_TYPE_CLOSEST,
-    CLIP_PATH_SIDE_TYPE_FARTHEST,
-    CLIP_PATH_SIDE_TYPE_NONE,
-    CLIP_PATH_TYPE_INSET
-} from "../types/ItemTypes";
-import { percent, stringUnit, percentUnit, value2px, unitValue, EMPTY_STRING } from "../../util/css/types";
+import { percent, stringUnit, percentUnit, value2px, unitValue, EMPTY_STRING, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_SVG, CLIP_PATH_TYPE_NONE } from "../../util/css/types";
 import { defaultValue } from "../../util/functions/func";
 import clipPathList from './clip-path/index'
 import { GETTER } from "../../util/Store";

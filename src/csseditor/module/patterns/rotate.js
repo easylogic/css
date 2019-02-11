@@ -1,6 +1,5 @@
-import { IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR } from "../../types/ItemTypes";
-import { clone, isNotUndefined, repeat } from "../../../util/functions/func";
-import { percentUnit } from "../../../util/css/types";
+import { isNotUndefined, repeat } from "../../../util/functions/func";
+import { percentUnit, IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR } from "../../../util/css/types";
 
 const DEFINED_ANGLES = {
     'to top': 0,

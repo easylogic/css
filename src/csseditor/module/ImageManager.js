@@ -2,12 +2,6 @@ import ImageLoader from '../../util/ImageLoader'
 import BaseModule from "../../colorpicker/BaseModule";
 import { ImageToRGB, palette } from '../../util/functions/image';
 import { isFunction} from '../../util/functions/func';
-import {  
-    IMAGE_FILE_TYPE_JPG,
-    IMAGE_FILE_TYPE_PNG,
-    IMAGE_FILE_TYPE_GIF,
-    IMAGE_FILE_TYPE_SVG
-} from '../types/ItemTypes';
 import { GETTER } from '../../util/Store';
 import { 
     IMAGE_GET_FILE, 
@@ -18,6 +12,7 @@ import {
 } from '../types/ImageTypes';
 import { ITEM_MAP_COLORSTEP_CHILDREN } from '../types/ItemSearchTypes';
 import { IMAGE_TO_LINEAR, IMAGE_TO_CSS } from '../../util/css/make';
+import { IMAGE_FILE_TYPE_JPG, IMAGE_FILE_TYPE_PNG, IMAGE_FILE_TYPE_GIF, IMAGE_FILE_TYPE_SVG } from '../../util/css/types';
 
 const IMAGE_LIST = [
     IMAGE_FILE_TYPE_JPG,

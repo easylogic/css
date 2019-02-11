@@ -1,8 +1,8 @@
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
-import { ITEM_TYPE_PAGE, ITEM_FOCUS } from '../../types/ItemTypes';
+import { ITEM_FOCUS } from '../../types/ItemTypes';
 import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CHECKER } from '../../../util/Event';
-import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_CHANGE, SELECTION_IS_PAGE, SELECTION_AREA } from '../../types/SelectionTypes';
+import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_PAGE, SELECTION_AREA } from '../../types/SelectionTypes';
 
 export default class HandleView extends GradientView {
 

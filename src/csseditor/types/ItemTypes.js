@@ -1,84 +1,5 @@
-import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit, EMPTY_STRING } from "../../util/css/types";
+import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit, EMPTY_STRING, ITEM_TYPE_PAGE, IS_OBJECT, CLIP_PATH_SIDE_TYPE_NONE, ITEM_TYPE_LAYER, SHAPE_TYPE_RECT, SHAPE_TYPE_CIRCLE, SHAPE_TYPE_POLYGON, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, IS_ATTRIBUTE, IMAGE_ITEM_TYPE_STATIC, POSITION_CENTER, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME } from "../../util/css/types";
 import { isNotUndefined } from "../../util/functions/func";
-
-export const ITEM_TYPE_PAGE = 'page';
-export const ITEM_TYPE_LAYER = 'layer';
-export const ITEM_TYPE_CIRCLE = 'circle';
-export const ITEM_TYPE_SHAPE = 'shape';
-export const ITEM_TYPE_GROUP = 'group';
-export const ITEM_TYPE_IMAGE = 'image';
-export const ITEM_TYPE_BOXSHADOW = 'boxshadow';
-export const ITEM_TYPE_TEXTSHADOW = 'textshadow';
-export const ITEM_TYPE_COLORSTEP = 'colorstep';
-export const ITEM_TYPE_TIMELINE = 'timeline';
-export const ITEM_TYPE_KEYFRAME = 'keyframe';
-
-export const IS_OBJECT = 'object';
-export const IS_ATTRIBUTE = 'attribute';
-
-
-export const SHAPE_TYPE_RECT = 'rect';
-export const SHAPE_TYPE_CIRCLE = 'circle';
-export const SHAPE_TYPE_POLYGON = 'polygon';
-
-export const IMAGE_ITEM_TYPE_LINEAR = 'linear';
-export const IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
-export const IMAGE_ITEM_TYPE_RADIAL = 'radial';
-export const IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
-export const IMAGE_ITEM_TYPE_CONIC = 'conic';
-export const IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
-export const IMAGE_ITEM_TYPE_STATIC = 'static';
-export const IMAGE_ITEM_TYPE_DIAMOND = 'diamond';
-export const IMAGE_ITEM_TYPE_IMAGE = 'image';
-
-
-export const CLIP_PATH_TYPE_NONE = 'none';
-export const CLIP_PATH_TYPE_CIRCLE = 'circle';
-export const CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
-export const CLIP_PATH_TYPE_INSET = 'inset';
-export const CLIP_PATH_TYPE_POLYGON = 'polygon';
-export const CLIP_PATH_TYPE_SVG = 'svg';
-
-export const CLIP_PATH_SIDE_TYPE_NONE = 'none';
-export const CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
-export const CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
-
-export const POSITION_TOP = 'top'
-export const POSITION_LEFT = 'left'
-export const POSITION_RIGHT = 'right'
-export const POSITION_BOTTOM = 'bottom'
-export const POSITION_CENTER = 'center'
-
-export const IMAGE_FILE_TYPE_JPG = 'jpg'
-export const IMAGE_FILE_TYPE_GIF = 'gif'
-export const IMAGE_FILE_TYPE_PNG = 'png'
-export const IMAGE_FILE_TYPE_SVG = 'svg'
-
-export const GUIDE_TYPE_VERTICAL = '|';
-export const GUIDE_TYPE_HORIZONTAL = '-';
-
-export const SEGMENT_TYPE_ROTATE = 'rotate';
-export const SEGMENT_TYPE_MOVE = 'move';
-export const SEGMENT_TYPE_TOP = 'to top';
-export const SEGMENT_TYPE_LEFT = 'to left';
-export const SEGMENT_TYPE_RIGHT = 'to right';
-export const SEGMENT_TYPE_BOTTOM = 'to bottom';
-export const SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-export const SEGMENT_TYPE_TOP_LEFT = 'to top left';
-export const SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-export const SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
-
-export const SEGMENT_CHECK = {
-    [SEGMENT_TYPE_MOVE]: {move: true},
-    [SEGMENT_TYPE_TOP]: {yIndex : 0},
-    [SEGMENT_TYPE_TOP_LEFT]: {yIndex : 0, xIndex: 0},
-    [SEGMENT_TYPE_TOP_RIGHT]: {yIndex : 0, xIndex: 2},
-    [SEGMENT_TYPE_LEFT]: {xIndex : 0},
-    [SEGMENT_TYPE_RIGHT]: {xIndex : 2},
-    [SEGMENT_TYPE_BOTTOM]: {yIndex : 2},
-    [SEGMENT_TYPE_BOTTOM_LEFT]: {yIndex : 2, xIndex: 0},
-    [SEGMENT_TYPE_BOTTOM_RIGHT]: {yIndex : 2, xIndex: 2}
-}
 
 export const ITEM_SET = 'item/set';
 export const ITEM_GET = 'item/get';
@@ -103,7 +24,6 @@ export const PAGE_DEFAULT_OBJECT = {
     width: pxUnit(400),
     height: pxUnit(300)
 }
-
 export const FILTER_DEFAULT_OBJECT = {
     'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
     'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },

@@ -9,8 +9,8 @@ import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { ITEM_TYPE_CIRCLE } from "../../../../types/ItemTypes";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { IS_CIRCLE } from "../../../../../util/css/make";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {
@@ -56,7 +56,7 @@ export default class RadiusFixed extends BasePropertyItem {
         var layer = this.read(SELECTION_CURRENT_LAYER);
 
         if (!layer) return false; 
-        if (layer.type == ITEM_TYPE_CIRCLE) return false;
+        if (IS_CIRCLE(layer)) return false;
 
         return true;
     }

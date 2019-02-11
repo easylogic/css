@@ -4,7 +4,7 @@ import {
     packXY,
     fillPixelColor
 } from '../functions'
-import { POSITION_CENTER } from '../../../csseditor/types/ItemTypes';
+import { POSITION_CENTER } from '../../css/types';
 
 export default function rotateDegree(angle, cx = POSITION_CENTER, cy = POSITION_CENTER) {
     // const r = F.radian(angle)

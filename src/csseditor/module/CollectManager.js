@@ -1,9 +1,8 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_GET } from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
 import { COLLECT_COLORSTEPS, COLLECT_ONE, COLLECT_PAGE_ONE, COLLECT_LAYER_ONE, COLLECT_IMAGE_ONE, COLLECT_BOXSHADOW_ONE, COLLECT_TEXTSHADOW_ONE, COLLECT_IMAGES, COLLECT_BOXSHADOWS, COLLECT_TEXTSHADOWS, COLLECT_LAYERS } from "../types/CollectTypes";
-import { clone } from "../../util/functions/func";
 import { ITEM_MAP_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_BOXSHADOW_CHILDREN, ITEM_MAP_TEXTSHADOW_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
 
 export default class CollectManager extends BaseModule {
 

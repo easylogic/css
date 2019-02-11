@@ -33,7 +33,7 @@ export default class CSSEditor extends UIElement {
 
     template () {
         return `
-            <div class="layout-main show-timeline" ref="$layoutMain">
+            <div class="layout-main" ref="$layoutMain">
                 <div class="layout-header">
                     <div class="page-tab-menu"><ToolMenu /></div>
                 </div>

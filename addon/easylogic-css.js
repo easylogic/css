@@ -518,264 +518,6 @@ var toConsumableArray = function (arr) {
   }
 };
 
-var _SEGMENT_CHECK;
-
-var ITEM_TYPE_PAGE = 'page';
-var ITEM_TYPE_LAYER = 'layer';
-var ITEM_TYPE_CIRCLE = 'circle';
-
-var ITEM_TYPE_GROUP = 'group';
-var ITEM_TYPE_IMAGE = 'image';
-var ITEM_TYPE_BOXSHADOW = 'boxshadow';
-var ITEM_TYPE_TEXTSHADOW$1 = 'textshadow';
-var ITEM_TYPE_COLORSTEP = 'colorstep';
-
-var IS_OBJECT = 'object';
-var IS_ATTRIBUTE = 'attribute';
-
-var SHAPE_TYPE_RECT = 'rect';
-var SHAPE_TYPE_CIRCLE = 'circle';
-var SHAPE_TYPE_POLYGON = 'polygon';
-
-var IMAGE_ITEM_TYPE_LINEAR = 'linear';
-var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
-var IMAGE_ITEM_TYPE_RADIAL = 'radial';
-var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
-var IMAGE_ITEM_TYPE_CONIC = 'conic';
-var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
-var IMAGE_ITEM_TYPE_STATIC = 'static';
-
-var IMAGE_ITEM_TYPE_IMAGE = 'image';
-
-var CLIP_PATH_TYPE_NONE = 'none';
-var CLIP_PATH_TYPE_CIRCLE = 'circle';
-var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
-var CLIP_PATH_TYPE_INSET = 'inset';
-var CLIP_PATH_TYPE_POLYGON = 'polygon';
-var CLIP_PATH_TYPE_SVG = 'svg';
-
-var CLIP_PATH_SIDE_TYPE_NONE = 'none';
-var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
-var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
-
-var POSITION_TOP = 'top';
-var POSITION_LEFT = 'left';
-var POSITION_RIGHT = 'right';
-var POSITION_BOTTOM = 'bottom';
-var POSITION_CENTER = 'center';
-
-var IMAGE_FILE_TYPE_JPG = 'jpg';
-var IMAGE_FILE_TYPE_GIF = 'gif';
-var IMAGE_FILE_TYPE_PNG = 'png';
-var IMAGE_FILE_TYPE_SVG = 'svg';
-
-var GUIDE_TYPE_VERTICAL = '|';
-var GUIDE_TYPE_HORIZONTAL = '-';
-
-var SEGMENT_TYPE_ROTATE = 'rotate';
-var SEGMENT_TYPE_MOVE = 'move';
-var SEGMENT_TYPE_TOP = 'to top';
-var SEGMENT_TYPE_LEFT = 'to left';
-var SEGMENT_TYPE_RIGHT = 'to right';
-var SEGMENT_TYPE_BOTTOM = 'to bottom';
-var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-var SEGMENT_TYPE_TOP_LEFT = 'to top left';
-var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
-
-var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
-
-var ITEM_SET = 'item/set';
-var ITEM_GET = 'item/get';
-var ITEM_CONVERT_STYLE = 'item/convert/style';
-var ITEM_SET_ALL = 'item/set/all';
-var ITEM_SORT = 'item/sort';
-var ITEM_REMOVE_CHILDREN = 'item/remove/children';
-var ITEM_REMOVE = 'item/remove';
-var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
-var ITEM_REMOVE_ALL = 'item/remove/all';
-var ITEM_FOCUS = 'item/focus';
-var ITEM_LOAD = 'item/load';
-var ITEM_INIT_CHILDREN = 'item/init/children';
-
-/* page is equal to artboard */
-var PAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_PAGE,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    index: 0,
-    width: pxUnit(400),
-    height: pxUnit(300)
-};
-
-var FILTER_DEFAULT_OBJECT = {
-    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
-    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
-    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
-    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
-    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
-    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
-    'filterDropshadow': { index: 60 },
-    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
-    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
-    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
-    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
-    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
-    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
-    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
-};
-
-var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
-    return isNotUndefined(FILTER_DEFAULT_OBJECT[key].index);
-});
-
-var BACKDROP_DEFAULT_OBJECT = {
-    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
-    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
-    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
-    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
-    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
-    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
-    'backdropDropshadow': { index: 60 },
-    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
-    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
-    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
-    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
-    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
-    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
-    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
-};
-
-var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
-    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index);
-});
-
-var CLIP_PATH_DEFAULT_OBJECT = {
-    clipPathType: 'none',
-    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
-    clipPathSvg: EMPTY_STRING,
-    fitClipPathSize: false,
-    clipText: false,
-    clipPathRadiusX: undefined,
-    clipPathRadiusY: undefined,
-    clipPathCenterX: undefined,
-    clipPathCenterY: undefined
-
-    /* layer can has children layers. */
-};var LAYER_DEFAULT_OBJECT = _extends({
-    itemType: ITEM_TYPE_LAYER,
-    is: IS_OBJECT,
-    type: SHAPE_TYPE_RECT,
-    name: EMPTY_STRING,
-    index: 0,
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    parentId: EMPTY_STRING,
-    mixBlendMode: 'normal',
-    selected: true,
-    visible: true,
-    x: pxUnit(0),
-    y: pxUnit(0),
-    width: pxUnit(200),
-    height: pxUnit(200),
-    rotate: 0,
-    opacity: 1,
-    fontFamily: 'serif',
-    fontSize: '13px',
-    fontWeight: 400,
-    wordBreak: 'break-word',
-    wordWrap: 'break-word',
-    lineHeight: 1.6,
-    content: EMPTY_STRING
-}, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
-
-var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
-    type: SHAPE_TYPE_CIRCLE,
-    borderRadius: percentUnit(100),
-    fixedRadius: true
-});
-
-var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
-    type: SHAPE_TYPE_POLYGON,
-    fixedShape: true
-});
-
-var GROUP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_GROUP,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    index: 0,
-    parentId: EMPTY_STRING,
-    selected: true,
-    visible: true,
-    x: pxUnit(0),
-    y: pxUnit(0)
-};
-
-var IMAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_IMAGE,
-    is: IS_ATTRIBUTE,
-    type: IMAGE_ITEM_TYPE_STATIC,
-    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
-    index: 0,
-    parentId: EMPTY_STRING,
-    angle: 90,
-    color: 'red',
-    radialType: 'ellipse',
-    radialPosition: POSITION_CENTER,
-    visible: true,
-    isClipPath: false,
-    pattern: {},
-    backgroundRepeat: null,
-    backgroundSize: null,
-    backgroundSizeWidth: 0,
-    backgroundSizeHeight: 0,
-    backgroundOrigin: null,
-    backgroundPositionX: undefined,
-    backgroundPositionY: undefined,
-    backgroundBlendMode: 'normal',
-    backgroundColor: null,
-    backgroundAttachment: null,
-    backgroundClip: null,
-    backgroundImage: null,
-    backgroundImageDataURI: null
-};
-
-var BOXSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_BOXSHADOW,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    inset: false,
-    blurRadius: pxUnit(0),
-    spreadRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var TEXTSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TEXTSHADOW$1,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    blurRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var COLORSTEP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_COLORSTEP,
-    is: IS_ATTRIBUTE,
-    parentId: EMPTY_STRING,
-    percent: 0,
-    color: 'rgba(0, 0, 0, 0)'
-};
-
-var DEFAULT_TOOL_SIZE = {
-    'board.offset': { left: 0, top: 0 },
-    'page.offset': { left: 0, top: 0 },
-    'board.scrollTop': 0,
-    'board.scrollLeft': 0
-};
-
 function rotateDegree(angle) {
     var cx = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : POSITION_CENTER;
     var cy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : POSITION_CENTER;
@@ -3041,6 +2783,7 @@ function partial(area) {
 }
 
 var _UNIT_STRINGS;
+var _SEGMENT_CHECK;
 
 var EMPTY_STRING = '';
 
@@ -3202,6 +2945,73 @@ function convertPercentUnit(obj) {
 
     return obj;
 }
+
+var ITEM_TYPE_PAGE = 'page';
+var ITEM_TYPE_LAYER = 'layer';
+var ITEM_TYPE_CIRCLE = 'circle';
+
+var ITEM_TYPE_GROUP = 'group';
+var ITEM_TYPE_IMAGE = 'image';
+var ITEM_TYPE_BOXSHADOW = 'boxshadow';
+var ITEM_TYPE_TEXTSHADOW = 'textshadow';
+var ITEM_TYPE_COLORSTEP = 'colorstep';
+var ITEM_TYPE_TIMELINE = 'timeline';
+var ITEM_TYPE_KEYFRAME = 'keyframe';
+
+var IS_OBJECT = 'object';
+var IS_ATTRIBUTE = 'attribute';
+
+var SHAPE_TYPE_RECT = 'rect';
+var SHAPE_TYPE_CIRCLE = 'circle';
+var SHAPE_TYPE_POLYGON = 'polygon';
+
+var IMAGE_ITEM_TYPE_LINEAR = 'linear';
+var IMAGE_ITEM_TYPE_REPEATING_LINEAR = 'repeating-linear';
+var IMAGE_ITEM_TYPE_RADIAL = 'radial';
+var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
+var IMAGE_ITEM_TYPE_CONIC = 'conic';
+var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
+var IMAGE_ITEM_TYPE_STATIC$1 = 'static';
+
+var IMAGE_ITEM_TYPE_IMAGE$1 = 'image';
+
+var CLIP_PATH_TYPE_NONE = 'none';
+var CLIP_PATH_TYPE_CIRCLE = 'circle';
+var CLIP_PATH_TYPE_ELLIPSE = 'ellipse';
+var CLIP_PATH_TYPE_INSET = 'inset';
+var CLIP_PATH_TYPE_POLYGON = 'polygon';
+var CLIP_PATH_TYPE_SVG = 'svg';
+
+var CLIP_PATH_SIDE_TYPE_NONE = 'none';
+var CLIP_PATH_SIDE_TYPE_CLOSEST = 'closest-side';
+var CLIP_PATH_SIDE_TYPE_FARTHEST = 'farthest-side';
+
+var POSITION_TOP = 'top';
+var POSITION_LEFT = 'left';
+var POSITION_RIGHT = 'right';
+var POSITION_BOTTOM = 'bottom';
+var POSITION_CENTER = 'center';
+
+var IMAGE_FILE_TYPE_JPG = 'jpg';
+var IMAGE_FILE_TYPE_GIF = 'gif';
+var IMAGE_FILE_TYPE_PNG = 'png';
+var IMAGE_FILE_TYPE_SVG = 'svg';
+
+var GUIDE_TYPE_VERTICAL = '|';
+var GUIDE_TYPE_HORIZONTAL = '-';
+
+
+var SEGMENT_TYPE_MOVE = 'move';
+var SEGMENT_TYPE_TOP = 'to top';
+var SEGMENT_TYPE_LEFT = 'to left';
+var SEGMENT_TYPE_RIGHT = 'to right';
+var SEGMENT_TYPE_BOTTOM = 'to bottom';
+var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+var SEGMENT_TYPE_TOP_LEFT = 'to top left';
+var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
+var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
 
 function debounce(callback, delay) {
 
@@ -6683,6 +6493,19 @@ var Dom = function () {
             return this;
         }
     }, {
+        key: "appendHTML",
+        value: function appendHTML(html$$1) {
+            var list = new Dom("div").html(html$$1).children();
+
+            var fragment = document.createDocumentFragment();
+
+            list.forEach(function ($el) {
+                fragment.appendChild($el.el);
+            });
+
+            this.append(fragment);
+        }
+    }, {
         key: "appendTo",
         value: function appendTo(target) {
             var t = target.el ? target.el : target;
@@ -6934,6 +6757,18 @@ var Dom = function () {
             }
         }
     }, {
+        key: "setScrollTop",
+        value: function setScrollTop(scrollTop) {
+            this.el.scrollTop = scrollTop;
+            return this;
+        }
+    }, {
+        key: "setScrollLeft",
+        value: function setScrollLeft(scrollLeft) {
+            this.el.scrollLeft = scrollLeft;
+            return this;
+        }
+    }, {
         key: "scrollTop",
         value: function scrollTop() {
             if (this.el === document.body) {
@@ -6950,6 +6785,11 @@ var Dom = function () {
             }
 
             return this.el.scrollLeft;
+        }
+    }, {
+        key: "scrollHeight",
+        value: function scrollHeight() {
+            return this.el.scrollHeight;
         }
     }, {
         key: "on",
@@ -7152,6 +6992,8 @@ var KEY_ARROW_LEFT = 'ArrowLeft';
 var KEY_ARROW_RIGHT = 'ArrowRight';
 var KEY_ENTER = 'Enter';
 
+var KEY_SPACE = 'Space';
+
 var ALT = CHECKER(KEY_ALT);
 var SHIFT = CHECKER(KEY_SHIFT);
 var META = CHECKER(KEY_META);
@@ -7162,6 +7004,8 @@ var ARROW_DOWN = CHECKER(KEY_ARROW_DOWN);
 var ARROW_LEFT = CHECKER(KEY_ARROW_LEFT);
 var ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT);
 var ENTER = CHECKER(KEY_ENTER);
+
+var SPACE = CHECKER(KEY_SPACE);
 
 var SELF = CHECKER('self');
 var CAPTURE = CHECKER('capture');
@@ -7759,12 +7603,222 @@ var EventMachin = function () {
   return EventMachin;
 }();
 
+var ITEM_SET = 'item/set';
+var ITEM_GET = 'item/get';
+var ITEM_CONVERT_STYLE = 'item/convert/style';
+var ITEM_SET_ALL = 'item/set/all';
+var ITEM_SORT = 'item/sort';
+var ITEM_REMOVE_CHILDREN = 'item/remove/children';
+var ITEM_REMOVE = 'item/remove';
+var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
+var ITEM_REMOVE_ALL = 'item/remove/all';
+var ITEM_FOCUS = 'item/focus';
+var ITEM_LOAD = 'item/load';
+var ITEM_INIT_CHILDREN = 'item/init/children';
+
+/* page is equal to artboard */
+var PAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_PAGE,
+    is: IS_OBJECT,
+    name: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    index: 0,
+    width: pxUnit(400),
+    height: pxUnit(300)
+};
+var FILTER_DEFAULT_OBJECT = {
+    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'filterDropshadow': { index: 60 },
+    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
+    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
+    return isNotUndefined(FILTER_DEFAULT_OBJECT[key].index);
+});
+
+var BACKDROP_DEFAULT_OBJECT = {
+    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'backdropDropshadow': { index: 60 },
+    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
+    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
+    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
+    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
+    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index);
+});
+
+var CLIP_PATH_DEFAULT_OBJECT = {
+    clipPathType: 'none',
+    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
+    clipPathSvg: EMPTY_STRING,
+    fitClipPathSize: false,
+    clipText: false,
+    clipPathRadiusX: undefined,
+    clipPathRadiusY: undefined,
+    clipPathCenterX: undefined,
+    clipPathCenterY: undefined
+
+    /* layer can has children layers. */
+};var LAYER_DEFAULT_OBJECT = _extends({
+    itemType: ITEM_TYPE_LAYER,
+    is: IS_OBJECT,
+    type: SHAPE_TYPE_RECT,
+    name: EMPTY_STRING,
+    index: 0,
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    parentId: EMPTY_STRING,
+    mixBlendMode: 'normal',
+    selected: true,
+    visible: true,
+    x: pxUnit(0),
+    y: pxUnit(0),
+    width: pxUnit(200),
+    height: pxUnit(200),
+    rotate: 0,
+    opacity: 1,
+    fontFamily: 'serif',
+    fontSize: '13px',
+    fontWeight: 400,
+    wordBreak: 'break-word',
+    wordWrap: 'break-word',
+    lineHeight: 1.6,
+    content: EMPTY_STRING
+}, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
+
+var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_CIRCLE,
+    borderRadius: percentUnit(100),
+    fixedRadius: true
+});
+
+var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_POLYGON,
+    fixedShape: true
+});
+
+var GROUP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_GROUP,
+    is: IS_OBJECT,
+    name: EMPTY_STRING,
+    index: 0,
+    parentId: EMPTY_STRING,
+    selected: true,
+    visible: true,
+    x: pxUnit(0),
+    y: pxUnit(0)
+};
+
+var IMAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_IMAGE,
+    is: IS_ATTRIBUTE,
+    type: IMAGE_ITEM_TYPE_STATIC$1,
+    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    index: 0,
+    parentId: EMPTY_STRING,
+    angle: 90,
+    color: 'red',
+    radialType: 'ellipse',
+    radialPosition: POSITION_CENTER,
+    visible: true,
+    isClipPath: false,
+    pattern: {},
+    backgroundRepeat: null,
+    backgroundSize: null,
+    backgroundSizeWidth: 0,
+    backgroundSizeHeight: 0,
+    backgroundOrigin: null,
+    backgroundPositionX: undefined,
+    backgroundPositionY: undefined,
+    backgroundBlendMode: 'normal',
+    backgroundColor: null,
+    backgroundAttachment: null,
+    backgroundClip: null,
+    backgroundImage: null,
+    backgroundImageDataURI: null
+};
+
+var BOXSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_BOXSHADOW,
+    is: IS_ATTRIBUTE,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    inset: false,
+    blurRadius: pxUnit(0),
+    spreadRadius: pxUnit(0),
+    color: 'rgb(0, 0, 0)'
+};
+
+var TEXTSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TEXTSHADOW,
+    is: IS_ATTRIBUTE,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    blurRadius: pxUnit(0),
+    color: 'rgb(0, 0, 0)'
+};
+
+var COLORSTEP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_COLORSTEP,
+    is: IS_ATTRIBUTE,
+    parentId: EMPTY_STRING,
+    percent: 0,
+    color: 'rgba(0, 0, 0, 0)'
+};
+
+var TIMELINE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TIMELINE,
+    targetId: EMPTY_STRING,
+    parentId: EMPTY_STRING
+};
+
+var KEYFRAME_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_KEYFRAME,
+    targetId: EMPTY_STRING,
+    attribute: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    delay: 0,
+    duration: 1000,
+    timing: 'linear',
+    iteration: 1,
+    direction: 'alternate'
+};
+var DEFAULT_TOOL_SIZE = {
+    'board.offset': { left: 0, top: 0 },
+    'page.offset': { left: 0, top: 0 },
+    'board.scrollTop': 0,
+    'board.scrollLeft': 0
+};
+
 var TOOL_COLOR_SOURCE = 'tool/colorSource';
 var TOOL_GET = 'tool/get';
 var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
 var TOOL_CHANGE_COLOR = 'tool/changeColor';
 var TOOL_SET = 'tool/set';
 var TOOL_TOGGLE = 'tool/toggle';
+
+var TOOL_SAVE_DATA = 'tool/save/data';
+var TOOL_RESTORE_DATA = 'tool/restore/data';
 var RESIZE_WINDOW = 'resize/window';
 
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
@@ -10487,7 +10541,9 @@ var CHANGE_TOOL = 'CHANGE_TOOL';
 var CHANGE_TOOL_SIZE = 'CHANGE_TOOL_SIZE';
 var CHANGE_HISTORY = 'CHANGE_HISTORY';
 
-var CHANGE_EDITOR = 'CHANGE_EDITOR';
+var CHANGE_EDITOR$1 = 'CHANGE_EDITOR';
+var CHANGE_TIMELINE = 'CHANGE_TIMELINE';
+
 var CHANGE_SELECTION = 'CHANGE_SELECTION';
 var CHANGE_PAGE = 'CHANGE_PAGE';
 var CHANGE_PAGE_NAME = 'CHANGE_PAGE_NAME';
@@ -10529,6 +10585,9 @@ var CHANGE_COLOR_STEP = 'CHANGE_COLOR_STEP';
 var ADD_COLOR_STEP = 'ADD_COLOR_STEP';
 var REMOVE_COLOR_STEP = 'REMOVE_COLOR_STEP';
 
+var ADD_TIMELINE = 'ADD_TIMELINE';
+
+
 var TEXT_FILL_COLOR = 'TEXT_FILL_COLOR';
 var SELECT_TAB_LAYER = 'SELECT_TAB_LAYER';
 var SELECT_TAB_IMAGE = 'SELECT_TAB_IMAGE';
@@ -10561,8 +10620,8 @@ var SELECTION_IS_IMAGE = 'selection/is/image';
 var SELECTION_IS_PAGE = 'selection/is/page';
 var SELECTION_IS_BOXSHADOW = 'selection/is/boxshadow';
 var SELECTION_IS_TEXTSHADOW = 'selection/is/textshadow';
-var SELECTION_IS_FILTER = 'selection/is/filter';
-var SELECTION_IS_BACKDROP_FILTER = 'selection/is/backdrop-filter';
+
+
 var SELECTION_IS_ONE = 'selection/is/one';
 var SELECTION_IS_GROUP = 'selection/is/group';
 var SELECTION_IS_AREA = 'selection/is/area';
@@ -10586,7 +10645,7 @@ var Size = function (_BasePropertyItem) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER_POSITION, CHANGE_LAYER_SIZE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_POSITION, CHANGE_LAYER_SIZE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -10686,7 +10745,7 @@ var Position = function (_BasePropertyItem) {
             return "\n            <div class='property-item position show'>\n                <div class='title' ref=\"$title\">Position</div>\n                <div class='items'>            \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <input type='number' ref=\"$x\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                        <label>Y</label>\n                        <div>\n                            <input type='number' ref=\"$y\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>               \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value$$1() {
             this.refresh();
         }
@@ -10738,7 +10797,7 @@ var Radius = function (_BasePropertyItem) {
             return "\n            <div class='property-item radius'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_RADIUS, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -10868,7 +10927,7 @@ var Clip = function (_UIElement) {
             return "\n            <div class='property-item show'>\n                <div class='items'>            \n                    <div>\n                        <label>Clip</label>\n                        <div>\n                            <input type='checkbox' ref=\"$check\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_PAGE, CHANGE_EDITOR),
+        key: EVENT(CHANGE_PAGE, CHANGE_EDITOR$1),
         value: function value() {
             this.refresh();
         }
@@ -10908,7 +10967,7 @@ var Name = function (_BasePropertyItem) {
             return "\n            <div class='property-item name show'>\n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div><input type='text' ref=\"$name\" class='full'></div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div><input type='text' ref=\"$id\" class='full'></div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div><input type='text' ref=\"$class\" class='full'></div>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value$$1() {
             this.refresh();
         }
@@ -10997,6 +11056,8 @@ var ITEM_COUNT_CHILDREN = 'item/count/children';
 var ITEM_MAP_CHILDREN = 'item/map/children';
 var ITEM_MAP_TYPE_CHILDREN = 'item/map/type/children';
 var ITEM_MAP_LAYER_CHILDREN = 'item/map/layer/children';
+var ITEM_MAP_TIMELINE_CHILDREN = 'item/map/timeline/children';
+var ITEM_MAP_KEYFRAME_CHILDREN = 'item/map/keyframe/children';
 var ITEM_MAP_IMAGE_CHILDREN = 'item/map/image/children';
 var ITEM_MAP_COLORSTEP_CHILDREN = 'item/map/colorstep/children';
 var ITEM_MAP_BOXSHADOW_CHILDREN = 'item/map/boxshadow/children';
@@ -11026,6 +11087,30 @@ var COLORSTEP_ORDERING_EQUALS_LEFT = 'colorstep/ordering/equals/left';
 var COLORSTEP_ORDERING_EQUALS_RIGHT = 'colorstep/ordering/equals/right';
 
 var _DEFINED_POSITIONS;
+
+function IS_PAGE(item) {
+    return item.itemType == ITEM_TYPE_PAGE;
+}
+function IS_LAYER(item) {
+    return item.itemType == ITEM_TYPE_LAYER;
+}
+function IS_CIRCLE(item) {
+    return item.itemType == ITEM_TYPE_CIRCLE;
+}
+
+
+function IS_IMAGE(item) {
+    return item.itemType == ITEM_TYPE_IMAGE;
+}
+function IS_BOXSHADOW(item) {
+    return item.itemType == ITEM_TYPE_BOXSHADOW;
+}
+function IS_TEXTSHADOW(item) {
+    return item.itemType == ITEM_TYPE_TEXTSHADOW;
+}
+
+
+
 
 function MAKE_BORDER_RADIUS(layer) {
     var css = {};
@@ -11629,8 +11714,8 @@ function IMAGE_TO_CSS$1() {
 var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
 var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
 var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
-var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
+var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE$1];
+var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC$1];
 
 function IMAGE_TYPE_IS_LINEAR(type) {
     return LINEAR_GRADIENT_LIST.includes(type);
@@ -11933,7 +12018,7 @@ var GradientSteps = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -12253,7 +12338,7 @@ var ColorSteps = function (_BasePropertyItem) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value() {
             this.refresh();
         }
@@ -12359,7 +12444,7 @@ var GradientInfo = function (_UIElement) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -12552,7 +12637,7 @@ var ColorStepsInfo = function (_UIElement) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -12640,7 +12725,7 @@ var ColorPickerLayer = function (_UIElement) {
             this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -12685,7 +12770,7 @@ var ColorPickerPanel = function (_UIElement) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -12716,7 +12801,7 @@ var Transform = function (_BasePropertyItem) {
             return "\n            <div class='property-item transform show'>\n                <div class='items block'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                                   \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER_ROTATE),
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR$1, CHANGE_LAYER_ROTATE),
         value: function value$$1() {
             this.refresh();
         }
@@ -12832,7 +12917,7 @@ var Transform3d = function (_BasePropertyItem) {
             return "\n            <div class='property-item transform show'>\n                <div class='items block'>            \n                    <div>\n                        <label> 3D </label>\n                        <div><label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label></div>\n                    </div>                    \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -13198,7 +13283,7 @@ var BackgroundSize = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -13250,7 +13335,7 @@ var PageSize = function (_UIElement) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        \n                        <div>\n                            <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_PAGE_SIZE),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_PAGE_SIZE),
         value: function value$$1() {
             this.refresh();
         }
@@ -13316,7 +13401,7 @@ var PageName = function (_UIElement) {
             return "\n            <div class='property-item name show'>\n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" style=\"width: 100px;\"> \n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value$$1() {
             this.refresh();
         }
@@ -13439,7 +13524,7 @@ var FilterList$1 = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_FILTER, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_FILTER, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -13536,7 +13621,7 @@ var BackgroundColor = function (_BasePropertyItem) {
             return "\n            <div class='property-item background-color show'>\n                <div class='items'>            \n                    <div>\n                        <label > Background Color</label>                    \n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='background-transparent'>\n                                <span class='color' ref='$color'></span>\n                            </span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div> \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value() {
             this.refresh();
         }
@@ -13576,6 +13661,8 @@ var ITEM_INITIALIZE = 'item/initialize';
 var ITEM_CREATE_OBJECT = 'item/create/object';
 var ITEM_CREATE_PAGE = 'item/create/page';
 var ITEM_CREATE_LAYER = 'item/create/layer';
+var ITEM_CREATE_TIMELINE = 'item/create/timeline';
+var ITEM_CREATE_KEYFRAME = 'item/create/keyframe';
 var ITEM_CREATE_IMAGE = 'item/create/image';
 var ITEM_CREATE_BOXSHADOW = 'item/create/boxshadow';
 var ITEM_CREATE_TEXTSHADOW = 'item/create/textshadow';
@@ -13592,6 +13679,8 @@ var ITEM_PREPEND_IMAGE_FILE$1 = 'item/prepend/image/file';
 var ITEM_SET_IMAGE_FILE = 'item/set/image/file';
 var ITEM_PREPEND_IMAGE_URL$1 = 'item/prepend/image/url';
 
+var ITEM_ADD_TIMELINE = 'item/add/timeline';
+var ITEM_ADD_KEYFRAME = 'item/add/keyframe';
 var ITEM_ADD_LAYER = 'item/add/layer';
 var ITEM_ADD_SHAPE = 'item/add/shape';
 var ITEM_ADD_IMAGE = 'item/add/image';
@@ -13636,7 +13725,7 @@ var ImageResource = function (_BasePropertyItem) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value() {
             this.$el.toggle(this.isShow());
         }
@@ -13710,8 +13799,8 @@ var ClipPath = function (_BasePropertyItem) {
             }));
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
-        value: function value() {
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -13726,7 +13815,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: CHANGE('$clipType'),
-        value: function value() {
+        value: function value$$1() {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -13738,7 +13827,7 @@ var ClipPath = function (_BasePropertyItem) {
         }
     }, {
         key: CLICK('$showClipPathEditor'),
-        value: function value() {
+        value: function value$$1() {
             var _this4 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -13771,7 +13860,7 @@ var PageShowGrid = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value() {
             this.refresh();
         }
@@ -13941,7 +14030,7 @@ var Rotate = function (_BasePropertyItem) {
             return "\n            <div class='property-item rotate show'>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' class='middle' ref=\"$rotate\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>\xB0</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_ROTATE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -14001,7 +14090,7 @@ var RadiusFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-radius'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -14029,7 +14118,7 @@ var RadiusFixed = function (_BasePropertyItem) {
             var layer = this.read(SELECTION_CURRENT_LAYER);
 
             if (!layer) return false;
-            if (layer.type == ITEM_TYPE_CIRCLE) return false;
+            if (IS_CIRCLE(layer)) return false;
 
             return true;
         }
@@ -14092,7 +14181,7 @@ var Opacity$3 = function (_BasePropertyItem) {
             return "\n            <div class='property-item opacity show'>\n                <div class='items'>            \n                    <div>\n                        <label>Opacity</label>\n                        <div>\n                            <input type='range' ref=\"$opacityRange\" min=\"0\" max=\"1\" step=\"0.01\">\n                            <input type='number' class='middle' ref=\"$opacity\" min=\"0\" max=\"1\" step=\"0.01\">\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_OPACITY, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_OPACITY, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -14336,8 +14425,8 @@ var ClipPathSide = function (_BasePropertyItem) {
             }));
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
-        value: function value() {
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
+        value: function value$$1() {
             this.refresh();
         }
     }, {
@@ -14368,12 +14457,12 @@ var ClipPathSide = function (_BasePropertyItem) {
         }
     }, {
         key: EVENT('toggleClipPathSideType'),
-        value: function value() {
+        value: function value$$1() {
             this.$el.toggleClass('show');
         }
     }, {
         key: CHANGE('$clipSideType'),
-        value: function value() {
+        value: function value$$1() {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -14438,7 +14527,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON),
         value: function value$$1() {
             this.refresh();
         }
@@ -14650,7 +14739,7 @@ var BoxShadow = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR),
+        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR$1),
         value: function value$$1() {
             if (this.isPropertyShow()) {
                 this.refresh();
@@ -14845,7 +14934,7 @@ var TextShadow = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR),
+        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR$1),
         value: function value$$1() {
             if (this.isPropertyShow()) {
                 this.refresh();
@@ -15024,7 +15113,7 @@ var FillColorPicker = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15115,7 +15204,7 @@ var Text = function (_BasePropertyItem) {
             return "\n            <div class='property-item text show'>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list full-size'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>            \n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_TEXT),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_TEXT),
         value: function value$$1() {
             this.refresh();
         }
@@ -15250,7 +15339,7 @@ var LayerCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_MOVE, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_EDITOR, CHANGE_SELECTION, SELECT_TAB_LAYER),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_MOVE, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_EDITOR$1, CHANGE_SELECTION, SELECT_TAB_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -15306,7 +15395,7 @@ var BackgroundCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION, SELECT_TAB_IMAGE),
+        key: EVENT(CHANGE_IMAGE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_COLOR_STEP, CHANGE_EDITOR$1, CHANGE_SELECTION, SELECT_TAB_IMAGE),
         value: function value$$1() {
             this.refresh();
         }
@@ -15376,7 +15465,7 @@ var Font = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TEXT, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_TEXT, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -15527,7 +15616,7 @@ var TextFillColorPicker = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15619,7 +15708,7 @@ var InfoFillColorPicker = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15727,7 +15816,7 @@ var BorderFillColorPicker = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15865,7 +15954,7 @@ var BackdropList = function (_BasePropertyItem) {
             this.refreshFilter(obj);
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -15979,7 +16068,7 @@ var Page3D = function (_UIElement) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"range\" ref=\"$perspectiveRange\" min=\"-2000\" max=\"2000\" /> \n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>" + unitString(UNIT_PX) + "</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        <div>\n                            <input type=\"range\" ref=\"$xRange\" min=\"-100\" max=\"100\" />                         \n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        <div>\n                            <input type=\"range\" ref=\"$yRange\" min=\"-100\" max=\"100\" />                                                 \n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>" + unitString(UNIT_PERCENT) + "</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM),
         value: function value$$1() {
             this.refresh();
         }
@@ -16113,7 +16202,7 @@ var ImageSorting = function (_BasePropertyItem) {
         // indivisual layer effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16254,7 +16343,7 @@ var RotatePattern = function (_BasePropertyItem) {
             }));
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16342,7 +16431,7 @@ var BorderFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-border'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$borderLabel\">*</button> Width</label>\n                        <div>\n                            <input type='range' ref=\"$borderWidthRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$borderWidth\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -16477,7 +16566,7 @@ var BorderWidth = function (_BasePropertyItem) {
             return "\n            <div class='property-item border'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\" value=\"0\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -16594,6 +16683,361 @@ var BorderWidth = function (_BasePropertyItem) {
     return BorderWidth;
 }(BasePropertyItem);
 
+var defined_position = {
+    'to right': {
+        backgroundPositionX: valueUnit(POSITION_RIGHT),
+        backgroundPositionY: valueUnit(POSITION_CENTER)
+    },
+    'to left': {
+        backgroundPositionX: valueUnit(POSITION_LEFT),
+        backgroundPositionY: valueUnit(POSITION_CENTER)
+    },
+    'to top': {
+        backgroundPositionX: valueUnit(POSITION_CENTER),
+        backgroundPositionY: valueUnit(POSITION_TOP)
+    },
+    'to bottom': {
+        backgroundPositionX: valueUnit(POSITION_CENTER),
+        backgroundPositionY: valueUnit(POSITION_BOTTOM)
+    },
+    'to top right': {
+        backgroundPositionX: valueUnit(POSITION_RIGHT),
+        backgroundPositionY: valueUnit(POSITION_TOP)
+    },
+    'to bottom right': {
+        backgroundPositionX: valueUnit(POSITION_RIGHT),
+        backgroundPositionY: valueUnit(POSITION_BOTTOM)
+    },
+    'to bottom left': {
+        backgroundPositionX: valueUnit(POSITION_LEFT),
+        backgroundPositionY: valueUnit(POSITION_BOTTOM)
+    },
+    'to top left': {
+        backgroundPositionX: valueUnit(POSITION_LEFT),
+        backgroundPositionY: valueUnit(POSITION_TOP)
+    }
+};
+
+var PredefinedBackgroundPosition = function (_UIElement) {
+    inherits(PredefinedBackgroundPosition, _UIElement);
+
+    function PredefinedBackgroundPosition() {
+        classCallCheck(this, PredefinedBackgroundPosition);
+        return possibleConstructorReturn(this, (PredefinedBackgroundPosition.__proto__ || Object.getPrototypeOf(PredefinedBackgroundPosition)).apply(this, arguments));
+    }
+
+    createClass(PredefinedBackgroundPosition, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-background-position">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read(SELECTION_IS_IMAGE);
+        }
+    }, {
+        key: 'getPosition',
+        value: function getPosition(type) {
+            return defined_position[type] || {
+                backgroundPositionX: valueUnit(POSITION_CENTER),
+                backgroundPositionY: valueUnit(POSITION_CENTER)
+            };
+        }
+    }, {
+        key: CLICK('$el button') + SELF,
+        value: function value$$1(e) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
+                var pos = _this2.getPosition(e.$delegateTarget.attr('data-value'));
+                _this2.commit(CHANGE_IMAGE, _extends({ id: id }, pos));
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedBackgroundPosition;
+}(UIElement);
+
+var BackgroundResizer = function (_UIElement) {
+    inherits(BackgroundResizer, _UIElement);
+
+    function BackgroundResizer() {
+        classCallCheck(this, BackgroundResizer);
+        return possibleConstructorReturn(this, (BackgroundResizer.__proto__ || Object.getPrototypeOf(BackgroundResizer)).apply(this, arguments));
+    }
+
+    createClass(BackgroundResizer, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="background-resizer">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n                <div ref="$backgroundRect" class=\'background-rect\'></div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.refreshUI();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            return this.read(SELECTION_IS_IMAGE);
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, position) {
+
+            if (e) {
+                var xy = e.xy;
+
+                return [xy.x, xy.y];
+            }
+
+            return position;
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var minX = this.$el.offsetLeft();
+            var minY = this.$el.offsetTop();
+
+            var maxX = minX + width;
+            var maxY = minY + height;
+
+            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+
+            var item = this.read(SELECTION_CURRENT_IMAGE$1);
+
+            if (!item) return EMPTY_STRING;
+
+            var x = defaultValue(item.backgroundPositionX, percentUnit(0)).value;
+            var y = defaultValue(item.backgroundPositionY, percentUnit(0)).value;
+            var width = defaultValue(item.backgroundSizeWidth, percentUnit(100)).value;
+            var height = defaultValue(item.backgroundSizeHeight, percentUnit(100)).value;
+
+            return { x: x, y: y, width: width, height: height };
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                maxX = _getRectangle.maxX,
+                maxY = _getRectangle.maxY;
+
+            var _getDefaultValue = this.getDefaultValue(),
+                x = _getDefaultValue.x,
+                y = _getDefaultValue.y,
+                width = _getDefaultValue.width,
+                height = _getDefaultValue.height;
+
+            if (e) {
+                var _getCurrentXY = this.getCurrentXY(e),
+                    _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
+                    x = _getCurrentXY2[0],
+                    y = _getCurrentXY2[1];
+
+                x = Math.max(Math.min(maxX, x), minX);
+                y = Math.max(Math.min(maxY, y), minY);
+
+                var left = x - minX;
+                var top = y - minY;
+            } else {
+
+                var left = minX + (maxX - minX) * (x / 100);
+                var top = minY + (maxY - minY) * (y / 100);
+            }
+
+            left = Math.floor(left);
+            top = Math.floor(top);
+
+            this.refs.$dragPointer.px('left', left);
+            this.refs.$dragPointer.px('top', top);
+
+            if (e) {
+                var newLeft = left / (maxX - minX) * 100;
+                var newTop = top / (maxY - minY) * 100;
+                this.setBackgroundPosition(percentUnit(newLeft), percentUnit(newTop));
+            }
+        }
+    }, {
+        key: 'setBackgroundPosition',
+        value: function setBackgroundPosition(backgroundPositionX, backgroundPositionY) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
+                _this2.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document'),
+        value: function value$$1(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value$$1(e) {
+            if (this.isDown) {
+                this.refreshUI(e);
+            }
+        }
+    }, {
+        key: POINTERSTART('$dragPointer'),
+        value: function value$$1(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: POINTERSTART(),
+        value: function value$$1(e) {
+            this.isDown = true;
+            // this.refreshUI(e);        
+        }
+    }]);
+    return BackgroundResizer;
+}(UIElement);
+
+var BackgroundPosition = function (_UIElement) {
+    inherits(BackgroundPosition, _UIElement);
+
+    function BackgroundPosition() {
+        classCallCheck(this, BackgroundPosition);
+        return possibleConstructorReturn(this, (BackgroundPosition.__proto__ || Object.getPrototypeOf(BackgroundPosition)).apply(this, arguments));
+    }
+
+    createClass(BackgroundPosition, [{
+        key: "components",
+        value: function components() {
+            return {
+                PredefinedBackgroundPosition: PredefinedBackgroundPosition,
+                BackgroundResizer: BackgroundResizer,
+                UnitRange: UnitRange
+            };
+        }
+    }, {
+        key: "template",
+        value: function template() {
+            return "\n            <div class='property-item background-position show'>\n                <div class='items'>\n\n                    <div class='drag-property-ui'>\n                        <div class='drag-ui'>\n                            <PredefinedBackgroundPosition></PredefinedBackgroundPosition>\n                            <BackgroundResizer></BackgroundResizer>\n                        </div>\n\n                        <div class='property-ui'>\n\n                            <div>\n                                <label>x</label>\n                                <UnitRange \n                                    ref=\"$x\" \n                                    min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                                    maxValueFunction=\"getMaxX\"\n                                    updateFunction=\"updateX\"\n                                ></UnitRange>\n                            </div>\n                            <div>\n                                <label>y</label>\n                                <UnitRange \n                                    ref=\"$y\" \n                                    min=\"-100\" max=\"1000\" step=\"1\" value=\"0\" unit=\"" + UNIT_PX + "\"\n                                    maxValueFunction=\"getMaxY\"\n                                    updateFunction=\"updateY\"\n                                ></UnitRange>\n                            </div>\n                        </div>\n                    </div>\n\n\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "updateX",
+        value: function updateX(backgroundPositionX) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
+                _this2.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX });
+            });
+        }
+    }, {
+        key: "updateY",
+        value: function updateY(backgroundPositionY) {
+            var _this3 = this;
+
+            this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
+                _this3.commit(CHANGE_IMAGE, { id: id, backgroundPositionY: backgroundPositionY });
+            });
+        }
+    }, {
+        key: "getMaxHeight",
+        value: function getMaxHeight() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+
+            if (!layer) return 0;
+
+            return unitValue(layer.height);
+        }
+    }, {
+        key: "getMaxY",
+        value: function getMaxY() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+
+            if (!layer) return 0;
+
+            return unitValue(layer.height) * 2;
+        }
+    }, {
+        key: "getMaxWidth",
+        value: function getMaxWidth() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+
+            if (!layer) return 0;
+
+            return unitValue(layer.width);
+        }
+    }, {
+        key: "getMaxX",
+        value: function getMaxX() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+
+            if (!layer) return 0;
+
+            return unitValue(layer.width) * 2;
+        }
+    }, {
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            var _this4 = this;
+
+            var isShow = this.isShow();
+
+            this.$el.toggle(isShow);
+
+            if (isShow) {
+                this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
+
+                    var x = convertPercentUnit(defaultValue(image.backgroundPositionX, percentUnit(0)));
+                    var y = convertPercentUnit(defaultValue(image.backgroundPositionY, percentUnit(0)));
+
+                    _this4.children.$x.refresh(x);
+                    _this4.children.$y.refresh(y);
+                });
+            }
+        }
+    }, {
+        key: "isShow",
+        value: function isShow() {
+
+            return true;
+        }
+    }]);
+    return BackgroundPosition;
+}(UIElement);
+
 var BorderColorFixed = function (_BasePropertyItem) {
     inherits(BorderColorFixed, _BasePropertyItem);
 
@@ -16608,7 +17052,7 @@ var BorderColorFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-border-color show'>\n                <div class='items'>            \n                    <div>\n                        <label >Color</label>\n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='background-transparent'>\n                                <span class='color' ref='$color'></span>\n                            </span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16660,7 +17104,7 @@ var LayerBorderPreview = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16675,6 +17119,7 @@ var patterns$1 = {
 };
 
 var items = _extends({}, patterns$1, (_babelHelpers$extends = {
+    BackgroundPosition: BackgroundPosition,
     LayerBorderPreview: LayerBorderPreview,
     LayerBorderColorPickerPanel: LayerBorderColorPickerPanel,
     BorderColorFixed: BorderColorFixed,
@@ -16806,7 +17251,12 @@ var BaseProperty = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n        <div class='property " + this.getClassName() + " show'>\n            <div class='property-title' ref=\"$title\">\n                " + this.getTitle() + "\n                <span class=\"tools\">" + this.getTools() + "</span>\n            </div>\n            <div class='property-body'>\n                " + this.getBody() + "\n            </div>\n        </div>\n        ";
+            return "\n        <div class='property " + this.getClassName() + " show'>\n            " + (this.isHideHeader() ? '' : "\n            <div class='property-title' ref=\"$title\">\n                " + this.getTitle() + "\n                <span class=\"tools\">" + this.getTools() + "</span>\n            </div>\n            ") + "\n            <div class='property-body'>\n                " + this.getBody() + "\n            </div>\n        </div>\n        ";
+        }
+    }, {
+        key: "isHideHeader",
+        value: function isHideHeader() {
+            return false;
         }
     }, {
         key: "getClassName",
@@ -16980,11 +17430,11 @@ var TextShadowProperty = function (_BaseProperty) {
         }
     }, {
         key: CLICK('$add'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this2.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW$1, false, id);
+                _this2.dispatch(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, false, id);
                 _this2.dispatch(HISTORY_PUSH, "Add Text Shadow");
             });
         }
@@ -17017,7 +17467,7 @@ var BoxShadowProperty = function (_BaseProperty) {
         }
     }, {
         key: CLICK('$add'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
@@ -17180,7 +17630,7 @@ var ImageSortingProperty = function (_BaseProperty) {
             return "<ImageSorting />";
         }
     }, {
-        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR),
+        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR$1),
         value: function value() {
             var isShow = this.isShow();
 
@@ -17221,7 +17671,7 @@ var ColorStepProperty = function (_BaseProperty) {
             return "<ColorStepsInfo />";
         }
     }, {
-        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR),
+        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR$1),
         value: function value() {
             var isShow = this.isShow();
 
@@ -17331,6 +17781,282 @@ var LayerBorderProperty = function (_BaseProperty) {
     return LayerBorderProperty;
 }(BaseProperty);
 
+var LayerAngle = function (_UIElement) {
+    inherits(LayerAngle, _UIElement);
+
+    function LayerAngle() {
+        classCallCheck(this, LayerAngle);
+        return possibleConstructorReturn(this, (LayerAngle.__proto__ || Object.getPrototypeOf(LayerAngle)).apply(this, arguments));
+    }
+
+    createClass(LayerAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            if (this.isShow()) {
+                this.$el.show();
+                this.refreshUI();
+            } else {
+                this.$el.hide();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read(SELECTION_IS_LAYER)) return false;
+
+            return this.config('guide.angle');
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
+            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.refs.$dragAngle.width();
+            var height = this.refs.$dragAngle.height();
+            var radius = Math.floor(width / 2 * 0.7);
+
+            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
+                left = _refs$$dragAngle$offs.left,
+                top = _refs$$dragAngle$offs.top;
+
+            var minX = left;
+            var minY = top;
+            var centerX = minX + width / 2;
+            var centerY = minY + height / 2;
+
+            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            var layer = this.read(SELECTION_CURRENT_LAYER);
+            if (!layer) return -90;
+            if (isUndefined$1(layer.rotate)) return -90;
+
+            return layer.rotate - 90;
+        }
+    }, {
+        key: 'refreshAngleText',
+        value: function refreshAngleText(angleText) {
+            this.refs.$angleText.text(angleText + ' °');
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(e) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                radius = _getRectangle.radius,
+                centerX = _getRectangle.centerX,
+                centerY = _getRectangle.centerY;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
+                x = _getCurrentXY.x,
+                y = _getCurrentXY.y;
+
+            var rx = x - centerX,
+                ry = y - centerY,
+                angle = caculateAngle(rx, ry);
+
+            {
+                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
+                    x = _getCurrentXY2.x,
+                    y = _getCurrentXY2.y;
+            }
+
+            // set drag pointer position 
+            this.refs.$dragPointer.px('left', x - minX);
+            this.refs.$dragPointer.px('top', y - minY);
+
+            var lastAngle = Math.round(angle + 90) % 360;
+
+            this.refreshAngleText(lastAngle);
+
+            if (e) {
+
+                this.setAngle(lastAngle);
+            }
+        }
+    }, {
+        key: 'setAngle',
+        value: function setAngle(rotate) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_TOOL),
+        value: function value() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isDownCheck',
+        value: function isDownCheck() {
+            return this.isDown;
+        }
+    }, {
+        key: 'isNotDownCheck',
+        value: function isNotDownCheck() {
+            return !this.isDown;
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        value: function value(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
+        value: function value(e) {
+            this.refreshUI(e);
+        }
+    }, {
+        key: POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck'),
+        value: function value(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck'),
+        value: function value(e) {
+            this.isDown = true;
+            this.refreshUI(e);
+        }
+    }]);
+    return LayerAngle;
+}(UIElement);
+
+var DEFINED_ANGLES$1 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var PredefinedLayerAngle = function (_UIElement) {
+    inherits(PredefinedLayerAngle, _UIElement);
+
+    function PredefinedLayerAngle() {
+        classCallCheck(this, PredefinedLayerAngle);
+        return possibleConstructorReturn(this, (PredefinedLayerAngle.__proto__ || Object.getPrototypeOf(PredefinedLayerAngle)).apply(this, arguments));
+    }
+
+    createClass(PredefinedLayerAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!this.read(SELECTION_IS_LAYER)) return false;
+
+            return this.config('guide.angle');
+        }
+    }, {
+        key: CLICK('$el button') + SELF,
+        value: function value(e) {
+            var _this2 = this;
+
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                var rotate = DEFINED_ANGLES$1[e.$delegateTarget.attr('data-value')];
+                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER_ROTATE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_TOOL),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedLayerAngle;
+}(UIElement);
+
+var Transform2DControlProperty = function (_BaseProperty) {
+    inherits(Transform2DControlProperty, _BaseProperty);
+
+    function Transform2DControlProperty() {
+        classCallCheck(this, Transform2DControlProperty);
+        return possibleConstructorReturn(this, (Transform2DControlProperty.__proto__ || Object.getPrototypeOf(Transform2DControlProperty)).apply(this, arguments));
+    }
+
+    createClass(Transform2DControlProperty, [{
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <div class=\"property-item\" style=\"position:relative;height:140px;\">\n                <PredefinedLayerAngle></PredefinedLayerAngle>\n                <LayerAngle></LayerAngle>   \n            </div>\n        ";
+        }
+    }, {
+        key: "isHideHeader",
+        value: function isHideHeader() {
+            return true;
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return {
+                LayerAngle: LayerAngle,
+                PredefinedLayerAngle: PredefinedLayerAngle
+            };
+        }
+    }]);
+    return Transform2DControlProperty;
+}(BaseProperty);
+
+var BackgroundPositionProperty = function (_BaseProperty) {
+    inherits(BackgroundPositionProperty, _BaseProperty);
+
+    function BackgroundPositionProperty() {
+        classCallCheck(this, BackgroundPositionProperty);
+        return possibleConstructorReturn(this, (BackgroundPositionProperty.__proto__ || Object.getPrototypeOf(BackgroundPositionProperty)).apply(this, arguments));
+    }
+
+    createClass(BackgroundPositionProperty, [{
+        key: "getTitle",
+        value: function getTitle() {
+            return 'Background Position';
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <BackgroundPosition></BackgroundPosition>\n        ";
+        }
+    }]);
+    return BackgroundPositionProperty;
+}(BaseProperty);
+
 var LayerBorderRadiusProperty = function (_BaseProperty) {
     inherits(LayerBorderRadiusProperty, _BaseProperty);
 
@@ -17354,6 +18080,8 @@ var LayerBorderRadiusProperty = function (_BaseProperty) {
 }(BaseProperty);
 
 var property = {
+    BackgroundPositionProperty: BackgroundPositionProperty,
+    Transform2DControlProperty: Transform2DControlProperty,
     LayerBorderRadiusProperty: LayerBorderRadiusProperty,
     LayerBorderProperty: LayerBorderProperty,
     RotatePatternProperty: RotatePatternProperty,
@@ -17386,7 +18114,7 @@ var LayerTabView = function (_BaseTab) {
     createClass(LayerTabView, [{
         key: 'template',
         value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item" data-id="shape">Shape</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page"><PageProperty /></div>\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'><LayerInfoColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerInfoScroll"><LayerProperty /></div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <div class=\'fixed\'><LayerBorderColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerBorderScroll"><LayerBorderProperty /><LayerBorderRadiusProperty /></div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'><LayerTextColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerTextScroll"><LayerFontProperty /><LayerTextProperty /><TextShadowProperty /></div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'><FillColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty /><FilterProperty /><BackdropProperty /><EmptyArea height="100px" />      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape"><ClipPathProperty /></div>\n                <div class="tab-content" data-id="transform"><Transform2DProperty /></div>\n                <div class="tab-content" data-id="transform3d"><Transform3DProperty /></div>\n                <div class="tab-content" data-id="css"><LayerCodeProperty/></div>\n            </div>\n        </div>';
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item small-font" data-id="clip-path">Clip Path</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page"><PageProperty /></div>\n                <div class="tab-content selected flex" data-id="property">\n                    <div class=\'fixed\'><LayerInfoColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerInfoScroll"><LayerProperty /></div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <div class=\'fixed\'><LayerBorderColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerBorderScroll"><LayerBorderProperty /><LayerBorderRadiusProperty /></div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <div class=\'fixed\'><LayerTextColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerTextScroll"><LayerFontProperty /><LayerTextProperty /><TextShadowProperty /></div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <div class=\'fixed\'><FillColorPickerPanel /></div>\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty /><FilterProperty /><BackdropProperty /><EmptyArea height="100px" />      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="shape"><ClipPathProperty /></div>\n                <div class="tab-content" data-id="transform"><Transform2DProperty /></div>\n                <div class="tab-content" data-id="transform3d"><Transform3DProperty /></div>\n                <div class="tab-content" data-id="css"><LayerCodeProperty/></div>\n            </div>\n        </div>';
         }
     }, {
         key: SCROLL('$layerInfoScroll'),
@@ -17456,7 +18184,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'><BackgroundProperty /></div>\n                        <div class=\'scroll\'><RotatePatternProperty /></div>    \n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'><BackgroundProperty /></div>\n                        <div class=\'scroll\'><RotatePatternProperty /></div>    \n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
@@ -17541,7 +18269,7 @@ var FeatureControl = function (_UIElement) {
             this.$el.$(".feature[data-type=" + selectType + "]").addClass('selected');
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.selectFeature();
         }
@@ -17605,7 +18333,7 @@ var ImageListView = function (_UIElement) {
         // individual effect
 
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_IMAGE_ANGLE, CHANGE_IMAGE_COLOR, CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_COLOR_STEP, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1(newValue) {
             this.refresh();
         }
@@ -17817,7 +18545,7 @@ var GradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_ANGLE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE_ANGLE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18027,7 +18755,7 @@ var GradientPosition = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -18117,7 +18845,7 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18174,7 +18902,7 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
             return this.config('guide.angle') && (isRadial || isConic);
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL),
+        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_TOOL),
         value: function value() {
             this.refresh();
         }
@@ -18205,13 +18933,13 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
+        key: EVENT(CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        value: function value$$1() {
             this.refresh();
         }
     }, {
         key: CHANGE('$select'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this3 = this;
 
             this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
@@ -18220,7 +18948,7 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
         }
     }, {
         key: CLICK('$center'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var _this4 = this;
 
             this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
@@ -18229,250 +18957,6 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
         }
     }]);
     return PredefinedRadialGradientAngle;
-}(UIElement);
-
-var BackgroundResizer = function (_UIElement) {
-    inherits(BackgroundResizer, _UIElement);
-
-    function BackgroundResizer() {
-        classCallCheck(this, BackgroundResizer);
-        return possibleConstructorReturn(this, (BackgroundResizer.__proto__ || Object.getPrototypeOf(BackgroundResizer)).apply(this, arguments));
-    }
-
-    createClass(BackgroundResizer, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="background-resizer">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n                <div ref="$backgroundRect" class=\'background-rect\'></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.refreshUI();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE);
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(e, position) {
-
-            if (e) {
-                var xy = e.xy;
-
-                return [xy.x, xy.y];
-            }
-
-            return position;
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.$el.width();
-            var height = this.$el.height();
-            var minX = this.$el.offsetLeft();
-            var minY = this.$el.offsetTop();
-
-            var maxX = minX + width;
-            var maxY = minY + height;
-
-            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-
-            var item = this.read(SELECTION_CURRENT_IMAGE$1);
-
-            if (!item) return EMPTY_STRING;
-
-            var x = defaultValue(item.backgroundPositionX, percentUnit(0)).value;
-            var y = defaultValue(item.backgroundPositionY, percentUnit(0)).value;
-            var width = defaultValue(item.backgroundSizeWidth, percentUnit(100)).value;
-            var height = defaultValue(item.backgroundSizeHeight, percentUnit(100)).value;
-
-            return { x: x, y: y, width: width, height: height };
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(e) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY;
-
-            var _getDefaultValue = this.getDefaultValue(),
-                x = _getDefaultValue.x,
-                y = _getDefaultValue.y,
-                width = _getDefaultValue.width,
-                height = _getDefaultValue.height;
-
-            if (e) {
-                var _getCurrentXY = this.getCurrentXY(e),
-                    _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
-                    x = _getCurrentXY2[0],
-                    y = _getCurrentXY2[1];
-
-                x = Math.max(Math.min(maxX, x), minX);
-                y = Math.max(Math.min(maxY, y), minY);
-
-                var left = x - minX;
-                var top = y - minY;
-            } else {
-
-                var left = minX + (maxX - minX) * (x / 100);
-                var top = minY + (maxY - minY) * (y / 100);
-            }
-
-            left = Math.floor(left);
-            top = Math.floor(top);
-
-            this.refs.$dragPointer.px('left', left);
-            this.refs.$dragPointer.px('top', top);
-
-            if (e) {
-                var newLeft = left / (maxX - minX) * 100;
-                var newTop = top / (maxY - minY) * 100;
-                this.setBackgroundPosition(percentUnit(newLeft), percentUnit(newTop));
-            }
-        }
-    }, {
-        key: 'setBackgroundPosition',
-        value: function setBackgroundPosition(backgroundPositionX, backgroundPositionY) {
-            var _this2 = this;
-
-            this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
-                _this2.commit(CHANGE_IMAGE, { id: id, backgroundPositionX: backgroundPositionX, backgroundPositionY: backgroundPositionY });
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value$$1() {
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$dragPointer'),
-        value: function value$$1(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: POINTERSTART(),
-        value: function value$$1(e) {
-            this.isDown = true;
-            // this.refreshUI(e);        
-        }
-    }]);
-    return BackgroundResizer;
-}(UIElement);
-
-var defined_position = {
-    'to right': {
-        backgroundPositionX: valueUnit(POSITION_RIGHT),
-        backgroundPositionY: valueUnit(POSITION_CENTER)
-    },
-    'to left': {
-        backgroundPositionX: valueUnit(POSITION_LEFT),
-        backgroundPositionY: valueUnit(POSITION_CENTER)
-    },
-    'to top': {
-        backgroundPositionX: valueUnit(POSITION_CENTER),
-        backgroundPositionY: valueUnit(POSITION_TOP)
-    },
-    'to bottom': {
-        backgroundPositionX: valueUnit(POSITION_CENTER),
-        backgroundPositionY: valueUnit(POSITION_BOTTOM)
-    },
-    'to top right': {
-        backgroundPositionX: valueUnit(POSITION_RIGHT),
-        backgroundPositionY: valueUnit(POSITION_TOP)
-    },
-    'to bottom right': {
-        backgroundPositionX: valueUnit(POSITION_RIGHT),
-        backgroundPositionY: valueUnit(POSITION_BOTTOM)
-    },
-    'to bottom left': {
-        backgroundPositionX: valueUnit(POSITION_LEFT),
-        backgroundPositionY: valueUnit(POSITION_BOTTOM)
-    },
-    'to top left': {
-        backgroundPositionX: valueUnit(POSITION_LEFT),
-        backgroundPositionY: valueUnit(POSITION_TOP)
-    }
-};
-
-var PredefinedBackgroundPosition = function (_UIElement) {
-    inherits(PredefinedBackgroundPosition, _UIElement);
-
-    function PredefinedBackgroundPosition() {
-        classCallCheck(this, PredefinedBackgroundPosition);
-        return possibleConstructorReturn(this, (PredefinedBackgroundPosition.__proto__ || Object.getPrototypeOf(PredefinedBackgroundPosition)).apply(this, arguments));
-    }
-
-    createClass(PredefinedBackgroundPosition, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-background-position">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            return this.read(SELECTION_IS_IMAGE);
-        }
-    }, {
-        key: 'getPosition',
-        value: function getPosition(type) {
-            return defined_position[type] || {
-                backgroundPositionX: valueUnit(POSITION_CENTER),
-                backgroundPositionY: valueUnit(POSITION_CENTER)
-            };
-        }
-    }, {
-        key: CLICK('$el button') + SELF,
-        value: function value$$1(e) {
-            var _this2 = this;
-
-            this.read(SELECTION_CURRENT_IMAGE_ID$1, function (id) {
-                var pos = _this2.getPosition(e.$delegateTarget.attr('data-value'));
-                _this2.commit(CHANGE_IMAGE, _extends({ id: id }, pos));
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedBackgroundPosition;
 }(UIElement);
 
 var defined_position$1 = {
@@ -18558,7 +19042,7 @@ var PredefinedPerspectiveOriginPosition = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_PAGE_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_PAGE_TRANSFORM, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -18724,7 +19208,7 @@ var PerspectiveOriginPosition = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_PAGE_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_PAGE_TRANSFORM, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -18764,230 +19248,6 @@ var PerspectiveOriginPosition = function (_UIElement) {
         }
     }]);
     return PerspectiveOriginPosition;
-}(UIElement);
-
-var LayerAngle = function (_UIElement) {
-    inherits(LayerAngle, _UIElement);
-
-    function LayerAngle() {
-        classCallCheck(this, LayerAngle);
-        return possibleConstructorReturn(this, (LayerAngle.__proto__ || Object.getPrototypeOf(LayerAngle)).apply(this, arguments));
-    }
-
-    createClass(LayerAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            if (this.isShow()) {
-                this.$el.show();
-                this.refreshUI();
-            } else {
-                this.$el.hide();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!this.read(SELECTION_IS_LAYER)) return false;
-
-            return this.config('guide.angle');
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
-            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.refs.$dragAngle.width();
-            var height = this.refs.$dragAngle.height();
-            var radius = Math.floor(width / 2 * 0.7);
-
-            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
-                left = _refs$$dragAngle$offs.left,
-                top = _refs$$dragAngle$offs.top;
-
-            var minX = left;
-            var minY = top;
-            var centerX = minX + width / 2;
-            var centerY = minY + height / 2;
-
-            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            var layer = this.read(SELECTION_CURRENT_LAYER);
-            if (!layer) return -90;
-            if (isUndefined$1(layer.rotate)) return -90;
-
-            return layer.rotate - 90;
-        }
-    }, {
-        key: 'refreshAngleText',
-        value: function refreshAngleText(angleText) {
-            this.refs.$angleText.text(angleText + ' °');
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(e) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                angle = caculateAngle(rx, ry);
-
-            {
-                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
-            }
-
-            // set drag pointer position 
-            this.refs.$dragPointer.px('left', x - minX);
-            this.refs.$dragPointer.px('top', y - minY);
-
-            var lastAngle = Math.round(angle + 90) % 360;
-
-            this.refreshAngleText(lastAngle);
-
-            if (e) {
-
-                this.setAngle(lastAngle);
-            }
-        }
-    }, {
-        key: 'setAngle',
-        value: function setAngle(rotate) {
-            var _this2 = this;
-
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_TOOL),
-        value: function value() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.isDown;
-        }
-    }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.isDown;
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: POINTEREND('document') + CHECKER('isDownCheck'),
-        value: function value(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
-        value: function value(e) {
-            this.refreshUI(e);
-        }
-    }, {
-        key: POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck'),
-        value: function value(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck'),
-        value: function value(e) {
-            this.isDown = true;
-            this.refreshUI(e);
-        }
-    }]);
-    return LayerAngle;
-}(UIElement);
-
-var DEFINED_ANGLES$1 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var PredefinedLayerAngle = function (_UIElement) {
-    inherits(PredefinedLayerAngle, _UIElement);
-
-    function PredefinedLayerAngle() {
-        classCallCheck(this, PredefinedLayerAngle);
-        return possibleConstructorReturn(this, (PredefinedLayerAngle.__proto__ || Object.getPrototypeOf(PredefinedLayerAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedLayerAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!this.read(SELECTION_IS_LAYER)) return false;
-
-            return this.config('guide.angle');
-        }
-    }, {
-        key: CLICK('$el button') + SELF,
-        value: function value(e) {
-            var _this2 = this;
-
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                var rotate = DEFINED_ANGLES$1[e.$delegateTarget.attr('data-value')];
-                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_TOOL),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedLayerAngle;
 }(UIElement);
 
 var SubFeatureControl = function (_UIElement) {
@@ -19092,7 +19352,7 @@ var SubFeatureControl = function (_UIElement) {
             return this.config('guide.angle');
         }
     }, {
-        key: EVENT(CHANGE_PAGE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_PAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19754,6 +20014,742 @@ var ExportWindow = function (_UIElement) {
     return ExportWindow;
 }(UIElement);
 
+var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
+
+var stepTimingFunction = function stepTimingFunction() {
+    var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+    var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+
+    return function (progress) {
+        var stepDist = 1 / step;
+
+        if (position == 'start') {
+            return stepDist * Math.ceil(progress / stepDist);
+        } else if (position == 'end') {
+            return stepDist * Math.floor(progress / stepDist);
+        }
+    };
+};
+
+var Timing = {
+    'ease-out-elastic': function easeOutElastic(progress, duration, start, end) {
+        return Math.pow(2, -10 * progress) * Math.sin((progress - .1) * 5 * Math.PI) + 1;
+    },
+    'cubic-bezier': function cubicBezier$$1(x1, y1, x2, y2) {
+        return cubicBezier(x1, y1, x2, y2);
+    },
+    'step': function step() {
+        var _step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+        var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+
+        return stepTimingFunction(_step, position);
+    },
+    'step-start': function stepStart(progress) {
+        return stepTimingFunction(1, 'start')(progress);
+    },
+    'step-end': function stepEnd(progress) {
+        return stepTimingFunction(1, 'end')(progress);
+    }
+};
+
+// setup bezier functions
+bezierList.forEach(function (arr) {
+    Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
+});
+
+var _ScaleFunctions;
+
+var ScaleFunctions = (_ScaleFunctions = {
+    'color': 'makeScaleFunctionForColor',
+    'number': 'makeScaleFunctionForNumber'
+}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
+
+var Scale = {
+    makeScaleFunctionForColor: function makeScaleFunctionForColor(start, end) {
+        return function (currentPercent) {
+            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
+
+            return interpolateRGBObject(start, end, rate);
+        };
+    },
+    makeScaleFunctionForNumber: function makeScaleFunctionForNumber(start, end) {
+        return function (currentPercent) {
+            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
+
+            return start.value + (end.value - start.value) * rate;
+        };
+    },
+    makeScaleFunctionForPercent: function makeScaleFunctionForPercent(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunctionForPx: function makeScaleFunctionForPx(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunctionForEm: function makeScaleFunctionForEm(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunction: function makeScaleFunction(start, end, isLast) {
+        var itemType = start.itemType || 'number';
+
+        return this[ScaleFunctions[itemType]].call(this, start, end);
+    },
+    makeCheckFunction: function makeCheckFunction(start, end, isLast) {
+        if (isLast) {
+            return function (currentPercent) {
+                return start.percent <= currentPercent && currentPercent <= end.percent;
+            };
+        } else {
+            return function (currentPercent) {
+                return start.percent <= currentPercent && currentPercent < end.percent;
+            };
+        }
+    },
+    makeSetupFunction: function makeSetupFunction(start, end, isLast) {
+        var check = this.makeCheckFunction(start, end, isLast);
+        var scale$$1 = this.makeScaleFunction(start, end, isLast);
+
+        if (start.itemType == 'color') {
+            return this.makeSetupColorScaleFunction(check, scale$$1, start, end);
+        } else {
+            return this.makeSetupNumberScaleFunction(check, scale$$1, start, end);
+        }
+    },
+    makeSetupColorScaleFunction: function makeSetupColorScaleFunction(check, scale$$1, start, end) {
+        return function (ani, progress) {
+            if (check(progress)) {
+                ani.obj[start.key] = rgb(scale$$1(ani.timing(progress, ani.duration, start, end)));
+            }
+        };
+    },
+    makeSetupNumberScaleFunction: function makeSetupNumberScaleFunction(check, scale$$1, start, end) {
+
+        return function (ani, progress) {
+            if (check(progress)) {
+                var value$$1 = scale$$1(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
+
+                ani.obj[start.key] = string2unit(value$$1);
+            }
+        };
+    }
+};
+
+var ValueGenerator = {
+    make: function make(key, percent, transitionPropertyValue) {
+
+        // 색상 체크 
+        var arr = matches$1(transitionPropertyValue);
+        if (arr.length) {
+            return _extends({ key: key, percent: percent, itemType: 'color' }, parse(arr[0].color)); // 색상 객체 
+        } else if (isNumber(transitionPropertyValue)) {
+            return { key: key, percent: percent, itemType: 'number', type: 'number', value: transitionPropertyValue };
+        } else {
+            if (transitionPropertyValue.includes('%')) {
+                return { key: key, percent: percent, itemType: '%', type: '%', value: parseParamNumber$1(transitionPropertyValue) };
+            } else if (transitionPropertyValue.includes('px')) {
+                return { key: key, percent: percent, itemType: 'px', type: 'px', value: parseParamNumber$1(transitionPropertyValue) };
+            } else if (transitionPropertyValue.includes('em')) {
+                return { key: key, percent: percent, itemType: 'em', type: 'em', value: parseParamNumber$1(transitionPropertyValue) };
+            }
+        }
+
+        return { key: key, percent: percent, itemType: 'number', type: 'number', value: +transitionPropertyValue };
+    }
+};
+
+var KeyFrames = {
+    parse: function parse(obj, ani) {
+        var list = Object.keys(obj).map(function (key) {
+            var originAttrs = obj[key];
+            var attrs = _extends({}, originAttrs);
+            var percent$$1 = 0;
+            if (key == 'from') {
+                key = '0%';
+            } else if (key == 'to') {
+                key = '100%';
+            }
+
+            if (key.includes('%')) {
+                percent$$1 = parseParamNumber$1(key) / 100;
+            } else {
+                var newKey = +key;
+
+                if (newKey + EMPTY_STRING == key) {
+                    // 시간 초 단위 
+                    percent$$1 = newKey / ani.duration;
+                }
+            }
+
+            return {
+                percent: percent$$1,
+                attrs: attrs,
+                originAttrs: originAttrs
+            };
+        });
+
+        return this.parseTiming.apply(this, toConsumableArray(this.parseAttrs.apply(this, toConsumableArray(list))));
+    },
+    parseTiming: function parseTiming() {
+        for (var _len = arguments.length, list = Array(_len), _key = 0; _key < _len; _key++) {
+            list[_key] = arguments[_key];
+        }
+
+        var transitionProperties = {};
+        list.forEach(function (item) {
+            Object.keys(item.attrs).forEach(function (property) {
+                transitionProperties[property] = true;
+            });
+        });
+
+        var keyValueMapping = Object.keys(transitionProperties).map(function (property) {
+            return list.filter(function (it) {
+                return it.attrs[property];
+            }).map(function (it) {
+                return it.attrs[property];
+            });
+        }).filter(function (it) {
+            return it.length;
+        });
+
+        return keyValueMapping.map(function (transitionPropertyItem) {
+            var functions$$1 = [];
+
+            for (var i = 0, len = transitionPropertyItem.length - 1; i < len; i++) {
+                functions$$1.push(Scale.makeSetupFunction(transitionPropertyItem[i], transitionPropertyItem[i + 1], len - 1 == i));
+            }
+
+            return {
+                functions: functions$$1,
+                type: transitionPropertyItem[0].itemType || UNIT_PX,
+                values: transitionPropertyItem
+            };
+        });
+    },
+    parseAttrs: function parseAttrs() {
+        for (var _len2 = arguments.length, list = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            list[_key2] = arguments[_key2];
+        }
+
+        list.sort(function (a, b) {
+            if (a.percent == b.percent) return 0;
+            return a.percent > b.percent ? 1 : -1;
+        });
+
+        list = list.map(function (item, index) {
+            Object.keys(item.attrs).forEach(function (key) {
+                item.attrs[key] = ValueGenerator.make(key, item.percent, item.attrs[key]);
+            });
+
+            return item;
+        });
+
+        return list;
+    }
+};
+
+var DIRECTION_NORMAL = 'normal';
+var DIRECTION_REVERSE = 'reverse';
+var DIRECTION_ALTERNATE = 'alternate';
+var DIRECTION_ALTERNATE_REVERSE = 'alternate-reverse';
+
+var Timers = {
+    parse: function parse(opt) {
+        var ani = _extends({
+            name: 'sample' + Date.now(),
+            iteration: 1,
+            duration: 1000,
+            delay: 0,
+            timing: Timing.linear,
+            direction: DIRECTION_NORMAL, // reverse, alternate, alternate-reverse
+            keyframes: {}
+        }, opt);
+
+        if (ani.iteration == 'infinite') {
+            ani.iteration = Number.MAX_SAFE_INTEGER;
+        } else {
+            ani.iteration = Math.floor(ani.iteration);
+        }
+
+        ani.timing = Timing[ani.timing] || ani.timing;
+
+        ani.realKeyframes = KeyFrames.parse(ani.keyframes, ani);
+
+        ani.update = this.setupFunction(ani);
+
+        return ani;
+    },
+    getDirection: function getDirection(ani, progress, runningTime) {
+        if (ani.direction == DIRECTION_REVERSE) {
+            // TODO: duration 안에서 reverse
+            return 1 - progress;
+        } else if (ani.direction == DIRECTION_ALTERNATE) {
+            var targetIterator = Math.ceil(runningTime / ani.duration);
+            var targetIterator2 = Math.floor(runningTime / ani.duration);
+
+            if (targetIterator % 2 == 0) {
+                return 1 - progress;
+            }
+        } else if (ani.direction == DIRECTION_ALTERNATE_REVERSE) {}
+
+        return progress;
+    },
+    setupFunction: function setupFunction(ani) {
+        var _this = this;
+
+        return function (elapsed /* 전체 animation 실행 시간 */) {
+
+            var runningTime = elapsed - ani.delay;
+            if (runningTime < 0) {
+                return false;
+            }
+
+            /* duration 안의 진행지점  */
+            var progress = runningTime / ani.duration;
+
+            if (ani.iteration > 1 && runningTime < ani.iteration * ani.duration) {
+                // 기간이 지나지 않았으면 duration 기간만큼 나눠서 다시 구한다. 
+                var newRunningTime = runningTime - ani.duration * Math.floor(runningTime / ani.duration);
+                progress = newRunningTime / ani.duration;
+            }
+
+            if (progress > 1 && ani.finished) {
+                return false;
+            }
+
+            if (progress > 1 && !ani.finished) {
+                ani.finished = true;
+                console.log('finished');
+                // return true;     
+
+                if (ani.direction == DIRECTION_NORMAL || ani.direction == DIRECTION_REVERSE) {
+                    progress = 1;
+                } else if (ani.direction == DIRECTION_ALTERNATE || ani.direction == DIRECTION_ALTERNATE_REVERSE) {
+                    if (Math.floor(progress / ani.duration) % 2 == 0) {
+                        progress = 0;
+                    } else {
+                        progress = 1;
+                    }
+                }
+            }
+
+            progress = _this.getDirection(ani, progress, runningTime);
+
+            ani.realKeyframes.forEach(function (item) {
+                item.functions.forEach(function (f) {
+                    return f(ani, progress);
+                });
+
+                if (ani.finished == true) {
+                    item.finished = true;
+
+                    _this.setLastValue(ani, item);
+                }
+            });
+
+            return true;
+        };
+    },
+    setLastValue: function setLastValue(ani, item) {
+
+        if (ani.direction == DIRECTION_ALTERNATE) {
+            return;
+        }
+
+        var lastValue = item.values[item.values.length - 1];
+        if (ani.direction == DIRECTION_REVERSE) {
+            lastValue = item.values[0];
+        }
+        console.log(lastValue);
+        if (item.itemType == 'color') {
+            ani.obj[item.key] = rgb(lastValue);
+        } else {
+            ani.obj[item.key] = lastValue.value + lastValue.type;
+        }
+    },
+    makeTimer: function makeTimer(list) {
+        var _this2 = this;
+
+        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+        list = list.map(function (item) {
+            return _this2.parse(item);
+        });
+
+        var timer = {
+            id: 0,
+            start: 0,
+            pause: false
+        };
+
+        var frameStart = function frameStart() {
+            timer.id = requestAnimationFrame(tick);
+        };
+
+        var move = function move(elapsed) {
+            timer.elapsed = elapsed;
+            list.forEach(function (ani) {
+                return ani.update(timer.elapsed);
+            });
+            opt.callback && opt.callback();
+        };
+
+        var tick = function tick(now) {
+
+            timer.elapsed = now - timer.start;
+            var unfinished = list.filter(function (ani) {
+                return !ani.finished;
+            });
+
+            // 끝나지 않음 
+            if (!unfinished.length) {
+                opt.callback && opt.callback();
+                opt.done && opt.done();
+                end();
+                return false;
+            }
+
+            // delay 가 걸려 있으면 시간만 실행되고 실제 값을 업데이트 하지 않음. 
+            list.forEach(function (ani) {
+                return ani.update(timer.elapsed);
+            });
+            opt.callback && opt.callback();
+
+            if (!timer.pause) {
+                frameStart();
+            }
+        };
+
+        var start = function start() {
+            timer.start = performance.now();
+            frameStart();
+        };
+
+        var end = function end() {
+            cancelAnimationFrame(timer.id);
+        };
+
+        var pause = function pause() {
+            timer.pause = true;
+            cancelAnimationFrame(timer.id);
+        };
+
+        var restart = function restart() {
+            timer.pause = false;
+            frameStart();
+        };
+
+        return {
+            start: start,
+            end: end,
+            pause: pause,
+            restart: restart,
+            tick: tick,
+            move: move,
+            timer: timer,
+            list: list
+        };
+    }
+};
+
+function createTimeline() {
+    var animations = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var opt = arguments[1];
+
+    return Timers.makeTimer(animations, opt);
+}
+
+var Animation = {
+    KeyFrames: KeyFrames,
+    Timers: Timers,
+    createTimeline: createTimeline,
+    Timing: Timing
+};
+
+var TIMELINE_PUSH = 'timeline/push';
+var TIMELINE_LIST = 'timeline/list';
+
+var TIMELINE_MAX_SECOND = 300;
+var TIMELINE_1_SECOND_WIDTH = 100;
+var TIMELINE_TOTAL_WIDTH = TIMELINE_1_SECOND_WIDTH * TIMELINE_MAX_SECOND;
+
+var PROPERTY_DEFAULT_VALUE$1 = {
+    'translateX': 0,
+    'translateY': 0
+};
+
+var TimelineObjectList = function (_UIElement) {
+    inherits(TimelineObjectList, _UIElement);
+
+    function TimelineObjectList() {
+        classCallCheck(this, TimelineObjectList);
+        return possibleConstructorReturn(this, (TimelineObjectList.__proto__ || Object.getPrototypeOf(TimelineObjectList)).apply(this, arguments));
+    }
+
+    createClass(TimelineObjectList, [{
+        key: "template",
+        value: function template() {
+            return "<div class=\"timeline-object-list\"></div>";
+        }
+    }, {
+        key: LOAD('$el'),
+        value: function value$$1() {
+            var _this2 = this;
+
+            return this.read(TIMELINE_LIST).map(function (timeline, index) {
+                return _this2.makeTimelineRow(timeline, index);
+            });
+        }
+    }, {
+        key: "makeTimelineRow",
+        value: function makeTimelineRow(timeline, index) {
+
+            var targetItem = this.get(timeline.targetId);
+
+            if (IS_LAYER(targetItem)) {
+                return this.makeTimelineObjectForLayer(timeline, targetItem, index);
+            }
+
+            return '';
+        }
+    }, {
+        key: "getPropertyValue",
+        value: function getPropertyValue(targetItem, property) {
+            return defaultValue(targetItem[property], PROPERTY_DEFAULT_VALUE$1[property]);
+        }
+    }, {
+        key: "makeTimelineObjectForLayer",
+        value: function makeTimelineObjectForLayer(timeline, targetItem, index) {
+            return "\n            <div class='timeline-object' data-type='layer'>\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + (targetItem.name || targetItem.index / 100 + 1 + '. Layer') + "</div>\n                </div>\n                <div class='timeline-group'>\n                    <div class='timeline-collapse' data-property='transform'>\n                        <div class='property-title row' >Transform</div>\n                        <div class='timeline-property-list' data-property='transform'>\n                            <div class='timeline-property row' data-property='translateX'>\n                                <label>translateX</label>\n                                <input type='number' data-type='translateX' /> <span class='unit'>" + UNIT_PX + "</span>\n                            </div>    \n                            <div class='timeline-property row' data-property='translateY'>\n                                <label>translateY</label>\n                                <input type='number' data-type='translateY' /> <span class='unit'>" + UNIT_PX + "</span>\n                            </div>    \n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT(CHANGE_TIMELINE),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(ADD_TIMELINE),
+        value: function value$$1(id) {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .group .title'),
+        value: function value$$1(e) {
+            var groupId = e.$delegateTarget.attr('id');
+
+            var isShow = e.$delegateTarget.hasClass('show');
+
+            e.$delegateTarget.toggleClass('show', !isShow);
+
+            this.$el.$$("[group-id=\"" + groupId + "\"]").forEach(function ($dom) {
+                $dom.toggleClass('show', !isShow);
+            });
+        }
+    }]);
+    return TimelineObjectList;
+}(UIElement);
+
+var KeyframeObjectList = function (_UIElement) {
+    inherits(KeyframeObjectList, _UIElement);
+
+    function KeyframeObjectList() {
+        classCallCheck(this, KeyframeObjectList);
+        return possibleConstructorReturn(this, (KeyframeObjectList.__proto__ || Object.getPrototypeOf(KeyframeObjectList)).apply(this, arguments));
+    }
+
+    createClass(KeyframeObjectList, [{
+        key: "template",
+        value: function template() {
+            return "<div class=\"keyframe-list\"></div>";
+        }
+    }, {
+        key: LOAD('$el'),
+        value: function value() {
+            var _this2 = this;
+
+            return this.read(TIMELINE_LIST).map(function (timeline, index) {
+                return _this2.makeTimelineRow(timeline, index);
+            });
+        }
+    }, {
+        key: "makeTimelineRow",
+        value: function makeTimelineRow(timeline, index) {
+
+            var targetItem = this.get(timeline.targetId);
+
+            if (IS_LAYER(targetItem)) {
+                return this.makeTimelineObjectForLayer(timeline, targetItem, index);
+            }
+
+            return '';
+        }
+    }, {
+        key: "getPropertyValue",
+        value: function getPropertyValue(targetItem, property) {
+            return defaultValue(targetItem[property], PROPERTY_DEFAULT_VALUE[property]);
+        }
+    }, {
+        key: "makeTimelineObjectForLayer",
+        value: function makeTimelineObjectForLayer(timeline, targetItem, index) {
+            return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>\n                    <div class='keyframe-collapse row' data-property='transform'></div>\n                    <div class='keyframe-property-list' data-property='transform'>\n                        <div class='keyfame-property row' data-property='translateX'>\n                            <div class='keyframe-item line' style='left: 50px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                            <div class='keyframe-item line' style='left: 350px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                            <div class='keyframe-item line' style='left: 650px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>\n                            <div class='keyframe-item line' style='left: 950px; width: 300px;'>\n                                <div class='bar'></div>\n                                <div class='start' ></div>\n                                <div class='end' ></div>\n                            </div>                            \n                        </div>    \n                        <div class='keyfame-property row' data-property='translateY'></div>    \n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.$el.px('width', TIMELINE_TOTAL_WIDTH);
+            this.load();
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR$1),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(ADD_TIMELINE),
+        value: function value(timelineId) {
+            this.refresh();
+        }
+    }, {
+        key: POINTERSTART('$el .bar') + SELF,
+        value: function value(e) {
+            this.selectedClass = 'bar';
+            this.selectedElement = e.$delegateTarget.parent();
+            this.selectedStartX = this.selectedElement.cssFloat('left');
+            this.xy = e.xy;
+            // console.log('start', e.xy);
+        }
+    }, {
+        key: POINTERSTART('$el .start') + SELF,
+        value: function value(e) {
+            this.selectedClass = 'start';
+            if (this.selectedEl) {
+                this.selectedEl.removeClass('selected');
+            }
+            this.selectedEl = e.$delegateTarget;
+            this.selectedEl.addClass('selected');
+            this.selectedElement = e.$delegateTarget.parent();
+            this.selectedStartX = this.selectedElement.cssFloat('left');
+            this.selectedStartWidth = this.selectedElement.cssFloat('width');
+            this.selectedEndX = this.selectedStartX + this.selectedStartWidth;
+            this.xy = e.xy;
+            // console.log('start', e.xy);
+        }
+    }, {
+        key: POINTERSTART('$el .end') + SELF,
+        value: function value(e) {
+            this.selectedClass = 'end';
+            if (this.selectedEl) {
+                this.selectedEl.removeClass('selected');
+            }
+            this.selectedEl = e.$delegateTarget;
+            this.selectedEl.addClass('selected');
+            this.selectedElement = e.$delegateTarget.parent();
+            this.selectedStartX = this.selectedElement.cssFloat('left');
+            this.selectedStartWidth = this.selectedElement.cssFloat('width');
+            this.selectedEndX = this.selectedStartX + this.selectedStartWidth;
+            this.xy = e.xy;
+            // console.log('start', e.xy);
+        }
+    }, {
+        key: "isSelectedClass",
+        value: function isSelectedClass() {
+            return this.selectedClass != '';
+        }
+    }, {
+        key: POINTERMOVE('document') + CHECKER('isSelectedClass'),
+        value: function value(e) {
+            if (this.selectedClass == 'bar') {
+                var newX = Math.max(0, this.selectedStartX + (e.xy.x - this.xy.x));
+                this.selectedElement.px('left', newX);
+            } else if (this.selectedClass == 'start') {
+                var dx = e.xy.x - this.xy.x;
+                var newX = Math.min(Math.max(0, this.selectedStartX + dx), this.selectedEndX);
+                var newWidth = this.selectedStartWidth - (newX - this.selectedStartX);
+                this.selectedElement.px('left', newX);
+                this.selectedElement.px('width', newWidth);
+            } else if (this.selectedClass == 'end') {
+                var dx = e.xy.x - this.xy.x;
+                var newWidth = Math.max(0, this.selectedStartWidth + dx);
+                this.selectedElement.px('width', newWidth);
+            }
+        }
+    }, {
+        key: POINTEREND('document'),
+        value: function value(e) {
+            this.selectedClass = '';
+            this.selectedElement = null;
+            // console.log('end', e.xy);
+        }
+    }]);
+    return KeyframeObjectList;
+}(UIElement);
+
+var KeyframeGuideLine = function (_UIElement) {
+    inherits(KeyframeGuideLine, _UIElement);
+
+    function KeyframeGuideLine() {
+        classCallCheck(this, KeyframeGuideLine);
+        return possibleConstructorReturn(this, (KeyframeGuideLine.__proto__ || Object.getPrototypeOf(KeyframeGuideLine)).apply(this, arguments));
+    }
+
+    createClass(KeyframeGuideLine, [{
+        key: "template",
+        value: function template() {
+            return "<div class=\"keyframe-guide-line\">\n            <div class='guide' style='width:1px;position:absolute;left:500px;height:100%;background-color:black;'></div>\n        </div>";
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.$el.px('height', 3000);
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR$1),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return KeyframeGuideLine;
+}(UIElement);
+
+var KeyframeTimeView = function (_UIElement) {
+    inherits(KeyframeTimeView, _UIElement);
+
+    function KeyframeTimeView() {
+        classCallCheck(this, KeyframeTimeView);
+        return possibleConstructorReturn(this, (KeyframeTimeView.__proto__ || Object.getPrototypeOf(KeyframeTimeView)).apply(this, arguments));
+    }
+
+    createClass(KeyframeTimeView, [{
+        key: "template",
+        value: function template() {
+            return "<div class='keyframe-time-view'></div>";
+        }
+    }, {
+        key: LOAD(),
+        value: function value$$1() {
+            return [].concat(toConsumableArray(Array(TIMELINE_MAX_SECOND))).map(function (it, index) {
+                return "<div class='time'>" + (index + 1) + "s</div>";
+            }).join(EMPTY_STRING);
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.$el.px('width', TIMELINE_TOTAL_WIDTH);
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR$1),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }]);
+    return KeyframeTimeView;
+}(UIElement);
+
 var Timeline = function (_UIElement) {
     inherits(Timeline, _UIElement);
 
@@ -19763,14 +20759,82 @@ var Timeline = function (_UIElement) {
     }
 
     createClass(Timeline, [{
+        key: "components",
+        value: function components() {
+            return {
+                KeyframeTimeView: KeyframeTimeView,
+                KeyframeGuideLine: KeyframeGuideLine,
+                TimelineObjectList: TimelineObjectList,
+                KeyframeObjectList: KeyframeObjectList
+            };
+        }
+    }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    Timeline\n                </div>\n                <div class='timeline-body\"></div>\n            </div>\n        ";
+            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>Timeline</div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView></KeyframeTimeView>\n                    </div>\n                </div>\n                <div class='timeline-body'>\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList></KeyframeObjectList>\n                        <KeyframeGuideLine></KeyframeGuideLine>\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList></TimelineObjectList>\n                    </div>\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "startAnimation",
+        value: function startAnimation() {
+            var _this2 = this;
+
+            this.run(TOOL_SAVE_DATA);
+
+            this.read(SELECTION_CURRENT_LAYER, function (layer) {
+                var obj = layer;
+                var aniObject = Animation.createTimeline([{
+                    duration: 1000,
+                    obj: obj,
+                    timing: 'ease-out-sine',
+                    iteration: 3,
+                    direction: 'alternate',
+                    keyframes: {
+                        '0%': {
+                            'x': '0px',
+                            'background-color': 'rgba(255, 255, 255, 0.5)'
+                        },
+                        '100%': {
+                            'x': '250px',
+                            'background-color': 'rgba(255, 0, 255, 1)'
+                        }
+                    }
+
+                }], {
+                    callback: function callback() {
+                        _this2.run(ITEM_SET, layer);
+                        _this2.emit('animationEditor');
+                    },
+                    done: function done() {
+                        _this2.run(TOOL_RESTORE_DATA);
+                    }
+                });
+
+                aniObject.start();
+            });
         }
     }, {
         key: CLICK('$header'),
         value: function value() {
-            this.parent.toggleTimeline();
+            this.startAnimation();
+        }
+    }, {
+        key: SCROLL('$timelineList') + DEBOUNCE(10),
+        value: function value(e) {
+            this.refs.$keyframeList.setScrollTop(this.refs.$timelineList.scrollTop());
+        }
+    }, {
+        key: SCROLL('$keyframeList') + DEBOUNCE(10),
+        value: function value(e) {
+            this.refs.$timelineList.setScrollTop(this.refs.$keyframeList.scrollTop());
+            this.refs.$keyframeToolbar.setScrollLeft(this.refs.$keyframeList.scrollLeft());
+        }
+    }, {
+        key: DROP('$timelineList'),
+        value: function value(e) {
+            e.preventDefault(e);
+            var draggedId = e.dataTransfer.getData('text');
+
+            this.run(TIMELINE_PUSH, draggedId);
         }
     }]);
     return Timeline;
@@ -19901,7 +20965,7 @@ var VerticalColorStep = function (_UIElement) {
             this.refs.$verticalColorstep.px('width', this.$store.step.width);
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19917,57 +20981,6 @@ var VerticalColorStep = function (_UIElement) {
     }]);
     return VerticalColorStep;
 }(UIElement);
-
-var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
-
-var stepTimingFunction = function stepTimingFunction() {
-    var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-    var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
-
-    return function (progress) {
-        var stepDist = 1 / step;
-
-        if (position == 'start') {
-            return stepDist * Math.ceil(progress / stepDist);
-        } else if (position == 'end') {
-            return stepDist * Math.floor(progress / stepDist);
-        }
-    };
-};
-
-var Timing = {
-    'ease-out-elastic': function easeOutElastic(progress, duration, start, end) {
-        return Math.pow(2, -10 * progress) * Math.sin((progress - .1) * 5 * Math.PI) + 1;
-    },
-    'cubic-bezier': function cubicBezier$$1(x1, y1, x2, y2) {
-        return cubicBezier(x1, y1, x2, y2);
-    },
-    'step': function step() {
-        var _step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
-        var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
-
-        return stepTimingFunction(_step, position);
-    },
-    'step-start': function stepStart(progress) {
-        return stepTimingFunction(1, 'start')(progress);
-    },
-    'step-end': function stepEnd(progress) {
-        return stepTimingFunction(1, 'end')(progress);
-    }
-};
-
-// setup bezier functions
-bezierList.forEach(function (arr) {
-    Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
-});
-
-var _ScaleFunctions;
-
-var ScaleFunctions = (_ScaleFunctions = {
-    'color': 'makeScaleFunctionForColor',
-    'number': 'makeScaleFunctionForNumber'
-}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
 
 var ClipPathImageList = function (_BasePropertyItem) {
     inherits(ClipPathImageList, _BasePropertyItem);
@@ -20146,7 +21159,7 @@ var PredefinedPageResizer = function (_UIElement) {
             return this.read(SELECTION_IS_PAGE);
         }
     }, {
-        key: EVENT(CHANGE_PAGE_SIZE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_PAGE_SIZE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -20396,7 +21409,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.read(SELECTION_IS_NOT_EMPTY);
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_BORDER, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE_SIZE),
+        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_SIZE, CHANGE_LAYER_ROTATE, CHANGE_LAYER_MOVE, CHANGE_LAYER_BORDER, CHANGE_LAYER_POSITION, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_PAGE_SIZE),
         value: function value$$1() {
             this.refresh();
         }
@@ -20897,7 +21910,7 @@ var CircleEditor = function (_UIElement) {
             this.commit(CHANGE_LAYER_CLIPPATH, item);
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -21070,7 +22083,7 @@ var EllipseEditor = function (_UIElement) {
             this.commit(CHANGE_LAYER_CLIPPATH, item);
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -21258,7 +22271,7 @@ var InsetEditor = function (_UIElement) {
             this.refreshPointer();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -21306,7 +22319,7 @@ var PolygonEditor = function (_UIElement) {
     createClass(PolygonEditor, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='layer-shape-polygon-editor'>\n\n            </div>\n        ";
+            return "<div class='layer-shape-polygon-editor' title=\"Click panel with alt if you want to add point\"></div>";
         }
     }, {
         key: LOAD(),
@@ -21418,7 +22431,7 @@ var PolygonEditor = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_CLIPPATH_POLYGON_POSITION),
         value: function value$$1() {
             this.refresh();
         }
@@ -21603,7 +22616,7 @@ var LayerShapeEditor = function (_UIElement) {
             return this.read(SELECTION_IS_LAYER) || this.read(SELECTION_IS_IMAGE) || this.read(SELECTION_IS_BOXSHADOW) || this.read(SELECTION_IS_TEXTSHADOW);
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_ROTATE, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_ROTATE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -21666,7 +22679,7 @@ var MoveGuide = function (_UIElement) {
             return this.config('moving');
         }
     }, {
-        key: EVENT(CHANGE_LAYER_SIZE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_SIZE, CHANGE_LAYER_MOVE, CHANGE_LAYER_POSITION, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -21857,7 +22870,7 @@ var GradientView = function (_UIElement) {
             this.refs.$page.toggle(item);
 
             if (item) {
-                if (item.itemType == ITEM_TYPE_PAGE) {
+                if (IS_PAGE(item)) {
                     var count = this.read(ITEM_COUNT_CHILDREN, item.id);
                     this.refs.$colorview.toggle(count);
                 }
@@ -21890,7 +22903,7 @@ var GradientView = function (_UIElement) {
         // all effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value$$1() {
             this.refresh();
         }
@@ -22305,7 +23318,7 @@ var ShowGrid = function (_MenuItem) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_TOOL, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_TOOL, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -22498,7 +23511,7 @@ var ShowClipPath = function (_MenuItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -23087,7 +24100,7 @@ var PageListView = function (_UIElement) {
         key: EVENT(CHANGE_PAGE),
         value: function value$$1() {
             this.refresh();
-            this.emit(CHANGE_EDITOR);
+            this.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: CLICK('$pageList .add-page'),
@@ -23100,7 +24113,7 @@ var PageListView = function (_UIElement) {
         value: function value$$1(e) {
 
             this.run(SELECTION_ONE, e.$delegateTarget.attr('id'));
-            this.emit(CHANGE_EDITOR);
+            this.emit(CHANGE_EDITOR$1);
             this.refresh();
         }
     }, {
@@ -23202,7 +24215,7 @@ var LayerListView = function (_UIElement) {
         // all effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -23219,6 +24232,7 @@ var LayerListView = function (_UIElement) {
         value: function value$$1(e) {
             this.draggedLayer = e.$delegateTarget;
             this.draggedLayer.css('opacity', 0.5);
+            e.dataTransfer.setData('text', e.$delegateTarget.attr('id'));
             // e.preventDefault();
         }
     }, {
@@ -23454,13 +24468,13 @@ var CSSEditor$1 = function (_UIElement) {
 
             setTimeout(function () {
                 _this2.emit(RESIZE_WINDOW);
-                _this2.emit(CHANGE_EDITOR);
+                _this2.emit(CHANGE_EDITOR$1);
             }, 100);
         }
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main expertor-mode" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/><DropView /><HotKey />\n            </div>\n        ';
+            return '\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/><DropView /><HotKey />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -23482,7 +24496,7 @@ var CSSEditor$1 = function (_UIElement) {
             };
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value() {
             /*
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
@@ -23575,7 +24589,7 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: GETTER(COLORSTEP_COLOR_SOURCE),
@@ -23832,7 +24846,7 @@ var ImageManager = function (_BaseModule) {
 
     createClass(ImageManager, [{
         key: GETTER(IMAGE_GET_FILE),
-        value: function value($store, files, callback) {
+        value: function value$$1($store, files, callback) {
             var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
 
             (files || []).forEach(function (file) {
@@ -23857,7 +24871,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_GET_URL),
-        value: function value($store, urls, callback) {
+        value: function value$$1($store, urls, callback) {
             var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
 
             (urls || []).forEach(function (url) {
@@ -23878,7 +24892,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_GET_BLOB),
-        value: function value($store, blobs, callback) {
+        value: function value$$1($store, blobs, callback) {
             (blobs || []).forEach(function (file) {
                 if (isFunction(callback)) {
                     new ImageLoader(file, {
@@ -23906,7 +24920,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_TO_STRING),
-        value: function value($store) {
+        value: function value$$1($store) {
             var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
             var newItem = _extends({}, image);
@@ -23919,7 +24933,7 @@ var ImageManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(IMAGE_TO_LINEAR_RIGHT),
-        value: function value($store, image) {
+        value: function value$$1($store, image) {
             var colorsteps = image.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, image.id);
             return IMAGE_TO_LINEAR(_extends({}, image, { type: 'linear', angle: 'to right', colorsteps: colorsteps }));
         }
@@ -24161,7 +25175,7 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_MAKE_TEXTSHADOW),
         value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW$1, isExport);
+            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW, isExport);
         }
     }, {
         key: GETTER(LAYER_TO_STRING_CLIPPATH),
@@ -24309,6 +25323,8 @@ var ToolManager = function (_BaseModule) {
                 'guide.angle': true,
                 'guide.position': true
             };
+
+            this.$store.toolStack = [];
         }
     }, {
         key: GETTER(TOOL_COLOR_SOURCE),
@@ -24349,6 +25365,24 @@ var ToolManager = function (_BaseModule) {
             }
 
             $store.emit(CHANGE_TOOL);
+        }
+    }, {
+        key: ACTION(TOOL_SAVE_DATA),
+        value: function value$$1($store) {
+            $store.toolStack.push({
+                items: clone($store.items),
+                itemKeys: clone($store.itemKeys)
+            });
+        }
+    }, {
+        key: ACTION(TOOL_RESTORE_DATA),
+        value: function value$$1($store) {
+            var obj = $store.toolStack.pop();
+
+            $store.items = obj.items;
+            $store.itemKeys = obj.itemKeys;
+
+            $store.emit(CHANGE_EDITOR);
         }
     }]);
     return ToolManager;
@@ -24526,7 +25560,7 @@ var silence = {
 var circle = {
     image: {
         type: 'radial',
-        radialPosition: POSITION_CENTER,
+        radialPosition: 'center',
         radialType: 'circle'
     },
     colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'black', percent: 50, index: 100 }]
@@ -24575,7 +25609,7 @@ var GradientManager = function (_BaseModule) {
     createClass(GradientManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: "getStaticList",
@@ -24764,7 +25798,7 @@ var ItemManager = function (_BaseModule) {
     createClass(ItemManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: GETTER(ITEM_CONVERT_STYLE),
@@ -25470,7 +26504,7 @@ var ExternalResourceManager = function (_BaseModule) {
     createClass(ExternalResourceManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: ACTION(EXTERNAL_PASTE),
@@ -25603,7 +26637,7 @@ var CollectManager = function (_BaseModule) {
 
     createClass(CollectManager, [{
         key: GETTER(COLLECT_COLORSTEPS),
-        value: function value($store, imageId) {
+        value: function value$$1($store, imageId) {
             return $store.read(ITEM_MAP_CHILDREN, imageId, function (colorstep) {
                 var colorstep = _extends({}, $store.items[colorstep.id]);
                 delete colorstep.id;
@@ -25614,7 +26648,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_ONE),
-        value: function value($store, id) {
+        value: function value$$1($store, id) {
             var item = this.get(id);
 
             switch (item.itemType) {
@@ -25634,7 +26668,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_IMAGE_ONE),
-        value: function value($store, imageId) {
+        value: function value$$1($store, imageId) {
             var image = _extends({}, $store.items[imageId]);
             delete image.id;
             delete image.parentId;
@@ -25646,7 +26680,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_BOXSHADOW_ONE),
-        value: function value($store, boxshadowId) {
+        value: function value$$1($store, boxshadowId) {
             var boxshadow = _extends({}, $store.items[boxshadowId]);
             delete boxshadow.id;
             delete boxshadow.parentId;
@@ -25655,7 +26689,7 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_TEXTSHADOW_ONE),
-        value: function value($store, textshadowId) {
+        value: function value$$1($store, textshadowId) {
             var textshadow = _extends({}, $store.items[textshadowId]);
             delete textshadow.id;
             delete textshadow.parentId;
@@ -25664,28 +26698,28 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_IMAGES),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             return $store.read(ITEM_MAP_IMAGE_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_IMAGE_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_BOXSHADOWS),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             return $store.read(ITEM_MAP_BOXSHADOW_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_BOXSHADOW_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_TEXTSHADOWS),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             return $store.read(ITEM_MAP_TEXTSHADOW_CHILDREN, layerId, function (image) {
                 return $store.read(COLLECT_TEXTSHADOW_ONE, image.id);
             });
         }
     }, {
         key: GETTER(COLLECT_LAYER_ONE),
-        value: function value($store, layerId) {
+        value: function value$$1($store, layerId) {
             var results = {};
 
             if (!$store.items[layerId]) {
@@ -25705,14 +26739,14 @@ var CollectManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(COLLECT_LAYERS),
-        value: function value($store, pageId) {
+        value: function value$$1($store, pageId) {
             return $store.read(ITEM_MAP_CHILDREN, pageId, function (layer) {
                 return $store.read(COLLECT_LAYER_ONE, layer.id);
             });
         }
     }, {
         key: GETTER(COLLECT_PAGE_ONE),
-        value: function value($store, pageId) {
+        value: function value$$1($store, pageId) {
             var results = {};
 
             if (!$store.items[pageId]) {
@@ -25884,7 +26918,7 @@ var HistoryManager = function (_BaseModule) {
 
                 $store.selection = selection || $store.read(SELECTION_INITIALIZE_DATA);
                 $store.items = clone(items);
-                $store.emit(CHANGE_EDITOR);
+                $store.emit(CHANGE_EDITOR$1);
             }
         }
     }, {
@@ -26153,12 +27187,12 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_CURRENT_TEXTSHADOW),
         value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW, callback);
         }
     }, {
         key: GETTER(SELECTION_CURRENT_TEXTSHADOW_ID),
         value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW$1, callback);
+            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW, callback);
         }
     }, {
         key: GETTER(SELECTION_CURRENT_LAYER),
@@ -26251,13 +27285,13 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_IS_LAYER),
         value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_LAYER;
+            return IS_LAYER($store.selection);
         }
     }, {
         key: GETTER(SELECTION_IS_IMAGE),
         value: function value$$1($store, type) {
 
-            var isImage = $store.selection.itemType == ITEM_TYPE_IMAGE;
+            var isImage = IS_IMAGE($store.selection);
             var isTypeCheck = true;
 
             if (type) {
@@ -26273,27 +27307,17 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_IS_PAGE),
         value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_PAGE;
+            return IS_PAGE($store.selection);
         }
     }, {
         key: GETTER(SELECTION_IS_BOXSHADOW),
         value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
+            return IS_BOXSHADOW($store.selection);
         }
     }, {
         key: GETTER(SELECTION_IS_TEXTSHADOW),
         value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_FILTER),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_FILTER;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_BACKDROP_FILTER),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == ITEM_TYPE_BACKDROP;
+            return IS_TEXTSHADOW($store.selection);
         }
     }, {
         key: GETTER(SELECTION_IS_ONE),
@@ -26314,7 +27338,7 @@ var SelectionManager = function (_BaseModule) {
         key: GETTER(SELECTION_LAYERS),
         value: function value$$1($store) {
             return $store.read(ITEM_FILTER, function (id) {
-                return $store.items[id].itemType == ITEM_TYPE_LAYER;
+                return IS_LAYER($store.items[id]);
             }).map(function (id) {
                 var _$store$items$id = $store.items[id],
                     x = _$store$items$id.x,
@@ -26347,13 +27371,11 @@ var SelectionManager = function (_BaseModule) {
             var path = $store.read(ITEM_PATH, selectedId);
             $store.selection.pageId = path[path.length - 1];
 
-            console.log($store.selection);
-
             var layers = [];
 
-            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+            if (IS_LAYER($store.selection)) {
                 layers = [selectedId];
-            } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+            } else if (IS_IMAGE($store.selection) || IS_BOXSHADOW($store.selection) || IS_TEXTSHADOW($store.selection)) {
                 layers = [this.get(selectedId).parentId];
             }
 
@@ -26362,7 +27384,7 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: ACTION(SELECTION_CHANGE),
         value: function value$$1($store, itemType) {
-            if (itemType == ITEM_TYPE_PAGE) {
+            if (IS_PAGE({ itemType: itemType })) {
                 $store.read(SELECTION_CURRENT_PAGE_ID, function (id) {
                     if (id) {
                         $store.run(SELECTION_ONE, id);
@@ -26406,9 +27428,9 @@ var SelectionManager = function (_BaseModule) {
 
                 var layers = [];
 
-                if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+                if (IS_LAYER($store.selection)) {
                     layers = [].concat(selectItems);
-                } else if ($store.selection.itemType == ITEM_TYPE_IMAGE || $store.selection.itemType == ITEM_TYPE_BOXSHADOW || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW$1) {
+                } else if (IS_IMAGE($store.selection) || IS_BOXSHADOW($store.selection) || IS_TEXTSHADOW($store.selection)) {
                     layers = selectItems.map(function (id) {
                         return _this3.get(id).parentId;
                     });
@@ -26486,7 +27508,7 @@ var OrderingManager = function (_BaseModule) {
     createClass(OrderingManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: "horizontal",
@@ -27174,7 +28196,7 @@ var I18nManager = function (_BaseModule) {
     }, {
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.emit(CHANGE_EDITOR);
+            this.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: ACTION('i18n/change/language'),
@@ -27417,7 +28439,7 @@ var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_IT
 var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 
-var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW$1, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
+var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_TIMELINE, ITEM_CREATE_TIMELINE), defineProperty(_itemCreateActions, ITEM_TYPE_KEYFRAME, ITEM_CREATE_KEYFRAME), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
 
 var ItemCreateManager = function (_BaseModule) {
     inherits(ItemCreateManager, _BaseModule);
@@ -27438,7 +28460,7 @@ var ItemCreateManager = function (_BaseModule) {
     }, {
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: GETTER(ITEM_KEYS),
@@ -27490,6 +28512,20 @@ var ItemCreateManager = function (_BaseModule) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             return $store.read(ITEM_CREATE_OBJECT, obj, LAYER_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_TIMELINE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, TIMELINE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_KEYFRAME),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, KEYFRAME_DEFAULT_OBJECT);
         }
     }, {
         key: GETTER(ITEM_CREATE_CIRCLE),
@@ -27616,6 +28652,36 @@ var ItemCreateManager = function (_BaseModule) {
 
             $store.run(ITEM_SET, item, isSelected);
             $store.run(ITEM_SORT, item.id);
+        }
+    }, {
+        key: ACTION(ITEM_ADD_TIMELINE),
+        value: function value$$1($store, targetId) {
+            var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
+            var callback = arguments[3];
+
+            var id = $store.read(ITEM_CREATE_TIMELINE, {
+                targetId: targetId,
+                parentId: parentId,
+                index: Number.MAX_SAFE_INTEGER
+            });
+
+            $store.run(ITEM_SORT, id);
+
+            if (isFunction(callback)) {
+                callback(id);
+            }
+        }
+    }, {
+        key: ACTION(ITEM_ADD_KEYFRAME),
+        value: function value$$1($store) {
+            var parentId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+
+            var id = $store.read(ITEM_CREATE_KEYFRAME, {
+                parentId: parentId,
+                index: Number.MAX_SAFE_INTEGER
+            });
+
+            $store.run(ITEM_SORT, id);
         }
     }, {
         key: ACTION(ITEM_ADD_SHAPE),
@@ -27753,6 +28819,8 @@ var ItemCreateManager = function (_BaseModule) {
             image.parentId = layerId;
             $store.run(ITEM_SET, image, isSelected);
 
+            $store.run(SELECTION_ONE, pageId);
+            $store.emit(RESIZE_WINDOW);
             $store.run(HISTORY_INITIALIZE);
         }
     }]);
@@ -27775,7 +28843,7 @@ var ItemMoveManager = function (_BaseModule) {
     createClass(ItemMoveManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: ACTION(ITEM_MOVE_TO),
@@ -27912,7 +28980,7 @@ var ItemRecoverManager = function (_BaseModule) {
     createClass(ItemRecoverManager, [{
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR);
+            this.$store.emit(CHANGE_EDITOR$1);
         }
     }, {
         key: GETTER(ITEM_RECOVER),
@@ -28140,11 +29208,13 @@ var ItemSearchManager = function (_BaseModule) {
 
             var parent = this.get(parentId);
 
-            if (!parent.children) {
-                parent.children = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
+            parent.children = parent.children || {};
+
+            if (!parent.children[itemType]) {
+                parent.children[itemType] = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
             }
 
-            return parent.children.map(function (id, index) {
+            return parent.children[itemType].map(function (id, index) {
                 return callback($store.items[id], index);
             });
         }
@@ -28161,6 +29231,20 @@ var ItemSearchManager = function (_BaseModule) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_LAYER, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_TIMELINE_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TIMELINE, callback);
+        }
+    }, {
+        key: GETTER(ITEM_MAP_KEYFRAME_CHILDREN),
+        value: function value$$1($store, parentId) {
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_KEYFRAME, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_IMAGE_CHILDREN),
@@ -28188,7 +29272,7 @@ var ItemSearchManager = function (_BaseModule) {
         value: function value$$1($store, parentId) {
             var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
 
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW$1, callback);
+            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW, callback);
         }
     }, {
         key: GETTER(ITEM_FILTER_CHILDREN),
@@ -28827,7 +29911,43 @@ var HotkeyManager = function (_BaseModule) {
     return HotkeyManager;
 }(BaseModule);
 
-var modules = [HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
+var TimelineManager = function (_BaseModule) {
+    inherits(TimelineManager, _BaseModule);
+
+    function TimelineManager() {
+        classCallCheck(this, TimelineManager);
+        return possibleConstructorReturn(this, (TimelineManager.__proto__ || Object.getPrototypeOf(TimelineManager)).apply(this, arguments));
+    }
+
+    createClass(TimelineManager, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {
+            this.$store.emit(CHANGE_TIMELINE);
+        }
+    }, {
+        key: GETTER(TIMELINE_LIST),
+        value: function value($store) {
+
+            var pageId = $store.read(SELECTION_CURRENT_PAGE_ID);
+
+            if (!pageId) return [];
+
+            return $store.read(ITEM_MAP_TIMELINE_CHILDREN, pageId);
+        }
+    }, {
+        key: ACTION(TIMELINE_PUSH),
+        value: function value($store, targetId) {
+            $store.read(SELECTION_CURRENT_PAGE_ID, function (pageId) {
+                $store.run(ITEM_ADD_TIMELINE, targetId, pageId, function (timelineId) {
+                    $store.emit(ADD_TIMELINE, timelineId);
+                });
+            });
+        }
+    }]);
+    return TimelineManager;
+}(BaseModule);
+
+var modules = [TimelineManager, HotkeyManager, ShapeManager, PatternManager, ExportManager, ClipPathManager, I18nManager, BackdropManager, FilterManager, TextShadowManager, BoxShadowManager, MatrixManager, OrderingManager, SelectionManager, HistoryManager, PageManager, CollectManager, SVGManager, ExternalResourceManager, StorageManager, ItemManager, ItemCreateManager, ItemMoveManager, ItemRecoverManager, ItemSearchManager, ColorStepManager, ImageManager, LayerManager, ToolManager, BlendManager, GradientManager, GuideManager];
 
 var CSSEditor = {
     createCSSEditor: function createCSSEditor() {

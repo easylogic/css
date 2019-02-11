@@ -1,7 +1,21 @@
-import { stringUnit, valueUnit, percentUnit, EMPTY_STRING } from "./types";
+import { 
+    stringUnit, valueUnit, percentUnit, EMPTY_STRING,
+    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME
+} from "./types";
 import { parseParamNumber } from "../filter/functions";
 import { defaultValue, isNotUndefined, get, isNumber, isUndefined } from "../functions/func";
-import { IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC } from "../../csseditor/types/ItemTypes";
+
+export function IS_PAGE (item) { return item.itemType == ITEM_TYPE_PAGE }
+export function IS_LAYER (item) { return item.itemType == ITEM_TYPE_LAYER }
+export function IS_CIRCLE (item) { return item.itemType == ITEM_TYPE_CIRCLE }
+export function IS_SHAPE (item) { return item.itemType == ITEM_TYPE_SHAPE }
+export function IS_GROUP (item) { return item.itemType == ITEM_TYPE_GROUP }
+export function IS_IMAGE (item) { return item.itemType == ITEM_TYPE_IMAGE }
+export function IS_BOXSHADOW (item) { return item.itemType == ITEM_TYPE_BOXSHADOW }
+export function IS_TEXTSHADOW (item) { return item.itemType == ITEM_TYPE_TEXTSHADOW }
+export function IS_COLORSTEP (item) { return item.itemType == ITEM_TYPE_COLORSTEP }
+export function IS_TIMELINE (item) { return item.itemType == ITEM_TYPE_TIMELINE }
+export function IS_KEYFRAME (item) { return item.itemType == ITEM_TYPE_KEYFRAME }
 
 export function MAKE_BORDER_RADIUS (layer) {
     var css = {};

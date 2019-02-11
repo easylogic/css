@@ -130,7 +130,7 @@
         background-color: #ececec;
         text-align: center;
         height: 100%;
-        padding: 5px 10px;
+        padding: 4px 10px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box; }
         .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header .color-tab-item.active {
@@ -1215,7 +1215,8 @@ html, body {
     .csseditor .layout-main.show-timeline .layout-left, .csseditor .layout-main.show-timeline .layout-right, .csseditor .layout-main.show-timeline .layout-body {
       bottom: 300px; }
     .csseditor .layout-main.show-timeline .layout-footer {
-      height: 300px; }
+      display: block;
+      height: 299px; }
     .csseditor .layout-main .select-layer-view .pages {
       display: block; }
     .csseditor .layout-main .select-layer-view .item-info {
@@ -1953,8 +1954,6 @@ html, body {
           vertical-align: middle;
           font-size: 12px;
           pointer-events: none; }
-  .csseditor .layout-main.expertor-mode .pages .page-list .tree-item {
-    padding: 4px 10px; }
   .csseditor .layers {
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
@@ -2379,7 +2378,7 @@ html, body {
     width: 100%;
     height: 100%;
     right: 0px;
-    background-color: rgba(0, 0, 0, 0.2); }
+    background-color: rgba(0, 0, 0, 0.4); }
     .csseditor .predefined-angluar-group.radial-position {
       top: 30px;
       height: auto; }
@@ -2619,8 +2618,8 @@ html, body {
       white-space: nowrap; }
       .csseditor .sub-feature-control > .feature > .property-view {
         position: relative;
-        height: 150px;
-        width: 150px;
+        height: 130px;
+        width: 130px;
         background-color: rgba(0, 0, 0, 0.2);
         display: inline-block;
         vertical-align: middle;
@@ -2659,16 +2658,192 @@ html, body {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column; }
-    .csseditor .timeline-view > * {
-      -webkit-box-flex: 1;
-          -ms-flex: 1 1 auto;
-              flex: 1 1 auto; }
     .csseditor .timeline-view > .timeline-header {
+      position: relative;
       -webkit-box-flex: 0;
           -ms-flex: none;
               flex: none;
-      height: 30px;
-      border-bottom: 1px solid #cccccc; }
+      height: 30px; }
+      .csseditor .timeline-view > .timeline-header .timeline-toolbar {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        top: 0px;
+        width: 300px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-right: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc; }
+      .csseditor .timeline-view > .timeline-header .keyframe-toolbar {
+        position: absolute;
+        left: 300px;
+        bottom: 0px;
+        top: 0px;
+        right: 0px;
+        overflow: hidden;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-bottom: 1px solid #cccccc; }
+        .csseditor .timeline-view > .timeline-header .keyframe-toolbar .keyframe-time-view {
+          position: relative;
+          height: 100%;
+          width: 3000px;
+          background-size: 100px 100%;
+          background-position: 99px 0px;
+          background-repeat: repeat-x;
+          background-image: linear-gradient(to right, rgba(204, 204, 204, 0.3) 1px, transparent 1px);
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex; }
+          .csseditor .timeline-view > .timeline-header .keyframe-toolbar .keyframe-time-view .time {
+            -webkit-box-flex: 0;
+                -ms-flex: none;
+                    flex: none;
+            pointer-events: none;
+            height: 100%;
+            vertical-align: middle;
+            width: 100px;
+            text-align: right;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            padding: 10px 5px;
+            color: rgba(204, 204, 204, 0.7);
+            font-size: 11px; }
+    .csseditor .timeline-view > .timeline-body {
+      position: relative;
+      -webkit-box-flex: 1;
+          -ms-flex: 1 1 auto;
+              flex: 1 1 auto; }
+      .csseditor .timeline-view > .timeline-body .row {
+        position: relative;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        display: block;
+        height: 30px;
+        border-bottom: 1px solid #cccccc;
+        padding: 5px 0px;
+        font-size: 11px; }
+      .csseditor .timeline-view > .timeline-body .timeline-list {
+        position: absolute;
+        left: 0px;
+        width: 300px;
+        top: 0px;
+        bottom: 0px;
+        border-right: 1px solid #cccccc;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        overflow: auto; }
+        .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object {
+          position: relative; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-object-title {
+            padding-left: 25px; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .property-title {
+            padding-left: 75px; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property {
+            padding-left: 125px; }
+            .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property label {
+              margin-right: 20px;
+              display: inline-block;
+              vertical-align: middle; }
+            .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property input, .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property select {
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              background-color: transparent;
+              display: inline-block;
+              height: 20px;
+              border: 1px solid #cccccc;
+              vertical-align: middle;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box; }
+            .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property input {
+              width: 50px; }
+            .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property select {
+              width: 150px; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-property {
+            padding-left: 100px; }
+      .csseditor .timeline-view > .timeline-body .timeline-panel {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        overflow: auto;
+        margin-left: 300px; }
+        .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list {
+          position: relative;
+          width: 3000px;
+          background-size: 100px 100%;
+          background-position: 99px 0px;
+          background-repeat: repeat-x;
+          background-image: linear-gradient(to right, rgba(204, 204, 204, 0.3) 1px, transparent 1px); }
+          .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object {
+            position: relative; }
+            .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyfame-property {
+              position: relative; }
+              .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyfame-property .keyframe-item {
+                position: absolute;
+                top: 0px;
+                bottom: 0px;
+                -webkit-box-sizing: border-box;
+                        box-sizing: border-box;
+                z-index: 1; }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyfame-property .keyframe-item .bar {
+                  position: absolute;
+                  left: 0px;
+                  right: 0px;
+                  top: 50%;
+                  -webkit-transform: translateY(-50%);
+                          transform: translateY(-50%);
+                  height: 1.5px;
+                  background-color: #cccccc;
+                  cursor: move;
+                  -webkit-box-sizing: border-box;
+                          box-sizing: border-box; }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyfame-property .keyframe-item .start {
+                  position: absolute;
+                  left: 0px;
+                  top: 50%;
+                  -webkit-transform: translateX(-50%) translateY(-50%);
+                          transform: translateX(-50%) translateY(-50%);
+                  width: 10px;
+                  height: 10px;
+                  -webkit-box-sizing: border-box;
+                          box-sizing: border-box;
+                  background-color: red;
+                  border: 1px solid white;
+                  -webkit-box-shadow: 0 0 1px 1px #cccccc;
+                          box-shadow: 0 0 1px 1px #cccccc;
+                  border-radius: 100%;
+                  z-index: 3;
+                  cursor: w-resize; }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyfame-property .keyframe-item .end {
+                  position: absolute;
+                  left: 100%;
+                  top: 50%;
+                  -webkit-transform: translateX(-50%) translateY(-50%);
+                          transform: translateX(-50%) translateY(-50%);
+                  width: 10px;
+                  height: 10px;
+                  -webkit-box-sizing: border-box;
+                          box-sizing: border-box;
+                  background-color: #45d845;
+                  border: 1px solid white;
+                  -webkit-box-shadow: 0 0 1px 1px #cccccc;
+                          box-shadow: 0 0 1px 1px #cccccc;
+                  border-radius: 100%;
+                  z-index: 2;
+                  cursor: e-resize; }
+        .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-guide-line {
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          right: 0px;
+          bottom: 0px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
   .csseditor .gradient-type > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr; }
@@ -2892,7 +3067,8 @@ html, body {
     top: 45px;
     left: 0px;
     right: 0px;
-    height: 50px; }
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.5); }
   .csseditor .vertical-colorstep {
     position: absolute;
     left: 50%;
@@ -3839,8 +4015,8 @@ html, body {
                 box-sizing: border-box; }
         .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item {
           position: absolute;
-          width: 16px;
-          height: 16px;
+          width: 14px;
+          height: 14px;
           border-radius: 50%;
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4703,6 +4879,26 @@ html, body {
         display: -ms-flexbox;
         display: flex;
         margin-bottom: 5px; }
+        .csseditor .property-view .property-item > .items > div.drag-property-ui {
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: row;
+                  flex-direction: row; }
+          .csseditor .property-view .property-item > .items > div.drag-property-ui > .drag-ui {
+            -webkit-box-flex: 0;
+                -ms-flex: none;
+                    flex: none;
+            width: 70px;
+            height: 70px;
+            position: relative; }
+          .csseditor .property-view .property-item > .items > div.drag-property-ui > .property-ui {
+            -webkit-box-flex: 1;
+                -ms-flex: 1 1 auto;
+                    flex: 1 1 auto;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column; }
         .csseditor .property-view .property-item > .items > div > label {
           width: 70px;
           display: inline-block;
@@ -5257,29 +5453,6 @@ html, body {
         .csseditor .property-view .property-item.image-list-view .items .images {
           top: 0px;
           bottom: 0px; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons button {
-        outline: none;
-        cursor: pointer; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.beginner-mode .beginner {
-        background: white;
-        border: 1px solid #333; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.beginner-mode .expertor {
-        border-left: 0px; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.expertor-mode .expertor {
-        background: white;
-        border: 1px solid #333; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.expertor-mode .beginner {
-        border-right: 0px; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.small-mode .small {
-        background: white;
-        border: 1px solid #333; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.small-mode .large {
-        border-left: 0px; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.large-mode .large {
-        background: white;
-        border: 1px solid #333; }
-      .csseditor .property-view .property-item.layout .items .layout-buttons.large-mode .small {
-        border-right: 0px; }
       .csseditor .property-view .property-item.clip-path .clip-path-container {
         cursor: pointer;
         width: 50px;
@@ -6056,11 +6229,6 @@ html, body {
                   border-color: #333 !important; }
                 .csseditor .property-view .sub-feature .image-list .images .image-tools .image-list .tree-item .item-tools {
                   display: none; }
-  .csseditor .layout-main.expertor-mode .layout-top .property-view .property-item {
-    padding: 0px;
-    margin-bottom: 0px; }
-    .csseditor .layout-main.expertor-mode .layout-top .property-view .property-item .items {
-      padding: 2px 5px; }
   .csseditor .filter-list {
     display: -webkit-box !important;
     display: -ms-flexbox !important;

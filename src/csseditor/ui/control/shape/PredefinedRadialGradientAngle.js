@@ -1,8 +1,8 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_EDITOR, CHANGE_SELECTION } from '../../../types/event';
 import { CLICK, CHANGE } from '../../../../util/Event';
-import { POSITION_CENTER } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
+import { POSITION_CENTER } from '../../../../util/css/types';
 
 
 export default class PredefinedRadialGradientAngle extends UIElement {

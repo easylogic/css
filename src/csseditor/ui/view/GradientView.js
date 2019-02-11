@@ -48,11 +48,8 @@ import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../types/Sel
 import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH } from '../../types/LayerTypes';
 import { ITEM_MAP_CHILDREN, ITEM_COUNT_CHILDREN } from '../../types/ItemSearchTypes';
 import { PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS } from '../../types/PageTypes';
-import { ITEM_TYPE_PAGE } from '../../types/ItemTypes';
 import { RESIZE_WINDOW } from '../../types/ToolTypes';
-import { BOUND_TO_CSS, BOUND_TO_CSS_ARRAY } from '../../../util/css/make';
-
-
+import { BOUND_TO_CSS_ARRAY, IS_PAGE } from '../../../util/css/make';
 
 export default class GradientView extends UIElement {
 
@@ -225,15 +222,12 @@ export default class GradientView extends UIElement {
 
         this.refs.$page.toggle(item)
 
-
         if (item) {
-            if (item.itemType == ITEM_TYPE_PAGE) {
+            if (IS_PAGE(item)) {
                 var count = this.read(ITEM_COUNT_CHILDREN, item.id);
                 this.refs.$colorview.toggle(count)
             }
         }
-        
-
     }
 
     [EVENT(

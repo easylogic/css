@@ -7,12 +7,10 @@ import {
     CHANGE_LAYER 
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
-import { ITEM_TYPE_BOXSHADOW } from '../../../../types/ItemTypes';
 import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD, POINTEREND, POINTERMOVE, POINTERSTART } from '../../../../../util/Event';
-import { ITEM_INITIALIZE, ITEM_ADD } from '../../../../types/ItemCreateTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
-import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
+import { ITEM_INITIALIZE} from '../../../../types/ItemCreateTypes';
+import { SELECTION_CURRENT_LAYER, SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
 import { ITEM_MAP_BOXSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
 
 export default class BoxShadow extends BasePropertyItem {

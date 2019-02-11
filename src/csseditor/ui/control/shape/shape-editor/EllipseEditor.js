@@ -7,12 +7,8 @@ import {
     CHANGE_LAYER_POSITION, 
     CHANGE_LAYER_SIZE 
 } from "../../../../types/event";
-import { 
-    CLIP_PATH_TYPE_ELLIPSE, 
-    CLIP_PATH_SIDE_TYPE_NONE
-} from "../../../../types/ItemTypes";
 import { defaultValue } from "../../../../../util/functions/func";
-import { percentUnit, value2px } from "../../../../../util/css/types";
+import { percentUnit, value2px, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_ELLIPSE } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";

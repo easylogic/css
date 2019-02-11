@@ -4,10 +4,9 @@ import {
     CHANGE_SELECTION, 
     CHANGE_PAGE_TRANSFORM 
 } from '../../../types/event';
-import { percentUnit, unitValue, valueUnit, EMPTY_STRING } from '../../../../util/css/types';
+import { percentUnit, unitValue, valueUnit, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
-import { POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../types/SelectionTypes';
 
 const DEFINE_POSITIONS = { 

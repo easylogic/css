@@ -7,8 +7,7 @@ import {
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
-import { CLIP_PATH_TYPE_POLYGON } from "../../../../types/ItemTypes";
+import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING, CLIP_PATH_TYPE_POLYGON } from "../../../../../util/css/types";
 import { defaultValue, isUndefined, html } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";

@@ -1,17 +1,11 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_SELECTION } from "../types/event";
-import { 
-    ITEM_TYPE_IMAGE, 
-    ITEM_TYPE_LAYER, 
-    ITEM_TYPE_BOXSHADOW, 
-    ITEM_TYPE_TEXTSHADOW, 
-    ITEM_TYPE_PAGE
-} from "../types/ItemTypes";
-import { unitValue, pxUnit, EMPTY_STRING } from "../../util/css/types";
+import { unitValue, pxUnit, EMPTY_STRING, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "../types/SelectionTypes";
 import { ITEM_FILTER, ITEM_PATH, ITEM_LIST_PAGE } from "../types/ItemSearchTypes";
+import { IS_LAYER, IS_IMAGE, IS_PAGE, IS_BOXSHADOW, IS_TEXTSHADOW } from "../../util/css/make";
 
 export const EDITOR_MODE_PAGE = 'page';
 export const EDITOR_GROUP_SELECT = 'layer-group'
@@ -262,12 +256,12 @@ export default class SelectionManager extends BaseModule {
     }    
 
     [GETTER(SELECTION_IS_LAYER)] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_LAYER;
+        return IS_LAYER($store.selection)
     }        
 
     [GETTER(SELECTION_IS_IMAGE)] ($store, type) {
 
-        var isImage = $store.selection.itemType == ITEM_TYPE_IMAGE;
+        var isImage = IS_IMAGE($store.selection);
         var isTypeCheck = true; 
 
         if (type) {
@@ -282,25 +276,17 @@ export default class SelectionManager extends BaseModule {
     }            
 
     [GETTER(SELECTION_IS_PAGE)] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_PAGE;
+        return IS_PAGE($store.selection);
     }                
 
     [GETTER(SELECTION_IS_BOXSHADOW)] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_BOXSHADOW;
+        return IS_BOXSHADOW($store.selection);
     }                    
 
     [GETTER(SELECTION_IS_TEXTSHADOW)] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_TEXTSHADOW;
+        return IS_TEXTSHADOW($store.selection);
     }                    
     
-    [GETTER(SELECTION_IS_FILTER)] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_FILTER;
-    }                    
-    
-    [GETTER(SELECTION_IS_BACKDROP_FILTER)] ($store, type) {
-        return $store.selection.itemType == ITEM_TYPE_BACKDROP;
-    }                        
-
     [GETTER(SELECTION_IS_ONE)] ($store) {
         return $store.read(SELECTION_IS, SELECT_MODE_ONE)
     }
@@ -315,7 +301,7 @@ export default class SelectionManager extends BaseModule {
 
     [GETTER(SELECTION_LAYERS)] ($store) {
         return $store.read(ITEM_FILTER, (id) => {
-            return $store.items[id].itemType == ITEM_TYPE_LAYER
+            return IS_LAYER($store.items[id])
         }).map(id => {
             var {x, y, width, height} = $store.items[id]
 
@@ -340,16 +326,14 @@ export default class SelectionManager extends BaseModule {
         var path = $store.read(ITEM_PATH, selectedId)
         $store.selection.pageId = path[path.length-1];
 
-        console.log($store.selection);
-
         var layers = [] 
 
-        if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+        if (IS_LAYER($store.selection)) {
             layers = [selectedId]
         } else if (
-            $store.selection.itemType == ITEM_TYPE_IMAGE 
-            || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
-            || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
+            IS_IMAGE($store.selection)
+            || IS_BOXSHADOW($store.selection)
+            || IS_TEXTSHADOW($store.selection)
         ) {
             layers = [this.get(selectedId).parentId]
         }        
@@ -358,7 +342,7 @@ export default class SelectionManager extends BaseModule {
     }    
 
     [ACTION(SELECTION_CHANGE)] ($store, itemType) {
-        if (itemType == ITEM_TYPE_PAGE) {
+        if (IS_PAGE({itemType})) {
             $store.read(SELECTION_CURRENT_PAGE_ID, (id) => {
                 if (id) {
                     $store.run(SELECTION_ONE, id);
@@ -394,12 +378,12 @@ export default class SelectionManager extends BaseModule {
 
             var layers = [] 
 
-            if ($store.selection.itemType == ITEM_TYPE_LAYER) {
+            if (IS_LAYER($store.selection)) {
                 layers = [...selectItems]
             } else if (
-                $store.selection.itemType == ITEM_TYPE_IMAGE 
-                || $store.selection.itemType == ITEM_TYPE_BOXSHADOW
-                || $store.selection.itemType == ITEM_TYPE_TEXTSHADOW
+                IS_IMAGE($store.selection) 
+                || IS_BOXSHADOW($store.selection)
+                || IS_TEXTSHADOW($store.selection)
             ) {
                 layers = selectItems.map(id => this.get(id).parentId)
             }        

@@ -1,9 +1,7 @@
-import { POSITION_CENTER } from "../../types/ItemTypes";
-
 export default { 
     image: {
         type: 'radial', 
-        radialPosition: POSITION_CENTER,
+        radialPosition: 'center',
         radialType: 'circle'
     },
     colorsteps: [

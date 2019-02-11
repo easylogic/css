@@ -1,5 +1,5 @@
 import octagon from "../clip-path/octagon";
-import { CLIP_PATH_TYPE_POLYGON, SHAPE_TYPE_POLYGON } from "../../types/ItemTypes";
+import { SHAPE_TYPE_POLYGON, CLIP_PATH_TYPE_POLYGON } from "../../../util/css/types";
 
 export default {
     type: SHAPE_TYPE_POLYGON,
