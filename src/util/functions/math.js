@@ -66,6 +66,16 @@ export function uuid(){
     return uuid;
 }
 
+export function uuidShort(){
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+}
+
 const bezierCalc = {
     B1 : function (t) { return t*t*t },
     B2 : function (t) { return 3*t*t*(1-t) },

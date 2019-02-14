@@ -95,14 +95,19 @@ export default class EventMachin {
           props[t.nodeName] = t.nodeValue 
         })
   
-        const refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName
+        let refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName
   
         if (refName) {
         
           if (Component) { 
 
             var instance = new Component(this, props);
-            this.children[refName] = instance
+
+            if (this.children[refName]) {
+              refName = instance.id
+            }
+
+            this.children[refName] = instance            
             this.refs[refName] = instance.$el
 
             if (instance) {

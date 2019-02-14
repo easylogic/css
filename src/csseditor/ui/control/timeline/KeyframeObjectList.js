@@ -25,16 +25,17 @@ export default class KeyframeObjectList extends UIElement {
         var width = this.config('timeline.1ms.width');
         var startTime = 0;  // 0ms 
         var timeDist = 100  // 100ms = 0.1s 
-        
+
 
         if ( (startTime % timeDist) != 0 ) {
             startTime +=  timeDist - (startTime % timeDist)
         }
 
         var fullWidth = Math.max(10, timeDist * width); 
+        var position = fullWidth - 0.5; 
         this.$el.cssText(`
             background-size: ${fullWidth}px 100%;
-            background-position: ${fullWidth-0.5}px 0px;
+            background-position: ${position}px 0px;
         `)
     }
 

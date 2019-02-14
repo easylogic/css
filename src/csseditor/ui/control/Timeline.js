@@ -3,7 +3,7 @@ import { CLICK, SCROLL, DEBOUNCE, DROP, RESIZE, WHEEL, ALT } from "../../../util
 import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
-import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE } from "../../types/ToolTypes";
+import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, TOGGLE_TIMELINE } from "../../types/ToolTypes";
 import TimelineObjectList from "./timeline/TimelineObjectList";
 import KeyframeObjectList from "./timeline/KeyframeObjectList";
 import KeyframeGuideLine from "./timeline/KeyframeGuideLine";
@@ -26,7 +26,9 @@ export default class Timeline extends UIElement {
         return `
             <div class='timeline-view'>
                 <div class="timeline-header" ref="$header">
-                    <div class='timeline-toolbar'>Timeline</div>
+                    <div class='timeline-toolbar'>
+                        <span ref='$title' class='title'>Timeline</span>
+                    </div>
                     <div class='keyframe-toolbar' ref="$keyframeToolbar">
                         <KeyframeTimeView />
                     </div>
@@ -87,8 +89,8 @@ export default class Timeline extends UIElement {
 
 
 
-    [CLICK('$header')] () {
-        this.startAnimation();
+    [CLICK('$title')] () {
+        this.emit(TOGGLE_TIMELINE)
     }
 
     [SCROLL('$timelineList') + DEBOUNCE(10)] (e) {

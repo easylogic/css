@@ -1866,6 +1866,16 @@ function uuid() {
     return uuid;
 }
 
+function uuidShort() {
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+    });
+    return uuid;
+}
+
 var bezierCalc = {
     B1: function B1(t) {
         return t * t * t;
@@ -1928,6 +1938,7 @@ var math = Object.freeze({
 	getDist: getDist,
 	caculateAngle: caculateAngle,
 	uuid: uuid,
+	uuidShort: uuidShort,
 	cubicBezier: cubicBezier,
 	getGradientLine: getGradientLine
 });
@@ -6931,8 +6942,14 @@ var Dom = function () {
             ctx.scale(scale, scale);
         }
     }, {
+        key: "clear",
+        value: function clear() {
+            this.context().clearRect(0, 0, this.el.width, this.el.height);
+        }
+    }, {
         key: "update",
         value: function update(callback) {
+            this.clear();
             callback.call(this);
         }
     }, {
@@ -7311,6 +7328,11 @@ var EventMachin = function () {
             if (Component) {
 
               var instance = new Component(_this2, props);
+
+              if (_this2.children[refName]) {
+                refName = instance.id;
+              }
+
               _this2.children[refName] = instance;
               _this2.refs[refName] = instance.$el;
 
@@ -7922,6 +7944,7 @@ var TOOL_RESTORE_DATA = 'tool/restore/data';
 var RESIZE_WINDOW = 'resize/window';
 var RESIZE_TIMELINE = 'resize/timeline';
 var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
+var TOGGLE_TIMELINE = 'toggle/timeline';
 
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
@@ -12217,7 +12240,7 @@ var GradientSteps = function (_UIElement) {
             var parent = e.$delegateTarget.parent();
             var item = this.get(parent.attr('id'));
 
-            this.read(ITEM_EACH_CHILDREN, item.parentId, function (step) {
+            this.read(ITEM_MAP_COLORSTEP_CHILDREN, item.parentId, function (step) {
                 if (step.selected) {
                     step.selected = false;
                     _this4.run(ITEM_SET, step);
@@ -15842,10 +15865,9 @@ var InfoFillColorPicker = function (_UIElement) {
 
             if (this.read(SELECTION_IS_LAYER)) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                    if (layer.backgroundColor) {
-                        if (layer.backgroundColor.includes('rgb')) return;
-                        _this4.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
-                    }
+
+                    var color = layer.backgroundColor || 'rgba(0, 0, 0, 1)';
+                    _this4.colorPicker.initColorWithoutChangeEvent(color);
                 });
             }
         }
@@ -17837,6 +17859,8 @@ var BackgroundCodeProperty = function (_BaseProperty) {
     return BackgroundCodeProperty;
 }(BaseProperty);
 
+var _templateObject$14 = taggedTemplateLiteral(["\n            <BackgroundInfo />\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "], ["\n            <BackgroundInfo />\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "]);
+
 var BackgroundProperty = function (_BaseProperty) {
     inherits(BackgroundProperty, _BaseProperty);
 
@@ -17853,7 +17877,7 @@ var BackgroundProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "<BackgroundInfo /><BackgroundBlend /><div class='sub-feature'><BackgroundSize /></div>";
+            return html(_templateObject$14);
         }
     }]);
     return BackgroundProperty;
@@ -18306,7 +18330,7 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <div class=\'fixed\'><BackgroundProperty /></div>\n                        <div class=\'scroll\'><RotatePatternProperty /></div>    \n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <RotatePatternProperty />\n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
         }
     }, {
         key: 'onTabShow',
@@ -18667,7 +18691,7 @@ var GradientAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE_ANGLE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE_LINEAR_ANGLE, CHANGE_IMAGE_ANGLE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20693,7 +20717,7 @@ var TimelineObjectList = function (_UIElement) {
     return TimelineObjectList;
 }(UIElement);
 
-var _templateObject$14 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
+var _templateObject$15 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
 var _templateObject2$1 = taggedTemplateLiteral(["", ""], ["", ""]);
 
 var KeyframeObjectList = function (_UIElement) {
@@ -20727,7 +20751,8 @@ var KeyframeObjectList = function (_UIElement) {
 
 
             var fullWidth = Math.max(10, timeDist * width);
-            this.$el.cssText("\n            background-size: " + fullWidth + "px 100%;\n            background-position: " + (fullWidth - 0.5) + "px 0px;\n        ");
+            var position = fullWidth - 0.5;
+            this.$el.cssText("\n            background-size: " + fullWidth + "px 100%;\n            background-position: " + position + "px 0px;\n        ");
         }
     }, {
         key: "updateKeyframeList",
@@ -20769,7 +20794,7 @@ var KeyframeObjectList = function (_UIElement) {
 
             var keyframes = timeline.keyframes[property] || [];
 
-            return html(_templateObject$14, property, timeline.id, keyframes.map(function (keyframe) {
+            return html(_templateObject$15, property, timeline.id, keyframes.map(function (keyframe) {
                 return _this3.makeKeyFrameItem(keyframe, timeline);
             }));
         }
@@ -21047,6 +21072,7 @@ var KeyframeTimeView = function (_UIElement) {
 
             var scrollLeft = this.config('timeline.scroll.left');
             var width = this.config('timeline.1ms.width');
+            var cursorTime = this.config('timeline.cursor.time');
             var one_second = 1000;
             var currentTime = Math.floor(scrollLeft / width);
             var startTime = 0; // 0ms 
@@ -21067,7 +21093,7 @@ var KeyframeTimeView = function (_UIElement) {
             this.refs.$canvas.update(function () {
                 var rect = this.rect();
 
-                this.drawOption(_extends({ strokeStyle: 'rgba(0, 0, 0, 0.5)' }, textOption));
+                this.drawOption(_extends({ strokeStyle: 'rgba(0, 0, 0, 0.5)', lineWidth: 1 }, textOption));
                 var startSecond = startTime;
                 var viewSecond = viewTime;
                 var distSecond = timeDist;
@@ -21091,7 +21117,7 @@ var KeyframeTimeView = function (_UIElement) {
                                 this.drawText(startX, y, secondStringS);
                             } else {
                                 var currentView = viewSecond % 1000 / 100;
-                                if (currentView === 3 || currentView === 6) {
+                                if (currentView === 5) {
                                     this.drawText(startX, y, secondString);
                                 }
                             }
@@ -21102,7 +21128,34 @@ var KeyframeTimeView = function (_UIElement) {
                     viewSecond += distSecond;
                     startX = startSecond * width;
                 }
+
+                var left = (cursorTime - currentTime) * width;
+                this.drawOption({ strokeStyle: 'rgba(255, 0, 0, 0.5)', lineWidth: 2 });
+                this.drawLine(left, 0, left, rect.height);
             });
+        }
+    }, {
+        key: POINTERSTART('$canvas'),
+        value: function value(e) {
+            this.isStart = true;
+            this.selectedCanvasOffset = this.refs.$canvas.offset();
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value(e) {
+            if (this.isStart) {
+                var distX = e.xy.x - this.selectedCanvasOffset.left;
+                var scrollLeft = this.config('timeline.scroll.left') + distX;
+                this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+                this.refreshCanvas();
+            }
+        }
+    }, {
+        key: POINTEREND('document'),
+        value: function value(e) {
+            if (this.isStart) {
+                this.isStart = false;
+            }
         }
     }, {
         key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE),
@@ -21135,7 +21188,7 @@ var Timeline = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>Timeline</div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                        <KeyframeGuideLine />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>\n                        <span ref='$title' class='title'>Timeline</span>\n                    </div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                        <KeyframeGuideLine />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "startAnimation",
@@ -21177,9 +21230,9 @@ var Timeline = function (_UIElement) {
             });
         }
     }, {
-        key: CLICK('$header'),
+        key: CLICK('$title'),
         value: function value() {
-            this.startAnimation();
+            this.emit(TOGGLE_TIMELINE);
         }
     }, {
         key: SCROLL('$timelineList') + DEBOUNCE(10),
@@ -24250,7 +24303,7 @@ var SHAPE_GET = 'shape/get';
 
 var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
 
-var _templateObject$15 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
+var _templateObject$16 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
 
 var ShapeListView = function (_UIElement) {
     inherits(ShapeListView, _UIElement);
@@ -24265,7 +24318,7 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return html(_templateObject$15, this.read(SHAPE_LIST).map(function (key) {
+            return html(_templateObject$16, this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
             }));
         }
@@ -24286,7 +24339,7 @@ var ShapeListView = function (_UIElement) {
     return ShapeListView;
 }(UIElement);
 
-var _templateObject$17 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
 var _templateObject2$2 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
@@ -24324,7 +24377,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
-                return html(_templateObject$17, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject$18, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), index);
@@ -24420,7 +24473,7 @@ var PageSampleList = function (_UIElement) {
     return PageSampleList;
 }(UIElement);
 
-var _templateObject$16 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject$17 = taggedTemplateLiteral(["", ""], ["", ""]);
 
 var PageListView = function (_UIElement) {
     inherits(PageListView, _UIElement);
@@ -24472,7 +24525,7 @@ var PageListView = function (_UIElement) {
 
             str.push("<button type=\"button\" class='add-page' title=\"Add a page\"></button>");
 
-            return html(_templateObject$16, str);
+            return html(_templateObject$17, str);
         }
     }, {
         key: "refresh",
@@ -24518,7 +24571,7 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -24556,7 +24609,7 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return html(_templateObject$18, selected, item.id, index + 1, item.name || "Layer ", item.lock ? 'lock' : '', item.id, item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$19, selected, item.id, index + 1, item.name || "Layer ", item.lock ? 'lock' : '', item.id, item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -24863,7 +24916,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main _show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/>\n                <DropView />\n                <HotKey />\n            </div>\n        ';
+            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/>\n                <DropView />\n                <HotKey />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -24933,8 +24986,8 @@ var CSSEditor$1 = function (_UIElement) {
             });
         }
     }, {
-        key: 'toggleTimeline',
-        value: function toggleTimeline() {
+        key: EVENT(TOGGLE_TIMELINE),
+        value: function value() {
             this.$el.toggleClass('show-timeline');
         }
     }, {
@@ -25715,7 +25768,8 @@ var ToolManager = function (_BaseModule) {
                 'timeline.1ms.width': 0.3,
                 'timeline.scroll.left': 0,
                 'timeline.keyframe.width': 0,
-                'timeline.keyframe.rect': {}
+                'timeline.keyframe.rect': {},
+                'timeline.cursor.time': 0
             };
 
             this.$store.toolStack = [];

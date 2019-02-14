@@ -58,10 +58,9 @@ export default class InfoFillColorPicker extends UIElement {
     refresh() {
         if (this.read(SELECTION_IS_LAYER)) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                if (layer.backgroundColor) {
-                    if (layer.backgroundColor.includes('rgb')) return;
-                    this.colorPicker.initColorWithoutChangeEvent(layer.backgroundColor);
-                }
+
+                var color = layer.backgroundColor || 'rgba(0, 0, 0, 1)'
+                this.colorPicker.initColorWithoutChangeEvent(color);
 
             })
         }

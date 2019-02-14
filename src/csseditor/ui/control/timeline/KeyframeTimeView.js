@@ -1,6 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_TOOL } from "../../../types/event";
 import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE } from "../../../types/ToolTypes";
+import { POINTERSTART, POINTERMOVE, POINTEREND } from "../../../../util/Event";
 
 export default class KeyframeTimeView extends UIElement {
     template () {
@@ -19,6 +20,7 @@ export default class KeyframeTimeView extends UIElement {
 
         var scrollLeft = this.config('timeline.scroll.left');
         var width = this.config('timeline.1ms.width');
+        var cursorTime = this.config('timeline.cursor.time')
         var one_second = 1000;
         var currentTime = Math.floor(scrollLeft / width)
         var startTime = 0;  // 0ms 
@@ -39,7 +41,7 @@ export default class KeyframeTimeView extends UIElement {
         this.refs.$canvas.update(function () {
             var rect = this.rect();
 
-            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)', ...textOption})
+            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)', lineWidth: 1, ...textOption})
             var startSecond = startTime; 
             var viewSecond = viewTime;
             var distSecond = timeDist; 
@@ -62,7 +64,7 @@ export default class KeyframeTimeView extends UIElement {
                             this.drawText(startX, y, secondStringS)
                         } else {
                             var currentView = (viewSecond % 1000)/100;
-                            if ( currentView === 3 || currentView === 6) {
+                            if ( currentView === 5) {
                                 this.drawText(startX, y, secondString)
                             }
                         }
@@ -73,8 +75,32 @@ export default class KeyframeTimeView extends UIElement {
                 viewSecond += distSecond;
                 startX = startSecond * width; 
             }
+
+            var left =  (cursorTime - currentTime) * width;
+            this.drawOption({strokeStyle: 'rgba(255, 0, 0, 0.5)', lineWidth: 2})
+            this.drawLine(left, 0, left, rect.height)
             
         })
+    }
+
+    [POINTERSTART('$canvas')] (e) {
+        this.isStart = true; 
+        this.selectedCanvasOffset = this.refs.$canvas.offset()
+    }
+
+    [POINTERMOVE('document')] (e) {
+        if (this.isStart) {
+            var distX = e.xy.x - this.selectedCanvasOffset.left; 
+            var scrollLeft = this.config('timeline.scroll.left') + distX;
+            this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+            this.refreshCanvas();
+        }
+    }
+
+    [POINTEREND('document')] (e) {
+        if (this.isStart) {
+            this.isStart = false; 
+        }
     }
 
     [EVENT(
