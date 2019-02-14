@@ -20,7 +20,7 @@ import HotKey from '../ui/control/HotKey';
 import { LOAD_START } from '../types/LoadTypes';
 import UIElement, { EVENT } from '../../colorpicker/UIElement';
 import { RESIZE } from '../../util/Event';
-import { RESIZE_WINDOW } from '../types/ToolTypes';
+import { RESIZE_WINDOW, TOGGLE_TIMELINE } from '../types/ToolTypes';
 
 export default class CSSEditor extends UIElement {
 
@@ -33,7 +33,7 @@ export default class CSSEditor extends UIElement {
 
     template () {
         return `
-            <div class="layout-main _show-timeline" ref="$layoutMain">
+            <div class="layout-main show-timeline" ref="$layoutMain">
                 <div class="layout-header">
                     <div class="page-tab-menu"><ToolMenu /></div>
                 </div>
@@ -126,7 +126,7 @@ export default class CSSEditor extends UIElement {
         });
     }
 
-    toggleTimeline () {
+    [EVENT(TOGGLE_TIMELINE)] () {
         this.$el.toggleClass('show-timeline')
     } 
 

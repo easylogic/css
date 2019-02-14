@@ -22,7 +22,8 @@ export default class ToolManager extends BaseModule {
             'timeline.1ms.width': 0.3,
             'timeline.scroll.left': 0,
             'timeline.keyframe.width': 0,
-            'timeline.keyframe.rect': {}
+            'timeline.keyframe.rect': {},
+            'timeline.cursor.time': 0
         }
 
         this.$store.toolStack = []

@@ -24,8 +24,7 @@ export default class ImageTabView extends BaseTab {
                         <BackgroundProperty></BackgroundProperty>
                     </div>
                     <div class="tab-content flex" data-id="pattern">
-                        <div class='fixed'><BackgroundProperty /></div>
-                        <div class='scroll'><RotatePatternProperty /></div>    
+                        <RotatePatternProperty />
                     </div>                    
                     <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>
                 </div>

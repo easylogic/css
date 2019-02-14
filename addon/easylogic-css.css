@@ -1244,7 +1244,7 @@ html, body {
       right: 0px;
       width: 310px;
       top: 0px;
-      bottom: 0px;
+      bottom: 30px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       border-left: 1px solid #cccccc;
@@ -1256,7 +1256,7 @@ html, body {
       left: 0px;
       width: 300px;
       top: 66px;
-      bottom: 0px;
+      bottom: 30px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       border-right: 1px solid #cccccc;
@@ -1266,7 +1266,7 @@ html, body {
       left: 300px;
       right: 310px;
       top: 66px;
-      bottom: 0px;
+      bottom: 30px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
     .csseditor .layout-main .layout-header {
@@ -1293,10 +1293,9 @@ html, body {
       position: absolute;
       left: 0px;
       right: 0px;
-      height: 0px;
+      height: 29px;
       bottom: 0px;
       z-index: 0;
-      display: none;
       overflow: hidden;
       border-top: 1px solid #cccccc;
       -webkit-transition: all 0.15s linear;
@@ -2709,7 +2708,13 @@ html, body {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         border-right: 1px solid #cccccc;
-        border-bottom: 1px solid #cccccc; }
+        border-bottom: 1px solid #cccccc;
+        line-height: 1.6;
+        padding-left: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px; }
+        .csseditor .timeline-view > .timeline-header .timeline-toolbar .title {
+          cursor: pointer; }
       .csseditor .timeline-view > .timeline-header .keyframe-toolbar {
         position: absolute;
         left: 300px;

@@ -14,7 +14,7 @@ import { ITEM_SET } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { IMAGE_TO_LINEAR_RIGHT } from '../../../types/ImageTypes';
-import { ITEM_MAP_CHILDREN, ITEM_EACH_CHILDREN } from '../../../types/ItemSearchTypes';
+import { ITEM_MAP_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from '../../../types/ItemSearchTypes';
 import { TOOL_COLOR_SOURCE } from '../../../types/ToolTypes';
 import { COLORSTEP_COLOR_SOURCE, COLORSTEP_REMOVE, COLORSTEP_ADD, COLORSTEP_INIT_COLOR, COLORSTEP_SORT, COLORSTEP_UNIT_VALUE } from '../../../types/ColorStepTypes';
 import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TYPE_IS_NOT_GRADIENT } from '../../../../util/css/make';
@@ -304,7 +304,7 @@ export default class GradientSteps extends UIElement {
         var parent = e.$delegateTarget.parent();
         var item = this.get( parent.attr('id'));
             
-        this.read(ITEM_EACH_CHILDREN, item.parentId, (step) => {
+        this.read(ITEM_MAP_COLORSTEP_CHILDREN, item.parentId, (step) => {
             if (step.selected) {
                 step.selected = false;
                 this.run(ITEM_SET, step);

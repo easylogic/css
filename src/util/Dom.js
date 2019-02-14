@@ -559,7 +559,12 @@ export default class Dom {
         ctx.scale(scale, scale);
     }
 
+    clear () {
+        this.context().clearRect(0, 0, this.el.width, this.el.height);
+    }
+
     update (callback) {
+        this.clear()
         callback.call(this);
     }
 

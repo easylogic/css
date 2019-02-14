@@ -31,7 +31,15 @@ $timeline-bar-color: #95b6ff;
             width: $timeline-property-width;
             box-sizing: border-box;
             border-right:1px solid $border-color;            
-            border-bottom: 1px solid $border-color;            
+            border-bottom: 1px solid $border-color;        
+            line-height: 1.6;
+            padding-left: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;    
+
+            .title {
+                cursor:pointer;
+            }
         }
 
         .keyframe-toolbar {
