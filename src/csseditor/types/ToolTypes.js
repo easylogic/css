@@ -9,3 +9,5 @@ export const TOOL_TOGGLE = 'tool/toggle'
 export const TOOL_SAVE_DATA = 'tool/save/data';
 export const TOOL_RESTORE_DATA = 'tool/restore/data'
 export const RESIZE_WINDOW = 'resize/window'
+export const RESIZE_TIMELINE = 'resize/timeline'
+export const SCROLL_LEFT_TIMELINE = 'scroll/left/timeline' 

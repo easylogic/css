@@ -303,7 +303,7 @@ export default class SelectionManager extends BaseModule {
         return $store.read(ITEM_FILTER, (id) => {
             return IS_LAYER($store.items[id])
         }).map(id => {
-            var {x, y, width, height} = $store.items[id]
+            var {x, y, width, height, lock, visible} = $store.items[id]
 
             x = unitValue(x);
             y = unitValue(y);
@@ -312,7 +312,7 @@ export default class SelectionManager extends BaseModule {
             var x2 = x + width;
             var y2 = y + height;
 
-            return {x, y, width, height, x2, y2, id} 
+            return {x, y, width, height, x2, y2, id, lock, visible} 
         })
     }
 
@@ -362,7 +362,7 @@ export default class SelectionManager extends BaseModule {
         var selectItems = []
         layers.forEach(it => {
 
-            if (this.checkInArea(area, it)) {
+            if (!it.lock && this.checkInArea(area, it)) {
                 selectItems.push(it.id);
             }
         })

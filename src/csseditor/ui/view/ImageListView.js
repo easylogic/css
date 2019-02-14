@@ -19,8 +19,8 @@ import { ITEM_MAP_IMAGE_CHILDREN } from '../../types/ItemSearchTypes';
 
 export default class ImageListView extends UIElement {
 
-    template () {  
-        return `<div class="image-list"> </div> `
+    templateClass () {  
+        return 'image-list'
     }
 
     makeItemNodeImage (item) {

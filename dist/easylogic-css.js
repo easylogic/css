@@ -7054,7 +7054,12 @@ var Dom = function () {
         value: function context() {
             var contextType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '2d';
 
-            return this.el.getContext(contextType);
+
+            if (!this._initContext) {
+                this._initContext = this.el.getContext(contextType);
+            }
+
+            return this._initContext;
         }
     }, {
         key: "resize",
@@ -7064,6 +7069,7 @@ var Dom = function () {
 
 
             // support hi-dpi for retina display 
+            this._initContext = null;
             var ctx = this.context();
             var scale = window.devicePixelRatio || 1;
 
@@ -7092,11 +7098,7 @@ var Dom = function () {
     }, {
         key: "drawLine",
         value: function drawLine(x1, y1, x2, y2) {
-            var opt = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-
             var ctx = this.context();
-
-            Object.assign(ctx, opt);
 
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -7107,9 +7109,6 @@ var Dom = function () {
     }, {
         key: "drawText",
         value: function drawText(x, y, text) {
-            var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-            this.drawOption(opt);
             this.context().fillText(text, x, y);
         }
     }], [{
@@ -7497,7 +7496,15 @@ var EventMachin = function () {
   }, {
     key: 'template',
     value: function template() {
-      return '<div></div>';
+      var className = this.templateClass();
+      var classString = className ? 'class="' + className + '"' : '';
+
+      return '<div ' + classString + '></div>';
+    }
+  }, {
+    key: 'templateClass',
+    value: function templateClass() {
+      return null;
     }
   }, {
     key: 'initialize',
@@ -7853,6 +7860,7 @@ var ITEM_SORT = 'item/sort';
 var ITEM_REMOVE_CHILDREN = 'item/remove/children';
 var ITEM_REMOVE = 'item/remove';
 var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
+var ITEM_TOGGLE_LOCK = 'item/toggle/lock';
 var ITEM_REMOVE_ALL = 'item/remove/all';
 var ITEM_FOCUS = 'item/focus';
 var ITEM_LOAD = 'item/load';
@@ -7933,6 +7941,7 @@ var CLIP_PATH_DEFAULT_OBJECT = {
     mixBlendMode: 'normal',
     selected: true,
     visible: true,
+    lock: false,
     x: pxUnit(0),
     y: pxUnit(0),
     width: pxUnit(200),
@@ -8062,6 +8071,8 @@ var TOOL_TOGGLE = 'tool/toggle';
 var TOOL_SAVE_DATA = 'tool/save/data';
 var TOOL_RESTORE_DATA = 'tool/restore/data';
 var RESIZE_WINDOW = 'resize/window';
+var RESIZE_TIMELINE = 'resize/timeline';
+var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
 
 // const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
@@ -13594,7 +13605,7 @@ var PageSize = function (_UIElement) {
     createClass(PageSize, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        \n                        <div>\n                            <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>   \n                                 \n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        <div>\n                            <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>             \n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_EDITOR$1, CHANGE_PAGE_SIZE),
@@ -14511,7 +14522,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path-svg show'>\n\n                <div class='items'>\n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\">\n\n                        </div>\n                    </div>                            \n                    <div class='image-resource' ref=\"$imageList\"></div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item clip-path-svg show'>\n                <div class='items'>\n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\"></div>\n                    </div>                            \n                    <div class='image-resource' ref=\"$imageList\"></div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: LOAD('$imageList'),
@@ -15859,9 +15870,9 @@ var TextFillColorPicker = function (_UIElement) {
             }, 100);
         }
     }, {
-        key: 'template',
-        value: function template() {
-            return '<div class=\'colorpicker-layer\'> </div>';
+        key: 'templateClass',
+        value: function templateClass() {
+            return 'colorpicker-layer';
         }
     }, {
         key: 'changeColor',
@@ -16312,7 +16323,7 @@ var EmptyArea = function (_BasePropertyItem) {
     createClass(EmptyArea, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item empty-area show' style=\"height: " + this.props.height + ";\"></div>\n        ";
+            return "<div class='property-item empty-area show' style=\"height: " + this.props.height + ";\"></div>";
         }
     }]);
     return EmptyArea;
@@ -18159,7 +18170,7 @@ var LayerAngle = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_ROTATE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18562,9 +18573,9 @@ var ImageListView = function (_UIElement) {
     }
 
     createClass(ImageListView, [{
-        key: 'template',
-        value: function template() {
-            return '<div class="image-list"> </div> ';
+        key: 'templateClass',
+        value: function templateClass() {
+            return 'image-list';
         }
     }, {
         key: 'makeItemNodeImage',
@@ -20746,9 +20757,9 @@ var TimelineObjectList = function (_UIElement) {
     }
 
     createClass(TimelineObjectList, [{
-        key: "template",
-        value: function template() {
-            return "<div class=\"timeline-object-list\"></div>";
+        key: "templateClass",
+        value: function templateClass() {
+            return 'timeline-object-list';
         }
     }, {
         key: LOAD('$el'),
@@ -20845,9 +20856,9 @@ var KeyframeObjectList = function (_UIElement) {
     }
 
     createClass(KeyframeObjectList, [{
-        key: "template",
-        value: function template() {
-            return "<div class=\"keyframe-list\"></div>";
+        key: "templateClass",
+        value: function templateClass() {
+            return 'keyframe-list';
         }
     }, {
         key: LOAD(),
@@ -20865,8 +20876,9 @@ var KeyframeObjectList = function (_UIElement) {
             var width = this.config('timeline.1ms.width');
             var timeDist = 100; // 100ms = 0.1s 
 
+
             var fullWidth = Math.max(10, timeDist * width);
-            this.$el.cssText("\n            background-size: " + fullWidth + "px 100%;\n            background-position: " + (fullWidth - 1) + "px 0px;\n        ");
+            this.$el.cssText("\n            background-size: " + fullWidth + "px 100%;\n            background-position: " + (fullWidth - 0.5) + "px 0px;\n        ");
         }
     }, {
         key: "updateKeyframeList",
@@ -20978,11 +20990,11 @@ var KeyframeObjectList = function (_UIElement) {
 
             var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'));
             if (selectedKeyframe.prevId) {
-                this.minX = this.get(selectedKeyframe.prevId).endTime * ONE_MIllISECOND_WIDTH;
+                this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
             }
 
             if (selectedKeyframe.nextId) {
-                this.maxX = this.get(selectedKeyframe.nextId).startTime * ONE_MIllISECOND_WIDTH;
+                this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
             }
             // console.log('start', e.xy);
         }
@@ -21007,7 +21019,7 @@ var KeyframeObjectList = function (_UIElement) {
 
             var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'));
             if (selectedKeyframe.prevId) {
-                this.minX = this.get(selectedKeyframe.prevId).endTime * ONE_MIllISECOND_WIDTH;
+                this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
             }
             // console.log('start', e.xy);
         }
@@ -21033,7 +21045,7 @@ var KeyframeObjectList = function (_UIElement) {
 
             var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'));
             if (selectedKeyframe.nextId) {
-                this.maxX = this.get(selectedKeyframe.nextId).startTime * ONE_MIllISECOND_WIDTH;
+                this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
             }
         }
     }, {
@@ -21044,9 +21056,10 @@ var KeyframeObjectList = function (_UIElement) {
     }, {
         key: "updateKeyframeTime",
         value: function updateKeyframeTime() {
+            var width = this.config('timeline.1ms.width');
             var id = this.selectedElement.attr('keyframe-id');
-            var startTime = this.selectedX / ONE_MIllISECOND_WIDTH;
-            var endTime = startTime + this.selectedWidth / ONE_MIllISECOND_WIDTH;
+            var startTime = this.selectedX / width;
+            var endTime = startTime + this.selectedWidth / width;
             this.commit(CHANGE_KEYFRAME, { id: id, startTime: startTime, endTime: endTime });
         }
     }, {
@@ -21121,7 +21134,7 @@ var KeyframeObjectList = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_TOOL),
+        key: EVENT(CHANGE_TOOL, RESIZE_TIMELINE),
         value: function value$$1(key, _value) {
             this.refresh();
         }
@@ -21183,50 +21196,67 @@ var KeyframeTimeView = function (_UIElement) {
         key: "refreshCanvas",
         value: function refreshCanvas() {
 
+            var scrollLeft = this.config('timeline.scroll.left');
             var width = this.config('timeline.1ms.width');
             var one_second = 1000;
+            var currentTime = Math.floor(scrollLeft / width);
             var startTime = 0; // 0ms 
             var timeDist = 100; // 100ms = 0.1s 
 
-            if (startTime % timeDist != 0) {
-                startTime += timeDist - startTime % timeDist;
+            if (currentTime % timeDist != 0) {
+                startTime = timeDist - currentTime % timeDist;
             }
+
+            var viewTime = currentTime + startTime;
 
             var textOption = {
                 textAlign: 'center',
-                textBaseline: 'bottom'
+                textBaseline: 'bottom',
+                font: '10px sans-serif'
             };
 
             this.refs.$canvas.update(function () {
                 var rect = this.rect();
 
-                this.drawOption({ strokeStyle: 'rgba(0, 0, 0, 0.5)' });
+                this.drawOption(_extends({ strokeStyle: 'rgba(0, 0, 0, 0.5)' }, textOption));
                 var startSecond = startTime;
+                var viewSecond = viewTime;
                 var distSecond = timeDist;
                 var startX = startSecond * width;
 
                 while (startX < rect.width) {
 
-                    if (startSecond % one_second === 0) {
-                        this.drawOption({ strokeStyle: 'rgba(0, 0, 0, 0.5)' });
-                        this.drawLine(startX, rect.height - 15, startX, rect.height);
-                        this.drawText(startX, rect.height - 15, startSecond / 1000 + "s", textOption);
-                    } else {
-                        this.drawOption({ strokeStyle: 'rgba(0, 0, 0, 0.5)' });
-                        this.drawLine(startX, rect.height - 5, startX, rect.height);
+                    if (startSecond !== 0) {
+                        // 0 이 아닌 경우만 그리기 
+                        var secondString = viewSecond / 1000; // 표시 지점 
+                        var secondStringS = secondString + 's';
+                        if (viewSecond % one_second === 0) {
+                            var y = rect.height - 15;
+                            this.drawLine(startX, y, startX, rect.height);
+                            this.drawText(startX, y, secondStringS);
+                        } else {
+                            var y = rect.height - 5;
+                            this.drawLine(startX, y, startX, rect.height);
 
-                        if (width > 0.6) {
-                            this.drawText(startX, rect.height - 5, startSecond / 1000 + "s", textOption);
+                            if (width > 0.4) {
+                                this.drawText(startX, y, secondStringS);
+                            } else {
+                                var currentView = viewSecond % 1000 / 100;
+                                if (currentView === 3 || currentView === 6) {
+                                    this.drawText(startX, y, secondString);
+                                }
+                            }
                         }
                     }
 
                     startSecond += distSecond;
+                    viewSecond += distSecond;
                     startX = startSecond * width;
                 }
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, CHANGE_TOOL),
+        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE),
         value: function value() {
             this.resizeCanvas();
             this.refresh();
@@ -21256,7 +21286,7 @@ var Timeline = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>Timeline</div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView></KeyframeTimeView>\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList></KeyframeObjectList>\n                        <KeyframeGuideLine></KeyframeGuideLine>\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList></TimelineObjectList>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>Timeline</div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                        <KeyframeGuideLine />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "startAnimation",
@@ -21311,7 +21341,8 @@ var Timeline = function (_UIElement) {
         key: SCROLL('$keyframeList') + DEBOUNCE(10),
         value: function value(e) {
             this.refs.$timelineList.setScrollTop(this.refs.$keyframeList.scrollTop());
-            this.refs.$keyframeToolbar.setScrollLeft(this.refs.$keyframeList.scrollLeft());
+            this.initConfig('timeline.scroll.left', this.refs.$keyframeList.scrollLeft());
+            this.emit(SCROLL_LEFT_TIMELINE);
         }
     }, {
         key: DROP('$timelineList'),
@@ -21326,15 +21357,19 @@ var Timeline = function (_UIElement) {
         value: function value(e) {
             e.preventDefault();
             e.stopPropagation();
-            var dt = Math.abs(this.config('timeline.1ms.width.original') * e.deltaY * 0.1);
+
+            // 현재 마우스 위치 저장 
+            this.initConfig('timeline.mouse.pointer', e.xy);
 
             if (e.wheelDeltaY < 0) {
                 // 확대 
-                this.config('timeline.1ms.width', this.config('timeline.1ms.width') + dt);
+                this.initConfig('timeline.1ms.width', Math.min(0.5, this.config('timeline.1ms.width') * 1.1));
             } else {
                 // 축소 
-                this.config('timeline.1ms.width', Math.max(0.1, this.config('timeline.1ms.width') - dt));
+                this.initConfig('timeline.1ms.width', Math.max(0.1, this.config('timeline.1ms.width') * 0.9));
             }
+
+            this.emit(RESIZE_TIMELINE, e);
         }
     }]);
     return Timeline;
@@ -21817,9 +21852,9 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
     }
 
     createClass(PredefinedGroupLayerResizer, [{
-        key: 'template',
-        value: function template() {
-            return '<div class="predefined-group-resizer"></div>';
+        key: 'templateClass',
+        value: function templateClass() {
+            return 'predefined-group-resizer';
         }
     }, {
         key: LOAD(),
@@ -23134,9 +23169,9 @@ var MoveGuide = function (_UIElement) {
     }
 
     createClass(MoveGuide, [{
-        key: 'template',
-        value: function template() {
-            return '<div class="move-guide"></div>';
+        key: 'templateClass',
+        value: function templateClass() {
+            return 'move-guide';
         }
     }, {
         key: LOAD(),
@@ -23462,6 +23497,11 @@ var HandleView = function (_GradientView) {
         value: function value(e) {
             var id = e.$delegateTarget.attr('item-layer-id');
             if (id) {
+
+                var item = this.get(id);
+
+                if (item.lock) return;
+
                 this.dispatch(SELECTION_ONE, id);
                 this.run(ITEM_FOCUS, id);
             }
@@ -24248,7 +24288,7 @@ var LayerSampleList = function (_UIElement) {
         key: "template",
         value: function template() {
 
-            return "\n        <div class=\"layer-sample-list\">\n            <div class='layer-title'>User Layer</div>        \n            <div class='cached-list' ref=\"$cachedList\"></div>\n\n        </div>\n        ";
+            return "\n        <div class=\"layer-sample-list\">\n            <div class='layer-title'>User Layer</div>        \n            <div class='cached-list' ref=\"$cachedList\"></div>\n        </div>\n        ";
         }
     }, {
         key: LOAD('$cachedList'),
@@ -24629,7 +24669,7 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -24667,7 +24707,7 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return html(_templateObject$18, selected, item.id, index + 1, item.name || "Layer ", item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$18, selected, item.id, index + 1, item.name || "Layer ", item.lock ? 'lock' : '', item.id, item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -24813,6 +24853,12 @@ var LayerListView = function (_UIElement) {
         value: function value$$1(e) {
             e.$delegateTarget.toggleClass('visible');
             this.dispatch(ITEM_TOGGLE_VISIBLE, e.$delegateTarget.attr('item-id'));
+        }
+    }, {
+        key: CLICK('$layerList .lock-item'),
+        value: function value$$1(e) {
+            e.$delegateTarget.toggleClass('lock');
+            this.dispatch(ITEM_TOGGLE_LOCK, e.$delegateTarget.attr('item-id'));
         }
     }, {
         key: CLICK('$viewSample'),
@@ -24968,7 +25014,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main _show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/><DropView /><HotKey />\n            </div>\n        ';
+            return '\n            <div class="layout-main _show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/>\n                <DropView />\n                <HotKey />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -25817,7 +25863,10 @@ var ToolManager = function (_BaseModule) {
                 'guide.angle': true,
                 'guide.position': true,
                 'timeline.1ms.width.original': 0.3,
-                'timeline.1ms.width': 0.3
+                'timeline.1ms.width': 0.3,
+                'timeline.scroll.left': 0,
+                'timeline.keyframe.width': 0,
+                'timeline.keyframe.rect': {}
             };
 
             this.$store.toolStack = [];
@@ -26314,6 +26363,15 @@ var ItemManager = function (_BaseModule) {
             var visible = !item.visible;
 
             $store.run(ITEM_SET, { id: item.id, visible: visible });
+        }
+    }, {
+        key: ACTION(ITEM_TOGGLE_LOCK),
+        value: function value$$1($store, id) {
+            var item = this.get(id);
+
+            var lock = !item.lock;
+
+            $store.run(ITEM_SET, { id: item.id, lock: lock });
         }
     }, {
         key: ACTION(ITEM_SET_ALL),
@@ -27859,7 +27917,9 @@ var SelectionManager = function (_BaseModule) {
                     x = _$store$items$id.x,
                     y = _$store$items$id.y,
                     width = _$store$items$id.width,
-                    height = _$store$items$id.height;
+                    height = _$store$items$id.height,
+                    lock = _$store$items$id.lock,
+                    visible = _$store$items$id.visible;
 
 
                 x = unitValue(x);
@@ -27869,7 +27929,7 @@ var SelectionManager = function (_BaseModule) {
                 var x2 = x + width;
                 var y2 = y + height;
 
-                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
+                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id, lock: lock, visible: visible };
             });
         }
     }, {
@@ -27927,7 +27987,7 @@ var SelectionManager = function (_BaseModule) {
             var selectItems = [];
             layers.forEach(function (it) {
 
-                if (_this3.checkInArea(area, it)) {
+                if (!it.lock && _this3.checkInArea(area, it)) {
                     selectItems.push(it.id);
                 }
             });

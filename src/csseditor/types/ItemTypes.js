@@ -9,6 +9,7 @@ export const ITEM_SORT = 'item/sort';
 export const ITEM_REMOVE_CHILDREN = 'item/remove/children';
 export const ITEM_REMOVE = 'item/remove';
 export const ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
+export const ITEM_TOGGLE_LOCK = 'item/toggle/lock';
 export const ITEM_REMOVE_ALL = 'item/remove/all';
 export const ITEM_FOCUS = 'item/focus';
 export const ITEM_LOAD = 'item/load';
@@ -90,6 +91,7 @@ export const LAYER_DEFAULT_OBJECT = {
     mixBlendMode: 'normal',
     selected: true,
     visible: true,
+    lock: false, 
     x: pxUnit(0),
     y: pxUnit(0),
     width: pxUnit(200),

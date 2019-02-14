@@ -535,12 +535,18 @@ export default class Dom {
     // canvas functions 
 
     context (contextType = '2d') {
-        return this.el.getContext(contextType)
+
+        if (!this._initContext) {
+            this._initContext = this.el.getContext(contextType)
+        }
+
+        return  this._initContext;
     }
 
     resize ({width, height}) {
         
         // support hi-dpi for retina display 
+        this._initContext = null; 
         var ctx = this.context();
         var scale = window.devicePixelRatio || 1; 
 
@@ -563,10 +569,8 @@ export default class Dom {
         Object.assign(ctx, option);
     }
 
-    drawLine (x1, y1, x2, y2, opt = {}) {
+    drawLine (x1, y1, x2, y2) {
         var ctx = this.context();
-        
-        Object.assign(ctx, opt);
 
         ctx.beginPath();
         ctx.moveTo(x1, y1);
@@ -575,8 +579,7 @@ export default class Dom {
         ctx.closePath();
     }
 
-    drawText (x, y, text, opt = {}) {
-        this.drawOption(opt);
+    drawText (x, y, text) {
         this.context().fillText(text, x, y);
     }
 }

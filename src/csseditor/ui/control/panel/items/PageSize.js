@@ -11,7 +11,6 @@ export default class PageSize extends UIElement {
                 <div class='items'>
                     <div>
                         <label>   Width</label>
-                        
                         <div>
                             <input type='number' ref="$width"> <span>${UNIT_PX}</span>
                             <button type="button" ref="$rect">rect</button>
@@ -22,8 +21,7 @@ export default class PageSize extends UIElement {
                         <div>
                             <input type='number' ref="$height"> <span>${UNIT_PX}</span>
                         </div>
-                    </div>   
-                                 
+                    </div>             
                 </div>
             </div>
         `

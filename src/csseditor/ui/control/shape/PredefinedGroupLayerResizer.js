@@ -30,8 +30,8 @@ const SNAP_GRID = 20;
 
 export default class PredefinedGroupLayerResizer extends UIElement {
 
-    template () { 
-        return `<div class="predefined-group-resizer"></div>`
+    templateClass () { 
+        return 'predefined-group-resizer'
     } 
 
     [LOAD()] () {

@@ -7,10 +7,11 @@ import { IS_LAYER } from "../../../../util/css/make";
 import { stringUnit, pxUnit } from "../../../../util/css/types";
 import { ITEM_MAP_KEYFRAME_CHILDREN } from "../../../types/ItemSearchTypes";
 import { ITEM_ADD_KEYFRAME } from "../../../types/ItemCreateTypes";
+import { RESIZE_TIMELINE } from "../../../types/ToolTypes";
 
 export default class KeyframeObjectList extends UIElement {
-    template () {
-        return `<div class="keyframe-list"></div>`
+    templateClass () {
+        return 'keyframe-list'
     }
 
     [LOAD()] () {
@@ -22,12 +23,9 @@ export default class KeyframeObjectList extends UIElement {
     setBackgroundGrid () {
 
         var width = this.config('timeline.1ms.width');
-        var one_second = 1000;
-        var widthFor1s = width * one_second;        
-        var scrollLeft;
         var startTime = 0;  // 0ms 
-        var timeScale; 
         var timeDist = 100  // 100ms = 0.1s 
+        
 
         if ( (startTime % timeDist) != 0 ) {
             startTime +=  timeDist - (startTime % timeDist)
@@ -36,7 +34,7 @@ export default class KeyframeObjectList extends UIElement {
         var fullWidth = Math.max(10, timeDist * width); 
         this.$el.cssText(`
             background-size: ${fullWidth}px 100%;
-            background-position: ${fullWidth-1}px 0px;
+            background-position: ${fullWidth-0.5}px 0px;
         `)
     }
 
@@ -161,11 +159,11 @@ export default class KeyframeObjectList extends UIElement {
 
         var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'))
         if (selectedKeyframe.prevId) {
-            this.minX = this.get(selectedKeyframe.prevId).endTime * ONE_MIllISECOND_WIDTH;
+            this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
         }
 
         if (selectedKeyframe.nextId) {
-            this.maxX = this.get(selectedKeyframe.nextId).startTime * ONE_MIllISECOND_WIDTH;
+            this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
         }
         // console.log('start', e.xy);
     }
@@ -189,7 +187,7 @@ export default class KeyframeObjectList extends UIElement {
 
         var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'))
         if (selectedKeyframe.prevId) {
-            this.minX = this.get(selectedKeyframe.prevId).endTime * ONE_MIllISECOND_WIDTH;
+            this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
         }                   
         // console.log('start', e.xy);
     }    
@@ -214,7 +212,7 @@ export default class KeyframeObjectList extends UIElement {
 
         var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'))
         if (selectedKeyframe.nextId) {
-            this.maxX = this.get(selectedKeyframe.nextId).startTime * ONE_MIllISECOND_WIDTH;
+            this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
         }        
     }    
 
@@ -224,9 +222,10 @@ export default class KeyframeObjectList extends UIElement {
     }
 
     updateKeyframeTime () {
+        var width = this.config('timeline.1ms.width')
         var id = this.selectedElement.attr('keyframe-id');
-        var startTime = this.selectedX / ONE_MIllISECOND_WIDTH
-        var endTime = startTime + (this.selectedWidth / ONE_MIllISECOND_WIDTH)
+        var startTime = this.selectedX / width
+        var endTime = startTime + (this.selectedWidth / width)
         this.commit(CHANGE_KEYFRAME, {id, startTime, endTime})
     }
 
@@ -289,7 +288,10 @@ export default class KeyframeObjectList extends UIElement {
         })
     }
 
-    [EVENT(CHANGE_TOOL)] (key, value) {
+    [EVENT(
+        CHANGE_TOOL,
+        RESIZE_TIMELINE
+    )] (key, value) {
         this.refresh();
     }
 }

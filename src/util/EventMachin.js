@@ -133,7 +133,14 @@ export default class EventMachin {
 
   // 기본 템플릿 지정 
   template () {
-    return '<div></div>';
+    var className =  this.templateClass()
+    var classString = className ? `class="${className}"` : '' 
+
+    return `<div ${classString}></div>`;
+  }
+
+  templateClass () {
+    return null;
   }
 
   initialize() {

@@ -14,6 +14,11 @@ export default class HandleView extends GradientView {
     [CLICK('$page .layer') + SELF] (e) {
         var id = e.$delegateTarget.attr('item-layer-id')
         if (id) {
+
+            var item = this.get(id);
+
+            if (item.lock) return; 
+
             this.dispatch(SELECTION_ONE, id);
             this.run(ITEM_FOCUS, id);
         }

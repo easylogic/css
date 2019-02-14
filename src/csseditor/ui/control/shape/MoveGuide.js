@@ -13,9 +13,8 @@ import { EMPTY_STRING, GUIDE_TYPE_HORIZONTAL } from '../../../../util/css/types'
 
 export default class MoveGuide extends UIElement {
 
-
-    template () { 
-        return `<div class="move-guide"></div>`
+    templateClass () { 
+        return 'move-guide'
     }
 
     [LOAD()] () {

@@ -4,6 +4,7 @@ $page-item-height: 35px;
 $button-size: 24px;
 $layer-item-padding: 4px;
 $mini-layer-view-height: 420px;
+$lock-color: #333;
 
 .layers {
     // border-bottom: 1px solid $border-color;
@@ -126,6 +127,40 @@ $mini-layer-view-height: 420px;
                     height: 20px;
                     display: inline-block;
 
+                    &.lock-item {
+                        width: 15px;
+                        height: 15px;
+                        box-sizing:border-box;
+                        background-image: linear-gradient(to right, $border-color, $border-color);
+                        background-size: 10px 10px;
+                        background-repeat: no-repeat;
+                        background-position: center bottom;
+                        position: relative;
+
+                        &.lock {
+                            background-image: linear-gradient(to right, $lock-color, $lock-color);
+                            &:before {
+                                transform: rotate(0deg);    
+                                background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, $lock-color 2px, $lock-color 4px, transparent 4px, transparent 100%)
+                            }
+                        }
+                          
+                        &:before {
+                            content: "";
+                            position: absolute;
+                            display: block;
+                            width: 10px;
+                            height: 10px;
+                            top: -4px;
+                            left: 2px;
+                            box-sizing:border-box;
+                            // transition: transform 0.3s linear; 
+                            transform:  rotate(0deg);
+                            transform-origin: center bottom;
+                            background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, $border-color 2px, $border-color 4px, transparent 4px, transparent 100%)
+                        }
+                    }
+
                     &.visible-item {
                         width: 15px !important;
                         height: 15px !important;
@@ -147,6 +182,8 @@ $mini-layer-view-height: 420px;
                             width: 6px;
                             height: 6px;
                         }
+
+
 
                         &:not(.visible) {
 

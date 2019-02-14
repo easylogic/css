@@ -30,8 +30,8 @@ export default class TextFillColorPicker extends UIElement {
         
     }    
 
-    template () { 
-        return `<div class='colorpicker-layer'> </div>`
+    templateClass () { 
+        return 'colorpicker-layer'
     }
 
     changeColor (color) {

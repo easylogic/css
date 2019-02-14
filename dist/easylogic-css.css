@@ -1194,7 +1194,10 @@
     display: none; }
 
 html, body {
-  font-size: 13px; }
+  font-size: 13px;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden; }
 
 .csseditor {
   width: 100%;
@@ -2054,6 +2057,39 @@ html, body {
           .csseditor .layers .layer-list .tree-item .item-tools button {
             height: 20px;
             display: inline-block; }
+            .csseditor .layers .layer-list .tree-item .item-tools button.lock-item {
+              width: 15px;
+              height: 15px;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              background-image: -webkit-gradient(linear, left top, right top, from(#cccccc), to(#cccccc));
+              background-image: linear-gradient(to right, #cccccc, #cccccc);
+              background-size: 10px 10px;
+              background-repeat: no-repeat;
+              background-position: center bottom;
+              position: relative; }
+              .csseditor .layers .layer-list .tree-item .item-tools button.lock-item.lock {
+                background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
+                background-image: linear-gradient(to right, #333, #333); }
+                .csseditor .layers .layer-list .tree-item .item-tools button.lock-item.lock:before {
+                  -webkit-transform: rotate(0deg);
+                          transform: rotate(0deg);
+                  background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, #333 2px, #333 4px, transparent 4px, transparent 100%); }
+              .csseditor .layers .layer-list .tree-item .item-tools button.lock-item:before {
+                content: "";
+                position: absolute;
+                display: block;
+                width: 10px;
+                height: 10px;
+                top: -4px;
+                left: 2px;
+                -webkit-box-sizing: border-box;
+                        box-sizing: border-box;
+                -webkit-transform: rotate(0deg);
+                        transform: rotate(0deg);
+                -webkit-transform-origin: center bottom;
+                        transform-origin: center bottom;
+                background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, #cccccc 2px, #cccccc 4px, transparent 4px, transparent 100%); }
             .csseditor .layers .layer-list .tree-item .item-tools button.visible-item {
               width: 15px !important;
               height: 15px !important;
@@ -2761,7 +2797,7 @@ html, body {
         margin-left: 300px; }
         .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list {
           position: relative;
-          width: 3000px;
+          width: 3000000px;
           background-size: 100px 100%;
           background-position: 99px 0px;
           background-repeat: repeat-x;
