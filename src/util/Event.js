@@ -1,3 +1,5 @@
+import { WHITE_STRING } from "./css/types";
+
 export class EventChecker {
     constructor (value, split = CHECK_SAPARATOR) {
         this.value = value; 
@@ -11,12 +13,37 @@ export class EventChecker {
 
 // event name regular expression
 export const CHECK_LOAD_PATTERN = /^load (.*)/ig;
-export const CHECK_PATTERN = /^(click|mouse(down|up|move|over|out|enter|leave)|pointer(start|move|end)|touch(start|move|end)|key(down|up|press)|drag|dragstart|drop|dragover|dragenter|dragleave|dragexit|dragend|contextmenu|change|input|ttingttong|tt|paste|resize|scroll|submit)/ig;
+
+const CHECK_CLICK_PATTERN = 'click';
+const CHECK_MOUSE_PATTERN = 'mouse(down|up|move|over|out|enter|leave)';
+const CHECK_POINTER_PATTERN = 'pointer(start|move|end)';
+const CHECK_TOUCH_PATTERN = 'touch(start|move|end)';
+const CHECK_KEY_PATTERN = 'key(down|up|press)';
+const CHECK_DRAGDROP_PATTERN = 'drag|drop|drag(start|over|enter|leave|exit|end)';
+const CHECK_CONTEXT_PATTERN = 'contextmenu';
+const CHECK_INPUT_PATTERN = 'change|input';
+const CHECK_CLIPBOARD_PATTERN = 'paste';
+const CHECK_BEHAVIOR_PATTERN = 'resize|scroll|wheel|mousewheel|DOMMouseScroll';
+
+const CHECK_PATTERN_LIST = [
+  CHECK_CLICK_PATTERN,
+  CHECK_MOUSE_PATTERN,
+  CHECK_POINTER_PATTERN,
+  CHECK_TOUCH_PATTERN,
+  CHECK_KEY_PATTERN,
+  CHECK_DRAGDROP_PATTERN,
+  CHECK_CONTEXT_PATTERN,
+  CHECK_INPUT_PATTERN,
+  CHECK_CLIPBOARD_PATTERN,
+  CHECK_BEHAVIOR_PATTERN
+].join('|');
+
+export const CHECK_PATTERN = new RegExp(`^(${CHECK_PATTERN_LIST})`, "ig");
 
 export const NAME_SAPARATOR = ':'
 export const CHECK_SAPARATOR = '|'
 export const LOAD_SAPARATOR = 'load ';
-export const SAPARATOR = ' '
+export const SAPARATOR = WHITE_STRING
 
 const DOM_EVENT_MAKE = (...keys) => {
     var key = keys.join(NAME_SAPARATOR);
@@ -62,6 +89,7 @@ export const POINTERSTART = CUSTOM('mousedown', 'touchstart')
 export const POINTERMOVE = CUSTOM('mousemove', 'touchmove')
 export const POINTEREND = CUSTOM('mouseup', 'touchend')
 export const CHANGEINPUT = CUSTOM('change', 'input')
+export const WHEEL = CUSTOM('wheel', 'mousewheel', 'DOMMouseScroll')
 
 
 // Predefined CHECKER 

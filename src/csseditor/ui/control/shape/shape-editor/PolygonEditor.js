@@ -11,10 +11,11 @@ import {
 } from "../../../../types/event";
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
-import { percentUnit, stringUnit, EMPTY_STRING, CLIP_PATH_TYPE_POLYGON } from "../../../../../util/css/types";
+import { percentUnit, stringUnit, EMPTY_STRING } from "../../../../../util/css/types";
 import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CAPTURE, LOAD } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { CLIP_PATH_IS_POLYGON } from "../../../../../util/css/make";
 
 export default class PolygonEditor extends UIElement {
 
@@ -57,7 +58,7 @@ export default class PolygonEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_POLYGON && !!item.showClipPathEditor; 
+        return CLIP_PATH_IS_POLYGON(item) && !!item.showClipPathEditor; 
     }
 
     getRectangle () {

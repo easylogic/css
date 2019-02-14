@@ -1,5 +1,5 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit } from "../../util/css/types";
+import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit, WHITE_STRING } from "../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT_KEYS, BACKDROP_DEFAULT_OBJECT, ITEM_GET } from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_GET, BACKDROP_LIST, BACKDROP_TO_CSS } from "../types/BackdropTypes";
@@ -82,14 +82,14 @@ export default class BackdropManager extends BaseModule {
                     var value = layer[key] || BACKDROP_DEFAULT_OBJECT[key]
 
                     return unit(value.value, value.unit, true)
-                }).join(' ')
+                }).join(WHITE_STRING)
 
                 return `${viewObject.func}(${values})`
             } else {
                 var values = unit(it.value, it.unit, true)
                 return `${viewObject.func}(${values})`
             }
-        }).join(' '); 
+        }).join(WHITE_STRING); 
        
         return {
             'backdrop-filter' : filterString,

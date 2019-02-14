@@ -8,7 +8,7 @@ export default class KeyframeGuideLine extends UIElement {
     }
 
     refresh () {
-        this.$el.px('height', 3000);
+        // this.$el.px('height', 3000);
     }
 
     [EVENT(CHANGE_EDITOR)] () {

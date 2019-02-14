@@ -7,6 +7,7 @@ import { isObject, isUndefined } from "../../../../util/functions/func";
 import { EVENT } from "../../../../colorpicker/UIElement";
 import { SELECTION_CURRENT_LAYER_ID } from "../../../types/SelectionTypes";
 import { SVG_LIST, SVG_GET } from "../../../types/SVGTypes";
+import { WHITE_STRING } from "../../../../util/css/types";
 
 export default class ClipPathImageList extends BasePropertyItem {
     template () {
@@ -68,7 +69,7 @@ export default class ClipPathImageList extends BasePropertyItem {
         }         
 
         if ($svg.attr('viewBox')) {
-            var box = $svg.attr('viewBox').split(' ');
+            var box = $svg.attr('viewBox').split(WHITE_STRING);
 
             width = parseParamNumber(box[2])
             height = parseParamNumber(box[3])

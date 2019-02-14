@@ -1,5 +1,5 @@
-import { px, EMPTY_STRING } from "./css/types";
-import { isString, isUndefined, isNotString } from "./functions/func";
+import { px, EMPTY_STRING, WHITE_STRING } from "./css/types";
+import { isString, isUndefined, isNotString, isFunction, keyEach } from "./functions/func";
 
 let counter = 0;
 let cached = [];
@@ -93,7 +93,7 @@ export default class Dom {
             var className = this.el.className;
 
             args.forEach(cls => {
-                className = ((` ${className} `).replace(` ${cls} `, ' ')).trim();    
+                className = ((` ${className} `).replace(` ${cls} `, WHITE_STRING)).trim();    
             })
 
             this.el.className = className;
@@ -254,11 +254,11 @@ export default class Dom {
                 return getComputedStyle(this.el)[key];
             } else {
                 var keys = key || {};
-                Object.keys(keys).forEach(k => {
-                    this.el.style[k] = keys[k];    
+
+                keyEach(keys, (k, value) => {
+                    this.el.style[k] = value;
                 })
-            } 
-    
+            }     
         }
     
         return this;
@@ -529,6 +529,55 @@ export default class Dom {
         this.el.focus()
 
         return this; 
+    }
+
+
+    // canvas functions 
+
+    context (contextType = '2d') {
+        return this.el.getContext(contextType)
+    }
+
+    resize ({width, height}) {
+        
+        // support hi-dpi for retina display 
+        var ctx = this.context();
+        var scale = window.devicePixelRatio || 1; 
+
+        this.px('width', width)
+        this.px('height', height)
+
+        this.el.width = width * scale
+        this.el.height = height * scale
+
+        ctx.scale(scale, scale);
+    }
+
+    update (callback) {
+        callback.call(this);
+    }
+
+    drawOption (option = {}) {
+        var ctx = this.context();
+
+        Object.assign(ctx, option);
+    }
+
+    drawLine (x1, y1, x2, y2, opt = {}) {
+        var ctx = this.context();
+        
+        Object.assign(ctx, opt);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    drawText (x, y, text, opt = {}) {
+        this.drawOption(opt);
+        this.context().fillText(text, x, y);
     }
 }
 

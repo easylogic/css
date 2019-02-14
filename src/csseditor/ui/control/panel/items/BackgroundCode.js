@@ -17,6 +17,7 @@ import { LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
 import { LAYER_IMAGE_TO_IMAGE_CSS } from "../../../../types/LayerTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
+import { keyMap } from "../../../../../util/functions/func";
 
 export default class BackgroundCode extends BasePropertyItem {
     template () {
@@ -34,9 +35,7 @@ export default class BackgroundCode extends BasePropertyItem {
 
         var obj = this.read(LAYER_IMAGE_TO_IMAGE_CSS, image)
 
-        return Object.keys(obj).map(key => {
-            var value = obj[key]
-
+        return keyMap(obj, (key, value) => {
             if (key == 'background-image') {
                 var ret = convertMatches(value) ;
 

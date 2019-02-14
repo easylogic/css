@@ -2,6 +2,7 @@ import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
 import { ITEM_SET } from "../csseditor/types/ItemTypes";
 import { TOOL_GET, TOOL_SET } from "../csseditor/types/ToolTypes";
+import { keyEach } from "../util/functions/func";
 
 // const CHECK_STORE_PATTERN = /^@/
 const CHECK_STORE_MULTI_PATTERN = /^ME@/
@@ -74,8 +75,9 @@ class UIElement extends EventMachin {
     }
 
     destoryStoreEvent () {
-        Object.keys(this.storeEvents).forEach(event => {
-            this.$store.off(event, this.storeEvents[event])
+
+        keyEach(this.storeEvents, (event, eventValue) => {
+            this.$store.off(event, eventValue)
         })
     }
 

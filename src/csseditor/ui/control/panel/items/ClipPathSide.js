@@ -10,6 +10,7 @@ import { CHANGE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { html } from "../../../../../util/functions/func";
 import { CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE } from "../../../../../util/css/types";
+import { CLIP_PATH_IS_CIRCLE, CLIP_PATH_IS_ELLIPSE } from "../../../../../util/css/make";
 
 const CLIP_PATH_SIDE_TYPES = [
     CLIP_PATH_SIDE_TYPE_NONE,
@@ -65,8 +66,8 @@ export default class ClipPathSide extends BasePropertyItem {
 
         if (!item) return false;
         
-        if (item.clipPathType == CLIP_PATH_TYPE_CIRCLE) return true; 
-        if (item.clipPathType == CLIP_PATH_TYPE_ELLIPSE) return true; 
+        if (CLIP_PATH_IS_CIRCLE(item)) return true; 
+        if (CLIP_PATH_IS_ELLIPSE(item)) return true; 
     }    
 
     [EVENT('toggleClipPathSideType')] () {

@@ -42,7 +42,7 @@ export default class LayerTabView extends BaseTab {
                         <BoxShadowProperty /><FilterProperty /><BackdropProperty /><EmptyArea height="100px" />      
                     </div>
                 </div>                
-                <div class="tab-content" data-id="shape"><ClipPathProperty /></div>
+                <div class="tab-content" data-id="clip-path"><ClipPathProperty /></div>
                 <div class="tab-content" data-id="transform"><Transform2DProperty /></div>
                 <div class="tab-content" data-id="transform3d"><Transform3DProperty /></div>
                 <div class="tab-content" data-id="css"><LayerCodeProperty/></div>

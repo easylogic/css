@@ -4,6 +4,7 @@ $timeline-row-height: 30px;
 $timeline-keyframe-border-color: rgba($border-color, 0.3);
 $timeline-keyframe-time-color: rgba($border-color, 0.7);
 $pointer-size: 10px;
+$timeline-bar-color: #95b6ff;
 
 
 .timeline-view {
@@ -44,26 +45,18 @@ $pointer-size: 10px;
             border-bottom: 1px solid $border-color;
 
             .keyframe-time-view {
-                position: relative;
-                height: 100%;
-                width: 3000px;
-                background-size: 100px 100%;
-                background-position: 99px 0px;
-                background-repeat: repeat-x;
-                background-image: linear-gradient(to right, $timeline-keyframe-border-color 1px, transparent 1px);
-                display: flex; 
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                right: 0px;
+                bottom: 0px;
 
-                .time {
-                    flex: none; 
-                    pointer-events: none;
+                canvas {
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
+                    width: 100%;
                     height: 100%;
-                    vertical-align: middle;
-                    width: 100px;
-                    text-align: right;
-                    box-sizing: border-box;
-                    padding:10px 5px;
-                    color: $timeline-keyframe-time-color;
-                    font-size: 11px;
                 }
             }
         }
@@ -166,15 +159,19 @@ $pointer-size: 10px;
                 .keyframe-object {
                     position: relative;
 
-                    .keyfame-property {
+                    .keyframe-property {
                         position: relative;
 
                         .keyframe-item {
                             position: absolute;
-                            top: 0px;
-                            bottom: 0px;
+                            top: 7px;
                             box-sizing: border-box;
                             z-index: 1;
+
+                            &:nth-child(even) {
+                                top: auto; 
+                                bottom: 7px;
+                            }
 
                             .bar {
                                 position: absolute;
@@ -183,7 +180,7 @@ $pointer-size: 10px;
                                 top: 50%;
                                 transform: translateY(-50%);
                                 height: 3px;
-                                background-color: $border-color;
+                                background-color: $timeline-bar-color;
                                 cursor: move;      
                                 box-sizing: border-box;                          
                             }
@@ -197,7 +194,7 @@ $pointer-size: 10px;
                                 height: $pointer-size;
                                 box-sizing: border-box;
                                 background-color: rgba(255, 0, 0, 1);
-                                border: 1px solid white;
+                                // border: 1px solid white;
                                 box-shadow: 0 0 1px 1px $border-color;
                                 border-radius: 100%;
                                 z-index: 3;
@@ -218,8 +215,8 @@ $pointer-size: 10px;
                                 height: $pointer-size;
                                 box-sizing: border-box;
                                 background-color: rgba(69, 216, 69, 1);
-                                border: 1px solid white;
-                                box-shadow: 0 0 1px 2px $border-color;
+                                // border: 1px solid white;
+                                box-shadow: 0 0 1px 1px white;
                                 border-radius: 100%;   
                                 z-index: 2;                                     
                                 cursor: e-resize;
@@ -241,6 +238,7 @@ $pointer-size: 10px;
                 right: 0px;
                 bottom: 0px;
                 box-sizing: border-box;
+                pointer-events: none;
             }
         }
 

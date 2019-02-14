@@ -12,6 +12,7 @@ import { percentUnit, value2px, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_ELLIPSE
 import { px2percent } from "../../../../../util/filter/functions";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { CLIP_PATH_IS_ELLIPSE } from "../../../../../util/css/make";
 
 export default class EllipseEditor extends UIElement {
 
@@ -44,7 +45,7 @@ export default class EllipseEditor extends UIElement {
     refreshPointer () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
-            if (layer.clipPathType != CLIP_PATH_TYPE_ELLIPSE) return;
+            if (!CLIP_PATH_IS_ELLIPSE(layer)) return;
             var { width, height } = this.getRectangle()
 
             var centerX =  defaultValue(layer.clipPathCenterX, percentUnit(50))
@@ -66,7 +67,7 @@ export default class EllipseEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE && !!item.showClipPathEditor; 
+        return CLIP_PATH_IS_ELLIPSE(item) && !!item.showClipPathEditor; 
     }
 
     getRectangle () {

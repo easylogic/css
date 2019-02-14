@@ -4,7 +4,7 @@ import {
     CHANGE_IMAGE_RADIAL_POSITION, 
     CHANGE_SELECTION 
 } from '../../../types/event';
-import { percent, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../../util/css/types';
+import { percent, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { isString } from '../../../../util/functions/func';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
@@ -70,7 +70,7 @@ export default class GradientPosition extends UIElement {
         if (isString( p ) && DEFINE_POSITIONS[p]) {
             p = DEFINE_POSITIONS[p]
         } else if (isString (p)) {
-            p = p.split(' ');
+            p = p.split(WHITE_STRING);
         }
 
         p = p.map((item, index) => {

@@ -2,6 +2,7 @@ import { percent2px, em2px, px2percent, em2percent, percent2em, px2em, parsePara
 import { isString, isNotString, isNumber } from "../functions/func";
 
 export const EMPTY_STRING = '' 
+export const WHITE_STRING = ' ';
 
 export const UNIT_VALUE = 'value';
 export const UNIT_PX = 'px';

@@ -3,7 +3,7 @@ import { GETTER } from "../../util/Store";
 import { SELECTION_CURRENT_PAGE } from "../types/SelectionTypes";
 import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "../types/ExportTpyes";
 import { LAYER_TO_STRING_CLIPPATH, LAYER_TOEXPORT } from "../types/LayerTypes";
-import { EMPTY_STRING } from "../../util/css/types";
+import { EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
 import { ITEM_MAP_CHILDREN } from "../types/ItemSearchTypes";
 import { PAGE_TO_CSS } from "../types/PageTypes";
 import { CSS_TO_STRING } from "../../util/css/make";
@@ -19,7 +19,7 @@ export default class ExportManager extends BaseModule {
     }
 
     getClassName (className) {
-        return (className || EMPTY_STRING).split(' ').map(it => '.' + it).join(EMPTY_STRING)
+        return (className || EMPTY_STRING).split(WHITE_STRING).map(it => '.' + it).join(EMPTY_STRING)
     }
 
     getPageStyle ($store, page) {
@@ -57,7 +57,7 @@ export default class ExportManager extends BaseModule {
 
             var content = item.content || EMPTY_STRING
 
-            return `\t<div ${selector.join(' ')}>${content}${clipPath}</div>`
+            return `\t<div ${selector.join(WHITE_STRING)}>${content}${clipPath}</div>`
         }).join('\n')}
 </div>`
 
