@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
-import { ITEM_GET, ITEM_REMOVE, ITEM_FOCUS, ITEM_TOGGLE_VISIBLE } from "../../../types/ItemTypes";
+import { ITEM_REMOVE, ITEM_FOCUS, ITEM_TOGGLE_VISIBLE, ITEM_TOGGLE_LOCK } from "../../../types/ItemTypes";
 import { SELECTION_CURRENT_PAGE, SELECTION_ONE, SELECTION_CHECK } from "../../../types/SelectionTypes";
 import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
@@ -47,6 +47,7 @@ export default class LayerListView extends UIElement {
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-title"> ${index+1}. ${item.name || `Layer `}</div>
                 <div class='item-tools'>
+                    <button type="button" class='lock-item ${item.lock ? 'lock': ''}' item-id='${item.id}' title="Lock a layer"></button>                
                     <button type="button" class='visible-item ${item.visible ? 'visible': ''}' item-id='${item.id}' title="Visible"></button>
                     <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">+</button>
@@ -188,6 +189,11 @@ export default class LayerListView extends UIElement {
         e.$delegateTarget.toggleClass('visible');
         this.dispatch(ITEM_TOGGLE_VISIBLE, e.$delegateTarget.attr('item-id'))
     }     
+
+    [CLICK('$layerList .lock-item')] (e) {
+        e.$delegateTarget.toggleClass('lock');
+        this.dispatch(ITEM_TOGGLE_LOCK, e.$delegateTarget.attr('item-id'))
+    }         
 
     [CLICK('$viewSample')] (e) {
         this.emit('toggleLayerSampleView');

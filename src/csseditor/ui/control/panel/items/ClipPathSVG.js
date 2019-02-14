@@ -20,7 +20,6 @@ export default class ClipPathSVG extends BasePropertyItem {
     template () {
         return `
             <div class='property-item clip-path-svg show'>
-
                 <div class='items'>
                     <div>
                         <label>Fit Size</label>
@@ -30,9 +29,7 @@ export default class ClipPathSVG extends BasePropertyItem {
                     </div>                
                     <div>
                         <label>Clip</label>
-                        <div class='clip-path-container' ref="$clipPath" title="Click me!!">
-
-                        </div>
+                        <div class='clip-path-container' ref="$clipPath" title="Click me!!"></div>
                     </div>                            
                     <div class='image-resource' ref="$imageList"></div>
                 </div>

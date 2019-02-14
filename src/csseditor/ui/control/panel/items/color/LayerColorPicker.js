@@ -35,14 +35,12 @@ export default class LayerColorPickerLayer extends UIElement {
         
     }    
 
-    template () { 
-        return `<div class='colorpicker-layer'> </div>`
+    templateClass () { 
+        return 'colorpicker-layer'
     }
 
     changeColor (color) {
-        console.log(color);
         this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            console.log(this.eventType, this.eventKey);
             this.commit(this.eventType, {id, [this.eventKey]: color})
         })
     }

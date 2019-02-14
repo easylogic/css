@@ -3,7 +3,7 @@ import { CLICK, SCROLL, DEBOUNCE, DROP, RESIZE, WHEEL, ALT } from "../../../util
 import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
-import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA } from "../../types/ToolTypes";
+import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE } from "../../types/ToolTypes";
 import TimelineObjectList from "./timeline/TimelineObjectList";
 import KeyframeObjectList from "./timeline/KeyframeObjectList";
 import KeyframeGuideLine from "./timeline/KeyframeGuideLine";
@@ -28,16 +28,16 @@ export default class Timeline extends UIElement {
                 <div class="timeline-header" ref="$header">
                     <div class='timeline-toolbar'>Timeline</div>
                     <div class='keyframe-toolbar' ref="$keyframeToolbar">
-                        <KeyframeTimeView></KeyframeTimeView>
+                        <KeyframeTimeView />
                     </div>
                 </div>
                 <div class='timeline-body' ref="$timelineBody">
                     <div class='timeline-panel' ref='$keyframeList'>
-                        <KeyframeObjectList></KeyframeObjectList>
-                        <KeyframeGuideLine></KeyframeGuideLine>
+                        <KeyframeObjectList />
+                        <KeyframeGuideLine />
                     </div>                
                     <div class='timeline-list' ref='$timelineList'>
-                        <TimelineObjectList></TimelineObjectList>
+                        <TimelineObjectList />
                     </div>
                 </div>
             </div>
@@ -97,7 +97,9 @@ export default class Timeline extends UIElement {
 
     [SCROLL('$keyframeList') + DEBOUNCE(10)] (e) {
         this.refs.$timelineList.setScrollTop(this.refs.$keyframeList.scrollTop())
-        this.refs.$keyframeToolbar.setScrollLeft(this.refs.$keyframeList.scrollLeft())
+        this.initConfig('timeline.scroll.left', this.refs.$keyframeList.scrollLeft())
+        this.emit(SCROLL_LEFT_TIMELINE)
+
     }    
 
     [DROP('$timelineList')] (e) {
@@ -111,12 +113,17 @@ export default class Timeline extends UIElement {
     [WHEEL('$timelineBody') + ALT] (e) {
         e.preventDefault()
         e.stopPropagation()
-        var dt = Math.abs(this.config('timeline.1ms.width.original') * e.deltaY * 0.1);
+
+        // 현재 마우스 위치 저장 
+        this.initConfig('timeline.mouse.pointer', e.xy);
 
         if (e.wheelDeltaY < 0) {    // 확대 
-            this.config('timeline.1ms.width', this.config('timeline.1ms.width') + dt  )
+            this.initConfig('timeline.1ms.width', Math.min(0.5, this.config('timeline.1ms.width') * 1.1)  )
         } else {    // 축소 
-            this.config('timeline.1ms.width', Math.max(0.1, this.config('timeline.1ms.width') - dt)  )
+            this.initConfig('timeline.1ms.width', Math.max(0.1, this.config('timeline.1ms.width') * 0.9)  )
         }
+
+        this.emit(RESIZE_TIMELINE, e);
+
     }
 }

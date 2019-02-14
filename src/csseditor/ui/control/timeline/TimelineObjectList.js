@@ -18,8 +18,8 @@ const PROPERTY_DEFAULT_VALUE = {
 }
 
 export default class TimelineObjectList extends UIElement {
-    template () {
-        return `<div class="timeline-object-list"></div>`
+    templateClass () {
+        return 'timeline-object-list'
     }
 
     [LOAD('$el')] () {

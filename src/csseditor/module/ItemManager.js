@@ -2,7 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { string2unit, UNIT_PX, EMPTY_STRING} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE, ITEM_REMOVE_ALL, ITEM_FOCUS, ITEM_LOAD, ITEM_TOGGLE_VISIBLE, ITEM_INIT_CHILDREN } from "../types/ItemTypes";
+import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE, ITEM_REMOVE_ALL, ITEM_FOCUS, ITEM_LOAD, ITEM_TOGGLE_VISIBLE, ITEM_INIT_CHILDREN, ITEM_TOGGLE_LOCK } from "../types/ItemTypes";
 import { ITEM_KEYS, ITEM_INITIALIZE } from "../types/ItemCreateTypes";
 import { SELECTION_ONE } from "../types/SelectionTypes";
 import { keyEach } from "../../util/functions/func";
@@ -104,6 +104,15 @@ export default class ItemManager extends BaseModule {
 
         $store.run(ITEM_SET, {id: item.id, visible});
     }
+
+    [ACTION(ITEM_TOGGLE_LOCK)] ($store, id) {
+        var item = this.get(id); 
+
+        var lock =  !item.lock;
+
+        $store.run(ITEM_SET, {id: item.id, lock});
+    }
+
 
     [ACTION(ITEM_SET_ALL)] ($store, parentId, items, isRemove = true) {
         if (isRemove) { 

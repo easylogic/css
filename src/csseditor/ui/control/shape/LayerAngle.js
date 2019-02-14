@@ -98,7 +98,7 @@ export default class LayerAngle extends UIElement {
     }
 
     [EVENT(
-        CHANGE_LAYER_TRANSFORM,
+        CHANGE_LAYER_ROTATE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

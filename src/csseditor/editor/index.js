@@ -54,7 +54,9 @@ export default class CSSEditor extends UIElement {
                 <div class="layout-footer">
                     <Timeline />
                 </div>
-                <ExportWindow/><DropView /><HotKey />
+                <ExportWindow/>
+                <DropView />
+                <HotKey />
             </div>
         `
     }
