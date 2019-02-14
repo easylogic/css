@@ -12,6 +12,7 @@ import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, value2px, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE } from "../../../../../util/css/types";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { CLIP_PATH_IS_CIRCLE } from "../../../../../util/css/make";
 
 export default class CircleEditor extends UIElement {
 
@@ -45,7 +46,7 @@ export default class CircleEditor extends UIElement {
     refreshPointer () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
-            if (layer.clipPathType !== CLIP_PATH_TYPE_CIRCLE) return;
+            if (!CLIP_PATH_IS_CIRCLE(layer)) return;
 
             var { width, height } = this.getRectangle()
 
@@ -68,7 +69,7 @@ export default class CircleEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_CIRCLE && !!item.showClipPathEditor; 
+        return CLIP_PATH_IS_CIRCLE(item) && !!item.showClipPathEditor; 
     }
 
     getRectangle () {

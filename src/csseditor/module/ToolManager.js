@@ -17,7 +17,9 @@ export default class ToolManager extends BaseModule {
             'snap.grid': false,
             'guide.only': false,            
             'guide.angle': true,
-            'guide.position': true
+            'guide.position': true,
+            'timeline.1ms.width.original': 0.3,
+            'timeline.1ms.width': 0.3
         }
 
         this.$store.toolStack = []
@@ -45,7 +47,7 @@ export default class ToolManager extends BaseModule {
     [ACTION(TOOL_SET)] ($store, key, value) {
         $store.tool[key] = value
 
-        $store.emit(CHANGE_TOOL)
+        $store.emit(CHANGE_TOOL, key, value)
     }
 
 

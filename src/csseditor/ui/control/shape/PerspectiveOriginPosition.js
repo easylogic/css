@@ -4,7 +4,7 @@ import {
     CHANGE_SELECTION, 
     CHANGE_PAGE_TRANSFORM 
 } from '../../../types/event';
-import { percentUnit, unitValue, valueUnit, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM } from '../../../../util/css/types';
+import { percentUnit, unitValue, valueUnit, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
 import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../types/SelectionTypes';
@@ -61,7 +61,7 @@ export default class PerspectiveOriginPosition extends UIElement {
         if (isString(p) && DEFINE_POSITIONS[p]) {
             p = DEFINE_POSITIONS[p]
         } else if (isString(p)) {
-            p = p.split(' ');
+            p = p.split(WHITE_STRING);
         } else {
             p = [unitValue(p.perspectiveOriginPositionX), unitValue(p.perspectiveOriginPositionY)]
         }

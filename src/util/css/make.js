@@ -1,9 +1,9 @@
 import { 
     stringUnit, valueUnit, percentUnit, EMPTY_STRING,
-    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME
+    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING
 } from "./types";
 import { parseParamNumber } from "../filter/functions";
-import { defaultValue, isNotUndefined, get, isNumber, isUndefined } from "../functions/func";
+import { defaultValue, isNotUndefined, get, isNumber, isUndefined, keyEach, isArray } from "../functions/func";
 
 export function IS_PAGE (item) { return item.itemType == ITEM_TYPE_PAGE }
 export function IS_LAYER (item) { return item.itemType == ITEM_TYPE_LAYER }
@@ -16,6 +16,13 @@ export function IS_TEXTSHADOW (item) { return item.itemType == ITEM_TYPE_TEXTSHA
 export function IS_COLORSTEP (item) { return item.itemType == ITEM_TYPE_COLORSTEP }
 export function IS_TIMELINE (item) { return item.itemType == ITEM_TYPE_TIMELINE }
 export function IS_KEYFRAME (item) { return item.itemType == ITEM_TYPE_KEYFRAME }
+
+export function CLIP_PATH_IS_NONE(item) { return item.clipPathType == CLIP_PATH_TYPE_NONE } 
+export function CLIP_PATH_IS_INSET(item) { return item.clipPathType == CLIP_PATH_TYPE_INSET } 
+export function CLIP_PATH_IS_ELLIPSE(item) { return item.clipPathType == CLIP_PATH_TYPE_ELLIPSE } 
+export function CLIP_PATH_IS_CIRCLE(item) { return item.clipPathType == CLIP_PATH_TYPE_CIRCLE } 
+export function CLIP_PATH_IS_POLYGON(item) { return item.clipPathType == CLIP_PATH_TYPE_POLYGON } 
+export function CLIP_PATH_IS_SVG(item) { return item.clipPathType == CLIP_PATH_TYPE_SVG } 
 
 export function MAKE_BORDER_RADIUS (layer) {
     var css = {};
@@ -154,7 +161,7 @@ export function MAKE_TRANSFORM (layer) {
     }          
     
     return {
-        transform: (results.length ? results.join(' ') : 'none')
+        transform: (results.length ? results.join(WHITE_STRING) : 'none')
     }
 }
 
@@ -239,17 +246,17 @@ export function CSS_FILTERING (style) {
 export function CSS_GENERATE (css) {
     var results = {};
 
-    Object.keys(css).forEach(key => {
+    keyEach(css, (key, value) => {
         if (!results[key]) {
             results[key] = [] 
         }
 
-        results[key].push(css[key]);
+        results[key].push(value);
     })
 
-    Object.keys(results).forEach(key => {
-        if (Array.isArray(results[key])) {
-            results[key] = results[key].join(', ')
+    keyEach(results, (key, value) => {
+        if (isArray(value)) {
+            results[key] = value.join(', ')
         }
     })
 
@@ -343,7 +350,7 @@ export function IMAGE_TO_BACKGROUND_SIZE_STRING (image) {
         return [
             stringUnit(image.backgroundSizeWidth), 
             stringUnit(image.backgroundSizeHeight)
-        ].join(' ')
+        ].join(WHITE_STRING)
     } else if (image.backgroundSizeWidth) {
         return stringUnit(image.backgroundSizeWidth);
     }
@@ -532,7 +539,7 @@ export function IMAGE_TO_RADIAL (image = {}) {
     var radialPosition = image.radialPosition || ['center', 'center'];
     var gradientType = image.type
 
-    radialPosition = (DEFINED_POSITIONS[radialPosition]) ? radialPosition : radialPosition.join(' ')
+    radialPosition = (DEFINED_POSITIONS[radialPosition]) ? radialPosition : radialPosition.join(WHITE_STRING)
 
     opt = radialPosition ? `${radialType} at ${radialPosition}` : radialType;
 
@@ -548,7 +555,7 @@ export function IMAGE_TO_CONIC (image = {}) {
     var conicPosition = image.radialPosition  || ['center', 'center'];
     var gradientType = image.type
 
-    conicPosition = (DEFINED_POSITIONS[conicPosition]) ? conicPosition : conicPosition.join(' ')
+    conicPosition = (DEFINED_POSITIONS[conicPosition]) ? conicPosition : conicPosition.join(WHITE_STRING)
 
     if (isNotUndefined(conicAngle)) {
         conicAngle = get(DEFINED_ANGLES, conicAngle, (it) => +it) 
@@ -559,7 +566,7 @@ export function IMAGE_TO_CONIC (image = {}) {
         opt.push(`at ${conicPosition}`)
     };
 
-    var optString = opt.length ? opt.join(' ') + ',' : EMPTY_STRING;
+    var optString = opt.length ? opt.join(WHITE_STRING) + ',' : EMPTY_STRING;
 
     return `${gradientType}-gradient(${optString} ${colors})`
 }    

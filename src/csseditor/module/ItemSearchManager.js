@@ -1,7 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import { GETTER } from "../../util/Store";
-import { isUndefined, clone } from "../../util/functions/func";
+import { isUndefined, keyEach } from "../../util/functions/func";
 import { EMPTY_STRING, ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, ITEM_TYPE_IMAGE, ITEM_TYPE_COLORSTEP, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
 import { 
     ITEM_MAP_PAGE, 
@@ -40,9 +40,9 @@ export default class ItemSearchManager extends BaseModule {
             items[item.id] = {...item};
 
             var children = $store.read(ITEM_GET_ALL, item.id)
-            Object.keys(children).forEach(key => {
-                items[key] = children[key];
-            }); 
+            keyEach(children, (key, value) => {
+                items[key] = value;
+            })
         })
 
         return items; 

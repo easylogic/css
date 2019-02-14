@@ -25,7 +25,6 @@ export default class BackgroundImage extends BasePropertyItem {
 
     isShow () {
         return false;
-        // return this.read(SELECTION_IS_IMAGE, IMAGE_ITEM_TYPE_IMAGE);  
     }    
 
     refresh () {

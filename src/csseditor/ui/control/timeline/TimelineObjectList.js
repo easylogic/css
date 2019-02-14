@@ -1,9 +1,8 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { LOAD, DROP, INPUT, CLICK } from "../../../../util/Event";
-import { ITEM_GET } from "../../../types/ItemTypes";
+import { LOAD, CLICK, CHANGEINPUT } from "../../../../util/Event";
 import { TIMELINE_LIST } from "../../../types/TimelineTypes";
 import { CHANGE_TIMELINE, ADD_TIMELINE } from "../../../types/event";
-import { EMPTY_STRING, UNIT_PX } from "../../../../util/css/types";
+import { UNIT_PX } from "../../../../util/css/types";
 import { defaultValue } from "../../../../util/functions/func";
 import { IS_LAYER } from "../../../../util/css/make";
 
@@ -47,6 +46,27 @@ export default class TimelineObjectList extends UIElement {
         return defaultValue(targetItem[property], PROPERTY_DEFAULT_VALUE[property])
     }
 
+    makeTimelineProperty (property, timeline, targetItem, index) {
+        return ` 
+            <div class='timeline-property row'>
+                <label>${property}</label>
+                <input type='number' min="-10000" max="10000" data-property='${property}' data-timeline-id="${timeline.id}" /> <span class='unit'>${UNIT_PX}</span>
+            </div>    
+        `
+    }
+
+    makeTimelineTransform (timeline, targetItem, index) {
+        return `
+        <div class='timeline-collapse' data-property='transform'>
+            <div class='property-title row' >Transform</div>
+            <div class='timeline-property-list' data-property='transform'>
+                ${this.makeTimelineProperty('translateX', timeline, targetItem, index)}
+                ${this.makeTimelineProperty('translateY', timeline, targetItem, index)}
+            </div>
+        </div>
+        `
+    }
+
     makeTimelineObjectForLayer (timeline, targetItem, index) {
         return `
             <div class='timeline-object' data-type='layer'>
@@ -55,19 +75,7 @@ export default class TimelineObjectList extends UIElement {
                     <div class='title'>${targetItem.name ||  ((targetItem.index/100) + 1) + '. Layer'}</div>
                 </div>
                 <div class='timeline-group'>
-                    <div class='timeline-collapse' data-property='transform'>
-                        <div class='property-title row' >Transform</div>
-                        <div class='timeline-property-list' data-property='transform'>
-                            <div class='timeline-property row' data-property='translateX'>
-                                <label>translateX</label>
-                                <input type='number' data-type='translateX' /> <span class='unit'>${UNIT_PX}</span>
-                            </div>    
-                            <div class='timeline-property row' data-property='translateY'>
-                                <label>translateY</label>
-                                <input type='number' data-type='translateY' /> <span class='unit'>${UNIT_PX}</span>
-                            </div>    
-                        </div>
-                    </div>
+                    ${this.makeTimelineTransform(timeline, targetItem, index)}
                 </div>
             </div>
         `
@@ -95,6 +103,15 @@ export default class TimelineObjectList extends UIElement {
         this.$el.$$(`[group-id="${groupId}"]`).forEach($dom => {
             $dom.toggleClass('show', !isShow);
         })
+    }
+
+    [CHANGEINPUT('$el [data-property]')] (e) {
+        var $t = e.$delegateTarget;
+        var value = $t.val()
+        var property = $t.attr('data-property')
+        var timelineId = $t.attr('data-timeline-id')
+
+        console.log(value, property, timelineId)
     }
 }
 

@@ -1,5 +1,5 @@
 import UIElement from "../../../colorpicker/UIElement";
-import { CLICK, SCROLL, DEBOUNCE, DROP } from "../../../util/Event";
+import { CLICK, SCROLL, DEBOUNCE, DROP, RESIZE, WHEEL, ALT } from "../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
@@ -31,7 +31,7 @@ export default class Timeline extends UIElement {
                         <KeyframeTimeView></KeyframeTimeView>
                     </div>
                 </div>
-                <div class='timeline-body'>
+                <div class='timeline-body' ref="$timelineBody">
                     <div class='timeline-panel' ref='$keyframeList'>
                         <KeyframeObjectList></KeyframeObjectList>
                         <KeyframeGuideLine></KeyframeGuideLine>
@@ -106,5 +106,17 @@ export default class Timeline extends UIElement {
 
         this.run(TIMELINE_PUSH, draggedId);
 
+    }
+
+    [WHEEL('$timelineBody') + ALT] (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        var dt = Math.abs(this.config('timeline.1ms.width.original') * e.deltaY * 0.1);
+
+        if (e.wheelDeltaY < 0) {    // 확대 
+            this.config('timeline.1ms.width', this.config('timeline.1ms.width') + dt  )
+        } else {    // 축소 
+            this.config('timeline.1ms.width', Math.max(0.1, this.config('timeline.1ms.width') - dt)  )
+        }
     }
 }

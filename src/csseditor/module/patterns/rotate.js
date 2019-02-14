@@ -1,5 +1,6 @@
 import { isNotUndefined, repeat } from "../../../util/functions/func";
-import { percentUnit, IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR } from "../../../util/css/types";
+import { percentUnit} from "../../../util/css/types";
+import { IMAGE_TYPE_IS_LINEAR } from "../../../util/css/make";
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -19,7 +20,7 @@ export default class rotate {
 
         var results = [];
 
-        if (item.type == IMAGE_ITEM_TYPE_LINEAR || item.type == IMAGE_ITEM_TYPE_REPEATING_LINEAR) {
+        if (IMAGE_TYPE_IS_LINEAR(item.type)) {
             results.push(...this.makeClone(item, opt))
         }
 

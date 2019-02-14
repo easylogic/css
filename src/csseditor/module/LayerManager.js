@@ -2,7 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { stringUnit, EMPTY_STRING, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
-import { isNotUndefined, isArray, cleanObject, combineKeyArray } from "../../util/functions/func";
+import { isNotUndefined, isArray, cleanObject, combineKeyArray, keyEach } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
@@ -73,12 +73,12 @@ export default class LayerManager extends BaseModule {
 
             var css = IMAGE_TO_CSS(newItem, isExport);
 
-            Object.keys(css).forEach(key => {
+            keyEach(css, (key, value) => {
                 if (!results[key]) {
                     results[key] = [] 
                 }
 
-                results[key].push(css[key]);
+                results[key].push(value);
             })
         })
 
@@ -93,13 +93,14 @@ export default class LayerManager extends BaseModule {
             var image = {...item.image, colorsteps: item.colorsteps}
             var css = IMAGE_TO_CSS(image);
 
-            Object.keys(css).forEach(key => {
+
+            keyEach(css, (key, value) => {
                 if (!results[key]) {
                     results[key] = [] 
                 }
 
-                results[key].push(css[key]);
-            })
+                results[key].push(value);
+            })            
         })
 
         return combineKeyArray(results);
@@ -115,18 +116,18 @@ export default class LayerManager extends BaseModule {
         $store.read(`item/map/${itemType}/children`, layer.id, (item)  => {
             var css = $store.read(`${itemType}/toCSS`, item, isExport);
 
-            Object.keys(css).forEach(key => {
+            keyEach(css, (key, value) => {
                 if (!results[key]) {
                     results[key] = [] 
                 }
 
-                results[key].push(css[key]);
-            })
+                results[key].push(value);
+            })            
         })
 
-        Object.keys(results).forEach(key => {
+        keyEach(results, (key, value) => {
             if (isArray(results[key])) {
-                results[key] = results[key].join(', ')
+                results[key] = value.join(', ')
             }
         })
 
@@ -142,20 +143,20 @@ export default class LayerManager extends BaseModule {
             var newItem = {...item}
             newItem.colorsteps =  newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id)
             var css = IMAGE_TO_CSS(newItem, isExport);
-
-            Object.keys(css).forEach(key => {
+            
+            keyEach(css, (key, value) => {
                 if (!results[key]) {
                     results[key] = [] 
                 }
 
-                results[key].push(css[key]);
+                results[key].push(value);
             })
         })
 
-        Object.keys(results).forEach(key => {
-            if (isArray(results[key])) {
-                results[key] = results[key].join(', ')
-            }
+        keyEach(results, (key, value) => {
+            if (isArray(value)) {
+                results[key] = value.join(', ')
+            }            
         })
 
         return results;

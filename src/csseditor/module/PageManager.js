@@ -1,9 +1,10 @@
 import BaseModule from "../../colorpicker/BaseModule";
-import { stringUnit, isPercentUnit, EMPTY_STRING } from "../../util/css/types";
+import { stringUnit, isPercentUnit, EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
 import { GETTER } from "../../util/Store";
 import { ITEM_GET, ITEM_CONVERT_STYLE } from "../types/ItemTypes";
 import { PAGE_TO_STRING, PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS, PAGE_CACHE_TO_CSS, PAGE_CACHE_TO_STRING } from "../types/PageTypes";
 import { CSS_SORTING, CSS_TO_STRING } from "../../util/css/make";
+import { keyMap } from "../../util/functions/func";
 
 export default class PageManager extends BaseModule {
 
@@ -12,9 +13,9 @@ export default class PageManager extends BaseModule {
         var page = this.get(id);
         var obj = $store.read(PAGE_TO_CSS, page) || {};
 
-        return Object.keys(obj).map(key => {
-            return `${key}: ${obj[key]};`
-        }).join(' ')
+        keyMap(obj, (key,value) => {
+            return `${key}: ${value};`
+        }).join(WHITE_STRING)
     }
 
     [GETTER(PAGE_TO_CSS)] ($store, page = {}) {

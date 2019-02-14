@@ -12,7 +12,7 @@ import Event, {
 } from './Event'
 import Dom from './Dom'
 import State from './State'
-import { debounce, isFunction, isArray, html } from './functions/func';
+import { debounce, isFunction, isArray, html, keyEach } from './functions/func';
 import { EMPTY_STRING } from './css/types';
 
 const checkGroup = /\>(\W*)\</g
@@ -84,9 +84,7 @@ export default class EventMachin {
 
   parseComponent () {
     const $el = this.$el; 
-    Object.keys(this.childComponents).forEach(ComponentName => {
-
-      const Component = this.childComponents[ComponentName]
+    keyEach(this.childComponents, (ComponentName, Component) => {
       const targets = $el.$$(`${ComponentName.toLowerCase()}`);
       [...targets].forEach($dom => {
         let props = {};
@@ -145,8 +143,8 @@ export default class EventMachin {
   eachChildren (callback) {
     if (!isFunction(callback)) return; 
 
-    Object.keys(this.children).forEach(ChildComponentName => {
-      callback(this.children[ChildComponentName])
+    keyEach(this.children, (_, Component) => {
+      callback(Component)
     })
   }
 
@@ -254,7 +252,7 @@ export default class EventMachin {
 
   /* magic check method  */ 
   self (e) {  // e.target 이 delegate 대상인지 체크 
-    return e.$delegateTarget.el == e.target; 
+    return e.$delegateTarget.is(e.target); 
   }
 
 

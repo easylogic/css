@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
-import { stringUnit, EMPTY_STRING } from "../../util/css/types";
+import { stringUnit, EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
+import { keyMap } from "../../util/functions/func";
 
 export default class TextShadowManager extends BaseModule { 
 
@@ -33,10 +34,9 @@ export default class TextShadowManager extends BaseModule {
 
         var obj = $store.read('textshadow/toCSS', image)
 
-        return Object.keys(obj).map(key => {
-            return `${key}: ${obj[key]};`
-        }).join(' ')
-
+        keyMap(obj, (key, value) => {
+            return `${key}: ${value};`
+        }).join(WHITE_STRING)
     } 
 
     [GETTER('textshadow/toTextShadowString')] ($store, item = undefined ) {
@@ -52,7 +52,7 @@ export default class TextShadowManager extends BaseModule {
             item.color
         )
 
-        return results.join(' '); 
+        return results.join(WHITE_STRING); 
     }
 
 }

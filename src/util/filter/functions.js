@@ -3,8 +3,8 @@ import Matrix from '../Matrix'
 import ImageFilter from './index' 
 import Color from '../Color'
 import { round } from '../functions/math';
-import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING } from '../css/types';
-import { isFunction, isString, isNumber, isArray } from '../functions/func';
+import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, WHITE_STRING } from '../css/types';
+import { isFunction, isString, isNumber, isArray, keyMap, keyEach } from '../functions/func';
 
 let makeId = 0 
 
@@ -367,7 +367,7 @@ export function percent2em (percent, maxValue) {
 }
 
 const filter_regexp = /(([\w_\-]+)(\(([^\)]*)\))?)+/gi;
-const filter_split = ' '
+const filter_split = WHITE_STRING
 
 export { filter_regexp, filter_split }
 
@@ -398,7 +398,7 @@ export function makePrebuildUserFilterList (arr) {
         rootContextObject = { ...rootContextObject, ...it.userFunction.rootContextObject}
      })
 
-     var rootContextDefine = `const ` + Object.keys(rootContextObject).map(key => {
+     var rootContextDefine = `const ` + keyMap(rootContextObject, (key) => {
         return ` ${key} = $rc.${key} `
      }).join(',')
  
@@ -425,20 +425,20 @@ export function makeUserFilterFunctionList (arr) {
     const list = arr.map(it => {
         let newKeys = []
 
-        Object.keys(it.context).forEach((key, i) => {
+        keyEach(it.context, (key) => {
             newKeys[key] = `n$${makeId++}${key}$` 
         })
 
-        Object.keys(it.rootContext).forEach((key, i) => {
+        keyEach(it.rootContext, (key, value) => {
             newKeys[key] = `r$${makeId++}${key}$` 
 
-            rootContextObject[newKeys[key]] = it.rootContext[key]
+            rootContextObject[newKeys[key]] = value
         })
 
         let preContext = Object.keys(it.context).filter(key => {
             if (isNumber( it.context[key] ) || isString( it.context[key] )) {
                 return false 
-            } else if (Array.isArray(it.context[key])) {
+            } else if (isArray(it.context[key])) {
                 if (isNumber( it.context[key][0] ) || isString( it.context[key][0]) ) {
                     return false 
                 }
@@ -457,9 +457,7 @@ export function makeUserFilterFunctionList (arr) {
         preCallbackString.pop()
         preCallbackString = preCallbackString.join("}")  
 
-        Object.keys(newKeys).forEach(key => {
-            var newKey = newKeys[key]
-
+        keyEach(newKeys, (key, newKey) => {
             if (isNumber(it.context[key]) || isString( it.context[key] )) {
                 preCallbackString = preCallbackString.replace(new RegExp("\\"+key, "g"), it.context[key])
             } else if (isArray(it.context[key])) {

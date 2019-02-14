@@ -6,8 +6,9 @@ import { EVENT } from "../../../../../colorpicker/UIElement";
 import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
-import { EMPTY_STRING, CLIP_PATH_TYPE_SVG } from "../../../../../util/css/types";
+import { EMPTY_STRING, CLIP_PATH_TYPE_SVG, WHITE_STRING } from "../../../../../util/css/types";
 import { SVG_LIST, SVG_GET } from "../../../../types/SVGTypes";
+import { CLIP_PATH_IS_SVG } from "../../../../../util/css/make";
 
 export default class ClipPathSVG extends BasePropertyItem {
 
@@ -75,7 +76,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
         if (!item) return false;
         
-        if (item.clipPathType == CLIP_PATH_TYPE_SVG) return true; 
+        if (CLIP_PATH_IS_SVG(item)) return true; 
     } 
 
 
@@ -148,7 +149,7 @@ export default class ClipPathSVG extends BasePropertyItem {
         }         
 
         if ($svg.attr('viewBox')) {
-            var box = $svg.attr('viewBox').split(' ');
+            var box = $svg.attr('viewBox').split(WHITE_STRING);
 
             width = parseParamNumber(box[2])
             height = parseParamNumber(box[3])

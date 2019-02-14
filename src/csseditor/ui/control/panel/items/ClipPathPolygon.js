@@ -7,11 +7,12 @@ import {
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
 import { EVENT } from "../../../../../colorpicker/UIElement";
-import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING, CLIP_PATH_TYPE_POLYGON } from "../../../../../util/css/types";
+import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { defaultValue, isUndefined, html } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIPPATH_SAMPLE_LIST, CLIPPATH_SAMPLE_GET } from "../../../../types/ClipPathTypes";
+import { CLIP_PATH_IS_POLYGON } from "../../../../../util/css/make";
 
 export default class ClipPathPolygon extends BasePropertyItem {
     template () {
@@ -114,7 +115,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
 
         if (!item) return false;
         
-        return item.clipPathType == CLIP_PATH_TYPE_POLYGON
+        return CLIP_PATH_IS_POLYGON(item)
     }
 
     [EVENT('toggleClipPathPolygon')] (isShow) {

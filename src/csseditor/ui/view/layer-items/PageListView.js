@@ -8,6 +8,7 @@ import { SELECTION_ONE, SELECTION_CURRENT_PAGE } from "../../../types/SelectionT
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { ITEM_MAP_PAGE } from "../../../types/ItemSearchTypes";
 import { STORAGE_SAVE } from "../../../types/StorageTypes";
+import { html } from "../../../../util/functions/func";
 
 export default class PageListView extends UIElement {
 
@@ -48,11 +49,11 @@ export default class PageListView extends UIElement {
     [LOAD('$pageList')] () {
         var str = this.read(ITEM_MAP_PAGE, (item, index) => {
             return this.makeItemNode(item, index); 
-        }).join(EMPTY_STRING);
+        });
 
-        str += `<button type="button" class='add-page' title="Add a page"></button>`
+        str.push(`<button type="button" class='add-page' title="Add a page"></button>`)
 
-        return str; 
+        return html`${str}`; 
     }
 
     refresh () { 

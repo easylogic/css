@@ -2,6 +2,7 @@ import Dom from '../../util/Dom'
 import UIElement, { EVENT } from '../UIElement';
 import { CLICK, CONTEXTMENU, LOAD } from '../../util/Event';
 import { EMPTY_STRING } from '../../util/css/types';
+import { html } from '../../util/functions/func';
 
 export default class CurrentColorSets extends UIElement {
 
@@ -20,13 +21,13 @@ export default class CurrentColorSets extends UIElement {
         const currentColorSets  = this.read('getCurrentColorSets')
         const colors  = this.read('getCurrentColors')
 
-        return `<div class="current-color-sets">
+        return html`<div class="current-color-sets">
             ${colors.map( (color, i) => {
                 return `<div class="color-item" title="${color}" data-index="${i}" data-color="${color}">
                     <div class="empty"></div>
                     <div class="color-view" style="background-color: ${color}"></div>
                 </div>`
-            }).join(EMPTY_STRING)}   
+            })}   
             ${currentColorSets.edit ? `<div class="add-color-item">+</div>` : EMPTY_STRING}         
             </div>`
     }    

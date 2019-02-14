@@ -5,6 +5,7 @@ import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from
 import { SELECTION_CURRENT_PAGE, SELECTION_IS_PAGE } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { RESIZE_WINDOW } from '../../../types/ToolTypes';
+import { keyEach } from '../../../../util/functions/func';
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -71,8 +72,8 @@ export default class PredefinedPageResizer extends UIElement {
 
         let style = {...style1, ...style2}
 
-        Object.keys(style).forEach(key => {
-            style[key] = pxUnit(style[key]) 
+        keyEach(style, (key, value) => {
+            style[key] = pxUnit(value) 
         })
 
         var page = this.read(SELECTION_CURRENT_PAGE)

@@ -1,6 +1,6 @@
 import Color from '../../util/Color'
 import ColorPicker from '../../colorpicker/index';
-import { isBoolean } from '../../util/functions/func';
+import { isBoolean, keyEach } from '../../util/functions/func';
 
 const colorpicker_class = 'codemirror-colorview'; 
 const colorpicker_background_class = 'codemirror-colorview-background';
@@ -70,8 +70,8 @@ function has_class(el, cls) {
     if (!el || !el.className) {
         return false;
     } else {
-        var newClass = ' ' + el.className + ' ';
-        return newClass.indexOf(' ' + cls + ' ') > -1;
+        var newClass = ` ${el.className} `;
+        return newClass.indexOf(` ${cls} `) > -1;
     }
 }
 
@@ -153,8 +153,8 @@ export default class ColorView {
         {
             return false;
         } else {
-            var newClass = ' ' + el.className + ' ';
-            return newClass.indexOf(' ' + className + ' ') > -1;
+            var newClass = ` ${el.className} `;
+            return newClass.indexOf(` ${className} `) > -1;
         }
     }
 
@@ -177,11 +177,9 @@ export default class ColorView {
             isShortCut : true
         };
 
-        Object.keys(this.markers).forEach(function(key) {
+        keyEach(this.markers, (key, marker) => {
             var searchKey = "#" + key;
-            if (searchKey.indexOf( "#" + colorMarker.lineNo + ":") > -1) {
-                var marker = self.markers[key];
-
+            if (searchKey.indexOf( "#" + colorMarker.lineNo + ":") > -1) {;
                 if (marker.ch <= colorMarker.ch && colorMarker.ch <= marker.ch + marker.color.length) {
                     // when cursor has marker
                     colorMarker.ch = marker.ch;

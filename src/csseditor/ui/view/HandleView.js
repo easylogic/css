@@ -8,7 +8,7 @@ export default class HandleView extends GradientView {
 
 
     checkPage (e) {
-        return e.target == this.refs.$colorview.el;
+        return this.refs.$colorview.is(e.target);
     }
 
     [CLICK('$page .layer') + SELF] (e) {
@@ -26,16 +26,6 @@ export default class HandleView extends GradientView {
             this.refreshLayer();
         })    
     }
-
-    
-
-    // selectPageMode () {
-        
-    //     if (!this.dragArea) {
-    //         this.dispatch(SELECTION_CHANGE, ITEM_TYPE_PAGE) ;
-    //     }
-
-    // }
 
     isDownCheck () {
         return this.isDown

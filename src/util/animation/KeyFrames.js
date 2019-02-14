@@ -2,11 +2,11 @@ import { parseParamNumber } from "../filter/functions";
 import Scale from "./Scale";
 import ValueGenerator from "./ValueGenerator";
 import { UNIT_PX, EMPTY_STRING } from "../css/types";
+import { keyMap, keyEach } from "../functions/func";
 
 const KeyFrames = {
     parse (obj, ani) {
-        var list = Object.keys(obj).map(key => {
-            var originAttrs = obj[key];
+        var list = keyMap(obj, (key, originAttrs) => {
             var attrs = {...originAttrs};
             var percent = 0; 
             if (key == 'from') {
@@ -39,12 +39,12 @@ const KeyFrames = {
     parseTiming (...list) {
         var transitionProperties = {} 
         list.forEach(item => {
-            Object.keys(item.attrs).forEach(property => {
+            keyEach(item.attrs, (property) => {
                 transitionProperties[property] = true; 
             });
         })
 
-        var keyValueMapping = Object.keys(transitionProperties).map(property => {
+        var keyValueMapping = keyMap(transitionProperties, property => {
             return list.filter(it => it.attrs[property]).map(it => it.attrs[property])
         }).filter(it => {
             return it.length; 
@@ -76,8 +76,8 @@ const KeyFrames = {
         })
 
         list = list.map ((item, index) => {
-            Object.keys(item.attrs).forEach(key => {
-                item.attrs[key] = ValueGenerator.make(key, item.percent, item.attrs[key]); 
+            keyEach(item.attrs, (key, value) => {
+                item.attrs[key] = ValueGenerator.make(key, item.percent, value); 
             })
 
             return item;

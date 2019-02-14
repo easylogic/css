@@ -19,11 +19,13 @@ import {
 } from "../types/ItemTypes";
 import { percentUnit, pxUnit, unitValue, EMPTY_STRING, IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC, ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_CIRCLE, ITEM_TYPE_IMAGE, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP } from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";
-import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER, ITEM_ADD_SHAPE, ITEM_CREATE_POLYGON, ITEM_CREATE_TIMELINE, ITEM_CREATE_KEYFRAME, ITEM_ADD_TIMELINE, ITEM_ADD_KEYFRAME } from "../types/ItemCreateTypes";
+import { ITEM_KEYS, ITEM_KEYS_GENERATE, ITEM_INITIALIZE, ITEM_CREATE_OBJECT, ITEM_CREATE_PAGE, ITEM_ADD_PAGE, ITEM_CREATE_LAYER, ITEM_CREATE_CIRCLE, ITEM_ADD, ITEM_CREATE_GROUP, ITEM_CREATE_BOXSHADOW, ITEM_CREATE_TEXTSHADOW, ITEM_CREATE_IMAGE, ITEM_CREATE_IMAGE_WITH_COLORSTEP, ITEM_CREATE_COLORSTEP, ITEM_CREATE, ITEM_COPY, ITEM_PREPEND_IMAGE, ITEM_ADD_IMAGE, ITEM_PREPEND_IMAGE_FILE, ITEM_ADD_IMAGE_FILE, ITEM_SET_IMAGE_FILE, ITEM_PREPEND_IMAGE_URL, ITEM_ADD_IMAGE_URL, ITEM_ADD_LAYER, ITEM_ADD_SHAPE, ITEM_CREATE_POLYGON, ITEM_CREATE_TIMELINE, ITEM_CREATE_KEYFRAME, ITEM_ADD_TIMELINE, ITEM_ADD_KEYFRAME, ITEM_ADD_BOXSHADOW, ITEM_ADD_TEXTSHADOW, ITEM_ADD_CIRCLE, ITEM_ADD_RECT } from "../types/ItemCreateTypes";
 import { isFunction } from "../../util/functions/func";
 import { SELECTION_RECT, SELECTION_ONE } from "../types/SelectionTypes";
 import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 import { RESIZE_WINDOW } from "../types/ToolTypes";
+import { ITEM_MAP_KEYFRAME_CHILDREN } from "../types/ItemSearchTypes";
+import { INDEX_DIST } from "./ItemManager";
 
 const gradientTypeList = [
     IMAGE_ITEM_TYPE_LINEAR,
@@ -191,6 +193,22 @@ export default class ItemCreateManager extends BaseModule {
         $store.run(ITEM_SORT, item.id)
     }
 
+    [ACTION(ITEM_ADD_BOXSHADOW)] ($store, isSelected = false, parentId = EMPTY_STRING) {
+        $store.run(ITEM_TYPE_BOXSHADOW, isSelected, parentId)
+    }
+
+    [ACTION(ITEM_ADD_TEXTSHADOW)] ($store, isSelected = false, parentId = EMPTY_STRING) {
+        $store.run(ITEM_TYPE_TEXTSHADOW, isSelected, parentId)
+    }
+
+    [ACTION(ITEM_ADD_CIRCLE)] ($store, isSelected, parentId = EMPTY_STRING) {
+        $store.run(ITEM_TYPE_CIRCLE, isSelected, parentId);
+    }
+
+    [ACTION(ITEM_ADD_RECT)] ($store, isSelected, parentId = EMPTY_STRING) {
+        $store.run(ITEM_TYPE_LAYER, isSelected, parentId);
+    }    
+
     [ACTION(ITEM_ADD_LAYER)] ($store, itemType, isSelected = false, parentId = EMPTY_STRING) {
         var rect = $store.read(SELECTION_RECT);
 
@@ -221,13 +239,39 @@ export default class ItemCreateManager extends BaseModule {
         }
     }    
 
-    [ACTION(ITEM_ADD_KEYFRAME)] ($store, parentId = EMPTY_STRING) {
+    [ACTION(ITEM_ADD_KEYFRAME)] ($store, parentId = EMPTY_STRING, opt = {}, callback) {
         var id = $store.read(ITEM_CREATE_KEYFRAME, {
             parentId, 
+            ...opt,
             index: Number.MAX_SAFE_INTEGER
         });
 
-        $store.run(ITEM_SORT, id)
+        $store.run(ITEM_SORT, id, (aId, bId) => {
+            return $store.items[aId].startTime > $store.items[bId].startTime ? 1 : -1;
+        })
+
+        // redefine startTime, endTime
+        var keyframe = this.get(id);
+            
+        if (keyframe.prevId) {
+            var prevItem = $store.items[keyframe.prevId]
+            if (prevItem && prevItem.endTime > keyframe.startTime) {
+                keyframe.startTime = prevItem.endTime
+            }    
+        } 
+
+        if (keyframe.nextId) {
+            var nextItem = $store.items[keyframe.nextId]
+            if (nextItem && nextItem.startTime < keyframe.endTime) {
+                keyframe.endTime = nextItem.startTime
+            }
+        }
+        $store.run(ITEM_SET, keyframe);        
+        // redefine startTime, endTime
+
+        if (isFunction(callback)) {
+            callback(id);
+        }
     }        
 
     [ACTION(ITEM_ADD_SHAPE)] ($store, shapeObject, isSelected = false, parentId = EMPTY_STRING) {

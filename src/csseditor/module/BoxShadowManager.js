@@ -1,6 +1,7 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER } from "../../util/Store";
-import { stringUnit, EMPTY_STRING } from "../../util/css/types";
+import { stringUnit, EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
+import { keyMap } from "../../util/functions/func";
 
 export default class BoxShadowManager extends BaseModule { 
 
@@ -33,10 +34,9 @@ export default class BoxShadowManager extends BaseModule {
 
         var obj = $store.read('boxshadow/toCSS', image)
 
-        return Object.keys(obj).map(key => {
-            return `${key}: ${obj[key]};`
-        }).join(' ')
-
+        return keyMap(obj, (key, value) => {
+            return `${key}: ${value};`
+        }).join(WHITE_STRING)
     } 
 
     [GETTER('boxshadow/toBoxShadowString')] ($store, item = undefined ) {
@@ -57,7 +57,7 @@ export default class BoxShadowManager extends BaseModule {
             item.color
         )
 
-        return results.join(' '); 
+        return results.join(WHITE_STRING); 
     }
 
 }

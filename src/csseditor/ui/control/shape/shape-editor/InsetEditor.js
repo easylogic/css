@@ -12,6 +12,7 @@ import { percentUnit, value2px, CLIP_PATH_TYPE_INSET } from "../../../../../util
 import { px2percent } from "../../../../../util/filter/functions";
 import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { CLIP_PATH_IS_INSET } from "../../../../../util/css/make";
 
 export default class InsetEditor extends UIElement {
 
@@ -42,7 +43,7 @@ export default class InsetEditor extends UIElement {
     refreshPointer () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
-            if (layer.clipPathType !== CLIP_PATH_TYPE_INSET) return;
+            if (CLIP_PATH_IS_INSET(layer)) return;
 
             var { width, height } = this.getRectangle()
 
@@ -78,7 +79,7 @@ export default class InsetEditor extends UIElement {
 
         if (!item) return false; 
 
-        return item.clipPathType == CLIP_PATH_TYPE_INSET && !!item.showClipPathEditor; ; 
+        return CLIP_PATH_IS_INSET(item) && !!item.showClipPathEditor; ; 
     }
 
     getRectangle () {

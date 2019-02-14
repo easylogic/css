@@ -5,7 +5,7 @@ import { GETTER, ACTION } from "../../util/Store";
 import { ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SET_ALL, ITEM_SET, ITEM_REMOVE_CHILDREN, ITEM_SORT, ITEM_REMOVE, ITEM_REMOVE_ALL, ITEM_FOCUS, ITEM_LOAD, ITEM_TOGGLE_VISIBLE, ITEM_INIT_CHILDREN } from "../types/ItemTypes";
 import { ITEM_KEYS, ITEM_INITIALIZE } from "../types/ItemCreateTypes";
 import { SELECTION_ONE } from "../types/SelectionTypes";
-import { clone } from "../../util/functions/func";
+import { keyEach } from "../../util/functions/func";
 import { ITEM_LIST_CHILDREN, ITEM_LIST_PAGE, ITEM_EACH_CHILDREN, ITEM_DOM } from "../types/ItemSearchTypes";
 import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 
@@ -65,15 +65,15 @@ const updateUnitField = {
 const convertStyle = (item) => {
     var style = item.style || {};
 
-    Object.keys(style).forEach(key => {
-        item[itemField[key]] = style[key]
+    keyEach(style, (key, value) => {
+        item[itemField[key]] = value
     })
 
     delete item.style;
 
-    Object.keys(item).forEach(key => {
+    keyEach(item, (key, value) => {
         if (updateUnitField[key]) {
-            item[key] = string2unit (item[key])
+            item[key] = string2unit (value)
         } 
     })
 
@@ -220,7 +220,7 @@ export default class ItemManager extends BaseModule {
         }
     }
 
-    [ACTION(ITEM_SORT)] ($store, id) {
+    [ACTION(ITEM_SORT)] ($store, id, sort) {
         const[get, list_children, list_page ] = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE);
 
         var item = get(id);
@@ -239,12 +239,31 @@ export default class ItemManager extends BaseModule {
             return $store.items[id].index != NONE_INDEX
         });
 
-        list.sort( (a, b) => {
+        var sortCallback = sort || ( (a, b) => {
             return $store.items[a].index > $store.items[b].index ? 1 : -1;
         })
+
+        list.sort(sortCallback);
 
         list.forEach((id, index) => {
             $store.items[id].index = index * INDEX_DIST
         })
+
+        // set prev, next  (as double linked list )
+        var lastIndex = list.length -1
+        list.forEach((id, index) => {
+            var item = $store.items[id];
+            var next = list[index+1]
+            var prev = list[index-1]
+
+            if (index == 0 && next) {
+                item.nextId = next;
+            } else if (index == lastIndex && prev) {
+                item.prevId = prev;
+            } else {
+                if (next) item.nextId = next;
+                if (prev) item.prevId = prev;
+            }
+        }) 
     }
 }
