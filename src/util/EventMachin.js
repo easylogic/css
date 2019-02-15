@@ -19,6 +19,8 @@ const checkGroup = /\>(\W*)\</g
 
 const META_KEYS = [ KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
 const REFERENCE_PROPERTY = 'ref';
+const TEMP_DIV = new Dom("div")
+const QUERY_PROPERTY = `[${REFERENCE_PROPERTY}]`;
 
 export default class EventMachin { 
 
@@ -56,16 +58,16 @@ export default class EventMachin {
 
     html = html.trim();
 
-    const list = new Dom("div").html(html).children()
+    const list = TEMP_DIV.html(html).children()
     
     var fragment = document.createDocumentFragment()
-    var queryProperty = `[${REFERENCE_PROPERTY}]`;
+
     list.forEach($el => {
       // ref element 정리 
       if ($el.attr(REFERENCE_PROPERTY)) {
         this.refs[$el.attr(REFERENCE_PROPERTY)] = $el; 
       }
-      var refs = $el.$$(queryProperty);
+      var refs = $el.$$(QUERY_PROPERTY);
       refs.forEach($dom => {
         const name = $dom.attr(REFERENCE_PROPERTY)
         this.refs[name] = $dom;

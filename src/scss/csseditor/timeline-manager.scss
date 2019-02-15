@@ -5,7 +5,7 @@ $timeline-keyframe-border-color: rgba($border-color, 0.3);
 $timeline-keyframe-time-color: rgba($border-color, 0.7);
 $pointer-size: 10px;
 $timeline-bar-color: #95b6ff;
-
+$timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
 
 .timeline-view {
     position: absolute;
@@ -79,9 +79,12 @@ $timeline-bar-color: #95b6ff;
             box-sizing: border-box;
             display: block;
             height: $timeline-row-height;
-            border-bottom: 1px solid $border-color;
             padding: 5px 0px;
             font-size: 11px;
+            background-position: 0% 100%;
+            background-size: 100% 1px;
+            background-repeat: no-repeat;
+            background-image: linear-gradient(to right, $timeline-keyframe-border-color, $timeline-keyframe-border-color);
         }
 
         .timeline-list {
@@ -159,10 +162,12 @@ $timeline-bar-color: #95b6ff;
             .keyframe-list {
                 position: relative;
                 width: 3000000px;
-                background-size: 100px 100%;
-                background-position: 99px 0px;
-                background-repeat: repeat-x;
-                background-image: linear-gradient(to right, $timeline-keyframe-border-color 1px, transparent 1px);
+                background-size: 2px 100%, 100px 100%;
+                background-position: 0px 0px, 99px 0px;
+                background-repeat: no-repeat, repeat-x;
+                background-image: 
+                    linear-gradient(to right, $timeline-keyframe-cursor-color, $timeline-keyframe-cursor-color),
+                    linear-gradient(to right, $timeline-keyframe-border-color 1px, transparent 1px);
 
                 .keyframe-object {
                     position: relative;

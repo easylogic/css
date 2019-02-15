@@ -7389,6 +7389,8 @@ var _templateObject = taggedTemplateLiteral(['', ''], ['', '']);
 
 var META_KEYS = [KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
 var REFERENCE_PROPERTY = 'ref';
+var TEMP_DIV = new Dom("div");
+var QUERY_PROPERTY = '[' + REFERENCE_PROPERTY + ']';
 
 var EventMachin = function () {
   function EventMachin() {
@@ -7431,16 +7433,16 @@ var EventMachin = function () {
 
       html$$1 = html$$1.trim();
 
-      var list = new Dom("div").html(html$$1).children();
+      var list = TEMP_DIV.html(html$$1).children();
 
       var fragment = document.createDocumentFragment();
-      var queryProperty = '[' + REFERENCE_PROPERTY + ']';
+
       list.forEach(function ($el) {
         // ref element 정리 
         if ($el.attr(REFERENCE_PROPERTY)) {
           _this.refs[$el.attr(REFERENCE_PROPERTY)] = $el;
         }
-        var refs = $el.$$(queryProperty);
+        var refs = $el.$$(QUERY_PROPERTY);
         refs.forEach(function ($dom) {
           var name = $dom.attr(REFERENCE_PROPERTY);
           _this.refs[name] = $dom;
@@ -8096,6 +8098,7 @@ var RESIZE_WINDOW = 'resize/window';
 var RESIZE_TIMELINE = 'resize/timeline';
 var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
 var TOGGLE_TIMELINE = 'toggle/timeline';
+var MOVE_TIMELINE = 'move/timeline';
 
 // const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
@@ -20898,12 +20901,13 @@ var KeyframeObjectList = function (_UIElement) {
         value: function setBackgroundGrid() {
 
             var width = this.config('timeline.1ms.width');
+            var cursorTime = this.config('timeline.cursor.time');
             var timeDist = 100; // 100ms = 0.1s 
-
+            var currentPosition = width * cursorTime - 1;
 
             var fullWidth = Math.max(10, timeDist * width);
             var position = fullWidth - 0.5;
-            this.$el.cssText("\n            background-size: " + fullWidth + "px 100%;\n            background-position: " + position + "px 0px;\n        ");
+            this.$el.cssText("\n            background-size: 2px 100%, " + fullWidth + "px 100%;\n            background-position: " + currentPosition + "px 0px, " + position + "px 0px;\n        ");
         }
     }, {
         key: "updateKeyframeList",
@@ -21159,6 +21163,11 @@ var KeyframeObjectList = function (_UIElement) {
             });
         }
     }, {
+        key: EVENT(MOVE_TIMELINE),
+        value: function value$$1() {
+            this.setBackgroundGrid();
+        }
+    }, {
         key: EVENT(CHANGE_TOOL, RESIZE_TIMELINE),
         value: function value$$1(key, _value) {
             this.refresh();
@@ -21298,6 +21307,7 @@ var KeyframeTimeView = function (_UIElement) {
                 var distX = e.xy.x - this.selectedCanvasOffset.left;
                 var scrollLeft = this.config('timeline.scroll.left') + distX;
                 this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+                this.emit(MOVE_TIMELINE);
                 this.refreshCanvas();
             }
         }
@@ -21309,7 +21319,7 @@ var KeyframeTimeView = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE),
+        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE),
         value: function value() {
             this.resizeCanvas();
             this.refresh();
@@ -26521,15 +26531,11 @@ var ItemManager = function (_BaseModule) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
             var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-            var _$store$mapGetters = $store.mapGetters(ITEM_GET),
-                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 1),
-                get$$1 = _$store$mapGetters2[0];
-
             var id = obj.id;
-            var isExists = $store.items[id];
-            $store.items[id] = _extends({}, get$$1(id), obj);
+            var oldObj = this.get(id);
+            $store.items[id] = _extends({}, oldObj, obj);
 
-            if (!isExists) {
+            if (!oldObj) {
                 $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId);
             }
 
@@ -26558,11 +26564,11 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_SORT),
         value: function value$$1($store, id, sort) {
-            var _$store$mapGetters3 = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE),
-                _$store$mapGetters4 = slicedToArray(_$store$mapGetters3, 3),
-                get$$1 = _$store$mapGetters4[0],
-                list_children = _$store$mapGetters4[1],
-                list_page = _$store$mapGetters4[2];
+            var _$store$mapGetters = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE),
+                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 3),
+                get$$1 = _$store$mapGetters2[0],
+                list_children = _$store$mapGetters2[1],
+                list_page = _$store$mapGetters2[2];
 
             var item = get$$1(id);
             var itemType = item.itemType;
@@ -26675,12 +26681,13 @@ var GuideManager = function (_BaseModule) {
 
             // x 축 비교 , x 축이 dist 안에 있으면 합격 
             var results = [];
-            A.pointX.forEach(function (AX, index) {
-                B.pointX.forEach(function (BX, targetIndex) {
+            for (var index = 0, len = A.pointX.length; index < len; index++) {
+                var AX = A.pointX[index];
 
+                for (var targetIndex = 0, len = B.pointX.length; targetIndex < len; targetIndex++) {
+                    var BX = B.pointX[targetIndex];
                     var tempDist = AX.isCenter || BX.isCenter ? ZERO_DIST : dist;
 
-                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
                     if (Math.abs(AX.x - BX.x) <= tempDist) {
 
                         results.push({
@@ -26699,12 +26706,15 @@ var GuideManager = function (_BaseModule) {
                             height: AX.height
                         });
                     }
-                });
-            });
+                }
+            }
 
             // y 축 비교,    
-            A.pointY.forEach(function (AY, index) {
-                B.pointY.forEach(function (BY, targetIndex) {
+            for (var index = 0, len = A.pointY.length; index < len; index++) {
+                var AY = A.pointY[index];
+
+                for (var targetIndex = 0, len = B.pointY.length; targetIndex < len; targetIndex++) {
+                    var BY = B.pointY[targetIndex];
                     var tempDist = AY.isCenter || BY.isCenter ? ZERO_DIST : dist;
 
                     // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
@@ -26725,8 +26735,8 @@ var GuideManager = function (_BaseModule) {
                             height: AY.height
                         });
                     }
-                });
-            });
+                }
+            }
 
             return results;
         }

@@ -7,7 +7,7 @@ import { IS_LAYER } from "../../../../util/css/make";
 import { stringUnit, pxUnit } from "../../../../util/css/types";
 import { ITEM_MAP_KEYFRAME_CHILDREN } from "../../../types/ItemSearchTypes";
 import { ITEM_ADD_KEYFRAME } from "../../../types/ItemCreateTypes";
-import { RESIZE_TIMELINE } from "../../../types/ToolTypes";
+import { RESIZE_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
 
 export default class KeyframeObjectList extends UIElement {
     templateClass () {
@@ -23,9 +23,10 @@ export default class KeyframeObjectList extends UIElement {
     setBackgroundGrid () {
 
         var width = this.config('timeline.1ms.width');
+        var cursorTime = this.config('timeline.cursor.time')
         var startTime = 0;  // 0ms 
         var timeDist = 100  // 100ms = 0.1s 
-
+        var currentPosition = width * cursorTime - 1;
 
         if ( (startTime % timeDist) != 0 ) {
             startTime +=  timeDist - (startTime % timeDist)
@@ -34,8 +35,8 @@ export default class KeyframeObjectList extends UIElement {
         var fullWidth = Math.max(10, timeDist * width); 
         var position = fullWidth - 0.5; 
         this.$el.cssText(`
-            background-size: ${fullWidth}px 100%;
-            background-position: ${position}px 0px;
+            background-size: 2px 100%, ${fullWidth}px 100%;
+            background-position: ${currentPosition}px 0px, ${position}px 0px;
         `)
     }
 
@@ -287,6 +288,10 @@ export default class KeyframeObjectList extends UIElement {
         this.run(ITEM_ADD_KEYFRAME, parentId, { property, startTime, endTime }, (keyframeId) => {
             this.refreshKeyframe(keyframeId);
         })
+    }
+
+    [EVENT(MOVE_TIMELINE)] () {
+        this.setBackgroundGrid()
     }
 
     [EVENT(

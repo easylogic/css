@@ -201,12 +201,11 @@ export default class ItemManager extends BaseModule {
     }
 
     [ACTION(ITEM_SET)] ($store, obj = {}, isSelected = false) {
-        const [ get ] = $store.mapGetters(ITEM_GET)
         var id = obj.id; 
-        var isExists = $store.items[id];
-        $store.items[id] = {...get(id), ...obj};
+        var oldObj = this.get(id);
+        $store.items[id] = {...oldObj, ...obj};
 
-        if (!isExists) {
+        if (!oldObj) {
             $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId)
         }
 

@@ -1,6 +1,6 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_TOOL } from "../../../types/event";
-import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE } from "../../../types/ToolTypes";
+import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
 import { POINTERSTART, POINTERMOVE, POINTEREND } from "../../../../util/Event";
 
 export default class KeyframeTimeView extends UIElement {
@@ -93,6 +93,7 @@ export default class KeyframeTimeView extends UIElement {
             var distX = e.xy.x - this.selectedCanvasOffset.left; 
             var scrollLeft = this.config('timeline.scroll.left') + distX;
             this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+            this.emit(MOVE_TIMELINE)
             this.refreshCanvas();
         }
     }
@@ -107,7 +108,8 @@ export default class KeyframeTimeView extends UIElement {
         CHANGE_EDITOR,
         RESIZE_WINDOW,
         RESIZE_TIMELINE,
-        SCROLL_LEFT_TIMELINE
+        SCROLL_LEFT_TIMELINE,
+        MOVE_TIMELINE
     )] () {
         this.resizeCanvas()        
         this.refresh();

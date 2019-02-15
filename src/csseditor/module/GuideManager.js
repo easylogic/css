@@ -67,12 +67,13 @@ export default class GuideManager extends BaseModule {
     [GETTER(GUIDE_COMPARE)] ($store, A, B, dist = MAX_DIST) {
         // x 축 비교 , x 축이 dist 안에 있으면 합격 
         var results = [] 
-        A.pointX.forEach((AX, index) => {
-            B.pointX.forEach((BX, targetIndex) => {
-
+        for(var index = 0, len = A.pointX.length; index < len; index++) {
+            var AX = A.pointX[index];
+            
+            for(var targetIndex = 0, len = B.pointX.length; targetIndex < len; targetIndex++) {
+                var BX = B.pointX[targetIndex]
                 var tempDist = (AX.isCenter || BX.isCenter) ? ZERO_DIST : dist; 
 
-                // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
                 if (Math.abs(AX.x - BX.x) <= tempDist) {
 
                     results.push({ 
@@ -91,12 +92,15 @@ export default class GuideManager extends BaseModule {
                         height: AX.height
                     })
                 }
-            })
-        })
+            }
+        }
 
         // y 축 비교,    
-        A.pointY.forEach( (AY, index) => {
-            B.pointY.forEach( (BY, targetIndex) => {
+        for(var index = 0, len = A.pointY.length; index < len; index++) {
+            var AY = A.pointY[index];
+            
+            for(var targetIndex = 0, len = B.pointY.length; targetIndex < len; targetIndex++) {
+                var BY = B.pointY[targetIndex]
                 var tempDist = (AY.isCenter || BY.isCenter) ? ZERO_DIST : dist; 
 
                 // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
@@ -117,8 +121,8 @@ export default class GuideManager extends BaseModule {
                         height: AY.height
                     })
                 }
-            }) 
-        })
+            }
+        }
 
         return results;
     }
