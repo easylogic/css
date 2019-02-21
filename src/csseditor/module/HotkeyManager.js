@@ -2,6 +2,7 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { ACTION, GETTER } from "../../util/Store";
 import { HOTKEY_EXISTS, HOTKEY_RUN, HOTKEY_EXECUTE, HOTKEY_EXCLUDE } from "../types/HotkeyTypes";
 import { isFunction } from "../../util/functions/func";
+import { EMPTY_STRING } from "../../util/css/types";
 
 const KEY_SPLIT = '+'
 const KEY_CTRL = 'ctrl'
@@ -46,7 +47,7 @@ hotKeys = hotKeys.map(it =>{
             obj[type] = true; 
             break;
         default: 
-            obj[''] = type; 
+            obj[EMPTY_STRING] = type; 
         }
 
     })
@@ -57,7 +58,7 @@ hotKeys = hotKeys.map(it =>{
     if (obj[KEY_ALT]) { arr.push(KEY_ALT); }
     if (obj[KEY_SHIFT]) { arr.push(KEY_SHIFT); }
     if (obj[KEY_META]) { arr.push(KEY_META); }
-    if (obj['']) { arr.push(obj['']); } 
+    if (obj[EMPTY_STRING]) { arr.push(obj[EMPTY_STRING]); } 
 
     it.key = arr.join(KEY_SPLIT)
 

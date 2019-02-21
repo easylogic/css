@@ -30,7 +30,7 @@ export default class SelectionManager extends BaseModule {
             type: SELECT_MODE_ONE,
             ids: [],
             items: [],
-            pageId: '',
+            pageId: EMPTY_STRING,
             itemType: EMPTY_STRING
         }
     }
@@ -57,7 +57,7 @@ export default class SelectionManager extends BaseModule {
             type: SELECT_MODE_ONE,
             ids: [],
             items: [],
-            pageId: '',
+            pageId: EMPTY_STRING,
             itemType: EMPTY_STRING
         }
     }
@@ -396,6 +396,11 @@ export default class SelectionManager extends BaseModule {
     }
 
     [GETTER(SELECTION_RECT)] ($store) {
+        var minX = Number.MAX_SAFE_INTEGER;
+        var minY = Number.MAX_SAFE_INTEGER;
+        var maxX = Number.MIN_SAFE_INTEGER;
+        var maxY = Number.MIN_SAFE_INTEGER;
+
         var items = $store.selection.ids.map(id => {
             var {x, y, width, height} = $store.items[id]
 
@@ -406,13 +411,18 @@ export default class SelectionManager extends BaseModule {
             var x2 = x + width;
             var y2 = y + height;
 
+            if (minX > x) minX = x; 
+            if (minY > y) minY = y; 
+            if (maxX < x2) maxX = x2; 
+            if (maxY < y2) maxY = y2; 
+
             return {x, y, width, height, x2, y2, id} 
         })
 
-        var x = Math.min(...items.map(it => it.x))
-        var y = Math.min(...items.map(it => it.y))
-        var x2 = Math.max(...items.map(it => it.x2))
-        var y2 = Math.max(...items.map(it => it.y2))
+        var x = minX
+        var y = minY
+        var x2 = maxX
+        var y2 = maxY
 
         var width = x2 - x;
         var height = y2 - y; 

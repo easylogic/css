@@ -1,6 +1,6 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR, CHANGE_TOOL } from "../../../types/event";
-import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE } from "../../../types/ToolTypes";
+import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
 import { POINTERSTART, POINTERMOVE, POINTEREND } from "../../../../util/Event";
 
 export default class KeyframeTimeView extends UIElement {
@@ -34,14 +34,14 @@ export default class KeyframeTimeView extends UIElement {
 
         var textOption = {
             textAlign: 'center',
-            textBaseline: 'bottom',
+            textBaseline: 'middle',
             font: '10px sans-serif'
         }
 
         this.refs.$canvas.update(function () {
             var rect = this.rect();
 
-            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)', lineWidth: 1, ...textOption})
+            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)',  lineWidth: 0.5, ...textOption})
             var startSecond = startTime; 
             var viewSecond = viewTime;
             var distSecond = timeDist; 
@@ -51,22 +51,30 @@ export default class KeyframeTimeView extends UIElement {
 
                 if (startSecond !== 0) {    // 0 이 아닌 경우만 그리기 
                     var secondString = viewSecond/1000;     // 표시 지점 
-                    var secondStringS = secondString + 's'
+                    var secondStringS = secondString
                     if (viewSecond % one_second === 0) {
-                        var y = rect.height - 15;
-                        this.drawLine(startX, y, startX, rect.height);
+                        var y = rect.height / 2;
+                        // this.drawLine(startX, y, startX, rect.height);
+                        this.drawOption({ fillStyle: '#333'})
                         this.drawText(startX, y, secondStringS)
                     } else {
-                        var y = rect.height - 5
-                        this.drawLine(startX, y, startX, rect.height);
+                        var y = rect.height / 2;
+
+                        // this.drawLine(startX, y, startX, rect.height);
 
                         if (width > 0.4) {
+                            this.drawOption({ fillStyle: '#333'})                            
                             this.drawText(startX, y, secondStringS)
                         } else {
                             var currentView = (viewSecond % 1000)/100;
                             if ( currentView === 5) {
+                                this.drawOption({ fillStyle: '#333'})                                
                                 this.drawText(startX, y, secondString)
+                            } else {
+                                this.drawOption({ fillStyle: 'rgba(0, 0, 0, 0.5)'})
+                                this.drawCircle(startX, y, 0.5)
                             }
+
                         }
                     }
                 }
@@ -93,6 +101,7 @@ export default class KeyframeTimeView extends UIElement {
             var distX = e.xy.x - this.selectedCanvasOffset.left; 
             var scrollLeft = this.config('timeline.scroll.left') + distX;
             this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+            this.emit(MOVE_TIMELINE)
             this.refreshCanvas();
         }
     }
@@ -107,7 +116,8 @@ export default class KeyframeTimeView extends UIElement {
         CHANGE_EDITOR,
         RESIZE_WINDOW,
         RESIZE_TIMELINE,
-        SCROLL_LEFT_TIMELINE
+        SCROLL_LEFT_TIMELINE,
+        MOVE_TIMELINE
     )] () {
         this.resizeCanvas()        
         this.refresh();

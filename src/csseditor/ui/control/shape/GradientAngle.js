@@ -1,7 +1,7 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE_LINEAR_ANGLE } from '../../../types/event';
-import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
+import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF } from '../../../../util/Event';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
 import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_ANGLE } from '../../../../util/css/make';
 
@@ -128,20 +128,20 @@ export default class GradientAngle extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
+    [POINTEREND('document') + IF('isDownCheck')] (e) {
         this.isDown = false ;
     }
 
-    [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck')] (e) {
         this.refreshUI(e);
     }
 
-    [POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$drag_pointer') + IF('isNotDownCheck')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    [POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$dragAngle') + IF('isNotDownCheck')] (e) {
         this.isDown = true; 
         this.refreshUI(e);        
     }     

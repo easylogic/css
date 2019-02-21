@@ -1,4 +1,5 @@
 import { EMPTY_STRING, WHITE_STRING } from "../css/types";
+import { cloneBitmap } from "../filter/functions";
 
 export function debounce (callback, delay) {
 
@@ -12,6 +13,23 @@ export function debounce (callback, delay) {
         t = setTimeout(function () {
             callback(...args);
         }, delay || 300);
+    }
+}
+
+// refer to https://jbee.io/web/optimize-scroll-event/
+export function fit(callback) {
+    let tick = false; 
+
+    return function () {
+        if (tick) {
+            return;
+        }
+
+        tick = true 
+        return requestAnimationFrame( () => {
+            tick = false; 
+            return callback()
+        })
     }
 }
 
@@ -103,12 +121,12 @@ export function combineKeyArray (obj) {
     return obj;
 }
 
-export function flatKeyValue (obj, rootKey = '') {
+export function flatKeyValue (obj, rootKey = EMPTY_STRING) {
     var values = {};
 
     Object.keys(obj).forEach(key => {
         var realKey = key; 
-        if (rootKey !== '') {
+        if (rootKey !== EMPTY_STRING) {
             realKey = `${rootKey}.${key}`
         }
 
@@ -133,7 +151,7 @@ export const html = (strings, ...args) => {
 
     var results =  strings.map((it, index) => {
         
-        var results = args[index] || ''
+        var results = args[index] || EMPTY_STRING
 
         if (isFunction(results)) {
             results = results()
@@ -154,7 +172,7 @@ export const html = (strings, ...args) => {
         }).join(EMPTY_STRING)
 
         return it + results;
-    }).join('');
+    }).join(EMPTY_STRING);
 
     results = results.replace(short_tag_regexp, function (match, p1) {
         return match.replace('/>', `></${p1}>`)

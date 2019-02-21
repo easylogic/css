@@ -134,7 +134,7 @@ export default class TextShadow extends BasePropertyItem {
 
     [INPUT('$textShadowList input[type=range]')] (e) {
         var $el = e.$delegateTarget;
-        var field = $el.attr('data-type').replace('Range', '');
+        var field = $el.attr('data-type').replace('Range', EMPTY_STRING);
         var id = this.getTextShadowId($el)
 
         $el.parent().$(`[data-type=${field}]`).val($el.val());

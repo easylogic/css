@@ -201,12 +201,16 @@ export const TIMELINE_DEFAULT_OBJECT = {
 export const KEYFRAME_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_KEYFRAME,
     targetId: EMPTY_STRING,
-    attribute: EMPTY_STRING,
+    property: EMPTY_STRING,
     parentId: EMPTY_STRING,
     delay: 0,
     duration: 1000, 
     timing: 'linear',
     iteration: 1, 
+    startTime: 0,
+    endTime: 0, 
+    startValue: 0,
+    endValue: 0,
     direction: 'alternate'
 }
 export const DEFAULT_TOOL_SIZE = {

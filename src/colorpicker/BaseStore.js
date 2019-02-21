@@ -5,6 +5,7 @@ export const PREVENT = 'PREVENT'
 
 export default class BaseStore {
     constructor (opt) {
+        this.cachedCallback = {}
         this.callbacks = [] 
         this.actions = []
         this.getters = []
@@ -129,14 +130,17 @@ export default class BaseStore {
 
         if (arguments.length == 0) {
             this.callbacks = [] 
+            this.cachedCallback = {}
         } else if (arguments.length == 1) {
             this.callbacks = this.callbacks.filter(f => {
                 return f.event != event 
             })
+            this.cachedCallback = {}
         } else if (arguments.length == 2) {
             this.callbacks = this.callbacks.filter(f => {
                 return !(f.event == event && f.originalCallback == originalCallback)
             })
+            this.cachedCallback = {}
         }
 
     }
@@ -144,10 +148,15 @@ export default class BaseStore {
     emit ($1, $2, $3, $4, $5) {
         var event = $1;
 
-        this.callbacks.filter(f => {
-            return (f.event == event)
-        }).forEach(f => {
-            if (f && isFunction(f.callback) && f.context.source != this.source) {
+        if (!this.cachedCallback[event]) {
+            this.cachedCallback[event] = this.callbacks.filter(f => {
+                return (f.event == event)
+            });
+        } 
+
+        
+        this.cachedCallback[event].forEach(f => {
+            if (f.context.source != this.source) {
                 f.callback($2, $3, $4, $5);
             }
         })

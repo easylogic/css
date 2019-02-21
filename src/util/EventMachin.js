@@ -4,21 +4,16 @@ import Event, {
   CHECK_SAPARATOR, 
   SAPARATOR, 
   CHECK_LOAD_PATTERN, 
-  LOAD_SAPARATOR, 
-  KEY_CONTROL, 
-  KEY_SHIFT, 
-  KEY_ALT, 
-  KEY_META 
+  LOAD_SAPARATOR
 } from './Event'
 import Dom from './Dom'
 import State from './State'
-import { debounce, isFunction, isArray, html, keyEach } from './functions/func';
+import { debounce, isFunction, isArray, html, keyEach, fit, isNotUndefined } from './functions/func';
 import { EMPTY_STRING } from './css/types';
 
-const checkGroup = /\>(\W*)\</g
-
-const META_KEYS = [ KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
 const REFERENCE_PROPERTY = 'ref';
+const TEMP_DIV = new Dom("div")
+const QUERY_PROPERTY = `[${REFERENCE_PROPERTY}]`;
 
 export default class EventMachin { 
 
@@ -56,16 +51,16 @@ export default class EventMachin {
 
     html = html.trim();
 
-    const list = new Dom("div").html(html).children()
+    const list = TEMP_DIV.html(html).children()
     
     var fragment = document.createDocumentFragment()
-    var queryProperty = `[${REFERENCE_PROPERTY}]`;
+
     list.forEach($el => {
       // ref element 정리 
       if ($el.attr(REFERENCE_PROPERTY)) {
         this.refs[$el.attr(REFERENCE_PROPERTY)] = $el; 
       }
-      var refs = $el.$$(queryProperty);
+      var refs = $el.$$(QUERY_PROPERTY);
       refs.forEach($dom => {
         const name = $dom.attr(REFERENCE_PROPERTY)
         this.refs[name] = $dom;
@@ -125,7 +120,12 @@ export default class EventMachin {
   }
 
   load () {
-    this.filterProps(CHECK_LOAD_PATTERN).forEach(callbackName => {
+
+    if (!this._loadMethods) {
+      this._loadMethods = this.filterProps(CHECK_LOAD_PATTERN);
+    }
+  
+    this._loadMethods.forEach(callbackName => {
       const elName = callbackName.split(LOAD_SAPARATOR)[1]
       if (this.refs[elName]) { 
         const fragment = this.parseTemplate(this[callbackName].call(this), true);
@@ -139,7 +139,7 @@ export default class EventMachin {
   // 기본 템플릿 지정 
   template () {
     var className =  this.templateClass()
-    var classString = className ? `class="${className}"` : '' 
+    var classString = className ? `class="${className}"` : EMPTY_STRING
 
     return `<div ${classString}></div>`;
   }
@@ -263,22 +263,22 @@ export default class EventMachin {
   }
 
   /* magic check method  */ 
-  self (e) {  // e.target 이 delegate 대상인지 체크 
-    return e.$delegateTarget.is(e.target); 
+  self (e) { return e.$delegateTarget.is(e.target); }
+  isAltKey (e) { return e.altKey }
+  isCtrlKey (e) { return e.ctrlKey }
+  isShiftKey (e) { return e.shiftKey }
+  isMetaKey (e) { return e.metaKey }
+  getDebounceTime (code) {
+    var debounceTime = 0;
+    if (code.indexOf('debounce(')  > -1) {
+      debounceTime = +(code.replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING));
+    } 
+
+    return debounceTime 
   }
 
-
-
   getDefaultEventObject (eventName, checkMethodFilters) {
-    const isControl = checkMethodFilters.includes(KEY_CONTROL);
-    const isShift =  checkMethodFilters.includes(KEY_SHIFT);
-    const isAlt = checkMethodFilters.includes(KEY_ALT);
-    const isMeta =  checkMethodFilters.includes(KEY_META);
-
-    var arr = checkMethodFilters.filter((code) => {
-      return META_KEYS.includes(code.toUpperCase()) === false;
-    });
-    
+    let arr = checkMethodFilters
     const checkMethodList = arr.filter(code => {
         return !!this[code];
     });
@@ -293,26 +293,22 @@ export default class EventMachin {
 
     let debounceTime = 0; 
     if (delay.length) {
-      debounceTime = delay[0].replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING);
+      debounceTime = this.getDebounceTime(delay[0]);
     }
 
     // capture 
-    const capturing = arr.filter(code => {
-      if (code.indexOf('capture')  > -1) {
-        return true; 
-      } 
-      return false; 
-    })
+    const capturing = arr.filter(code => code.indexOf('capture') > -1)
+    let useCapture = !!capturing.length; 
 
-    let useCapture = false; 
-    if (capturing.length) {
-      useCapture = true; 
-    }
+    // FIT 
+    const fit = arr.filter(code => code.indexOf('fit') > -1)
+    let useFit = !!fit.length;
     
     arr = arr.filter(code => {
       return checkMethodList.includes(code) === false 
             && delay.includes(code) === false 
-            && capturing.includes(code) === false; 
+            && capturing.includes(code) === false
+            && fit.includes(code) === false; 
     }).map(code => {
       return code.toLowerCase() 
     });
@@ -321,12 +317,9 @@ export default class EventMachin {
 
     return {
       eventName,
-      isControl,
-      isShift,
-      isAlt,
-      isMeta,
       codes : arr,
       useCapture,
+      useFit,
       debounce: debounceTime,
       checkMethodList: checkMethodList
     }
@@ -367,10 +360,6 @@ export default class EventMachin {
   }
 
   checkEventType (e, eventObject ) {
-    var onlyControl = eventObject.isControl ? e.ctrlKey : true;
-    var onlyShift = eventObject.isShift ? e.shiftKey : true; 
-    var onlyAlt = eventObject.isAlt ? e.altKey : true; 
-    var onlyMeta = eventObject.isMeta ? e.metaKey : true; 
 
     // 특정 keycode 를 가지고 있는지 체크 
     // keyup.pagedown  이라고 정의하면 pagedown 키를 눌렀을때만 동작 함 
@@ -388,18 +377,26 @@ export default class EventMachin {
     // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
     var isAllCheck = true;  
     if (eventObject.checkMethodList.length) {  
-      isAllCheck = eventObject.checkMethodList.every(method => {
-        return this[method].call(this, e);
+      isAllCheck = eventObject.checkMethodList.every(field => {
+        var fieldValue = this[field];
+        if (isFunction(fieldValue) && fieldValue) { // check method 
+          return fieldValue.call(this, e);
+        } else if (isNotUndefined(fieldValue)) { // check field value
+          return !!fieldValue
+        } 
+        return true; 
       });
     }
 
-    return (onlyControl && onlyAlt && onlyShift && onlyMeta && hasKeyCode && isAllCheck);
+    return (hasKeyCode && isAllCheck);
   }
 
   makeCallback ( eventObject, callback) {
 
     if (eventObject.debounce) {
       callback = debounce(callback, eventObject.debounce)
+    } else if (eventObject.useFit) {
+      callback = fit(callback);
     }
 
     if (eventObject.delegate) {

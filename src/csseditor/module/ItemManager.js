@@ -201,12 +201,11 @@ export default class ItemManager extends BaseModule {
     }
 
     [ACTION(ITEM_SET)] ($store, obj = {}, isSelected = false) {
-        const [ get ] = $store.mapGetters(ITEM_GET)
         var id = obj.id; 
-        var isExists = $store.items[id];
-        $store.items[id] = {...get(id), ...obj};
+        var oldObj = this.get(id);
+        $store.items[id] = {...oldObj, ...obj};
 
-        if (!isExists) {
+        if (!oldObj) {
             $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId)
         }
 
@@ -257,22 +256,5 @@ export default class ItemManager extends BaseModule {
         list.forEach((id, index) => {
             $store.items[id].index = index * INDEX_DIST
         })
-
-        // set prev, next  (as double linked list )
-        var lastIndex = list.length -1
-        list.forEach((id, index) => {
-            var item = $store.items[id];
-            var next = list[index+1]
-            var prev = list[index-1]
-
-            if (index == 0 && next) {
-                item.nextId = next;
-            } else if (index == lastIndex && prev) {
-                item.prevId = prev;
-            } else {
-                if (next) item.nextId = next;
-                if (prev) item.prevId = prev;
-            }
-        }) 
     }
 }

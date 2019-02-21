@@ -1,7 +1,7 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL, CHANGE_LAYER_TRANSFORM } from '../../../types/event';
-import { POINTERSTART, POINTEREND, POINTERMOVE, CHECKER, DEBOUNCE } from '../../../../util/Event';
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
+import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF } from '../../../../util/Event';
 import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { isUndefined } from '../../../../util/functions/func';
 
@@ -116,20 +116,20 @@ export default class LayerAngle extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
+    [POINTEREND('document') + IF('isDownCheck')] (e) {
         this.isDown = false ;
     }
 
-    [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck')] (e) {
         this.refreshUI(e);
     }
 
-    [POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$drag_pointer') + IF('isNotDownCheck')] (e) {
         e.preventDefault();
         this.isDown = true; 
     }
 
-    [POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$dragAngle') + IF('isNotDownCheck')] (e) {
         this.isDown = true; 
         this.refreshUI(e);        
     }     

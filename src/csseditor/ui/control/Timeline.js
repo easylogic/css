@@ -6,28 +6,36 @@ import { ITEM_SET } from "../../types/ItemTypes";
 import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, TOGGLE_TIMELINE } from "../../types/ToolTypes";
 import TimelineObjectList from "./timeline/TimelineObjectList";
 import KeyframeObjectList from "./timeline/KeyframeObjectList";
-import KeyframeGuideLine from "./timeline/KeyframeGuideLine";
-import { TIMELINE_PUSH } from "../../types/TimelineTypes";
+import { TIMELINE_PUSH, TIMELINE_NOT_EXISTS } from "../../types/TimelineTypes";
 import { ADD_TIMELINE } from "../../types/event";
 import KeyframeTimeView from "./timeline/KeyframeTimeView";
+import TimelineTopToolbar from "./timeline/TimelineTopToolbar";
 
 export default class Timeline extends UIElement {
 
     components() {
         return { 
+            TimelineTopToolbar,            
             KeyframeTimeView,
-            KeyframeGuideLine,
             TimelineObjectList,
-            KeyframeObjectList
+            KeyframeObjectList 
         }
     }
 
     template () {
         return `
             <div class='timeline-view'>
-                <div class="timeline-header" ref="$header">
+                <div class="timeline-top" ref="$top">
                     <div class='timeline-toolbar'>
                         <span ref='$title' class='title'>Timeline</span>
+                    </div>
+                    <div class='keyframe-toolbar'>
+                        <TimelineTopToolbar />
+                    </div>                
+                </div>
+                <div class="timeline-header" ref="$header">
+                    <div class='timeline-toolbar'>
+                        
                     </div>
                     <div class='keyframe-toolbar' ref="$keyframeToolbar">
                         <KeyframeTimeView />
@@ -36,7 +44,6 @@ export default class Timeline extends UIElement {
                 <div class='timeline-body' ref="$timelineBody">
                     <div class='timeline-panel' ref='$keyframeList'>
                         <KeyframeObjectList />
-                        <KeyframeGuideLine />
                     </div>                
                     <div class='timeline-list' ref='$timelineList'>
                         <TimelineObjectList />
@@ -87,8 +94,6 @@ export default class Timeline extends UIElement {
 
     }
 
-
-
     [CLICK('$title')] () {
         this.emit(TOGGLE_TIMELINE)
     }
@@ -101,15 +106,17 @@ export default class Timeline extends UIElement {
         this.refs.$timelineList.setScrollTop(this.refs.$keyframeList.scrollTop())
         this.initConfig('timeline.scroll.left', this.refs.$keyframeList.scrollLeft())
         this.emit(SCROLL_LEFT_TIMELINE)
-
     }    
 
     [DROP('$timelineList')] (e) {
-        e.preventDefault(e);
+        e.preventDefault();
         var draggedId = e.dataTransfer.getData('text');
 
-        this.run(TIMELINE_PUSH, draggedId);
-
+        if (this.read(TIMELINE_NOT_EXISTS, draggedId)) {
+            this.run(TIMELINE_PUSH, draggedId);
+        } else {
+            alert(`Item exists already in timeline.`)
+        }
     }
 
     [WHEEL('$timelineBody') + ALT] (e) {

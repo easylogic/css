@@ -1,6 +1,6 @@
 import UIElement from "../../colorpicker/UIElement";
 import Dom from "../../util/Dom";
-import { CLICK, CHECKER } from "../../util/Event";
+import { CLICK, IF } from "../../util/Event";
 import { EMPTY_STRING } from "../../util/css/types";
 
 export default class BaseTab extends UIElement {
@@ -24,7 +24,7 @@ export default class BaseTab extends UIElement {
         return !e.$delegateTarget.hasClass('selected')
     }
 
-    [CLICK('$header .tab-item') + CHECKER('isNotSelectedTab')] (e, $dt) {
+    [CLICK('$header .tab-item') + IF('isNotSelectedTab')] (e, $dt) {
         this.selectTab($dt.attr('data-id'))
     }
 

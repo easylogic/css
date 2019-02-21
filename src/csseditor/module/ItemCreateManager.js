@@ -240,8 +240,12 @@ export default class ItemCreateManager extends BaseModule {
     }    
 
     [ACTION(ITEM_ADD_KEYFRAME)] ($store, parentId = EMPTY_STRING, opt = {}, callback) {
+
+        var timeline = this.get(parentId);
+        var targetId = timeline.targetId;
         var id = $store.read(ITEM_CREATE_KEYFRAME, {
             parentId, 
+            targetId,
             ...opt,
             index: Number.MAX_SAFE_INTEGER
         });
@@ -249,25 +253,6 @@ export default class ItemCreateManager extends BaseModule {
         $store.run(ITEM_SORT, id, (aId, bId) => {
             return $store.items[aId].startTime > $store.items[bId].startTime ? 1 : -1;
         })
-
-        // redefine startTime, endTime
-        var keyframe = this.get(id);
-            
-        if (keyframe.prevId) {
-            var prevItem = $store.items[keyframe.prevId]
-            if (prevItem && prevItem.endTime > keyframe.startTime) {
-                keyframe.startTime = prevItem.endTime
-            }    
-        } 
-
-        if (keyframe.nextId) {
-            var nextItem = $store.items[keyframe.nextId]
-            if (nextItem && nextItem.startTime < keyframe.endTime) {
-                keyframe.endTime = nextItem.startTime
-            }
-        }
-        $store.run(ITEM_SET, keyframe);        
-        // redefine startTime, endTime
 
         if (isFunction(callback)) {
             callback(id);

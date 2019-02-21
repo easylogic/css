@@ -2244,7 +2244,7 @@ function putBitmap(bitmap, subBitmap, area) {
 
 function parseParamNumber$1(param, callback) {
     if (isString(param)) {
-        param = param.replace(/deg|px|\%|em/g, '');
+        param = param.replace(/deg|px|\%|em/g, EMPTY_STRING);
     }
     if (isFunction(callback)) {
         return callback(+param);
@@ -3023,6 +3023,29 @@ var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
 
 var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
 
+var LAYER_TRANSFORM_PROPERTY = ['translateX', 'translateY', 'rotate', 'skewX', 'skewY', 'scale'];
+
+var LAYER_TRANSFORM_3D_PROPERTY = ['translateZ', 'perspective', 'rotateX', 'rotateY', 'rotateZ', 'scaleX', 'scaleY', 'scaleZ'];
+
+var PROPERTY_LIST = defineProperty({}, ITEM_TYPE_LAYER, [{ key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY }, { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY }]);
+
+var PROPERTY_DEFAULT_VALUE = {
+    'translateX': { defaultValue: 0, min: -10000, max: 10000 },
+    'translateY': { defaultValue: 0, min: -10000, max: 10000 },
+    'rotate': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'skewX': { defaultValue: 0, min: -1000, max: 1000 },
+    'skewY': { defaultValue: 0, min: -1000, max: 1000 },
+    'scale': { defaultValue: 1, min: -10, max: 10, step: 0.01 },
+    'translateZ': { defaultValue: 0, min: -10000, max: 10000 },
+    'perspective': { defaultValue: 0, min: -10000, max: 10000 },
+    'rotateX': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'rotateY': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'rotateZ': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'scaleX': { defaultValue: 1, min: -10, max: 10, step: 0.01 },
+    'scaleY': { defaultValue: 1, min: -10, max: 10, step: 0.01 },
+    'scaleZ': { defaultValue: 1, min: -10, max: 10, step: 0.01 }
+};
+
 function debounce(callback, delay) {
 
     var t = undefined;
@@ -3039,6 +3062,23 @@ function debounce(callback, delay) {
         t = setTimeout(function () {
             callback.apply(undefined, args);
         }, delay || 300);
+    };
+}
+
+// refer to https://jbee.io/web/optimize-scroll-event/
+function fit(callback) {
+    var tick = false;
+
+    return function () {
+        if (tick) {
+            return;
+        }
+
+        tick = true;
+        return requestAnimationFrame(function () {
+            tick = false;
+            return callback();
+        });
     };
 }
 
@@ -3094,7 +3134,7 @@ function isNotString(value$$1) {
 }
 
 function isObject(value$$1) {
-    return (typeof value$$1 === 'undefined' ? 'undefined' : _typeof(value$$1)) == 'object' && !isArray(value$$1) && value$$1 !== null;
+    return (typeof value$$1 === "undefined" ? "undefined" : _typeof(value$$1)) == 'object' && !isArray(value$$1) && value$$1 !== null;
 }
 
 function isFunction(value$$1) {
@@ -3131,14 +3171,14 @@ function combineKeyArray(obj) {
 }
 
 function flatKeyValue(obj) {
-    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var rootKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
 
     var values = {};
 
     Object.keys(obj).forEach(function (key) {
         var realKey = key;
-        if (rootKey !== '') {
-            realKey = rootKey + '.' + key;
+        if (rootKey !== EMPTY_STRING) {
+            realKey = rootKey + "." + key;
         }
 
         if (isObject(obj[key])) {
@@ -3164,7 +3204,7 @@ var html = function html(strings) {
 
     var results = strings.map(function (it, index) {
 
-        var results = args[index] || '';
+        var results = args[index] || EMPTY_STRING;
 
         if (isFunction(results)) {
             results = results();
@@ -3177,7 +3217,7 @@ var html = function html(strings) {
         results = results.map(function (r) {
             if (isObject(r)) {
                 return Object.keys(r).map(function (key) {
-                    return key + '="' + r[key] + '"';
+                    return key + "=\"" + r[key] + "\"";
                 }).join(WHITE_STRING);
             }
 
@@ -3185,10 +3225,10 @@ var html = function html(strings) {
         }).join(EMPTY_STRING);
 
         return it + results;
-    }).join('');
+    }).join(EMPTY_STRING);
 
     results = results.replace(short_tag_regexp, function (match, p1) {
-        return match.replace('/>', '></' + p1 + '>');
+        return match.replace('/>', "></" + p1 + ">");
     });
 
     return results;
@@ -3198,6 +3238,7 @@ var html = function html(strings) {
 
 var func = Object.freeze({
 	debounce: debounce,
+	fit: fit,
 	keyEach: keyEach,
 	keyMap: keyMap,
 	get: get,
@@ -6116,6 +6157,7 @@ var BaseStore = function () {
     function BaseStore(opt) {
         classCallCheck(this, BaseStore);
 
+        this.cachedCallback = {};
         this.callbacks = [];
         this.actions = [];
         this.getters = [];
@@ -6281,14 +6323,17 @@ var BaseStore = function () {
 
             if (arguments.length == 0) {
                 this.callbacks = [];
+                this.cachedCallback = {};
             } else if (arguments.length == 1) {
                 this.callbacks = this.callbacks.filter(function (f) {
                     return f.event != event;
                 });
+                this.cachedCallback = {};
             } else if (arguments.length == 2) {
                 this.callbacks = this.callbacks.filter(function (f) {
                     return !(f.event == event && f.originalCallback == originalCallback);
                 });
+                this.cachedCallback = {};
             }
         }
     }, {
@@ -6298,10 +6343,14 @@ var BaseStore = function () {
 
             var event = $1;
 
-            this.callbacks.filter(function (f) {
-                return f.event == event;
-            }).forEach(function (f) {
-                if (f && isFunction(f.callback) && f.context.source != _this8.source) {
+            if (!this.cachedCallback[event]) {
+                this.cachedCallback[event] = this.callbacks.filter(function (f) {
+                    return f.event == event;
+                });
+            }
+
+            this.cachedCallback[event].forEach(function (f) {
+                if (f.context.source != _this8.source) {
                     f.callback($2, $3, $4, $5);
                 }
             });
@@ -6404,51 +6453,49 @@ var Dom = function () {
     }, {
         key: "removeClass",
         value: function removeClass() {
+            var _el$classList;
 
+            (_el$classList = this.el.classList).remove.apply(_el$classList, arguments);
+
+            /*
             if (this.el.className) {
                 var className = this.el.className;
-
-                for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                    args[_key2] = arguments[_key2];
-                }
-
-                args.forEach(function (cls) {
-                    className = (" " + className + " ").replace(" " + cls + " ", WHITE_STRING).trim();
-                });
-
-                this.el.className = className;
+                 if ($1) { className = ((` ${className} `).replace(` ${$1} `, WHITE_STRING)).trim();    }
+                if ($2) { className = ((` ${className} `).replace(` ${$2} `, WHITE_STRING)).trim();    }
+                if ($3) { className = ((` ${className} `).replace(` ${$3} `, WHITE_STRING)).trim();    }
+                if ($4) { className = ((` ${className} `).replace(` ${$4} `, WHITE_STRING)).trim();    }
+                if ($5) { className = ((` ${className} `).replace(` ${$5} `, WHITE_STRING)).trim();    }
+                 this.el.className = className;
             }
+            */
 
             return this;
         }
     }, {
         key: "hasClass",
         value: function hasClass(cls) {
-            if (!this.el.className) {
-                return false;
-            } else {
-                var newClass = " " + this.el.className + " ";
-                return newClass.indexOf(" " + cls + " ") > -1;
-            }
+            if (!this.el.classList) return false;
+            return this.el.classList.contains(cls);
         }
     }, {
         key: "addClass",
-        value: function addClass(cls) {
-            if (!this.hasClass(cls)) {
-                this.el.className = this.el.className + " " + cls;
-            }
+        value: function addClass() {
+            var _el$classList2;
+
+            (_el$classList2 = this.el.classList).add.apply(_el$classList2, arguments);
 
             return this;
         }
     }, {
         key: "toggleClass",
-        value: function toggleClass(cls) {
-            var isForce = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+        value: function toggleClass(cls, isForce) {
 
+            this.el.classList.toggle(cls, isForce);
 
+            /*
             if (arguments.length == 2) {
                 if (isForce) {
-                    this.addClass(cls);
+                    this.addClass(cls)
                 } else {
                     this.removeClass(cls);
                 }
@@ -6459,12 +6506,13 @@ var Dom = function () {
                     this.addClass(cls);
                 }
             }
+            */
         }
     }, {
         key: "html",
         value: function html$$1(_html) {
 
-            if (arguments.length == 0) {
+            if (isUndefined$1(_html)) {
                 return this.el.innerHTML;
             }
 
@@ -6550,7 +6598,7 @@ var Dom = function () {
     }, {
         key: "text",
         value: function text(value$$1) {
-            if (arguments.length == 0) {
+            if (isUndefined$1(value$$1)) {
                 return this.el.textContent;
             } else {
 
@@ -6580,9 +6628,9 @@ var Dom = function () {
         value: function css(key, value$$1) {
             var _this2 = this;
 
-            if (arguments.length == 2) {
+            if (isNotUndefined(key) && isNotUndefined(value$$1)) {
                 this.el.style[key] = value$$1;
-            } else if (arguments.length == 1) {
+            } else if (isNotUndefined(key)) {
 
                 if (isString(key)) {
                     return getComputedStyle(this.el)[key];
@@ -6611,9 +6659,12 @@ var Dom = function () {
     }, {
         key: "cssArray",
         value: function cssArray(arr) {
-            for (var i = 0, len = arr.length; i < len; i += 2) {
-                this.el.style[arr[i]] = arr[i + 1];
-            }
+
+            if (arr[0]) this.el.style[arr[0]] = arr[1];
+            if (arr[2]) this.el.style[arr[2]] = arr[3];
+            if (arr[4]) this.el.style[arr[4]] = arr[5];
+            if (arr[6]) this.el.style[arr[6]] = arr[7];
+            if (arr[8]) this.el.style[arr[8]] = arr[9];
 
             return this;
         }
@@ -6730,9 +6781,9 @@ var Dom = function () {
     }, {
         key: "val",
         value: function val(value$$1) {
-            if (arguments.length == 0) {
+            if (isUndefined$1(value$$1)) {
                 return this.el.value;
-            } else if (arguments.length == 1) {
+            } else if (isNotUndefined(value$$1)) {
 
                 var tempValue = value$$1;
 
@@ -6973,6 +7024,15 @@ var Dom = function () {
             ctx.closePath();
         }
     }, {
+        key: "drawCircle",
+        value: function drawCircle(cx, cy, r) {
+            var ctx = this.context();
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+        }
+    }, {
         key: "drawText",
         value: function drawText(x, y, text) {
             this.context().fillText(text, x, y);
@@ -7092,34 +7152,35 @@ var CHECKER = function CHECKER(value$$1) {
     return new EventChecker(value$$1, split);
 };
 
-var KEY_ALT = 'ALT';
-var KEY_SHIFT = 'SHIFT';
-var KEY_META = 'META';
-var KEY_CONTROL = 'CONTROL';
+var IF = CHECKER;
+
+
+
+
+
 
 var KEY_ARROW_UP = 'ArrowUp';
 var KEY_ARROW_DOWN = 'ArrowDown';
 var KEY_ARROW_LEFT = 'ArrowLeft';
 var KEY_ARROW_RIGHT = 'ArrowRight';
 var KEY_ENTER = 'Enter';
-
 var KEY_SPACE = 'Space';
-
-var ALT = CHECKER(KEY_ALT);
-var SHIFT = CHECKER(KEY_SHIFT);
-var META = CHECKER(KEY_META);
-var CONTROL = CHECKER(KEY_CONTROL);
 
 var ARROW_UP = CHECKER(KEY_ARROW_UP);
 var ARROW_DOWN = CHECKER(KEY_ARROW_DOWN);
 var ARROW_LEFT = CHECKER(KEY_ARROW_LEFT);
 var ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT);
 var ENTER = CHECKER(KEY_ENTER);
-
 var SPACE = CHECKER(KEY_SPACE);
 
+var ALT = CHECKER('isAltKey');
+var SHIFT = CHECKER('isShiftKey');
+var META = CHECKER('isMetaKey');
+var CONTROL = CHECKER('isCtrlKey');
 var SELF = CHECKER('self');
 var CAPTURE = CHECKER('capture');
+var FIT = CHECKER('fit');
+var PASSIVE = CHECKER('passive');
 
 var DEBOUNCE = function DEBOUNCE() {
     var debounce = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
@@ -7236,8 +7297,9 @@ var State = function () {
 
 var _templateObject = taggedTemplateLiteral(['', ''], ['', '']);
 
-var META_KEYS = [KEY_CONTROL, KEY_SHIFT, KEY_ALT, KEY_META];
 var REFERENCE_PROPERTY = 'ref';
+var TEMP_DIV = new Dom("div");
+var QUERY_PROPERTY = '[' + REFERENCE_PROPERTY + ']';
 
 var EventMachin = function () {
   function EventMachin() {
@@ -7280,16 +7342,16 @@ var EventMachin = function () {
 
       html$$1 = html$$1.trim();
 
-      var list = new Dom("div").html(html$$1).children();
+      var list = TEMP_DIV.html(html$$1).children();
 
       var fragment = document.createDocumentFragment();
-      var queryProperty = '[' + REFERENCE_PROPERTY + ']';
+
       list.forEach(function ($el) {
         // ref element 정리 
         if ($el.attr(REFERENCE_PROPERTY)) {
           _this.refs[$el.attr(REFERENCE_PROPERTY)] = $el;
         }
-        var refs = $el.$$(queryProperty);
+        var refs = $el.$$(QUERY_PROPERTY);
         refs.forEach(function ($dom) {
           var name = $dom.attr(REFERENCE_PROPERTY);
           _this.refs[name] = $dom;
@@ -7351,7 +7413,11 @@ var EventMachin = function () {
     value: function load() {
       var _this3 = this;
 
-      this.filterProps(CHECK_LOAD_PATTERN).forEach(function (callbackName) {
+      if (!this._loadMethods) {
+        this._loadMethods = this.filterProps(CHECK_LOAD_PATTERN);
+      }
+
+      this._loadMethods.forEach(function (callbackName) {
         var elName = callbackName.split(LOAD_SAPARATOR)[1];
         if (_this3.refs[elName]) {
           var fragment = _this3.parseTemplate(_this3[callbackName].call(_this3), true);
@@ -7368,7 +7434,7 @@ var EventMachin = function () {
     key: 'template',
     value: function template() {
       var className = this.templateClass();
-      var classString = className ? 'class="' + className + '"' : '';
+      var classString = className ? 'class="' + className + '"' : EMPTY_STRING;
 
       return '<div ' + classString + '></div>';
     }
@@ -7520,23 +7586,44 @@ var EventMachin = function () {
   }, {
     key: 'self',
     value: function self(e) {
-      // e.target 이 delegate 대상인지 체크 
       return e.$delegateTarget.is(e.target);
+    }
+  }, {
+    key: 'isAltKey',
+    value: function isAltKey(e) {
+      return e.altKey;
+    }
+  }, {
+    key: 'isCtrlKey',
+    value: function isCtrlKey(e) {
+      return e.ctrlKey;
+    }
+  }, {
+    key: 'isShiftKey',
+    value: function isShiftKey(e) {
+      return e.shiftKey;
+    }
+  }, {
+    key: 'isMetaKey',
+    value: function isMetaKey(e) {
+      return e.metaKey;
+    }
+  }, {
+    key: 'getDebounceTime',
+    value: function getDebounceTime(code) {
+      var debounceTime = 0;
+      if (code.indexOf('debounce(') > -1) {
+        debounceTime = +code.replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING);
+      }
+
+      return debounceTime;
     }
   }, {
     key: 'getDefaultEventObject',
     value: function getDefaultEventObject(eventName, checkMethodFilters) {
       var _this5 = this;
 
-      var isControl = checkMethodFilters.includes(KEY_CONTROL);
-      var isShift = checkMethodFilters.includes(KEY_SHIFT);
-      var isAlt = checkMethodFilters.includes(KEY_ALT);
-      var isMeta = checkMethodFilters.includes(KEY_META);
-
-      var arr = checkMethodFilters.filter(function (code) {
-        return META_KEYS.includes(code.toUpperCase()) === false;
-      });
-
+      var arr = checkMethodFilters;
       var checkMethodList = arr.filter(function (code) {
         return !!_this5[code];
       });
@@ -7551,24 +7638,23 @@ var EventMachin = function () {
 
       var debounceTime = 0;
       if (delay.length) {
-        debounceTime = delay[0].replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING);
+        debounceTime = this.getDebounceTime(delay[0]);
       }
 
       // capture 
       var capturing = arr.filter(function (code) {
-        if (code.indexOf('capture') > -1) {
-          return true;
-        }
-        return false;
+        return code.indexOf('capture') > -1;
       });
+      var useCapture = !!capturing.length;
 
-      var useCapture = false;
-      if (capturing.length) {
-        useCapture = true;
-      }
+      // FIT 
+      var fit$$1 = arr.filter(function (code) {
+        return code.indexOf('fit') > -1;
+      });
+      var useFit = !!fit$$1.length;
 
       arr = arr.filter(function (code) {
-        return checkMethodList.includes(code) === false && delay.includes(code) === false && capturing.includes(code) === false;
+        return checkMethodList.includes(code) === false && delay.includes(code) === false && capturing.includes(code) === false && fit$$1.includes(code) === false;
       }).map(function (code) {
         return code.toLowerCase();
       });
@@ -7577,12 +7663,9 @@ var EventMachin = function () {
 
       return {
         eventName: eventName,
-        isControl: isControl,
-        isShift: isShift,
-        isAlt: isAlt,
-        isMeta: isMeta,
         codes: arr,
         useCapture: useCapture,
+        useFit: useFit,
         debounce: debounceTime,
         checkMethodList: checkMethodList
       };
@@ -7638,11 +7721,6 @@ var EventMachin = function () {
     value: function checkEventType(e, eventObject) {
       var _this6 = this;
 
-      var onlyControl = eventObject.isControl ? e.ctrlKey : true;
-      var onlyShift = eventObject.isShift ? e.shiftKey : true;
-      var onlyAlt = eventObject.isAlt ? e.altKey : true;
-      var onlyMeta = eventObject.isMeta ? e.metaKey : true;
-
       // 특정 keycode 를 가지고 있는지 체크 
       // keyup.pagedown  이라고 정의하면 pagedown 키를 눌렀을때만 동작 함 
       var hasKeyCode = true;
@@ -7654,12 +7732,20 @@ var EventMachin = function () {
       // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
       var isAllCheck = true;
       if (eventObject.checkMethodList.length) {
-        isAllCheck = eventObject.checkMethodList.every(function (method) {
-          return _this6[method].call(_this6, e);
+        isAllCheck = eventObject.checkMethodList.every(function (field) {
+          var fieldValue = _this6[field];
+          if (isFunction(fieldValue) && fieldValue) {
+            // check method 
+            return fieldValue.call(_this6, e);
+          } else if (isNotUndefined(fieldValue)) {
+            // check field value
+            return !!fieldValue;
+          }
+          return true;
         });
       }
 
-      return onlyControl && onlyAlt && onlyShift && onlyMeta && hasKeyCode && isAllCheck;
+      return hasKeyCode && isAllCheck;
     }
   }, {
     key: 'makeCallback',
@@ -7668,6 +7754,8 @@ var EventMachin = function () {
 
       if (eventObject.debounce) {
         callback = debounce(callback, eventObject.debounce);
+      } else if (eventObject.useFit) {
+        callback = fit(callback);
       }
 
       if (eventObject.delegate) {
@@ -7917,12 +8005,16 @@ var TIMELINE_DEFAULT_OBJECT = {
 var KEYFRAME_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_KEYFRAME,
     targetId: EMPTY_STRING,
-    attribute: EMPTY_STRING,
+    property: EMPTY_STRING,
     parentId: EMPTY_STRING,
     delay: 0,
     duration: 1000,
     timing: 'linear',
     iteration: 1,
+    startTime: 0,
+    endTime: 0,
+    startValue: 0,
+    endValue: 0,
     direction: 'alternate'
 };
 var DEFAULT_TOOL_SIZE = {
@@ -7945,6 +8037,7 @@ var RESIZE_WINDOW = 'resize/window';
 var RESIZE_TIMELINE = 'resize/timeline';
 var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
 var TOGGLE_TIMELINE = 'toggle/timeline';
+var MOVE_TIMELINE = 'move/timeline';
 
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
@@ -10670,8 +10763,9 @@ var CHANGE_HISTORY = 'CHANGE_HISTORY';
 
 var CHANGE_EDITOR$1 = 'CHANGE_EDITOR';
 var CHANGE_TIMELINE = 'CHANGE_TIMELINE';
-var CHANGE_KEYFRAME = 'CHANGE_KEYFRAME';
 var CHANGE_SELECTION = 'CHANGE_SELECTION';
+var CHANGE_KEYFRAME = 'CHANGE_KEYFRAME';
+var CHANGE_KEYFRAME_SELECTION = 'CHANGE_KEYFRAME_SELECTION';
 var CHANGE_PAGE = 'CHANGE_PAGE';
 var CHANGE_PAGE_NAME = 'CHANGE_PAGE_NAME';
 var CHANGE_PAGE_SIZE = 'CHANGE_PAGE_SIZE';
@@ -10891,9 +10985,9 @@ var Position = function (_BasePropertyItem) {
         value: function value$$1() {
             var _this3 = this;
 
-            this.read(SELECTION_CURRENT_LAYER, function (item) {
-                item.x = pxUnit(_this3.refs.$x.int());
-                _this3.dispatch(ITEM_SET, item);
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                var x = pxUnit(_this3.refs.$x.int());
+                _this3.dispatch(ITEM_SET, { id: id, x: x });
             });
         }
     }, {
@@ -10901,9 +10995,9 @@ var Position = function (_BasePropertyItem) {
         value: function value$$1() {
             var _this4 = this;
 
-            this.read(SELECTION_CURRENT_LAYER, function (item) {
-                item.y = pxUnit(_this4.refs.$y.int());
-                _this4.dispatch(ITEM_SET, item);
+            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
+                var y = pxUnit(_this4.refs.$y.int());
+                _this4.dispatch(ITEM_SET, { id: id, y: y });
             });
         }
     }]);
@@ -11213,6 +11307,50 @@ var COLORSTEP_ORDERING_EQUALS = 'colorstep/ordering/equals';
 var COLORSTEP_ORDERING_EQUALS_LEFT = 'colorstep/ordering/equals/left';
 var COLORSTEP_ORDERING_EQUALS_RIGHT = 'colorstep/ordering/equals/right';
 
+var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
+
+var stepTimingFunction = function stepTimingFunction() {
+    var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+    var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+
+    return function (progress) {
+        var stepDist = 1 / step;
+
+        if (position == 'start') {
+            return stepDist * Math.ceil(progress / stepDist);
+        } else if (position == 'end') {
+            return stepDist * Math.floor(progress / stepDist);
+        }
+    };
+};
+
+var Timing = {
+    'ease-out-elastic': function easeOutElastic(progress, duration, start, end) {
+        return Math.pow(2, -10 * progress) * Math.sin((progress - .1) * 5 * Math.PI) + 1;
+    },
+    'cubic-bezier': function cubicBezier$$1(x1, y1, x2, y2) {
+        return cubicBezier(x1, y1, x2, y2);
+    },
+    'step': function step() {
+        var _step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+        var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+
+        return stepTimingFunction(_step, position);
+    },
+    'step-start': function stepStart(progress) {
+        return stepTimingFunction(1, 'start')(progress);
+    },
+    'step-end': function stepEnd(progress) {
+        return stepTimingFunction(1, 'end')(progress);
+    }
+};
+
+// setup bezier functions
+bezierList.forEach(function (arr) {
+    Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
+});
+
 var _DEFINED_POSITIONS;
 
 function IS_PAGE(item) {
@@ -11516,20 +11654,22 @@ var ordering = {
 
 };
 
+var CSS_SORTING_FUNCTION = function CSS_SORTING_FUNCTION(a, b) {
+    var aN = ordering[a] || Number.MAX_SAFE_INTEGER;
+    var bN = ordering[b] || Number.MAX_SAFE_INTEGER;
+
+    if (aN == bN) return 0;
+
+    return aN < bN ? -1 : 1;
+};
+
 function CSS_SORTING(style) {
 
     style = CSS_FILTERING(style);
 
     var keys = Object.keys(style);
 
-    keys.sort(function (a, b) {
-        var aN = ordering[a] || Number.MAX_SAFE_INTEGER;
-        var bN = ordering[b] || Number.MAX_SAFE_INTEGER;
-
-        if (aN == bN) return 0;
-
-        return aN < bN ? -1 : 1;
-    });
+    keys.sort(CSS_SORTING_FUNCTION);
 
     var newStyle = {};
     keys.forEach(function (key) {
@@ -11939,6 +12079,84 @@ function generateImagePattern(images) {
     });
 
     return results;
+}
+
+function LAYER_BORDER_PREVIEW() {
+    var layer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+    var css = {};
+
+    css['box-sizing'] = layer.boxSizing || 'border-box';
+
+    var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer));
+
+    return CSS_TO_STRING(cleanObject(results));
+}
+
+function LAYER_MAKE_FONT(layer) {
+    var results = {};
+
+    if (layer.color) {
+        results['color'] = layer.color;
+    }
+
+    if (layer.fontSize) {
+        results['font-size'] = stringUnit(layer.fontSize);
+    }
+
+    if (layer.fontFamily) {
+        results['font-family'] = layer.fontFamily;
+    }
+
+    if (layer.fontWeight) {
+        results['font-weight'] = layer.fontWeight;
+    }
+
+    if (isNotUndefined(layer.lineHeight)) {
+        results['line-height'] = stringUnit(layer.lineHeight);
+    }
+
+    results['word-wrap'] = layer.wordWrap || 'break-word';
+    results['word-break'] = layer.wordBreak || 'break-word';
+
+    if (layer.clipText) {
+        results['color'] = 'transparent';
+        results['background-clip'] = 'text';
+        results['-webkit-background-clip'] = 'text';
+    }
+
+    return results;
+}
+
+function LAYER_CACHE_TO_IMAGE_CSS(images) {
+    var results = {};
+
+    images.forEach(function (item) {
+        var image = _extends({}, item.image, { colorsteps: item.colorsteps });
+        var css = IMAGE_TO_CSS$1(image);
+
+        keyEach(css, function (key, value$$1) {
+            if (!results[key]) {
+                results[key] = [];
+            }
+
+            results[key].push(value$$1);
+        });
+    });
+
+    return combineKeyArray(results);
+}
+
+function PROPERTY_GET_DEFAULT_VALUE(property) {
+    return PROPERTY_DEFAULT_VALUE[property] || { defaultValue: 0, step: 1, min: -1000, max: 1000 };
+}
+
+function TIMING_GET_VALUE(keyframe, currentTime) {
+    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime);
+
+    var value$$1 = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * Timing[keyframe.timing](progress);
+
+    return value$$1;
 }
 
 var GradientSteps = function (_UIElement) {
@@ -12417,7 +12635,7 @@ var GradientSteps = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        key: POINTEREND('document') + IF('isDownCheck'),
         value: function value$$1(e) {
             this.isDown = false;
             if (this.refs.$stepList) {
@@ -12426,7 +12644,7 @@ var GradientSteps = function (_UIElement) {
             }
         }
     }, {
-        key: POINTERMOVE('document') + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + IF('isDownCheck'),
         value: function value$$1(e) {
             this.refreshColorUI(e);
             this.refs.$stepList.addClass('mode-drag');
@@ -12437,7 +12655,7 @@ var GradientSteps = function (_UIElement) {
             return new Dom(e.target).hasClass('step');
         }
     }, {
-        key: POINTERSTART('$steps .step') + CHECKER('isNotDownCheck') + CHECKER('isStepElement'),
+        key: POINTERSTART('$steps .step') + IF('isNotDownCheck') + IF('isStepElement'),
         value: function value$$1(e) {
             e.preventDefault();
 
@@ -13853,7 +14071,7 @@ var ImageResource = function (_BasePropertyItem) {
     createClass(ImageResource, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item image-resource show'>\n                <div class='title'>Image Resource</div>            \n                <div class='items' ref=\"$imageList\">\n\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item image-resource show'>\n                <div class='title'>Image Resource</div>            \n                <div class='items' ref=\"$imageList\"></div>\n            </div>\n        ";
         }
     }, {
         key: LOAD('$imageList'),
@@ -14911,7 +15129,7 @@ var BoxShadow = function (_BasePropertyItem) {
         key: INPUT('$boxShadowList input[type=range]'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var field = $el.attr('data-type').replace('Range', '');
+            var field = $el.attr('data-type').replace('Range', EMPTY_STRING);
             var id = this.getBoxShadowId($el);
 
             $el.parent().$('[data-type=' + field + ']').val($el.val());
@@ -15105,7 +15323,7 @@ var TextShadow = function (_BasePropertyItem) {
         key: INPUT('$textShadowList input[type=range]'),
         value: function value$$1(e) {
             var $el = e.$delegateTarget;
-            var field = $el.attr('data-type').replace('Range', '');
+            var field = $el.attr('data-type').replace('Range', EMPTY_STRING);
             var id = this.getTextShadowId($el);
 
             $el.parent().$('[data-type=' + field + ']').val($el.val());
@@ -15419,12 +15637,10 @@ var LAYER_MAKE_CLIPPATH = 'layer/make/clip-path';
 var LAYER_MAKE_FILTER = 'layer/make/filter';
 var LAYER_MAKE_BACKDROP = 'layer/make/backdrop';
 var LAYER_TO_IMAGE_CSS = 'layer/TO_IMAGE_CSS';
-var LAYER_CACHE_TO_IMAGE_CSS = 'layer/cache/TO_IMAGE_CSS';
 var LAYER_IMAGE_TO_IMAGE_CSS = 'layer/image/TO_IMAGE_CSS';
 var LAYER_MAKE_MAP = 'layer/make/map';
 var LAYER_MAKE_MAP_IMAGE = 'layer/make/map/image';
 var LAYER_MAKE_BOXSHADOW = 'layer/make/box-shadow';
-var LAYER_MAKE_FONT = 'layer/make/font';
 var LAYER_MAKE_IMAGE = 'layer/make/image';
 var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
 
@@ -15434,11 +15650,6 @@ var LAYER_GET_CLIPPATH = 'layer/getClipPath';
 
 var LAYER_TO_CSS = 'layer/toCSS';
 var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
-
-
-
-
-var LAYER_BORDER_PREVIEW = 'layer/border/preview';
 
 var LayerCode = function (_BasePropertyItem) {
     inherits(LayerCode, _BasePropertyItem);
@@ -15477,7 +15688,7 @@ var LayerCode = function (_BasePropertyItem) {
                     value$$1 = reverseMatches(str, ret.matches);
                 }
 
-                var isShort = '';
+                var isShort = EMPTY_STRING;
 
                 if (value$$1.length < 20) {
                     isShort = 'short';
@@ -17244,7 +17455,7 @@ var LayerBorderPreview = function (_BasePropertyItem) {
             var _this2 = this;
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                _this2.refs.$borderPreview.cssText('width: 100%;height: 100px; ' + _this2.read(LAYER_BORDER_PREVIEW, layer));
+                _this2.refs.$borderPreview.cssText('width: 100%;height: 100px; ' + LAYER_BORDER_PREVIEW(layer));
             });
         }
     }, {
@@ -17309,7 +17520,7 @@ var BaseTab = function (_UIElement) {
             return !e.$delegateTarget.hasClass('selected');
         }
     }, {
-        key: CLICK('$header .tab-item') + CHECKER('isNotSelectedTab'),
+        key: CLICK('$header .tab-item') + IF('isNotSelectedTab'),
         value: function value$$1(e, $dt) {
             this.selectTab($dt.attr('data-id'));
         }
@@ -17395,7 +17606,7 @@ var BaseProperty = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n        <div class='property " + this.getClassName() + " show'>\n            " + (this.isHideHeader() ? '' : "\n            <div class='property-title' ref=\"$title\">\n                " + this.getTitle() + "\n                <span class=\"tools\">" + this.getTools() + "</span>\n            </div>\n            ") + "\n            <div class='property-body'>\n                " + this.getBody() + "\n            </div>\n        </div>\n        ";
+            return "\n        <div class='property " + this.getClassName() + " show'>\n            " + (this.isHideHeader() ? EMPTY_STRING : "\n            <div class='property-title' ref=\"$title\">\n                " + this.getTitle() + "\n                <span class=\"tools\">" + this.getTools() + "</span>\n            </div>") + "\n            <div class='property-body'>" + this.getBody() + "</div>\n        </div>\n        ";
         }
     }, {
         key: "isHideHeader",
@@ -17405,26 +17616,26 @@ var BaseProperty = function (_UIElement) {
     }, {
         key: "getClassName",
         value: function getClassName() {
-            return '';
+            return EMPTY_STRING;
         }
     }, {
         key: "getTitle",
         value: function getTitle() {
-            return '';
+            return EMPTY_STRING;
         }
     }, {
         key: "getTools",
         value: function getTools() {
-            return '';
+            return EMPTY_STRING;
         }
     }, {
         key: "getBody",
         value: function getBody() {
-            return '';
+            return EMPTY_STRING;
         }
     }, {
         key: CLICK('$title'),
-        value: function value(e) {
+        value: function value$$1(e) {
             var $dom = new Dom(e.target);
 
             if ($dom.hasClass('property-title')) {
@@ -18065,23 +18276,23 @@ var LayerAngle = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        key: POINTEREND('document') + IF('isDownCheck'),
         value: function value(e) {
             this.isDown = false;
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck'),
         value: function value(e) {
             this.refreshUI(e);
         }
     }, {
-        key: POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$drag_pointer') + IF('isNotDownCheck'),
         value: function value(e) {
             e.preventDefault();
             this.isDown = true;
         }
     }, {
-        key: POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$dragAngle') + IF('isNotDownCheck'),
         value: function value(e) {
             this.isDown = true;
             this.refreshUI(e);
@@ -18714,23 +18925,23 @@ var GradientAngle = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        key: POINTEREND('document') + IF('isDownCheck'),
         value: function value(e) {
             this.isDown = false;
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck'),
         value: function value(e) {
             this.refreshUI(e);
         }
     }, {
-        key: POINTERSTART('$drag_pointer') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$drag_pointer') + IF('isNotDownCheck'),
         value: function value(e) {
             e.preventDefault();
             this.isDown = true;
         }
     }, {
-        key: POINTERSTART('$dragAngle') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$dragAngle') + IF('isNotDownCheck'),
         value: function value(e) {
             this.isDown = true;
             this.refreshUI(e);
@@ -20158,50 +20369,6 @@ var ExportWindow = function (_UIElement) {
     return ExportWindow;
 }(UIElement);
 
-var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
-
-var stepTimingFunction = function stepTimingFunction() {
-    var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-    var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
-
-    return function (progress) {
-        var stepDist = 1 / step;
-
-        if (position == 'start') {
-            return stepDist * Math.ceil(progress / stepDist);
-        } else if (position == 'end') {
-            return stepDist * Math.floor(progress / stepDist);
-        }
-    };
-};
-
-var Timing = {
-    'ease-out-elastic': function easeOutElastic(progress, duration, start, end) {
-        return Math.pow(2, -10 * progress) * Math.sin((progress - .1) * 5 * Math.PI) + 1;
-    },
-    'cubic-bezier': function cubicBezier$$1(x1, y1, x2, y2) {
-        return cubicBezier(x1, y1, x2, y2);
-    },
-    'step': function step() {
-        var _step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
-        var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
-
-        return stepTimingFunction(_step, position);
-    },
-    'step-start': function stepStart(progress) {
-        return stepTimingFunction(1, 'start')(progress);
-    },
-    'step-end': function stepEnd(progress) {
-        return stepTimingFunction(1, 'end')(progress);
-    }
-};
-
-// setup bezier functions
-bezierList.forEach(function (arr) {
-    Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
-});
-
 var _ScaleFunctions;
 
 var ScaleFunctions = (_ScaleFunctions = {
@@ -20611,15 +20778,17 @@ var Animation = {
 
 var TIMELINE_PUSH = 'timeline/push';
 var TIMELINE_LIST = 'timeline/list';
-
+var TIMELINE_SEEK = 'timeline/seek';
+var TIMELINE_NOT_EXISTS = 'timeline/not/exists';
+var TIMELINE_NOT_EXISTS_KEYFRAME = 'timeline/not/exists/keyframe';
+var TIMELINE_MIN_TIME_IN_KEYFRAMES = 'timeline/min/time/in/keyframes';
+var TIMELINE_MAX_TIME_IN_KEYFRAMES = 'timeline/max/time/in/keyframes';
 var TIMELINE_MAX_SECOND = 300;
 var TIMELINE_1_SECOND_WIDTH = 100;
 var TIMELINE_TOTAL_WIDTH = TIMELINE_1_SECOND_WIDTH * TIMELINE_MAX_SECOND;
 
-var PROPERTY_DEFAULT_VALUE = {
-    'translateX': 0,
-    'translateY': 0
-};
+var _templateObject$15 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject2$1 = taggedTemplateLiteral(["\n            <div class='timeline-collapse' data-property='", "'>\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "], ["\n            <div class='timeline-collapse' data-property='", "'>\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "]);
 
 var TimelineObjectList = function (_UIElement) {
     inherits(TimelineObjectList, _UIElement);
@@ -20653,27 +20822,32 @@ var TimelineObjectList = function (_UIElement) {
                 return this.makeTimelineObjectForLayer(timeline, targetItem, index);
             }
 
-            return '';
-        }
-    }, {
-        key: "getPropertyValue",
-        value: function getPropertyValue(targetItem, property) {
-            return defaultValue(targetItem[property], PROPERTY_DEFAULT_VALUE[property]);
+            return EMPTY_STRING;
         }
     }, {
         key: "makeTimelineProperty",
         value: function makeTimelineProperty(property, timeline, targetItem, index) {
-            return " \n            <div class='timeline-property row'>\n                <label>" + property + "</label>\n                <input type='number' min=\"-10000\" max=\"10000\" data-property='" + property + "' data-timeline-id=\"" + timeline.id + "\" /> <span class='unit'>" + UNIT_PX + "</span>\n            </div>    \n        ";
+            var sampleValue = PROPERTY_GET_DEFAULT_VALUE(property);
+            var value$$1 = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue));
+            return " \n            <div class='timeline-property row'>\n                <label>" + property + "</label>\n                <input type='number' min=\"" + sampleValue.min + "\" max=\"" + sampleValue.max + "\" step=\"" + sampleValue.step + "\" value=\"" + value$$1 + "\" data-property='" + property + "' data-timeline-id=\"" + timeline.id + "\" /> <span class='unit'>" + UNIT_PX + "</span>\n            </div>    \n        ";
         }
     }, {
-        key: "makeTimelineTransform",
-        value: function makeTimelineTransform(timeline, targetItem, index) {
-            return "\n        <div class='timeline-collapse' data-property='transform'>\n            <div class='property-title row' >Transform</div>\n            <div class='timeline-property-list' data-property='transform'>\n                " + this.makeTimelineProperty('translateX', timeline, targetItem, index) + "\n                " + this.makeTimelineProperty('translateY', timeline, targetItem, index) + "\n            </div>\n        </div>\n        ";
+        key: "makeTimelinePropertyGroup",
+        value: function makeTimelinePropertyGroup(timeline, targetItem, index) {
+            var _this3 = this;
+
+            var list = PROPERTY_LIST[targetItem.itemType] || [];
+
+            return html(_templateObject$15, list.map(function (it) {
+                return html(_templateObject2$1, it.key, it.title, it.key, it.properties.map(function (property) {
+                    return _this3.makeTimelineProperty(property, timeline, targetItem, index);
+                }));
+            }));
         }
     }, {
         key: "makeTimelineObjectForLayer",
         value: function makeTimelineObjectForLayer(timeline, targetItem, index) {
-            return "\n            <div class='timeline-object' data-type='layer'>\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + (targetItem.name || targetItem.index / 100 + 1 + '. Layer') + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelineTransform(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
+            return "\n            <div class='timeline-object' data-type='layer'>\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + (targetItem.name || targetItem.index / 100 + 1 + '. Layer') + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelinePropertyGroup(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
@@ -20691,6 +20865,11 @@ var TimelineObjectList = function (_UIElement) {
             this.refresh();
         }
     }, {
+        key: EVENT(MOVE_TIMELINE),
+        value: function value$$1() {
+            this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'), this.$el);
+        }
+    }, {
         key: CLICK('$el .group .title'),
         value: function value$$1(e) {
             var groupId = e.$delegateTarget.attr('id');
@@ -20704,21 +20883,58 @@ var TimelineObjectList = function (_UIElement) {
             });
         }
     }, {
-        key: CHANGEINPUT('$el [data-property]'),
+        key: EVENT(CHANGE_KEYFRAME_SELECTION),
+        value: function value$$1() {
+            var selectedId = this.config('timeline.keyframe.selectedId');
+            var selectedType = this.config('timeline.keyframe.selectedType');
+            var keyframe = this.get(selectedId);
+            var property = keyframe.property;
+            var timelineId = keyframe.parentId;
+            var targetId = keyframe.targetId;
+            var value$$1 = keyframe[selectedType + "Value"];
+
+            var $input = this.$el.$("[data-property=\"" + property + "\"][data-timeline-id=\"" + timelineId + "\"]");
+            $input.val(value$$1);
+
+            this.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: targetId }, property, value$$1));
+        }
+    }, {
+        key: CHANGEINPUT('$el input[data-property]'),
         value: function value$$1(e) {
             var $t = e.$delegateTarget;
-            var value$$1 = $t.val();
-            var property = $t.attr('data-property');
-            var timelineId = $t.attr('data-timeline-id');
 
-            console.log(value$$1, property, timelineId);
+            var _$t$attrs = $t.attrs('data-property', 'data-timeline-id'),
+                _$t$attrs2 = slicedToArray(_$t$attrs, 2),
+                property = _$t$attrs2[0],
+                timelineId = _$t$attrs2[1];
+
+            var selectedId = this.config('timeline.keyframe.selectedId');
+            var selectedType = this.config('timeline.keyframe.selectedType');
+            var keyframe = this.get(selectedId);
+            var targetId = keyframe.targetId;
+
+            // 선택한 값에 대입 하도록 설정 
+            if (timelineId == keyframe.parentId && property == keyframe.property) {
+                var timeField = selectedType + "Time";
+                var valueField = selectedType + "Value";
+                var time = keyframe[timeField];
+                var value$$1 = $t.float();
+
+                if (keyframe && isNotUndefined(time)) {
+                    keyframe[valueField] = value$$1;
+
+                    this.run(ITEM_SET, defineProperty({ id: selectedId }, valueField, value$$1));
+                    this.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: targetId }, property, value$$1));
+                }
+            }
         }
     }]);
     return TimelineObjectList;
 }(UIElement);
 
-var _templateObject$15 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
-var _templateObject2$1 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject$16 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
+var _templateObject2$2 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject3 = taggedTemplateLiteral(["\n            <div class='keyframe-collapse row' data-property='", "'></div>\n            <div class='keyframe-property-list' data-property='", "'>\n                ", "\n            </div>            \n            "], ["\n            <div class='keyframe-collapse row' data-property='", "'></div>\n            <div class='keyframe-property-list' data-property='", "'>\n                ", "\n            </div>            \n            "]);
 
 var KeyframeObjectList = function (_UIElement) {
     inherits(KeyframeObjectList, _UIElement);
@@ -20747,12 +20963,13 @@ var KeyframeObjectList = function (_UIElement) {
         value: function setBackgroundGrid() {
 
             var width = this.config('timeline.1ms.width');
+            var cursorTime = this.config('timeline.cursor.time');
             var timeDist = 100; // 100ms = 0.1s 
-
+            var currentPosition = width * cursorTime - 1;
 
             var fullWidth = Math.max(10, timeDist * width);
             var position = fullWidth - 0.5;
-            this.$el.cssText("\n            background-size: " + fullWidth + "px 100%;\n            background-position: " + position + "px 0px;\n        ");
+            this.$el.cssText("\n            background-size: 2px 100%, " + fullWidth + "px 100%;\n            background-position: " + currentPosition + "px 0px, " + position + "px 0px;\n        ");
         }
     }, {
         key: "updateKeyframeList",
@@ -20772,20 +20989,20 @@ var KeyframeObjectList = function (_UIElement) {
         value: function makeTimelineRow(timeline, index) {
             var targetItem = this.get(timeline.targetId);
 
-            if (IS_LAYER(targetItem)) {
-                return this.makeTimelineObjectForLayer(timeline);
-            }
-
-            return '';
+            return this.makeTimelineObject(timeline, targetItem);
         }
     }, {
         key: "makeKeyFrameItem",
         value: function makeKeyFrameItem(keyframe, keyframeIndex, timeline) {
+            var msWidth = this.config('timeline.1ms.width');
+            var startTime = keyframe.startTime;
+            var endTime = keyframe.endTime;
+            var left = pxUnit(startTime * msWidth);
+            var width = pxUnit((endTime - startTime) * msWidth);
 
-            var left = pxUnit(keyframe.startTime * this.config('timeline.1ms.width'));
-            var width = pxUnit((keyframe.endTime - keyframe.startTime) * this.config('timeline.1ms.width'));
+            var nested = unitValue(width) < 1 ? 'nested' : EMPTY_STRING;
 
-            return "\n        <div \n            class='keyframe-item line' \n            style='left: " + stringUnit(left) + "; width: " + stringUnit(width) + ";' \n            keyframe-id=\"" + keyframe.id + "\" \n            keyframe-property=\"" + keyframe.property + "\"\n        >\n            <div class='bar'></div>\n            <div class='start' time=\"" + keyframe.startTime + "\" value=\"" + stringUnit(keyframe.startValue) + "\"></div>\n            <div class='end' time=\"" + keyframe.endTime + "\" value=\"" + stringUnit(keyframe.endValue) + "\"></div>\n        </div>\n        ";
+            return "\n        <div \n            class='keyframe-item line " + nested + "' \n            style='left: " + stringUnit(left) + "; width: " + stringUnit(width) + ";' \n            keyframe-id=\"" + keyframe.id + "\" \n            keyframe-property=\"" + keyframe.property + "\"\n        >\n            <div class='bar'></div>\n            <div class='start' time=\"" + startTime + "\"></div>\n            <div class='end' time=\"" + endTime + "\"></div>\n        </div>\n        ";
         }
     }, {
         key: "makeKeyframeProperty",
@@ -20794,28 +21011,31 @@ var KeyframeObjectList = function (_UIElement) {
 
             var keyframes = timeline.keyframes[property] || [];
 
-            return html(_templateObject$15, property, timeline.id, keyframes.map(function (keyframe) {
+            return html(_templateObject$16, property, timeline.id, keyframes.map(function (keyframe) {
                 return _this3.makeKeyFrameItem(keyframe, timeline);
             }));
         }
     }, {
-        key: "makeTimelineTransformProperty",
-        value: function makeTimelineTransformProperty(timeline) {
-            return "\n        <div class='keyframe-collapse row' data-property='transform'></div>\n        <div class='keyframe-property-list' data-property='transform'>\n            " + this.makeKeyframeProperty('translateX', timeline) + "\n            " + this.makeKeyframeProperty('translateY', timeline) + "\n        </div>\n        ";
-        }
-    }, {
-        key: "makeTimelineProperty",
-        value: function makeTimelineProperty(timeline) {
+        key: "makeTimelinePropertyGroup",
+        value: function makeTimelinePropertyGroup(timeline, targetItem) {
+            var _this4 = this;
 
             this.updateKeyframeList(timeline);
 
-            return html(_templateObject2$1, [this.makeTimelineTransformProperty(timeline)]);
+            targetItem = targetItem || this.get(timeline.targetId);
+            var list = PROPERTY_LIST[targetItem.itemType] || [];
+
+            return html(_templateObject2$2, list.map(function (it) {
+                return html(_templateObject3, it.key, it.key, it.properties.map(function (property) {
+                    return _this4.makeKeyframeProperty(property, timeline);
+                }));
+            }));
         }
     }, {
-        key: "makeTimelineObjectForLayer",
-        value: function makeTimelineObjectForLayer(timeline) {
+        key: "makeTimelineObject",
+        value: function makeTimelineObject(timeline, targetItem) {
 
-            return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>" + this.makeTimelineProperty(timeline) + "</div>\n            </div>\n        ";
+            return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>" + this.makeTimelinePropertyGroup(timeline, targetItem) + "</div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
@@ -20834,8 +21054,7 @@ var KeyframeObjectList = function (_UIElement) {
             var $t = this.$el.$(".keyframe-object[data-timeline-id=\"" + timelineId + "\"]");
 
             if ($t) {
-                var htmlString = this.makeTimelineProperty(timeline);
-                $t.$('.keyframe-group').html(htmlString);
+                $t.$('.keyframe-group').html(this.makeTimelinePropertyGroup(timeline));
             }
         }
     }, {
@@ -20851,30 +21070,32 @@ var KeyframeObjectList = function (_UIElement) {
     }, {
         key: POINTERSTART('$el .bar') + SELF,
         value: function value$$1(e) {
+            this.msWidth = this.config('timeline.1ms.width');
             this.selectedClass = 'bar';
             this.selectedElement = e.$delegateTarget.parent();
             this.selectedStartX = this.selectedElement.cssFloat('left');
             this.selectedStartWidth = this.selectedElement.cssFloat('width');
             this.selectedX = this.selectedStartX;
             this.selectedWidth = this.selectedStartWidth;
+            this.selectedId = this.selectedElement.attr('keyframe-id');
 
             this.xy = e.xy;
             this.minX = 0;
             this.maxX = 10000;
 
-            var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'));
-            if (selectedKeyframe.prevId) {
-                this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
-            }
+            var minTime = this.read(TIMELINE_MIN_TIME_IN_KEYFRAMES, this.selectedId);
+            this.minX = minTime * this.msWidth;
 
-            if (selectedKeyframe.nextId) {
-                this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
-            }
+            var maxTime = this.read(TIMELINE_MAX_TIME_IN_KEYFRAMES, this.selectedId);
+            this.maxX = maxTime * this.msWidth;
+
             // console.log('start', e.xy);
+            this.setCurrentKeyframeItem(this.selectedId, 'bar');
         }
     }, {
         key: POINTERSTART('$el .start') + SELF,
         value: function value$$1(e) {
+            this.msWidth = this.config('timeline.1ms.width');
             this.selectedClass = 'start';
             if (this.selectedEl) {
                 this.selectedEl.removeClass('selected');
@@ -20890,16 +21111,18 @@ var KeyframeObjectList = function (_UIElement) {
             this.xy = e.xy;
             this.minX = 0;
             this.maxX = this.selectedEndX;
+            this.selectedId = this.selectedElement.attr('keyframe-id');
 
-            var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'));
-            if (selectedKeyframe.prevId) {
-                this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
-            }
+            var minTime = this.read(TIMELINE_MIN_TIME_IN_KEYFRAMES, this.selectedId);
+            this.minX = minTime * this.msWidth;
+
             // console.log('start', e.xy);
+            this.setCurrentKeyframeItem(this.selectedId, 'start');
         }
     }, {
         key: POINTERSTART('$el .end') + SELF,
         value: function value$$1(e) {
+            this.msWidth = this.config('timeline.1ms.width');
             this.selectedClass = 'end';
             if (this.selectedEl) {
                 this.selectedEl.removeClass('selected');
@@ -20915,45 +21138,79 @@ var KeyframeObjectList = function (_UIElement) {
             this.xy = e.xy;
             this.minX = this.selectedStartX;
             this.maxX = 1000;
+            this.selectedId = this.selectedElement.attr('keyframe-id');
             // console.log('start', e.xy);
 
-            var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'));
-            if (selectedKeyframe.nextId) {
-                this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
+            var maxTime = this.read(TIMELINE_MAX_TIME_IN_KEYFRAMES, this.selectedId);
+            this.maxX = maxTime * this.msWidth;
+
+            this.setCurrentKeyframeItem(this.selectedId, 'end');
+        }
+    }, {
+        key: "setCurrentKeyframeItem",
+        value: function setCurrentKeyframeItem(id, type) {
+            this.initConfig('timeline.keyframe.selectedId', id);
+            this.initConfig('timeline.keyframe.selectedType', type);
+
+            if (type == 'start' || type == 'end') {
+                this.emit(CHANGE_KEYFRAME_SELECTION);
             }
         }
     }, {
         key: "isSelectedClass",
         value: function isSelectedClass() {
-            return this.selectedClass != '';
+            return !!this.selectedClass;
         }
     }, {
         key: "updateKeyframeTime",
         value: function updateKeyframeTime() {
-            var width = this.config('timeline.1ms.width');
             var id = this.selectedElement.attr('keyframe-id');
-            var startTime = this.selectedX / width;
-            var endTime = startTime + this.selectedWidth / width;
+            var startTime = this.selectedX / this.msWidth;
+            var endTime = startTime + this.selectedWidth / this.msWidth;
             this.commit(CHANGE_KEYFRAME, { id: id, startTime: startTime, endTime: endTime });
+        }
+    }, {
+        key: "getTimeString",
+        value: function getTimeString(pixel) {
+            var unit$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'ms';
+
+            var time = Math.floor(pixel / this.msWidth);
+
+            return "" + time + unit$$1;
         }
     }, {
         key: "setBarPosition",
         value: function setBarPosition(e) {
             var dx = e.xy.x - this.xy.x;
-            var newX = Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX - this.selectedStartWidth);
+            var newX = this.match1ms(Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX - this.selectedStartWidth), 10);
             this.selectedElement.px('left', newX);
+            this.selectedElement.attr('data-start-time', this.getTimeString(newX));
+            this.selectedElement.attr('data-end-time', this.getTimeString(newX + this.selectedStartWidth));
             this.selectedX = newX;
 
             this.updateKeyframeTime();
         }
     }, {
+        key: "match1ms",
+        value: function match1ms(x) {
+            var baseTime = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+            var width = this.msWidth * baseTime;
+            var time = Math.floor(x / width);
+            return time * width;
+        }
+    }, {
         key: "setStartPosition",
         value: function setStartPosition(e) {
             var dx = e.xy.x - this.xy.x;
-            var newX = Math.min(Math.max(this.minX, this.selectedStartX + dx), this.selectedEndX);
-            var newWidth = this.selectedStartWidth - (newX - this.selectedStartX);
+            var newX = this.match1ms(Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX), 10);
+
+            var newWidth = this.selectedEndX - newX;
+
+            this.selectedElement.attr('data-start-time', this.getTimeString(newX));
             this.selectedElement.px('left', newX);
             this.selectedElement.px('width', newWidth);
+            this.selectedElement.toggleClass('nested', newWidth < 1);
             this.selectedX = newX;
             this.selectedWidth = newWidth;
 
@@ -20963,15 +21220,17 @@ var KeyframeObjectList = function (_UIElement) {
         key: "setEndPosition",
         value: function setEndPosition(e) {
             var dx = e.xy.x - this.xy.x;
-            var newX = Math.min(Math.max(this.minX, this.selectedEndX + dx), this.maxX);
-            var newWidth = Math.max(0, this.selectedStartWidth + (newX - this.selectedEndX));
+            var newX = this.match1ms(Math.min(Math.max(this.minX, this.selectedEndX + dx), this.maxX), 10);
+            var newWidth = Math.max(0, newX - this.selectedStartX);
+            this.selectedElement.attr('data-end-time', this.getTimeString(newX));
             this.selectedElement.px('width', newWidth);
+            this.selectedElement.toggleClass('nested', !newWidth);
             this.selectedWidth = newWidth;
 
             this.updateKeyframeTime();
         }
     }, {
-        key: POINTERMOVE('document') + CHECKER('isSelectedClass'),
+        key: POINTERMOVE('document') + IF('isSelectedClass'),
         value: function value$$1(e) {
             if (this.selectedClass == 'bar') {
                 this.setBarPosition(e);
@@ -20982,18 +21241,17 @@ var KeyframeObjectList = function (_UIElement) {
             }
         }
     }, {
-        key: POINTEREND('document'),
+        key: POINTEREND('document') + IF('isSelectedClass'),
         value: function value$$1(e) {
-            if (this.selectedClass) {
-                this.selectedClass = '';
-                this.selectedElement = null;
-                // console.log('end', e.xy);    
-            }
+            this.selectedClass = null;
+            this.selectedElement.removeAttr('data-start-time');
+            this.selectedElement.removeAttr('data-end-time');
+            this.selectedElement = null;
         }
     }, {
         key: CLICK('$el .keyframe-property') + ALT,
         value: function value$$1(e) {
-            var _this4 = this;
+            var _this5 = this;
 
             var _e$$delegateTarget$at = e.$delegateTarget.attrs('data-timeline-id', 'data-property'),
                 _e$$delegateTarget$at2 = slicedToArray(_e$$delegateTarget$at, 2),
@@ -21001,46 +21259,28 @@ var KeyframeObjectList = function (_UIElement) {
                 property = _e$$delegateTarget$at2[1];
 
             var startTime = (e.xy.x - e.$delegateTarget.offset().left) / this.config('timeline.1ms.width');
-            var endTime = startTime + 100;
+            var endTime = startTime;
 
-            this.run(ITEM_ADD_KEYFRAME, parentId, { property: property, startTime: startTime, endTime: endTime }, function (keyframeId) {
-                _this4.refreshKeyframe(keyframeId);
-            });
+            if (this.read(TIMELINE_NOT_EXISTS_KEYFRAME, parentId, property, startTime)) {
+                this.run(ITEM_ADD_KEYFRAME, parentId, { property: property, startTime: startTime, endTime: endTime }, function (keyframeId) {
+                    _this5.refreshKeyframe(keyframeId);
+                });
+            } else {
+                alert('Time can not nested');
+            }
+        }
+    }, {
+        key: EVENT(MOVE_TIMELINE),
+        value: function value$$1() {
+            this.setBackgroundGrid();
         }
     }, {
         key: EVENT(CHANGE_TOOL, RESIZE_TIMELINE),
-        value: function value$$1(key, _value) {
+        value: function value$$1() {
             this.refresh();
         }
     }]);
     return KeyframeObjectList;
-}(UIElement);
-
-var KeyframeGuideLine = function (_UIElement) {
-    inherits(KeyframeGuideLine, _UIElement);
-
-    function KeyframeGuideLine() {
-        classCallCheck(this, KeyframeGuideLine);
-        return possibleConstructorReturn(this, (KeyframeGuideLine.__proto__ || Object.getPrototypeOf(KeyframeGuideLine)).apply(this, arguments));
-    }
-
-    createClass(KeyframeGuideLine, [{
-        key: "template",
-        value: function template() {
-            return "<div class=\"keyframe-guide-line\">\n            <div class='guide' style='width:1px;position:absolute;left:500px;height:100%;background-color:black;'></div>\n        </div>";
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            // this.$el.px('height', 3000);
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return KeyframeGuideLine;
 }(UIElement);
 
 var KeyframeTimeView = function (_UIElement) {
@@ -21086,14 +21326,14 @@ var KeyframeTimeView = function (_UIElement) {
 
             var textOption = {
                 textAlign: 'center',
-                textBaseline: 'bottom',
+                textBaseline: 'middle',
                 font: '10px sans-serif'
             };
 
             this.refs.$canvas.update(function () {
                 var rect = this.rect();
 
-                this.drawOption(_extends({ strokeStyle: 'rgba(0, 0, 0, 0.5)', lineWidth: 1 }, textOption));
+                this.drawOption(_extends({ strokeStyle: 'rgba(0, 0, 0, 0.5)', lineWidth: 0.5 }, textOption));
                 var startSecond = startTime;
                 var viewSecond = viewTime;
                 var distSecond = timeDist;
@@ -21104,21 +21344,28 @@ var KeyframeTimeView = function (_UIElement) {
                     if (startSecond !== 0) {
                         // 0 이 아닌 경우만 그리기 
                         var secondString = viewSecond / 1000; // 표시 지점 
-                        var secondStringS = secondString + 's';
+                        var secondStringS = secondString;
                         if (viewSecond % one_second === 0) {
-                            var y = rect.height - 15;
-                            this.drawLine(startX, y, startX, rect.height);
+                            var y = rect.height / 2;
+                            // this.drawLine(startX, y, startX, rect.height);
+                            this.drawOption({ fillStyle: '#333' });
                             this.drawText(startX, y, secondStringS);
                         } else {
-                            var y = rect.height - 5;
-                            this.drawLine(startX, y, startX, rect.height);
+                            var y = rect.height / 2;
+
+                            // this.drawLine(startX, y, startX, rect.height);
 
                             if (width > 0.4) {
+                                this.drawOption({ fillStyle: '#333' });
                                 this.drawText(startX, y, secondStringS);
                             } else {
                                 var currentView = viewSecond % 1000 / 100;
                                 if (currentView === 5) {
+                                    this.drawOption({ fillStyle: '#333' });
                                     this.drawText(startX, y, secondString);
+                                } else {
+                                    this.drawOption({ fillStyle: 'rgba(0, 0, 0, 0.5)' });
+                                    this.drawCircle(startX, y, 0.5);
                                 }
                             }
                         }
@@ -21147,6 +21394,7 @@ var KeyframeTimeView = function (_UIElement) {
                 var distX = e.xy.x - this.selectedCanvasOffset.left;
                 var scrollLeft = this.config('timeline.scroll.left') + distX;
                 this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+                this.emit(MOVE_TIMELINE);
                 this.refreshCanvas();
             }
         }
@@ -21158,13 +21406,30 @@ var KeyframeTimeView = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE),
+        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE),
         value: function value() {
             this.resizeCanvas();
             this.refresh();
         }
     }]);
     return KeyframeTimeView;
+}(UIElement);
+
+var TimelineTopToolbar = function (_UIElement) {
+    inherits(TimelineTopToolbar, _UIElement);
+
+    function TimelineTopToolbar() {
+        classCallCheck(this, TimelineTopToolbar);
+        return possibleConstructorReturn(this, (TimelineTopToolbar.__proto__ || Object.getPrototypeOf(TimelineTopToolbar)).apply(this, arguments));
+    }
+
+    createClass(TimelineTopToolbar, [{
+        key: "template",
+        value: function template() {
+            return "\n            <div class='timeline-top-toolbar'>\n                <div class='time-input' ref=\"$timeInputView\"></div>\n                <div class='time-play' ref=\"$timePlay\">\n                    <button type=\"button\">&lt;&lt;</button>\n                    <button type=\"button\">&gt;</button>\n                    <button type=\"button\">&gt;&gt;</button>\n                    <select>\n                        <option>1x</option>\n                        <option>2x</option>\n                        <option>3x</option>\n                        <option>4x</option>\n                        <option>5x</option>\n                    </select>\n                </div>\n            </div>\n        ";
+        }
+    }]);
+    return TimelineTopToolbar;
 }(UIElement);
 
 var Timeline = function (_UIElement) {
@@ -21179,8 +21444,8 @@ var Timeline = function (_UIElement) {
         key: "components",
         value: function components() {
             return {
+                TimelineTopToolbar: TimelineTopToolbar,
                 KeyframeTimeView: KeyframeTimeView,
-                KeyframeGuideLine: KeyframeGuideLine,
                 TimelineObjectList: TimelineObjectList,
                 KeyframeObjectList: KeyframeObjectList
             };
@@ -21188,7 +21453,7 @@ var Timeline = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>\n                        <span ref='$title' class='title'>Timeline</span>\n                    </div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                        <KeyframeGuideLine />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-top\" ref=\"$top\">\n                    <div class='timeline-toolbar'>\n                        <span ref='$title' class='title'>Timeline</span>\n                    </div>\n                    <div class='keyframe-toolbar'>\n                        <TimelineTopToolbar />\n                    </div>                \n                </div>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>\n                        \n                    </div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "startAnimation",
@@ -21249,10 +21514,14 @@ var Timeline = function (_UIElement) {
     }, {
         key: DROP('$timelineList'),
         value: function value(e) {
-            e.preventDefault(e);
+            e.preventDefault();
             var draggedId = e.dataTransfer.getData('text');
 
-            this.run(TIMELINE_PUSH, draggedId);
+            if (this.read(TIMELINE_NOT_EXISTS, draggedId)) {
+                this.run(TIMELINE_PUSH, draggedId);
+            } else {
+                alert("Item exists already in timeline.");
+            }
         }
     }, {
         key: WHEEL('$timelineBody') + ALT,
@@ -21706,7 +21975,7 @@ var PredefinedPageResizer = function (_UIElement) {
             return this.xy;
         }
     }, {
-        key: POINTERSTART('$el [data-value]') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$el [data-value]') + IF('isNotDownCheck'),
         value: function value$$1(e) {
             e.stopPropagation();
             var type = e.$delegateTarget.attr('data-value');
@@ -21717,13 +21986,13 @@ var PredefinedPageResizer = function (_UIElement) {
             this.height = unitValue(this.page.height);
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck'),
         value: function value$$1(e) {
             this.targetXY = e.xy;
             this.resize();
         }
     }, {
-        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        key: POINTEREND('document') + IF('isDownCheck'),
         value: function value$$1(e) {
             this.currentType = null;
             this.xy = null;
@@ -22108,7 +22377,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.xy;
         }
     }, {
-        key: POINTERSTART('$el [data-value]') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$el [data-value]') + IF('isNotDownCheck'),
         value: function value$$1(e) {
             e.stopPropagation();
             this.activeButton = e.$delegateTarget;
@@ -22139,10 +22408,9 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             });
         }
     }, {
-        key: POINTERMOVE('document') + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + IF('isDownCheck'),
         value: function value$$1(e) {
             this.targetXY = e.xy;
-
             if (!this.xy) {
                 return;
             }
@@ -22179,7 +22447,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             return this.xy.x != e.xy.x || this.xy.y != e.xy.y;
         }
     }, {
-        key: POINTEREND('document') + CHECKER('isDownCheck'),
+        key: POINTEREND('document') + IF('isDownCheck'),
         value: function value$$1(e) {
 
             switch (this.currentType) {
@@ -23456,7 +23724,7 @@ var HandleView = function (_GradientView) {
             return !this.dragArea;
         }
     }, {
-        key: POINTERSTART('$canvas') + CHECKER('hasNotDragArea') + CHECKER('isPageMode') + CHECKER('isNotDownCheck'),
+        key: POINTERSTART('$canvas') + IF('hasNotDragArea') + IF('isPageMode') + IF('isNotDownCheck'),
         value: function value(e) {
             this.isDown = true;
             this.xy = e.xy;
@@ -23466,13 +23734,10 @@ var HandleView = function (_GradientView) {
             this.dragArea = true;
             this.refs.$dragArea.cssText('position:absolute;left: ' + x + 'px;top: ' + y + 'px;width: 0px;height:0px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;');
             this.refs.$dragArea.show();
-            // console.log('b');        
         }
     }, {
-        key: POINTERMOVE('document') + CHECKER('hasDragArea') + CHECKER('isDownCheck'),
+        key: POINTERMOVE('document') + IF('hasDragArea') + IF('isDownCheck'),
         value: function value(e) {
-            // if (!this.xy) return;         
-            // this.refs.$page.addClass('moving');
             this.targetXY = e.xy;
             var toolSize = this.config('tool.size');
 
@@ -23484,11 +23749,9 @@ var HandleView = function (_GradientView) {
             var x = Math.min(this.targetXY.x, this.xy.x) + toolSize['board.scrollLeft'] - offset.left;
             var y = Math.min(this.targetXY.y, this.xy.y) + toolSize['board.scrollTop'] - offset.top;
             this.refs.$dragArea.cssText('position:absolute;left: ' + x + 'px;top: ' + y + 'px;width: ' + width + 'px;height:' + height + 'px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;');
-
-            // console.log('c');
         }
     }, {
-        key: POINTEREND('document') + CHECKER('hasDragArea') + CHECKER('isDownCheck'),
+        key: POINTEREND('document') + IF('hasDragArea') + IF('isDownCheck'),
         value: function value(e) {
             var _this3 = this;
 
@@ -23527,8 +23790,6 @@ var HandleView = function (_GradientView) {
 
             this.targetXY = null;
             this.xy = null;
-
-            // console.log('a');
 
             this.refs.$dragArea.hide();
             setTimeout(function () {
@@ -24303,7 +24564,7 @@ var SHAPE_GET = 'shape/get';
 
 var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
 
-var _templateObject$16 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
+var _templateObject$17 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
 
 var ShapeListView = function (_UIElement) {
     inherits(ShapeListView, _UIElement);
@@ -24318,7 +24579,7 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return html(_templateObject$16, this.read(SHAPE_LIST).map(function (key) {
+            return html(_templateObject$17, this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
             }));
         }
@@ -24339,8 +24600,8 @@ var ShapeListView = function (_UIElement) {
     return ShapeListView;
 }(UIElement);
 
-var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
-var _templateObject2$2 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
+var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject2$3 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
     inherits(PageSampleList, _UIElement);
@@ -24377,7 +24638,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
-                return html(_templateObject$18, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject$19, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), index);
@@ -24394,7 +24655,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
 
-                return html(_templateObject2$2, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject2$3, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), page.id, page.id);
@@ -24473,7 +24734,7 @@ var PageSampleList = function (_UIElement) {
     return PageSampleList;
 }(UIElement);
 
-var _templateObject$17 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject$18 = taggedTemplateLiteral(["", ""], ["", ""]);
 
 var PageListView = function (_UIElement) {
     inherits(PageListView, _UIElement);
@@ -24525,7 +24786,7 @@ var PageListView = function (_UIElement) {
 
             str.push("<button type=\"button\" class='add-page' title=\"Add a page\"></button>");
 
-            return html(_templateObject$17, str);
+            return html(_templateObject$18, str);
         }
     }, {
         key: "refresh",
@@ -24571,7 +24832,7 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$20 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -24599,7 +24860,7 @@ var LayerListView = function (_UIElement) {
         key: "makeItemNodeImage",
         value: function makeItemNodeImage(item) {
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return "\n            <div class='tree-item image " + selected + "' id=\"" + item.id + "\" draggable=\"true\" >\n                <div class=\"item-title\">&lt;" + item.type + "&gt;</div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item " + (item.visible ? 'visible' : '') + "' item-id='" + item.id + "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-image-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>            \n            </div>\n            ";
+            return "\n            <div class='tree-item image " + selected + "' id=\"" + item.id + "\" draggable=\"true\" >\n                <div class=\"item-title\">&lt;" + item.type + "&gt;</div>                \n                <div class='item-tools'>\n                    <button type=\"button\" class='visible-item " + (item.visible ? 'visible' : EMPTY_STRING) + "' item-id='" + item.id + "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='" + item.id + "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-image-item' item-id='" + item.id + "' title=\"Copy\">+</button>\n                </div>            \n            </div>\n            ";
         }
     }, {
         key: "makeItemNodeLayer",
@@ -24609,7 +24870,9 @@ var LayerListView = function (_UIElement) {
             var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
-            return html(_templateObject$19, selected, item.id, index + 1, item.name || "Layer ", item.lock ? 'lock' : '', item.id, item.visible ? 'visible' : '', item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            var lock = item.lock ? 'lock' : EMPTY_STRING;
+            var visible = item.visible ? 'visible' : EMPTY_STRING;
+            return html(_templateObject$20, selected, item.id, index + 1, item.name || "Layer ", lock, item.id, visible, item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -24916,7 +25179,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/>\n                <DropView />\n                <HotKey />\n            </div>\n        ';
+            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/>\n                <DropView />\n                <HotKey />\n            </div>\n        ';
         }
     }, {
         key: 'components',
@@ -25483,26 +25746,6 @@ var LayerManager = function (_BaseModule) {
             return combineKeyArray(results);
         }
     }, {
-        key: GETTER(LAYER_CACHE_TO_IMAGE_CSS),
-        value: function value$$1($store, images) {
-            var results = {};
-
-            images.forEach(function (item) {
-                var image = _extends({}, item.image, { colorsteps: item.colorsteps });
-                var css = IMAGE_TO_CSS$1(image);
-
-                keyEach(css, function (key, value$$1) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(value$$1);
-                });
-            });
-
-            return combineKeyArray(results);
-        }
-    }, {
         key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
         value: function value$$1($store, image) {
             var images = generateImagePattern([image]);
@@ -25572,42 +25815,6 @@ var LayerManager = function (_BaseModule) {
         key: GETTER(LAYER_MAKE_BOXSHADOW),
         value: function value$$1($store, layer, isExport) {
             return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_BOXSHADOW, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_FONT),
-        value: function value$$1($store, layer, isExport) {
-            var results = {};
-
-            if (layer.color) {
-                results['color'] = layer.color;
-            }
-
-            if (layer.fontSize) {
-                results['font-size'] = stringUnit(layer.fontSize);
-            }
-
-            if (layer.fontFamily) {
-                results['font-family'] = layer.fontFamily;
-            }
-
-            if (layer.fontWeight) {
-                results['font-weight'] = layer.fontWeight;
-            }
-
-            if (isNotUndefined(layer.lineHeight)) {
-                results['line-height'] = stringUnit(layer.lineHeight);
-            }
-
-            results['word-wrap'] = layer.wordWrap || 'break-word';
-            results['word-break'] = layer.wordBreak || 'break-word';
-
-            if (layer.clipText) {
-                results['color'] = 'transparent';
-                results['background-clip'] = 'text';
-                results['-webkit-background-clip'] = 'text';
-            }
-
-            return results;
         }
     }, {
         key: GETTER(LAYER_MAKE_IMAGE),
@@ -25688,7 +25895,7 @@ var LayerManager = function (_BaseModule) {
 
             var imageCSS = image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport);
 
-            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), imageCSS);
+            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), LAYER_MAKE_FONT(layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), imageCSS);
 
             return cleanObject(results);
         }
@@ -25722,22 +25929,9 @@ var LayerManager = function (_BaseModule) {
                 css['opacity'] = layer.opacity;
             }
 
-            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), $store.read(LAYER_MAKE_FONT, layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), $store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images));
+            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), LAYER_MAKE_FONT(layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), LAYER_CACHE_TO_IMAGE_CSS(layer.images));
 
             return cleanObject(results);
-        }
-    }, {
-        key: GETTER(LAYER_BORDER_PREVIEW),
-        value: function value$$1($store) {
-            var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-            var css = {};
-
-            css['box-sizing'] = 'border-box';
-
-            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer));
-
-            return CSS_TO_STRING(cleanObject(results));
         }
     }]);
     return LayerManager;
@@ -25764,12 +25958,15 @@ var ToolManager = function (_BaseModule) {
                 'guide.only': false,
                 'guide.angle': true,
                 'guide.position': true,
+                'timeline.time.format': 'default', // default: 1s, time:  00:00:00.000s
                 'timeline.1ms.width.original': 0.3,
                 'timeline.1ms.width': 0.3,
                 'timeline.scroll.left': 0,
                 'timeline.keyframe.width': 0,
                 'timeline.keyframe.rect': {},
-                'timeline.cursor.time': 0
+                'timeline.cursor.time': 0,
+                'timeline.keyframe.selectedId': EMPTY_STRING,
+                'timeline.keyframe.selectedType': EMPTY_STRING
             };
 
             this.$store.toolStack = [];
@@ -26370,15 +26567,11 @@ var ItemManager = function (_BaseModule) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
             var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-            var _$store$mapGetters = $store.mapGetters(ITEM_GET),
-                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 1),
-                get$$1 = _$store$mapGetters2[0];
-
             var id = obj.id;
-            var isExists = $store.items[id];
-            $store.items[id] = _extends({}, get$$1(id), obj);
+            var oldObj = this.get(id);
+            $store.items[id] = _extends({}, oldObj, obj);
 
-            if (!isExists) {
+            if (!oldObj) {
                 $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId);
             }
 
@@ -26407,11 +26600,11 @@ var ItemManager = function (_BaseModule) {
     }, {
         key: ACTION(ITEM_SORT),
         value: function value$$1($store, id, sort) {
-            var _$store$mapGetters3 = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE),
-                _$store$mapGetters4 = slicedToArray(_$store$mapGetters3, 3),
-                get$$1 = _$store$mapGetters4[0],
-                list_children = _$store$mapGetters4[1],
-                list_page = _$store$mapGetters4[2];
+            var _$store$mapGetters = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE),
+                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 3),
+                get$$1 = _$store$mapGetters2[0],
+                list_children = _$store$mapGetters2[1],
+                list_page = _$store$mapGetters2[2];
 
             var item = get$$1(id);
             var itemType = item.itemType;
@@ -26437,23 +26630,6 @@ var ItemManager = function (_BaseModule) {
 
             list.forEach(function (id, index) {
                 $store.items[id].index = index * INDEX_DIST;
-            });
-
-            // set prev, next  (as double linked list )
-            var lastIndex = list.length - 1;
-            list.forEach(function (id, index) {
-                var item = $store.items[id];
-                var next = list[index + 1];
-                var prev = list[index - 1];
-
-                if (index == 0 && next) {
-                    item.nextId = next;
-                } else if (index == lastIndex && prev) {
-                    item.prevId = prev;
-                } else {
-                    if (next) item.nextId = next;
-                    if (prev) item.prevId = prev;
-                }
             });
         }
     }]);
@@ -26524,12 +26700,15 @@ var GuideManager = function (_BaseModule) {
 
             // x 축 비교 , x 축이 dist 안에 있으면 합격 
             var results = [];
-            A.pointX.forEach(function (AX, index) {
-                B.pointX.forEach(function (BX, targetIndex) {
+            for (var index = 0, len = A.pointX.length; index < len; index++) {
+                var AX = A.pointX[index];
 
+                if (isUndefined$1(AX)) continue;
+
+                for (var targetIndex = 0, len = B.pointX.length; targetIndex < len; targetIndex++) {
+                    var BX = B.pointX[targetIndex];
                     var tempDist = AX.isCenter || BX.isCenter ? ZERO_DIST : dist;
 
-                    // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
                     if (Math.abs(AX.x - BX.x) <= tempDist) {
 
                         results.push({
@@ -26548,12 +26727,17 @@ var GuideManager = function (_BaseModule) {
                             height: AX.height
                         });
                     }
-                });
-            });
+                }
+            }
 
             // y 축 비교,    
-            A.pointY.forEach(function (AY, index) {
-                B.pointY.forEach(function (BY, targetIndex) {
+            for (var index = 0, len = A.pointY.length; index < len; index++) {
+                var AY = A.pointY[index];
+
+                if (isUndefined$1(AY)) continue;
+
+                for (var targetIndex = 0, len = B.pointY.length; targetIndex < len; targetIndex++) {
+                    var BY = B.pointY[targetIndex];
                     var tempDist = AY.isCenter || BY.isCenter ? ZERO_DIST : dist;
 
                     // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
@@ -26574,8 +26758,8 @@ var GuideManager = function (_BaseModule) {
                             height: AY.height
                         });
                     }
-                });
-            });
+                }
+            }
 
             return results;
         }
@@ -27488,7 +27672,7 @@ var SelectionManager = function (_BaseModule) {
                 type: SELECT_MODE_ONE,
                 ids: [],
                 items: [],
-                pageId: '',
+                pageId: EMPTY_STRING,
                 itemType: EMPTY_STRING
             };
         }
@@ -27529,7 +27713,7 @@ var SelectionManager = function (_BaseModule) {
                 type: SELECT_MODE_ONE,
                 ids: [],
                 items: [],
-                pageId: '',
+                pageId: EMPTY_STRING,
                 itemType: EMPTY_STRING
             };
         }
@@ -27922,6 +28106,11 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_RECT),
         value: function value$$1($store) {
+            var minX = Number.MAX_SAFE_INTEGER;
+            var minY = Number.MAX_SAFE_INTEGER;
+            var maxX = Number.MIN_SAFE_INTEGER;
+            var maxY = Number.MIN_SAFE_INTEGER;
+
             var items = $store.selection.ids.map(function (id) {
                 var _$store$items$id2 = $store.items[id],
                     x = _$store$items$id2.x,
@@ -27937,21 +28126,18 @@ var SelectionManager = function (_BaseModule) {
                 var x2 = x + width;
                 var y2 = y + height;
 
+                if (minX > x) minX = x;
+                if (minY > y) minY = y;
+                if (maxX < x2) maxX = x2;
+                if (maxY < y2) maxY = y2;
+
                 return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
             });
 
-            var x = Math.min.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.x;
-            })));
-            var y = Math.min.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.y;
-            })));
-            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.x2;
-            })));
-            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (it) {
-                return it.y2;
-            })));
+            var x = minX;
+            var y = minY;
+            var x2 = maxX;
+            var y2 = maxY;
 
             var width = x2 - x;
             var height = y2 - y;
@@ -29186,8 +29372,12 @@ var ItemCreateManager = function (_BaseModule) {
             var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
             var callback = arguments[3];
 
+
+            var timeline = this.get(parentId);
+            var targetId = timeline.targetId;
             var id = $store.read(ITEM_CREATE_KEYFRAME, _extends({
-                parentId: parentId
+                parentId: parentId,
+                targetId: targetId
             }, opt, {
                 index: Number.MAX_SAFE_INTEGER
             }));
@@ -29195,25 +29385,6 @@ var ItemCreateManager = function (_BaseModule) {
             $store.run(ITEM_SORT, id, function (aId, bId) {
                 return $store.items[aId].startTime > $store.items[bId].startTime ? 1 : -1;
             });
-
-            // redefine startTime, endTime
-            var keyframe = this.get(id);
-
-            if (keyframe.prevId) {
-                var prevItem = $store.items[keyframe.prevId];
-                if (prevItem && prevItem.endTime > keyframe.startTime) {
-                    keyframe.startTime = prevItem.endTime;
-                }
-            }
-
-            if (keyframe.nextId) {
-                var nextItem = $store.items[keyframe.nextId];
-                if (nextItem && nextItem.startTime < keyframe.endTime) {
-                    keyframe.endTime = nextItem.startTime;
-                }
-            }
-            $store.run(ITEM_SET, keyframe);
-            // redefine startTime, endTime
 
             if (isFunction(callback)) {
                 callback(id);
@@ -29614,8 +29785,8 @@ var ItemRecoverManager = function (_BaseModule) {
             var newImageItem = this.get(newImageId);
             newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
 
-            $store.run(ITEM_SET, sourceItem, true);
-            $store.run(ITEM_SORT, sourceId);
+            $store.run(ITEM_SET, newImageItem, true);
+            $store.run(ITEM_SORT, newImageId);
         }
     }, {
         key: ACTION(ITEM_COPY_IN_LAYER),
@@ -30320,7 +30491,7 @@ hotKeys = hotKeys.map(function (it) {
                 obj[type] = true;
                 break;
             default:
-                obj[''] = type;
+                obj[EMPTY_STRING] = type;
         }
     });
 
@@ -30338,8 +30509,8 @@ hotKeys = hotKeys.map(function (it) {
     if (obj[KEY_META$1]) {
         arr.push(KEY_META$1);
     }
-    if (obj['']) {
-        arr.push(obj['']);
+    if (obj[EMPTY_STRING]) {
+        arr.push(obj[EMPTY_STRING]);
     }
 
     it.key = arr.join(KEY_SPLIT);
@@ -30391,7 +30562,7 @@ var HotkeyManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(HOTKEY_EXISTS),
-        value: function value($store, e) {
+        value: function value$$1($store, e) {
             var _this2 = this;
 
             return hotKeys.filter(function (command) {
@@ -30400,7 +30571,7 @@ var HotkeyManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(HOTKEY_RUN),
-        value: function value($store, hotkey) {
+        value: function value$$1($store, hotkey) {
 
             if (hotkey) {
                 if (isFunction(hotkey.command)) {
@@ -30414,7 +30585,7 @@ var HotkeyManager = function (_BaseModule) {
         }
     }, {
         key: GETTER(HOTKEY_EXCLUDE),
-        value: function value($store, e) {
+        value: function value$$1($store, e) {
 
             switch (e.target.nodeName) {
                 case 'INPUT':
@@ -30429,7 +30600,7 @@ var HotkeyManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(HOTKEY_EXECUTE),
-        value: function value($store, e) {
+        value: function value$$1($store, e) {
             if ($store.read(HOTKEY_EXCLUDE, e)) {
                 return;
             }
@@ -30477,6 +30648,86 @@ var TimelineManager = function (_BaseModule) {
                 $store.run(ITEM_ADD_TIMELINE, targetId, pageId, function (timelineId) {
                     $store.emit(ADD_TIMELINE, timelineId);
                 });
+            });
+        }
+    }, {
+        key: GETTER(TIMELINE_NOT_EXISTS),
+        value: function value($store, targetId) {
+            return !$store.read(TIMELINE_LIST).filter(function (it) {
+                return it.targetId == targetId;
+            }).length;
+        }
+    }, {
+        key: GETTER(TIMELINE_NOT_EXISTS_KEYFRAME),
+        value: function value($store, timelineId, property, startTime) {
+            var list = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timelineId).filter(function (it) {
+                return it.property == property;
+            });
+
+            return !list.some(function (it) {
+                return it.startTime <= startTime && startTime <= it.endTime;
+            });
+        }
+    }, {
+        key: GETTER(TIMELINE_MIN_TIME_IN_KEYFRAMES),
+        value: function value($store, keyframeId) {
+            var keyframe = $store.read(ITEM_GET, keyframeId);
+
+            var list = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, keyframe.parentId).filter(function (it) {
+                return it.property == keyframe.property && it.id != keyframeId;
+            });
+
+            var minValue = Math.max.apply(Math, [0].concat(toConsumableArray(list.filter(function (it) {
+                return it.endTime <= keyframe.startTime;
+            }).map(function (it) {
+                return it.endTime;
+            }))));
+
+            return minValue;
+        }
+    }, {
+        key: GETTER(TIMELINE_MAX_TIME_IN_KEYFRAMES),
+        value: function value($store, keyframeId) {
+            var keyframe = $store.read(ITEM_GET, keyframeId);
+
+            var list = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, keyframe.parentId).filter(function (it) {
+                return it.property == keyframe.property && it.id != keyframeId;
+            });
+
+            var maxValue = Math.min.apply(Math, [Number.MAX_SAFE_INTEGER].concat(toConsumableArray(list.filter(function (it) {
+                return it.startTime >= keyframe.endTime;
+            }).map(function (it) {
+                return it.startTime;
+            }))));
+
+            return maxValue;
+        }
+    }, {
+        key: ACTION(TIMELINE_SEEK),
+        value: function value($store, currentTime, $container) {
+            $store.read(TIMELINE_LIST).map(function (timeline, index) {
+
+                var currentKeyframes = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timeline.id).filter(function (keyframe) {
+                    return keyframe.startTime <= currentTime && currentTime <= keyframe.endTime;
+                });
+
+                if (currentKeyframes.length) {
+
+                    var obj = { id: timeline.targetId };
+
+                    currentKeyframes.forEach(function (keyframe) {
+
+                        var value = TIMING_GET_VALUE(keyframe, currentTime);
+
+                        var $input = $container.$("[data-property=\"" + keyframe.property + "\"][data-timeline-id=\"" + keyframe.parentId + "\"]");
+                        $input.val(value);
+
+                        obj[keyframe.property] = value;
+                    });
+
+                    $store.run(ITEM_SET, obj);
+                    $store.emit(CHANGE_LAYER);
+                }
             });
         }
     }]);

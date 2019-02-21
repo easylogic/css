@@ -2,9 +2,9 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { unitValue, pxUnit, SEGMENT_TYPE_MOVE, GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_RIGHT, SEGMENT_CHECK } from "../../util/css/types";
 import { ITEM_SET } from "../types/ItemTypes";
-import { isNotUndefined } from "../../util/functions/func";
+import { isNotUndefined, isUndefined } from "../../util/functions/func";
 import { SELECTION_CURRENT_PAGE, SELECTION_RECT, SELECTION_CHECK } from "../types/SelectionTypes";
-import { ITEM_EACH_CHILDREN, ITEM_MAP_LAYER_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_MAP_LAYER_CHILDREN } from "../types/ItemSearchTypes";
 import { GUIDE_RECT_POINT, GUIDE_COMPARE, GUIDE_SNAP_LAYER, GUIDE_SNAP_CACULATE } from "../types/GuideTypes";
 
 var MAX_DIST = 1; 
@@ -67,12 +67,15 @@ export default class GuideManager extends BaseModule {
     [GETTER(GUIDE_COMPARE)] ($store, A, B, dist = MAX_DIST) {
         // x 축 비교 , x 축이 dist 안에 있으면 합격 
         var results = [] 
-        A.pointX.forEach((AX, index) => {
-            B.pointX.forEach((BX, targetIndex) => {
+        for(var index = 0, len = A.pointX.length; index < len; index++) {
+            var AX = A.pointX[index];
 
+            if (isUndefined(AX)) continue;
+            
+            for(var targetIndex = 0, len = B.pointX.length; targetIndex < len; targetIndex++) {
+                var BX = B.pointX[targetIndex]
                 var tempDist = (AX.isCenter || BX.isCenter) ? ZERO_DIST : dist; 
 
-                // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
                 if (Math.abs(AX.x - BX.x) <= tempDist) {
 
                     results.push({ 
@@ -91,12 +94,17 @@ export default class GuideManager extends BaseModule {
                         height: AX.height
                     })
                 }
-            })
-        })
+            }
+        }
 
         // y 축 비교,    
-        A.pointY.forEach( (AY, index) => {
-            B.pointY.forEach( (BY, targetIndex) => {
+        for(var index = 0, len = A.pointY.length; index < len; index++) {
+            var AY = A.pointY[index];
+
+            if (isUndefined(AY)) continue;            
+            
+            for(var targetIndex = 0, len = B.pointY.length; targetIndex < len; targetIndex++) {
+                var BY = B.pointY[targetIndex]
                 var tempDist = (AY.isCenter || BY.isCenter) ? ZERO_DIST : dist; 
 
                 // console.log('x축', AX.x, BX.x, Math.abs(AX.x - BX.x),  dist)
@@ -117,8 +125,8 @@ export default class GuideManager extends BaseModule {
                         height: AY.height
                     })
                 }
-            }) 
-        })
+            }
+        }
 
         return results;
     }
