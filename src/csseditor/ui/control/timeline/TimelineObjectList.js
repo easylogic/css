@@ -33,7 +33,7 @@ export default class TimelineObjectList extends UIElement {
 
         return EMPTY_STRING; 
     }
-    
+
     makeTimelineProperty (property, timeline, targetItem, index) {
         var sampleValue = PROPERTY_GET_DEFAULT_VALUE(property)
         var value = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue))
