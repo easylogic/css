@@ -2678,6 +2678,28 @@ html, body {
               margin-bottom: 2px; }
               .csseditor .sub-feature-control > .feature > .property-view > .property-item > .items > div > label {
                 width: 50px; }
+
+@-webkit-keyframes bounce-up-down {
+  0% {
+    -webkit-transform: translateY(-5px);
+            transform: translateY(-5px); }
+  50% {
+    -webkit-transform: translateY(0px);
+            transform: translateY(0px); }
+  100% {
+    -webkit-transform: translateY(-5px);
+            transform: translateY(-5px); } }
+
+@keyframes bounce-up-down {
+  0% {
+    -webkit-transform: translateY(-5px);
+            transform: translateY(-5px); }
+  50% {
+    -webkit-transform: translateY(0px);
+            transform: translateY(0px); }
+  100% {
+    -webkit-transform: translateY(-5px);
+            transform: translateY(-5px); } }
   .csseditor .timeline-view {
     position: absolute;
     -webkit-box-sizing: border-box;
@@ -2938,6 +2960,19 @@ html, body {
                   border-radius: 2px; }
                   .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end.selected {
                     background-color: #44d844; }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .start.selected:before, .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end.selected:before {
+                  content: '';
+                  display: inline-block;
+                  position: absolute;
+                  width: 8px;
+                  height: 5px;
+                  left: -2px;
+                  bottom: 12px;
+                  background-color: black;
+                  -webkit-clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                          clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                  -webkit-animation: bounce-up-down 1s infinite ease-in-out;
+                          animation: bounce-up-down 1s infinite ease-in-out; }
   .csseditor .gradient-type > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr; }

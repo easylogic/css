@@ -8,6 +8,15 @@ $timeline-keyframe-time-color: rgba($border-color, 0.7);
 $pointer-size: 10px;
 $timeline-bar-color: #95b6ff;
 $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
+$timeline-select-bounce-time: 1s;
+
+
+@keyframes bounce-up-down {
+    0% { transform: translateY(-5px)  }
+    50% { transform: translateY(0px) }
+    100% { transform: translateY(-5px) }
+}
+
 
 .timeline-view {
     position: absolute;
@@ -315,7 +324,24 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
                                 &.selected {
                                     background-color:darken( rgba(69, 216, 69, 1), 0.2);
                                 }
-                            }                            
+                            }          
+                            
+                            .start, .end {
+                                &.selected {
+                                    &:before {
+                                        content: '';
+                                        display: inline-block;
+                                        position: absolute;
+                                        width: 8px;
+                                        height: 5px;
+                                        left: -2px;
+                                        bottom: 12px;
+                                        background-color: black;
+                                        clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                                        animation: bounce-up-down $timeline-select-bounce-time infinite ease-in-out;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
