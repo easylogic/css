@@ -113,8 +113,8 @@ export default class ItemRecoverManager extends BaseModule {
         var newImageItem = this.get(newImageId);
         newImageItem.index = destItem.index - COPY_INDEX_DIST;
 
-        $store.run(ITEM_SET, sourceItem, true);
-        $store.run(ITEM_SORT, sourceId);
+        $store.run(ITEM_SET, newImageItem, true);
+        $store.run(ITEM_SORT, newImageId);
     }        
 
 

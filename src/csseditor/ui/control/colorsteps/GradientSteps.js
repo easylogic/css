@@ -9,7 +9,7 @@ import {
     CHANGE_SELECTION
 } from '../../../types/event';
 import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT, EMPTY_STRING } from '../../../../util/css/types';
-import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, CHECKER, LOAD } from '../../../../util/Event';
+import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, IF, LOAD } from '../../../../util/Event';
 import { ITEM_SET } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
@@ -471,7 +471,7 @@ export default class GradientSteps extends UIElement {
     } 
 
     // Event Bindings 
-    [POINTEREND('document') + CHECKER('isDownCheck')] (e) { 
+    [POINTEREND('document') + IF('isDownCheck')] (e) { 
         this.isDown = false       
         if (this.refs.$stepList) {
             this.refs.$stepList.removeClass('mode-drag')       
@@ -479,7 +479,7 @@ export default class GradientSteps extends UIElement {
         }
     }
 
-    [POINTERMOVE('document') + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + IF('isDownCheck')] (e) {
         this.refreshColorUI(e);
         this.refs.$stepList.addClass('mode-drag')
     }
@@ -488,7 +488,7 @@ export default class GradientSteps extends UIElement {
         return new Dom(e.target).hasClass('step');
     }
 
-    [POINTERSTART('$steps .step') + CHECKER('isNotDownCheck') + CHECKER('isStepElement')] (e) {
+    [POINTERSTART('$steps .step') + IF('isNotDownCheck') + IF('isStepElement')] (e) {
         e.preventDefault();
 
         this.isDown = true; 

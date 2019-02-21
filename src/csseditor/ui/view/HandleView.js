@@ -1,7 +1,7 @@
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
 import { ITEM_FOCUS } from '../../types/ItemTypes';
-import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CHECKER } from '../../../util/Event';
+import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, IF } from '../../../util/Event';
 import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_PAGE, SELECTION_AREA } from '../../types/SelectionTypes';
 
 export default class HandleView extends GradientView {
@@ -64,7 +64,7 @@ export default class HandleView extends GradientView {
         return !this.dragArea
     }
 
-    [POINTERSTART('$canvas') + CHECKER('hasNotDragArea') + CHECKER('isPageMode') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$canvas') + IF('hasNotDragArea') + IF('isPageMode') + IF('isNotDownCheck')] (e) {
         this.isDown = true; 
         this.xy = e.xy;
         this.targetXY = e.xy;        
@@ -73,12 +73,9 @@ export default class HandleView extends GradientView {
         this.dragArea = true;
         this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: 0px;height:0px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`)
         this.refs.$dragArea.show();
-        // console.log('b');        
     }     
     
-    [POINTERMOVE('document') + CHECKER('hasDragArea') + CHECKER('isDownCheck')] (e) {
-        // if (!this.xy) return;         
-        // this.refs.$page.addClass('moving');
+    [POINTERMOVE('document') + IF('hasDragArea') + IF('isDownCheck')] (e) {
         this.targetXY = e.xy;
         var toolSize = this.config('tool.size');
 
@@ -90,11 +87,9 @@ export default class HandleView extends GradientView {
         var x = Math.min(this.targetXY.x, this.xy.x) + toolSize['board.scrollLeft'] - offset.left;
         var y = Math.min(this.targetXY.y, this.xy.y) + toolSize['board.scrollTop'] - offset.top;
         this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: ${width}px;height:${height}px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`);
-
-        // console.log('c');
     }    
 
-    [POINTEREND('document') + CHECKER('hasDragArea') + CHECKER('isDownCheck')] (e) {
+    [POINTEREND('document') + IF('hasDragArea') + IF('isDownCheck')] (e) {
         this.isDown = false; 
         var toolSize = this.config('tool.size');
         var width = Math.abs(this.targetXY.x - this.xy.x)
@@ -128,16 +123,12 @@ export default class HandleView extends GradientView {
             this.run(ITEM_FOCUS, items[0]);                 
         }
 
-
         this.targetXY = null;
         this.xy = null;
-
-        // console.log('a');
 
         this.refs.$dragArea.hide();
         setTimeout(() => {
             this.dragArea = false;
         }, 100)
-
     }    
 }

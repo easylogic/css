@@ -1,24 +1,10 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
-import { 
-    CHANGE_EDITOR, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_TRANSFORM, 
-    CHANGE_SELECTION, 
-    CHANGE_LAYER_MOVE,
-    CHANGE_LAYER_ROTATE,
-    CHANGE_PAGE_SIZE,
-    CHANGE_IMAGE,
-    CHANGE_LAYER_BORDER
-} from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_TRANSFORM, CHANGE_SELECTION, CHANGE_LAYER_MOVE,CHANGE_LAYER_ROTATE,CHANGE_PAGE_SIZE,CHANGE_IMAGE,CHANGE_LAYER_BORDER} from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE, SEGMENT_TYPE_ROTATE } from '../../../../util/css/types';
-import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, CHECKER, LOAD } from '../../../../util/Event';
-import { defaultValue, isNotUndefined, clone, isArray } from '../../../../util/functions/func';
-import { 
-    ITEM_SET,
-    DEFAULT_TOOL_SIZE
-} from '../../../types/ItemTypes';
+import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, LOAD, IF } from '../../../../util/Event';
+import { defaultValue, isNotUndefined, isArray } from '../../../../util/functions/func';
+import { ITEM_SET,DEFAULT_TOOL_SIZE } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_TYPE, SELECTION_IS_NOT_EMPTY } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
@@ -337,7 +323,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy; 
     }
 
-    [POINTERSTART('$el [data-value]') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$el [data-value]') + IF('isNotDownCheck')] (e) {
         e.stopPropagation();
         this.activeButton = e.$delegateTarget;
         this.activeButton.addClass('active');
@@ -368,9 +354,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     }
 
-    [POINTERMOVE('document') + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + IF('isDownCheck')] (e) {
         this.targetXY = e.xy; 
-
         if (!this.xy) {
             return; 
         }
@@ -407,7 +392,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         return this.xy.x != e.xy.x || this.xy.y != e.xy.y; 
     }
 
-    [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
+    [POINTEREND('document') + IF('isDownCheck')] (e) {
 
         switch (this.currentType)  {
         case SEGMENT_TYPE_MOVE:  

@@ -1,7 +1,7 @@
 import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
 import { ITEM_SET } from "../csseditor/types/ItemTypes";
-import { TOOL_GET, TOOL_SET } from "../csseditor/types/ToolTypes";
+import { TOOL_SET } from "../csseditor/types/ToolTypes";
 import { keyEach } from "../util/functions/func";
 
 // const CHECK_STORE_PATTERN = /^@/

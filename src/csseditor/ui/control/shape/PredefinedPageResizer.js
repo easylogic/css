@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
-import { px, unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
-import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, CHECKER } from '../../../../util/Event';
+import { unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
+import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, IF } from '../../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_IS_PAGE } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { RESIZE_WINDOW } from '../../../types/ToolTypes';
@@ -160,7 +160,7 @@ export default class PredefinedPageResizer extends UIElement {
         return this.xy; 
     }    
 
-    [POINTERSTART('$el [data-value]') + CHECKER('isNotDownCheck')] (e) {
+    [POINTERSTART('$el [data-value]') + IF('isNotDownCheck')] (e) {
         e.stopPropagation();
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
@@ -170,13 +170,13 @@ export default class PredefinedPageResizer extends UIElement {
         this.height = unitValue(this.page.height)
     }
 
-    [POINTERMOVE('document') + DEBOUNCE(10) + CHECKER('isDownCheck')] (e) {
+    [POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck')] (e) {
         this.targetXY = e.xy; 
         this.resize();
 
     }
 
-    [POINTEREND('document') + CHECKER('isDownCheck')] (e) {
+    [POINTEREND('document') + IF('isDownCheck')] (e) {
         this.currentType = null; 
         this.xy = null 
         this.dispatch(HISTORY_PUSH, 'Resize a layer');        

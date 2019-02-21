@@ -1,9 +1,10 @@
 import { 
     stringUnit, valueUnit, percentUnit, EMPTY_STRING,
-    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING
+    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING, PROPERTY_DEFAULT_VALUE
 } from "./types";
 import { parseParamNumber } from "../filter/functions";
-import { defaultValue, isNotUndefined, get, isNumber, isUndefined, keyEach, isArray } from "../functions/func";
+import { defaultValue, isNotUndefined, get, isNumber, isUndefined, keyEach, isArray, cleanObject, combineKeyArray } from "../functions/func";
+import Timing from "../animation/Timing";
 
 export function IS_PAGE (item) { return item.itemType == ITEM_TYPE_PAGE }
 export function IS_LAYER (item) { return item.itemType == ITEM_TYPE_LAYER }
@@ -297,20 +298,22 @@ var ordering = {
 
 }
 
+const CSS_SORTING_FUNCTION = ( a, b ) => {
+    var aN = ordering[a] || Number.MAX_SAFE_INTEGER 
+    var bN = ordering[b] || Number.MAX_SAFE_INTEGER
+
+    if (aN == bN) return 0; 
+
+    return aN < bN ? -1 : 1; 
+}
+
 export function CSS_SORTING (style) {
 
     style = CSS_FILTERING(style);
 
     var keys = Object.keys(style);
 
-    keys.sort( ( a, b ) => {
-        var aN = ordering[a] || Number.MAX_SAFE_INTEGER 
-        var bN = ordering[b] || Number.MAX_SAFE_INTEGER
-
-        if (aN == bN) return 0; 
-
-        return aN < bN ? -1 : 1; 
-    })
+    keys.sort(CSS_SORTING_FUNCTION)
 
     var newStyle = {} 
     keys.forEach(key => {
@@ -752,4 +755,93 @@ export function generateImagePattern (images) {
     });
 
     return results;
+}
+
+
+
+
+export function LAYER_BORDER_PREVIEW (layer = null) {
+    var css = {}
+
+    css['box-sizing'] = layer.boxSizing || 'border-box';
+
+
+    var results = {
+        ...css, 
+        ...MAKE_BORDER_WIDTH(layer),
+        ...MAKE_BORDER_RADIUS(layer),
+        ...MAKE_BORDER_COLOR(layer),
+        ...MAKE_BORDER_STYLE(layer)
+    }
+
+    return CSS_TO_STRING(cleanObject(results));
+}
+
+
+export function LAYER_MAKE_FONT (layer) {
+    var results = {}
+
+    if (layer.color) {
+        results['color'] = layer.color;
+    }
+
+    if (layer.fontSize) {
+        results['font-size'] = stringUnit(layer.fontSize);
+    }
+
+    if (layer.fontFamily) {
+        results['font-family'] = layer.fontFamily;
+    }
+
+    if (layer.fontWeight) {
+        results['font-weight'] = layer.fontWeight;
+    }        
+
+    if (isNotUndefined(layer.lineHeight)) {
+        results['line-height']  = stringUnit(layer.lineHeight)
+    }
+
+    results['word-wrap'] = layer.wordWrap || 'break-word';
+    results['word-break'] = layer.wordBreak || 'break-word';
+
+    if (layer.clipText) {
+        results['color'] = 'transparent';
+        results['background-clip'] = 'text';
+        results['-webkit-background-clip'] = 'text';
+    }
+
+    return results;
+}
+
+
+export function LAYER_CACHE_TO_IMAGE_CSS (images) {    
+    var results = {}
+
+    images.forEach(item => {
+        var image = {...item.image, colorsteps: item.colorsteps}
+        var css = IMAGE_TO_CSS(image);
+
+
+        keyEach(css, (key, value) => {
+            if (!results[key]) {
+                results[key] = [] 
+            }
+
+            results[key].push(value);
+        })            
+    })
+
+    return combineKeyArray(results);
+}    
+
+export function PROPERTY_GET_DEFAULT_VALUE (property) {
+    return PROPERTY_DEFAULT_VALUE[property] || {defaultValue: 0, step: 1, min: -1000, max: 1000};
+}
+
+export function TIMING_GET_VALUE (keyframe, currentTime) {
+    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime)
+
+    var value = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * Timing[keyframe.timing](progress);
+    
+    return value; 
 }

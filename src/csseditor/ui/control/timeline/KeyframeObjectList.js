@@ -1,10 +1,9 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CHECKER, CLICK, ALT, WHEEL, SCROLL } from "../../../../util/Event";
-import { TIMELINE_TOTAL_WIDTH, TIMELINE_LIST } from "../../../types/TimelineTypes";
-import { CHANGE_EDITOR, ADD_TIMELINE, CHANGE_KEYFRAME, CHANGE_TOOL } from "../../../types/event";
+import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CLICK, ALT, IF } from "../../../../util/Event";
+import { TIMELINE_TOTAL_WIDTH, TIMELINE_LIST, TIMELINE_NOT_EXISTS_KEYFRAME, TIMELINE_MIN_TIME_IN_KEYFRAMES, TIMELINE_MAX_TIME_IN_KEYFRAMES } from "../../../types/TimelineTypes";
+import { CHANGE_EDITOR, ADD_TIMELINE, CHANGE_KEYFRAME, CHANGE_TOOL, CHANGE_KEYFRAME_SELECTION } from "../../../types/event";
 import { html } from "../../../../util/functions/func";
-import { IS_LAYER } from "../../../../util/css/make";
-import { stringUnit, pxUnit } from "../../../../util/css/types";
+import { stringUnit, pxUnit, PROPERTY_LIST, EMPTY_STRING, unitValue } from "../../../../util/css/types";
 import { ITEM_MAP_KEYFRAME_CHILDREN } from "../../../types/ItemSearchTypes";
 import { ITEM_ADD_KEYFRAME } from "../../../types/ItemCreateTypes";
 import { RESIZE_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
@@ -55,28 +54,28 @@ export default class KeyframeObjectList extends UIElement {
     makeTimelineRow (timeline, index) {
         var targetItem = this.get(timeline.targetId)
 
-        if (IS_LAYER(targetItem)) {
-            return this.makeTimelineObjectForLayer(timeline);
-        } 
-
-        return ''; 
+        return this.makeTimelineObject(timeline, targetItem); 
     }
 
     makeKeyFrameItem (keyframe, keyframeIndex, timeline) {
+        var msWidth = this.config('timeline.1ms.width');
+        var startTime = keyframe.startTime;
+        var endTime = keyframe.endTime;
+        var left = pxUnit(startTime * msWidth)
+        var width = pxUnit((endTime - startTime) * msWidth)
 
-        var left = pxUnit(keyframe.startTime * this.config('timeline.1ms.width'))
-        var width = pxUnit((keyframe.endTime - keyframe.startTime) * this.config('timeline.1ms.width'))
+        var nested = unitValue(width) < 1 ? 'nested' : EMPTY_STRING
 
         return `
         <div 
-            class='keyframe-item line' 
+            class='keyframe-item line ${nested}' 
             style='left: ${stringUnit(left)}; width: ${stringUnit(width)};' 
             keyframe-id="${keyframe.id}" 
             keyframe-property="${keyframe.property}"
         >
             <div class='bar'></div>
-            <div class='start' time="${keyframe.startTime}" value="${stringUnit(keyframe.startValue)}"></div>
-            <div class='end' time="${keyframe.endTime}" value="${stringUnit(keyframe.endValue)}"></div>
+            <div class='start' time="${startTime}"></div>
+            <div class='end' time="${endTime}"></div>
         </div>
         `
     }
@@ -91,31 +90,32 @@ export default class KeyframeObjectList extends UIElement {
             </div>`
     }
 
-    makeTimelineTransformProperty (timeline) {
-        return `
-        <div class='keyframe-collapse row' data-property='transform'></div>
-        <div class='keyframe-property-list' data-property='transform'>
-            ${this.makeKeyframeProperty('translateX', timeline)}
-            ${this.makeKeyframeProperty('translateY', timeline)}
-        </div>
-        `
-    }
 
-    makeTimelineProperty (timeline) {
-
+    makeTimelinePropertyGroup (timeline, targetItem) {
         this.updateKeyframeList(timeline);
 
-        return html`${[
-            this.makeTimelineTransformProperty(timeline)
-        ]}`
-    }
+        targetItem = targetItem || this.get(timeline.targetId)
+        var list = PROPERTY_LIST[targetItem.itemType] || []
 
-    makeTimelineObjectForLayer (timeline) {
+        return html`${list.map(it => {
+            return html`
+            <div class='keyframe-collapse row' data-property='${it.key}'></div>
+            <div class='keyframe-property-list' data-property='${it.key}'>
+                ${it.properties.map(property => {
+                    return this.makeKeyframeProperty(property, timeline)
+                })}
+            </div>            
+            `
+        })}`
+        
+    }    
+
+    makeTimelineObject (timeline, targetItem) {
 
         return `
             <div class='keyframe-object' data-type='layer' data-timeline-id='${timeline.id}'>
                 <div class='keyframe-title row'></div>
-                <div class='keyframe-group'>${this.makeTimelineProperty(timeline)}</div>
+                <div class='keyframe-group'>${this.makeTimelinePropertyGroup(timeline, targetItem)}</div>
             </div>
         `
     }    
@@ -134,8 +134,7 @@ export default class KeyframeObjectList extends UIElement {
         var $t = this.$el.$(`.keyframe-object[data-timeline-id="${timelineId}"]`);
 
         if ($t) {
-            var htmlString = this.makeTimelineProperty(timeline);
-            $t.$('.keyframe-group').html(htmlString)
+            $t.$('.keyframe-group').html(this.makeTimelinePropertyGroup(timeline))
         }
     }
 
@@ -148,29 +147,31 @@ export default class KeyframeObjectList extends UIElement {
     }
 
     [POINTERSTART('$el .bar') + SELF] (e) {
+        this.msWidth = this.config('timeline.1ms.width')
         this.selectedClass = 'bar'
         this.selectedElement = e.$delegateTarget.parent()
         this.selectedStartX  = this.selectedElement.cssFloat('left');
         this.selectedStartWidth  = this.selectedElement.cssFloat('width');
         this.selectedX = this.selectedStartX
         this.selectedWidth = this.selectedStartWidth
+        this.selectedId = this.selectedElement.attr('keyframe-id')
 
         this.xy = e.xy; 
         this.minX = 0; 
         this.maxX = 10000; 
 
-        var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'))
-        if (selectedKeyframe.prevId) {
-            this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
-        }
+        var minTime = this.read(TIMELINE_MIN_TIME_IN_KEYFRAMES, this.selectedId)
+        this.minX = minTime * this.msWidth;
 
-        if (selectedKeyframe.nextId) {
-            this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
-        }
+        var maxTime = this.read(TIMELINE_MAX_TIME_IN_KEYFRAMES, this.selectedId)
+        this.maxX = maxTime * this.msWidth;
+
         // console.log('start', e.xy);
+        this.setCurrentKeyframeItem(this.selectedId, 'bar')
     }
 
     [POINTERSTART('$el .start') + SELF] (e) {
+        this.msWidth = this.config('timeline.1ms.width')        
         this.selectedClass = 'start'
         if (this.selectedEl) {
             this.selectedEl.removeClass('selected')
@@ -185,16 +186,19 @@ export default class KeyframeObjectList extends UIElement {
         this.selectedWidth = this.selectedStartWidth        
         this.xy = e.xy; 
         this.minX = 0;  
-        this.maxX = this.selectedEndX;     
+        this.maxX = this.selectedEndX;
+        this.selectedId = this.selectedElement.attr('keyframe-id')
 
-        var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'))
-        if (selectedKeyframe.prevId) {
-            this.minX = this.get(selectedKeyframe.prevId).endTime * this.config('timeline.1ms.width');
-        }                   
+
+        var minTime = this.read(TIMELINE_MIN_TIME_IN_KEYFRAMES, this.selectedId)
+        this.minX = minTime * this.msWidth;
+        
         // console.log('start', e.xy);
+        this.setCurrentKeyframeItem(this.selectedId, 'start')  
     }    
 
     [POINTERSTART('$el .end') + SELF] (e) {
+        this.msWidth = this.config('timeline.1ms.width')        
         this.selectedClass = 'end'
         if (this.selectedEl) {
             this.selectedEl.removeClass('selected')
@@ -210,42 +214,70 @@ export default class KeyframeObjectList extends UIElement {
         this.xy = e.xy; 
         this.minX = this.selectedStartX;
         this.maxX = 1000; 
+        this.selectedId = this.selectedElement.attr('keyframe-id')        
         // console.log('start', e.xy);
 
-        var selectedKeyframe = this.get(this.selectedElement.attr('keyframe-id'))
-        if (selectedKeyframe.nextId) {
-            this.maxX = this.get(selectedKeyframe.nextId).startTime * this.config('timeline.1ms.width');
-        }        
+        var maxTime = this.read(TIMELINE_MAX_TIME_IN_KEYFRAMES, this.selectedId)
+        this.maxX = maxTime * this.msWidth;   
+
+        this.setCurrentKeyframeItem(this.selectedId, 'end')
+
     }    
+
+    setCurrentKeyframeItem (id, type) {
+        this.initConfig('timeline.keyframe.selectedId', id);
+        this.initConfig('timeline.keyframe.selectedType', type)
+
+        if (type == 'start' || type == 'end') {
+            this.emit(CHANGE_KEYFRAME_SELECTION)
+        }
+    }
 
 
     isSelectedClass () {
-        return this.selectedClass != '';
+        return !!this.selectedClass;
     }
 
     updateKeyframeTime () {
-        var width = this.config('timeline.1ms.width')
         var id = this.selectedElement.attr('keyframe-id');
-        var startTime = this.selectedX / width
-        var endTime = startTime + (this.selectedWidth / width)
+        var startTime = this.selectedX / this.msWidth
+        var endTime = startTime + (this.selectedWidth / this.msWidth)
         this.commit(CHANGE_KEYFRAME, {id, startTime, endTime})
+    }
+
+    getTimeString (pixel, unit = 'ms') {
+        var time = Math.floor(pixel / this.msWidth)
+
+        return `${time}${unit}` 
     }
 
     setBarPosition (e) {
         var dx = (e.xy.x - this.xy.x);            
-        var newX = Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX - this.selectedStartWidth);
+        var newX = this.match1ms( Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX - this.selectedStartWidth), 10)
         this.selectedElement.px('left', newX)
+        this.selectedElement.attr('data-start-time', this.getTimeString(newX))        
+        this.selectedElement.attr('data-end-time', this.getTimeString(newX + this.selectedStartWidth))
         this.selectedX = newX
 
         this.updateKeyframeTime()
     }
 
+    match1ms (x, baseTime = 1) {
+        var width = this.msWidth * baseTime
+        var time = Math.floor(x / width)
+        return time * width;
+    }
+
     setStartPosition (e) {
         var dx = (e.xy.x - this.xy.x);
-        var newX = Math.min( Math.max(this.minX, this.selectedStartX + dx) , this.selectedEndX)
-        var newWidth = this.selectedStartWidth - (newX - this.selectedStartX)
+        var newX = this.match1ms(Math.min( Math.max(this.minX, this.selectedStartX + dx) , this.maxX), 10)
+
+        var newWidth = this.selectedEndX - newX
+
+        this.selectedElement.attr('data-start-time', this.getTimeString(newX))        
         this.selectedElement.px('left', newX)
         this.selectedElement.px('width', newWidth)
+        this.selectedElement.toggleClass('nested', newWidth < 1)
         this.selectedX = newX
         this.selectedWidth = newWidth
 
@@ -254,15 +286,17 @@ export default class KeyframeObjectList extends UIElement {
 
     setEndPosition (e) {
         var dx = (e.xy.x - this.xy.x);
-        var newX = Math.min( Math.max(this.minX, this.selectedEndX + dx) , this.maxX)
-        var newWidth =  Math.max(0, this.selectedStartWidth + (newX - this.selectedEndX) )
+        var newX = this.match1ms( Math.min( Math.max(this.minX, this.selectedEndX + dx) , this.maxX) , 10)
+        var newWidth =  Math.max(0, newX - this.selectedStartX)
+        this.selectedElement.attr('data-end-time', this.getTimeString(newX))
         this.selectedElement.px('width', newWidth)
+        this.selectedElement.toggleClass('nested', !newWidth)        
         this.selectedWidth = newWidth
 
         this.updateKeyframeTime()        
     }
 
-    [POINTERMOVE('document') + CHECKER('isSelectedClass')] (e) {
+    [POINTERMOVE('document') + IF('isSelectedClass')] (e) {
         if (this.selectedClass == 'bar') {
             this.setBarPosition(e);
         } else if (this.selectedClass == 'start' ) {
@@ -272,32 +306,33 @@ export default class KeyframeObjectList extends UIElement {
         }
     }
 
-    [POINTEREND('document')] (e) {
-        if (this.selectedClass) {
-            this.selectedClass = ''
-            this.selectedElement = null; 
-            // console.log('end', e.xy);    
-        }
+    [POINTEREND('document') + IF('isSelectedClass')] (e) {
+        this.selectedClass = null;
+        this.selectedElement.removeAttr('data-start-time')
+        this.selectedElement.removeAttr('data-end-time')            
+        this.selectedElement = null; 
     }
 
     [CLICK('$el .keyframe-property') + ALT] (e) {
         var [parentId, property] = e.$delegateTarget.attrs('data-timeline-id', 'data-property');
         var startTime = (e.xy.x - e.$delegateTarget.offset().left)  / this.config('timeline.1ms.width')
-        var endTime = startTime + 100; 
+        var endTime = startTime; 
 
-        this.run(ITEM_ADD_KEYFRAME, parentId, { property, startTime, endTime }, (keyframeId) => {
-            this.refreshKeyframe(keyframeId);
-        })
+        if (this.read(TIMELINE_NOT_EXISTS_KEYFRAME, parentId, property, startTime)) {
+            this.run(ITEM_ADD_KEYFRAME, parentId, { property, startTime, endTime }, (keyframeId) => {
+                this.refreshKeyframe(keyframeId);
+            })
+        } else {
+            alert('Time can not nested')
+        }
+
     }
 
     [EVENT(MOVE_TIMELINE)] () {
         this.setBackgroundGrid()
     }
 
-    [EVENT(
-        CHANGE_TOOL,
-        RESIZE_TIMELINE
-    )] (key, value) {
+    [EVENT( CHANGE_TOOL, RESIZE_TIMELINE )] () {
         this.refresh();
     }
 }

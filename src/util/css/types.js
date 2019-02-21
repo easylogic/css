@@ -250,3 +250,48 @@ export const SEGMENT_CHECK = {
     [SEGMENT_TYPE_BOTTOM_LEFT]: {yIndex : 2, xIndex: 0},
     [SEGMENT_TYPE_BOTTOM_RIGHT]: {yIndex : 2, xIndex: 2}
 }
+
+
+export const LAYER_TRANSFORM_PROPERTY = [
+    'translateX',
+    'translateY',
+    'rotate',
+    'skewX',
+    'skewY',
+    'scale' 
+]
+
+export const LAYER_TRANSFORM_3D_PROPERTY = [
+    'translateZ',
+    'perspective',
+    'rotateX',
+    'rotateY',
+    'rotateZ',
+    'scaleX',
+    'scaleY',
+    'scaleZ'      
+]
+
+export const PROPERTY_LIST = {
+    [ITEM_TYPE_LAYER]: [
+        { key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY},
+        { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY},
+    ]
+}
+
+export  const PROPERTY_DEFAULT_VALUE = {
+    'translateX' : { defaultValue: 0, min: -10000, max: 10000 },
+    'translateY' : { defaultValue: 0, min: -10000, max: 10000 },
+    'rotate' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'skewX' : { defaultValue: 0, min: -1000, max: 1000 },
+    'skewY' : { defaultValue: 0, min: -1000, max: 1000 },
+    'scale' : { defaultValue: 1, min: -10, max: 10, step: 0.01 },
+    'translateZ' : { defaultValue: 0, min: -10000, max: 10000 },
+    'perspective' : { defaultValue: 0, min: -10000, max: 10000 },
+    'rotateX' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'rotateY' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'rotateZ' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
+    'scaleX' : { defaultValue: 1, min: -10, max: 10, step: 0.01 },
+    'scaleY' : { defaultValue: 1, min: -10, max: 10, step: 0.01 },
+    'scaleZ' : { defaultValue: 1, min: -10, max: 10, step: 0.01 }       
+}

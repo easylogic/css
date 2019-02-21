@@ -1,6 +1,8 @@
 $timeline-property-width: 300px;
-$timeline-title-padding: 50px;
-$timeline-row-height: 30px;
+$timeline-title-padding: 30px;
+$timeline-top-height: 40px;
+$timeline-header-height: 30px;
+$timeline-row-height: 24px;
 $timeline-keyframe-border-color: rgba($border-color, 0.3);
 $timeline-keyframe-time-color: rgba($border-color, 0.7);
 $pointer-size: 10px;
@@ -18,10 +20,46 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
     display: flex; 
     flex-direction: column;
 
+    > .timeline-top {
+        position: relative;
+        flex: none;
+        height: $timeline-top-height;
+
+        .timeline-toolbar {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            top: 0px;
+            width: $timeline-property-width;
+            box-sizing: border-box;
+            border-right:1px solid $border-color;            
+            border-bottom: 1px solid $border-color;        
+            line-height: 1.6;
+            padding-left: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;    
+
+            .title {
+                cursor:pointer;
+            }
+        }
+
+        .keyframe-toolbar {
+            position: absolute;
+            left: $timeline-property-width;
+            bottom: 0px;
+            top: 0px;
+            right: 0px;
+            overflow: hidden;
+            box-sizing: border-box;
+            border-bottom: 1px solid $border-color;
+        }
+    }
+
     > .timeline-header {
         position: relative;
         flex: none;
-        height: $timeline-row-height;
+        height: $timeline-header-height;
 
         .timeline-toolbar {
             position: absolute;
@@ -79,7 +117,7 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
             box-sizing: border-box;
             display: block;
             height: $timeline-row-height;
-            padding: 5px 0px;
+            padding: 2px 0px;
             font-size: 11px;
             background-position: 0% 100%;
             background-size: 100% 1px;
@@ -119,13 +157,14 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
                                 margin-right: 20px;
                                 display: inline-block;
                                 vertical-align: middle;
+                                width: 60px;
                             }
 
                             input, select {
                                 appearance: none;
                                 background-color: transparent;
                                 display: inline-block;
-                                height: 20px;
+                                height: 18px;
                                 border: 1px solid $border-color;
                                 vertical-align: middle;
                                 box-sizing: border-box;
@@ -181,6 +220,51 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
                             box-sizing: border-box;
                             z-index: 1;
 
+                            &[data-start-time] {
+                                &:before {
+                                    position: absolute;
+                                    content: attr(data-start-time);
+                                    display: inline-block;
+                                    color: white;
+                                    background-color: rgba(#333, 0.8); 
+                                    border-radius: 3px;
+                                    height: 20px;
+                                    min-width: 80px;
+                                    text-align: center;
+                                    padding: 2px 10px;
+                                    box-sizing: border-box;
+                                    transform: translateX(-50%) translateY(-30px);
+                                }
+                            }
+
+                            &[data-end-time] {
+                                &:after {
+                                    position: absolute;
+                                    content: attr(data-end-time);
+                                    display: inline-block;
+                                    color: white;
+                                    background-color: rgba(#333, 0.8); 
+                                    left: 100%;
+                                    height: 20px;
+                                    min-width: 80px;
+                                    text-align: center;
+                                    padding: 2px 10px;
+                                    box-sizing: border-box;
+                                    border-radius: 3px;
+                                    transform: translateX(-50%) translateY(-30px);
+                                }
+                            }                            
+
+                            &.nested {
+                                .start {
+                                    transform: translateX(-50%) translateY(-90%);
+                                }
+
+                                .end {
+                                    transform: translateX(-50%) translateY(-10%);
+                                }                                
+                            }
+
                             &:nth-child(even) {
                                 top: auto; 
                                 bottom: 7px;
@@ -192,8 +276,8 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
                                 right: 0px;
                                 top: 50%;
                                 transform: translateY(-50%);
-                                height: 3px;
-                                background-color: $timeline-bar-color;
+                                height: 4px;
+                                background-color: rgba($timeline-bar-color, 0.8);
                                 cursor: move;      
                                 box-sizing: border-box;                          
                             }
@@ -203,19 +287,16 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
                                 left: 0px;
                                 top: 50%;                                
                                 transform: translateX(-50%) translateY(-50%);
-                                width: $pointer-size;
+                                width: 3px;
                                 height: $pointer-size;
                                 box-sizing: border-box;
                                 background-color: rgba(255, 0, 0, 1);
-                                // border: 1px solid white;
-                                box-shadow: 0 0 1px 1px $border-color;
-                                border-radius: 100%;
-                                z-index: 3;
+                                z-index: 2;
                                 cursor: w-resize;
+                                border-radius: 2px;
 
                                 &.selected {
-                                    width: $pointer-size * 1.4;
-                                    height: $pointer-size * 1.4;
+                                    background-color: darken( rgba(255, 0, 0, 1), 0.2) ;
                                 }                                
                             }
 
@@ -224,34 +305,20 @@ $timeline-keyframe-cursor-color: rgba(255, 0, 0, 0.5);
                                 left: 100%;
                                 top: 50%;
                                 transform: translateX(-50%) translateY(-50%);
-                                width: $pointer-size;
+                                width: 3px;
                                 height: $pointer-size;
                                 box-sizing: border-box;
                                 background-color: rgba(69, 216, 69, 1);
-                                // border: 1px solid white;
-                                box-shadow: 0 0 1px 1px white;
-                                border-radius: 100%;   
-                                z-index: 2;                                     
+                                z-index: 3;                                     
                                 cursor: e-resize;
-
+                                border-radius: 2px;
                                 &.selected {
-                                    width: $pointer-size * 1.4;
-                                    height: $pointer-size * 1.4;
+                                    background-color:darken( rgba(69, 216, 69, 1), 0.2);
                                 }
                             }                            
                         }
                     }
                 }
-            }
-
-            .keyframe-guide-line {
-                position: absolute;
-                left: 0px;
-                top: 0px;
-                right: 0px;
-                bottom: 0px;
-                box-sizing: border-box;
-                pointer-events: none;
             }
         }
 

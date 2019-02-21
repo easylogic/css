@@ -3,7 +3,7 @@ import Matrix from '../Matrix'
 import ImageFilter from './index' 
 import Color from '../Color'
 import { round } from '../functions/math';
-import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, WHITE_STRING } from '../css/types';
+import { UNIT_PERCENT_STRING, UNIT_PX_STRING, UNIT_EM_STRING, WHITE_STRING, EMPTY_STRING } from '../css/types';
 import { isFunction, isString, isNumber, isArray, keyMap, keyEach } from '../functions/func';
 
 let makeId = 0 
@@ -295,7 +295,7 @@ export function putBitmap(bitmap, subBitmap, area) {
 
 export function parseParamNumber (param, callback) {
     if (isString( param )) {
-        param = param.replace(/deg|px|\%|em/g, '')
+        param = param.replace(/deg|px|\%|em/g, EMPTY_STRING)
     }
     if (isFunction( callback )) {
         return callback(+param);

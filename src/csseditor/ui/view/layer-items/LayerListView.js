@@ -32,7 +32,7 @@ export default class LayerListView extends UIElement {
             <div class='tree-item image ${selected}' id="${item.id}" draggable="true" >
                 <div class="item-title">&lt;${item.type}&gt;</div>                
                 <div class='item-tools'>
-                    <button type="button" class='visible-item ${item.visible ? 'visible': ''}' item-id='${item.id}' title="Visible"></button>
+                    <button type="button" class='visible-item ${item.visible ? 'visible': EMPTY_STRING}' item-id='${item.id}' title="Visible"></button>
                     <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
                     <button type="button" class='copy-image-item' item-id='${item.id}' title="Copy">+</button>
                 </div>            
@@ -43,12 +43,14 @@ export default class LayerListView extends UIElement {
     
     makeItemNodeLayer (item, index = 0) {
         var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING; 
+        var lock = item.lock ? 'lock': EMPTY_STRING
+        var visible = item.visible ? 'visible': EMPTY_STRING
         return html`
             <div class='tree-item ${selected}' id="${item.id}" item-type='layer' draggable="true">
                 <div class="item-title"> ${index+1}. ${item.name || `Layer `}</div>
                 <div class='item-tools'>
-                    <button type="button" class='lock-item ${item.lock ? 'lock': ''}' item-id='${item.id}' title="Lock a layer"></button>                
-                    <button type="button" class='visible-item ${item.visible ? 'visible': ''}' item-id='${item.id}' title="Visible"></button>
+                    <button type="button" class='lock-item ${lock}' item-id='${item.id}' title="Lock a layer"></button>                
+                    <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible"></button>
                     <button type="button" class='delete-item' item-id='${item.id}' title="Remove">&times;</button>
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">+</button>
                 </div>                

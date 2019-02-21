@@ -2,7 +2,16 @@ import BaseModule from "../../colorpicker/BaseModule";
 import { isFunction, isUndefined, clone } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
-import { TOOL_COLOR_SOURCE, TOOL_GET, TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR, TOOL_SET, TOOL_TOGGLE, TOOL_SAVE_DATA, TOOL_RESTORE_DATA } from "../types/ToolTypes";
+import { 
+    TOOL_COLOR_SOURCE, 
+    TOOL_GET, 
+    TOOL_SET_COLOR_SOURCE, 
+    TOOL_CHANGE_COLOR, 
+    TOOL_SET, 
+    TOOL_TOGGLE, 
+    TOOL_SAVE_DATA, 
+    TOOL_RESTORE_DATA 
+} from "../types/ToolTypes";
 import { CHANGE_TOOL } from "../types/event";
 
 export default class ToolManager extends BaseModule {
@@ -18,12 +27,15 @@ export default class ToolManager extends BaseModule {
             'guide.only': false,            
             'guide.angle': true,
             'guide.position': true,
+            'timeline.time.format': 'default',  // default: 1s, time:  00:00:00.000s
             'timeline.1ms.width.original': 0.3,
             'timeline.1ms.width': 0.3,
             'timeline.scroll.left': 0,
             'timeline.keyframe.width': 0,
             'timeline.keyframe.rect': {},
-            'timeline.cursor.time': 0
+            'timeline.cursor.time': 0,
+            'timeline.keyframe.selectedId': EMPTY_STRING,
+            'timeline.keyframe.selectedType': EMPTY_STRING,
         }
 
         this.$store.toolStack = []

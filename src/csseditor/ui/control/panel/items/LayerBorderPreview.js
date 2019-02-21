@@ -4,7 +4,7 @@ import { CHANGE_SELECTION, CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHA
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { SELECTION_CURRENT_LAYER } from '../../../../types/SelectionTypes';
 import { html } from '../../../../../util/functions/func';
-import { LAYER_BORDER_PREVIEW } from '../../../../types/LayerTypes';
+import { LAYER_BORDER_PREVIEW } from '../../../../../util/css/make';
 
 export default class LayerBorderPreview extends BasePropertyItem {
 
@@ -23,7 +23,7 @@ export default class LayerBorderPreview extends BasePropertyItem {
     refresh () {
 
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            this.refs.$borderPreview.cssText(`width: 100%;height: 100px; ${this.read(LAYER_BORDER_PREVIEW, layer)}`)
+            this.refs.$borderPreview.cssText(`width: 100%;height: 100px; ${LAYER_BORDER_PREVIEW(layer)}`)
         })
 
     }

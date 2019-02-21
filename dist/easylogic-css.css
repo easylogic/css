@@ -2693,6 +2693,38 @@ html, body {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column; }
+    .csseditor .timeline-view > .timeline-top {
+      position: relative;
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none;
+      height: 40px; }
+      .csseditor .timeline-view > .timeline-top .timeline-toolbar {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        top: 0px;
+        width: 300px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-right: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc;
+        line-height: 1.6;
+        padding-left: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px; }
+        .csseditor .timeline-view > .timeline-top .timeline-toolbar .title {
+          cursor: pointer; }
+      .csseditor .timeline-view > .timeline-top .keyframe-toolbar {
+        position: absolute;
+        left: 300px;
+        bottom: 0px;
+        top: 0px;
+        right: 0px;
+        overflow: hidden;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-bottom: 1px solid #cccccc; }
     .csseditor .timeline-view > .timeline-header {
       position: relative;
       -webkit-box-flex: 0;
@@ -2747,8 +2779,8 @@ html, body {
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         display: block;
-        height: 30px;
-        padding: 5px 0px;
+        height: 24px;
+        padding: 2px 0px;
         font-size: 11px;
         background-position: 0% 100%;
         background-size: 100% 1px;
@@ -2768,22 +2800,23 @@ html, body {
         .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object {
           position: relative; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-object-title {
-            padding-left: 25px; }
+            padding-left: 15px; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .property-title {
-            padding-left: 75px; }
+            padding-left: 45px; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property {
-            padding-left: 125px; }
+            padding-left: 75px; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property label {
               margin-right: 20px;
               display: inline-block;
-              vertical-align: middle; }
+              vertical-align: middle;
+              width: 60px; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property input, .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property select {
               -webkit-appearance: none;
                  -moz-appearance: none;
                       appearance: none;
               background-color: transparent;
               display: inline-block;
-              height: 20px;
+              height: 18px;
               border: 1px solid #cccccc;
               vertical-align: middle;
               -webkit-box-sizing: border-box;
@@ -2821,6 +2854,43 @@ html, body {
                 -webkit-box-sizing: border-box;
                         box-sizing: border-box;
                 z-index: 1; }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item[data-start-time]:before {
+                  position: absolute;
+                  content: attr(data-start-time);
+                  display: inline-block;
+                  color: white;
+                  background-color: rgba(51, 51, 51, 0.8);
+                  border-radius: 3px;
+                  height: 20px;
+                  min-width: 80px;
+                  text-align: center;
+                  padding: 2px 10px;
+                  -webkit-box-sizing: border-box;
+                          box-sizing: border-box;
+                  -webkit-transform: translateX(-50%) translateY(-30px);
+                          transform: translateX(-50%) translateY(-30px); }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item[data-end-time]:after {
+                  position: absolute;
+                  content: attr(data-end-time);
+                  display: inline-block;
+                  color: white;
+                  background-color: rgba(51, 51, 51, 0.8);
+                  left: 100%;
+                  height: 20px;
+                  min-width: 80px;
+                  text-align: center;
+                  padding: 2px 10px;
+                  -webkit-box-sizing: border-box;
+                          box-sizing: border-box;
+                  border-radius: 3px;
+                  -webkit-transform: translateX(-50%) translateY(-30px);
+                          transform: translateX(-50%) translateY(-30px); }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item.nested .start {
+                  -webkit-transform: translateX(-50%) translateY(-90%);
+                          transform: translateX(-50%) translateY(-90%); }
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item.nested .end {
+                  -webkit-transform: translateX(-50%) translateY(-10%);
+                          transform: translateX(-50%) translateY(-10%); }
                 .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item:nth-child(even) {
                   top: auto;
                   bottom: 7px; }
@@ -2831,8 +2901,8 @@ html, body {
                   top: 50%;
                   -webkit-transform: translateY(-50%);
                           transform: translateY(-50%);
-                  height: 3px;
-                  background-color: #95b6ff;
+                  height: 4px;
+                  background-color: rgba(149, 182, 255, 0.8);
                   cursor: move;
                   -webkit-box-sizing: border-box;
                           box-sizing: border-box; }
@@ -2842,47 +2912,32 @@ html, body {
                   top: 50%;
                   -webkit-transform: translateX(-50%) translateY(-50%);
                           transform: translateX(-50%) translateY(-50%);
-                  width: 10px;
+                  width: 3px;
                   height: 10px;
                   -webkit-box-sizing: border-box;
                           box-sizing: border-box;
                   background-color: red;
-                  -webkit-box-shadow: 0 0 1px 1px #cccccc;
-                          box-shadow: 0 0 1px 1px #cccccc;
-                  border-radius: 100%;
-                  z-index: 3;
-                  cursor: w-resize; }
+                  z-index: 2;
+                  cursor: w-resize;
+                  border-radius: 2px; }
                   .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .start.selected {
-                    width: 14px;
-                    height: 14px; }
+                    background-color: #fe0000; }
                 .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end {
                   position: absolute;
                   left: 100%;
                   top: 50%;
                   -webkit-transform: translateX(-50%) translateY(-50%);
                           transform: translateX(-50%) translateY(-50%);
-                  width: 10px;
+                  width: 3px;
                   height: 10px;
                   -webkit-box-sizing: border-box;
                           box-sizing: border-box;
                   background-color: #45d845;
-                  -webkit-box-shadow: 0 0 1px 1px white;
-                          box-shadow: 0 0 1px 1px white;
-                  border-radius: 100%;
-                  z-index: 2;
-                  cursor: e-resize; }
+                  z-index: 3;
+                  cursor: e-resize;
+                  border-radius: 2px; }
                   .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end.selected {
-                    width: 14px;
-                    height: 14px; }
-        .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-guide-line {
-          position: absolute;
-          left: 0px;
-          top: 0px;
-          right: 0px;
-          bottom: 0px;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          pointer-events: none; }
+                    background-color: #44d844; }
   .csseditor .gradient-type > div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr; }

@@ -13,9 +13,7 @@ export default class ImageResource extends BasePropertyItem {
         return `
             <div class='property-item image-resource show'>
                 <div class='title'>Image Resource</div>            
-                <div class='items' ref="$imageList">
-
-                </div>
+                <div class='items' ref="$imageList"></div>
             </div>
         `
     }

@@ -97,6 +97,8 @@ export const CHECKER = (value, split = CHECK_SAPARATOR) => {
     return new EventChecker(value, split);
 }
 
+export const IF = CHECKER;
+
 export const KEY_ALT = 'ALT'
 export const KEY_SHIFT = 'SHIFT'
 export const KEY_META = 'META'
@@ -107,25 +109,23 @@ export const KEY_ARROW_DOWN = 'ArrowDown'
 export const KEY_ARROW_LEFT = 'ArrowLeft'
 export const KEY_ARROW_RIGHT = 'ArrowRight'
 export const KEY_ENTER = 'Enter'
-
 export const KEY_SPACE = 'Space'
-
-
-export const ALT = CHECKER(KEY_ALT)
-export const SHIFT = CHECKER(KEY_SHIFT)
-export const META = CHECKER(KEY_META)
-export const CONTROL = CHECKER(KEY_CONTROL)
 
 export const ARROW_UP = CHECKER(KEY_ARROW_UP)
 export const ARROW_DOWN = CHECKER(KEY_ARROW_DOWN)
 export const ARROW_LEFT = CHECKER(KEY_ARROW_LEFT)
 export const ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT)
 export const ENTER = CHECKER(KEY_ENTER)
-
 export const SPACE = CHECKER(KEY_SPACE)
 
+export const ALT = CHECKER('isAltKey')
+export const SHIFT = CHECKER('isShiftKey')
+export const META = CHECKER('isMetaKey')
+export const CONTROL = CHECKER('isCtrlKey')
 export const SELF = CHECKER('self');
 export const CAPTURE = CHECKER('capture');
+export const FIT = CHECKER('fit')
+export const PASSIVE = CHECKER('passive');
 
 export const DEBOUNCE = (debounce = 100) => {
     return CHECKER(`debounce(${debounce})`)

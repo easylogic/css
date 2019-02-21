@@ -109,9 +109,7 @@ export default class OrderingManager extends BaseModule {
 
     left ($store) {
         var items = $store.read(SELECTION_CURRENT);
-        var x = Math.min(...items.map(item => {
-            return unitValue(item.x)
-        }));
+        var x = Math.min(...items.map(item => unitValue(item.x)));
 
         items.forEach(item => {
             $store.run(ITEM_SET, {id: item.id, x: pxUnit(x)})
@@ -121,9 +119,7 @@ export default class OrderingManager extends BaseModule {
     center ($store) {
         var items = $store.read(SELECTION_CURRENT);
         
-        var x = Math.min(...items.map(item => {
-            return unitValue(item.x)
-        }));
+        var x = Math.min(...items.map(item => unitValue(item.x)));
 
         var x2 = Math.max(...items.map(item => {
             return unitValue(item.x) + unitValue(item.width);

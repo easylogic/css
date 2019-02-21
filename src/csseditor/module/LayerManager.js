@@ -1,15 +1,15 @@
 import BaseModule from "../../colorpicker/BaseModule";
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
-import { stringUnit, EMPTY_STRING, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
-import { isNotUndefined, isArray, cleanObject, combineKeyArray, keyEach } from "../../util/functions/func";
+import { EMPTY_STRING, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
+import { isArray, cleanObject, combineKeyArray, keyEach } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_CACHE_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_FONT, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_MAP_IMAGE, LAYER_BORDER_PREVIEW } from "../types/LayerTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_MAP_IMAGE} from "../types/LayerTypes";
 import { ITEM_FILTER_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
-import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, PATTERN_MAKE, generateImagePattern } from "../../util/css/make";
+import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, generateImagePattern, LAYER_MAKE_FONT, LAYER_CACHE_TO_IMAGE_CSS } from "../../util/css/make";
 import { ITEM_CONVERT_STYLE } from "../types/ItemTypes";
 
 export default class LayerManager extends BaseModule {
@@ -86,26 +86,6 @@ export default class LayerManager extends BaseModule {
     }
 
 
-    [GETTER(LAYER_CACHE_TO_IMAGE_CSS)] ($store, images) {    
-        var results = {}
-
-        images.forEach(item => {
-            var image = {...item.image, colorsteps: item.colorsteps}
-            var css = IMAGE_TO_CSS(image);
-
-
-            keyEach(css, (key, value) => {
-                if (!results[key]) {
-                    results[key] = [] 
-                }
-
-                results[key].push(value);
-            })            
-        })
-
-        return combineKeyArray(results);
-    }    
-
     [GETTER(LAYER_IMAGE_TO_IMAGE_CSS)] ($store, image) {    
         var images = generateImagePattern([image]);        
         return CSS_GENERATE(this.generateImageCSS($store, images));
@@ -174,41 +154,6 @@ export default class LayerManager extends BaseModule {
 
     [GETTER(LAYER_MAKE_BOXSHADOW)] ($store, layer, isExport) {
         return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_BOXSHADOW, isExport);
-    }
-
-    [GETTER(LAYER_MAKE_FONT)] ($store, layer, isExport) {
-        var results = {}
-
-        if (layer.color) {
-            results['color'] = layer.color;
-        }
-
-        if (layer.fontSize) {
-            results['font-size'] = stringUnit(layer.fontSize);
-        }
-
-        if (layer.fontFamily) {
-            results['font-family'] = layer.fontFamily;
-        }
-
-        if (layer.fontWeight) {
-            results['font-weight'] = layer.fontWeight;
-        }        
-
-        if (isNotUndefined(layer.lineHeight)) {
-            results['line-height']  = stringUnit(layer.lineHeight)
-        }
-
-        results['word-wrap'] = layer.wordWrap || 'break-word';
-        results['word-break'] = layer.wordBreak || 'break-word';
-
-        if (layer.clipText) {
-            results['color'] = 'transparent';
-            results['background-clip'] = 'text';
-            results['-webkit-background-clip'] = 'text';
-        }
-
-        return results;
     }
 
     [GETTER(LAYER_MAKE_IMAGE)] ($store, layer, isExport) {
@@ -288,7 +233,7 @@ export default class LayerManager extends BaseModule {
             ...$store.read(LAYER_MAKE_CLIPPATH, layer),
             ...$store.read(LAYER_MAKE_FILTER, layer),
             ...$store.read(LAYER_MAKE_BACKDROP, layer),            
-            ...$store.read(LAYER_MAKE_FONT, layer),            
+            ...LAYER_MAKE_FONT(layer),              
             ...$store.read(LAYER_MAKE_BOXSHADOW, layer),
             ...$store.read(LAYER_MAKE_TEXTSHADOW, layer),
             ...imageCSS
@@ -334,31 +279,13 @@ export default class LayerManager extends BaseModule {
             ...$store.read(LAYER_MAKE_CLIPPATH, layer),
             ...$store.read(LAYER_MAKE_FILTER, layer),
             ...$store.read(LAYER_MAKE_BACKDROP, layer),            
-            ...$store.read(LAYER_MAKE_FONT, layer),            
+            ...LAYER_MAKE_FONT(layer),            
             ...$store.read(LAYER_MAKE_BOXSHADOW, layer),
             ...$store.read(LAYER_MAKE_TEXTSHADOW, layer),
-            ...$store.read(LAYER_CACHE_TO_IMAGE_CSS, layer.images)
+            ...LAYER_CACHE_TO_IMAGE_CSS(layer.images)
         }
 
         return cleanObject(results);
-    }
-
-
-    [GETTER(LAYER_BORDER_PREVIEW)] ($store, layer = null) {
-        var css = {}
-
-        css['box-sizing'] = 'border-box';
-
-
-        var results = {
-            ...css, 
-            ...MAKE_BORDER_WIDTH(layer),
-            ...MAKE_BORDER_RADIUS(layer),
-            ...MAKE_BORDER_COLOR(layer),
-            ...MAKE_BORDER_STYLE(layer)
-        }
-
-        return CSS_TO_STRING(cleanObject(results));
     }
 
 }

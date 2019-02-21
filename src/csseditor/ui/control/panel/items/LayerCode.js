@@ -55,7 +55,7 @@ export default class LayerCode extends BasePropertyItem {
                 value = reverseMatches(str, ret.matches)
             }            
 
-            var isShort = '';
+            var isShort = EMPTY_STRING;
 
             if (value.length < 20) {
                 isShort = 'short';

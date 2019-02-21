@@ -1,5 +1,5 @@
 import { px, EMPTY_STRING, WHITE_STRING } from "./css/types";
-import { isString, isUndefined, isNotString, isFunction, keyEach } from "./functions/func";
+import { isString, isUndefined, isNotString, isFunction, keyEach, isNotUndefined } from "./functions/func";
 
 let counter = 0;
 let cached = [];
@@ -89,40 +89,42 @@ export default class Dom {
     
     removeClass (...args) {
 
+        this.el.classList.remove(...args);
+
+        /*
         if (this.el.className) {
             var className = this.el.className;
 
-            args.forEach(cls => {
-                className = ((` ${className} `).replace(` ${cls} `, WHITE_STRING)).trim();    
-            })
+            if ($1) { className = ((` ${className} `).replace(` ${$1} `, WHITE_STRING)).trim();    }
+            if ($2) { className = ((` ${className} `).replace(` ${$2} `, WHITE_STRING)).trim();    }
+            if ($3) { className = ((` ${className} `).replace(` ${$3} `, WHITE_STRING)).trim();    }
+            if ($4) { className = ((` ${className} `).replace(` ${$4} `, WHITE_STRING)).trim();    }
+            if ($5) { className = ((` ${className} `).replace(` ${$5} `, WHITE_STRING)).trim();    }
 
             this.el.className = className;
         }
+        */
 
         return this; 
     }
     
     hasClass (cls) {
-        if (!this.el.className)
-        {
-            return false;
-        } else {
-            var newClass = ` ${this.el.className} `;
-            return newClass.indexOf(` ${cls} `) > -1;
-        }
+        if (!this.el.classList) return false;
+        return this.el.classList.contains(cls);
     }
     
-    addClass (cls) {
-        if (!this.hasClass(cls)) {
-            this.el.className = `${this.el.className} ${cls}`;
-        }
+    addClass (...args) {
+        this.el.classList.add(...args);
 
         return this; 
     
     }
 
-    toggleClass (cls, isForce = false) {
+    toggleClass (cls, isForce) {
 
+        this.el.classList.toggle(cls, isForce);
+
+        /*
         if (arguments.length == 2) {
             if (isForce) {
                 this.addClass(cls)
@@ -136,13 +138,14 @@ export default class Dom {
                 this.addClass(cls);
             }
         }
+        */
 
 
     }
     
     html (html) {
 
-        if (arguments.length == 0) {
+        if (isUndefined(html)) {
             return this.el.innerHTML;
         }
 
@@ -219,7 +222,7 @@ export default class Dom {
     }
     
     text (value) {
-        if (arguments.length == 0) {
+        if (isUndefined(value)) {
             return this.el.textContent;
         } else {
 
@@ -246,9 +249,9 @@ export default class Dom {
      */
     
     css (key, value) {
-        if (arguments.length == 2) {
+        if (isNotUndefined(key) && isNotUndefined(value)) {
             this.el.style[key] = value;
-        } else if (arguments.length == 1) {
+        } else if (isNotUndefined(key)) {
     
             if (isString( key )) {
                 return getComputedStyle(this.el)[key];
@@ -275,9 +278,12 @@ export default class Dom {
     }
 
     cssArray (arr) {
-        for (var i = 0, len = arr.length; i < len; i += 2) {
-            this.el.style[arr[i]] = arr[i+1];
-        }
+
+        if (arr[0]) this.el.style[arr[0]] = arr[1]
+        if (arr[2]) this.el.style[arr[2]] = arr[3]
+        if (arr[4]) this.el.style[arr[4]] = arr[5]
+        if (arr[6]) this.el.style[arr[6]] = arr[7]
+        if (arr[8]) this.el.style[arr[8]] = arr[9]
 
         return this; 
     }
@@ -380,9 +386,9 @@ export default class Dom {
     }
     
     val (value) {
-        if (arguments.length == 0) {
+        if (isUndefined(value)) {
             return this.el.value;
-        } else if (arguments.length == 1) {
+        } else if (isNotUndefined(value)) {
 
             var tempValue = value; 
 
@@ -582,6 +588,14 @@ export default class Dom {
         ctx.lineTo(x2, y2);
         ctx.stroke();
         ctx.closePath();
+    }
+
+    drawCircle (cx, cy, r) {
+        var ctx = this.context();        
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
     }
 
     drawText (x, y, text) {
