@@ -109,7 +109,7 @@
             box-sizing: border-box;
     border: 1px solid #ececec; }
     .codemirror-colorpicker .colorpicker-body .color-tab.xd {
-      height: 250px; }
+      height: 200px; }
     .codemirror-colorpicker .colorpicker-body .color-tab .color-tab-header {
       -webkit-box-flex: 0;
           -ms-flex: none;
@@ -1089,7 +1089,7 @@
     margin-top: 10px;
     margin-left: 6px;
     width: 170px;
-    height: 170px;
+    height: 120px;
     vertical-align: middle;
     border-radius: 3px;
     overflow: hidden;
@@ -1103,7 +1103,7 @@
       -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
               box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black; }
   .codemirror-colorpicker.xd-tab .control {
-    height: 170px;
+    height: 120px;
     padding: 0px;
     vertical-align: middle;
     display: inline-block;
@@ -1214,12 +1214,86 @@ html, body {
     left: 0px;
     top: 0px;
     right: 0px;
-    bottom: 0px; }
-    .csseditor .layout-main.show-timeline .layout-left, .csseditor .layout-main.show-timeline .layout-right, .csseditor .layout-main.show-timeline .layout-body {
-      bottom: 300px; }
+    bottom: 0px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column; }
     .csseditor .layout-main.show-timeline .layout-footer {
-      display: block;
       height: 299px; }
+    .csseditor .layout-main .layout-header {
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none;
+      height: 66px;
+      overflow: hidden;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      border-bottom: 1px solid #cccccc;
+      position: relative; }
+      .csseditor .layout-main .layout-header .page-tab-menu {
+        -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+                flex: 1 1 auto;
+        display: block;
+        position: relative; }
+    .csseditor .layout-main .layout-footer {
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none;
+      height: 29px;
+      overflow: hidden;
+      border-top: 1px solid #cccccc;
+      -webkit-transition: all 0.15s linear;
+      transition: all 0.15s linear;
+      position: relative;
+      pointer-events: all; }
+    .csseditor .layout-main .layout-middle {
+      -webkit-box-flex: 1;
+          -ms-flex: 1 1 auto;
+              flex: 1 1 auto;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      height: 100%;
+      position: relative; }
+      .csseditor .layout-main .layout-middle .layout-right {
+        -webkit-box-flex: 0;
+            -ms-flex: none;
+                flex: none;
+        width: 310px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-left: 1px solid #cccccc;
+        background-color: white;
+        z-index: 100;
+        height: 100%;
+        position: relative; }
+      .csseditor .layout-main .layout-middle .layout-left {
+        -webkit-box-flex: 0;
+            -ms-flex: none;
+                flex: none;
+        width: 300px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        border-right: 1px solid #cccccc;
+        z-index: 100;
+        height: 100%;
+        position: relative; }
+      .csseditor .layout-main .layout-middle .layout-body {
+        -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+                flex: 1 1 auto;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        height: 100%;
+        position: relative; }
     .csseditor .layout-main .select-layer-view .pages {
       display: block; }
     .csseditor .layout-main .select-layer-view .item-info {
@@ -1228,78 +1302,6 @@ html, body {
         display: block; }
       .csseditor .layout-main .select-layer-view .item-info .layers {
         top: 0px; }
-    .csseditor .layout-main .layout-top {
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      top: 66px;
-      height: 66px;
-      z-index: 1;
-      border-bottom: 1px solid #cccccc;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      display: none; }
-    .csseditor .layout-main .layout-right {
-      position: absolute;
-      right: 0px;
-      width: 310px;
-      top: 0px;
-      bottom: 30px;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      border-left: 1px solid #cccccc;
-      background-color: white;
-      border-left: 1px solid #cccccc;
-      z-index: 100; }
-    .csseditor .layout-main .layout-left {
-      position: absolute;
-      left: 0px;
-      width: 300px;
-      top: 66px;
-      bottom: 30px;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      border-right: 1px solid #cccccc;
-      z-index: 100; }
-    .csseditor .layout-main .layout-body {
-      position: absolute;
-      left: 300px;
-      right: 310px;
-      top: 66px;
-      bottom: 30px;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
-    .csseditor .layout-main .layout-header {
-      position: absolute;
-      left: 0px;
-      right: 310px;
-      height: 66px;
-      top: 0px;
-      z-index: 0;
-      overflow: hidden;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      border-bottom: 1px solid #cccccc; }
-      .csseditor .layout-main .layout-header .page-tab-menu {
-        -webkit-box-flex: 1;
-            -ms-flex: 1 1 auto;
-                flex: 1 1 auto;
-        display: block;
-        position: relative; }
-    .csseditor .layout-main .layout-footer {
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      height: 29px;
-      bottom: 0px;
-      z-index: 0;
-      overflow: hidden;
-      border-top: 1px solid #cccccc;
-      -webkit-transition: all 0.15s linear;
-      transition: all 0.15s linear; }
   .csseditor [type='range'] {
     -webkit-appearance: none;
        -moz-appearance: none;
@@ -2831,7 +2833,7 @@ html, body {
               margin-right: 20px;
               display: inline-block;
               vertical-align: middle;
-              width: 60px; }
+              width: 90px; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property input, .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property select {
               -webkit-appearance: none;
                  -moz-appearance: none;
@@ -2847,6 +2849,21 @@ html, body {
               width: 50px; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property select {
               width: 150px; }
+            .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property .input-color {
+              display: inline-block;
+              width: 20px;
+              height: 20px;
+              background-color: transparent;
+              background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+              background-size: 10px 10px;
+              background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+              -webkit-box-sizing: border-box;
+                      box-sizing: border-box;
+              border: 1px solid #cccccc;
+              cursor: pointer; }
+              .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property .input-color .color-panel {
+                width: 100%;
+                height: 100%; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-property {
             padding-left: 100px; }
       .csseditor .timeline-view > .timeline-body .timeline-panel {

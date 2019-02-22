@@ -2838,6 +2838,7 @@ function partial(area) {
 
 var _UNIT_STRINGS;
 var _SEGMENT_CHECK;
+var _PROPERTY_LIST;
 
 var EMPTY_STRING = '';
 var WHITE_STRING = ' ';
@@ -3026,7 +3027,7 @@ var IMAGE_ITEM_TYPE_RADIAL = 'radial';
 var IMAGE_ITEM_TYPE_REPEATING_RADIAL = 'repeating-radial';
 var IMAGE_ITEM_TYPE_CONIC = 'conic';
 var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
-var IMAGE_ITEM_TYPE_STATIC$1 = 'static';
+var IMAGE_ITEM_TYPE_STATIC = 'static';
 
 var IMAGE_ITEM_TYPE_IMAGE$1 = 'image';
 
@@ -3072,23 +3073,43 @@ var LAYER_TRANSFORM_PROPERTY = ['translateX', 'translateY', 'rotate', 'skewX', '
 
 var LAYER_TRANSFORM_3D_PROPERTY = ['translateZ', 'perspective', 'rotateX', 'rotateY', 'rotateZ', 'scaleX', 'scaleY', 'scaleZ'];
 
-var PROPERTY_LIST = defineProperty({}, ITEM_TYPE_LAYER, [{ key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY }, { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY }]);
+var IMAGE_LINEAR_PRROPERTY = ['angle', 'backgroundPositionX', 'backgroundPositionY', 'backgroundSizeWidth', 'backgroundSizeHeight'];
+
+var IMAGE_CONIC_PRROPERTY = ['angle', 'backgroundPositionX', 'backgroundPositionY', 'backgroundSizeWidth', 'backgroundSizeHeight'];
+
+var IMAGE_RADIAL_PRROPERTY = ['backgroundPositionX', 'backgroundPositionY', 'backgroundSizeWidth', 'backgroundSizeHeight'];
+
+var IMAGE_STATIC_PRROPERTY = ['color', 'backgroundPositionX', 'backgroundPositionY', 'backgroundSizeWidth', 'backgroundSizeHeight'];
+
+var PROPERTY_LIST = (_PROPERTY_LIST = {}, defineProperty(_PROPERTY_LIST, ITEM_TYPE_LAYER, [{ key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY }, { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_LINEAR, [{ key: 'linear', title: 'Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_RADIAL, [{ key: 'linear', title: 'Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_CONIC, [{ key: 'linear', title: 'Static Gradient', properties: IMAGE_CONIC_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_LINEAR, [{ key: 'linear', title: 'Repeating Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_RADIAL, [{ key: 'linear', title: 'Repeating Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_CONIC, [{ key: 'linear', title: 'Repeating Conic Gradient', properties: IMAGE_CONIC_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_STATIC, [{ key: 'linear', title: 'Static Gradient', properties: IMAGE_STATIC_PRROPERTY }]), _PROPERTY_LIST);
 
 var PROPERTY_DEFAULT_VALUE = {
-    'translateX': { defaultValue: 0, min: -10000, max: 10000 },
-    'translateY': { defaultValue: 0, min: -10000, max: 10000 },
-    'rotate': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'skewX': { defaultValue: 0, min: -1000, max: 1000 },
-    'skewY': { defaultValue: 0, min: -1000, max: 1000 },
-    'scale': { defaultValue: 1, min: -10, max: 10, step: 0.01 },
-    'translateZ': { defaultValue: 0, min: -10000, max: 10000 },
-    'perspective': { defaultValue: 0, min: -10000, max: 10000 },
-    'rotateX': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'rotateY': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'rotateZ': { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'scaleX': { defaultValue: 1, min: -10, max: 10, step: 0.01 },
-    'scaleY': { defaultValue: 1, min: -10, max: 10, step: 0.01 },
-    'scaleZ': { defaultValue: 1, min: -10, max: 10, step: 0.01 }
+
+    // layer property 
+    'translateX': { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'translateY': { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'rotate': { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_DEG },
+    'skewX': { type: 'number', defaultValue: 0, min: -1000, max: 1000, unit: UNIT_PX },
+    'skewY': { type: 'number', defaultValue: 0, min: -1000, max: 1000, unit: UNIT_PX },
+    'scale': { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    'translateZ': { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'perspective': { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'rotateX': { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_PX },
+    'rotateY': { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_PX },
+    'rotateZ': { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_PX },
+    'scaleX': { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    'scaleY': { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    'scaleZ': { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+
+    // image property 
+    'angle': { type: 'number', defaultValue: 0, min: -360, max: 360, step: 1, unit: UNIT_DEG },
+    'color': { type: 'color', defaultValue: 'rgba(0, 0, 0, 0)', unit: UNIT_COLOR },
+    'backgroundPositionX': { type: 'number', defaultValue: 0, min: -100, max: 100, step: 1, unit: UNIT_PX },
+    'backgroundPositionY': { type: 'number', defaultValue: 0, min: -100, max: 100, step: 1, unit: UNIT_PX },
+    'backgroundSizeWidth': { type: 'number', defaultValue: 0, min: -10000, max: 10000, step: 1, unit: UNIT_PX },
+    'backgroundSizeHeight': { type: 'number', defaultValue: 0, min: -10000, max: 10000, step: 1, unit: UNIT_PX },
+
+    '': {}
 };
 
 function debounce(callback, delay) {
@@ -8093,7 +8114,7 @@ var GROUP_DEFAULT_OBJECT = {
 var IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
     is: IS_ATTRIBUTE,
-    type: IMAGE_ITEM_TYPE_STATIC$1,
+    type: IMAGE_ITEM_TYPE_STATIC,
     fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
     index: 0,
     parentId: EMPTY_STRING,
@@ -12150,7 +12171,7 @@ var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LI
 var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
 var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
 var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE$1];
-var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC$1];
+var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
 
 function IMAGE_TYPE_IS_LINEAR(type) {
     return LINEAR_GRADIENT_LIST.includes(type);
@@ -12308,6 +12329,15 @@ function TIMING_GET_VALUE(keyframe, currentTime) {
     var value$$1 = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * Timing[keyframe.timing](progress);
 
     return value$$1;
+}
+
+function GET_PROPERTY_LIST(item) {
+
+    if (IS_LAYER(item)) {
+        return PROPERTY_LIST[item.itemType] || [];
+    } else if (IS_IMAGE(item)) {
+        return PROPERTY_LIST[item.itemType + "_" + item.type] || [];
+    }
 }
 
 var GradientSteps = function (_UIElement) {
@@ -20969,25 +20999,43 @@ var TimelineObjectList = function (_UIElement) {
 
             var targetItem = this.get(timeline.targetId);
 
-            if (IS_LAYER(targetItem)) {
-                return this.makeTimelineObjectForLayer(timeline, targetItem, index);
-            }
+            return this.makeTimelineObjectForLayer(timeline, targetItem, index);
+        }
+    }, {
+        key: "makeInputColor",
+        value: function makeInputColor(sampleValue, targetItem, property, timeline) {
+            var value$$1 = defaultValue(targetItem[property], sampleValue.defaultValue);
+            return "\n            <div \n                class='input-color' \n                data-property='" + property + "' \n                data-timeline-id='" + timeline.id + "'\n            >\n                <div class='color-panel' style='background-color: " + value$$1 + ";'></div>\n            </div>\n        ";
+        }
+    }, {
+        key: "makeInputNumber",
+        value: function makeInputNumber(sampleValue, targetItem, property, timeline) {
 
-            return EMPTY_STRING;
+            var value$$1 = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue));
+
+            return "\n            <input \n                type='number' \n                min=\"" + sampleValue.min + "\" \n                max=\"" + sampleValue.max + "\" \n                step=\"" + sampleValue.step + "\" \n                value=\"" + value$$1 + "\" \n                data-property='" + property + "' \n                data-timeline-id=\"" + timeline.id + "\" \n                /> <span class='unit'>" + sampleValue.unit + "</span>";
+        }
+    }, {
+        key: "makeInput",
+        value: function makeInput(targetItem, property, timeline) {
+            var sampleValue = PROPERTY_GET_DEFAULT_VALUE(property);
+            if (sampleValue.type == 'color') {
+                return this.makeInputColor(sampleValue, targetItem, property, timeline);
+            } else {
+                return this.makeInputNumber(sampleValue, targetItem, property, timeline);
+            }
         }
     }, {
         key: "makeTimelineProperty",
         value: function makeTimelineProperty(property, timeline, targetItem, index) {
-            var sampleValue = PROPERTY_GET_DEFAULT_VALUE(property);
-            var value$$1 = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue));
-            return " \n            <div class='timeline-property row'>\n                <label>" + property + "</label>\n                <input type='number' min=\"" + sampleValue.min + "\" max=\"" + sampleValue.max + "\" step=\"" + sampleValue.step + "\" value=\"" + value$$1 + "\" data-property='" + property + "' data-timeline-id=\"" + timeline.id + "\" /> <span class='unit'>" + UNIT_PX + "</span>\n            </div>    \n        ";
+            return " \n            <div class='timeline-property row'>\n                <label>" + property + "</label>\n                " + this.makeInput(targetItem, property, timeline) + "\n            </div>    \n        ";
         }
     }, {
         key: "makeTimelinePropertyGroup",
         value: function makeTimelinePropertyGroup(timeline, targetItem, index) {
             var _this3 = this;
 
-            var list = PROPERTY_LIST[targetItem.itemType] || [];
+            var list = GET_PROPERTY_LIST(targetItem);
 
             return html(_templateObject$15, list.map(function (it) {
                 return html(_templateObject2$1, it.key, it.title, it.key, it.properties.map(function (property) {
@@ -20996,9 +21044,23 @@ var TimelineObjectList = function (_UIElement) {
             }));
         }
     }, {
+        key: "getLayerName",
+        value: function getLayerName(item) {
+            return item.name || item.index / 100 + 1 + '. ' + 'Layer';
+        }
+    }, {
         key: "makeTimelineObjectForLayer",
         value: function makeTimelineObjectForLayer(timeline, targetItem, index) {
-            return "\n            <div class='timeline-object' data-type='layer'>\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + (targetItem.name || targetItem.index / 100 + 1 + '. Layer') + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelinePropertyGroup(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
+            var name = EMPTY_STRING;
+
+            if (IS_LAYER(targetItem)) {
+                name = this.getLayerName(targetItem);
+            } else if (IS_IMAGE(targetItem)) {
+                var layer = this.get(targetItem.parentId);
+                name = this.getLayerName(layer) + " -&gt; " + targetItem.type;
+            }
+
+            return "\n            <div class='timeline-object' data-type='" + targetItem.itemType + "'>\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + name + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelinePropertyGroup(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
@@ -21078,6 +21140,23 @@ var TimelineObjectList = function (_UIElement) {
                     this.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: targetId }, property, value$$1));
                 }
             }
+        }
+    }, {
+        key: CLICK('$el .input-color'),
+        value: function value$$1(e) {
+            var $t = e.$delegateTarget;
+
+            var _$t$attrs3 = $t.attrs('data-property', 'data-timeline-id'),
+                _$t$attrs4 = slicedToArray(_$t$attrs3, 2),
+                property = _$t$attrs4[0],
+                timelineId = _$t$attrs4[1];
+
+            // TODO: 색 변경 패널을 뛰워야 하는데.... .흠 귀찮.... 
+            // 색 팝업을 어떻게 하지 ? 
+            // 타임라인 전용으로 만들까? 
+            // 아니면 키 프레임 클릭하고 탭을 열어줄까? 거기서 하라고? 
+            // 헷갈리겠지? 
+
         }
     }]);
     return TimelineObjectList;
@@ -21174,7 +21253,7 @@ var KeyframeObjectList = function (_UIElement) {
             this.updateKeyframeList(timeline);
 
             targetItem = targetItem || this.get(timeline.targetId);
-            var list = PROPERTY_LIST[targetItem.itemType] || [];
+            var list = GET_PROPERTY_LIST(targetItem);
 
             return html(_templateObject2$2, list.map(function (it) {
                 return html(_templateObject3, it.key, it.key, it.properties.map(function (property) {
@@ -21185,7 +21264,6 @@ var KeyframeObjectList = function (_UIElement) {
     }, {
         key: "makeTimelineObject",
         value: function makeTimelineObject(timeline, targetItem) {
-
             return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>" + this.makeTimelinePropertyGroup(timeline, targetItem) + "</div>\n            </div>\n        ";
         }
     }, {
@@ -25330,7 +25408,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-top"></div>\n                <div class="layout-left">      \n                    <SelectLayerView/>\n                </div>\n                <div class="layout-body">\n                    <LayerToolbar />\n                    <VerticalColorStep />\n                    <HandleView />\n                </div>                \n                <div class="layout-right">\n                    <Alignment />\n                    <FeatureControl />\n                    <ClipPathImageList />\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow/>\n                <DropView />\n                <HotKey />\n            </div>\n        ';
+            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-middle">\n                    <div class="layout-left">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class="layout-body">\n                        <LayerToolbar />\n                        <VerticalColorStep />\n                        <HandleView />\n                    </div>                \n                    <div class="layout-right">\n                        <Alignment />\n                        <FeatureControl />\n                        <ClipPathImageList />\n                    </div>\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />                \n            </div>\n  \n        ';
         }
     }, {
         key: 'components',
@@ -29393,7 +29471,7 @@ var ItemCreateManager = function (_BaseModule) {
             var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
             var color_0 = 'rgba(216,216,216, 0)';
             var color_1 = 'rgba(216,216,216, 1)';
-            if (obj.type == IMAGE_ITEM_TYPE_STATIC) {} else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {} else if (gradientTypeList.includes(obj.type)) {
+            if (IMAGE_TYPE_IS_STATIC(obj.type)) {} else if (IMAGE_TYPE_IS_IMAGE(obj.type)) {} else if (gradientTypeList.includes(obj.type)) {
 
                 if (conicList.includes(obj.type)) {
                     $store.items[imageId].angle = 0;

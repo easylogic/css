@@ -272,26 +272,90 @@ export const LAYER_TRANSFORM_3D_PROPERTY = [
     'scaleZ'      
 ]
 
+export const IMAGE_LINEAR_PRROPERTY = [
+    'angle',
+    'backgroundPositionX',
+    'backgroundPositionY',
+    'backgroundSizeWidth',
+    'backgroundSizeHeight'
+]
+
+export const IMAGE_CONIC_PRROPERTY = [
+    'angle',
+    'backgroundPositionX',
+    'backgroundPositionY',
+    'backgroundSizeWidth',
+    'backgroundSizeHeight'
+]
+
+export const IMAGE_RADIAL_PRROPERTY = [
+    'backgroundPositionX',
+    'backgroundPositionY',
+    'backgroundSizeWidth',
+    'backgroundSizeHeight'
+]
+
+export const IMAGE_STATIC_PRROPERTY = [
+    'color',
+    'backgroundPositionX',
+    'backgroundPositionY',
+    'backgroundSizeWidth',
+    'backgroundSizeHeight'
+]
+
 export const PROPERTY_LIST = {
     [ITEM_TYPE_LAYER]: [
         { key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY},
         { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY},
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_LINEAR]: [
+        { key: 'linear', title: 'Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY}
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_RADIAL]: [
+        { key: 'linear', title: 'Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY}
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_CONIC]: [
+        { key: 'linear', title: 'Static Gradient', properties: IMAGE_CONIC_PRROPERTY}
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_LINEAR]: [
+        { key: 'linear', title: 'Repeating Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY}
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_RADIAL]: [
+        { key: 'linear', title: 'Repeating Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY}
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_CONIC]: [
+        { key: 'linear', title: 'Repeating Conic Gradient', properties: IMAGE_CONIC_PRROPERTY}
+    ],
+    [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_STATIC]: [
+        { key: 'linear', title: 'Static Gradient', properties: IMAGE_STATIC_PRROPERTY}
     ]
 }
 
 export  const PROPERTY_DEFAULT_VALUE = {
-    'translateX' : { defaultValue: 0, min: -10000, max: 10000 },
-    'translateY' : { defaultValue: 0, min: -10000, max: 10000 },
-    'rotate' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'skewX' : { defaultValue: 0, min: -1000, max: 1000 },
-    'skewY' : { defaultValue: 0, min: -1000, max: 1000 },
-    'scale' : { defaultValue: 1, min: -10, max: 10, step: 0.01 },
-    'translateZ' : { defaultValue: 0, min: -10000, max: 10000 },
-    'perspective' : { defaultValue: 0, min: -10000, max: 10000 },
-    'rotateX' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'rotateY' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'rotateZ' : { defaultValue: 0, min: -360, max: 360, step: 0.1 },
-    'scaleX' : { defaultValue: 1, min: -10, max: 10, step: 0.01 },
-    'scaleY' : { defaultValue: 1, min: -10, max: 10, step: 0.01 },
-    'scaleZ' : { defaultValue: 1, min: -10, max: 10, step: 0.01 }       
+
+    // layer property 
+    'translateX' : { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'translateY' : { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'rotate' : { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_DEG },
+    'skewX' : { type: 'number', defaultValue: 0, min: -1000, max: 1000, unit: UNIT_PX },
+    'skewY' : { type: 'number', defaultValue: 0, min: -1000, max: 1000, unit: UNIT_PX },
+    'scale' : { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    'translateZ' : { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'perspective' : { type: 'number', defaultValue: 0, min: -10000, max: 10000, unit: UNIT_PX },
+    'rotateX' : { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_PX },
+    'rotateY' : { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_PX },
+    'rotateZ' : { type: 'number', defaultValue: 0, min: -360, max: 360, step: 0.1, unit: UNIT_PX },
+    'scaleX' : { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    'scaleY' : { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    'scaleZ' : { type: 'number', defaultValue: 1, min: -10, max: 10, step: 0.01, unit: UNIT_PX },
+    
+    // image property 
+    'angle' : { type: 'number', defaultValue: 0, min: -360, max: 360, step: 1, unit: UNIT_DEG},
+    'color': {type: 'color', defaultValue: 'rgba(0, 0, 0, 0)', unit: UNIT_COLOR},
+    'backgroundPositionX': {type: 'number', defaultValue: 0, min: -100, max: 100, step: 1, unit: UNIT_PX },
+    'backgroundPositionY': {type: 'number', defaultValue: 0, min: -100, max: 100, step: 1, unit: UNIT_PX },
+    'backgroundSizeWidth': {type: 'number', defaultValue: 0, min: -10000, max: 10000, step: 1, unit: UNIT_PX },
+    'backgroundSizeHeight': {type: 'number', defaultValue: 0, min: -10000, max: 10000, step: 1, unit: UNIT_PX },
+
+    '': {}
 }

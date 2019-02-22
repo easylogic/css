@@ -1,0 +1,51 @@
+> .timeline-header {
+    position: relative;
+    flex: none;
+    height: $timeline-header-height;
+
+    .timeline-toolbar {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        top: 0px;
+        width: $timeline-property-width;
+        box-sizing: border-box;
+        border-right:1px solid $border-color;            
+        border-bottom: 1px solid $border-color;        
+        line-height: 1.6;
+        padding-left: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;    
+
+        .title {
+            cursor:pointer;
+        }
+    }
+
+    .keyframe-toolbar {
+        position: absolute;
+        left: $timeline-property-width;
+        bottom: 0px;
+        top: 0px;
+        right: 0px;
+        overflow: hidden;
+        box-sizing: border-box;
+        border-bottom: 1px solid $border-color;
+
+        .keyframe-time-view {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+
+            canvas {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

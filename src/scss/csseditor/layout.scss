@@ -24,20 +24,78 @@ $layer-toolbar-height: 0px;
     top: 0px;
     right: 0px;
     bottom: 0px; 
+    display: flex;
+    flex-direction: column;
 
     &.show-timeline {
-        .layout-left, .layout-right, .layout-body {
-            bottom: $timeline-size;
-        }
-
         .layout-footer {
-            display: block;
             height: $timeline-size - 1px;
         }
-
-
     }
 
+
+    .layout-header {
+        flex: none; 
+        height: $tool-size;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex; 
+        border-bottom: 1px solid $border-color;
+        position: relative;        
+
+        .page-tab-menu {
+            flex: 1 1 auto; 
+            display: block;
+            position: relative;
+        }
+    }
+
+
+    .layout-footer {
+        flex: none; 
+        height: $timeline-header-size - 1px;
+        overflow: hidden; 
+        border-top: 1px solid $border-color;      
+        transition: $show-timeline-animation;  
+        position: relative;
+        pointer-events: all;
+    }    
+
+    .layout-middle {
+        flex: 1 1 auto; 
+        display: flex;
+        height: 100%;
+        position: relative;
+
+        .layout-right {
+            flex: none; 
+            width: $right-size;
+            box-sizing: border-box;
+            border-left: 1px solid $border-color;
+            background-color: white; 
+            z-index: 100;
+            height: 100%;
+            position: relative;
+        }
+
+        .layout-left {
+            flex: none; 
+            width: $left-size;
+            box-sizing: border-box;
+            border-right: 1px solid $border-color;
+            z-index: 100;
+            height: 100%;
+            position: relative;
+        }    
+
+        .layout-body {
+            flex: 1 1 auto;
+            box-sizing: border-box;
+            // transition: $show-timeline-animation;        
+            height: 100%;
+            position: relative;
+        }
+    }
 
     .select-layer-view {
         .pages {
@@ -57,88 +115,7 @@ $layer-toolbar-height: 0px;
         }
     }
 
-    .layout-top {
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        top: $tool-size;
-        height: $tool-size;
-        z-index: 1;         
-        border-bottom: 1px solid $border-color;
-        box-sizing: border-box; 
-        display: none;
-    }
 
-    .layout-right {
-        position: absolute;
-        right : 0px;
-        // left: $left-size;
-        width: $right-size;
-        top: 0px;
-        bottom: $timeline-header-size;
-        // overflow: auto;
-        box-sizing: border-box;
-        // border-right: 1px solid $border-color;
-        border-left: 1px solid $border-color;
-        background-color: white; 
-        border-left: 1px solid $border-color;
-        // transition: $show-timeline-animation;
-        z-index: 100;
-    }
-
-    .layout-left {
-        position: absolute;
-        left: 0px;
-        width: $left-size;
-        top: $tool-size;
-        bottom: $timeline-header-size;
-        box-sizing: border-box;
-        border-right: 1px solid $border-color;
-        // transition: $show-timeline-animation;
-        z-index: 100;
-    }    
-
-    .layout-body {
-        position: absolute;
-        left: $left-size + $gradient-box-size;
-        right: $right-size;
-        top: $tool-size;
-        bottom: $timeline-header-size;
-        box-sizing: border-box;
-        // transition: $show-timeline-animation;        
-    }
-
-    .layout-header {
-        position: absolute;
-        left: 0px;
-        right: $right-size;
-        height: $tool-size;
-        top: 0px; 
-        z-index: 0; 
-        overflow: hidden;
-        box-sizing: border-box;
-        display: flex; 
-        border-bottom: 1px solid $border-color;
-
-        .page-tab-menu {
-            flex: 1 1 auto; 
-            display: block;
-            position: relative;
-        }
-    }
-
-
-    .layout-footer {
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        height: $timeline-header-size - 1px;
-        bottom: 0px;
-        z-index: 0; 
-        overflow: hidden; 
-        border-top: 1px solid $border-color;      
-        transition: $show-timeline-animation;  
-    }
 
 }
 
