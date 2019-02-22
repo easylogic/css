@@ -37,27 +37,29 @@ export default class CSSEditor extends UIElement {
                 <div class="layout-header">
                     <div class="page-tab-menu"><ToolMenu /></div>
                 </div>
-                <div class="layout-top"></div>
-                <div class="layout-left">      
-                    <SelectLayerView/>
-                </div>
-                <div class="layout-body">
-                    <LayerToolbar />
-                    <VerticalColorStep />
-                    <HandleView />
-                </div>                
-                <div class="layout-right">
-                    <Alignment />
-                    <FeatureControl />
-                    <ClipPathImageList />
+                <div class="layout-middle">
+                    <div class="layout-left">      
+                        <SelectLayerView/>
+                    </div>
+                    <div class="layout-body">
+                        <LayerToolbar />
+                        <VerticalColorStep />
+                        <HandleView />
+                    </div>                
+                    <div class="layout-right">
+                        <Alignment />
+                        <FeatureControl />
+                        <ClipPathImageList />
+                    </div>
                 </div>
                 <div class="layout-footer">
                     <Timeline />
                 </div>
-                <ExportWindow/>
+                <ExportWindow />
                 <DropView />
-                <HotKey />
+                <HotKey />                
             </div>
+  
         `
     }
 

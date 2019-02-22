@@ -24,8 +24,7 @@ import { isFunction } from "../../util/functions/func";
 import { SELECTION_RECT, SELECTION_ONE } from "../types/SelectionTypes";
 import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 import { RESIZE_WINDOW } from "../types/ToolTypes";
-import { ITEM_MAP_KEYFRAME_CHILDREN } from "../types/ItemSearchTypes";
-import { INDEX_DIST } from "./ItemManager";
+import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_IMAGE } from "../../util/css/make";
 
 const gradientTypeList = [
     IMAGE_ITEM_TYPE_LINEAR,
@@ -143,9 +142,9 @@ export default class ItemCreateManager extends BaseModule {
         var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
         var color_0 = 'rgba(216,216,216, 0)';
         var color_1 = 'rgba(216,216,216, 1)';
-        if (obj.type == IMAGE_ITEM_TYPE_STATIC) {
+        if (IMAGE_TYPE_IS_STATIC(obj.type)) {
  
-        } else if (obj.type == IMAGE_ITEM_TYPE_IMAGE) {
+        } else if (IMAGE_TYPE_IS_IMAGE(obj.type)) {
 
         } else if (gradientTypeList.includes(obj.type)) {
 

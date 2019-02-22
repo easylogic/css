@@ -7,6 +7,7 @@ import { stringUnit, pxUnit, PROPERTY_LIST, EMPTY_STRING, unitValue } from "../.
 import { ITEM_MAP_KEYFRAME_CHILDREN } from "../../../types/ItemSearchTypes";
 import { ITEM_ADD_KEYFRAME } from "../../../types/ItemCreateTypes";
 import { RESIZE_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
+import { GET_PROPERTY_LIST } from "../../../../util/css/make";
 
 export default class KeyframeObjectList extends UIElement {
     templateClass () {
@@ -95,7 +96,7 @@ export default class KeyframeObjectList extends UIElement {
         this.updateKeyframeList(timeline);
 
         targetItem = targetItem || this.get(timeline.targetId)
-        var list = PROPERTY_LIST[targetItem.itemType] || []
+        var list = GET_PROPERTY_LIST(targetItem)
 
         return html`${list.map(it => {
             return html`
@@ -111,7 +112,6 @@ export default class KeyframeObjectList extends UIElement {
     }    
 
     makeTimelineObject (timeline, targetItem) {
-
         return `
             <div class='keyframe-object' data-type='layer' data-timeline-id='${timeline.id}'>
                 <div class='keyframe-title row'></div>

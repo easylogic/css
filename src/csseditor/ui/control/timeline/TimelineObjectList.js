@@ -1,10 +1,10 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK, CHANGEINPUT } from "../../../../util/Event";
 import { TIMELINE_LIST, TIMELINE_SEEK } from "../../../types/TimelineTypes";
-import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION, CHANGE_EDITOR, CHANGE_LAYER } from "../../../types/event";
-import { UNIT_PX, PROPERTY_LIST, unitValue, PROPERTY_DEFAULT_VALUE, EMPTY_STRING } from "../../../../util/css/types";
+import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION } from "../../../types/event";
+import { UNIT_PX, unitValue, EMPTY_STRING } from "../../../../util/css/types";
 import { defaultValue, html, isNotUndefined } from "../../../../util/functions/func";
-import { IS_LAYER, PROPERTY_GET_DEFAULT_VALUE, TIMING_GET_VALUE } from "../../../../util/css/make";
+import { IS_LAYER, PROPERTY_GET_DEFAULT_VALUE, IS_IMAGE, GET_PROPERTY_LIST } from "../../../../util/css/make";
 import { ITEM_SET } from "../../../types/ItemTypes";
 import { MOVE_TIMELINE } from "../../../types/ToolTypes";
 
@@ -27,27 +27,59 @@ export default class TimelineObjectList extends UIElement {
 
         var targetItem = this.get(timeline.targetId);
 
-        if (IS_LAYER(targetItem)) {
-            return this.makeTimelineObjectForLayer(timeline, targetItem, index);
-        } 
+        return this.makeTimelineObjectForLayer(timeline, targetItem, index);
+    }
 
-        return EMPTY_STRING; 
+    makeInputColor (sampleValue, targetItem, property, timeline) {
+        var value = defaultValue(targetItem[property], sampleValue.defaultValue)
+        return `
+            <div 
+                class='input-color' 
+                data-property='${property}' 
+                data-timeline-id='${timeline.id}'
+            >
+                <div class='color-panel' style='background-color: ${value};'></div>
+            </div>
+        `
+    }
+
+    makeInputNumber (sampleValue, targetItem, property, timeline) {
+
+        var value = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue))
+
+        return `
+            <input 
+                type='number' 
+                min="${sampleValue.min}" 
+                max="${sampleValue.max}" 
+                step="${sampleValue.step}" 
+                value="${value}" 
+                data-property='${property}' 
+                data-timeline-id="${timeline.id}" 
+                /> <span class='unit'>${sampleValue.unit}</span>`
+    }
+
+    makeInput (targetItem, property, timeline) {
+        var sampleValue = PROPERTY_GET_DEFAULT_VALUE(property)
+        if (sampleValue.type == 'color') {
+            return this.makeInputColor(sampleValue, targetItem, property, timeline)
+        } else {
+            return this.makeInputNumber(sampleValue, targetItem, property, timeline)
+        }
     }
 
     makeTimelineProperty (property, timeline, targetItem, index) {
-        var sampleValue = PROPERTY_GET_DEFAULT_VALUE(property)
-        var value = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue))
         return ` 
             <div class='timeline-property row'>
                 <label>${property}</label>
-                <input type='number' min="${sampleValue.min}" max="${sampleValue.max}" step="${sampleValue.step}" value="${value}" data-property='${property}' data-timeline-id="${timeline.id}" /> <span class='unit'>${UNIT_PX}</span>
+                ${this.makeInput(targetItem, property, timeline)}
             </div>    
         `
     }
 
     makeTimelinePropertyGroup (timeline, targetItem, index) {
 
-        var list = PROPERTY_LIST[targetItem.itemType] || []
+        var list = GET_PROPERTY_LIST(targetItem)
 
         return html`${list.map(it => {
             return html`
@@ -65,19 +97,32 @@ export default class TimelineObjectList extends UIElement {
         
     }
 
+    getLayerName (item) {
+        return item.name ||  ((item.index/100) + 1) + '. ' + 'Layer'
+    }
+
     makeTimelineObjectForLayer (timeline, targetItem, index) {
+        var name = EMPTY_STRING;
+
+        if (IS_LAYER(targetItem)) {
+            name = this.getLayerName(targetItem)
+        } else if (IS_IMAGE(targetItem)) {
+            var layer = this.get(targetItem.parentId)
+            name = `${this.getLayerName(layer)} -&gt; ${targetItem.type}`
+        }
+
         return `
-            <div class='timeline-object' data-type='layer'>
+            <div class='timeline-object' data-type='${targetItem.itemType}'>
                 <div class='timeline-object-title row'>
                     <div class='icon'></div>    
-                    <div class='title'>${targetItem.name ||  ((targetItem.index/100) + 1) + '. Layer'}</div>
+                    <div class='title'>${name}</div>
                 </div>
                 <div class='timeline-group'>
                     ${this.makeTimelinePropertyGroup(timeline, targetItem, index)}
                 </div>
             </div>
         `
-    }
+    }    
 
     refresh () {
         this.load();
@@ -146,7 +191,17 @@ export default class TimelineObjectList extends UIElement {
                 this.commit(CHANGE_LAYER_TRANSFORM, {id: targetId, [property]: value})
             }
         }
+    }
 
+    [CLICK('$el .input-color')] (e) {
+        var $t = e.$delegateTarget;
+        const [property, timelineId] = $t.attrs('data-property', 'data-timeline-id')
+
+        // TODO: 색 변경 패널을 뛰워야 하는데.... .흠 귀찮.... 
+        // 색 팝업을 어떻게 하지 ? 
+        // 타임라인 전용으로 만들까? 
+        // 아니면 키 프레임 클릭하고 탭을 열어줄까? 거기서 하라고? 
+        // 헷갈리겠지? 
     }
 }
 

@@ -1,0 +1,22 @@
+
+> .timeline-body {
+    position: relative;
+    flex: 1 1 auto;
+
+    .row {
+        position: relative;
+        box-sizing: border-box;
+        display: block;
+        height: $timeline-row-height;
+        padding: 2px 0px;
+        font-size: 11px;
+        background-position: 0% 100%;
+        background-size: 100% 1px;
+        background-repeat: no-repeat;
+        background-image: linear-gradient(to right, $timeline-keyframe-border-color, $timeline-keyframe-border-color);
+    }
+
+    @import './timeline-list.scss';
+    @import './timeline-panel.scss';
+
+}
