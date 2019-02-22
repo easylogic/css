@@ -2303,14 +2303,14 @@ function parseParamNumber$1(param, callback) {
 
 
 
-function px2percent(px, maxValue) {
-    return round(px / maxValue * 100, ROUND_MAX);
+function px2percent(px$$1, maxValue) {
+    return round(px$$1 / maxValue * 100, ROUND_MAX);
 }
 
-function px2em(px, maxValue) {
+function px2em(px$$1, maxValue) {
     var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
 
-    return round(px / fontSize, ROUND_MAX);
+    return round(px$$1 / fontSize, ROUND_MAX);
 }
 
 function em2px(em$$1, maxValue) {
@@ -2860,7 +2860,7 @@ var UNIT_COLOR_STRING = EMPTY_STRING;
 var UNIT_STRINGS = (_UNIT_STRINGS = {}, defineProperty(_UNIT_STRINGS, UNIT_VALUE, UNIT_VALUE_STRING), defineProperty(_UNIT_STRINGS, UNIT_PX, UNIT_PX_STRING), defineProperty(_UNIT_STRINGS, UNIT_EM, UNIT_EM_STRING), defineProperty(_UNIT_STRINGS, UNIT_PERCENT, UNIT_PERCENT_STRING), defineProperty(_UNIT_STRINGS, UNIT_DEG, UNIT_DEG), defineProperty(_UNIT_STRINGS, UNIT_COLOR, UNIT_COLOR_STRING), _UNIT_STRINGS);
 
 
-function px$1(value) {
+function px(value) {
     return value + UNIT_PX_STRING;
 }
 
@@ -5409,8 +5409,8 @@ var GLCanvas = function () {
         classCallCheck(this, GLCanvas);
 
         this.img = opt.img;
-        this.width = parseFloat(this.img.width || opt.width || px$1(400));
-        this.height = parseFloat(this.img.height || opt.height || px$1(300));
+        this.width = parseFloat(this.img.width || opt.width || px(400));
+        this.height = parseFloat(this.img.height || opt.height || px(300));
         this.init();
     }
 
@@ -5419,8 +5419,8 @@ var GLCanvas = function () {
         value: function resize() {
             this.canvas.width = this.width;
             this.canvas.height = this.height;
-            this.canvas.style.width = px$1(this.width);
-            this.canvas.style.height = px$1(this.height);
+            this.canvas.style.width = px(this.width);
+            this.canvas.style.height = px(this.height);
 
             this.viewport();
         }
@@ -6853,7 +6853,7 @@ var Dom = function () {
     }, {
         key: "px",
         value: function px$$1(key, value$$1) {
-            return this.css(key, px$1(value$$1));
+            return this.css(key, px(value$$1));
         }
     }, {
         key: "rect",
@@ -8845,6 +8845,10 @@ var BaseColorPicker = function (_UIElement) {
                 this.$root.addClass('hide-colorsets');
             }
 
+            if (this.opt.width) {
+                this.$root.css('width', this.opt.width);
+            }
+
             this.$arrow = new Dom('div', 'arrow');
 
             this.$root.append(this.$arrow);
@@ -8860,8 +8864,8 @@ var BaseColorPicker = function (_UIElement) {
         }
     }, {
         key: 'initColorWithoutChangeEvent',
-        value: function initColorWithoutChangeEvent(color) {
-            this.dispatch('initColor', color);
+        value: function initColorWithoutChangeEvent(color$$1) {
+            this.dispatch('initColor', color$$1);
         }
 
         /** 
@@ -8881,7 +8885,7 @@ var BaseColorPicker = function (_UIElement) {
 
     }, {
         key: 'show',
-        value: function show(opt, color, showCallback, hideCallback) {
+        value: function show(opt, color$$1, showCallback, hideCallback) {
 
             // 매번 이벤트를 지우고 다시 생성할 필요가 없어서 초기화 코드는 지움. 
             // this.destroy();
@@ -8905,7 +8909,7 @@ var BaseColorPicker = function (_UIElement) {
 
             this.$root.appendTo(this.$body);
 
-            this.initColorWithoutChangeEvent(color);
+            this.initColorWithoutChangeEvent(color$$1);
         }
 
         /**
@@ -8978,8 +8982,8 @@ var BaseColorPicker = function (_UIElement) {
         }
     }, {
         key: 'setOption',
-        value: function setOption(key, value) {
-            this.opt[key] = value;
+        value: function setOption(key, value$$1) {
+            this.opt[key] = value$$1;
         }
     }, {
         key: 'getContainer',
@@ -9040,8 +9044,9 @@ var BaseColorPicker = function (_UIElement) {
                     display: 'inline-block'
                 };
             } else {
+                var position = this.opt.position == 'absolute' ? 'absolute' : 'fixed';
                 return {
-                    position: 'fixed', // color picker has fixed position
+                    position: position, // color picker has fixed position
                     left: '-10000px',
                     top: '-10000px'
                 };
@@ -9073,27 +9078,27 @@ var BaseColorPicker = function (_UIElement) {
         }
     }, {
         key: 'callbackChangeValue',
-        value: function callbackChangeValue(color) {
-            color = color || this.getCurrentColor();
+        value: function callbackChangeValue(color$$1) {
+            color$$1 = color$$1 || this.getCurrentColor();
 
             if (isFunction(this.opt.onChange)) {
-                this.opt.onChange.call(this, color);
+                this.opt.onChange.call(this, color$$1);
             }
 
             if (isFunction(this.colorpickerShowCallback)) {
-                this.colorpickerShowCallback(color);
+                this.colorpickerShowCallback(color$$1);
             }
         }
     }, {
         key: 'callbackHideValue',
-        value: function callbackHideValue(color) {
-            color = color || this.getCurrentColor();
+        value: function callbackHideValue(color$$1) {
+            color$$1 = color$$1 || this.getCurrentColor();
             if (isFunction(this.opt.onHide)) {
-                this.opt.onHide.call(this, color);
+                this.opt.onHide.call(this, color$$1);
             }
 
             if (isFunction(this.colorpickerHideCallback)) {
-                this.colorpickerHideCallback(color);
+                this.colorpickerHideCallback(color$$1);
             }
         }
     }, {
@@ -9146,7 +9151,7 @@ var BaseColorPicker = function (_UIElement) {
 
     }, {
         key: MOUSEUP('document'),
-        value: function value(e) {
+        value: function value$$1(e) {
 
             // when color picker clicked in outside
             if (this.checkInHtml(e.target)) {
@@ -9335,7 +9340,7 @@ var BaseSlider = function (_BaseBox) {
     }, {
         key: 'setMousePosition',
         value: function setMousePosition(x) {
-            this.refs.$bar.css({ left: px$1(x) });
+            this.refs.$bar.css({ left: px(x) });
         }
 
         /** set mouse position in page */
@@ -11523,6 +11528,82 @@ bezierList.forEach(function (arr) {
     Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
 });
 
+var _ScaleFunctions;
+
+var ScaleFunctions = (_ScaleFunctions = {
+    'color': 'makeScaleFunctionForColor',
+    'number': 'makeScaleFunctionForNumber'
+}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
+
+var Scale = {
+    makeScaleFunctionForColor: function makeScaleFunctionForColor(start, end) {
+        return function (currentPercent) {
+            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
+
+            return interpolateRGBObject(start, end, rate);
+        };
+    },
+    makeScaleFunctionForNumber: function makeScaleFunctionForNumber(start, end) {
+        return function (currentPercent) {
+            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
+
+            return start.value + (end.value - start.value) * rate;
+        };
+    },
+    makeScaleFunctionForPercent: function makeScaleFunctionForPercent(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunctionForPx: function makeScaleFunctionForPx(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunctionForEm: function makeScaleFunctionForEm(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunction: function makeScaleFunction(start, end, isLast) {
+        var itemType = start.itemType || 'number';
+
+        return this[ScaleFunctions[itemType]].call(this, start, end);
+    },
+    makeCheckFunction: function makeCheckFunction(start, end, isLast) {
+        if (isLast) {
+            return function (currentPercent) {
+                return start.percent <= currentPercent && currentPercent <= end.percent;
+            };
+        } else {
+            return function (currentPercent) {
+                return start.percent <= currentPercent && currentPercent < end.percent;
+            };
+        }
+    },
+    makeSetupFunction: function makeSetupFunction(start, end, isLast) {
+        var check = this.makeCheckFunction(start, end, isLast);
+        var scale$$1 = this.makeScaleFunction(start, end, isLast);
+
+        if (start.itemType == 'color') {
+            return this.makeSetupColorScaleFunction(check, scale$$1, start, end);
+        } else {
+            return this.makeSetupNumberScaleFunction(check, scale$$1, start, end);
+        }
+    },
+    makeSetupColorScaleFunction: function makeSetupColorScaleFunction(check, scale$$1, start, end) {
+        return function (ani, progress) {
+            if (check(progress)) {
+                ani.obj[start.key] = rgb(scale$$1(ani.timing(progress, ani.duration, start, end)));
+            }
+        };
+    },
+    makeSetupNumberScaleFunction: function makeSetupNumberScaleFunction(check, scale$$1, start, end) {
+
+        return function (ani, progress) {
+            if (check(progress)) {
+                var value$$1 = scale$$1(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
+
+                ani.obj[start.key] = string2unit(value$$1);
+            }
+        };
+    }
+};
+
 var _DEFINED_POSITIONS;
 
 function IS_PAGE(item) {
@@ -12323,10 +12404,23 @@ function PROPERTY_GET_DEFAULT_VALUE(property) {
     return PROPERTY_DEFAULT_VALUE[property] || { defaultValue: 0, step: 1, min: -1000, max: 1000 };
 }
 
-function TIMING_GET_VALUE(keyframe, currentTime) {
-    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime);
+function TIMING_GET_VALUE(targetItem, keyframe, currentTime) {
 
-    var value$$1 = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * Timing[keyframe.timing](progress);
+    // var Scale.makeSetupFunction(start, end);
+
+    var propertyInfo = PROPERTY_GET_DEFAULT_VALUE(keyframe.property);
+    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime);
+    var realProgress = Timing[keyframe.timing](progress);
+
+    if (propertyInfo.type == 'color') {
+        var start = parse(keyframe.startValue);
+        var end = parse(keyframe.endValue);
+        var value$$1 = interpolateRGBObject(start, end, realProgress);
+
+        value$$1 = format(value$$1, end.type);
+    } else {
+        var value$$1 = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * realProgress;
+    }
 
     return value$$1;
 }
@@ -12512,12 +12606,12 @@ var GradientSteps = function (_UIElement) {
 
             if (this.currentStep) {
                 var posX = Math.max(min, current);
-                var px = posX - this.refs.$steps.offsetLeft();
+                var px$$1 = posX - this.refs.$steps.offsetLeft();
 
                 if (e.ctrlKey) {
-                    px = Math.floor(px); // control + drag is floor number 
+                    px$$1 = Math.floor(px$$1); // control + drag is floor number 
                 }
-                this.currentStepBox.px('left', px);
+                this.currentStepBox.px('left', px$$1);
                 // var percent = Math.floor((current - min) / (max - min) * 100)
 
                 var item = this.get(this.currentStepBox.attr('id'));
@@ -12525,12 +12619,12 @@ var GradientSteps = function (_UIElement) {
                 if (item) {
 
                     // item.px = px; 
-                    var percent$$1 = px2percent(px, max - min);
-                    var em$$1 = px2em(px, max - min);
-                    var newValue = { id: item.id, px: px, percent: percent$$1, em: em$$1 };
+                    var percent$$1 = px2percent(px$$1, max - min);
+                    var em$$1 = px2em(px$$1, max - min);
+                    var newValue = { id: item.id, px: px$$1, percent: percent$$1, em: em$$1 };
 
                     this.currentUnitPercent.val(percent$$1);
-                    this.currentUnitPx.val(px);
+                    this.currentUnitPx.val(px$$1);
                     this.currentUnitEm.val(em$$1);
 
                     this.run(ITEM_SET, newValue);
@@ -12746,7 +12840,7 @@ var GradientSteps = function (_UIElement) {
 
             var layer = this.read(SELECTION_CURRENT_LAYER);
 
-            var px = +e.$delegateTarget.val();
+            var px$$1 = +e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('data-colorstep-id');
 
             var step = this.get(id);
@@ -12754,9 +12848,9 @@ var GradientSteps = function (_UIElement) {
             if (step) {
                 var newValue = {
                     id: step.id,
-                    px: px,
-                    percent: px2percent(px, this.getMaxValue(layer)),
-                    em: px2em(px, this.getMaxValue(layer))
+                    px: px$$1,
+                    percent: px2percent(px$$1, this.getMaxValue(layer)),
+                    em: px2em(px$$1, this.getMaxValue(layer))
                 };
 
                 this.currentStepBox.px('left', newValue.px);
@@ -13079,9 +13173,9 @@ var GradientInfo = function (_UIElement) {
 
             if (step) {
                 // percent; 
-                var px = percent2px(percent$$1, this.getMaxValue(layer));
+                var px$$1 = percent2px(percent$$1, this.getMaxValue(layer));
                 var em$$1 = percent2em(percent$$1, this.getMaxValue(layer));
-                var newValue = { id: step.id, percent: percent$$1, px: px, em: em$$1 };
+                var newValue = { id: step.id, percent: percent$$1, px: px$$1, em: em$$1 };
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
             }
@@ -13094,16 +13188,16 @@ var GradientInfo = function (_UIElement) {
 
             var layer = this.read(SELECTION_CURRENT_LAYER);
 
-            var px = e.$delegateTarget.val();
+            var px$$1 = e.$delegateTarget.val();
             var id = e.$delegateTarget.attr('colorstep-id');
 
             var step = this.get(id);
 
             if (step) {
                 // step.px = px; 
-                var percent$$1 = px2percent(px, this.getMaxValue(layer));
-                var em$$1 = px2em(px, this.getMaxValue(layer));
-                var newValue = { id: step.id, percent: percent$$1, px: px, em: em$$1 };
+                var percent$$1 = px2percent(px$$1, this.getMaxValue(layer));
+                var em$$1 = px2em(px$$1, this.getMaxValue(layer));
+                var newValue = { id: step.id, percent: percent$$1, px: px$$1, em: em$$1 };
                 this.commit(CHANGE_COLOR_STEP, newValue);
             }
         }
@@ -13123,8 +13217,8 @@ var GradientInfo = function (_UIElement) {
             if (step) {
                 // step.em = em; 
                 var percent$$1 = em2percent(em$$1, this.getMaxValue(layer));
-                var px = em2px(em$$1, this.getMaxValue(layer));
-                var newValue = { id: step.id, percent: percent$$1, px: px, em: em$$1 };
+                var px$$1 = em2px(em$$1, this.getMaxValue(layer));
+                var newValue = { id: step.id, percent: percent$$1, px: px$$1, em: em$$1 };
 
                 this.commit(CHANGE_COLOR_STEP, newValue);
             }
@@ -13642,15 +13736,15 @@ var UnitRange = function (_UIElement) {
         key: "updateRange",
         value: function updateRange() {
             var unit$$1 = this.unit;
-            var px = isPX(unit$$1) ? this.refs.$range.val() : undefined;
+            var px$$1 = isPX(unit$$1) ? this.refs.$range.val() : undefined;
             var percent$$1 = isPercent(unit$$1) ? this.refs.$range.val() : undefined;
             var em$$1 = isEM(unit$$1) ? this.refs.$range.val() : undefined;
             var maxValue = this.maxValueFunction();
 
-            if (px) {
-                this.refs.$px.text(px + ' px').attr('value', px);
-                this.refs.$percent.text(px2percent(px, maxValue) + ' %').attr('value', px2percent(px, maxValue));
-                this.refs.$em.text(px2em(px, maxValue) + ' em').attr('value', px2em(px, maxValue));
+            if (px$$1) {
+                this.refs.$px.text(px$$1 + ' px').attr('value', px$$1);
+                this.refs.$percent.text(px2percent(px$$1, maxValue) + ' %').attr('value', px2percent(px$$1, maxValue));
+                this.refs.$em.text(px2em(px$$1, maxValue) + ' em').attr('value', px2em(px$$1, maxValue));
             } else if (percent$$1) {
                 this.refs.$percent.text(percent$$1 + ' %').attr('value', percent$$1);
                 this.refs.$px.text(percent2px(percent$$1, maxValue) + ' px').attr('value', percent2px(percent$$1, maxValue));
@@ -20550,82 +20644,6 @@ var ExportWindow = function (_UIElement) {
     return ExportWindow;
 }(UIElement);
 
-var _ScaleFunctions;
-
-var ScaleFunctions = (_ScaleFunctions = {
-    'color': 'makeScaleFunctionForColor',
-    'number': 'makeScaleFunctionForNumber'
-}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
-
-var Scale = {
-    makeScaleFunctionForColor: function makeScaleFunctionForColor(start, end) {
-        return function (currentPercent) {
-            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
-
-            return interpolateRGBObject(start, end, rate);
-        };
-    },
-    makeScaleFunctionForNumber: function makeScaleFunctionForNumber(start, end) {
-        return function (currentPercent) {
-            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
-
-            return start.value + (end.value - start.value) * rate;
-        };
-    },
-    makeScaleFunctionForPercent: function makeScaleFunctionForPercent(start, end) {
-        return this.makeScaleFunctionForNumber(start, end);
-    },
-    makeScaleFunctionForPx: function makeScaleFunctionForPx(start, end) {
-        return this.makeScaleFunctionForNumber(start, end);
-    },
-    makeScaleFunctionForEm: function makeScaleFunctionForEm(start, end) {
-        return this.makeScaleFunctionForNumber(start, end);
-    },
-    makeScaleFunction: function makeScaleFunction(start, end, isLast) {
-        var itemType = start.itemType || 'number';
-
-        return this[ScaleFunctions[itemType]].call(this, start, end);
-    },
-    makeCheckFunction: function makeCheckFunction(start, end, isLast) {
-        if (isLast) {
-            return function (currentPercent) {
-                return start.percent <= currentPercent && currentPercent <= end.percent;
-            };
-        } else {
-            return function (currentPercent) {
-                return start.percent <= currentPercent && currentPercent < end.percent;
-            };
-        }
-    },
-    makeSetupFunction: function makeSetupFunction(start, end, isLast) {
-        var check = this.makeCheckFunction(start, end, isLast);
-        var scale$$1 = this.makeScaleFunction(start, end, isLast);
-
-        if (start.itemType == 'color') {
-            return this.makeSetupColorScaleFunction(check, scale$$1, start, end);
-        } else {
-            return this.makeSetupNumberScaleFunction(check, scale$$1, start, end);
-        }
-    },
-    makeSetupColorScaleFunction: function makeSetupColorScaleFunction(check, scale$$1, start, end) {
-        return function (ani, progress) {
-            if (check(progress)) {
-                ani.obj[start.key] = rgb(scale$$1(ani.timing(progress, ani.duration, start, end)));
-            }
-        };
-    },
-    makeSetupNumberScaleFunction: function makeSetupNumberScaleFunction(check, scale$$1, start, end) {
-
-        return function (ani, progress) {
-            if (check(progress)) {
-                var value$$1 = scale$$1(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
-
-                ani.obj[start.key] = string2unit(value$$1);
-            }
-        };
-    }
-};
-
 var ValueGenerator = {
     make: function make(key, percent, transitionPropertyValue) {
 
@@ -21105,9 +21123,17 @@ var TimelineObjectList = function (_UIElement) {
             var timelineId = keyframe.parentId;
             var targetId = keyframe.targetId;
             var value$$1 = keyframe[selectedType + "Value"];
-
+            var propertyInfo = PROPERTY_GET_DEFAULT_VALUE(property);
             var $input = this.$el.$("[data-property=\"" + property + "\"][data-timeline-id=\"" + timelineId + "\"]");
-            $input.val(value$$1);
+
+            if (propertyInfo.type == 'color') {
+                var colorPanel = $input.$('.color-panel');
+                if (colorPanel) {
+                    colorPanel.css('background-color', value$$1);
+                }
+            } else {
+                $input.val(value$$1);
+            }
 
             this.commit(CHANGE_LAYER_TRANSFORM, defineProperty({ id: targetId }, property, value$$1));
         }
@@ -21144,19 +21170,36 @@ var TimelineObjectList = function (_UIElement) {
     }, {
         key: CLICK('$el .input-color'),
         value: function value$$1(e) {
+            var _this4 = this;
+
             var $t = e.$delegateTarget;
+            var $colorPanel = $t.$('.color-panel');
 
             var _$t$attrs3 = $t.attrs('data-property', 'data-timeline-id'),
                 _$t$attrs4 = slicedToArray(_$t$attrs3, 2),
                 property = _$t$attrs4[0],
                 timelineId = _$t$attrs4[1];
 
-            // TODO: 색 변경 패널을 뛰워야 하는데.... .흠 귀찮.... 
-            // 색 팝업을 어떻게 하지 ? 
-            // 타임라인 전용으로 만들까? 
-            // 아니면 키 프레임 클릭하고 탭을 열어줄까? 거기서 하라고? 
-            // 헷갈리겠지? 
+            var selectedId = this.config('timeline.keyframe.selectedId');
+            var selectedType = this.config('timeline.keyframe.selectedType');
+            var keyframe = this.get(selectedId);
+            var targetId = keyframe.targetId;
 
+            // 선택한 값에 대입 하도록 설정 
+            if (timelineId == keyframe.parentId && property == keyframe.property) {
+                var timeField = selectedType + "Time";
+                var valueField = selectedType + "Value";
+                var time = keyframe[timeField];
+                var oldColor = e.$delegateTarget.css('background-color');
+
+                if (keyframe && isNotUndefined(time)) {
+                    this.emit('openTimelineColorPicker', e.xy, oldColor, function (newColor) {
+                        $colorPanel.css('background-color', newColor);
+                        _this4.run(ITEM_SET, defineProperty({ id: selectedId }, valueField, newColor));
+                        _this4.commit(CHANGE_IMAGE_COLOR, defineProperty({ id: targetId }, property, newColor));
+                    });
+                }
+            }
         }
     }]);
     return TimelineObjectList;
@@ -21491,7 +21534,12 @@ var KeyframeObjectList = function (_UIElement) {
             var endTime = startTime;
 
             if (this.read(TIMELINE_NOT_EXISTS_KEYFRAME, parentId, property, startTime)) {
-                this.run(ITEM_ADD_KEYFRAME, parentId, { property: property, startTime: startTime, endTime: endTime }, function (keyframeId) {
+                var timeline = this.get(parentId);
+                var targetItem = this.get(timeline.targetId);
+                var startValue = targetItem[property] || 0;
+                var endValue = targetItem[property] || 0;
+
+                this.run(ITEM_ADD_KEYFRAME, parentId, { property: property, startTime: startTime, endTime: endTime, startValue: startValue, endValue: endValue }, function (keyframeId) {
                     _this5.refreshKeyframe(keyframeId);
                 });
             } else {
@@ -21670,6 +21718,18 @@ var Timeline = function (_UIElement) {
     }
 
     createClass(Timeline, [{
+        key: "afterRender",
+        value: function afterRender() {
+            this.colorPicker = ColorPicker.create({
+                type: 'xd-tab',
+                tabTitle: '',
+                autoHide: false,
+                position: 'absolute',
+                width: '240px',
+                container: this.$el.el
+            });
+        }
+    }, {
         key: "components",
         value: function components() {
             return {
@@ -21770,6 +21830,17 @@ var Timeline = function (_UIElement) {
             }
 
             this.emit(RESIZE_TIMELINE, e);
+        }
+    }, {
+        key: EVENT('openTimelineColorPicker'),
+        value: function value(xy, oldColor, callback) {
+            this.colorPicker.show({
+                left: xy.x + 30,
+                top: 0,
+                hideDelay: 100000000
+            }, oldColor, /*show*/function (newColor) {
+                if (isFunction(callback)) callback(newColor);
+            }, /*hide*/function () {});
         }
     }]);
     return Timeline;
@@ -23765,8 +23836,8 @@ var GradientView = function (_UIElement) {
             var pageCSS = this.read(PAGE_TO_CSS, page || { clip: false });
 
             var canvasCSS = {
-                width: px$1(2000),
-                height: px$1(2000)
+                width: px(2000),
+                height: px(2000)
             };
 
             var colorviewCSS = this.read(PAGE_COLORVIEW_TO_CSS, page || { clip: false });
@@ -30934,22 +31005,68 @@ var TimelineManager = function (_BaseModule) {
     }, {
         key: ACTION(TIMELINE_SEEK),
         value: function value($store, currentTime, $container) {
-            $store.read(TIMELINE_LIST).map(function (timeline, index) {
+            var _this2 = this;
 
-                var currentKeyframes = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timeline.id).filter(function (keyframe) {
-                    return keyframe.startTime <= currentTime && currentTime <= keyframe.endTime;
+            var list = $store.read(TIMELINE_LIST);
+
+            list.map(function (timeline, index) {
+
+                var keyframeList = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timeline.id);
+
+                var propertyList = {};
+                keyframeList.forEach(function (keyframe) {
+                    if (!propertyList[keyframe.property]) {
+                        propertyList[keyframe.property] = [];
+                    }
+
+                    propertyList[keyframe.property].push(keyframe);
+                });
+
+                var currentKeyframes = [];
+
+                keyEach(propertyList, function (property, keyframes) {
+
+                    var one = null;
+
+                    for (var i = 0, len = keyframes.length; i < len; i++) {
+                        var k = keyframes[i];
+                        if (k.startTime <= currentTime && currentTime <= k.endTime) {
+                            one = k;
+                            break;
+                        } else if (k.startTime > currentTime) {
+
+                            if (i > 0) {
+                                var temp = keyframes[i - 1];
+                                one = {
+                                    property: property,
+                                    timing: 'linear', // 값의 변화가 없기에
+                                    startTime: temp.endTime,
+                                    endTime: k.startTime,
+                                    startValue: temp.endValue,
+                                    endValue: temp.endValue
+                                };
+                                break;
+                            }
+                        }
+                    }
+
+                    if (one) {
+                        currentKeyframes.push(one);
+                    }
                 });
 
                 if (currentKeyframes.length) {
-
+                    var targetItem = _this2.get(timeline.targetId);
                     var obj = { id: timeline.targetId };
 
                     currentKeyframes.forEach(function (keyframe) {
 
-                        var value = TIMING_GET_VALUE(keyframe, currentTime);
+                        var value = TIMING_GET_VALUE(targetItem, keyframe, currentTime);
 
-                        var $input = $container.$("[data-property=\"" + keyframe.property + "\"][data-timeline-id=\"" + keyframe.parentId + "\"]");
-                        $input.val(value);
+                        if (keyframe.parentId) {
+                            var $input = $container.$("[data-property=\"" + keyframe.property + "\"][data-timeline-id=\"" + keyframe.parentId + "\"]");
+                            $input.val(value);
+                        }
 
                         obj[keyframe.property] = value;
                     });

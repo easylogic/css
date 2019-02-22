@@ -2860,7 +2860,8 @@ html, body {
               -webkit-box-sizing: border-box;
                       box-sizing: border-box;
               border: 1px solid #cccccc;
-              cursor: pointer; }
+              cursor: pointer;
+              vertical-align: middle; }
               .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property .input-color .color-panel {
                 width: 100%;
                 height: 100%; }

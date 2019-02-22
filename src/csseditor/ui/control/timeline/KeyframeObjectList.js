@@ -319,7 +319,12 @@ export default class KeyframeObjectList extends UIElement {
         var endTime = startTime; 
 
         if (this.read(TIMELINE_NOT_EXISTS_KEYFRAME, parentId, property, startTime)) {
-            this.run(ITEM_ADD_KEYFRAME, parentId, { property, startTime, endTime }, (keyframeId) => {
+            var timeline = this.get(parentId)
+            var targetItem = this.get(timeline.targetId)
+            var startValue = targetItem[property] || 0;
+            var endValue = targetItem[property] || 0; 
+
+            this.run(ITEM_ADD_KEYFRAME, parentId, { property, startTime, endTime, startValue, endValue }, (keyframeId) => {
                 this.refreshKeyframe(keyframeId);
             })
         } else {
