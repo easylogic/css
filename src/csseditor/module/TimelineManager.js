@@ -7,6 +7,7 @@ import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER } from "../types/event";
 import { ITEM_ADD_TIMELINE } from "../types/ItemCreateTypes";
 import { TIMING_GET_VALUE } from "../../util/css/make";
 import { ITEM_SET, ITEM_GET } from "../types/ItemTypes";
+import { keyEach } from "../../util/functions/func";
 
 export default class TimelineManager extends BaseModule {
 
@@ -72,24 +73,64 @@ export default class TimelineManager extends BaseModule {
         return maxValue; 
     }    
 
-    [ACTION(TIMELINE_SEEK)] ($store, currentTime, $container) {
-        $store.read(TIMELINE_LIST).map( (timeline, index) => {
+    [ACTION(TIMELINE_SEEK)] ($store, currentTime) {
+        var list = $store.read(TIMELINE_LIST);
+        
+        list.map( (timeline, index) => {
                     
-            var currentKeyframes = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timeline.id).filter(keyframe => {
-                return keyframe.startTime <= currentTime && currentTime <= keyframe.endTime
-            });
+            var keyframeList = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timeline.id);
+
+            var propertyList = {}
+            keyframeList.forEach(keyframe => {
+                if (!propertyList[keyframe.property]) {
+                    propertyList[keyframe.property] = []
+                }
+
+                propertyList[keyframe.property].push(keyframe);
+            })
+
+            var currentKeyframes = [] 
+
+            keyEach(propertyList, (property, keyframes) => {
+
+                var one = null
+
+                for(var i = 0, len = keyframes.length; i < len; i++) {
+                    var k = keyframes[i];
+                    if (k.startTime <= currentTime && currentTime <= k.endTime) {
+                        one = k; 
+                        break; 
+                    } else if (k.startTime > currentTime) {
+
+                        if (i > 0) {
+                            var temp = keyframes[i - 1]
+                            one = {
+                                property, 
+                                timing: 'linear',           // 값의 변화가 없기에
+                                startTime: temp.endTime, 
+                                endTime: k.startTime , 
+                                startValue: temp.endValue,
+                                endValue: temp.endValue
+                            }
+                            break; 
+                        }
+                    }
+                }
+
+                if (one) {
+                    currentKeyframes.push(one);
+                }
+            })
 
             if (currentKeyframes.length) {
-
+                var targetItem = this.get(timeline.targetId)
                 var obj = { id: timeline.targetId  }
 
                 currentKeyframes.forEach(keyframe => {
 
-                    var value = TIMING_GET_VALUE(keyframe, currentTime);
+                    var value = TIMING_GET_VALUE(targetItem, keyframe, currentTime);
 
-                    var $input = $container.$(`[data-property="${keyframe.property}"][data-timeline-id="${keyframe.parentId}"]` );
-                    $input.val(value);
-            
+
                     obj[keyframe.property] = value; 
                 })
 

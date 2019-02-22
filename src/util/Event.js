@@ -14,7 +14,7 @@ export class EventChecker {
 // event name regular expression
 export const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 
-const CHECK_CLICK_PATTERN = 'click';
+const CHECK_CLICK_PATTERN = 'click|dblclick';
 const CHECK_MOUSE_PATTERN = 'mouse(down|up|move|over|out|enter|leave)';
 const CHECK_POINTER_PATTERN = 'pointer(start|move|end)';
 const CHECK_TOUCH_PATTERN = 'touch(start|move|end)';

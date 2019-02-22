@@ -5,6 +5,7 @@ import ColorManager from './module/ColorManager';
 import BaseStore from './BaseStore';
 import { MOUSEUP } from '../util/Event';
 import { defaultValue, isFunction } from '../util/functions/func';
+import { px } from '../util/css/types';
 
 export default class BaseColorPicker extends UIElement {
 
@@ -57,6 +58,10 @@ export default class BaseColorPicker extends UIElement {
         if (this.opt.hideColorsets) {
             this.$root.addClass('hide-colorsets')
         }        
+
+        if (this.opt.width) {
+            this.$root.css('width', this.opt.width)
+        }
 
         this.$arrow = new Dom('div', 'arrow');
         
@@ -224,8 +229,9 @@ export default class BaseColorPicker extends UIElement {
                 display: 'inline-block'
             }
         } else {
-           return {
-                position: 'fixed',  // color picker has fixed position
+            var position = this.opt.position == 'absolute' ? 'absolute' : 'fixed'
+            return {
+                position,  // color picker has fixed position
                 left: '-10000px',
                 top: '-10000px'
             }

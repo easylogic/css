@@ -1,5 +1,6 @@
-import UIElement from "../../../colorpicker/UIElement";
-import { CLICK, SCROLL, DEBOUNCE, DROP, RESIZE, WHEEL, ALT } from "../../../util/Event";
+import ColorPicker from '../../../colorpicker/index'
+import UIElement, { EVENT } from "../../../colorpicker/UIElement";
+import { CLICK, SCROLL, DEBOUNCE, DROP, WHEEL, ALT } from "../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
@@ -7,11 +8,24 @@ import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELIN
 import TimelineObjectList from "./timeline/TimelineObjectList";
 import KeyframeObjectList from "./timeline/KeyframeObjectList";
 import { TIMELINE_PUSH, TIMELINE_NOT_EXISTS } from "../../types/TimelineTypes";
-import { ADD_TIMELINE } from "../../types/event";
+import { ADD_TIMELINE, CHANGE_IMAGE_COLOR } from "../../types/event";
 import KeyframeTimeView from "./timeline/KeyframeTimeView";
 import TimelineTopToolbar from "./timeline/TimelineTopToolbar";
+import { isFunction } from '../../../util/functions/func';
 
 export default class Timeline extends UIElement {
+
+    afterRender () {
+        this.colorPicker = ColorPicker.create({
+            type: 'xd-tab',
+            tabTitle: '',
+            autoHide: false,
+            position: 'absolute',
+            width: '240px',
+            container: this.$el.el
+        })    
+
+    }
 
     components() {
         return { 
@@ -134,5 +148,17 @@ export default class Timeline extends UIElement {
 
         this.emit(RESIZE_TIMELINE, e);
 
+    }
+
+    [EVENT('openTimelineColorPicker')] (xy, oldColor, callback) {
+        this.colorPicker.show({
+            left: xy.x + 30,
+            top: 0,
+            hideDelay: 100000000,
+        }, oldColor, /*show*/(newColor) => {
+            if (isFunction(callback)) callback(newColor);
+        }, /*hide*/() => {
+
+        })                
     }
 }

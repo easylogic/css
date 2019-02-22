@@ -1,8 +1,8 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { LOAD, CLICK, CHANGEINPUT } from "../../../../util/Event";
 import { TIMELINE_LIST, TIMELINE_SEEK } from "../../../types/TimelineTypes";
-import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION } from "../../../types/event";
-import { UNIT_PX, unitValue, EMPTY_STRING } from "../../../../util/css/types";
+import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION, CHANGE_IMAGE_COLOR } from "../../../types/event";
+import { unitValue, EMPTY_STRING } from "../../../../util/css/types";
 import { defaultValue, html, isNotUndefined } from "../../../../util/functions/func";
 import { IS_LAYER, PROPERTY_GET_DEFAULT_VALUE, IS_IMAGE, GET_PROPERTY_LIST } from "../../../../util/css/make";
 import { ITEM_SET } from "../../../types/ItemTypes";
@@ -10,6 +10,8 @@ import { MOVE_TIMELINE } from "../../../types/ToolTypes";
 
 
 export default class TimelineObjectList extends UIElement {
+
+
     templateClass () {
         return 'timeline-object-list'
     }
@@ -137,7 +139,7 @@ export default class TimelineObjectList extends UIElement {
     }
 
     [EVENT(MOVE_TIMELINE)] () {
-        this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'), this.$el);
+        this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'));
     }
 
     [CLICK('$el .group .title')] (e) {
@@ -160,9 +162,17 @@ export default class TimelineObjectList extends UIElement {
         var timelineId = keyframe.parentId;        
         var targetId = keyframe.targetId;
         var value = keyframe[`${selectedType}Value`];
-
+        var propertyInfo  = PROPERTY_GET_DEFAULT_VALUE(property)
         var $input = this.$el.$(`[data-property="${property}"][data-timeline-id="${timelineId}"]` );
-        $input.val(value);
+
+        if (propertyInfo.type == 'color') {
+            var colorPanel = $input.$('.color-panel');
+            if (colorPanel) {
+                colorPanel.css('background-color', value);
+            }
+        } else {
+            $input.val(value);
+        }
 
         this.commit(CHANGE_LAYER_TRANSFORM, {id: targetId, [property]: value})
 
@@ -195,13 +205,29 @@ export default class TimelineObjectList extends UIElement {
 
     [CLICK('$el .input-color')] (e) {
         var $t = e.$delegateTarget;
+        var $colorPanel = $t.$('.color-panel')
         const [property, timelineId] = $t.attrs('data-property', 'data-timeline-id')
 
-        // TODO: 색 변경 패널을 뛰워야 하는데.... .흠 귀찮.... 
-        // 색 팝업을 어떻게 하지 ? 
-        // 타임라인 전용으로 만들까? 
-        // 아니면 키 프레임 클릭하고 탭을 열어줄까? 거기서 하라고? 
-        // 헷갈리겠지? 
+        var selectedId = this.config('timeline.keyframe.selectedId');
+        var selectedType = this.config('timeline.keyframe.selectedType');
+        var keyframe = this.get(selectedId);
+        var targetId = keyframe.targetId
+
+        // 선택한 값에 대입 하도록 설정 
+        if (timelineId == keyframe.parentId && property == keyframe.property) {
+            var timeField = `${selectedType}Time`
+            var valueField = `${selectedType}Value`
+            var time = keyframe[timeField]
+            var oldColor = e.$delegateTarget.css('background-color')
+
+            if (keyframe && isNotUndefined(time)) {
+                this.emit('openTimelineColorPicker', e.xy, oldColor, (newColor) => {
+                    $colorPanel.css('background-color', newColor)                    
+                    this.run(ITEM_SET, {id: selectedId, [valueField]: newColor })
+                    this.commit(CHANGE_IMAGE_COLOR, {id: targetId, [property]: newColor})
+                })
+            }
+        }
     }
 }
 

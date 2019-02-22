@@ -27,8 +27,8 @@
 
                     .keyframe-item {
                         position: absolute;
-                        top: 7px;
                         box-sizing: border-box;
+                        height: $pointer-size;
                         z-index: 1;
 
                         &[data-start-time] {
@@ -87,10 +87,28 @@
                             right: 0px;
                             top: 50%;
                             transform: translateY(-50%);
-                            height: 4px;
+                            height: $pointer-size;
                             background-color: rgba($timeline-bar-color, 0.8);
                             cursor: move;      
-                            box-sizing: border-box;                          
+                            box-sizing: border-box;         
+                            text-align: center;
+                            
+                            .timing-icon {
+                                position: absolute;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                background-color: #333;
+                                display: none;
+                                height: $pointer-size;
+                                width: $pointer-size;
+                                box-sizing: border-box;
+                                cursor: pointer;
+                                pointer-events: none;
+
+                                &.show {
+                                    display: inline-block;
+                                }
+                            }
                         }
 
                         .start {
@@ -101,13 +119,13 @@
                             width: 3px;
                             height: $pointer-size;
                             box-sizing: border-box;
-                            background-color: rgba(255, 0, 0, 1);
+                            background-color: #5459f1;
                             z-index: 2;
                             cursor: w-resize;
                             border-radius: 2px;
 
                             &.selected {
-                                background-color: darken( rgba(255, 0, 0, 1), 0.2) ;
+                                background-color: darken( #5459f1, 0.2) ;
                             }                                
                         }
 
@@ -119,12 +137,12 @@
                             width: 3px;
                             height: $pointer-size;
                             box-sizing: border-box;
-                            background-color: rgba(69, 216, 69, 1);
+                            background-color: rgb(26, 26, 26);
                             z-index: 3;                                     
                             cursor: e-resize;
                             border-radius: 2px;
                             &.selected {
-                                background-color:darken( rgba(69, 216, 69, 1), 0.2);
+                                background-color:darken( rgba(26, 26, 26, 1), 0.2);
                             }
                         }          
                         

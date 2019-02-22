@@ -5,6 +5,10 @@ import {
 import { parseParamNumber } from "../filter/functions";
 import { defaultValue, isNotUndefined, get, isNumber, isUndefined, keyEach, isArray, cleanObject, combineKeyArray } from "../functions/func";
 import Timing from "../animation/Timing";
+import Scale from "../animation/Scale";
+import { parse } from "../functions/parser";
+import { interpolateRGBObject } from "../functions/mixin";
+import { format } from "../functions/formatter";
 
 export function IS_PAGE (item) { return item.itemType == ITEM_TYPE_PAGE }
 export function IS_LAYER (item) { return item.itemType == ITEM_TYPE_LAYER }
@@ -838,11 +842,25 @@ export function PROPERTY_GET_DEFAULT_VALUE (property) {
     return PROPERTY_DEFAULT_VALUE[property] || {defaultValue: 0, step: 1, min: -1000, max: 1000};
 }
 
-export function TIMING_GET_VALUE (keyframe, currentTime) {
-    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime)
+export function TIMING_GET_VALUE (targetItem, keyframe, currentTime) {
 
-    var value = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * Timing[keyframe.timing](progress);
-    
+    // var Scale.makeSetupFunction(start, end);
+
+    var propertyInfo = PROPERTY_GET_DEFAULT_VALUE(keyframe.property);
+    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime)
+    var realProgress = Timing[keyframe.timing](progress);
+
+    if (propertyInfo.type == 'color') {
+        var start = parse(keyframe.startValue);
+        var end = parse(keyframe.endValue);
+        var value = interpolateRGBObject (start, end, realProgress)
+
+        value = format(value, end.type)
+
+    } else {
+        var value = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * realProgress;
+    }
+
     return value; 
 }
 

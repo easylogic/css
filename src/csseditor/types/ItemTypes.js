@@ -206,6 +206,7 @@ export const KEYFRAME_DEFAULT_OBJECT = {
     delay: 0,
     duration: 1000, 
     timing: 'linear',
+    params: [],
     iteration: 1, 
     startTime: 0,
     endTime: 0, 
