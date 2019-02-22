@@ -139,7 +139,7 @@ export default class TimelineObjectList extends UIElement {
     }
 
     [EVENT(MOVE_TIMELINE)] () {
-        this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'), this.$el);
+        this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'));
     }
 
     [CLICK('$el .group .title')] (e) {

@@ -73,7 +73,7 @@ export default class TimelineManager extends BaseModule {
         return maxValue; 
     }    
 
-    [ACTION(TIMELINE_SEEK)] ($store, currentTime, $container) {
+    [ACTION(TIMELINE_SEEK)] ($store, currentTime) {
         var list = $store.read(TIMELINE_LIST);
         
         list.map( (timeline, index) => {
@@ -130,10 +130,6 @@ export default class TimelineManager extends BaseModule {
 
                     var value = TIMING_GET_VALUE(targetItem, keyframe, currentTime);
 
-                    if (keyframe.parentId) {
-                        var $input = $container.$(`[data-property="${keyframe.property}"][data-timeline-id="${keyframe.parentId}"]` );
-                        $input.val(value);
-                    }
 
                     obj[keyframe.property] = value; 
                 })

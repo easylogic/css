@@ -85,8 +85,15 @@ export default class KeyframeTimeView extends UIElement {
             }
 
             var left =  (cursorTime - currentTime) * width;
-            this.drawOption({strokeStyle: 'rgba(255, 0, 0, 0.5)', lineWidth: 2})
-            this.drawLine(left, 0, left, rect.height)
+            this.drawOption({strokeStyle: 'black',fillStyle: '#ececec', lineWidth: 1})
+            this.drawPath(
+                [left - 5, rect.height - 13],
+                [left + 5, rect.height - 13],
+                [left + 5, rect.height - 5],
+                [left, rect.height],
+                [left - 5, rect.height - 5],
+                [left - 5, rect.height - 13]
+            )
             
         })
     }

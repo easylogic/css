@@ -590,6 +590,23 @@ export default class Dom {
         ctx.closePath();
     }
 
+    drawPath (...path) {
+        var ctx = this.context();
+
+        ctx.beginPath();
+
+        path.forEach((p, index) => {
+            if (index == 0) {
+                ctx.moveTo(p[0], p[1]);
+            } else {
+                ctx.lineTo(p[0], p[1]);
+            }
+        })
+        ctx.stroke();
+        ctx.fill();
+        ctx.closePath();
+    }
+
     drawCircle (cx, cy, r) {
         var ctx = this.context();        
         ctx.beginPath();

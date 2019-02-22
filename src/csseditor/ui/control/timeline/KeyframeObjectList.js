@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CLICK, ALT, IF } from "../../../../util/Event";
+import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CLICK, ALT, IF, DOUBLECLICK } from "../../../../util/Event";
 import { TIMELINE_TOTAL_WIDTH, TIMELINE_LIST, TIMELINE_NOT_EXISTS_KEYFRAME, TIMELINE_MIN_TIME_IN_KEYFRAMES, TIMELINE_MAX_TIME_IN_KEYFRAMES } from "../../../types/TimelineTypes";
 import { CHANGE_EDITOR, ADD_TIMELINE, CHANGE_KEYFRAME, CHANGE_TOOL, CHANGE_KEYFRAME_SELECTION } from "../../../types/event";
 import { html } from "../../../../util/functions/func";
@@ -66,6 +66,7 @@ export default class KeyframeObjectList extends UIElement {
         var width = pxUnit((endTime - startTime) * msWidth)
 
         var nested = unitValue(width) < 1 ? 'nested' : EMPTY_STRING
+        var show = unitValue(width) < 20 ? EMPTY_STRING : 'show';
 
         return `
         <div 
@@ -74,7 +75,9 @@ export default class KeyframeObjectList extends UIElement {
             keyframe-id="${keyframe.id}" 
             keyframe-property="${keyframe.property}"
         >
-            <div class='bar'></div>
+            <div class='bar'>
+                <div class='timing-icon ${keyframe.timing} ${show}'></div>
+            </div>
             <div class='start' time="${startTime}"></div>
             <div class='end' time="${endTime}"></div>
         </div>
@@ -287,7 +290,7 @@ export default class KeyframeObjectList extends UIElement {
     setEndPosition (e) {
         var dx = (e.xy.x - this.xy.x);
         var newX = this.match1ms( Math.min( Math.max(this.minX, this.selectedEndX + dx) , this.maxX) , 10)
-        var newWidth =  Math.max(0, newX - this.selectedStartX)
+        var newWidth =  Math.max(0, newX - this.selectedStartX)       
         this.selectedElement.attr('data-end-time', this.getTimeString(newX))
         this.selectedElement.px('width', newWidth)
         this.selectedElement.toggleClass('nested', !newWidth)        
@@ -331,6 +334,11 @@ export default class KeyframeObjectList extends UIElement {
             alert('Time can not nested')
         }
 
+    }
+
+    [DOUBLECLICK('$el .keyframe-item')] (e) {
+        var [keyframeId, property] = e.$delegateTarget.attrs('keyframe-id', 'keyframe-property')
+        console.log(keyframeId, property)
     }
 
     [EVENT(MOVE_TIMELINE)] () {

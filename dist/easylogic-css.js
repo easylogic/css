@@ -7196,6 +7196,28 @@ var Dom = function () {
             ctx.closePath();
         }
     }, {
+        key: "drawPath",
+        value: function drawPath() {
+            var ctx = this.context();
+
+            ctx.beginPath();
+
+            for (var _len2 = arguments.length, path = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                path[_key2] = arguments[_key2];
+            }
+
+            path.forEach(function (p, index) {
+                if (index == 0) {
+                    ctx.moveTo(p[0], p[1]);
+                } else {
+                    ctx.lineTo(p[0], p[1]);
+                }
+            });
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+        }
+    }, {
         key: "drawCircle",
         value: function drawCircle(cx, cy, r) {
             var ctx = this.context();
@@ -7244,7 +7266,7 @@ var EventChecker = function () {
 // event name regular expression
 var CHECK_LOAD_PATTERN = /^load (.*)/ig;
 
-var CHECK_CLICK_PATTERN = 'click';
+var CHECK_CLICK_PATTERN = 'click|dblclick';
 var CHECK_MOUSE_PATTERN = 'mouse(down|up|move|over|out|enter|leave)';
 var CHECK_POINTER_PATTERN = 'pointer(start|move|end)';
 var CHECK_TOUCH_PATTERN = 'touch(start|move|end)';
@@ -8182,6 +8204,7 @@ var KEYFRAME_DEFAULT_OBJECT = {
     delay: 0,
     duration: 1000,
     timing: 'linear',
+    params: [],
     iteration: 1,
     startTime: 0,
     endTime: 0,
@@ -21098,7 +21121,7 @@ var TimelineObjectList = function (_UIElement) {
     }, {
         key: EVENT(MOVE_TIMELINE),
         value: function value$$1() {
-            this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'), this.$el);
+            this.run(TIMELINE_SEEK, this.config('timeline.cursor.time'));
         }
     }, {
         key: CLICK('$el .group .title'),
@@ -21274,8 +21297,9 @@ var KeyframeObjectList = function (_UIElement) {
             var width = pxUnit((endTime - startTime) * msWidth);
 
             var nested = unitValue(width) < 1 ? 'nested' : EMPTY_STRING;
+            var show = unitValue(width) < 20 ? EMPTY_STRING : 'show';
 
-            return "\n        <div \n            class='keyframe-item line " + nested + "' \n            style='left: " + stringUnit(left) + "; width: " + stringUnit(width) + ";' \n            keyframe-id=\"" + keyframe.id + "\" \n            keyframe-property=\"" + keyframe.property + "\"\n        >\n            <div class='bar'></div>\n            <div class='start' time=\"" + startTime + "\"></div>\n            <div class='end' time=\"" + endTime + "\"></div>\n        </div>\n        ";
+            return "\n        <div \n            class='keyframe-item line " + nested + "' \n            style='left: " + stringUnit(left) + "; width: " + stringUnit(width) + ";' \n            keyframe-id=\"" + keyframe.id + "\" \n            keyframe-property=\"" + keyframe.property + "\"\n        >\n            <div class='bar'>\n                <div class='timing-icon " + keyframe.timing + " " + show + "'></div>\n            </div>\n            <div class='start' time=\"" + startTime + "\"></div>\n            <div class='end' time=\"" + endTime + "\"></div>\n        </div>\n        ";
         }
     }, {
         key: "makeKeyframeProperty",
@@ -21547,6 +21571,16 @@ var KeyframeObjectList = function (_UIElement) {
             }
         }
     }, {
+        key: DOUBLECLICK('$el .keyframe-item'),
+        value: function value$$1(e) {
+            var _e$$delegateTarget$at3 = e.$delegateTarget.attrs('keyframe-id', 'keyframe-property'),
+                _e$$delegateTarget$at4 = slicedToArray(_e$$delegateTarget$at3, 2),
+                keyframeId = _e$$delegateTarget$at4[0],
+                property = _e$$delegateTarget$at4[1];
+
+            console.log(keyframeId, property);
+        }
+    }, {
         key: EVENT(MOVE_TIMELINE),
         value: function value$$1() {
             this.setBackgroundGrid();
@@ -21654,8 +21688,8 @@ var KeyframeTimeView = function (_UIElement) {
                 }
 
                 var left = (cursorTime - currentTime) * width;
-                this.drawOption({ strokeStyle: 'rgba(255, 0, 0, 0.5)', lineWidth: 2 });
-                this.drawLine(left, 0, left, rect.height);
+                this.drawOption({ strokeStyle: 'black', fillStyle: '#ececec', lineWidth: 1 });
+                this.drawPath([left - 5, rect.height - 13], [left + 5, rect.height - 13], [left + 5, rect.height - 5], [left, rect.height], [left - 5, rect.height - 5], [left - 5, rect.height - 13]);
             });
         }
     }, {
@@ -31004,7 +31038,7 @@ var TimelineManager = function (_BaseModule) {
         }
     }, {
         key: ACTION(TIMELINE_SEEK),
-        value: function value($store, currentTime, $container) {
+        value: function value($store, currentTime) {
             var _this2 = this;
 
             var list = $store.read(TIMELINE_LIST);
@@ -31062,11 +31096,6 @@ var TimelineManager = function (_BaseModule) {
                     currentKeyframes.forEach(function (keyframe) {
 
                         var value = TIMING_GET_VALUE(targetItem, keyframe, currentTime);
-
-                        if (keyframe.parentId) {
-                            var $input = $container.$("[data-property=\"" + keyframe.property + "\"][data-timeline-id=\"" + keyframe.parentId + "\"]");
-                            $input.val(value);
-                        }
 
                         obj[keyframe.property] = value;
                     });
