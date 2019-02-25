@@ -91,8 +91,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_SELECTION,
-        CHANGE_LAYER_CLIPPATH
+        CHANGE_SELECTION
     )] (value) {
         this.refresh();
     }

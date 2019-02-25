@@ -5,7 +5,7 @@ import {
     CHANGE_PAGE_TRANSFORM 
 } from '../../../types/event';
 import { percentUnit, unitValue, valueUnit, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
-import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
+import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
 import { defaultValue, isString } from '../../../../util/functions/func';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../types/SelectionTypes';
 
@@ -47,10 +47,10 @@ export default class PerspectiveOriginPosition extends UIElement {
         return !!page.preserve;  
     }
 
-    getCurrentXY(e, position) {
+    getCurrentXY(isUpdate, position) {
 
-        if (e) {
-            var xy = e.xy;
+        if (isUpdate) {
+            var xy = this.config('pos');
 
             return [xy.x, xy.y]
         }
@@ -118,9 +118,9 @@ export default class PerspectiveOriginPosition extends UIElement {
 
     }
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
-        var [x , y] = this.getCurrentXY(e, this.getDefaultValue())
+        var [x , y] = this.getCurrentXY(isUpdate, this.getDefaultValue())
 
         x = Math.max(Math.min(maxX, x), minX)
         y = Math.max(Math.min(maxY, y), minY)
@@ -131,7 +131,7 @@ export default class PerspectiveOriginPosition extends UIElement {
         this.refs.$dragPointer.px('left', left);
         this.refs.$dragPointer.px('top', top);
 
-        if (e) {
+        if (isUpdate) {
 
             this.setPerspectiveOriginPosition(
                 percentUnit( Math.floor(left/width * 100) ), 
@@ -156,19 +156,13 @@ export default class PerspectiveOriginPosition extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
-    }
-
-    [POINTERSTART('$dragPointer')] (e) {
+    [POINTERSTART('$dragPointer') + MOVE()] (e) {
         e.preventDefault();
-        this.isDown = true; 
     }
 
     [POINTERSTART()] (e) {

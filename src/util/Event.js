@@ -11,6 +11,18 @@ export class EventChecker {
     }
 }
 
+export class EventAfterRunner {
+    constructor (value, split = CHECK_SAPARATOR) {
+        this.value = value; 
+        this.split = split
+    }
+
+    toString () {
+        return ` ${this.split} after(${this.value})`;
+    }
+}
+
+
 // event name regular expression
 export const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 
@@ -97,6 +109,10 @@ export const CHECKER = (value, split = CHECK_SAPARATOR) => {
     return new EventChecker(value, split);
 }
 
+export const AFTER = (value, split = CHECK_SAPARATOR) => {
+    return new EventAfterRunner(value, split);
+}
+
 export const IF = CHECKER;
 
 export const KEY_ALT = 'ALT'
@@ -130,6 +146,14 @@ export const PASSIVE = CHECKER('passive');
 export const DEBOUNCE = (debounce = 100) => {
     return CHECKER(`debounce(${debounce})`)
 }
+
+// after method 
+export const MOVE = (method = 'move') => {
+    return AFTER(`bodyMouseMove ${method}`)
+} 
+export const END = (method = 'end') => {
+    return AFTER(`bodyMouseUp ${method}`)
+} 
 
 
 // Predefined LOADER

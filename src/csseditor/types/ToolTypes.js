@@ -13,3 +13,6 @@ export const RESIZE_TIMELINE = 'resize/timeline'
 export const SCROLL_LEFT_TIMELINE = 'scroll/left/timeline' 
 export const TOGGLE_TIMELINE = 'toggle/timeline'
 export const MOVE_TIMELINE = 'move/timeline'
+
+export const ADD_BODY_MOUSEMOVE = 'add/body/mousemove'
+export const ADD_BODY_MOUSEUP = 'add/body/mouseup'

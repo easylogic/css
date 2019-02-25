@@ -10,7 +10,7 @@ import {
 import { defaultValue } from "../../../../../util/functions/func";
 import { percentUnit, value2px, CLIP_PATH_TYPE_INSET } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
-import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
+import { POINTEREND, POINTERMOVE, POINTERSTART, MOVE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIP_PATH_IS_INSET } from "../../../../../util/css/make";
 
@@ -99,9 +99,9 @@ export default class InsetEditor extends UIElement {
         return this.cachedRectangle;
     }    
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
-        var {x , y} = e.xy;
+        var {x , y} = this.config('pos');
 
         x = Math.max(Math.min(maxX, x), minX)
         y = Math.max(Math.min(maxY, y), minY)
@@ -114,7 +114,7 @@ export default class InsetEditor extends UIElement {
             this.refs['$' + this.currentType].px('left', left);
         }
 
-        if (e) {
+        if (isUpdate) {
             
             if (this.currentType == 'top' || this.currentType == 'bottom') {
                 this[this.currentType + "pos"] = top
@@ -155,26 +155,18 @@ export default class InsetEditor extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
-    }
-
-    [POINTERSTART('$el .drag-item')] (e) {
+    [POINTERSTART('$el .drag-item') + MOVE()] (e) {
         e.preventDefault();
         this.currentType = e.$delegateTarget.attr('data-type');
-        this.isDown = true; 
     }
 
     [POINTERSTART()] (e) {
-        this.isDown = true; 
-        this.layer = this.read(SELECTION_CURRENT_LAYER);
-        // this.refreshUI(e);        
+        this.layer = this.read(SELECTION_CURRENT_LAYER);  
     }    
     
 }

@@ -10,7 +10,7 @@ import {
 import { defaultValue } from "../../../../../util/functions/func";
 import { percentUnit, value2px, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_ELLIPSE } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
-import { POINTEREND, POINTERMOVE, POINTERSTART } from "../../../../../util/Event";
+import { POINTEREND, POINTERMOVE, POINTERSTART, MOVE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIP_PATH_IS_ELLIPSE } from "../../../../../util/css/make";
 
@@ -87,9 +87,9 @@ export default class EllipseEditor extends UIElement {
         return this.cachedRectangle;
     }    
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
-        var {x , y} = e.xy;
+        var {x , y} = this.config('pos');
 
         x = Math.max(Math.min(maxX, x), minX)
         y = Math.max(Math.min(maxY, y), minY)
@@ -100,7 +100,7 @@ export default class EllipseEditor extends UIElement {
         this.refs['$' + this.currentType].px('left', left);
         this.refs['$' + this.currentType].px('top', top);
 
-        if (e) {
+        if (isUpdate) {
             
             this[this.currentType + "pos"] = [left, top]
 
@@ -137,26 +137,18 @@ export default class EllipseEditor extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
-    }
-
-    [POINTERSTART('$el .drag-item')] (e) {
+    [POINTERSTART('$el .drag-item') + MOVE()] (e) {
         e.preventDefault();
         this.currentType = e.$delegateTarget.attr('data-type');
-        this.isDown = true; 
     }
 
     [POINTERSTART()] (e) {
-        this.isDown = true; 
         this.layer = this.read(SELECTION_CURRENT_LAYER);
-        // this.refreshUI(e);        
     }    
     
 }

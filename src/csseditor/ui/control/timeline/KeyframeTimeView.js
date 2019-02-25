@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { CHANGE_EDITOR, CHANGE_TOOL } from "../../../types/event";
+import { CHANGE_EDITOR } from "../../../types/event";
 import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
-import { POINTERSTART, POINTERMOVE, POINTEREND } from "../../../../util/Event";
+import { POINTERSTART, POINTERMOVE, POINTEREND, IF, MOVE, END } from "../../../../util/Event";
 
 export default class KeyframeTimeView extends UIElement {
     template () {
@@ -85,7 +85,7 @@ export default class KeyframeTimeView extends UIElement {
             }
 
             var left =  (cursorTime - currentTime) * width;
-            this.drawOption({strokeStyle: 'black',fillStyle: '#ececec', lineWidth: 1})
+            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)',fillStyle: 'rgba(236, 236, 236, 0.5)', lineWidth: 1})
             this.drawPath(
                 [left - 5, rect.height - 13],
                 [left + 5, rect.height - 13],
@@ -98,25 +98,16 @@ export default class KeyframeTimeView extends UIElement {
         })
     }
 
-    [POINTERSTART('$canvas')] (e) {
-        this.isStart = true; 
+    [POINTERSTART('$canvas') + MOVE()] (e) {
         this.selectedCanvasOffset = this.refs.$canvas.offset()
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isStart) {
-            var distX = e.xy.x - this.selectedCanvasOffset.left; 
-            var scrollLeft = this.config('timeline.scroll.left') + distX;
-            this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
-            this.emit(MOVE_TIMELINE)
-            this.refreshCanvas();
-        }
-    }
-
-    [POINTEREND('document')] (e) {
-        if (this.isStart) {
-            this.isStart = false; 
-        }
+    move () {
+        var distX = this.config('pos').x - this.selectedCanvasOffset.left; 
+        var scrollLeft = this.config('timeline.scroll.left') + distX;
+        this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+        this.emit(MOVE_TIMELINE)
+        this.refreshCanvas();
     }
 
     [EVENT(

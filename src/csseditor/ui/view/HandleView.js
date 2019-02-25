@@ -1,7 +1,7 @@
 import Dom from '../../../util/Dom';
 import GradientView from './GradientView';
 import { ITEM_FOCUS } from '../../types/ItemTypes';
-import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, IF } from '../../../util/Event';
+import { CLICK, POINTERSTART, POINTERMOVE, POINTEREND, SELF, IF, MOVE, END } from '../../../util/Event';
 import { SELECTION_ONE, SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_PAGE, SELECTION_AREA } from '../../types/SelectionTypes';
 
 export default class HandleView extends GradientView {
@@ -32,14 +32,6 @@ export default class HandleView extends GradientView {
         })    
     }
 
-    isDownCheck () {
-        return this.isDown
-    }
-
-    isNotDownCheck () {
-        return !this.isDown
-    }
-
     isPageMode (e) {
         if (this.read(SELECTION_IS_PAGE)) {
             return true; 
@@ -56,27 +48,16 @@ export default class HandleView extends GradientView {
         }
     }
 
-    hasDragArea () {
-        return this.dragArea
-    }
-
-    hasNotDragArea () {
-        return !this.dragArea
-    }
-
-    [POINTERSTART('$canvas') + IF('hasNotDragArea') + IF('isPageMode') + IF('isNotDownCheck')] (e) {
-        this.isDown = true; 
+    [POINTERSTART('$canvas') + IF('isPageMode') + MOVE('moveArea') + END('endArea')] (e) {
         this.xy = e.xy;
         this.targetXY = e.xy;        
-        var x = this.xy.x;
-        var y = this.xy.y;
-        this.dragArea = true;
+        var {x, y} = this.xy;
         this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: 0px;height:0px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`)
         this.refs.$dragArea.show();
     }     
     
-    [POINTERMOVE('document') + IF('hasDragArea') + IF('isDownCheck')] (e) {
-        this.targetXY = e.xy;
+    moveArea () {
+        this.targetXY = this.config('pos');
         var toolSize = this.config('tool.size');
 
         var width = Math.abs(this.targetXY.x - this.xy.x)
@@ -89,8 +70,7 @@ export default class HandleView extends GradientView {
         this.refs.$dragArea.cssText(`position:absolute;left: ${x}px;top: ${y}px;width: ${width}px;height:${height}px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;`);
     }    
 
-    [POINTEREND('document') + IF('hasDragArea') + IF('isDownCheck')] (e) {
-        this.isDown = false; 
+    endArea () {
         var toolSize = this.config('tool.size');
         var width = Math.abs(this.targetXY.x - this.xy.x)
         var height = Math.abs(this.targetXY.y - this.xy.y)
@@ -105,7 +85,7 @@ export default class HandleView extends GradientView {
         if (width != 0 && height != 0) {    
             // noop 
         } else {
-            var $target = new Dom(e.target)
+            var $target = new Dom(this.config('bodyEvent').target)
 
             if ($target.hasClass('layer')) {
                 area = {x, y, width:1, height:1}
@@ -127,8 +107,5 @@ export default class HandleView extends GradientView {
         this.xy = null;
 
         this.refs.$dragArea.hide();
-        setTimeout(() => {
-            this.dragArea = false;
-        }, 100)
     }    
 }

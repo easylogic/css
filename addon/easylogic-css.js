@@ -7112,6 +7112,24 @@ var EventChecker = function () {
     return EventChecker;
 }();
 
+var EventAfterRunner = function () {
+    function EventAfterRunner(value$$1) {
+        var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
+        classCallCheck(this, EventAfterRunner);
+
+        this.value = value$$1;
+        this.split = split;
+    }
+
+    createClass(EventAfterRunner, [{
+        key: 'toString',
+        value: function toString() {
+            return ' ' + this.split + ' after(' + this.value + ')';
+        }
+    }]);
+    return EventAfterRunner;
+}();
+
 // event name regular expression
 var CHECK_LOAD_PATTERN = /^load (.*)/ig;
 
@@ -7195,6 +7213,12 @@ var CHECKER = function CHECKER(value$$1) {
     return new EventChecker(value$$1, split);
 };
 
+var AFTER = function AFTER(value$$1) {
+    var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
+
+    return new EventAfterRunner(value$$1, split);
+};
+
 var IF = CHECKER;
 
 
@@ -7229,6 +7253,18 @@ var DEBOUNCE = function DEBOUNCE() {
     var debounce = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
 
     return CHECKER('debounce(' + debounce + ')');
+};
+
+// after method 
+var MOVE = function MOVE() {
+    var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'move';
+
+    return AFTER('bodyMouseMove ' + method);
+};
+var END = function END() {
+    var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'end';
+
+    return AFTER('bodyMouseUp ' + method);
 };
 
 // Predefined LOADER
@@ -7337,6 +7373,24 @@ var State = function () {
   }]);
   return State;
 }();
+
+var TOOL_COLOR_SOURCE = 'tool/colorSource';
+var TOOL_GET = 'tool/get';
+var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
+var TOOL_CHANGE_COLOR = 'tool/changeColor';
+var TOOL_SET = 'tool/set';
+var TOOL_TOGGLE = 'tool/toggle';
+
+var TOOL_SAVE_DATA = 'tool/save/data';
+var TOOL_RESTORE_DATA = 'tool/restore/data';
+var RESIZE_WINDOW = 'resize/window';
+var RESIZE_TIMELINE = 'resize/timeline';
+var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
+var TOGGLE_TIMELINE = 'toggle/timeline';
+var MOVE_TIMELINE = 'move/timeline';
+
+var ADD_BODY_MOUSEMOVE = 'add/body/mousemove';
+var ADD_BODY_MOUSEUP = 'add/body/mouseup';
 
 var _templateObject = taggedTemplateLiteral(['', ''], ['', '']);
 
@@ -7661,6 +7715,26 @@ var EventMachin = function () {
 
       return debounceTime;
     }
+    /* magic check method */
+
+    /* after check method */
+
+  }, {
+    key: 'bodyMouseMove',
+    value: function bodyMouseMove(methodName) {
+      if (this[methodName]) {
+        this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this);
+      }
+    }
+  }, {
+    key: 'bodyMouseUp',
+    value: function bodyMouseUp(methodName) {
+      if (this[methodName]) {
+        this.emit(ADD_BODY_MOUSEUP, this[methodName], this);
+      }
+    }
+    /* after check method */
+
   }, {
     key: 'getDefaultEventObject',
     value: function getDefaultEventObject(eventName, checkMethodFilters) {
@@ -7669,6 +7743,19 @@ var EventMachin = function () {
       var arr = checkMethodFilters;
       var checkMethodList = arr.filter(function (code) {
         return !!_this5[code];
+      });
+
+      var afters = arr.filter(function (code) {
+        return code.indexOf('after(') > -1;
+      });
+
+      var afterMethods = afters.map(function (code) {
+        var _code$split$1$split$ = code.split('after(')[1].split(')')[0].trim().split(' '),
+            _code$split$1$split$2 = slicedToArray(_code$split$1$split$, 2),
+            target = _code$split$1$split$2[0],
+            param = _code$split$1$split$2[1];
+
+        return { target: target, param: param };
       });
 
       // TODO: split debounce check code 
@@ -7697,7 +7784,7 @@ var EventMachin = function () {
       var useFit = !!fit$$1.length;
 
       arr = arr.filter(function (code) {
-        return checkMethodList.includes(code) === false && delay.includes(code) === false && capturing.includes(code) === false && fit$$1.includes(code) === false;
+        return checkMethodList.includes(code) === false && delay.includes(code) === false && afters.includes(code) === false && capturing.includes(code) === false && fit$$1.includes(code) === false;
       }).map(function (code) {
         return code.toLowerCase();
       });
@@ -7709,6 +7796,7 @@ var EventMachin = function () {
         codes: arr,
         useCapture: useCapture,
         useFit: useFit,
+        afterMethods: afterMethods,
         debounce: debounceTime,
         checkMethodList: checkMethodList
       };
@@ -7811,7 +7899,15 @@ var EventMachin = function () {
             e.xy = Event.posXY(e);
 
             if (_this7.checkEventType(e, eventObject)) {
-              return callback(e, e.$delegateTarget, e.xy);
+              var returnValue = callback(e, e.$delegateTarget, e.xy);
+
+              if (eventObject.afterMethods.length) {
+                eventObject.afterMethods.forEach(function (after) {
+                  return _this7[after.target].call(_this7, after.param);
+                });
+              }
+
+              return returnValue;
             }
           }
         };
@@ -7819,7 +7915,15 @@ var EventMachin = function () {
         return function (e) {
           e.xy = Event.posXY(e);
           if (_this7.checkEventType(e, eventObject)) {
-            return callback(e);
+            var returnValue = callback(e);
+
+            if (eventObject.afterMethods.length) {
+              eventObject.afterMethods.forEach(function (after) {
+                _this7[after.target].call(_this7, after.param);
+              });
+            }
+
+            return returnValue;
           }
         };
       }
@@ -8068,21 +8172,6 @@ var DEFAULT_TOOL_SIZE = {
     'board.scrollLeft': 0
 };
 
-var TOOL_COLOR_SOURCE = 'tool/colorSource';
-var TOOL_GET = 'tool/get';
-var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
-var TOOL_CHANGE_COLOR = 'tool/changeColor';
-var TOOL_SET = 'tool/set';
-var TOOL_TOGGLE = 'tool/toggle';
-
-var TOOL_SAVE_DATA = 'tool/save/data';
-var TOOL_RESTORE_DATA = 'tool/restore/data';
-var RESIZE_WINDOW = 'resize/window';
-var RESIZE_TIMELINE = 'resize/timeline';
-var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
-var TOGGLE_TIMELINE = 'toggle/timeline';
-var MOVE_TIMELINE = 'move/timeline';
-
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
 var PREFIX = '@';
@@ -8253,6 +8342,7 @@ var UIElement = function (_EventMachin) {
     return UIElement;
 }(EventMachin);
 
+var EMPTY_POS = { x: 0, y: 0 };
 var start = function start(opt) {
     var App = function (_UIElement) {
         inherits(App, _UIElement);
@@ -8280,6 +8370,48 @@ var start = function start(opt) {
 
                 // 이벤트 연결 
                 this.initializeEvent();
+
+                this.initBodyMoves();
+            }
+        }, {
+            key: "initBodyMoves",
+            value: function initBodyMoves() {
+                this.moves = new Set();
+                this.ends = new Set();
+                this.funcBodyMoves = this.loopBodyMoves.bind(this);
+                requestAnimationFrame(this.funcBodyMoves);
+            }
+        }, {
+            key: "loopBodyMoves",
+            value: function loopBodyMoves() {
+
+                if (this.bodyMoved) {
+                    this.moves.forEach(function (v) {
+                        v.func.call(v.context);
+                    });
+                }
+                requestAnimationFrame(this.funcBodyMoves);
+            }
+        }, {
+            key: "removeBodyMoves",
+            value: function removeBodyMoves() {
+
+                this.ends.forEach(function (v) {
+                    v.func.call(v.context);
+                });
+
+                this.moves.clear();
+                this.ends.clear();
+            }
+        }, {
+            key: EVENT(ADD_BODY_MOUSEMOVE),
+            value: function value(func, context) {
+                this.moves.add({ func: func, context: context });
+            }
+        }, {
+            key: EVENT(ADD_BODY_MOUSEUP),
+            value: function value(func, context) {
+                this.ends.add({ func: func, context: context });
             }
         }, {
             key: "getModuleList",
@@ -8305,6 +8437,23 @@ var start = function start(opt) {
             key: "components",
             value: function components() {
                 return opt.components || {};
+            }
+        }, {
+            key: POINTERMOVE('document'),
+            value: function value(e) {
+                var pos = this.config('pos') || EMPTY_POS;
+                var newPos = Event.pos(e) || EMPTY_POS;
+
+                this.bodyMoved = !(pos.x == newPos.x && pos.y == newPos.y);
+                this.initConfig('bodyEvent', e);
+                this.initConfig('pos', newPos);
+            }
+        }, {
+            key: POINTEREND('document'),
+            value: function value(e) {
+                this.initConfig('bodyEvent', e);
+                this.initConfig('pos', Event.pos(e));
+                this.removeBodyMoves();
             }
         }]);
         return App;
@@ -12448,13 +12597,13 @@ var GradientSteps = function (_UIElement) {
 
     }, {
         key: 'getCurrent',
-        value: function getCurrent(e) {
+        value: function getCurrent() {
             var _getMinMax2 = this.getMinMax(),
                 min = _getMinMax2.min,
                 max = _getMinMax2.max;
 
-            var x = e.xy.x;
-
+            var _config = this.config('pos'),
+                x = _config.x;
 
             var current = Math.min(Math.max(min, x), max);
 
@@ -12469,18 +12618,18 @@ var GradientSteps = function (_UIElement) {
 
     }, {
         key: 'refreshColorUI',
-        value: function refreshColorUI(e) {
+        value: function refreshColorUI(isUpdate) {
             var _getMinMax3 = this.getMinMax(),
                 min = _getMinMax3.min,
                 max = _getMinMax3.max;
 
-            var current = this.getCurrent(e);
+            var current = this.getCurrent();
 
             if (this.currentStep) {
                 var posX = Math.max(min, current);
                 var px$$1 = posX - this.refs.$steps.offsetLeft();
 
-                if (e.ctrlKey) {
+                if (this.config('bodyEvent').ctrlKey) {
                     px$$1 = Math.floor(px$$1); // control + drag is floor number 
                 }
                 this.currentStepBox.px('left', px$$1);
@@ -12763,37 +12912,21 @@ var GradientSteps = function (_UIElement) {
                 this.setBackgroundColor();
             }
         }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck(e) {
-            return this.isDown;
-        }
-    }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck(e) {
-            return !this.isDown;
-        }
-    }, {
-        key: 'isNotFirstPosition',
-        value: function isNotFirstPosition(e) {
-            return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y;
-        }
 
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document') + IF('isDownCheck'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: 'end',
+        value: function end() {
             if (this.refs.$stepList) {
                 this.refs.$stepList.removeClass('mode-drag');
                 this.run(HISTORY_PUSH, 'Moved colorstep');
             }
         }
     }, {
-        key: POINTERMOVE('document') + IF('isDownCheck'),
-        value: function value$$1(e) {
-            this.refreshColorUI(e);
+        key: 'move',
+        value: function move() {
+            this.refreshColorUI(true);
             this.refs.$stepList.addClass('mode-drag');
         }
     }, {
@@ -12802,11 +12935,10 @@ var GradientSteps = function (_UIElement) {
             return new Dom(e.target).hasClass('step');
         }
     }, {
-        key: POINTERSTART('$steps .step') + IF('isNotDownCheck') + IF('isStepElement'),
+        key: POINTERSTART('$steps .step') + IF('isStepElement') + MOVE() + END(),
         value: function value$$1(e) {
             e.preventDefault();
 
-            this.isDown = true;
             this.xy = e.xy;
             this.currentStep = e.$delegateTarget;
             this.currentStepBox = this.currentStep.parent();
@@ -14815,7 +14947,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH),
+        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION),
         value: function value$$1(_value) {
             this.refresh();
         }
@@ -15312,9 +15444,10 @@ var BoxShadow = function (_BasePropertyItem) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
-            var x = e.xy.x;
-            var y = e.xy.y;
+        value: function refreshUI() {
+            var _config = this.config('pos'),
+                x = _config.x,
+                y = _config.y;
 
             var rect = this.selectedPointArea.rect();
 
@@ -15346,23 +15479,19 @@ var BoxShadow = function (_BasePropertyItem) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: 'end',
+        value: function end() {
             this.selectedPointArea = false;
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERSTART('$boxShadowList .drag-area'),
+        key: POINTERSTART('$boxShadowList .drag-area') + MOVE() + END(),
         value: function value$$1(e) {
             e.preventDefault();
-            this.isDown = true;
             this.selectedPointArea = e.$delegateTarget;
             this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer');
         }
@@ -15498,9 +15627,10 @@ var TextShadow = function (_BasePropertyItem) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
-            var x = e.xy.x;
-            var y = e.xy.y;
+        value: function refreshUI() {
+            var _config = this.config('pos'),
+                x = _config.x,
+                y = _config.y;
 
             var rect = this.selectedPointArea.rect();
 
@@ -15532,23 +15662,19 @@ var TextShadow = function (_BasePropertyItem) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: 'end',
+        value: function end() {
             this.selectedPointArea = false;
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
+        key: 'move',
+        value: function move() {
+            this.refreshUI();
         }
     }, {
-        key: POINTERSTART('$textShadowList .drag-area'),
+        key: POINTERSTART('$textShadowList .drag-area') + MOVE() + END(),
         value: function value$$1(e) {
             e.preventDefault();
-            this.isDown = true;
             this.selectedPointArea = e.$delegateTarget;
             this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer');
         }
@@ -17302,10 +17428,10 @@ var BackgroundResizer = function (_UIElement) {
         }
     }, {
         key: 'getCurrentXY',
-        value: function getCurrentXY(e, position) {
+        value: function getCurrentXY(isUpdate, position) {
 
-            if (e) {
-                var xy = e.xy;
+            if (isUpdate) {
+                var xy = this.config('pos');
 
                 return [xy.x, xy.y];
             }
@@ -17342,7 +17468,7 @@ var BackgroundResizer = function (_UIElement) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle = this.getRectangle(),
                 minX = _getRectangle.minX,
                 minY = _getRectangle.minY,
@@ -17355,8 +17481,8 @@ var BackgroundResizer = function (_UIElement) {
                 width = _getDefaultValue.width,
                 height = _getDefaultValue.height;
 
-            if (e) {
-                var _getCurrentXY = this.getCurrentXY(e),
+            if (isUpdate) {
+                var _getCurrentXY = this.getCurrentXY(isUpdate),
                     _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
                     x = _getCurrentXY2[0],
                     y = _getCurrentXY2[1];
@@ -17378,7 +17504,7 @@ var BackgroundResizer = function (_UIElement) {
             this.refs.$dragPointer.px('left', left);
             this.refs.$dragPointer.px('top', top);
 
-            if (e) {
+            if (isUpdate) {
                 var newLeft = left / (maxX - minX) * 100;
                 var newTop = top / (maxY - minY) * 100;
                 this.setBackgroundPosition(percentUnit(newLeft), percentUnit(newTop));
@@ -17402,29 +17528,18 @@ var BackgroundResizer = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$dragPointer'),
+        key: POINTERSTART('$dragPointer') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
-            this.isDown = true;
         }
     }, {
-        key: POINTERSTART(),
-        value: function value$$1(e) {
-            this.isDown = true;
-            // this.refreshUI(e);        
-        }
+        key: POINTERSTART() + MOVE(),
+        value: function value$$1(e) {}
     }]);
     return BackgroundResizer;
 }(UIElement);
@@ -18318,8 +18433,8 @@ var LayerAngle = function (_UIElement) {
         }
     }, {
         key: 'getCurrentXY',
-        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
-            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
+        value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
+            return isUpdate ? this.config('pos') : getXYInCircle(angle, radius, centerX, centerY);
         }
     }, {
         key: 'getRectangle',
@@ -18355,7 +18470,7 @@ var LayerAngle = function (_UIElement) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle = this.getRectangle(),
                 minX = _getRectangle.minX,
                 minY = _getRectangle.minY,
@@ -18363,7 +18478,7 @@ var LayerAngle = function (_UIElement) {
                 centerX = _getRectangle.centerX,
                 centerY = _getRectangle.centerY;
 
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
+            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
                 x = _getCurrentXY.x,
                 y = _getCurrentXY.y;
 
@@ -18385,7 +18500,7 @@ var LayerAngle = function (_UIElement) {
 
             this.refreshAngleText(lastAngle);
 
-            if (e) {
+            if (isUpdate) {
 
                 this.setAngle(lastAngle);
             }
@@ -18409,39 +18524,22 @@ var LayerAngle = function (_UIElement) {
         value: function value() {
             this.$el.toggle(this.isShow());
         }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.isDown;
-        }
-    }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.isDown;
-        }
 
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document') + IF('isDownCheck'),
-        value: function value(e) {
-            this.isDown = false;
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck'),
-        value: function value(e) {
-            this.refreshUI(e);
-        }
-    }, {
-        key: POINTERSTART('$drag_pointer') + IF('isNotDownCheck'),
+        key: POINTERSTART('$drag_pointer') + MOVE(),
         value: function value(e) {
             e.preventDefault();
-            this.isDown = true;
         }
     }, {
-        key: POINTERSTART('$dragAngle') + IF('isNotDownCheck'),
+        key: POINTERSTART('$dragAngle') + MOVE(),
         value: function value(e) {
-            this.isDown = true;
             this.refreshUI(e);
         }
     }]);
@@ -18967,8 +19065,8 @@ var GradientAngle = function (_UIElement) {
         }
     }, {
         key: 'getCurrentXY',
-        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
-            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
+        value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
+            return isUpdate ? this.config('pos') : getXYInCircle(angle, radius, centerX, centerY);
         }
     }, {
         key: 'getRectangle',
@@ -19004,7 +19102,7 @@ var GradientAngle = function (_UIElement) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle = this.getRectangle(),
                 minX = _getRectangle.minX,
                 minY = _getRectangle.minY,
@@ -19012,7 +19110,7 @@ var GradientAngle = function (_UIElement) {
                 centerX = _getRectangle.centerX,
                 centerY = _getRectangle.centerY;
 
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
+            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
                 x = _getCurrentXY.x,
                 y = _getCurrentXY.y;
 
@@ -19034,7 +19132,7 @@ var GradientAngle = function (_UIElement) {
 
             this.refreshAngleText(lastAngle);
 
-            if (e) {
+            if (isUpdate) {
 
                 this.setAngle(lastAngle);
             }
@@ -19058,41 +19156,22 @@ var GradientAngle = function (_UIElement) {
         value: function value() {
             this.$el.toggle(this.isShow());
         }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.isDown;
-        }
-    }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.isDown;
-        }
 
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document') + IF('isDownCheck'),
-        value: function value(e) {
-            this.isDown = false;
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck'),
-        value: function value(e) {
-            this.refreshUI(e);
-        }
-    }, {
-        key: POINTERSTART('$drag_pointer') + IF('isNotDownCheck'),
+        key: POINTERSTART('$drag_pointer') + MOVE(),
         value: function value(e) {
             e.preventDefault();
-            this.isDown = true;
         }
     }, {
-        key: POINTERSTART('$dragAngle') + IF('isNotDownCheck'),
-        value: function value(e) {
-            this.isDown = true;
-            this.refreshUI(e);
-        }
+        key: POINTERSTART('$dragAngle') + MOVE(),
+        value: function value(e) {}
     }]);
     return GradientAngle;
 }(UIElement);
@@ -19146,10 +19225,10 @@ var GradientPosition = function (_UIElement) {
         }
     }, {
         key: 'getCurrentXY',
-        value: function getCurrentXY(e, position) {
+        value: function getCurrentXY(isUpdate, position) {
 
-            if (e) {
-                var xy = e.xy;
+            if (isUpdate) {
+                var xy = this.config('pos');
 
                 return [xy.x, xy.y];
             }
@@ -19220,7 +19299,7 @@ var GradientPosition = function (_UIElement) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle2 = this.getRectangle(),
                 minX = _getRectangle2.minX,
                 minY = _getRectangle2.minY,
@@ -19229,7 +19308,7 @@ var GradientPosition = function (_UIElement) {
                 width = _getRectangle2.width,
                 height = _getRectangle2.height;
 
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue()),
+            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue()),
                 _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
                 x = _getCurrentXY2[0],
                 y = _getCurrentXY2[1];
@@ -19243,7 +19322,7 @@ var GradientPosition = function (_UIElement) {
             this.refs.$dragPointer.px('left', left);
             this.refs.$dragPointer.px('top', top);
 
-            if (e) {
+            if (isUpdate) {
 
                 this.setRadialPosition([percent(Math.floor(left / width * 100)), percent(Math.floor(top / height * 100))]);
             }
@@ -19272,29 +19351,18 @@ var GradientPosition = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$dragPointer'),
+        key: POINTERSTART('$dragPointer') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
-            this.isDown = true;
         }
     }, {
-        key: POINTERSTART(),
-        value: function value$$1(e) {
-            this.isDown = true;
-            // this.refreshUI(e);        
-        }
+        key: POINTERSTART() + MOVE(),
+        value: function value$$1(e) {}
     }, {
         key: DOUBLECLICK('$dragPointer'),
         value: function value$$1(e) {
@@ -19595,10 +19663,10 @@ var PerspectiveOriginPosition = function (_UIElement) {
         }
     }, {
         key: 'getCurrentXY',
-        value: function getCurrentXY(e, position) {
+        value: function getCurrentXY(isUpdate, position) {
 
-            if (e) {
-                var xy = e.xy;
+            if (isUpdate) {
+                var xy = this.config('pos');
 
                 return [xy.x, xy.y];
             }
@@ -19674,7 +19742,7 @@ var PerspectiveOriginPosition = function (_UIElement) {
         }
     }, {
         key: 'refreshUI',
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle2 = this.getRectangle(),
                 minX = _getRectangle2.minX,
                 minY = _getRectangle2.minY,
@@ -19683,7 +19751,7 @@ var PerspectiveOriginPosition = function (_UIElement) {
                 width = _getRectangle2.width,
                 height = _getRectangle2.height;
 
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue()),
+            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue()),
                 _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
                 x = _getCurrentXY2[0],
                 y = _getCurrentXY2[1];
@@ -19697,7 +19765,7 @@ var PerspectiveOriginPosition = function (_UIElement) {
             this.refs.$dragPointer.px('left', left);
             this.refs.$dragPointer.px('top', top);
 
-            if (e) {
+            if (isUpdate) {
 
                 this.setPerspectiveOriginPosition(percentUnit(Math.floor(left / width * 100)), percentUnit(Math.floor(top / height * 100)));
             }
@@ -19720,22 +19788,14 @@ var PerspectiveOriginPosition = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$dragPointer'),
+        key: POINTERSTART('$dragPointer') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
-            this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
@@ -21209,14 +21269,13 @@ var KeyframeObjectList = function (_UIElement) {
         }
     }, {
         key: EVENT(ADD_TIMELINE),
-        value: function value$$1(timelineId) {
+        value: function value$$1() {
             this.refresh();
         }
     }, {
-        key: POINTERSTART('$el .bar') + SELF,
+        key: POINTERSTART('$el .bar') + SELF + MOVE('setBarPosition'),
         value: function value$$1(e) {
             this.msWidth = this.config('timeline.1ms.width');
-            this.selectedClass = 'bar';
             this.selectedElement = e.$delegateTarget.parent();
             this.selectedStartX = this.selectedElement.cssFloat('left');
             this.selectedStartWidth = this.selectedElement.cssFloat('width');
@@ -21234,14 +21293,12 @@ var KeyframeObjectList = function (_UIElement) {
             var maxTime = this.read(TIMELINE_MAX_TIME_IN_KEYFRAMES, this.selectedId);
             this.maxX = maxTime * this.msWidth;
 
-            // console.log('start', e.xy);
             this.setCurrentKeyframeItem(this.selectedId, 'bar');
         }
     }, {
-        key: POINTERSTART('$el .start') + SELF,
+        key: POINTERSTART('$el .start') + SELF + MOVE('setStartPosition'),
         value: function value$$1(e) {
             this.msWidth = this.config('timeline.1ms.width');
-            this.selectedClass = 'start';
             if (this.selectedEl) {
                 this.selectedEl.removeClass('selected');
             }
@@ -21265,10 +21322,9 @@ var KeyframeObjectList = function (_UIElement) {
             this.setCurrentKeyframeItem(this.selectedId, 'start');
         }
     }, {
-        key: POINTERSTART('$el .end') + SELF,
+        key: POINTERSTART('$el .end') + SELF + MOVE('setEndPosition'),
         value: function value$$1(e) {
             this.msWidth = this.config('timeline.1ms.width');
-            this.selectedClass = 'end';
             if (this.selectedEl) {
                 this.selectedEl.removeClass('selected');
             }
@@ -21302,11 +21358,6 @@ var KeyframeObjectList = function (_UIElement) {
             }
         }
     }, {
-        key: "isSelectedClass",
-        value: function isSelectedClass() {
-            return !!this.selectedClass;
-        }
-    }, {
         key: "updateKeyframeTime",
         value: function updateKeyframeTime() {
             var id = this.selectedElement.attr('keyframe-id');
@@ -21325,8 +21376,8 @@ var KeyframeObjectList = function (_UIElement) {
         }
     }, {
         key: "setBarPosition",
-        value: function setBarPosition(e) {
-            var dx = e.xy.x - this.xy.x;
+        value: function setBarPosition() {
+            var dx = this.config('pos').x - this.xy.x;
             var newX = this.match1ms(Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX - this.selectedStartWidth), 10);
             this.selectedElement.px('left', newX);
             this.selectedElement.attr('data-start-time', this.getTimeString(newX));
@@ -21346,8 +21397,8 @@ var KeyframeObjectList = function (_UIElement) {
         }
     }, {
         key: "setStartPosition",
-        value: function setStartPosition(e) {
-            var dx = e.xy.x - this.xy.x;
+        value: function setStartPosition() {
+            var dx = this.config('pos').x - this.xy.x;
             var newX = this.match1ms(Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX), 10);
 
             var newWidth = this.selectedEndX - newX;
@@ -21363,8 +21414,8 @@ var KeyframeObjectList = function (_UIElement) {
         }
     }, {
         key: "setEndPosition",
-        value: function setEndPosition(e) {
-            var dx = e.xy.x - this.xy.x;
+        value: function setEndPosition() {
+            var dx = this.config('pos').x - this.xy.x;
             var newX = this.match1ms(Math.min(Math.max(this.minX, this.selectedEndX + dx), this.maxX), 10);
             var newWidth = Math.max(0, newX - this.selectedStartX);
             this.selectedElement.attr('data-end-time', this.getTimeString(newX));
@@ -21373,25 +21424,6 @@ var KeyframeObjectList = function (_UIElement) {
             this.selectedWidth = newWidth;
 
             this.updateKeyframeTime();
-        }
-    }, {
-        key: POINTERMOVE('document') + IF('isSelectedClass'),
-        value: function value$$1(e) {
-            if (this.selectedClass == 'bar') {
-                this.setBarPosition(e);
-            } else if (this.selectedClass == 'start') {
-                this.setStartPosition(e);
-            } else if (this.selectedClass == 'end') {
-                this.setEndPosition(e);
-            }
-        }
-    }, {
-        key: POINTEREND('document') + IF('isSelectedClass'),
-        value: function value$$1(e) {
-            this.selectedClass = null;
-            this.selectedElement.removeAttr('data-start-time');
-            this.selectedElement.removeAttr('data-end-time');
-            this.selectedElement = null;
         }
     }, {
         key: CLICK('$el .keyframe-property') + ALT,
@@ -21537,33 +21569,23 @@ var KeyframeTimeView = function (_UIElement) {
                 }
 
                 var left = (cursorTime - currentTime) * width;
-                this.drawOption({ strokeStyle: 'black', fillStyle: '#ececec', lineWidth: 1 });
+                this.drawOption({ strokeStyle: 'rgba(0, 0, 0, 0.5)', fillStyle: 'rgba(236, 236, 236, 0.5)', lineWidth: 1 });
                 this.drawPath([left - 5, rect.height - 13], [left + 5, rect.height - 13], [left + 5, rect.height - 5], [left, rect.height], [left - 5, rect.height - 5], [left - 5, rect.height - 13]);
             });
         }
     }, {
-        key: POINTERSTART('$canvas'),
+        key: POINTERSTART('$canvas') + MOVE(),
         value: function value(e) {
-            this.isStart = true;
             this.selectedCanvasOffset = this.refs.$canvas.offset();
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value(e) {
-            if (this.isStart) {
-                var distX = e.xy.x - this.selectedCanvasOffset.left;
-                var scrollLeft = this.config('timeline.scroll.left') + distX;
-                this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
-                this.emit(MOVE_TIMELINE);
-                this.refreshCanvas();
-            }
-        }
-    }, {
-        key: POINTEREND('document'),
-        value: function value(e) {
-            if (this.isStart) {
-                this.isStart = false;
-            }
+        key: "move",
+        value: function move() {
+            var distX = this.config('pos').x - this.selectedCanvasOffset.left;
+            var scrollLeft = this.config('timeline.scroll.left') + distX;
+            this.initConfig('timeline.cursor.time', scrollLeft / this.config('timeline.1ms.width'));
+            this.emit(MOVE_TIMELINE);
+            this.refreshCanvas();
         }
     }, {
         key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE),
@@ -22128,7 +22150,7 @@ var PredefinedPageResizer = function (_UIElement) {
     }, {
         key: 'resize',
         value: function resize() {
-
+            this.targetXY = this.config('pos');
             if (this.currentType == 'to top') {
                 this.change(this.toTop());
             } else if (this.currentType == 'to bottom') {
@@ -22148,17 +22170,7 @@ var PredefinedPageResizer = function (_UIElement) {
             }
         }
     }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.xy;
-        }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.xy;
-        }
-    }, {
-        key: POINTERSTART('$el [data-value]') + IF('isNotDownCheck'),
+        key: POINTERSTART('$el [data-value]') + MOVE('resize') + END('resizeEnd'),
         value: function value$$1(e) {
             e.stopPropagation();
             var type = e.$delegateTarget.attr('data-value');
@@ -22169,16 +22181,8 @@ var PredefinedPageResizer = function (_UIElement) {
             this.height = unitValue(this.page.height);
         }
     }, {
-        key: POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck'),
-        value: function value$$1(e) {
-            this.targetXY = e.xy;
-            this.resize();
-        }
-    }, {
-        key: POINTEREND('document') + IF('isDownCheck'),
-        value: function value$$1(e) {
-            this.currentType = null;
-            this.xy = null;
+        key: 'resizeEnd',
+        value: function resizeEnd() {
             this.dispatch(HISTORY_PUSH, 'Resize a layer');
         }
     }, {
@@ -22383,10 +22387,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: 'caculateSnap',
-        value: function caculateSnap(e) {
-            // if (this.currentType == SEGMENT_TYPE_MOVE) {
+        value: function caculateSnap() {
             this.run(GUIDE_SNAP_CACULATE, 3, this.currentType);
-            // }
         }
     }, {
         key: 'setPosition',
@@ -22480,7 +22482,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         }
     }, {
         key: 'resizeComponent',
-        value: function resizeComponent(e) {
+        value: function resizeComponent() {
             var _this4 = this;
 
             var items = this.rectItems;
@@ -22488,7 +22490,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             if (this.currentType == SEGMENT_TYPE_TOP) {
                 items.forEach(function (item) {
-                    _this4.toTop(item, e);
+                    _this4.toTop(item);
                 });
             } else if (this.currentType == SEGMENT_TYPE_BOTTOM) {
                 items.forEach(function (item) {
@@ -22541,7 +22543,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                 event = CHANGE_LAYER_ROTATE;
             }
 
-            this.caculateSnap(e);
+            this.caculateSnap();
             this.emit(event);
 
             this.updatePosition(items);
@@ -22550,17 +22552,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
         /* drag  */
 
     }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.xy;
-        }
-    }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.xy;
-        }
-    }, {
-        key: POINTERSTART('$el [data-value]') + IF('isNotDownCheck'),
+        key: POINTERSTART('$el [data-value]') + MOVE('moveLayer') + END('moveEndLayer'),
         value: function value$$1(e) {
             e.stopPropagation();
             this.activeButton = e.$delegateTarget;
@@ -22591,18 +22583,15 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             });
         }
     }, {
-        key: POINTERMOVE('document') + IF('isDownCheck'),
-        value: function value$$1(e) {
-            this.targetXY = e.xy;
-            if (!this.xy) {
-                return;
-            }
+        key: 'moveLayer',
+        value: function moveLayer() {
+            this.targetXY = this.config('pos');
 
-            this.dx = e.xy.x - this.xy.x;
-            this.dy = e.xy.y - this.xy.y;
+            this.dx = this.targetXY.x - this.xy.x;
+            this.dy = this.targetXY.y - this.xy.y;
 
             if (this.currentType == 'rotate') {
-                this.angle = caculateAngle(e.xy.x - this.layerCenterX, e.xy.y - this.layerCenterY);
+                this.angle = caculateAngle(targetXY.x - this.layerCenterX, targetXY.y - this.layerCenterY);
             }
 
             if (this.config('snap.grid')) {
@@ -22621,17 +22610,11 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
 
             this.initConfig('moving', true);
 
-            this.resizeComponent(e);
+            this.resizeComponent();
         }
     }, {
-        key: 'isMoved',
-        value: function isMoved(e) {
-            if (!this.xy) return false;
-            return this.xy.x != e.xy.x || this.xy.y != e.xy.y;
-        }
-    }, {
-        key: POINTEREND('document') + IF('isDownCheck'),
-        value: function value$$1(e) {
+        key: 'moveEndLayer',
+        value: function moveEndLayer() {
 
             switch (this.currentType) {
                 case SEGMENT_TYPE_MOVE:
@@ -22749,7 +22732,7 @@ var CircleEditor = function (_UIElement) {
         }
     }, {
         key: "refreshUI",
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle2 = this.getRectangle(),
                 minX = _getRectangle2.minX,
                 minY = _getRectangle2.minY,
@@ -22758,10 +22741,9 @@ var CircleEditor = function (_UIElement) {
                 width = _getRectangle2.width,
                 height = _getRectangle2.height;
 
-            var _e$xy = e.xy,
-                x = _e$xy.x,
-                y = _e$xy.y;
-
+            var _config = this.config('pos'),
+                x = _config.x,
+                y = _config.y;
 
             x = Math.max(Math.min(maxX, x), minX);
             y = Math.max(Math.min(maxY, y), minY);
@@ -22772,7 +22754,7 @@ var CircleEditor = function (_UIElement) {
             this.refs['$' + this.currentType].px('left', left);
             this.refs['$' + this.currentType].px('top', top);
 
-            if (e) {
+            if (isUpdate) {
 
                 this[this.currentType + "pos"] = [left, top];
 
@@ -22807,30 +22789,20 @@ var CircleEditor = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: "move",
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item'),
+        key: POINTERSTART('$el .drag-item') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
-            this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
         value: function value$$1(e) {
-            this.isDown = true;
             this.layer = this.read(SELECTION_CURRENT_LAYER);
-            // this.refreshUI(e);        
         }
     }]);
     return CircleEditor;
@@ -22922,7 +22894,7 @@ var EllipseEditor = function (_UIElement) {
         }
     }, {
         key: "refreshUI",
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle2 = this.getRectangle(),
                 minX = _getRectangle2.minX,
                 minY = _getRectangle2.minY,
@@ -22931,10 +22903,9 @@ var EllipseEditor = function (_UIElement) {
                 width = _getRectangle2.width,
                 height = _getRectangle2.height;
 
-            var _e$xy = e.xy,
-                x = _e$xy.x,
-                y = _e$xy.y;
-
+            var _config = this.config('pos'),
+                x = _config.x,
+                y = _config.y;
 
             x = Math.max(Math.min(maxX, x), minX);
             y = Math.max(Math.min(maxY, y), minY);
@@ -22945,7 +22916,7 @@ var EllipseEditor = function (_UIElement) {
             this.refs['$' + this.currentType].px('left', left);
             this.refs['$' + this.currentType].px('top', top);
 
-            if (e) {
+            if (isUpdate) {
 
                 this[this.currentType + "pos"] = [left, top];
 
@@ -22980,30 +22951,20 @@ var EllipseEditor = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: "move",
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item'),
+        key: POINTERSTART('$el .drag-item') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
-            this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
         value: function value$$1(e) {
-            this.isDown = true;
             this.layer = this.read(SELECTION_CURRENT_LAYER);
-            // this.refreshUI(e);        
         }
     }]);
     return EllipseEditor;
@@ -23102,7 +23063,7 @@ var InsetEditor = function (_UIElement) {
         }
     }, {
         key: "refreshUI",
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle2 = this.getRectangle(),
                 minX = _getRectangle2.minX,
                 minY = _getRectangle2.minY,
@@ -23111,10 +23072,9 @@ var InsetEditor = function (_UIElement) {
                 width = _getRectangle2.width,
                 height = _getRectangle2.height;
 
-            var _e$xy = e.xy,
-                x = _e$xy.x,
-                y = _e$xy.y;
-
+            var _config = this.config('pos'),
+                x = _config.x,
+                y = _config.y;
 
             x = Math.max(Math.min(maxX, x), minX);
             y = Math.max(Math.min(maxY, y), minY);
@@ -23127,7 +23087,7 @@ var InsetEditor = function (_UIElement) {
                 this.refs['$' + this.currentType].px('left', left);
             }
 
-            if (e) {
+            if (isUpdate) {
 
                 if (this.currentType == 'top' || this.currentType == 'bottom') {
                     this[this.currentType + "pos"] = top;
@@ -23168,30 +23128,20 @@ var InsetEditor = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: "move",
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item'),
+        key: POINTERSTART('$el .drag-item') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
-            this.isDown = true;
         }
     }, {
         key: POINTERSTART(),
         value: function value$$1(e) {
-            this.isDown = true;
             this.layer = this.read(SELECTION_CURRENT_LAYER);
-            // this.refreshUI(e);        
         }
     }]);
     return InsetEditor;
@@ -23269,7 +23219,7 @@ var PolygonEditor = function (_UIElement) {
         }
     }, {
         key: "refreshUI",
-        value: function refreshUI(e) {
+        value: function refreshUI(isUpdate) {
             var _getRectangle = this.getRectangle(),
                 minX = _getRectangle.minX,
                 minY = _getRectangle.minY,
@@ -23278,10 +23228,9 @@ var PolygonEditor = function (_UIElement) {
                 width = _getRectangle.width,
                 height = _getRectangle.height;
 
-            var _e$xy = e.xy,
-                x = _e$xy.x,
-                y = _e$xy.y;
-
+            var _config = this.config('pos'),
+                x = _config.x,
+                y = _config.y;
 
             x = Math.max(Math.min(maxX, x), minX);
             y = Math.max(Math.min(maxY, y), minY);
@@ -23292,7 +23241,7 @@ var PolygonEditor = function (_UIElement) {
             this.$dragItem.px('left', left);
             this.$dragItem.px('top', top);
 
-            if (e) {
+            if (isUpdate) {
 
                 this.$dragPoint = {
                     x: percentUnit(px2percent(left, width)),
@@ -23328,23 +23277,15 @@ var PolygonEditor = function (_UIElement) {
         // Event Bindings 
 
     }, {
-        key: POINTEREND('document'),
-        value: function value$$1(e) {
-            this.isDown = false;
+        key: "move",
+        value: function move() {
+            this.refreshUI(true);
         }
     }, {
-        key: POINTERMOVE('document'),
-        value: function value$$1(e) {
-            if (this.isDown) {
-                this.refreshUI(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item'),
+        key: POINTERSTART('$el .drag-item') + MOVE(),
         value: function value$$1(e) {
             e.preventDefault();
             this.$dragItem = e.$delegateTarget;
-            this.isDown = true;
         }
     }, {
         key: "addPoint",
@@ -23359,9 +23300,9 @@ var PolygonEditor = function (_UIElement) {
                 width = _getRectangle2.width,
                 height = _getRectangle2.height;
 
-            var _e$xy2 = e.xy,
-                x = _e$xy2.x,
-                y = _e$xy2.y;
+            var _e$xy = e.xy,
+                x = _e$xy.x,
+                y = _e$xy.y;
 
 
             x = Math.max(Math.min(maxX, x), minX);
@@ -23870,16 +23811,6 @@ var HandleView = function (_GradientView) {
             });
         }
     }, {
-        key: 'isDownCheck',
-        value: function isDownCheck() {
-            return this.isDown;
-        }
-    }, {
-        key: 'isNotDownCheck',
-        value: function isNotDownCheck() {
-            return !this.isDown;
-        }
-    }, {
         key: 'isPageMode',
         value: function isPageMode(e) {
             if (this.read(SELECTION_IS_PAGE)) {
@@ -23897,31 +23828,21 @@ var HandleView = function (_GradientView) {
             }
         }
     }, {
-        key: 'hasDragArea',
-        value: function hasDragArea() {
-            return this.dragArea;
-        }
-    }, {
-        key: 'hasNotDragArea',
-        value: function hasNotDragArea() {
-            return !this.dragArea;
-        }
-    }, {
-        key: POINTERSTART('$canvas') + IF('hasNotDragArea') + IF('isPageMode') + IF('isNotDownCheck'),
+        key: POINTERSTART('$canvas') + IF('isPageMode') + MOVE('moveArea') + END('endArea'),
         value: function value(e) {
-            this.isDown = true;
             this.xy = e.xy;
             this.targetXY = e.xy;
-            var x = this.xy.x;
-            var y = this.xy.y;
-            this.dragArea = true;
+            var _xy = this.xy,
+                x = _xy.x,
+                y = _xy.y;
+
             this.refs.$dragArea.cssText('position:absolute;left: ' + x + 'px;top: ' + y + 'px;width: 0px;height:0px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;');
             this.refs.$dragArea.show();
         }
     }, {
-        key: POINTERMOVE('document') + IF('hasDragArea') + IF('isDownCheck'),
-        value: function value(e) {
-            this.targetXY = e.xy;
+        key: 'moveArea',
+        value: function moveArea() {
+            this.targetXY = this.config('pos');
             var toolSize = this.config('tool.size');
 
             var width = Math.abs(this.targetXY.x - this.xy.x);
@@ -23934,11 +23855,8 @@ var HandleView = function (_GradientView) {
             this.refs.$dragArea.cssText('position:absolute;left: ' + x + 'px;top: ' + y + 'px;width: ' + width + 'px;height:' + height + 'px;background-color: rgba(222,222,222,0.5);border:1px solid #ececec;');
         }
     }, {
-        key: POINTEREND('document') + IF('hasDragArea') + IF('isDownCheck'),
-        value: function value(e) {
-            var _this3 = this;
-
-            this.isDown = false;
+        key: 'endArea',
+        value: function endArea() {
             var toolSize = this.config('tool.size');
             var width = Math.abs(this.targetXY.x - this.xy.x);
             var height = Math.abs(this.targetXY.y - this.xy.y);
@@ -23953,7 +23871,7 @@ var HandleView = function (_GradientView) {
             if (width != 0 && height != 0) {
                 // noop 
             } else {
-                var $target = new Dom(e.target);
+                var $target = new Dom(this.config('bodyEvent').target);
 
                 if ($target.hasClass('layer')) {
                     area = { x: x, y: y, width: 1, height: 1 };
@@ -23975,9 +23893,6 @@ var HandleView = function (_GradientView) {
             this.xy = null;
 
             this.refs.$dragArea.hide();
-            setTimeout(function () {
-                _this3.dragArea = false;
-            }, 100);
         }
     }]);
     return HandleView;
@@ -29486,7 +29401,7 @@ var ItemCreateManager = function (_BaseModule) {
             var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
             var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
 
-            $store.run(ITEM_TYPE_BOXSHADOW, isSelected, parentId);
+            $store.run(ITEM_ADD, ITEM_TYPE_BOXSHADOW, isSelected, parentId);
         }
     }, {
         key: ACTION(ITEM_ADD_TEXTSHADOW),
@@ -29494,21 +29409,21 @@ var ItemCreateManager = function (_BaseModule) {
             var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
             var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
 
-            $store.run(ITEM_TYPE_TEXTSHADOW, isSelected, parentId);
+            $store.run(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, isSelected, parentId);
         }
     }, {
         key: ACTION(ITEM_ADD_CIRCLE),
         value: function value$$1($store, isSelected) {
             var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
 
-            $store.run(ITEM_TYPE_CIRCLE, isSelected, parentId);
+            $store.run(ITEM_ADD, ITEM_TYPE_CIRCLE, isSelected, parentId);
         }
     }, {
         key: ACTION(ITEM_ADD_RECT),
         value: function value$$1($store, isSelected) {
             var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
 
-            $store.run(ITEM_TYPE_LAYER, isSelected, parentId);
+            $store.run(ITEM_ADD, ITEM_TYPE_LAYER, isSelected, parentId);
         }
     }, {
         key: ACTION(ITEM_ADD_LAYER),

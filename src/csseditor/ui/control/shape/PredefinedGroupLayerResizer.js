@@ -2,7 +2,7 @@ import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_TRANSFORM, CHANGE_SELECTION, CHANGE_LAYER_MOVE,CHANGE_LAYER_ROTATE,CHANGE_PAGE_SIZE,CHANGE_IMAGE,CHANGE_LAYER_BORDER} from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE, SEGMENT_TYPE_ROTATE } from '../../../../util/css/types';
-import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, LOAD, IF } from '../../../../util/Event';
+import { POINTERSTART, POINTERMOVE, POINTEREND, RESIZE, DEBOUNCE, LOAD, IF, MOVE, END } from '../../../../util/Event';
 import { defaultValue, isNotUndefined, isArray } from '../../../../util/functions/func';
 import { ITEM_SET,DEFAULT_TOOL_SIZE } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_TYPE, SELECTION_IS_NOT_EMPTY } from '../../../types/SelectionTypes';
@@ -194,10 +194,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         }
     }
 
-    caculateSnap (e) {
-        // if (this.currentType == SEGMENT_TYPE_MOVE) {
+    caculateSnap () {
         this.run(GUIDE_SNAP_CACULATE, 3, this.currentType);
-        // }
     }
 
     setPosition() {
@@ -275,12 +273,12 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         });
     }
 
-    resizeComponent (e) {
+    resizeComponent () {
         var items = this.rectItems;
         var event = CHANGE_LAYER_SIZE;
 
         if (this.currentType == SEGMENT_TYPE_TOP) {
-            items.forEach(item => { this.toTop(item, e) })
+            items.forEach(item => { this.toTop(item) })
         } else if (this.currentType == SEGMENT_TYPE_BOTTOM) {
             items.forEach(item => { this.toBottom(item) })
         } else if (this.currentType == SEGMENT_TYPE_RIGHT) {
@@ -306,7 +304,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             event = CHANGE_LAYER_ROTATE 
         }
 
-        this.caculateSnap(e);
+        this.caculateSnap();
         this.emit(event)    
 
         this.updatePosition(items)        
@@ -315,15 +313,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
 
     /* drag  */
-    isNotDownCheck () {
-        return !this.xy;
-    }
 
-    isDownCheck () {
-        return this.xy; 
-    }
-
-    [POINTERSTART('$el [data-value]') + IF('isNotDownCheck')] (e) {
+    [POINTERSTART('$el [data-value]') + MOVE('moveLayer') + END('moveEndLayer')] (e) {
         e.stopPropagation();
         this.activeButton = e.$delegateTarget;
         this.activeButton.addClass('active');
@@ -354,17 +345,14 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     }
 
-    [POINTERMOVE('document') + IF('isDownCheck')] (e) {
-        this.targetXY = e.xy; 
-        if (!this.xy) {
-            return; 
-        }
+    moveLayer () {
+        this.targetXY = this.config('pos'); 
 
-        this.dx = e.xy.x - this.xy.x;
-        this.dy = e.xy.y - this.xy.y;
+        this.dx = this.targetXY.x - this.xy.x;
+        this.dy = this.targetXY.y - this.xy.y;
 
         if (this.currentType == 'rotate') {
-            this.angle = caculateAngle (e.xy.x - this.layerCenterX,  e.xy.y - this.layerCenterY);
+            this.angle = caculateAngle (targetXY.x - this.layerCenterX,  targetXY.y - this.layerCenterY);
         }
 
         if (this.config('snap.grid')) {
@@ -384,15 +372,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         this.initConfig('moving', true);
 
-        this.resizeComponent(e);
+        this.resizeComponent();
     }
 
-    isMoved (e) {
-        if (!this.xy) return false;
-        return this.xy.x != e.xy.x || this.xy.y != e.xy.y; 
-    }
-
-    [POINTEREND('document') + IF('isDownCheck')] (e) {
+    moveEndLayer () {
 
         switch (this.currentType)  {
         case SEGMENT_TYPE_MOVE:  
