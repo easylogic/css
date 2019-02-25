@@ -22,148 +22,166 @@
             .keyframe-object {
                 position: relative;
 
-                .keyframe-property {
-                    position: relative;
+                .keyframe-group {
 
-                    .keyframe-item {
-                        position: absolute;
-                        box-sizing: border-box;
-                        height: $pointer-size;
-                        z-index: 1;
 
-                        &[data-start-time] {
-                            &:before {
-                                position: absolute;
-                                content: attr(data-start-time);
-                                display: inline-block;
-                                color: white;
-                                background-color: rgba(#333, 0.8); 
-                                border-radius: 3px;
-                                height: 20px;
-                                min-width: 80px;
-                                text-align: center;
-                                padding: 2px 10px;
-                                box-sizing: border-box;
-                                transform: translateX(-50%) translateY(-30px);
-                            }
-                        }
 
-                        &[data-end-time] {
-                            &:after {
-                                position: absolute;
-                                content: attr(data-end-time);
-                                display: inline-block;
-                                color: white;
-                                background-color: rgba(#333, 0.8); 
-                                left: 100%;
-                                height: 20px;
-                                min-width: 80px;
-                                text-align: center;
-                                padding: 2px 10px;
-                                box-sizing: border-box;
-                                border-radius: 3px;
-                                transform: translateX(-50%) translateY(-30px);
-                            }
-                        }                            
-
-                        &.nested {
-                            .start {
-                                transform: translateX(-50%) translateY(-90%);
-                            }
-
-                            .end {
-                                transform: translateX(-50%) translateY(-10%);
-                            }                                
-                        }
-
-                        &:nth-child(even) {
-                            top: auto; 
-                            bottom: 7px;
-                        }
-
-                        .bar {
-                            position: absolute;
-                            left: 0px;
-                            right: 0px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            height: $pointer-size;
-                            background-color: rgba($timeline-bar-color, 0.8);
-                            cursor: move;      
-                            box-sizing: border-box;         
-                            text-align: center;
-                            
-                            .timing-icon {
-                                position: absolute;
-                                left: 50%;
-                                transform: translateX(-50%);
-                                background-color: #333;
+                    .keyframe-collapse {
+                        &.collapsed {
+                            .keyframe-property-list {
                                 display: none;
-                                height: $pointer-size;
-                                width: $pointer-size;
-                                box-sizing: border-box;
-                                cursor: pointer;
-                                pointer-events: none;
-
-                                &.show {
-                                    display: inline-block;
-                                }
                             }
                         }
-
-                        .start {
-                            position: absolute;
-                            left: 0px;
-                            top: 50%;                                
-                            transform: translateX(-50%) translateY(-50%);
-                            width: 3px;
-                            height: $pointer-size;
-                            box-sizing: border-box;
-                            background-color: #5459f1;
-                            z-index: 2;
-                            cursor: w-resize;
-                            border-radius: 2px;
-
-                            &.selected {
-                                background-color: darken( #5459f1, 0.2) ;
-                            }                                
-                        }
-
-                        .end {
-                            position: absolute;
-                            left: 100%;
-                            top: 50%;
-                            transform: translateX(-50%) translateY(-50%);
-                            width: 3px;
-                            height: $pointer-size;
-                            box-sizing: border-box;
-                            background-color: rgb(26, 26, 26);
-                            z-index: 3;                                     
-                            cursor: e-resize;
-                            border-radius: 2px;
-                            &.selected {
-                                background-color:darken( rgba(26, 26, 26, 1), 0.2);
-                            }
-                        }          
                         
-                        .start, .end {
-                            &.selected {
-                                &:before {
-                                    content: '';
-                                    display: inline-block;
+                        .keyframe-property-list {
+
+                            .keyframe-property {
+                                position: relative;
+
+                                .keyframe-item {
                                     position: absolute;
-                                    width: 8px;
-                                    height: 5px;
-                                    left: -2px;
-                                    bottom: 12px;
-                                    background-color: black;
-                                    clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-                                    animation: bounce-up-down $timeline-select-bounce-time infinite ease-in-out;
+                                    box-sizing: border-box;
+                                    height: $pointer-size;
+                                    z-index: 1;
+
+                                    &[data-start-time] {
+                                        &:before {
+                                            position: absolute;
+                                            content: attr(data-start-time);
+                                            display: inline-block;
+                                            color: white;
+                                            background-color: rgba(#333, 0.8); 
+                                            border-radius: 3px;
+                                            height: 20px;
+                                            min-width: 80px;
+                                            text-align: center;
+                                            padding: 2px 10px;
+                                            box-sizing: border-box;
+                                            transform: translateX(-50%) translateY(-30px);
+                                        }
+                                    }
+
+                                    &[data-end-time] {
+                                        &:after {
+                                            position: absolute;
+                                            content: attr(data-end-time);
+                                            display: inline-block;
+                                            color: white;
+                                            background-color: rgba(#333, 0.8); 
+                                            left: 100%;
+                                            height: 20px;
+                                            min-width: 80px;
+                                            text-align: center;
+                                            padding: 2px 10px;
+                                            box-sizing: border-box;
+                                            border-radius: 3px;
+                                            transform: translateX(-50%) translateY(-30px);
+                                        }
+                                    }                            
+
+                                    &.nested {
+                                        .start {
+                                            transform: translateX(-50%) translateY(-90%);
+                                        }
+
+                                        .end {
+                                            transform: translateX(-50%) translateY(-10%);
+                                        }                                
+                                    }
+
+                                    &:nth-child(even) {
+                                        top: auto; 
+                                        bottom: 7px;
+                                    }
+
+                                    .bar {
+                                        position: absolute;
+                                        left: 0px;
+                                        right: 0px;
+                                        top: 50%;
+                                        transform: translateY(-50%);
+                                        height: $pointer-size;
+                                        background-color: rgba($timeline-bar-color, 0.8);
+                                        cursor: move;      
+                                        box-sizing: border-box;         
+                                        text-align: center;
+                                        
+                                        .timing-icon {
+                                            position: absolute;
+                                            left: 50%;
+                                            transform: translateX(-50%);
+                                            background-color: #333;
+                                            display: none;
+                                            height: $pointer-size;
+                                            width: $pointer-size;
+                                            box-sizing: border-box;
+                                            cursor: pointer;
+                                            pointer-events: none;
+
+                                            &.show {
+                                                display: inline-block;
+                                            }
+                                        }
+                                    }
+
+                                    .start {
+                                        position: absolute;
+                                        left: 0px;
+                                        top: 50%;                                
+                                        transform: translateX(-50%) translateY(-50%);
+                                        width: 3px;
+                                        height: $pointer-size;
+                                        box-sizing: border-box;
+                                        background-color: #5459f1;
+                                        z-index: 2;
+                                        cursor: w-resize;
+                                        border-radius: 2px;
+
+                                        &.selected {
+                                            background-color: darken( #5459f1, 0.2) ;
+                                        }                                
+                                    }
+
+                                    .end {
+                                        position: absolute;
+                                        left: 100%;
+                                        top: 50%;
+                                        transform: translateX(-50%) translateY(-50%);
+                                        width: 3px;
+                                        height: $pointer-size;
+                                        box-sizing: border-box;
+                                        background-color: rgb(26, 26, 26);
+                                        z-index: 3;                                     
+                                        cursor: e-resize;
+                                        border-radius: 2px;
+                                        &.selected {
+                                            background-color:darken( rgba(26, 26, 26, 1), 0.2);
+                                        }
+                                    }          
+                                    
+                                    .start, .end {
+                                        &.selected {
+                                            &:before {
+                                                content: '';
+                                                display: inline-block;
+                                                position: absolute;
+                                                width: 8px;
+                                                height: 5px;
+                                                left: -2px;
+                                                bottom: 12px;
+                                                background-color: black;
+                                                clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                                                animation: bounce-up-down $timeline-select-bounce-time infinite ease-in-out;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+
                 }
+
             }
         }
     }

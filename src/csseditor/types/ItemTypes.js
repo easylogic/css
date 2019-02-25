@@ -195,7 +195,8 @@ export const COLORSTEP_DEFAULT_OBJECT = {
 export const TIMELINE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_TIMELINE,
     targetId: EMPTY_STRING,
-    parentId: EMPTY_STRING
+    parentId: EMPTY_STRING,
+    collapse: {}
 }
 
 export const KEYFRAME_DEFAULT_OBJECT = {

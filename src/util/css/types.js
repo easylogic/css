@@ -315,7 +315,7 @@ export const PROPERTY_LIST = {
         { key: 'linear', title: 'Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY}
     ],
     [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_CONIC]: [
-        { key: 'linear', title: 'Static Gradient', properties: IMAGE_CONIC_PRROPERTY}
+        { key: 'linear', title: 'Conic Gradient', properties: IMAGE_CONIC_PRROPERTY}
     ],
     [ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_LINEAR]: [
         { key: 'linear', title: 'Repeating Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY}

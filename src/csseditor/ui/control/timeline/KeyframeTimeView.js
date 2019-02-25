@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
 import { CHANGE_EDITOR } from "../../../types/event";
 import { RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
-import { POINTERSTART, POINTERMOVE, POINTEREND, IF, MOVE, END } from "../../../../util/Event";
+import { POINTERSTART, MOVE } from "../../../../util/Event";
 
 export default class KeyframeTimeView extends UIElement {
     template () {
@@ -85,14 +85,16 @@ export default class KeyframeTimeView extends UIElement {
             }
 
             var left =  (cursorTime - currentTime) * width;
+            var markTop = 10
+            var markWidth = 4
             this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)',fillStyle: 'rgba(236, 236, 236, 0.5)', lineWidth: 1})
             this.drawPath(
-                [left - 5, rect.height - 13],
-                [left + 5, rect.height - 13],
-                [left + 5, rect.height - 5],
+                [left - markWidth, rect.height - markTop],
+                [left + markWidth, rect.height - markTop],
+                [left + markWidth, rect.height - markWidth],
                 [left, rect.height],
-                [left - 5, rect.height - 5],
-                [left - 5, rect.height - 13]
+                [left - markWidth, rect.height - markWidth],
+                [left - markWidth, rect.height - markTop]
             )
             
         })

@@ -2827,6 +2827,19 @@ html, body {
             padding-left: 15px; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .property-title {
             padding-left: 45px; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse.collapsed .property-title:before {
+            content: '';
+            display: inline-block;
+            border-radius: 50%;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            background-color: blue;
+            width: 5px;
+            height: 5px;
+            vertical-align: middle;
+            margin-right: 5px; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse.collapsed .timeline-property {
+            display: none; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property {
             padding-left: 75px; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property label {
@@ -2886,15 +2899,17 @@ html, body {
           background-image: linear-gradient(to right, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), linear-gradient(to right, rgba(204, 204, 204, 0.3) 1px, transparent 1px); }
           .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object {
             position: relative; }
-            .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property {
+            .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse.collapsed .keyframe-property-list {
+              display: none; }
+            .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property {
               position: relative; }
-              .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item {
+              .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item {
                 position: absolute;
                 -webkit-box-sizing: border-box;
                         box-sizing: border-box;
                 height: 10px;
                 z-index: 1; }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item[data-start-time]:before {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item[data-start-time]:before {
                   position: absolute;
                   content: attr(data-start-time);
                   display: inline-block;
@@ -2909,7 +2924,7 @@ html, body {
                           box-sizing: border-box;
                   -webkit-transform: translateX(-50%) translateY(-30px);
                           transform: translateX(-50%) translateY(-30px); }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item[data-end-time]:after {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item[data-end-time]:after {
                   position: absolute;
                   content: attr(data-end-time);
                   display: inline-block;
@@ -2925,16 +2940,16 @@ html, body {
                   border-radius: 3px;
                   -webkit-transform: translateX(-50%) translateY(-30px);
                           transform: translateX(-50%) translateY(-30px); }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item.nested .start {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item.nested .start {
                   -webkit-transform: translateX(-50%) translateY(-90%);
                           transform: translateX(-50%) translateY(-90%); }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item.nested .end {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item.nested .end {
                   -webkit-transform: translateX(-50%) translateY(-10%);
                           transform: translateX(-50%) translateY(-10%); }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item:nth-child(even) {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item:nth-child(even) {
                   top: auto;
                   bottom: 7px; }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .bar {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .bar {
                   position: absolute;
                   left: 0px;
                   right: 0px;
@@ -2947,7 +2962,7 @@ html, body {
                   -webkit-box-sizing: border-box;
                           box-sizing: border-box;
                   text-align: center; }
-                  .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .bar .timing-icon {
+                  .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .bar .timing-icon {
                     position: absolute;
                     left: 50%;
                     -webkit-transform: translateX(-50%);
@@ -2960,9 +2975,9 @@ html, body {
                             box-sizing: border-box;
                     cursor: pointer;
                     pointer-events: none; }
-                    .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .bar .timing-icon.show {
+                    .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .bar .timing-icon.show {
                       display: inline-block; }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .start {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .start {
                   position: absolute;
                   left: 0px;
                   top: 50%;
@@ -2976,9 +2991,9 @@ html, body {
                   z-index: 2;
                   cursor: w-resize;
                   border-radius: 2px; }
-                  .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .start.selected {
+                  .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .start.selected {
                     background-color: #5358f1; }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .end {
                   position: absolute;
                   left: 100%;
                   top: 50%;
@@ -2992,9 +3007,9 @@ html, body {
                   z-index: 3;
                   cursor: e-resize;
                   border-radius: 2px; }
-                  .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end.selected {
+                  .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .end.selected {
                     background-color: #191919; }
-                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .start.selected:before, .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-property .keyframe-item .end.selected:before {
+                .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .start.selected:before, .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .end.selected:before {
                   content: '';
                   display: inline-block;
                   position: absolute;

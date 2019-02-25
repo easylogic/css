@@ -25,6 +25,25 @@
                     padding-left: $timeline-title-padding * 1.5;
                 }
 
+                &.collapsed {
+                    .property-title {
+                        &:before {
+                            content: '';
+                            display: inline-block;
+                            border-radius: 50%;
+                            box-sizing: border-box;
+                            background-color: blue;
+                            width: 5px;
+                            height: 5px;
+                            vertical-align: middle;
+                            margin-right: 5px;
+                        }
+                    }
+                    .timeline-property {
+                        display: none;
+                    }
+                }
+
                 .timeline-property {
                     padding-left: $timeline-title-padding * 2.5;
 

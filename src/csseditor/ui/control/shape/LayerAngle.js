@@ -1,7 +1,7 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
-import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF, MOVE } from '../../../../util/Event';
+import { POINTERSTART, MOVE } from '../../../../util/Event';
 import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { isUndefined } from '../../../../util/functions/func';
 
@@ -91,10 +91,11 @@ export default class LayerAngle extends UIElement {
 
     setAngle (rotate) {
 
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_ROTATE, {id, rotate});
+        this.read(SELECTION_CURRENT_LAYER_ID, (ids) => {
+            ids.forEach(id => {
+                this.commit(CHANGE_LAYER_ROTATE, {id, rotate});
+            })
         })
-
     }
 
     [EVENT(
