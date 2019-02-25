@@ -9,7 +9,7 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
-import { CLICK, INPUT, LOAD, POINTERMOVE, POINTEREND, POINTERSTART } from '../../../../../util/Event';
+import { CLICK, INPUT, LOAD, POINTERMOVE, POINTEREND, POINTERSTART, MOVE, END } from '../../../../../util/Event';
 import { ITEM_INITIALIZE } from '../../../../types/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../types/SelectionTypes';
 import { ITEM_MAP_TEXTSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
@@ -160,9 +160,8 @@ export default class TextShadow extends BasePropertyItem {
     }
 
 
-    refreshUI (e) {
-        var x = e.xy.x;
-        var y = e.xy.y; 
+    refreshUI () {
+        var {x, y} = this.config('pos');
 
         var rect = this.selectedPointArea.rect();
 
@@ -192,20 +191,16 @@ export default class TextShadow extends BasePropertyItem {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+    end () {
         this.selectedPointArea = false;
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
+    move () {
+        this.refreshUI();
     }
 
-    [POINTERSTART('$textShadowList .drag-area')] (e) {
+    [POINTERSTART('$textShadowList .drag-area') + MOVE() + END()] (e) {
         e.preventDefault();
-        this.isDown = true; 
         this.selectedPointArea = e.$delegateTarget;
         this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer')
     }

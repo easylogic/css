@@ -9,7 +9,7 @@ import {
     CHANGE_SELECTION
 } from '../../../types/event';
 import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT, EMPTY_STRING } from '../../../../util/css/types';
-import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, IF, LOAD } from '../../../../util/Event';
+import { CHANGE, INPUT, POINTEREND, POINTERMOVE, POINTERSTART, CLICK, SHIFT, IF, LOAD, MOVE, END } from '../../../../util/Event';
 import { ITEM_SET } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
@@ -168,9 +168,9 @@ export default class GradientSteps extends UIElement {
     }
 
     /* 현재 위치 구하기  */ 
-    getCurrent (e) {
+    getCurrent () {
         var {min, max} = this.getMinMax()
-        var {x} = e.xy
+        var {x} = this.config('pos')
  
         var current = Math.min(Math.max(min, x), max)
 
@@ -182,17 +182,17 @@ export default class GradientSteps extends UIElement {
      * 
      * @param {*} e 
      */
-    refreshColorUI (e) {
+    refreshColorUI (isUpdate) {
         
         var {min, max} = this.getMinMax()
 
-        var current = this.getCurrent(e)
+        var current = this.getCurrent()
 
         if (this.currentStep) {
             var posX = Math.max(min, current)
             var px = posX - this.refs.$steps.offsetLeft();
 
-            if (e.ctrlKey) {
+            if (this.config('bodyEvent').ctrlKey) {
                 px = Math.floor(px);    // control + drag is floor number 
             }
             this.currentStepBox.px('left', px)
@@ -458,29 +458,16 @@ export default class GradientSteps extends UIElement {
         }
     }        
 
-    isDownCheck (e) {
-        return this.isDown
-    }
-
-    isNotDownCheck (e) {
-        return !this.isDown
-    }    
-
-    isNotFirstPosition (e) {
-        return this.xy.x !== e.xy.x || this.xy.y !== e.xy.y     
-    } 
-
     // Event Bindings 
-    [POINTEREND('document') + IF('isDownCheck')] (e) { 
-        this.isDown = false       
+    end () { 
         if (this.refs.$stepList) {
             this.refs.$stepList.removeClass('mode-drag')       
             this.run(HISTORY_PUSH, 'Moved colorstep');
         }
     }
 
-    [POINTERMOVE('document') + IF('isDownCheck')] (e) {
-        this.refreshColorUI(e);
+    move () {
+        this.refreshColorUI(true);
         this.refs.$stepList.addClass('mode-drag')
     }
 
@@ -488,10 +475,9 @@ export default class GradientSteps extends UIElement {
         return new Dom(e.target).hasClass('step');
     }
 
-    [POINTERSTART('$steps .step') + IF('isNotDownCheck') + IF('isStepElement')] (e) {
+    [POINTERSTART('$steps .step') + IF('isStepElement') + MOVE() + END()] (e) {
         e.preventDefault();
 
-        this.isDown = true; 
         this.xy = e.xy;
         this.currentStep = e.$delegateTarget;
         this.currentStepBox = this.currentStep.parent();

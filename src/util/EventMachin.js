@@ -10,6 +10,7 @@ import Dom from './Dom'
 import State from './State'
 import { debounce, isFunction, isArray, html, keyEach, fit, isNotUndefined } from './functions/func';
 import { EMPTY_STRING } from './css/types';
+import { ADD_BODY_MOUSEMOVE, ADD_BODY_MOUSEUP } from '../csseditor/types/ToolTypes';
 
 const REFERENCE_PROPERTY = 'ref';
 const TEMP_DIV = new Dom("div")
@@ -276,12 +277,38 @@ export default class EventMachin {
 
     return debounceTime 
   }
+  /* magic check method */ 
+
+  /* after check method */ 
+  bodyMouseMove (methodName) {
+    if (this[methodName]) {
+      this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this)
+    }
+  }
+
+  bodyMouseUp (methodName) {
+    if (this[methodName]) {
+      this.emit(ADD_BODY_MOUSEUP, this[methodName], this)
+    }    
+  }  
+  /* after check method */ 
+  
 
   getDefaultEventObject (eventName, checkMethodFilters) {
     let arr = checkMethodFilters
     const checkMethodList = arr.filter(code => {
         return !!this[code];
     });
+
+    const afters = arr.filter(code => {
+      return code.indexOf('after(') > -1; 
+    })
+
+    const afterMethods = afters.map(code => {
+      var [target, param] = code.split('after(')[1].split(')')[0].trim().split(' ')
+
+      return {target, param}
+    })
 
     // TODO: split debounce check code 
     const delay = arr.filter(code => {
@@ -307,6 +334,7 @@ export default class EventMachin {
     arr = arr.filter(code => {
       return checkMethodList.includes(code) === false 
             && delay.includes(code) === false 
+            && afters.includes(code) === false
             && capturing.includes(code) === false
             && fit.includes(code) === false; 
     }).map(code => {
@@ -320,6 +348,7 @@ export default class EventMachin {
       codes : arr,
       useCapture,
       useFit,
+      afterMethods, 
       debounce: debounceTime,
       checkMethodList: checkMethodList
     }
@@ -408,7 +437,13 @@ export default class EventMachin {
           e.xy = Event.posXY(e)
 
           if (this.checkEventType(e, eventObject)) {
-            return callback(e, e.$delegateTarget, e.xy);
+            var returnValue = callback(e, e.$delegateTarget, e.xy);
+
+            if (eventObject.afterMethods.length) {
+              eventObject.afterMethods.forEach(after => this[after.target].call(this, after.param))
+            } 
+
+            return returnValue; 
           } 
 
         } 
@@ -418,7 +453,16 @@ export default class EventMachin {
       return (e) => {
         e.xy = Event.posXY(e)        
         if (this.checkEventType(e, eventObject)) { 
-          return callback(e);
+          var returnValue = callback(e);
+
+          if (eventObject.afterMethods.length) {      
+            eventObject.afterMethods.forEach(after => {
+              this[after.target].call(this, after.param)
+            })
+          } 
+
+          return returnValue;           
+          
         }
       }
     }

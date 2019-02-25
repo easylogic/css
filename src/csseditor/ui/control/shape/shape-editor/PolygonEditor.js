@@ -12,7 +12,7 @@ import {
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, stringUnit, EMPTY_STRING } from "../../../../../util/css/types";
-import { CLICK, POINTEREND, POINTERMOVE, POINTERSTART, ALT, CAPTURE, LOAD } from "../../../../../util/Event";
+import { CLICK, POINTERSTART, ALT, CAPTURE, LOAD, MOVE } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIP_PATH_IS_POLYGON } from "../../../../../util/css/make";
@@ -78,9 +78,9 @@ export default class PolygonEditor extends UIElement {
         return this.cachedRectangle;
     }    
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
-        var {x , y} = e.xy;
+        var {x , y} = this.config('pos');
 
         x = Math.max(Math.min(maxX, x), minX)
         y = Math.max(Math.min(maxY, y), minY)
@@ -91,14 +91,12 @@ export default class PolygonEditor extends UIElement {
         this.$dragItem.px('left', left);
         this.$dragItem.px('top', top);
 
-        if (e) {
-            
+        if (isUpdate) {
 
             this.$dragPoint =  {
                 x: percentUnit( px2percent( left, width) ),
                 y: percentUnit( px2percent( top, height) )
             }
-    
 
             this.updateClipPath();
         }
@@ -133,20 +131,14 @@ export default class PolygonEditor extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
-    }
-
-    [POINTERSTART('$el .drag-item')] (e) {
+    [POINTERSTART('$el .drag-item') + MOVE()] (e) {
         e.preventDefault();
         this.$dragItem = e.$delegateTarget
-        this.isDown = true; 
     }
  
 

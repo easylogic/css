@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CLICK, ALT, IF, DOUBLECLICK } from "../../../../util/Event";
+import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CLICK, ALT, IF, DOUBLECLICK, MOVE } from "../../../../util/Event";
 import { TIMELINE_TOTAL_WIDTH, TIMELINE_LIST, TIMELINE_NOT_EXISTS_KEYFRAME, TIMELINE_MIN_TIME_IN_KEYFRAMES, TIMELINE_MAX_TIME_IN_KEYFRAMES } from "../../../types/TimelineTypes";
 import { CHANGE_EDITOR, ADD_TIMELINE, CHANGE_KEYFRAME, CHANGE_TOOL, CHANGE_KEYFRAME_SELECTION } from "../../../types/event";
 import { html } from "../../../../util/functions/func";
@@ -145,13 +145,12 @@ export default class KeyframeObjectList extends UIElement {
         this.refresh();
     }
 
-    [EVENT(ADD_TIMELINE)] (timelineId) {
+    [EVENT(ADD_TIMELINE)] () {
         this.refresh()
     }
 
-    [POINTERSTART('$el .bar') + SELF] (e) {
+    [POINTERSTART('$el .bar') + SELF + MOVE('setBarPosition')] (e) {
         this.msWidth = this.config('timeline.1ms.width')
-        this.selectedClass = 'bar'
         this.selectedElement = e.$delegateTarget.parent()
         this.selectedStartX  = this.selectedElement.cssFloat('left');
         this.selectedStartWidth  = this.selectedElement.cssFloat('width');
@@ -169,13 +168,11 @@ export default class KeyframeObjectList extends UIElement {
         var maxTime = this.read(TIMELINE_MAX_TIME_IN_KEYFRAMES, this.selectedId)
         this.maxX = maxTime * this.msWidth;
 
-        // console.log('start', e.xy);
         this.setCurrentKeyframeItem(this.selectedId, 'bar')
     }
 
-    [POINTERSTART('$el .start') + SELF] (e) {
+    [POINTERSTART('$el .start') + SELF + MOVE('setStartPosition')] (e) {
         this.msWidth = this.config('timeline.1ms.width')        
-        this.selectedClass = 'start'
         if (this.selectedEl) {
             this.selectedEl.removeClass('selected')
         }
@@ -200,9 +197,8 @@ export default class KeyframeObjectList extends UIElement {
         this.setCurrentKeyframeItem(this.selectedId, 'start')  
     }    
 
-    [POINTERSTART('$el .end') + SELF] (e) {
+    [POINTERSTART('$el .end') + SELF + MOVE('setEndPosition')] (e) {
         this.msWidth = this.config('timeline.1ms.width')        
-        this.selectedClass = 'end'
         if (this.selectedEl) {
             this.selectedEl.removeClass('selected')
         }
@@ -236,11 +232,6 @@ export default class KeyframeObjectList extends UIElement {
         }
     }
 
-
-    isSelectedClass () {
-        return !!this.selectedClass;
-    }
-
     updateKeyframeTime () {
         var id = this.selectedElement.attr('keyframe-id');
         var startTime = this.selectedX / this.msWidth
@@ -254,8 +245,8 @@ export default class KeyframeObjectList extends UIElement {
         return `${time}${unit}` 
     }
 
-    setBarPosition (e) {
-        var dx = (e.xy.x - this.xy.x);            
+    setBarPosition () {
+        var dx = (this.config('pos').x - this.xy.x);            
         var newX = this.match1ms( Math.min(Math.max(this.minX, this.selectedStartX + dx), this.maxX - this.selectedStartWidth), 10)
         this.selectedElement.px('left', newX)
         this.selectedElement.attr('data-start-time', this.getTimeString(newX))        
@@ -271,8 +262,8 @@ export default class KeyframeObjectList extends UIElement {
         return time * width;
     }
 
-    setStartPosition (e) {
-        var dx = (e.xy.x - this.xy.x);
+    setStartPosition () {
+        var dx = (this.config('pos').x - this.xy.x);            
         var newX = this.match1ms(Math.min( Math.max(this.minX, this.selectedStartX + dx) , this.maxX), 10)
 
         var newWidth = this.selectedEndX - newX
@@ -287,8 +278,8 @@ export default class KeyframeObjectList extends UIElement {
         this.updateKeyframeTime()        
     }
 
-    setEndPosition (e) {
-        var dx = (e.xy.x - this.xy.x);
+    setEndPosition () {
+        var dx = (this.config('pos').x - this.xy.x);            
         var newX = this.match1ms( Math.min( Math.max(this.minX, this.selectedEndX + dx) , this.maxX) , 10)
         var newWidth =  Math.max(0, newX - this.selectedStartX)       
         this.selectedElement.attr('data-end-time', this.getTimeString(newX))
@@ -299,22 +290,6 @@ export default class KeyframeObjectList extends UIElement {
         this.updateKeyframeTime()        
     }
 
-    [POINTERMOVE('document') + IF('isSelectedClass')] (e) {
-        if (this.selectedClass == 'bar') {
-            this.setBarPosition(e);
-        } else if (this.selectedClass == 'start' ) {
-            this.setStartPosition(e);
-        } else if (this.selectedClass == 'end') {
-            this.setEndPosition(e);
-        }
-    }
-
-    [POINTEREND('document') + IF('isSelectedClass')] (e) {
-        this.selectedClass = null;
-        this.selectedElement.removeAttr('data-start-time')
-        this.selectedElement.removeAttr('data-end-time')            
-        this.selectedElement = null; 
-    }
 
     [CLICK('$el .keyframe-property') + ALT] (e) {
         var [parentId, property] = e.$delegateTarget.attrs('data-timeline-id', 'data-property');

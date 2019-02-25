@@ -4,7 +4,7 @@ import {
     CHANGE_SELECTION, 
     CHANGE_IMAGE
 } from '../../../types/event';
-import { POINTERSTART, POINTERMOVE, POINTEREND } from '../../../../util/Event';
+import { POINTERSTART, POINTERMOVE, POINTEREND, MOVE } from '../../../../util/Event';
 import { defaultValue } from '../../../../util/functions/func';
 import { percentUnit, EMPTY_STRING } from '../../../../util/css/types';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
@@ -35,10 +35,10 @@ export default class BackgroundResizer extends UIElement {
         return this.read(SELECTION_IS_IMAGE);
     }
 
-    getCurrentXY(e, position) {
+    getCurrentXY(isUpdate, position) {
 
-        if (e) {
-            var xy = e.xy;
+        if (isUpdate) {
+            var xy = this.config('pos');
 
             return [xy.x, xy.y]
         }
@@ -73,12 +73,12 @@ export default class BackgroundResizer extends UIElement {
 
     }
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, maxX, maxY } = this.getRectangle()
         var {x, y, width, height} = this.getDefaultValue();
 
-        if (e) {
-            var [x , y] = this.getCurrentXY(e)
+        if (isUpdate) {
+            var [x , y] = this.getCurrentXY(isUpdate)
 
             x = Math.max(Math.min(maxX, x), minX)
             y = Math.max(Math.min(maxY, y), minY)
@@ -98,7 +98,7 @@ export default class BackgroundResizer extends UIElement {
         this.refs.$dragPointer.px('left', left);
         this.refs.$dragPointer.px('top', top);
 
-        if (e) {
+        if (isUpdate) {
             var newLeft = (left / (maxX - minX)) * 100
             var newTop = (top / (maxY - minY)) * 100
             this.setBackgroundPosition( percentUnit(newLeft), percentUnit(newTop));
@@ -121,23 +121,14 @@ export default class BackgroundResizer extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
-    }
-
-    [POINTERSTART('$dragPointer')] (e) {
+    [POINTERSTART('$dragPointer') + MOVE()] (e) {
         e.preventDefault();
-        this.isDown = true; 
     }
 
-    [POINTERSTART()] (e) {
-        this.isDown = true; 
-        // this.refreshUI(e);        
+    [POINTERSTART() + MOVE()] (e) {
     }    
 }

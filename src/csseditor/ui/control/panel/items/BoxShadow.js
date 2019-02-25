@@ -8,7 +8,7 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../colorpicker/UIElement';
 import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
-import { CLICK, INPUT, LOAD, POINTEREND, POINTERMOVE, POINTERSTART } from '../../../../../util/Event';
+import { CLICK, INPUT, LOAD, POINTEREND, POINTERMOVE, POINTERSTART, MOVE, END } from '../../../../../util/Event';
 import { ITEM_INITIALIZE} from '../../../../types/ItemCreateTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
 import { ITEM_MAP_BOXSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
@@ -185,9 +185,8 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
 
-    refreshUI (e) {
-        var x = e.xy.x;
-        var y = e.xy.y; 
+    refreshUI () {
+        var {x, y} = this.config('pos');
 
         var rect = this.selectedPointArea.rect();
 
@@ -217,20 +216,16 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+    end () {
         this.selectedPointArea = false;
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERSTART('$boxShadowList .drag-area')] (e) {
+    [POINTERSTART('$boxShadowList .drag-area') + MOVE() + END()] (e) {
         e.preventDefault();
-        this.isDown = true; 
         this.selectedPointArea = e.$delegateTarget;
         this.selectedDragPointer = this.selectedPointArea.$('.drag-pointer')
     }

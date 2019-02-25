@@ -193,19 +193,19 @@ export default class ItemCreateManager extends BaseModule {
     }
 
     [ACTION(ITEM_ADD_BOXSHADOW)] ($store, isSelected = false, parentId = EMPTY_STRING) {
-        $store.run(ITEM_TYPE_BOXSHADOW, isSelected, parentId)
+        $store.run(ITEM_ADD, ITEM_TYPE_BOXSHADOW, isSelected, parentId)
     }
 
     [ACTION(ITEM_ADD_TEXTSHADOW)] ($store, isSelected = false, parentId = EMPTY_STRING) {
-        $store.run(ITEM_TYPE_TEXTSHADOW, isSelected, parentId)
+        $store.run(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, isSelected, parentId)
     }
 
     [ACTION(ITEM_ADD_CIRCLE)] ($store, isSelected, parentId = EMPTY_STRING) {
-        $store.run(ITEM_TYPE_CIRCLE, isSelected, parentId);
+        $store.run(ITEM_ADD, ITEM_TYPE_CIRCLE, isSelected, parentId);
     }
 
     [ACTION(ITEM_ADD_RECT)] ($store, isSelected, parentId = EMPTY_STRING) {
-        $store.run(ITEM_TYPE_LAYER, isSelected, parentId);
+        $store.run(ITEM_ADD, ITEM_TYPE_LAYER, isSelected, parentId);
     }    
 
     [ACTION(ITEM_ADD_LAYER)] ($store, itemType, isSelected = false, parentId = EMPTY_STRING) {

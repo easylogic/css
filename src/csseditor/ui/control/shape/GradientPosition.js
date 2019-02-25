@@ -5,7 +5,7 @@ import {
     CHANGE_SELECTION 
 } from '../../../types/event';
 import { percent, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
-import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK } from '../../../../util/Event';
+import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
 import { isString } from '../../../../util/functions/func';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
 import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../../util/css/make';
@@ -56,10 +56,10 @@ export default class GradientPosition extends UIElement {
         return this.config('guide.angle')
     }
 
-    getCurrentXY(e, position) {
+    getCurrentXY(isUpdate, position) {
 
-        if (e) {
-            var xy = e.xy;
+        if (isUpdate) {
+            var xy = this.config('pos');
 
             return [xy.x, xy.y]
         }
@@ -122,9 +122,9 @@ export default class GradientPosition extends UIElement {
 
     }
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, maxX, maxY, width, height } = this.getRectangle()
-        var [x , y] = this.getCurrentXY(e, this.getDefaultValue())
+        var [x , y] = this.getCurrentXY(isUpdate, this.getDefaultValue())
 
         x = Math.max(Math.min(maxX, x), minX)
         y = Math.max(Math.min(maxY, y), minY)
@@ -135,7 +135,7 @@ export default class GradientPosition extends UIElement {
         this.refs.$dragPointer.px('left', left);
         this.refs.$dragPointer.px('top', top);
 
-        if (e) {
+        if (isUpdate) {
 
             this.setRadialPosition([
                 percent( Math.floor(left/width * 100) ), 
@@ -165,24 +165,15 @@ export default class GradientPosition extends UIElement {
     }
 
     // Event Bindings 
-    [POINTEREND('document')] (e) {
-        this.isDown = false ;
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document')] (e) {
-        if (this.isDown) {
-            this.refreshUI(e);
-        }
-    }
-
-    [POINTERSTART('$dragPointer')] (e) {
+    [POINTERSTART('$dragPointer') + MOVE()] (e) {
         e.preventDefault();
-        this.isDown = true; 
     }
 
-    [POINTERSTART()] (e) {
-        this.isDown = true; 
-        // this.refreshUI(e);        
+    [POINTERSTART() + MOVE()] (e) {
     }    
     
     [DOUBLECLICK('$dragPointer')] (e) {

@@ -1,7 +1,7 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
-import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF } from '../../../../util/Event';
+import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF, MOVE } from '../../../../util/Event';
 import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { isUndefined } from '../../../../util/functions/func';
 
@@ -35,8 +35,8 @@ export default class LayerAngle extends UIElement {
         return this.config('guide.angle')
     }
 
-    getCurrentXY(e, angle, radius, centerX, centerY) {
-        return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY)
+    getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
+        return isUpdate ? this.config('pos') : getXYInCircle(angle, radius, centerX, centerY)
     }
 
     getRectangle () {
@@ -64,9 +64,9 @@ export default class LayerAngle extends UIElement {
         this.refs.$angleText.text(angleText + ' °') 
     }
 
-    refreshUI (e) {
+    refreshUI (isUpdate) {
         var { minX, minY, radius,  centerX, centerY } = this.getRectangle()
-        var { x , y } = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY)
+        var { x , y } = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY)
 
         var rx = x - centerX, ry = y - centerY, angle = caculateAngle(rx, ry);
 
@@ -82,7 +82,7 @@ export default class LayerAngle extends UIElement {
 
         this.refreshAngleText (lastAngle)
 
-        if (e) {
+        if (isUpdate) {
 
             this.setAngle (lastAngle)
         }
@@ -107,30 +107,16 @@ export default class LayerAngle extends UIElement {
         this.$el.toggle(this.isShow())
     }
 
-    isDownCheck () {
-        return this.isDown;
-    }
-
-    isNotDownCheck () {
-        return !this.isDown
-    }
-
     // Event Bindings 
-    [POINTEREND('document') + IF('isDownCheck')] (e) {
-        this.isDown = false ;
+    move () {
+        this.refreshUI(true);
     }
 
-    [POINTERMOVE('document') + DEBOUNCE(10) + IF('isDownCheck')] (e) {
-        this.refreshUI(e);
-    }
-
-    [POINTERSTART('$drag_pointer') + IF('isNotDownCheck')] (e) {
+    [POINTERSTART('$drag_pointer') + MOVE()] (e) {
         e.preventDefault();
-        this.isDown = true; 
     }
 
-    [POINTERSTART('$dragAngle') + IF('isNotDownCheck')] (e) {
-        this.isDown = true; 
+    [POINTERSTART('$dragAngle') + MOVE()] (e) {
         this.refreshUI(e);        
     }     
 
