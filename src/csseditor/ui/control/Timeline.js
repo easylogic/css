@@ -1,14 +1,13 @@
 import ColorPicker from '../../../colorpicker/index'
 import UIElement, { EVENT } from "../../../colorpicker/UIElement";
 import { CLICK, SCROLL, DEBOUNCE, DROP, WHEEL, ALT } from "../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
+import { SELECTION_CURRENT_LAYER, SELECTION_IDS } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
 import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, TOGGLE_TIMELINE } from "../../types/ToolTypes";
 import TimelineObjectList from "./timeline/TimelineObjectList";
 import KeyframeObjectList from "./timeline/KeyframeObjectList";
 import { TIMELINE_PUSH, TIMELINE_NOT_EXISTS } from "../../types/TimelineTypes";
-import { ADD_TIMELINE, CHANGE_IMAGE_COLOR } from "../../types/event";
 import KeyframeTimeView from "./timeline/KeyframeTimeView";
 import TimelineTopToolbar from "./timeline/TimelineTopToolbar";
 import { isFunction } from '../../../util/functions/func';
@@ -42,6 +41,7 @@ export default class Timeline extends UIElement {
                 <div class="timeline-top" ref="$top">
                     <div class='timeline-toolbar'>
                         <span ref='$title' class='title'>Timeline</span>
+                        <button type="button" ref="$addSelection">+</button>
                     </div>
                     <div class='keyframe-toolbar'>
                         <TimelineTopToolbar />
@@ -106,6 +106,14 @@ export default class Timeline extends UIElement {
     
         })
 
+    }
+
+    [CLICK('$addSelection')] (e) {
+        this.read(SELECTION_IDS).forEach(id => {
+            if (this.read(TIMELINE_NOT_EXISTS, id)) {
+                this.run(TIMELINE_PUSH, id);
+            }
+        })
     }
 
     [CLICK('$title')] () {

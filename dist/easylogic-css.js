@@ -3081,7 +3081,7 @@ var IMAGE_RADIAL_PRROPERTY = ['backgroundPositionX', 'backgroundPositionY', 'bac
 
 var IMAGE_STATIC_PRROPERTY = ['color', 'backgroundPositionX', 'backgroundPositionY', 'backgroundSizeWidth', 'backgroundSizeHeight'];
 
-var PROPERTY_LIST = (_PROPERTY_LIST = {}, defineProperty(_PROPERTY_LIST, ITEM_TYPE_LAYER, [{ key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY }, { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_LINEAR, [{ key: 'linear', title: 'Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_RADIAL, [{ key: 'linear', title: 'Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_CONIC, [{ key: 'linear', title: 'Static Gradient', properties: IMAGE_CONIC_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_LINEAR, [{ key: 'linear', title: 'Repeating Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_RADIAL, [{ key: 'linear', title: 'Repeating Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_CONIC, [{ key: 'linear', title: 'Repeating Conic Gradient', properties: IMAGE_CONIC_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_STATIC, [{ key: 'linear', title: 'Static Gradient', properties: IMAGE_STATIC_PRROPERTY }]), _PROPERTY_LIST);
+var PROPERTY_LIST = (_PROPERTY_LIST = {}, defineProperty(_PROPERTY_LIST, ITEM_TYPE_LAYER, [{ key: 'transform', title: 'Transform', properties: LAYER_TRANSFORM_PROPERTY }, { key: 'transform3d', title: 'Transform 3D', properties: LAYER_TRANSFORM_3D_PROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_LINEAR, [{ key: 'linear', title: 'Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_RADIAL, [{ key: 'linear', title: 'Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_CONIC, [{ key: 'linear', title: 'Conic Gradient', properties: IMAGE_CONIC_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_LINEAR, [{ key: 'linear', title: 'Repeating Linear Gradient', properties: IMAGE_LINEAR_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_RADIAL, [{ key: 'linear', title: 'Repeating Radial Gradient', properties: IMAGE_RADIAL_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_REPEATING_CONIC, [{ key: 'linear', title: 'Repeating Conic Gradient', properties: IMAGE_CONIC_PRROPERTY }]), defineProperty(_PROPERTY_LIST, ITEM_TYPE_IMAGE + '_' + IMAGE_ITEM_TYPE_STATIC, [{ key: 'linear', title: 'Static Gradient', properties: IMAGE_STATIC_PRROPERTY }]), _PROPERTY_LIST);
 
 var PROPERTY_DEFAULT_VALUE = {
 
@@ -8297,7 +8297,8 @@ var COLORSTEP_DEFAULT_OBJECT = {
 var TIMELINE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_TIMELINE,
     targetId: EMPTY_STRING,
-    parentId: EMPTY_STRING
+    parentId: EMPTY_STRING,
+    collapse: {}
 };
 
 var KEYFRAME_DEFAULT_OBJECT = {
@@ -18661,8 +18662,10 @@ var LayerAngle = function (_UIElement) {
         value: function setAngle(rotate) {
             var _this2 = this;
 
-            this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
+            this.read(SELECTION_CURRENT_LAYER_ID, function (ids) {
+                ids.forEach(function (id) {
+                    _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
+                });
             });
         }
     }, {
@@ -21070,7 +21073,7 @@ var TIMELINE_1_SECOND_WIDTH = 100;
 var TIMELINE_TOTAL_WIDTH = TIMELINE_1_SECOND_WIDTH * TIMELINE_MAX_SECOND;
 
 var _templateObject$15 = taggedTemplateLiteral(["", ""], ["", ""]);
-var _templateObject2$1 = taggedTemplateLiteral(["\n            <div class='timeline-collapse' data-property='", "'>\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "], ["\n            <div class='timeline-collapse' data-property='", "'>\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "]);
+var _templateObject2$1 = taggedTemplateLiteral(["\n            <div class='timeline-collapse' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "], ["\n            <div class='timeline-collapse' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "]);
 
 var TimelineObjectList = function (_UIElement) {
     inherits(TimelineObjectList, _UIElement);
@@ -21139,7 +21142,7 @@ var TimelineObjectList = function (_UIElement) {
             var list = GET_PROPERTY_LIST(targetItem);
 
             return html(_templateObject$15, list.map(function (it) {
-                return html(_templateObject2$1, it.key, it.title, it.key, it.properties.map(function (property) {
+                return html(_templateObject2$1, it.key, timeline.id, it.title, it.key, it.properties.map(function (property) {
                     return _this3.makeTimelineProperty(property, timeline, targetItem, index);
                 }));
             }));
@@ -21167,6 +21170,27 @@ var TimelineObjectList = function (_UIElement) {
         key: "refresh",
         value: function refresh() {
             this.load();
+        }
+    }, {
+        key: CLICK('$el .timeline-collapse > .property-title'),
+        value: function value$$1(e) {
+            var $parent = e.$delegateTarget.parent();
+            $parent.toggleClass('collapsed');
+
+            var subkey = $parent.attr('data-sub-key');
+            var id = $parent.attr('data-timeline-id');
+
+            var timeline = this.get(id);
+            var collapse = _extends({}, timeline.collapse, defineProperty({}, subkey, $parent.hasClass('collapsed')));
+
+            this.run(ITEM_SET, { id: id, collapse: collapse });
+            this.emit('collapsedTimelineTree', id, subkey, $parent.hasClass('collapsed'));
+        }
+    }, {
+        key: EVENT('collapsedTimelineTree'),
+        value: function value$$1(id, subkey, isCollapsed) {
+            var $propertyGroup = this.$el.$("[data-sub-key=\"" + subkey + "\"][data-timeline-id=\"" + id + "\"]");
+            $propertyGroup.toggleClass('collapsed', isCollapsed);
         }
     }, {
         key: EVENT(CHANGE_TIMELINE),
@@ -21290,7 +21314,7 @@ var TimelineObjectList = function (_UIElement) {
 
 var _templateObject$16 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
 var _templateObject2$2 = taggedTemplateLiteral(["", ""], ["", ""]);
-var _templateObject3 = taggedTemplateLiteral(["\n            <div class='keyframe-collapse row' data-property='", "'></div>\n            <div class='keyframe-property-list' data-property='", "'>\n                ", "\n            </div>            \n            "], ["\n            <div class='keyframe-collapse row' data-property='", "'></div>\n            <div class='keyframe-property-list' data-property='", "'>\n                ", "\n            </div>            \n            "]);
+var _templateObject3 = taggedTemplateLiteral(["\n            <div class='keyframe-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row'></div>\n                <div class='keyframe-property-list' data-property='", "'>\n                    ", "\n                </div>                            \n            </div>\n\n            "], ["\n            <div class='keyframe-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row'></div>\n                <div class='keyframe-property-list' data-property='", "'>\n                    ", "\n                </div>                            \n            </div>\n\n            "]);
 
 var KeyframeObjectList = function (_UIElement) {
     inherits(KeyframeObjectList, _UIElement);
@@ -21383,10 +21407,17 @@ var KeyframeObjectList = function (_UIElement) {
             var list = GET_PROPERTY_LIST(targetItem);
 
             return html(_templateObject2$2, list.map(function (it) {
-                return html(_templateObject3, it.key, it.key, it.properties.map(function (property) {
+                var collapse = timeline.collapse[it.key] ? 'collapsed' : '';
+                return html(_templateObject3, collapse, it.key, timeline.id, it.key, it.properties.map(function (property) {
                     return _this4.makeKeyframeProperty(property, timeline);
                 }));
             }));
+        }
+    }, {
+        key: EVENT('collapsedTimelineTree'),
+        value: function value$$1(id, subkey, isCollapsed) {
+            var $propertyGroup = this.$el.$("[data-sub-key=\"" + subkey + "\"][data-timeline-id=\"" + id + "\"]");
+            $propertyGroup.toggleClass('collapsed', isCollapsed);
         }
     }, {
         key: "makeTimelineObject",
@@ -21720,8 +21751,10 @@ var KeyframeTimeView = function (_UIElement) {
                 }
 
                 var left = (cursorTime - currentTime) * width;
+                var markTop = 10;
+                var markWidth = 4;
                 this.drawOption({ strokeStyle: 'rgba(0, 0, 0, 0.5)', fillStyle: 'rgba(236, 236, 236, 0.5)', lineWidth: 1 });
-                this.drawPath([left - 5, rect.height - 13], [left + 5, rect.height - 13], [left + 5, rect.height - 5], [left, rect.height], [left - 5, rect.height - 5], [left - 5, rect.height - 13]);
+                this.drawPath([left - markWidth, rect.height - markTop], [left + markWidth, rect.height - markTop], [left + markWidth, rect.height - markWidth], [left, rect.height], [left - markWidth, rect.height - markWidth], [left - markWidth, rect.height - markTop]);
             });
         }
     }, {
@@ -21798,7 +21831,7 @@ var Timeline = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-top\" ref=\"$top\">\n                    <div class='timeline-toolbar'>\n                        <span ref='$title' class='title'>Timeline</span>\n                    </div>\n                    <div class='keyframe-toolbar'>\n                        <TimelineTopToolbar />\n                    </div>                \n                </div>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>\n                        \n                    </div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='timeline-view'>\n                <div class=\"timeline-top\" ref=\"$top\">\n                    <div class='timeline-toolbar'>\n                        <span ref='$title' class='title'>Timeline</span>\n                        <button type=\"button\" ref=\"$addSelection\">+</button>\n                    </div>\n                    <div class='keyframe-toolbar'>\n                        <TimelineTopToolbar />\n                    </div>                \n                </div>\n                <div class=\"timeline-header\" ref=\"$header\">\n                    <div class='timeline-toolbar'>\n                        \n                    </div>\n                    <div class='keyframe-toolbar' ref=\"$keyframeToolbar\">\n                        <KeyframeTimeView />\n                    </div>\n                </div>\n                <div class='timeline-body' ref=\"$timelineBody\">\n                    <div class='timeline-panel' ref='$keyframeList'>\n                        <KeyframeObjectList />\n                    </div>                \n                    <div class='timeline-list' ref='$timelineList'>\n                        <TimelineObjectList />\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "startAnimation",
@@ -21837,6 +21870,17 @@ var Timeline = function (_UIElement) {
                 });
 
                 aniObject.start();
+            });
+        }
+    }, {
+        key: CLICK('$addSelection'),
+        value: function value(e) {
+            var _this3 = this;
+
+            this.read(SELECTION_IDS).forEach(function (id) {
+                if (_this3.read(TIMELINE_NOT_EXISTS, id)) {
+                    _this3.run(TIMELINE_PUSH, id);
+                }
             });
         }
     }, {

@@ -1,9 +1,9 @@
 import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
-import { LOAD, POINTERSTART, POINTERMOVE, POINTEREND, SELF, CLICK, ALT, IF, DOUBLECLICK, MOVE } from "../../../../util/Event";
+import { LOAD, POINTERSTART,SELF, CLICK, ALT, DOUBLECLICK, MOVE } from "../../../../util/Event";
 import { TIMELINE_TOTAL_WIDTH, TIMELINE_LIST, TIMELINE_NOT_EXISTS_KEYFRAME, TIMELINE_MIN_TIME_IN_KEYFRAMES, TIMELINE_MAX_TIME_IN_KEYFRAMES } from "../../../types/TimelineTypes";
 import { CHANGE_EDITOR, ADD_TIMELINE, CHANGE_KEYFRAME, CHANGE_TOOL, CHANGE_KEYFRAME_SELECTION } from "../../../types/event";
 import { html } from "../../../../util/functions/func";
-import { stringUnit, pxUnit, PROPERTY_LIST, EMPTY_STRING, unitValue } from "../../../../util/css/types";
+import { stringUnit, pxUnit, EMPTY_STRING, unitValue } from "../../../../util/css/types";
 import { ITEM_MAP_KEYFRAME_CHILDREN } from "../../../types/ItemSearchTypes";
 import { ITEM_ADD_KEYFRAME } from "../../../types/ItemCreateTypes";
 import { RESIZE_TIMELINE, MOVE_TIMELINE } from "../../../types/ToolTypes";
@@ -102,17 +102,26 @@ export default class KeyframeObjectList extends UIElement {
         var list = GET_PROPERTY_LIST(targetItem)
 
         return html`${list.map(it => {
+            var collapse = timeline.collapse[it.key] ? 'collapsed': ''
             return html`
-            <div class='keyframe-collapse row' data-property='${it.key}'></div>
-            <div class='keyframe-property-list' data-property='${it.key}'>
-                ${it.properties.map(property => {
-                    return this.makeKeyframeProperty(property, timeline)
-                })}
-            </div>            
+            <div class='keyframe-collapse ${collapse}' data-sub-key='${it.key}' data-timeline-id="${timeline.id}">
+                <div class='property-title row'></div>
+                <div class='keyframe-property-list' data-property='${it.key}'>
+                    ${it.properties.map(property => {
+                        return this.makeKeyframeProperty(property, timeline)
+                    })}
+                </div>                            
+            </div>
+
             `
         })}`
         
     }    
+
+    [EVENT('collapsedTimelineTree')] (id, subkey, isCollapsed) {
+        var $propertyGroup = this.$el.$(`[data-sub-key="${subkey}"][data-timeline-id="${id}"]`);
+        $propertyGroup.toggleClass('collapsed', isCollapsed)
+    }
 
     makeTimelineObject (timeline, targetItem) {
         return `

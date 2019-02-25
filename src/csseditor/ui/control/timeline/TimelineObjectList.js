@@ -85,7 +85,7 @@ export default class TimelineObjectList extends UIElement {
 
         return html`${list.map(it => {
             return html`
-            <div class='timeline-collapse' data-property='${it.key}'>
+            <div class='timeline-collapse' data-sub-key='${it.key}' data-timeline-id="${timeline.id}">
                 <div class='property-title row' >${it.title}</div>
                 <div class='timeline-property-list' data-property='${it.key}'>
                     ${it.properties.map(property => {
@@ -128,6 +128,25 @@ export default class TimelineObjectList extends UIElement {
 
     refresh () {
         this.load();
+    }
+
+    [CLICK('$el .timeline-collapse > .property-title')] (e) {
+        var $parent = e.$delegateTarget.parent();
+        $parent.toggleClass('collapsed')
+
+        var subkey = $parent.attr('data-sub-key');
+        var id = $parent.attr('data-timeline-id')
+
+        var timeline = this.get(id);
+        var collapse = {...timeline.collapse, [subkey]: $parent.hasClass('collapsed')}
+
+        this.run(ITEM_SET, {id, collapse })
+        this.emit('collapsedTimelineTree', id, subkey, $parent.hasClass('collapsed'));
+    }
+
+    [EVENT('collapsedTimelineTree')] (id, subkey, isCollapsed) {
+        var $propertyGroup = this.$el.$(`[data-sub-key="${subkey}"][data-timeline-id="${id}"]`);
+        $propertyGroup.toggleClass('collapsed', isCollapsed)
     }
 
     [EVENT(CHANGE_TIMELINE)] () {
