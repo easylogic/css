@@ -22,9 +22,16 @@
             .keyframe-object {
                 position: relative;
 
+
+                &.group-collapsed {
+        
+                    .keyframe-group {
+                        display: none;
+                    }
+                }
+
+
                 .keyframe-group {
-
-
 
                     .keyframe-collapse {
                         &.collapsed {
@@ -32,7 +39,7 @@
                                 display: none;
                             }
                         }
-                        
+
                         .keyframe-property-list {
 
                             .keyframe-property {

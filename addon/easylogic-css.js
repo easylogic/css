@@ -20922,7 +20922,7 @@ var TIMELINE_1_SECOND_WIDTH = 100;
 var TIMELINE_TOTAL_WIDTH = TIMELINE_1_SECOND_WIDTH * TIMELINE_MAX_SECOND;
 
 var _templateObject$15 = taggedTemplateLiteral(["", ""], ["", ""]);
-var _templateObject2$1 = taggedTemplateLiteral(["\n            <div class='timeline-collapse' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "], ["\n            <div class='timeline-collapse' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "]);
+var _templateObject2$1 = taggedTemplateLiteral(["\n            <div class='timeline-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "], ["\n            <div class='timeline-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "]);
 
 var TimelineObjectList = function (_UIElement) {
     inherits(TimelineObjectList, _UIElement);
@@ -20991,7 +20991,8 @@ var TimelineObjectList = function (_UIElement) {
             var list = GET_PROPERTY_LIST(targetItem);
 
             return html(_templateObject$15, list.map(function (it) {
-                return html(_templateObject2$1, it.key, timeline.id, it.title, it.key, it.properties.map(function (property) {
+                var collapse = timeline.collapse[it.key] ? 'collapsed' : '';
+                return html(_templateObject2$1, collapse, it.key, timeline.id, it.title, it.key, it.properties.map(function (property) {
                     return _this3.makeTimelineProperty(property, timeline, targetItem, index);
                 }));
             }));
@@ -21012,13 +21013,26 @@ var TimelineObjectList = function (_UIElement) {
                 var layer = this.get(targetItem.parentId);
                 name = this.getLayerName(layer) + " -&gt; " + targetItem.type;
             }
-
-            return "\n            <div class='timeline-object' data-type='" + targetItem.itemType + "'>\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + name + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelinePropertyGroup(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
+            var collapse = timeline.groupCollapsed ? 'group-collapsed' : '';
+            return "\n            <div class='timeline-object " + collapse + "' data-type='" + targetItem.itemType + "' data-timeline-id=\"" + timeline.id + "\">\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + name + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelinePropertyGroup(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",
         value: function refresh() {
             this.load();
+        }
+    }, {
+        key: CLICK('$el .timeline-object-title'),
+        value: function value$$1(e) {
+            var $parent = e.$delegateTarget.parent();
+            $parent.toggleClass('group-collapsed');
+
+            var id = $parent.attr('data-timeline-id');
+
+            var groupCollapsed = $parent.hasClass('group-collapsed');
+
+            this.run(ITEM_SET, { id: id, groupCollapsed: groupCollapsed });
+            this.emit('collapsedGroupTimelineTree', id, $parent.hasClass('group-collapsed'));
         }
     }, {
         key: CLICK('$el .timeline-collapse > .property-title'),
@@ -21040,6 +21054,12 @@ var TimelineObjectList = function (_UIElement) {
         value: function value$$1(id, subkey, isCollapsed) {
             var $propertyGroup = this.$el.$("[data-sub-key=\"" + subkey + "\"][data-timeline-id=\"" + id + "\"]");
             $propertyGroup.toggleClass('collapsed', isCollapsed);
+        }
+    }, {
+        key: EVENT('collapsedGroupTimelineTree'),
+        value: function value$$1(id, isGroupCollapsed) {
+            var $propertyGroup = this.$el.$(".timeline-object[data-timeline-id=\"" + id + "\"]");
+            $propertyGroup.toggleClass('group-collapsed', isGroupCollapsed);
         }
     }, {
         key: EVENT(CHANGE_TIMELINE),
@@ -21269,9 +21289,16 @@ var KeyframeObjectList = function (_UIElement) {
             $propertyGroup.toggleClass('collapsed', isCollapsed);
         }
     }, {
+        key: EVENT('collapsedGroupTimelineTree'),
+        value: function value$$1(id, isGroupCollapsed) {
+            var $propertyGroup = this.$el.$(".keyframe-object[data-timeline-id=\"" + id + "\"]");
+            $propertyGroup.toggleClass('group-collapsed', isGroupCollapsed);
+        }
+    }, {
         key: "makeTimelineObject",
         value: function makeTimelineObject(timeline, targetItem) {
-            return "\n            <div class='keyframe-object' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>" + this.makeTimelinePropertyGroup(timeline, targetItem) + "</div>\n            </div>\n        ";
+            var collapse = timeline.groupCollapsed ? 'group-collapsed' : '';
+            return "\n            <div class='keyframe-object " + collapse + "' data-type='layer' data-timeline-id='" + timeline.id + "'>\n                <div class='keyframe-title row'></div>\n                <div class='keyframe-group'>" + this.makeTimelinePropertyGroup(timeline, targetItem) + "</div>\n            </div>\n        ";
         }
     }, {
         key: "refresh",

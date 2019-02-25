@@ -13,6 +13,29 @@
     .timeline-object {
         position: relative;
 
+        &.group-collapsed {
+
+            .timeline-object-title {
+                .title {
+                    &:before {
+                        content: '';
+                        display: inline-block;
+                        border-radius: 50%;
+                        box-sizing: border-box;
+                        background-color: blue;
+                        width: 5px;
+                        height: 5px;
+                        vertical-align: middle;
+                        margin-right: 5px;
+                    }
+                }
+            }
+
+            .timeline-group {
+                display: none;
+            }
+        }
+
         .timeline-object-title {
             padding-left: $timeline-title-padding * 0.5;
         }
