@@ -123,9 +123,15 @@ export default class KeyframeObjectList extends UIElement {
         $propertyGroup.toggleClass('collapsed', isCollapsed)
     }
 
+    [EVENT('collapsedGroupTimelineTree')] (id, isGroupCollapsed) {
+        var $propertyGroup = this.$el.$(`.keyframe-object[data-timeline-id="${id}"]`);
+        $propertyGroup.toggleClass('group-collapsed', isGroupCollapsed)
+    }
+
     makeTimelineObject (timeline, targetItem) {
+        var collapse = timeline.groupCollapsed ? 'group-collapsed': ''
         return `
-            <div class='keyframe-object' data-type='layer' data-timeline-id='${timeline.id}'>
+            <div class='keyframe-object ${collapse}' data-type='layer' data-timeline-id='${timeline.id}'>
                 <div class='keyframe-title row'></div>
                 <div class='keyframe-group'>${this.makeTimelinePropertyGroup(timeline, targetItem)}</div>
             </div>

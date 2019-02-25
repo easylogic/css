@@ -2823,6 +2823,19 @@ html, body {
         overflow: auto; }
         .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object {
           position: relative; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object.group-collapsed .timeline-object-title .title:before {
+            content: '';
+            display: inline-block;
+            border-radius: 50%;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            background-color: blue;
+            width: 5px;
+            height: 5px;
+            vertical-align: middle;
+            margin-right: 5px; }
+          .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object.group-collapsed .timeline-group {
+            display: none; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-object-title {
             padding-left: 15px; }
           .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .property-title {
@@ -2899,6 +2912,8 @@ html, body {
           background-image: linear-gradient(to right, rgba(255, 0, 0, 0.5), rgba(255, 0, 0, 0.5)), linear-gradient(to right, rgba(204, 204, 204, 0.3) 1px, transparent 1px); }
           .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object {
             position: relative; }
+            .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object.group-collapsed .keyframe-group {
+              display: none; }
             .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse.collapsed .keyframe-property-list {
               display: none; }
             .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property {
