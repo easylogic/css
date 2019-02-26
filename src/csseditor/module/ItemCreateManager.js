@@ -347,6 +347,7 @@ export default class ItemCreateManager extends BaseModule {
         var page = this.get(pageId);
         page.index = Number.MAX_SAFE_INTEGER;  
         $store.run(ITEM_SET, page);
+        $store.run(ITEM_SORT, page.id);
 
         // 레이어 생성 
         var layer = this.get(layerId);
@@ -360,8 +361,9 @@ export default class ItemCreateManager extends BaseModule {
         image.parentId = layerId; 
         $store.run(ITEM_SET, image, isSelected);      
         
-        $store.run(SELECTION_ONE, pageId);
+        $store.dispatch(SELECTION_ONE, pageId);
         $store.emit(RESIZE_WINDOW);
         $store.run(HISTORY_INITIALIZE);
+        
     }
 }

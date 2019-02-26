@@ -100,9 +100,9 @@ $layer-item-padding: 4px;
         .tree-item {
             cursor: pointer;
             position: relative;
-            height: 50px;
             padding: 10px 10px;     
-            vertical-align: top;       
+            vertical-align: top;    
+            box-sizing: border-box;   
 
             &.selected {
                 background-color: white;
@@ -116,14 +116,15 @@ $layer-item-padding: 4px;
             }
 
             .item-preview {
-                height: 40px;
-                width: 40px;
-                background-color: #333;
+                height: 120px;
+                width: 228px;
                 border-radius: 3px;
                 margin-bottom: 5px;
                 pointer-events: none;
                 display: inline-block;
                 vertical-align: middle;
+                position: relative;
+                overflow:hidden;
             }
 
             .item-title {

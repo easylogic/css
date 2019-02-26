@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
 import { unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
-import { POINTERSTART, POINTERMOVE, DEBOUNCE, POINTEREND, RESIZE, IF, MOVE, END } from '../../../../util/Event';
+import { POINTERSTART, DEBOUNCE, RESIZE, MOVE, END } from '../../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_IS_PAGE } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { RESIZE_WINDOW } from '../../../types/ToolTypes';
@@ -165,7 +165,7 @@ export default class PredefinedPageResizer extends UIElement {
         this.dispatch(HISTORY_PUSH, 'Resize a layer');        
     }
 
-    [RESIZE('window') + DEBOUNCE(300)] (e) {
+    [EVENT(RESIZE_WINDOW)] (e) {
         this.refresh();
     }
         

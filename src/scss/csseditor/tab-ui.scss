@@ -18,18 +18,18 @@ $tab-horizontal-header-right-width: 60px;
         right: 5px;
         bottom: 5px;
 
-        .tab-header {
-            .tab-item {
+        > .tab-header {
+            > .tab-item {
                 border:0px;
             }
         }
 
-        .tab-body {
+        > .tab-body {
             border:0px;
         }
     }
 
-    .tab-header {
+    > .tab-header {
         position: absolute;
         left: 0px;
         right: 0px;
@@ -41,12 +41,12 @@ $tab-horizontal-header-right-width: 60px;
 
         &.no-border {
 
-            .tab-item {
+            > .tab-item {
                 border:0px !important;
             }
         }
 
-        .tab-item {
+        > .tab-item {
             flex:1;
             display: inline-block;
             font-size: 12px;
@@ -74,7 +74,7 @@ $tab-horizontal-header-right-width: 60px;
         }
     }
 
-    .tab-body {
+    > .tab-body {
         position: absolute;
         left: 0px;
         right: 0px;
@@ -82,7 +82,11 @@ $tab-horizontal-header-right-width: 60px;
         bottom: 0px;
         border: 1px solid $tab-border-color;
 
-        .tab-content {
+        &.no-border {
+            border:0px;
+        }
+
+        > .tab-content {
             position: absolute;
             left: 0px;
             right: 0px;
@@ -134,7 +138,7 @@ $tab-horizontal-header-right-width: 60px;
             top: auto;
             bottom: 1px;
 
-            .tab-item {
+            > .tab-item {
                 &.selected {
                     border-top: 1px solid #ffffff;
                     border-bottom: 1px solid $tab-border-color;                    
@@ -152,12 +156,12 @@ $tab-horizontal-header-right-width: 60px;
     &.horizontal {
 
         &.left {
-            .tab-header {    
+            > .tab-header {    
                 left: 0px;
                 width: $tab-horizontal-header-width; 
                 display: inline-block;
 
-                .tab-item {
+                > .tab-item {
                     height: $tab-horizontal-header-width; 
                     overflow: auto;
                     line-height: 3;
@@ -165,7 +169,7 @@ $tab-horizontal-header-right-width: 60px;
                 }
             }
 
-            .tab-body {
+            > .tab-body {
                 left: $tab-horizontal-header-width;
                 right: 0px;
                 border-left: 1px solid $border-color;
@@ -173,7 +177,7 @@ $tab-horizontal-header-right-width: 60px;
             }
         }
 
-        .tab-header {
+        > .tab-header {
             left: auto;
             top: 0px;
             bottom: 0px;
@@ -181,7 +185,7 @@ $tab-horizontal-header-right-width: 60px;
             height: auto;
             display: inline-block;
 
-            .tab-item {
+            > .tab-item {
                 border: 0px;
                 border-bottom: 1px solid $border-color;
                 text-align: center;
@@ -195,37 +199,11 @@ $tab-horizontal-header-right-width: 60px;
             }
         }
 
-        .tab-body {
+        > .tab-body {
             top: 0px;
             right: $tab-horizontal-header-right-width;
             border:0px;
             border-right: 1px solid $border-color;
         }
-    }
-}
-
-.layer-menu-tab,
-.page-menu-tab,
-.image-menu-tab {
-    > .tab-header{
-        height: 32px;
-        > .tab-item {
-            border: 0px;
-            border-right: 1px solid $border-color;
-            text-align: center;
-            vertical-align: middle;
-            line-height: 1.2;
-            padding: 10px 5px;
-            font-size: 12px;
-            &:last-child {
-                border-right: 0px;
-            }
-        }
-    }
-
-    > .tab-body {
-        top: 32px;
-        border:0px;
-        border-top: 1px solid $border-color;
     }
 }

@@ -236,7 +236,7 @@ const parseEvent = (context, key) => {
 
 
 
-export default class EventMachin { 
+export default class EventMachine { 
 
   constructor() { 
     this.state = new State(this);
@@ -270,8 +270,6 @@ export default class EventMachin {
     html = html.trim();
 
     const list = TEMP_DIV.html(html).children()
-    
-    var fragment = document.createDocumentFragment()
 
     list.forEach($el => {
       // ref element 정리 
@@ -284,15 +282,13 @@ export default class EventMachin {
         this.refs[name] = $dom;
       })
 
-      fragment.appendChild($el.el);
-
     })
 
     if (!isLoad) {
       return list[0];
     }
 
-    return fragment
+    return TEMP_DIV.createChildrenFragment();
   }
 
   parseComponent () {

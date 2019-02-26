@@ -8,7 +8,7 @@ import { ITEM_SET,DEFAULT_TOOL_SIZE } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_TYPE, SELECTION_IS_NOT_EMPTY } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
-import { TOOL_SET } from '../../../types/ToolTypes';
+import { TOOL_SET, RESIZE_WINDOW } from '../../../types/ToolTypes';
 import { GUIDE_SNAP_CACULATE } from '../../../types/GuideTypes';
 import { CSS_TO_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../../util/css/make';
 
@@ -399,7 +399,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         
     }
 
-    [RESIZE('window') + DEBOUNCE(300)] (e) {
-        this.refresh();
+    [EVENT(RESIZE_WINDOW)] () {
+        this.refresh()
     }
 }

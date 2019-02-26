@@ -3218,6 +3218,11 @@ function repeat(count) {
 
 var short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
 
+var HTML_TAG = {
+    'image': true,
+    'input': true
+};
+
 var html = function html(strings) {
     for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
@@ -3249,7 +3254,11 @@ var html = function html(strings) {
     }).join(EMPTY_STRING);
 
     results = results.replace(short_tag_regexp, function (match, p1) {
-        return match.replace('/>', "></" + p1 + ">");
+        if (HTML_TAG[p1.toLowerCase()]) {
+            return match;
+        } else {
+            return match.replace('/>', "></" + p1 + ">");
+        }
     });
 
     return results;
@@ -6588,15 +6597,21 @@ var Dom = function () {
     }, {
         key: "appendHTML",
         value: function appendHTML(html$$1) {
-            var list = new Dom("div").html(html$$1).children();
+            var $dom = new Dom("div").html(html$$1);
+
+            this.append($dom.createChildrenFragment());
+        }
+    }, {
+        key: "createChildrenFragment",
+        value: function createChildrenFragment() {
+            var list = this.children();
 
             var fragment = document.createDocumentFragment();
-
             list.forEach(function ($el) {
-                fragment.appendChild($el.el);
+                return fragment.appendChild($el.el);
             });
 
-            this.append(fragment);
+            return fragment;
         }
     }, {
         key: "appendTo",
@@ -7094,6 +7109,241 @@ var Dom = function () {
     return Dom;
 }();
 
+var ITEM_SET = 'item/set';
+var ITEM_GET = 'item/get';
+var ITEM_CONVERT_STYLE = 'item/convert/style';
+var ITEM_SET_ALL = 'item/set/all';
+var ITEM_SORT = 'item/sort';
+var ITEM_REMOVE_CHILDREN = 'item/remove/children';
+var ITEM_REMOVE = 'item/remove';
+var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
+var ITEM_TOGGLE_LOCK = 'item/toggle/lock';
+var ITEM_REMOVE_ALL = 'item/remove/all';
+var ITEM_FOCUS = 'item/focus';
+var ITEM_LOAD = 'item/load';
+var ITEM_INIT_CHILDREN = 'item/init/children';
+
+/* page is equal to artboard */
+var PAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_PAGE,
+    is: IS_OBJECT,
+    name: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    index: 0,
+    width: pxUnit(400),
+    height: pxUnit(300)
+};
+var FILTER_DEFAULT_OBJECT = {
+    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'filterDropshadow': { index: 60 },
+    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
+    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
+    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
+    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
+    return isNotUndefined(FILTER_DEFAULT_OBJECT[key].index);
+});
+
+var BACKDROP_DEFAULT_OBJECT = {
+    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
+    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
+    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
+    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
+    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
+    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
+    'backdropDropshadow': { index: 60 },
+    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
+    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
+    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
+    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
+    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
+    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
+    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
+};
+
+var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
+    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index);
+});
+
+var CLIP_PATH_DEFAULT_OBJECT = {
+    clipPathType: 'none',
+    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
+    clipPathSvg: EMPTY_STRING,
+    fitClipPathSize: false,
+    clipText: false,
+    clipPathRadiusX: undefined,
+    clipPathRadiusY: undefined,
+    clipPathCenterX: undefined,
+    clipPathCenterY: undefined
+
+    /* layer can has children layers. */
+};var LAYER_DEFAULT_OBJECT = _extends({
+    itemType: ITEM_TYPE_LAYER,
+    is: IS_OBJECT,
+    type: SHAPE_TYPE_RECT,
+    name: EMPTY_STRING,
+    index: 0,
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    parentId: EMPTY_STRING,
+    mixBlendMode: 'normal',
+    selected: true,
+    visible: true,
+    lock: false,
+    x: pxUnit(0),
+    y: pxUnit(0),
+    width: pxUnit(200),
+    height: pxUnit(200),
+    rotate: 0,
+    opacity: 1,
+    fontFamily: 'serif',
+    fontSize: '13px',
+    fontWeight: 400,
+    wordBreak: 'break-word',
+    wordWrap: 'break-word',
+    lineHeight: 1.6,
+    content: EMPTY_STRING
+}, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
+
+var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_CIRCLE,
+    borderRadius: percentUnit(100),
+    fixedRadius: true
+});
+
+var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
+    type: SHAPE_TYPE_POLYGON,
+    fixedShape: true
+});
+
+var GROUP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_GROUP,
+    is: IS_OBJECT,
+    name: EMPTY_STRING,
+    index: 0,
+    parentId: EMPTY_STRING,
+    selected: true,
+    visible: true,
+    x: pxUnit(0),
+    y: pxUnit(0)
+};
+
+var IMAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_IMAGE,
+    is: IS_ATTRIBUTE,
+    type: IMAGE_ITEM_TYPE_STATIC,
+    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    index: 0,
+    parentId: EMPTY_STRING,
+    angle: 90,
+    color: 'red',
+    radialType: 'ellipse',
+    radialPosition: POSITION_CENTER,
+    visible: true,
+    isClipPath: false,
+    pattern: {},
+    backgroundRepeat: null,
+    backgroundSize: null,
+    backgroundSizeWidth: 0,
+    backgroundSizeHeight: 0,
+    backgroundOrigin: null,
+    backgroundPositionX: undefined,
+    backgroundPositionY: undefined,
+    backgroundBlendMode: 'normal',
+    backgroundColor: null,
+    backgroundAttachment: null,
+    backgroundClip: null,
+    backgroundImage: null,
+    backgroundImageDataURI: null
+};
+
+var BOXSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_BOXSHADOW,
+    is: IS_ATTRIBUTE,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    inset: false,
+    blurRadius: pxUnit(0),
+    spreadRadius: pxUnit(0),
+    color: 'rgb(0, 0, 0)'
+};
+
+var TEXTSHADOW_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TEXTSHADOW,
+    is: IS_ATTRIBUTE,
+    offsetX: pxUnit(0),
+    offsetY: pxUnit(0),
+    blurRadius: pxUnit(0),
+    color: 'rgb(0, 0, 0)'
+};
+
+var COLORSTEP_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_COLORSTEP,
+    is: IS_ATTRIBUTE,
+    parentId: EMPTY_STRING,
+    percent: 0,
+    color: 'rgba(0, 0, 0, 0)'
+};
+
+var TIMELINE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_TIMELINE,
+    targetId: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    collapse: {}
+};
+
+var KEYFRAME_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_KEYFRAME,
+    targetId: EMPTY_STRING,
+    property: EMPTY_STRING,
+    parentId: EMPTY_STRING,
+    delay: 0,
+    duration: 1000,
+    timing: 'linear',
+    params: [],
+    iteration: 1,
+    startTime: 0,
+    endTime: 0,
+    startValue: 0,
+    endValue: 0,
+    direction: 'alternate'
+};
+var DEFAULT_TOOL_SIZE = {
+    'board.offset': { left: 0, top: 0 },
+    'page.offset': { left: 0, top: 0 },
+    'board.scrollTop': 0,
+    'board.scrollLeft': 0
+};
+
+var TOOL_COLOR_SOURCE = 'tool/colorSource';
+var TOOL_GET = 'tool/get';
+var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
+var TOOL_CHANGE_COLOR = 'tool/changeColor';
+var TOOL_SET = 'tool/set';
+var TOOL_TOGGLE = 'tool/toggle';
+
+var TOOL_SAVE_DATA = 'tool/save/data';
+var TOOL_RESTORE_DATA = 'tool/restore/data';
+var RESIZE_WINDOW = 'resize/window';
+var RESIZE_TIMELINE = 'resize/timeline';
+var CHANGE_HEIGHT_TIMELINE = 'change/height/timeline';
+var INIT_HEIGHT_TIMELINE = 'init/height/timeline';
+var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
+var TOGGLE_TIMELINE = 'toggle/timeline';
+var MOVE_TIMELINE = 'move/timeline';
+
+var ADD_BODY_MOUSEMOVE = 'add/body/mousemove';
+var ADD_BODY_MOUSEUP = 'add/body/mouseup';
+
 var EventChecker = function () {
     function EventChecker(value$$1) {
         var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
@@ -7374,26 +7624,6 @@ var State = function () {
   return State;
 }();
 
-var TOOL_COLOR_SOURCE = 'tool/colorSource';
-var TOOL_GET = 'tool/get';
-var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
-var TOOL_CHANGE_COLOR = 'tool/changeColor';
-var TOOL_SET = 'tool/set';
-var TOOL_TOGGLE = 'tool/toggle';
-
-var TOOL_SAVE_DATA = 'tool/save/data';
-var TOOL_RESTORE_DATA = 'tool/restore/data';
-var RESIZE_WINDOW = 'resize/window';
-var RESIZE_TIMELINE = 'resize/timeline';
-var CHANGE_HEIGHT_TIMELINE = 'change/height/timeline';
-var INIT_HEIGHT_TIMELINE = 'init/height/timeline';
-var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
-var TOGGLE_TIMELINE = 'toggle/timeline';
-var MOVE_TIMELINE = 'move/timeline';
-
-var ADD_BODY_MOUSEMOVE = 'add/body/mousemove';
-var ADD_BODY_MOUSEUP = 'add/body/mouseup';
-
 var _templateObject = taggedTemplateLiteral(['', ''], ['', '']);
 
 var REFERENCE_PROPERTY = 'ref';
@@ -7625,9 +7855,9 @@ var parseEvent = function parseEvent(context, key) {
   });
 };
 
-var EventMachin = function () {
-  function EventMachin() {
-    classCallCheck(this, EventMachin);
+var EventMachine = function () {
+  function EventMachine() {
+    classCallCheck(this, EventMachine);
 
     this.state = new State(this);
     this.refs = {};
@@ -7636,7 +7866,7 @@ var EventMachin = function () {
     this.childComponents = this.components();
   }
 
-  createClass(EventMachin, [{
+  createClass(EventMachine, [{
     key: 'render',
     value: function render($container) {
       this.$el = this.parseTemplate(html(_templateObject, this.template()));
@@ -7672,8 +7902,6 @@ var EventMachin = function () {
 
       var list = TEMP_DIV.html(html$$1).children();
 
-      var fragment = document.createDocumentFragment();
-
       list.forEach(function ($el) {
         // ref element 정리 
         if ($el.attr(REFERENCE_PROPERTY)) {
@@ -7684,15 +7912,13 @@ var EventMachin = function () {
           var name = $dom.attr(REFERENCE_PROPERTY);
           _this.refs[name] = $dom;
         });
-
-        fragment.appendChild($el.el);
       });
 
       if (!isLoad) {
         return list[0];
       }
 
-      return fragment;
+      return TEMP_DIV.createChildrenFragment();
     }
   }, {
     key: 'parseComponent',
@@ -7945,223 +8171,8 @@ var EventMachin = function () {
       Event.removeEvent(dom, eventName, callback);
     }
   }]);
-  return EventMachin;
+  return EventMachine;
 }();
-
-var ITEM_SET = 'item/set';
-var ITEM_GET = 'item/get';
-var ITEM_CONVERT_STYLE = 'item/convert/style';
-var ITEM_SET_ALL = 'item/set/all';
-var ITEM_SORT = 'item/sort';
-var ITEM_REMOVE_CHILDREN = 'item/remove/children';
-var ITEM_REMOVE = 'item/remove';
-var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
-var ITEM_TOGGLE_LOCK = 'item/toggle/lock';
-var ITEM_REMOVE_ALL = 'item/remove/all';
-var ITEM_FOCUS = 'item/focus';
-var ITEM_LOAD = 'item/load';
-var ITEM_INIT_CHILDREN = 'item/init/children';
-
-/* page is equal to artboard */
-var PAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_PAGE,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    index: 0,
-    width: pxUnit(400),
-    height: pxUnit(300)
-};
-var FILTER_DEFAULT_OBJECT = {
-    'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
-    'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
-    'filterHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
-    'filterInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
-    'filterBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
-    'filterContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
-    'filterDropshadow': { index: 60 },
-    'filterDropshadowOffsetX': { value: 0, unit: UNIT_PX },
-    'filterDropshadowOffsetY': { value: 0, unit: UNIT_PX },
-    'filterDropshadowBlurRadius': { value: 0, unit: UNIT_PX },
-    'filterDropshadowColor': { value: 'black', unit: UNIT_COLOR },
-    'filterOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
-    'filterSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
-    'filterSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
-};
-
-var FILTER_DEFAULT_OBJECT_KEYS = Object.keys(FILTER_DEFAULT_OBJECT).filter(function (key) {
-    return isNotUndefined(FILTER_DEFAULT_OBJECT[key].index);
-});
-
-var BACKDROP_DEFAULT_OBJECT = {
-    'backdropBlur': { index: 0, value: 0, unit: UNIT_PX },
-    'backdropGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
-    'backdropHueRotate': { index: 20, value: 0, unit: UNIT_DEG },
-    'backdropInvert': { index: 30, value: 0, unit: UNIT_PERCENT },
-    'backdropBrightness': { index: 40, value: 100, unit: UNIT_PERCENT },
-    'backdropContrast': { index: 50, value: 100, unit: UNIT_PERCENT },
-    'backdropDropshadow': { index: 60 },
-    'backdropDropshadowOffsetX': { value: 10, unit: UNIT_PX },
-    'backdropDropshadowOffsetY': { value: 20, unit: UNIT_PX },
-    'backdropDropshadowBlurRadius': { value: 30, unit: UNIT_PX },
-    'backdropDropshadowColor': { value: 'black', unit: UNIT_COLOR },
-    'backdropOpacity': { index: 70, value: 100, unit: UNIT_PERCENT },
-    'backdropSaturate': { index: 80, value: 100, unit: UNIT_PERCENT },
-    'backdropSepia': { index: 90, value: 0, unit: UNIT_PERCENT }
-};
-
-var BACKDROP_DEFAULT_OBJECT_KEYS = Object.keys(BACKDROP_DEFAULT_OBJECT).filter(function (key) {
-    return isNotUndefined(BACKDROP_DEFAULT_OBJECT[key].index);
-});
-
-var CLIP_PATH_DEFAULT_OBJECT = {
-    clipPathType: 'none',
-    clipPathSideType: CLIP_PATH_SIDE_TYPE_NONE,
-    clipPathSvg: EMPTY_STRING,
-    fitClipPathSize: false,
-    clipText: false,
-    clipPathRadiusX: undefined,
-    clipPathRadiusY: undefined,
-    clipPathCenterX: undefined,
-    clipPathCenterY: undefined
-
-    /* layer can has children layers. */
-};var LAYER_DEFAULT_OBJECT = _extends({
-    itemType: ITEM_TYPE_LAYER,
-    is: IS_OBJECT,
-    type: SHAPE_TYPE_RECT,
-    name: EMPTY_STRING,
-    index: 0,
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    parentId: EMPTY_STRING,
-    mixBlendMode: 'normal',
-    selected: true,
-    visible: true,
-    lock: false,
-    x: pxUnit(0),
-    y: pxUnit(0),
-    width: pxUnit(200),
-    height: pxUnit(200),
-    rotate: 0,
-    opacity: 1,
-    fontFamily: 'serif',
-    fontSize: '13px',
-    fontWeight: 400,
-    wordBreak: 'break-word',
-    wordWrap: 'break-word',
-    lineHeight: 1.6,
-    content: EMPTY_STRING
-}, CLIP_PATH_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT, BACKDROP_DEFAULT_OBJECT);
-
-var CIRCLE_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
-    type: SHAPE_TYPE_CIRCLE,
-    borderRadius: percentUnit(100),
-    fixedRadius: true
-});
-
-var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
-    type: SHAPE_TYPE_POLYGON,
-    fixedShape: true
-});
-
-var GROUP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_GROUP,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    index: 0,
-    parentId: EMPTY_STRING,
-    selected: true,
-    visible: true,
-    x: pxUnit(0),
-    y: pxUnit(0)
-};
-
-var IMAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_IMAGE,
-    is: IS_ATTRIBUTE,
-    type: IMAGE_ITEM_TYPE_STATIC,
-    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
-    index: 0,
-    parentId: EMPTY_STRING,
-    angle: 90,
-    color: 'red',
-    radialType: 'ellipse',
-    radialPosition: POSITION_CENTER,
-    visible: true,
-    isClipPath: false,
-    pattern: {},
-    backgroundRepeat: null,
-    backgroundSize: null,
-    backgroundSizeWidth: 0,
-    backgroundSizeHeight: 0,
-    backgroundOrigin: null,
-    backgroundPositionX: undefined,
-    backgroundPositionY: undefined,
-    backgroundBlendMode: 'normal',
-    backgroundColor: null,
-    backgroundAttachment: null,
-    backgroundClip: null,
-    backgroundImage: null,
-    backgroundImageDataURI: null
-};
-
-var BOXSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_BOXSHADOW,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    inset: false,
-    blurRadius: pxUnit(0),
-    spreadRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var TEXTSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TEXTSHADOW,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    blurRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var COLORSTEP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_COLORSTEP,
-    is: IS_ATTRIBUTE,
-    parentId: EMPTY_STRING,
-    percent: 0,
-    color: 'rgba(0, 0, 0, 0)'
-};
-
-var TIMELINE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TIMELINE,
-    targetId: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    collapse: {}
-};
-
-var KEYFRAME_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_KEYFRAME,
-    targetId: EMPTY_STRING,
-    property: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    delay: 0,
-    duration: 1000,
-    timing: 'linear',
-    params: [],
-    iteration: 1,
-    startTime: 0,
-    endTime: 0,
-    startValue: 0,
-    endValue: 0,
-    direction: 'alternate'
-};
-var DEFAULT_TOOL_SIZE = {
-    'board.offset': { left: 0, top: 0 },
-    'page.offset': { left: 0, top: 0 },
-    'board.scrollTop': 0,
-    'board.scrollLeft': 0
-};
 
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
@@ -8181,8 +8192,8 @@ var EVENT = function EVENT() {
     return MULTI_PREFIX + PIPE.apply(undefined, arguments);
 };
 
-var UIElement = function (_EventMachin) {
-    inherits(UIElement, _EventMachin);
+var UIElement = function (_EventMachine) {
+    inherits(UIElement, _EventMachine);
 
     function UIElement(opt, props) {
         classCallCheck(this, UIElement);
@@ -8331,7 +8342,7 @@ var UIElement = function (_EventMachin) {
         }
     }]);
     return UIElement;
-}(EventMachin);
+}(EventMachine);
 
 var EMPTY_POS = { x: 0, y: 0 };
 var start = function start(opt) {
@@ -19158,11 +19169,6 @@ var GradientAngle = function (_UIElement) {
             this.refreshUI(true);
         }
     }, {
-        key: POINTERSTART('$drag_pointer') + MOVE(),
-        value: function value(e) {
-            e.preventDefault();
-        }
-    }, {
         key: POINTERSTART('$dragAngle') + MOVE(),
         value: function value(e) {}
     }]);
@@ -20956,7 +20962,7 @@ var TimelineObjectList = function (_UIElement) {
 
             var value$$1 = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue));
 
-            return "\n            <input \n                type='number' \n                min=\"" + sampleValue.min + "\" \n                max=\"" + sampleValue.max + "\" \n                step=\"" + sampleValue.step + "\" \n                value=\"" + value$$1 + "\" \n                data-property='" + property + "' \n                data-timeline-id=\"" + timeline.id + "\" \n                /> <span class='unit'>" + sampleValue.unit + "</span>";
+            return "\n            <span class='input-field' data-unit-string=\"" + sampleValue.unit + "\">\n            <input \n                type='number' \n                min=\"" + sampleValue.min + "\" \n                max=\"" + sampleValue.max + "\" \n                step=\"" + sampleValue.step + "\" \n                value=\"" + value$$1 + "\" \n                data-property='" + property + "' \n                data-timeline-id=\"" + timeline.id + "\" \n                /> \n            </span>";
         }
     }, {
         key: "makeInput",
@@ -22275,7 +22281,7 @@ var PredefinedPageResizer = function (_UIElement) {
             this.dispatch(HISTORY_PUSH, 'Resize a layer');
         }
     }, {
-        key: RESIZE('window') + DEBOUNCE(300),
+        key: EVENT(RESIZE_WINDOW),
         value: function value$$1(e) {
             this.refresh();
         }
@@ -22726,8 +22732,8 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.run(TOOL_SET, 'moving', false);
         }
     }, {
-        key: RESIZE('window') + DEBOUNCE(300),
-        value: function value$$1(e) {
+        key: EVENT(RESIZE_WINDOW),
+        value: function value$$1() {
             this.refresh();
         }
     }]);
@@ -23603,8 +23609,8 @@ var MoveGuide = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: RESIZE('window') + DEBOUNCE(300),
-        value: function value$$1(e) {
+        key: EVENT(RESIZE_WINDOW),
+        value: function value$$1() {
             this.refresh();
         }
     }]);
@@ -24787,141 +24793,8 @@ var ShapeListView = function (_UIElement) {
     return ShapeListView;
 }(UIElement);
 
-var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
-var _templateObject2$3 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
-
-var PageSampleList = function (_UIElement) {
-    inherits(PageSampleList, _UIElement);
-
-    function PageSampleList() {
-        classCallCheck(this, PageSampleList);
-        return possibleConstructorReturn(this, (PageSampleList.__proto__ || Object.getPrototypeOf(PageSampleList)).apply(this, arguments));
-    }
-
-    createClass(PageSampleList, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(PageSampleList.prototype.__proto__ || Object.getPrototypeOf(PageSampleList.prototype), "initialize", this).call(this);
-
-            this.list = [];
-            this.dispatch(STORAGE_LOAD_PAGE);
-        }
-    }, {
-        key: "template",
-        value: function template() {
-
-            return "<div class=\"page-sample-list\"><div class='cached-list' ref=\"$cachedList\"></div></div>";
-        }
-    }, {
-        key: LOAD('$cachedList'),
-        value: function value$$1() {
-            var _this2 = this;
-
-            var list = this.list.map(function (page, index) {
-                var data = _this2.read(PAGE_CACHE_TO_STRING, page);
-
-                var rateX = 72 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
-                var rateY = 70 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
-
-                var transform = "transform: scale(" + rateX + " " + rateY + ")";
-
-                return html(_templateObject$19, page.id, data.css, transform, page.layers.map(function (layer) {
-                    var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
-                    return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
-                }), index);
-            });
-
-            var storageList = this.read(STORAGE_PAGES).map(function (page) {
-                var samplePage = _this2.read(ITEM_CONVERT_STYLE, page.page);
-
-                var data = _this2.read(PAGE_CACHE_TO_STRING, samplePage);
-                var rateX = 72 / unitValue(defaultValue(samplePage.width, pxUnit(400)));
-                var rateY = 70 / unitValue(defaultValue(samplePage.height, pxUnit(300)));
-
-                var minRate = Math.min(rateY, rateX);
-
-                var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
-
-                return html(_templateObject2$3, page.id, data.css, transform, page.layers.map(function (layer) {
-                    var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
-                    return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
-                }), page.id, page.id);
-            });
-
-            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-page\" title=\"Cache a page\">+</button>"]);
-
-            var emptyCount = 5 - results.length % 5;
-
-            var arr = repeat(emptyCount);
-
-            arr.forEach(function (it) {
-                results.push("<div class='empty'></div>");
-            });
-
-            return results;
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT('changeStorage'),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .page-sample-item .add-item'),
-        value: function value$$1(e) {
-            var _this3 = this;
-
-            var index = +e.$delegateTarget.attr('data-index');
-
-            var newPage = this.list[index];
-
-            if (newPage) {
-                this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    _this3.dispatch(ITEM_ADD_CACHE, newPage, id);
-                    _this3.emit(CHANGE_PAGE);
-                });
-            }
-        }
-    }, {
-        key: CLICK('$el .page-cached-item .add-item'),
-        value: function value$$1(e) {
-            var _this4 = this;
-
-            var newPage = this.read(STORAGE_PAGES, e.$delegateTarget.attr('data-sample-id'));
-            if (newPage) {
-                this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    _this4.dispatch(ITEM_ADD_CACHE, newPage, id);
-                    _this4.emit(CHANGE_PAGE);
-                });
-            }
-        }
-    }, {
-        key: CLICK('$el .page-cached-item .delete-item'),
-        value: function value$$1(e) {
-            this.dispatch(STORAGE_REMOVE_PAGE, e.$delegateTarget.attr('data-sample-id'));
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$el .add-current-page'),
-        value: function value$$1(e) {
-            var _this5 = this;
-
-            this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                var newPage = _this5.read(COLLECT_PAGE_ONE, id);
-
-                _this5.dispatch(STORAGE_ADD_PAGE, newPage);
-                _this5.refresh();
-            });
-        }
-    }]);
-    return PageSampleList;
-}(UIElement);
-
-var _templateObject$18 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject$18 = taggedTemplateLiteral(["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"], ["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"]);
+var _templateObject2$3 = taggedTemplateLiteral(["", ""], ["", ""]);
 
 var PageListView = function (_UIElement) {
     inherits(PageListView, _UIElement);
@@ -24932,14 +24805,9 @@ var PageListView = function (_UIElement) {
     }
 
     createClass(PageListView, [{
-        key: "components",
-        value: function components() {
-            return { PageSampleList: PageSampleList };
-        }
-    }, {
         key: "template",
         value: function template() {
-            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n            <PageSampleList />\n        </div>";
+            return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n        </div>";
         }
     }, {
         key: "makeItemNode",
@@ -24957,23 +24825,49 @@ var PageListView = function (_UIElement) {
             }
         }
     }, {
+        key: "makePagePreview",
+        value: function makePagePreview(id) {
+            var _this2 = this;
+
+            var page = this.read(COLLECT_PAGE_ONE, id);
+            var data = this.read(PAGE_CACHE_TO_STRING, page);
+
+            var width = string2unit(data.obj.width);
+            var height = string2unit(data.obj.height);
+
+            if (unitValue(width) == 0) width = pxUnit(228 * 4);
+            if (unitValue(height) == 0) height = pxUnit(120 * 4);
+
+            var rateX = 228 / unitValue(width);
+            var rateY = 120 / unitValue(height);
+
+            var transform = "transform: scale(" + rateX + ", " + rateY + ");  transform-origin: 0px 0px;";
+
+            return html(_templateObject$18, data.css, stringUnit(width), stringUnit(height), transform, page.layers.map(function (layer) {
+                var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
+                return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
+            }));
+        }
+    }, {
         key: "makeItemNodePage",
         value: function makeItemNodePage(item, index, selectedId) {
             var selected = item.id == selectedId ? 'selected' : EMPTY_STRING;
-            return "<div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n            <div class=\"item-preview\"></div>\n            <div class=\"item-title\">" + (item.name || "Project " + (index + 1)) + "</div>   \n        </div>";
+            var preview = this.makePagePreview(item.id);
+            var index = item.index / 100 + 1;
+            return "<div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n            <div class=\"item-preview\">" + preview + "</div>\n            <div class=\"item-title\">" + (item.name || "Project " + index) + "</div>   \n        </div>";
         }
     }, {
         key: LOAD('$pageList'),
         value: function value$$1() {
-            var _this2 = this;
+            var _this3 = this;
 
             var str = this.read(ITEM_MAP_PAGE, function (item, index) {
-                return _this2.makeItemNode(item, index);
+                return _this3.makeItemNode(item, index);
             });
 
             str.push("<button type=\"button\" class='add-page' title=\"Add a page\"></button>");
 
-            return html(_templateObject$18, str);
+            return html(_templateObject2$3, str);
         }
     }, {
         key: "refresh",
@@ -24998,28 +24892,14 @@ var PageListView = function (_UIElement) {
 
             this.run(SELECTION_ONE, e.$delegateTarget.attr('id'));
             this.emit(CHANGE_EDITOR$1);
+            this.emit(RESIZE_WINDOW);
             this.refresh();
-        }
-    }, {
-        key: CLICK('$saveButton'),
-        value: function value$$1(e) {
-            this.run(STORAGE_SAVE);
-        }
-    }, {
-        key: CLICK('$viewSample'),
-        value: function value$$1(e) {
-            this.emit('togglePageSampleView');
-        }
-    }, {
-        key: CLICK('$exportButton'),
-        value: function value$$1(e) {
-            this.emit('showExport');
         }
     }]);
     return PageListView;
 }(UIElement);
 
-var _templateObject$20 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -25059,7 +24939,7 @@ var LayerListView = function (_UIElement) {
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
             var lock = item.lock ? 'lock' : EMPTY_STRING;
             var visible = item.visible ? 'visible' : EMPTY_STRING;
-            return html(_templateObject$20, selected, item.id, index + 1, item.name || "Layer ", lock, item.id, visible, item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$19, selected, item.id, index + 1, item.name || "Layer ", lock, item.id, visible, item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -25261,15 +25141,194 @@ var HistoryListView = function (_UIElement) {
     return HistoryListView;
 }(UIElement);
 
+var _templateObject$20 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject2$4 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
+
+var PageSampleList = function (_UIElement) {
+    inherits(PageSampleList, _UIElement);
+
+    function PageSampleList() {
+        classCallCheck(this, PageSampleList);
+        return possibleConstructorReturn(this, (PageSampleList.__proto__ || Object.getPrototypeOf(PageSampleList)).apply(this, arguments));
+    }
+
+    createClass(PageSampleList, [{
+        key: "initialize",
+        value: function initialize() {
+            get$1(PageSampleList.prototype.__proto__ || Object.getPrototypeOf(PageSampleList.prototype), "initialize", this).call(this);
+
+            this.list = [];
+            this.dispatch(STORAGE_LOAD_PAGE);
+        }
+    }, {
+        key: "template",
+        value: function template() {
+
+            return "<div class=\"page-sample-list\"><div class='cached-list' ref=\"$cachedList\"></div></div>";
+        }
+    }, {
+        key: LOAD('$cachedList'),
+        value: function value$$1() {
+            var _this2 = this;
+
+            var list = this.list.map(function (page, index) {
+                var data = _this2.read(PAGE_CACHE_TO_STRING, page);
+
+                var rateX = 72 / unitValue(defaultValue(data.obj.width, pxUnit(400)));
+                var rateY = 70 / unitValue(defaultValue(data.obj.height, pxUnit(300)));
+
+                var transform = "transform: scale(" + rateX + " " + rateY + ")";
+
+                return html(_templateObject$20, page.id, data.css, transform, page.layers.map(function (layer) {
+                    var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
+                    return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
+                }), index);
+            });
+
+            var storageList = this.read(STORAGE_PAGES).map(function (page) {
+                var samplePage = _this2.read(ITEM_CONVERT_STYLE, page.page);
+
+                var data = _this2.read(PAGE_CACHE_TO_STRING, samplePage);
+                var rateX = 72 / unitValue(defaultValue(samplePage.width, pxUnit(400)));
+                var rateY = 70 / unitValue(defaultValue(samplePage.height, pxUnit(300)));
+
+                var minRate = Math.min(rateY, rateX);
+
+                var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
+
+                return html(_templateObject2$4, page.id, data.css, transform, page.layers.map(function (layer) {
+                    var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
+                    return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
+                }), page.id, page.id);
+            });
+
+            var results = [].concat(toConsumableArray(list), toConsumableArray(storageList), ["<button type=\"button\" class=\"add-current-page\" title=\"Cache a page\">+</button>"]);
+
+            var emptyCount = 5 - results.length % 5;
+
+            var arr = repeat(emptyCount);
+
+            arr.forEach(function (it) {
+                results.push("<div class='empty'></div>");
+            });
+
+            return results;
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT('changeStorage'),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .page-sample-item .add-item'),
+        value: function value$$1(e) {
+            var _this3 = this;
+
+            var index = +e.$delegateTarget.attr('data-index');
+
+            var newPage = this.list[index];
+
+            if (newPage) {
+                this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
+                    _this3.dispatch(ITEM_ADD_CACHE, newPage, id);
+                    _this3.emit(CHANGE_PAGE);
+                });
+            }
+        }
+    }, {
+        key: CLICK('$el .page-cached-item .add-item'),
+        value: function value$$1(e) {
+            var _this4 = this;
+
+            var newPage = this.read(STORAGE_PAGES, e.$delegateTarget.attr('data-sample-id'));
+            if (newPage) {
+                this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
+                    _this4.dispatch(ITEM_ADD_CACHE, newPage, id);
+                    _this4.emit(CHANGE_PAGE);
+                });
+            }
+        }
+    }, {
+        key: CLICK('$el .page-cached-item .delete-item'),
+        value: function value$$1(e) {
+            this.dispatch(STORAGE_REMOVE_PAGE, e.$delegateTarget.attr('data-sample-id'));
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$el .add-current-page'),
+        value: function value$$1(e) {
+            var _this5 = this;
+
+            this.read(SELECTION_CURRENT_PAGE_ID, function (id) {
+                var newPage = _this5.read(COLLECT_PAGE_ONE, id);
+
+                _this5.dispatch(STORAGE_ADD_PAGE, newPage);
+                _this5.refresh();
+            });
+        }
+    }]);
+    return PageSampleList;
+}(UIElement);
+
+var PageSampleListView = function (_UIElement) {
+    inherits(PageSampleListView, _UIElement);
+
+    function PageSampleListView() {
+        classCallCheck(this, PageSampleListView);
+        return possibleConstructorReturn(this, (PageSampleListView.__proto__ || Object.getPrototypeOf(PageSampleListView)).apply(this, arguments));
+    }
+
+    createClass(PageSampleListView, [{
+        key: "components",
+        value: function components() {
+            return { PageSampleList: PageSampleList };
+        }
+    }, {
+        key: "template",
+        value: function template() {
+            return "<div class='pages'>         \n            <PageSampleList />\n        </div>";
+        }
+    }]);
+    return PageSampleListView;
+}(UIElement);
+
 var layerItems = {
     HistoryListView: HistoryListView,
     LayerListView: LayerListView,
     PageListView: PageListView,
+    PageSampleListView: PageSampleListView,
     ShapeListView: ShapeListView,
     LayerSampleList: LayerSampleList,
     GradientSampleList: GradientSampleList,
     BasicGradient: BasicGradient
 };
+
+var OutlineTabView = function (_BaseTab) {
+    inherits(OutlineTabView, _BaseTab);
+
+    function OutlineTabView() {
+        classCallCheck(this, OutlineTabView);
+        return possibleConstructorReturn(this, (OutlineTabView.__proto__ || Object.getPrototypeOf(OutlineTabView)).apply(this, arguments));
+    }
+
+    createClass(OutlineTabView, [{
+        key: "template",
+        value: function template() {
+            return "    \n            <div class=\"tab outline-tab-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"layers\">Layers</div>                \n                    <div class=\"tab-item\" data-id=\"pages\">Pages</div>       \n                </div>\n                <div class=\"tab-body no-border\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"layers\">\n                        <LayerListView />\n                    </div>                \n                    <div class=\"tab-content\" data-id=\"pages\">\n                        <PageListView />\n                    </div> \n\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return _extends({}, layerItems);
+        }
+    }]);
+    return OutlineTabView;
+}(BaseTab);
 
 var SelectLayerView = function (_BaseTab) {
     inherits(SelectLayerView, _BaseTab);
@@ -25282,12 +25341,14 @@ var SelectLayerView = function (_BaseTab) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item small-font\" data-id=\"history\">History</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageListView />\n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <LayerListView />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView />\n                        <LayerSampleList />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradient\">\n                        <BasicGradient />\n                        <GradientSampleList />\n                    </div> \n                    <div class=\"tab-content\" data-id=\"history\">\n                        <HistoryListView />\n                    </div>\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item small-font\" data-id=\"history\">History</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <PageSampleListView />\n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <OutlineTabView />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <ShapeListView />\n                        <LayerSampleList />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradient\">\n                        <BasicGradient />\n                        <GradientSampleList />\n                    </div> \n                    <div class=\"tab-content\" data-id=\"history\">\n                        <HistoryListView />\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
         value: function components() {
-            return _extends({}, layerItems);
+            return _extends({}, layerItems, {
+                OutlineTabView: OutlineTabView
+            });
         }
     }]);
     return SelectLayerView;
@@ -25452,7 +25513,7 @@ var CSSEditor$1 = function (_UIElement) {
             this.$el.toggleClass('has-layer-panel');
         }
     }, {
-        key: RESIZE('window'),
+        key: RESIZE('window') + DEBOUNCE(100),
         value: function value(e) {
             this.emit(RESIZE_WINDOW);
         }
@@ -29711,6 +29772,7 @@ var ItemCreateManager = function (_BaseModule) {
             var page = this.get(pageId);
             page.index = Number.MAX_SAFE_INTEGER;
             $store.run(ITEM_SET, page);
+            $store.run(ITEM_SORT, page.id);
 
             // 레이어 생성 
             var layer = this.get(layerId);
@@ -29724,7 +29786,7 @@ var ItemCreateManager = function (_BaseModule) {
             image.parentId = layerId;
             $store.run(ITEM_SET, image, isSelected);
 
-            $store.run(SELECTION_ONE, pageId);
+            $store.dispatch(SELECTION_ONE, pageId);
             $store.emit(RESIZE_WINDOW);
             $store.run(HISTORY_INITIALIZE);
         }

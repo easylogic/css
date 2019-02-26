@@ -1,8 +1,8 @@
-import EventMachin from "../util/EventMachin";
 import { uuid } from '../util/functions/math'
 import { ITEM_SET } from "../csseditor/types/ItemTypes";
 import { TOOL_SET } from "../csseditor/types/ToolTypes";
 import { keyEach } from "../util/functions/func";
+import EventMachine from "../util/EventMachine";
 
 // const CHECK_STORE_PATTERN = /^@/
 const CHECK_STORE_MULTI_PATTERN = /^ME@/
@@ -19,7 +19,7 @@ export const EVENT = (...args) => {
     return MULTI_PREFIX + PIPE(...args);
 }
 
-class UIElement extends EventMachin {
+class UIElement extends EventMachine {
     constructor (opt, props) {
         super(opt)
 

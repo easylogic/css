@@ -50,6 +50,7 @@ export default class TimelineObjectList extends UIElement {
         var value = unitValue(defaultValue(targetItem[property], sampleValue.defaultValue))
 
         return `
+            <span class='input-field' data-unit-string="${sampleValue.unit}">
             <input 
                 type='number' 
                 min="${sampleValue.min}" 
@@ -58,7 +59,8 @@ export default class TimelineObjectList extends UIElement {
                 value="${value}" 
                 data-property='${property}' 
                 data-timeline-id="${timeline.id}" 
-                /> <span class='unit'>${sampleValue.unit}</span>`
+                /> 
+            </span>`
     }
 
     makeInput (targetItem, property, timeline) {

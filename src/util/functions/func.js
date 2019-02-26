@@ -145,7 +145,13 @@ export function repeat (count) {
 }
 
 
-const short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim
+const short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
+
+const HTML_TAG = {
+    'image': true,
+    'input': true
+}
+
 
 export const html = (strings, ...args) => {
 
@@ -175,7 +181,11 @@ export const html = (strings, ...args) => {
     }).join(EMPTY_STRING);
 
     results = results.replace(short_tag_regexp, function (match, p1) {
-        return match.replace('/>', `></${p1}>`)
+        if (HTML_TAG[p1.toLowerCase()]) {
+            return match;
+        } else {
+            return match.replace('/>', `></${p1}>`)
+        }
     })
 
     return results; 
