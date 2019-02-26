@@ -125,6 +125,7 @@ $layer-item-padding: 4px;
                 vertical-align: middle;
                 position: relative;
                 overflow:hidden;
+                background-color: rgba($border-color, 0.5);
             }
 
             .item-title {

@@ -74,7 +74,9 @@ const convertStyle = (item) => {
     keyEach(item, (key, value) => {
         if (updateUnitField[key]) {
             item[key] = string2unit (value)
-        } 
+        } else if (key == 'index' && value == Number.MAX_SAFE_INTEGER) {
+            item[key] = 0;
+        }
     })
 
     return item; 
