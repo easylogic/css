@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, SELF } from "../../../../util/Event";
 import { CHANGE_PAGE, CHANGE_EDITOR } from "../../../types/event";
 import { ITEM_ADD_PAGE } from "../../../types/ItemCreateTypes";

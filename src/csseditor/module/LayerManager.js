@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+
 import Dom from "../../util/Dom";
 import layerList from './layers/index';
 import { EMPTY_STRING, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
@@ -11,6 +11,7 @@ import { ITEM_FILTER_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILD
 import { FILTER_TO_CSS } from "../types/FilterTypes";
 import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, generateImagePattern, LAYER_MAKE_FONT, LAYER_CACHE_TO_IMAGE_CSS } from "../../util/css/make";
 import { ITEM_CONVERT_STYLE } from "../types/ItemTypes";
+import BaseModule from "../../util/BaseModule";
 
 export default class LayerManager extends BaseModule {
    

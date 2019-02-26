@@ -1,7 +1,7 @@
 import Color from '../../util/Color'
-import BaseModule from '../BaseModule';
 import { isFunction, isUndefined, isNumber } from '../../util/functions/func';
 import { ACTION, GETTER } from '../../util/Store';
+import BaseModule from '../../util/BaseModule';
 
 export default class ColorSetsList extends BaseModule {
     initialize () {

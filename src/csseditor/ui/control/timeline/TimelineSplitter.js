@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 import { POINTERSTART, MOVE } from "../../../../util/Event";
 import {CHANGE_HEIGHT_TIMELINE, INIT_HEIGHT_TIMELINE } from "../../../types/ToolTypes";
 

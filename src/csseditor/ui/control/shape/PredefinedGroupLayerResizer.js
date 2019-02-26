@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_TRANSFORM, CHANGE_SELECTION, CHANGE_LAYER_MOVE,CHANGE_LAYER_ROTATE,CHANGE_PAGE_SIZE,CHANGE_IMAGE,CHANGE_LAYER_BORDER} from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE, SEGMENT_TYPE_ROTATE } from '../../../../util/css/types';

@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../util/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../types/SelectionTypes";

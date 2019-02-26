@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
 import { EXTERNAL_PASTE } from "../types/ExternalResourceTypes";

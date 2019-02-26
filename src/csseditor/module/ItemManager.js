@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { string2unit, UNIT_PX, EMPTY_STRING} from "../../util/css/types";
 import { GETTER, ACTION } from "../../util/Store";

@@ -1,5 +1,5 @@
 import Event, { CLICK } from '../../util/Event'
-import UIElement, { EVENT } from '../UIElement';
+import UIElement, { EVENT } from '../../util/UIElement';
 import { isUndefined } from '../../util/functions/func';
 
 export default class CurrentColorSetsContextMenu extends UIElement {

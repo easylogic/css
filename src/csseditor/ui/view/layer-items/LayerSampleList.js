@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { unitValue } from "../../../../util/css/types";
 import { LOAD, CLICK } from "../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";

@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";
 import { ITEM_SET, ITEM_GET, ITEM_CONVERT_STYLE, ITEM_SORT } from "../types/ItemTypes";

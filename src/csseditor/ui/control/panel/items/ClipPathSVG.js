@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
 import { CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";

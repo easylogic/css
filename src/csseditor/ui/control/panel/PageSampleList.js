@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { CLICK, LOAD } from "../../../../util/Event";
 import { unitValue, pxUnit } from "../../../../util/css/types";
 import { defaultValue, repeat, html } from "../../../../util/functions/func";

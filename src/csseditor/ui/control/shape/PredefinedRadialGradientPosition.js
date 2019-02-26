@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_SELECTION, CHANGE_TOOL } from '../../../types/event';
 import { CLICK } from '../../../../util/Event';
 import { SELECTION_CURRENT_IMAGE_ID, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../types/SelectionTypes';

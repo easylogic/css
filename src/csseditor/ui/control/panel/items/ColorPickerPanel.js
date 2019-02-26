@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../../util/UIElement";
 import ColorPicker  from "./color/ColorPicker";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";

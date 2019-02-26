@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import Dom from "../../util/Dom";
 import { GETTER } from "../../util/Store";
 import { isUndefined, keyEach } from "../../util/functions/func";

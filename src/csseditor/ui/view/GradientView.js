@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../util/UIElement';
 import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
 import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
 import LayerShapeEditor from '../control/shape/LayerShapeEditor';

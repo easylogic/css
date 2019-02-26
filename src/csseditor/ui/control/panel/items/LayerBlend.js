@@ -2,7 +2,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
 import { CHANGE } from '../../../../../util/Event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { BLEND_LIST } from '../../../../types/BlendTypes';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../types/SelectionTypes';
 import { html } from '../../../../../util/functions/func';

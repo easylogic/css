@@ -1,4 +1,4 @@
-import UIElement from '../../../colorpicker/UIElement';
+import UIElement from '../../../util/UIElement';
 import ImageListView from './ImageListView';
 import { CLICK } from '../../../util/Event';
 

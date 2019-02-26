@@ -1,7 +1,7 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 import { BLEND_LIST } from '../../../../types/BlendTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../../types/SelectionTypes';

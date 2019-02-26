@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { unitValue, pxUnit, SEGMENT_TYPE_MOVE, GUIDE_TYPE_VERTICAL, GUIDE_TYPE_HORIZONTAL, SEGMENT_TYPE_TOP, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_RIGHT, SEGMENT_CHECK } from "../../util/css/types";
 import { ITEM_SET } from "../types/ItemTypes";

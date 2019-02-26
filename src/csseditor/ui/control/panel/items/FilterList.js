@@ -1,6 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_FILTER } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
 import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";

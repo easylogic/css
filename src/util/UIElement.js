@@ -1,8 +1,8 @@
-import { uuid } from '../util/functions/math'
+import { uuid } from './functions/math'
 import { ITEM_SET } from "../csseditor/types/ItemTypes";
 import { TOOL_SET } from "../csseditor/types/ToolTypes";
-import { keyEach } from "../util/functions/func";
-import EventMachine from "../util/EventMachine";
+import { keyEach } from "./functions/func";
+import EventMachine from "./EventMachine";
 
 // const CHECK_STORE_PATTERN = /^@/
 const CHECK_STORE_MULTI_PATTERN = /^ME@/

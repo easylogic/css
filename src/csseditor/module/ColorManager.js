@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 
 import ColorList from './color-list/index'
 import { ACTION, GETTER } from "../../util/Store";

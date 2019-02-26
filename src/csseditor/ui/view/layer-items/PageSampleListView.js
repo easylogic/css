@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 import PageSampleList from "../../control/panel/PageSampleList";
 
 export default class PageSampleListView extends UIElement {

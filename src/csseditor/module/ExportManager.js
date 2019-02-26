@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { GETTER } from "../../util/Store";
 import { SELECTION_CURRENT_PAGE } from "../types/SelectionTypes";
 import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "../types/ExportTpyes";

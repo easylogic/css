@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
 import { ITEM_REMOVE, ITEM_FOCUS, ITEM_TOGGLE_VISIBLE, ITEM_TOGGLE_LOCK } from "../../../types/ItemTypes";

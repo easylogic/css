@@ -6,7 +6,7 @@ import {
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { unitString, percentUnit, stringUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { defaultValue, isUndefined, html } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";

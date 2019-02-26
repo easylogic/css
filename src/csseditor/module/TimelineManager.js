@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { GETTER, ACTION } from "../../util/Store";
 import { TIMELINE_LIST, TIMELINE_PUSH, TIMELINE_SEEK, TIMELINE_NOT_EXISTS, TIMELINE_NOT_EXISTS_KEYFRAME, TIMELINE_MIN_TIME_IN_KEYFRAMES, TIMELINE_MAX_TIME_IN_KEYFRAMES } from "../types/TimelineTypes";
 import { ITEM_MAP_TIMELINE_CHILDREN, ITEM_MAP_KEYFRAME_CHILDREN } from "../types/ItemSearchTypes";

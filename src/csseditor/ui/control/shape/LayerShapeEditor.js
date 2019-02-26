@@ -1,5 +1,5 @@
 import shapeEditor from './shape-editor/index';
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 

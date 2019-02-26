@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { GETTER } from "../../util/Store";
 import { stringUnit, EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
 import { keyMap } from "../../util/functions/func";

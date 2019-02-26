@@ -6170,225 +6170,6 @@ var HueColor = {
 // TODO: worker run 
 var ImageFilter = _extends({}, FilterList, functions);
 
-var GETTER_PREFIX = '*/';
-var ACTION_PREFIX = '/';
-
-function GETTER(str) {
-    return GETTER_PREFIX + str;
-}
-
-function ACTION(str) {
-    return ACTION_PREFIX + str;
-}
-
-var PREVENT = 'PREVENT';
-
-var BaseStore = function () {
-    function BaseStore(opt) {
-        classCallCheck(this, BaseStore);
-
-        this.cachedCallback = {};
-        this.callbacks = [];
-        this.actions = [];
-        this.getters = [];
-        this.modules = opt.modules || [];
-        this.standalone = {
-            getters: {},
-            actions: {},
-            dispatches: {}
-        };
-
-        this.initialize();
-    }
-
-    createClass(BaseStore, [{
-        key: "initialize",
-        value: function initialize() {
-            this.initializeModule();
-        }
-    }, {
-        key: "initializeModule",
-        value: function initializeModule() {
-            var _this = this;
-
-            this.modules.forEach(function (ModuleClass) {
-                _this.addModule(ModuleClass);
-            });
-        }
-    }, {
-        key: "makeActionCallback",
-        value: function makeActionCallback(context, action, actionName) {
-            var _this2 = this;
-
-            var func = function func($1, $2, $3, $4, $5) {
-                return context[action].call(context, _this2, $1, $2, $3, $4, $5);
-            };
-
-            func.context = context;
-            func.displayName = actionName;
-
-            return func;
-        }
-    }, {
-        key: "action",
-        value: function action(_action, context) {
-            var _this3 = this;
-
-            var actionName = _action.substr(_action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length);
-
-            this.actions[actionName] = this.makeActionCallback(context, _action, actionName);
-
-            this.standalone.actions[actionName] = function ($1, $2, $3, $4, $5) {
-                return _this3.run(actionName, $1, $2, $3, $4, $5);
-            };
-            this.standalone.dispatches[actionName] = function ($1, $2, $3, $4, $5) {
-                return _this3.dispatch(actionName, $1, $2, $3, $4, $5);
-            };
-        }
-    }, {
-        key: "getter",
-        value: function getter(action, context) {
-            var _this4 = this;
-
-            var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length);
-
-            this.getters[actionName] = this.makeActionCallback(context, action, actionName);
-
-            this.standalone.getters[actionName] = function ($1, $2, $3, $4, $5) {
-                return _this4.read(actionName, $1, $2, $3, $4, $5);
-            };
-        }
-    }, {
-        key: "mapGetters",
-        value: function mapGetters() {
-            var _this5 = this;
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            return args.map(function (actionName) {
-                return _this5.standalone.getters[actionName];
-            });
-        }
-    }, {
-        key: "mapActions",
-        value: function mapActions() {
-            var _this6 = this;
-
-            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                args[_key2] = arguments[_key2];
-            }
-
-            return args.map(function (actionName) {
-                return _this6.standalone.actions[actionName];
-            });
-        }
-    }, {
-        key: "mapDispatches",
-        value: function mapDispatches() {
-            var _this7 = this;
-
-            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-                args[_key3] = arguments[_key3];
-            }
-
-            return args.map(function (actionName) {
-                return _this7.standalone.dispatches[actionName];
-            });
-        }
-    }, {
-        key: "dispatch",
-        value: function dispatch(action, $1, $2, $3, $4, $5) {
-            var actionCallback = this.actions[action];
-
-            if (actionCallback) {
-                var ret = actionCallback($1, $2, $3, $4, $5);
-
-                if (ret != PREVENT) {
-                    actionCallback.context.afterDispatch();
-                }
-            } else {
-                throw new Error('action : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "run",
-        value: function run(action, $1, $2, $3, $4, $5) {
-            var actionCallback = this.actions[action];
-
-            if (actionCallback) {
-                return actionCallback($1, $2, $3, $4, $5);
-            } else {
-                throw new Error('action : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "read",
-        value: function read(action, $1, $2, $3, $4, $5) {
-            var getterCallback = this.getters[action];
-
-            if (getterCallback) {
-                return getterCallback($1, $2, $3, $4, $5);
-            } else {
-                throw new Error('getter : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "addModule",
-        value: function addModule(ModuleClass) {
-            return new ModuleClass(this);
-        }
-    }, {
-        key: "on",
-        value: function on(event, originalCallback, context) {
-            var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-            var callback = delay > 0 ? debounce(originalCallback, delay) : originalCallback;
-            this.callbacks.push({ event: event, callback: callback, context: context, originalCallback: originalCallback });
-        }
-    }, {
-        key: "off",
-        value: function off(event, originalCallback) {
-
-            if (arguments.length == 0) {
-                this.callbacks = [];
-                this.cachedCallback = {};
-            } else if (arguments.length == 1) {
-                this.callbacks = this.callbacks.filter(function (f) {
-                    return f.event != event;
-                });
-                this.cachedCallback = {};
-            } else if (arguments.length == 2) {
-                this.callbacks = this.callbacks.filter(function (f) {
-                    return !(f.event == event && f.originalCallback == originalCallback);
-                });
-                this.cachedCallback = {};
-            }
-        }
-    }, {
-        key: "emit",
-        value: function emit($1, $2, $3, $4, $5) {
-            var _this8 = this;
-
-            var event = $1;
-
-            if (!this.cachedCallback[event]) {
-                this.cachedCallback[event] = this.callbacks.filter(function (f) {
-                    return f.event == event;
-                });
-            }
-
-            this.cachedCallback[event].forEach(function (f) {
-                if (f.context.source != _this8.source) {
-                    f.callback($2, $3, $4, $5);
-                }
-            });
-        }
-    }]);
-    return BaseStore;
-}();
-
 var counter = 0;
 var cached = [];
 
@@ -7109,6 +6890,454 @@ var Dom = function () {
     return Dom;
 }();
 
+var EventChecker = function () {
+    function EventChecker(value$$1) {
+        var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
+        classCallCheck(this, EventChecker);
+
+        this.value = value$$1;
+        this.split = split;
+    }
+
+    createClass(EventChecker, [{
+        key: 'toString',
+        value: function toString() {
+            return ' ' + this.split + ' ' + this.value;
+        }
+    }]);
+    return EventChecker;
+}();
+
+var EventAfterRunner = function () {
+    function EventAfterRunner(value$$1) {
+        var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
+        classCallCheck(this, EventAfterRunner);
+
+        this.value = value$$1;
+        this.split = split;
+    }
+
+    createClass(EventAfterRunner, [{
+        key: 'toString',
+        value: function toString() {
+            return ' ' + this.split + ' after(' + this.value + ')';
+        }
+    }]);
+    return EventAfterRunner;
+}();
+
+// event name regular expression
+var CHECK_LOAD_PATTERN = /^load (.*)/ig;
+
+var CHECK_CLICK_PATTERN = 'click|dblclick';
+var CHECK_MOUSE_PATTERN = 'mouse(down|up|move|over|out|enter|leave)';
+var CHECK_POINTER_PATTERN = 'pointer(start|move|end)';
+var CHECK_TOUCH_PATTERN = 'touch(start|move|end)';
+var CHECK_KEY_PATTERN = 'key(down|up|press)';
+var CHECK_DRAGDROP_PATTERN = 'drag|drop|drag(start|over|enter|leave|exit|end)';
+var CHECK_CONTEXT_PATTERN = 'contextmenu';
+var CHECK_INPUT_PATTERN = 'change|input';
+var CHECK_CLIPBOARD_PATTERN = 'paste';
+var CHECK_BEHAVIOR_PATTERN = 'resize|scroll|wheel|mousewheel|DOMMouseScroll';
+
+var CHECK_PATTERN_LIST = [CHECK_CLICK_PATTERN, CHECK_MOUSE_PATTERN, CHECK_POINTER_PATTERN, CHECK_TOUCH_PATTERN, CHECK_KEY_PATTERN, CHECK_DRAGDROP_PATTERN, CHECK_CONTEXT_PATTERN, CHECK_INPUT_PATTERN, CHECK_CLIPBOARD_PATTERN, CHECK_BEHAVIOR_PATTERN].join('|');
+
+var CHECK_PATTERN = new RegExp('^(' + CHECK_PATTERN_LIST + ')', "ig");
+
+var NAME_SAPARATOR = ':';
+var CHECK_SAPARATOR = '|';
+var LOAD_SAPARATOR = 'load ';
+var SAPARATOR = WHITE_STRING;
+
+var DOM_EVENT_MAKE = function DOM_EVENT_MAKE() {
+    for (var _len = arguments.length, keys = Array(_len), _key = 0; _key < _len; _key++) {
+        keys[_key] = arguments[_key];
+    }
+
+    var key = keys.join(NAME_SAPARATOR);
+    return function () {
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            args[_key2] = arguments[_key2];
+        }
+
+        return [key].concat(args).join(SAPARATOR);
+    };
+};
+
+var CUSTOM = DOM_EVENT_MAKE;
+var CLICK = DOM_EVENT_MAKE('click');
+var DOUBLECLICK = DOM_EVENT_MAKE('dblclick');
+var MOUSEDOWN = DOM_EVENT_MAKE('mousedown');
+var MOUSEUP = DOM_EVENT_MAKE('mouseup');
+var MOUSEMOVE = DOM_EVENT_MAKE('mousemove');
+var MOUSEOVER = DOM_EVENT_MAKE('mouseover');
+var MOUSEOUT = DOM_EVENT_MAKE('mouseout');
+var MOUSEENTER = DOM_EVENT_MAKE('mouseenter');
+var MOUSELEAVE = DOM_EVENT_MAKE('mouseleave');
+var TOUCHSTART = DOM_EVENT_MAKE('touchstart');
+var TOUCHMOVE = DOM_EVENT_MAKE('touchmove');
+var TOUCHEND = DOM_EVENT_MAKE('touchend');
+var KEYDOWN = DOM_EVENT_MAKE('keydown');
+var KEYUP = DOM_EVENT_MAKE('keyup');
+var KEYPRESS = DOM_EVENT_MAKE('keypress');
+var DRAG = DOM_EVENT_MAKE('drag');
+var DRAGSTART = DOM_EVENT_MAKE('dragstart');
+var DROP = DOM_EVENT_MAKE('drop');
+var DRAGOVER = DOM_EVENT_MAKE('dragover');
+var DRAGENTER = DOM_EVENT_MAKE('dragenter');
+var DRAGLEAVE = DOM_EVENT_MAKE('dragleave');
+var DRAGEXIT = DOM_EVENT_MAKE('dragexit');
+var DRAGOUT = DOM_EVENT_MAKE('dragout');
+var DRAGEND = DOM_EVENT_MAKE('dragend');
+var CONTEXTMENU = DOM_EVENT_MAKE('contextmenu');
+var CHANGE = DOM_EVENT_MAKE('change');
+var INPUT = DOM_EVENT_MAKE('input');
+var PASTE = DOM_EVENT_MAKE('paste');
+var RESIZE = DOM_EVENT_MAKE('resize');
+var SCROLL = DOM_EVENT_MAKE('scroll');
+var SUBMIT = DOM_EVENT_MAKE('submit');
+var POINTERSTART = CUSTOM('mousedown', 'touchstart');
+var POINTERMOVE = CUSTOM('mousemove', 'touchmove');
+var POINTEREND = CUSTOM('mouseup', 'touchend');
+var CHANGEINPUT = CUSTOM('change', 'input');
+var WHEEL = CUSTOM('wheel', 'mousewheel', 'DOMMouseScroll');
+
+// Predefined CHECKER 
+var CHECKER = function CHECKER(value$$1) {
+    var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
+
+    return new EventChecker(value$$1, split);
+};
+
+var AFTER = function AFTER(value$$1) {
+    var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
+
+    return new EventAfterRunner(value$$1, split);
+};
+
+var IF = CHECKER;
+
+
+
+
+
+
+var KEY_ARROW_UP = 'ArrowUp';
+var KEY_ARROW_DOWN = 'ArrowDown';
+var KEY_ARROW_LEFT = 'ArrowLeft';
+var KEY_ARROW_RIGHT = 'ArrowRight';
+var KEY_ENTER = 'Enter';
+var KEY_SPACE = 'Space';
+
+var ARROW_UP = CHECKER(KEY_ARROW_UP);
+var ARROW_DOWN = CHECKER(KEY_ARROW_DOWN);
+var ARROW_LEFT = CHECKER(KEY_ARROW_LEFT);
+var ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT);
+var ENTER = CHECKER(KEY_ENTER);
+var SPACE = CHECKER(KEY_SPACE);
+
+var ALT = CHECKER('isAltKey');
+var SHIFT = CHECKER('isShiftKey');
+var META = CHECKER('isMetaKey');
+var CONTROL = CHECKER('isCtrlKey');
+var SELF = CHECKER('self');
+var CAPTURE = CHECKER('capture');
+var FIT = CHECKER('fit');
+var PASSIVE = CHECKER('passive');
+
+var DEBOUNCE = function DEBOUNCE() {
+    var debounce = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
+
+    return CHECKER('debounce(' + debounce + ')');
+};
+
+// after method 
+var MOVE = function MOVE() {
+    var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'move';
+
+    return AFTER('bodyMouseMove ' + method);
+};
+var END = function END() {
+    var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'end';
+
+    return AFTER('bodyMouseUp ' + method);
+};
+
+// Predefined LOADER
+var LOAD = function LOAD() {
+    var value$$1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '$el';
+
+    return LOAD_SAPARATOR + value$$1;
+};
+
+var Event = {
+    addEvent: function addEvent(dom, eventName, callback) {
+        var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+        if (dom) {
+            dom.addEventListener(eventName, callback, useCapture);
+        }
+    },
+    removeEvent: function removeEvent(dom, eventName, callback) {
+        if (dom) {
+            dom.removeEventListener(eventName, callback);
+        }
+    },
+    pos: function pos(e) {
+        if (e.touches && e.touches[0]) {
+            return e.touches[0];
+        }
+
+        return e;
+    },
+    posXY: function posXY(e) {
+        var pos = this.pos(e);
+        return {
+            x: pos.pageX,
+            y: pos.pageY
+        };
+    }
+};
+
+var TOOL_COLOR_SOURCE = 'tool/colorSource';
+var TOOL_GET = 'tool/get';
+var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
+var TOOL_CHANGE_COLOR = 'tool/changeColor';
+var TOOL_SET = 'tool/set';
+var TOOL_TOGGLE = 'tool/toggle';
+
+var TOOL_SAVE_DATA = 'tool/save/data';
+var TOOL_RESTORE_DATA = 'tool/restore/data';
+var RESIZE_WINDOW = 'resize/window';
+var RESIZE_TIMELINE = 'resize/timeline';
+var CHANGE_HEIGHT_TIMELINE = 'change/height/timeline';
+var INIT_HEIGHT_TIMELINE = 'init/height/timeline';
+var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
+var TOGGLE_TIMELINE = 'toggle/timeline';
+var MOVE_TIMELINE = 'move/timeline';
+
+var ADD_BODY_MOUSEMOVE = 'add/body/mousemove';
+var ADD_BODY_MOUSEUP = 'add/body/mouseup';
+
+var GETTER_PREFIX = '*/';
+var ACTION_PREFIX = '/';
+
+function GETTER(str) {
+    return GETTER_PREFIX + str;
+}
+
+function ACTION(str) {
+    return ACTION_PREFIX + str;
+}
+
+var PREVENT = 'PREVENT';
+
+var BaseStore = function () {
+    function BaseStore(opt) {
+        classCallCheck(this, BaseStore);
+
+        this.cachedCallback = {};
+        this.callbacks = [];
+        this.actions = [];
+        this.getters = [];
+        this.modules = opt.modules || [];
+        this.standalone = {
+            getters: {},
+            actions: {},
+            dispatches: {}
+        };
+
+        this.initialize();
+    }
+
+    createClass(BaseStore, [{
+        key: "initialize",
+        value: function initialize() {
+            this.initializeModule();
+        }
+    }, {
+        key: "initializeModule",
+        value: function initializeModule() {
+            var _this = this;
+
+            this.modules.forEach(function (ModuleClass) {
+                _this.addModule(ModuleClass);
+            });
+        }
+    }, {
+        key: "makeActionCallback",
+        value: function makeActionCallback(context, action, actionName) {
+            var _this2 = this;
+
+            var func = function func($1, $2, $3, $4, $5) {
+                return context[action].call(context, _this2, $1, $2, $3, $4, $5);
+            };
+
+            func.context = context;
+            func.displayName = actionName;
+
+            return func;
+        }
+    }, {
+        key: "action",
+        value: function action(_action, context) {
+            var _this3 = this;
+
+            var actionName = _action.substr(_action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length);
+
+            this.actions[actionName] = this.makeActionCallback(context, _action, actionName);
+
+            this.standalone.actions[actionName] = function ($1, $2, $3, $4, $5) {
+                return _this3.run(actionName, $1, $2, $3, $4, $5);
+            };
+            this.standalone.dispatches[actionName] = function ($1, $2, $3, $4, $5) {
+                return _this3.dispatch(actionName, $1, $2, $3, $4, $5);
+            };
+        }
+    }, {
+        key: "getter",
+        value: function getter(action, context) {
+            var _this4 = this;
+
+            var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length);
+
+            this.getters[actionName] = this.makeActionCallback(context, action, actionName);
+
+            this.standalone.getters[actionName] = function ($1, $2, $3, $4, $5) {
+                return _this4.read(actionName, $1, $2, $3, $4, $5);
+            };
+        }
+    }, {
+        key: "mapGetters",
+        value: function mapGetters() {
+            var _this5 = this;
+
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+            }
+
+            return args.map(function (actionName) {
+                return _this5.standalone.getters[actionName];
+            });
+        }
+    }, {
+        key: "mapActions",
+        value: function mapActions() {
+            var _this6 = this;
+
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            return args.map(function (actionName) {
+                return _this6.standalone.actions[actionName];
+            });
+        }
+    }, {
+        key: "mapDispatches",
+        value: function mapDispatches() {
+            var _this7 = this;
+
+            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+                args[_key3] = arguments[_key3];
+            }
+
+            return args.map(function (actionName) {
+                return _this7.standalone.dispatches[actionName];
+            });
+        }
+    }, {
+        key: "dispatch",
+        value: function dispatch(action, $1, $2, $3, $4, $5) {
+            var actionCallback = this.actions[action];
+
+            if (actionCallback) {
+                var ret = actionCallback($1, $2, $3, $4, $5);
+
+                if (ret != PREVENT) {
+                    actionCallback.context.afterDispatch();
+                }
+            } else {
+                throw new Error('action : ' + action + ' is not a valid.');
+            }
+        }
+    }, {
+        key: "run",
+        value: function run(action, $1, $2, $3, $4, $5) {
+            var actionCallback = this.actions[action];
+
+            if (actionCallback) {
+                return actionCallback($1, $2, $3, $4, $5);
+            } else {
+                throw new Error('action : ' + action + ' is not a valid.');
+            }
+        }
+    }, {
+        key: "read",
+        value: function read(action, $1, $2, $3, $4, $5) {
+            var getterCallback = this.getters[action];
+
+            if (getterCallback) {
+                return getterCallback($1, $2, $3, $4, $5);
+            } else {
+                throw new Error('getter : ' + action + ' is not a valid.');
+            }
+        }
+    }, {
+        key: "addModule",
+        value: function addModule(ModuleClass) {
+            return new ModuleClass(this);
+        }
+    }, {
+        key: "on",
+        value: function on(event, originalCallback, context) {
+            var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+
+            var callback = delay > 0 ? debounce(originalCallback, delay) : originalCallback;
+            this.callbacks.push({ event: event, callback: callback, context: context, originalCallback: originalCallback });
+        }
+    }, {
+        key: "off",
+        value: function off(event, originalCallback) {
+
+            if (arguments.length == 0) {
+                this.callbacks = [];
+                this.cachedCallback = {};
+            } else if (arguments.length == 1) {
+                this.callbacks = this.callbacks.filter(function (f) {
+                    return f.event != event;
+                });
+                this.cachedCallback = {};
+            } else if (arguments.length == 2) {
+                this.callbacks = this.callbacks.filter(function (f) {
+                    return !(f.event == event && f.originalCallback == originalCallback);
+                });
+                this.cachedCallback = {};
+            }
+        }
+    }, {
+        key: "emit",
+        value: function emit($1, $2, $3, $4, $5) {
+            var _this8 = this;
+
+            var event = $1;
+
+            if (!this.cachedCallback[event]) {
+                this.cachedCallback[event] = this.callbacks.filter(function (f) {
+                    return f.event == event;
+                });
+            }
+
+            this.cachedCallback[event].forEach(function (f) {
+                if (f.context.source != _this8.source) {
+                    f.callback($2, $3, $4, $5);
+                }
+            });
+        }
+    }]);
+    return BaseStore;
+}();
+
 var ITEM_SET = 'item/set';
 var ITEM_GET = 'item/get';
 var ITEM_CONVERT_STYLE = 'item/convert/style';
@@ -7322,235 +7551,6 @@ var DEFAULT_TOOL_SIZE = {
     'page.offset': { left: 0, top: 0 },
     'board.scrollTop': 0,
     'board.scrollLeft': 0
-};
-
-var TOOL_COLOR_SOURCE = 'tool/colorSource';
-var TOOL_GET = 'tool/get';
-var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
-var TOOL_CHANGE_COLOR = 'tool/changeColor';
-var TOOL_SET = 'tool/set';
-var TOOL_TOGGLE = 'tool/toggle';
-
-var TOOL_SAVE_DATA = 'tool/save/data';
-var TOOL_RESTORE_DATA = 'tool/restore/data';
-var RESIZE_WINDOW = 'resize/window';
-var RESIZE_TIMELINE = 'resize/timeline';
-var CHANGE_HEIGHT_TIMELINE = 'change/height/timeline';
-var INIT_HEIGHT_TIMELINE = 'init/height/timeline';
-var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
-var TOGGLE_TIMELINE = 'toggle/timeline';
-var MOVE_TIMELINE = 'move/timeline';
-
-var ADD_BODY_MOUSEMOVE = 'add/body/mousemove';
-var ADD_BODY_MOUSEUP = 'add/body/mouseup';
-
-var EventChecker = function () {
-    function EventChecker(value$$1) {
-        var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
-        classCallCheck(this, EventChecker);
-
-        this.value = value$$1;
-        this.split = split;
-    }
-
-    createClass(EventChecker, [{
-        key: 'toString',
-        value: function toString() {
-            return ' ' + this.split + ' ' + this.value;
-        }
-    }]);
-    return EventChecker;
-}();
-
-var EventAfterRunner = function () {
-    function EventAfterRunner(value$$1) {
-        var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
-        classCallCheck(this, EventAfterRunner);
-
-        this.value = value$$1;
-        this.split = split;
-    }
-
-    createClass(EventAfterRunner, [{
-        key: 'toString',
-        value: function toString() {
-            return ' ' + this.split + ' after(' + this.value + ')';
-        }
-    }]);
-    return EventAfterRunner;
-}();
-
-// event name regular expression
-var CHECK_LOAD_PATTERN = /^load (.*)/ig;
-
-var CHECK_CLICK_PATTERN = 'click|dblclick';
-var CHECK_MOUSE_PATTERN = 'mouse(down|up|move|over|out|enter|leave)';
-var CHECK_POINTER_PATTERN = 'pointer(start|move|end)';
-var CHECK_TOUCH_PATTERN = 'touch(start|move|end)';
-var CHECK_KEY_PATTERN = 'key(down|up|press)';
-var CHECK_DRAGDROP_PATTERN = 'drag|drop|drag(start|over|enter|leave|exit|end)';
-var CHECK_CONTEXT_PATTERN = 'contextmenu';
-var CHECK_INPUT_PATTERN = 'change|input';
-var CHECK_CLIPBOARD_PATTERN = 'paste';
-var CHECK_BEHAVIOR_PATTERN = 'resize|scroll|wheel|mousewheel|DOMMouseScroll';
-
-var CHECK_PATTERN_LIST = [CHECK_CLICK_PATTERN, CHECK_MOUSE_PATTERN, CHECK_POINTER_PATTERN, CHECK_TOUCH_PATTERN, CHECK_KEY_PATTERN, CHECK_DRAGDROP_PATTERN, CHECK_CONTEXT_PATTERN, CHECK_INPUT_PATTERN, CHECK_CLIPBOARD_PATTERN, CHECK_BEHAVIOR_PATTERN].join('|');
-
-var CHECK_PATTERN = new RegExp('^(' + CHECK_PATTERN_LIST + ')', "ig");
-
-var NAME_SAPARATOR = ':';
-var CHECK_SAPARATOR = '|';
-var LOAD_SAPARATOR = 'load ';
-var SAPARATOR = WHITE_STRING;
-
-var DOM_EVENT_MAKE = function DOM_EVENT_MAKE() {
-    for (var _len = arguments.length, keys = Array(_len), _key = 0; _key < _len; _key++) {
-        keys[_key] = arguments[_key];
-    }
-
-    var key = keys.join(NAME_SAPARATOR);
-    return function () {
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            args[_key2] = arguments[_key2];
-        }
-
-        return [key].concat(args).join(SAPARATOR);
-    };
-};
-
-var CUSTOM = DOM_EVENT_MAKE;
-var CLICK = DOM_EVENT_MAKE('click');
-var DOUBLECLICK = DOM_EVENT_MAKE('dblclick');
-var MOUSEDOWN = DOM_EVENT_MAKE('mousedown');
-var MOUSEUP = DOM_EVENT_MAKE('mouseup');
-var MOUSEMOVE = DOM_EVENT_MAKE('mousemove');
-var MOUSEOVER = DOM_EVENT_MAKE('mouseover');
-var MOUSEOUT = DOM_EVENT_MAKE('mouseout');
-var MOUSEENTER = DOM_EVENT_MAKE('mouseenter');
-var MOUSELEAVE = DOM_EVENT_MAKE('mouseleave');
-var TOUCHSTART = DOM_EVENT_MAKE('touchstart');
-var TOUCHMOVE = DOM_EVENT_MAKE('touchmove');
-var TOUCHEND = DOM_EVENT_MAKE('touchend');
-var KEYDOWN = DOM_EVENT_MAKE('keydown');
-var KEYUP = DOM_EVENT_MAKE('keyup');
-var KEYPRESS = DOM_EVENT_MAKE('keypress');
-var DRAG = DOM_EVENT_MAKE('drag');
-var DRAGSTART = DOM_EVENT_MAKE('dragstart');
-var DROP = DOM_EVENT_MAKE('drop');
-var DRAGOVER = DOM_EVENT_MAKE('dragover');
-var DRAGENTER = DOM_EVENT_MAKE('dragenter');
-var DRAGLEAVE = DOM_EVENT_MAKE('dragleave');
-var DRAGEXIT = DOM_EVENT_MAKE('dragexit');
-var DRAGOUT = DOM_EVENT_MAKE('dragout');
-var DRAGEND = DOM_EVENT_MAKE('dragend');
-var CONTEXTMENU = DOM_EVENT_MAKE('contextmenu');
-var CHANGE = DOM_EVENT_MAKE('change');
-var INPUT = DOM_EVENT_MAKE('input');
-var PASTE = DOM_EVENT_MAKE('paste');
-var RESIZE = DOM_EVENT_MAKE('resize');
-var SCROLL = DOM_EVENT_MAKE('scroll');
-var SUBMIT = DOM_EVENT_MAKE('submit');
-var POINTERSTART = CUSTOM('mousedown', 'touchstart');
-var POINTERMOVE = CUSTOM('mousemove', 'touchmove');
-var POINTEREND = CUSTOM('mouseup', 'touchend');
-var CHANGEINPUT = CUSTOM('change', 'input');
-var WHEEL = CUSTOM('wheel', 'mousewheel', 'DOMMouseScroll');
-
-// Predefined CHECKER 
-var CHECKER = function CHECKER(value$$1) {
-    var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
-
-    return new EventChecker(value$$1, split);
-};
-
-var AFTER = function AFTER(value$$1) {
-    var split = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CHECK_SAPARATOR;
-
-    return new EventAfterRunner(value$$1, split);
-};
-
-var IF = CHECKER;
-
-
-
-
-
-
-var KEY_ARROW_UP = 'ArrowUp';
-var KEY_ARROW_DOWN = 'ArrowDown';
-var KEY_ARROW_LEFT = 'ArrowLeft';
-var KEY_ARROW_RIGHT = 'ArrowRight';
-var KEY_ENTER = 'Enter';
-var KEY_SPACE = 'Space';
-
-var ARROW_UP = CHECKER(KEY_ARROW_UP);
-var ARROW_DOWN = CHECKER(KEY_ARROW_DOWN);
-var ARROW_LEFT = CHECKER(KEY_ARROW_LEFT);
-var ARROW_RIGHT = CHECKER(KEY_ARROW_RIGHT);
-var ENTER = CHECKER(KEY_ENTER);
-var SPACE = CHECKER(KEY_SPACE);
-
-var ALT = CHECKER('isAltKey');
-var SHIFT = CHECKER('isShiftKey');
-var META = CHECKER('isMetaKey');
-var CONTROL = CHECKER('isCtrlKey');
-var SELF = CHECKER('self');
-var CAPTURE = CHECKER('capture');
-var FIT = CHECKER('fit');
-var PASSIVE = CHECKER('passive');
-
-var DEBOUNCE = function DEBOUNCE() {
-    var debounce = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
-
-    return CHECKER('debounce(' + debounce + ')');
-};
-
-// after method 
-var MOVE = function MOVE() {
-    var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'move';
-
-    return AFTER('bodyMouseMove ' + method);
-};
-var END = function END() {
-    var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'end';
-
-    return AFTER('bodyMouseUp ' + method);
-};
-
-// Predefined LOADER
-var LOAD = function LOAD() {
-    var value$$1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '$el';
-
-    return LOAD_SAPARATOR + value$$1;
-};
-
-var Event = {
-    addEvent: function addEvent(dom, eventName, callback) {
-        var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-        if (dom) {
-            dom.addEventListener(eventName, callback, useCapture);
-        }
-    },
-    removeEvent: function removeEvent(dom, eventName, callback) {
-        if (dom) {
-            dom.removeEventListener(eventName, callback);
-        }
-    },
-    pos: function pos(e) {
-        if (e.touches && e.touches[0]) {
-            return e.touches[0];
-        }
-
-        return e;
-    },
-    posXY: function posXY(e) {
-        var pos = this.pos(e);
-        return {
-            x: pos.pageX,
-            y: pos.pageY
-        };
-    }
 };
 
 var DELEGATE_SPLIT = '.';
@@ -8174,6 +8174,7 @@ var EventMachine = function () {
   return EventMachine;
 }();
 
+// const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
 var PREFIX = '@';

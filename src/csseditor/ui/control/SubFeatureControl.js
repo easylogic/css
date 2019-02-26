@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../util/UIElement";
 import items from './panel/items/index';
 import GradientAngle from "./shape/GradientAngle";
 import GradientPosition from "./shape/GradientPosition";

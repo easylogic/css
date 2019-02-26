@@ -4,7 +4,7 @@ import { parseParamNumber } from "../../../../util/filter/functions";
 import { CHANGE_LAYER_CLIPPATH } from "../../../types/event";
 import { CLICK, LOAD } from "../../../../util/Event";
 import { isObject, isUndefined } from "../../../../util/functions/func";
-import { EVENT } from "../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../util/UIElement";
 import { SELECTION_CURRENT_LAYER_ID } from "../../../types/SelectionTypes";
 import { SVG_LIST, SVG_GET } from "../../../types/SVGTypes";
 import { WHITE_STRING } from "../../../../util/css/types";

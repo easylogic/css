@@ -1,6 +1,6 @@
 
 import ColorPicker from '../../../../../../colorpicker/index'
-import UIElement, { EVENT } from '../../../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../../../util/UIElement';
 import { 
     CHANGE_COLOR_STEP, 
     CHANGE_IMAGE_COLOR, 

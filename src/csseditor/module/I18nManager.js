@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import i18n, { LANG_EN, LANG_KO } from "./i18n/index";
 import { ACTION, GETTER } from "../../util/Store";
 import { CHANGE_EDITOR } from "../types/event";

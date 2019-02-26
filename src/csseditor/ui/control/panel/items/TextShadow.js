@@ -7,7 +7,7 @@ import {
     CHANGE_LAYER, 
     TEXT_FILL_COLOR
 } from '../../../../types/event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD, POINTERMOVE, POINTEREND, POINTERSTART, MOVE, END } from '../../../../../util/Event';
 import { ITEM_INITIALIZE } from '../../../../types/ItemCreateTypes';

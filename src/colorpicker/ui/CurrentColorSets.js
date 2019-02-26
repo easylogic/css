@@ -1,5 +1,5 @@
 import Dom from '../../util/Dom'
-import UIElement, { EVENT } from '../UIElement';
+import UIElement, { EVENT } from '../../util/UIElement';
 import { CLICK, CONTEXTMENU, LOAD } from '../../util/Event';
 import { EMPTY_STRING } from '../../util/css/types';
 import { html } from '../../util/functions/func';

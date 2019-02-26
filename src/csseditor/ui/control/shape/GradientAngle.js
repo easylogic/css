@@ -1,5 +1,5 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE_LINEAR_ANGLE } from '../../../types/event';
 import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF, MOVE } from '../../../../util/Event';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';

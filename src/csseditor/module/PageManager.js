@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { stringUnit, isPercentUnit, EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
 import { GETTER } from "../../util/Store";
 import { ITEM_GET, ITEM_CONVERT_STYLE } from "../types/ItemTypes";

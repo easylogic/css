@@ -1,8 +1,8 @@
 import Color from '../../util/Color'
 import HueColor from '../../util/HueColor'
-import BaseModule from '../BaseModule';
 import { isUndefined, isString } from '../../util/functions/func';
 import { ACTION, GETTER } from '../../util/Store';
+import BaseModule from '../../util/BaseModule';
 
 export default class ColorManager extends BaseModule {
 

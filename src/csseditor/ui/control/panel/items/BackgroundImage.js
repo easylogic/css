@@ -1,7 +1,7 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { CLICK, SELF } from '../../../../../util/Event';
 
 export default class BackgroundImage extends BasePropertyItem {

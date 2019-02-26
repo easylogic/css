@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 import ImageTabView from "./ImageTabView";
 
 export default class ImageView extends UIElement {

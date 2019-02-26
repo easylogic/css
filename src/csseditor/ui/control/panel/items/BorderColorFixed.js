@@ -5,7 +5,7 @@ import {
     CHANGE_SELECTION, 
     CHANGE_LAYER_BORDER
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 

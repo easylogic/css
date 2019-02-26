@@ -1,7 +1,7 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../types/SelectionTypes';
 

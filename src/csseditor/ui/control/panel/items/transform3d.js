@@ -5,7 +5,7 @@ import {
     CHANGE_LAYER_TRANSFORM
 } from "../../../../types/event";
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 

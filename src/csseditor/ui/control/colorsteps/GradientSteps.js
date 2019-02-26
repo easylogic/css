@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import Dom from '../../../../util/Dom';
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from '../../../../util/filter/functions';
 import { 

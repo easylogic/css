@@ -1,7 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 
 export default class Rotate extends BasePropertyItem {

@@ -18,7 +18,7 @@ import { ITEM_LOAD } from '../types/ItemTypes';
 import { STORAGE_LOAD } from '../types/StorageTypes';
 import HotKey from '../ui/control/HotKey';
 import { LOAD_START } from '../types/LoadTypes';
-import UIElement, { EVENT } from '../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../util/UIElement';
 import { RESIZE, DEBOUNCE } from '../../util/Event';
 import { RESIZE_WINDOW, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE, INIT_HEIGHT_TIMELINE } from '../types/ToolTypes';
 import TimelineSplitter from '../ui/control/timeline/TimelineSplitter';

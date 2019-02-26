@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from './UIElement';
+import UIElement, { EVENT } from '../util/UIElement';
 import { POINTERSTART, POINTERMOVE, POINTEREND } from '../util/Event';
 
 export default class BaseBox extends UIElement {

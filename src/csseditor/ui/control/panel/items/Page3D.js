@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM } from "../../../../types/event";
 import { UNIT_PERCENT, unitString, unitValue, percentUnit, pxUnit, UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";

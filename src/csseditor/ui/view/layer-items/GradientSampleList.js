@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK } from "../../../../util/Event";
 import { ITEM_CONVERT_STYLE } from "../../../types/ItemTypes";
 import { COLLECT_IMAGE_ONE } from "../../../types/CollectTypes";

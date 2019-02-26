@@ -1,5 +1,5 @@
 import BaseProperty from "./BaseProperty";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_IMAGE } from "../../../../../util/css/make";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";

@@ -4,7 +4,7 @@ import {
     CHANGE_EDITOR, 
     CHANGE_LAYER_ROTATE
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";

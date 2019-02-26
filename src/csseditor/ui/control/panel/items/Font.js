@@ -4,7 +4,7 @@ import {
     CHANGE_SELECTION,
     CHANGE_LAYER_TEXT
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import UnitRange from "./element/UnitRange";
 import { UNIT_PX } from "../../../../../util/css/types";
 import { CHANGE } from "../../../../../util/Event";
