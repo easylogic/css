@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 
 export default class TimelineTopToolbar extends UIElement {
     

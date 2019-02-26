@@ -1,4 +1,4 @@
-import { ACTION_PREFIX, GETTER_PREFIX } from "../util/Store";
+import { ACTION_PREFIX, GETTER_PREFIX } from "./Store";
 
 export default class BaseModule {
     constructor ($store) {

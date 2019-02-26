@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 import { CLICK } from "../../../../util/Event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 

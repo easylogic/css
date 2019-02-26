@@ -1,5 +1,5 @@
-import { debounce, isFunction } from "../util/functions/func";
-import { ACTION_PREFIX, GETTER_PREFIX } from "../util/Store";
+import { debounce, isFunction } from "./functions/func";
+import { ACTION_PREFIX, GETTER_PREFIX } from "./Store";
 
 export const PREVENT = 'PREVENT'
 

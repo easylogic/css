@@ -1,5 +1,5 @@
 import ColorPicker from '../../../colorpicker/index'
-import UIElement, { EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../util/UIElement";
 import { CLICK, SCROLL, DEBOUNCE, DROP, WHEEL, ALT } from "../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_IDS } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";

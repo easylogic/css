@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 import { CLICK } from "../../../../util/Event";
 import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
 import { HISTORY_PUSH } from "../../../types/HistoryTypes";

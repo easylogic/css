@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import shapes from "./shapes/index";
 import { GETTER } from "../../util/Store";
 import { SHAPE_GET, SHAPE_TO_CSS_TEXT, SHAPE_LIST } from "../types/ShapeTypes";

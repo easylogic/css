@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../../UIElement';
+import UIElement, { EVENT } from '../../../util/UIElement';
 
 export default class ColorView extends UIElement {
     template () {

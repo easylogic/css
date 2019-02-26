@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { ACTION, GETTER } from "../../util/Store";
 import { HOTKEY_EXISTS, HOTKEY_RUN, HOTKEY_EXECUTE, HOTKEY_EXCLUDE } from "../types/HotkeyTypes";
 import { isFunction } from "../../util/functions/func";

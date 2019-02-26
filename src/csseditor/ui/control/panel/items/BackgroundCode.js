@@ -11,7 +11,7 @@ import {
     CHANGE_COLOR_STEP,
     SELECT_TAB_IMAGE
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";

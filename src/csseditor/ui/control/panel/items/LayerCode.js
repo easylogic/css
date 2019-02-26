@@ -20,7 +20,7 @@ import {
     CHANGE_LAYER_BACKDROP_FILTER,
     CHANGE_LAYER_CLIPPATH_POLYGON
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";

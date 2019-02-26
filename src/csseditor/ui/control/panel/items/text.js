@@ -5,7 +5,7 @@ import {
     CHANGE_LAYER_TEXT,
     TEXT_FILL_COLOR
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";

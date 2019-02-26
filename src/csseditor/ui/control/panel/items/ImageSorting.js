@@ -1,7 +1,7 @@
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_EDITOR, CHANGE_SELECTION } from '../../../../types/event';
 import { CLICK } from '../../../../../util/Event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../types/SelectionTypes';
 import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../../../types/ColorStepTypes';
 import { HISTORY_PUSH } from '../../../../types/HistoryTypes';

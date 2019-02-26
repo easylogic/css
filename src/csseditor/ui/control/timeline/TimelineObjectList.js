@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, CHANGEINPUT } from "../../../../util/Event";
 import { TIMELINE_LIST, TIMELINE_SEEK } from "../../../types/TimelineTypes";
 import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION, CHANGE_IMAGE_COLOR } from "../../../types/event";

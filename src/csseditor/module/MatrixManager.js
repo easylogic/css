@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { CHANGE_LAYER_POSITION } from "../types/event";
 import { pxUnit, unitValue } from "../../util/css/types";
 import { ACTION } from "../../util/Store";

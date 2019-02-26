@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { uuid } from "../../util/functions/math";
 import { CHANGE_EDITOR } from "../types/event";
 import { 

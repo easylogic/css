@@ -1,11 +1,11 @@
 import Dom from '../util/Dom'
 import ColorSetsList from './module/ColorSetsList'
-import UIElement from './UIElement'
 import ColorManager from './module/ColorManager';
-import BaseStore from './BaseStore';
 import { MOUSEUP } from '../util/Event';
 import { defaultValue, isFunction } from '../util/functions/func';
 import { px } from '../util/css/types';
+import UIElement from '../util/UIElement';
+import BaseStore from '../util/BaseStore';
 
 export default class BaseColorPicker extends UIElement {
 

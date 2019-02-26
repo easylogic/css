@@ -1,7 +1,7 @@
 
 import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_SELECTION, CHANGE_LAYER, CHANGE_LAYER_BORDER, CHANGE_EDITOR, CHANGE_LAYER_RADIUS } from '../../../../types/event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { SELECTION_CURRENT_LAYER } from '../../../../types/SelectionTypes';
 import { html } from '../../../../../util/functions/func';
 import { LAYER_BORDER_PREVIEW } from '../../../../../util/css/make';

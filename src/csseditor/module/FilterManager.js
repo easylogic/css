@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, stringUnit, WHITE_STRING } from "../../util/css/types";
 import { FILTER_DEFAULT_OBJECT, FILTER_DEFAULT_OBJECT_KEYS, ITEM_GET } from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";

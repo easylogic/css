@@ -1,4 +1,4 @@
-import UIElement from "../../../colorpicker/UIElement";
+import UIElement from "../../../util/UIElement";
 import { KEYDOWN} from "../../../util/Event";
 import { HOTKEY_EXECUTE } from "../../types/HotkeyTypes";
 

@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD } from "../../../../util/Event";
 import { CHANGE_SELECTION, CHANGE_HISTORY, CHANGE_PAGE } from "../../../types/event";
 import { HISTORY_LIST, HISTORY_SELECTED_CHECK } from "../../../types/HistoryTypes";

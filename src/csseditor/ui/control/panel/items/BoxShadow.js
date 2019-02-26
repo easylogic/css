@@ -6,7 +6,7 @@ import {
     CHANGE_EDITOR, 
     CHANGE_LAYER 
 } from '../../../../types/event';
-import { EVENT } from '../../../../../colorpicker/UIElement';
+import { EVENT } from '../../../../../util/UIElement';
 import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
 import { CLICK, INPUT, LOAD, POINTEREND, POINTERMOVE, POINTERSTART, MOVE, END } from '../../../../../util/Event';
 import { ITEM_INITIALIZE} from '../../../../types/ItemCreateTypes';

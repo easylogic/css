@@ -6,7 +6,7 @@ import {
     CHANGE_LAYER_RADIUS 
 } from "../../../../types/event";
 import { pxUnit, string2unit } from "../../../../../util/css/types";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";

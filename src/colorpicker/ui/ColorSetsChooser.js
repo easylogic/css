@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../UIElement';
+import UIElement, { EVENT } from '../../util/UIElement';
 import { CLICK, LOAD } from '../../util/Event';
 import { html } from '../../util/functions/func';
 

@@ -1,4 +1,4 @@
-import UIElement from "../../../../../../colorpicker/UIElement";
+import UIElement from "../../../../../../util/UIElement";
 import { 
     px2em, px2percent, 
     percent2em, percent2px, 

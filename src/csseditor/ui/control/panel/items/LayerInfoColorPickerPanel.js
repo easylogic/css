@@ -1,4 +1,4 @@
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement from "../../../../../util/UIElement";
 import InfoFillColorPicker from "./color/InfoFillColorPicker";
  
 export default class LayerInfoColorPickerPanel extends UIElement {

@@ -1,4 +1,4 @@
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement from "../../../../../util/UIElement";
 import FillColorPicker from "./color/FillColorPicker";
 
 export default class FillColorPickerPanel extends UIElement {

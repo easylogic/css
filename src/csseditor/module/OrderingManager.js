@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { CHANGE_EDITOR } from "../types/event";
 import { unitValue, pxUnit } from "../../util/css/types";
 import { ACTION } from "../../util/Store";

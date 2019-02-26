@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+
 import { isFunction, isUndefined, clone } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
@@ -13,6 +13,7 @@ import {
     TOOL_RESTORE_DATA 
 } from "../types/ToolTypes";
 import { CHANGE_TOOL } from "../types/event";
+import BaseModule from "../../util/BaseModule";
 
 export default class ToolManager extends BaseModule {
 

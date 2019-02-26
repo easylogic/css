@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { ACTION, GETTER } from "../../util/Store";
 import { HISTORY_INITIALIZE, HISTORY_PUSH, HISTORY_UNDO, HISTORY_REDO, HISTORY_LIST, HISTORY_SELECTED_CHECK } from "../types/HistoryTypes";
 import { SELECTION_INITIALIZE_DATA, SELECTION_CURRENT_PAGE } from "../types/SelectionTypes";

@@ -1,5 +1,5 @@
 import UnitRange from "./element/UnitRange";
-import UIElement, { EVENT } from "../../../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { UNIT_PX, percentUnit, convertPercentUnit, unitValue } from "../../../../../util/css/types";
 import { defaultValue } from "../../../../../util/functions/func";

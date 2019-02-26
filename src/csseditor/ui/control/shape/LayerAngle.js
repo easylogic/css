@@ -1,5 +1,5 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
 import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IDS } from '../../../types/SelectionTypes';

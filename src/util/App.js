@@ -1,8 +1,9 @@
-import BaseStore from "../colorpicker/BaseStore";
+
 import Dom from "./Dom";
-import UIElement, { EVENT } from "../colorpicker/UIElement";
 import Event, { POINTERMOVE, POINTEREND } from "./Event";
 import { ADD_BODY_MOUSEMOVE, ADD_BODY_MOUSEUP } from "../csseditor/types/ToolTypes";
+import BaseStore from "./BaseStore";
+import UIElement, { EVENT } from "./UIElement";
 const EMPTY_POS = {x: 0, y : 0}
 export const start = (opt) => {
     class App extends UIElement {

@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+
 import Color from "../../util/Color";
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
 import { CHANGE_EDITOR } from "../types/event";
@@ -11,6 +11,7 @@ import { COLORSTEP_COLOR_SOURCE, COLORSTEP_CURRENT, COLORSTEP_LIST, COLORSTEP_IN
 import { ITEM_CREATE_COLORSTEP } from "../types/ItemCreateTypes";
 import { ITEM_MAP_CHILDREN, ITEM_LIST_CHILDREN } from "../types/ItemSearchTypes";
 import { TOOL_SET_COLOR_SOURCE, TOOL_CHANGE_COLOR } from "../types/ToolTypes";
+import BaseModule from "../../util/BaseModule";
 
 const INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP
 

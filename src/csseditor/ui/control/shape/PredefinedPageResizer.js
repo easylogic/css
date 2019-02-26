@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
+import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
 import { unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
 import { POINTERSTART, DEBOUNCE, RESIZE, MOVE, END } from '../../../../util/Event';

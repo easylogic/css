@@ -1,4 +1,4 @@
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement from "../../../../../util/UIElement";
 import TextFillColorPicker from "./color/TextFillColorPicker";
  
 export default class LayerTextColorPickerPanel extends UIElement {

@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { isObject } from "../../../../../util/functions/func";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { IMAGE_GET_BLOB } from "../../../../types/ImageTypes";
 import { ITEM_SET_IMAGE_FILE } from "../../../../types/ItemCreateTypes";
 import { SVG_LIST, SVG_GET_BLOB } from "../../../../types/SVGTypes";

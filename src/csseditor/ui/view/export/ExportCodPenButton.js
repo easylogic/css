@@ -1,4 +1,4 @@
-import UIElement from "../../../../colorpicker/UIElement";
+import UIElement from "../../../../util/UIElement";
 import { SUBMIT } from "../../../../util/Event";
 
 export default class ExportCodePenButton extends UIElement {

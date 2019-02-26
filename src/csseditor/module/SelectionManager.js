@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import { CHANGE_SELECTION } from "../types/event";
 import { unitValue, pxUnit, EMPTY_STRING, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE } from "../../util/css/types";
 import { isFunction } from "../../util/functions/func";

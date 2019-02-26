@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX, unitValue, pxUnit } from "../../../../../util/css/types";
 import { INPUT } from "../../../../../util/Event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { ITEM_SET } from "../../../../types/ItemTypes";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
 

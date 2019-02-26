@@ -2,7 +2,7 @@ import BasePropertyItem from "../BasePropertyItem";
 import { CHANGE_SELECTION, CHANGE_IMAGE, CHANGE_EDITOR } from "../../../../../types/event";
 import { SELECTION_CURRENT_IMAGE } from "../../../../../types/SelectionTypes";
 import { CLICK, INPUT, CHANGE } from "../../../../../../util/Event";
-import { EVENT } from "../../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../../util/UIElement";
 import { PATTERN_SET } from "../../../../../types/PatternTypes";
 import { BLEND_LIST } from "../../../../../types/BlendTypes";
 import { html } from "../../../../../../util/functions/func";

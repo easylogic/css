@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../util/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";

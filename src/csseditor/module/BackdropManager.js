@@ -1,8 +1,9 @@
-import BaseModule from "../../colorpicker/BaseModule";
+
 import { UNIT_PX, UNIT_PERCENT, UNIT_COLOR, unit, WHITE_STRING } from "../../util/css/types";
 import { BACKDROP_DEFAULT_OBJECT_KEYS, BACKDROP_DEFAULT_OBJECT, ITEM_GET } from "../types/ItemTypes";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_GET, BACKDROP_LIST, BACKDROP_TO_CSS } from "../types/BackdropTypes";
+import BaseModule from "../../util/BaseModule";
 const backdropInfo = {
     'backdropBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
     'backdropGrayscale' : { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },

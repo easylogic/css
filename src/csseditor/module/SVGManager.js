@@ -1,4 +1,4 @@
-import BaseModule from "../../colorpicker/BaseModule";
+import BaseModule from "../../util/BaseModule";
 import SVGList from "./svg/index";
 import Dom from "../../util/Dom";
 import { GETTER, ACTION } from "../../util/Store";

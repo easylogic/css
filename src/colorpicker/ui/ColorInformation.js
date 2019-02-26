@@ -1,5 +1,5 @@
 import Event, { CLICK, KEYUP, INPUT, KEYDOWN } from '../../util/Event'
-import UIElement, { EVENT } from '../UIElement';
+import UIElement, { EVENT } from '../../util/UIElement';
 
 export default class ColorInformation extends UIElement {
 

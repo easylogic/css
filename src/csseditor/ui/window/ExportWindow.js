@@ -1,4 +1,4 @@
-import UIElement, { EVENT } from "../../../colorpicker/UIElement";
+import UIElement, { EVENT } from "../../../util/UIElement";
 import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { CLICK } from "../../../util/Event";
 import ExportCodePenButton from "../view/export/ExportCodPenButton";

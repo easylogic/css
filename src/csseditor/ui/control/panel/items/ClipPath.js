@@ -5,7 +5,7 @@ import {
     CHANGE_SELECTION, 
     CHANGE_LAYER_CLIPPATH
 } from "../../../../types/event";
-import { EVENT } from "../../../../../colorpicker/UIElement";
+import { EVENT } from "../../../../../util/UIElement";
 import { CHANGE, CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { html } from "../../../../../util/functions/func";

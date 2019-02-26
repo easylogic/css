@@ -1,4 +1,4 @@
-import UIElement from "../../../../../colorpicker/UIElement";
+import UIElement from "../../../../../util/UIElement";
 import BorderFillColorPicker from "./color/BorderFillColorPicker";
  
 export default class LayerBorderColorPickerPanel extends UIElement {
