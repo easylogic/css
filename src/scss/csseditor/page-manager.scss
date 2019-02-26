@@ -12,13 +12,11 @@ $layer-item-padding: 4px;
     top: 0px;
     bottom: 0px;
     overflow: auto;
-    box-sizing: border-box;
     background-color: rgba(#c7c7c7, 0.2);
     border-right: 1px solid rgba(#c7c7c7, 0.2);
     
     .project-tools {
         padding: 10px;
-        box-sizing: border-box;
         text-align: right;
         overflow:hidden;
 
@@ -37,7 +35,6 @@ $layer-item-padding: 4px;
             height: 100%;
             display: inline-block;
             vertical-align: middle;
-            box-sizing: border-box;
             border-left: 1px solid $border-color;
             outline: none;
             line-height: 34px;
@@ -54,7 +51,6 @@ $layer-item-padding: 4px;
             appearance: none;
             display: inline-block;
             vertical-align: middle;
-            box-sizing: border-box;
             outline: none;
             border:0px;
             cursor: pointer;
@@ -72,12 +68,11 @@ $layer-item-padding: 4px;
     }
 
     .page-list {
-        box-sizing: border-box;
+
         
         button {
             display:block;
             height: 80px;
-            box-sizing: border-box;
             cursor: pointer;
             position: relative;
             padding: 5px;
@@ -93,7 +88,6 @@ $layer-item-padding: 4px;
                 background-color: transparent;
                 color: white;
                 padding: 10px;
-                box-sizing: border-box;
 
                 background-image: linear-gradient(to right, black, black),linear-gradient(to right, black, black);
                 background-size: 1px 30px, 30px 1px;
@@ -103,11 +97,7 @@ $layer-item-padding: 4px;
             }
         }
 
-
-    
-
         .tree-item {
-            box-sizing: border-box;
             cursor: pointer;
             position: relative;
             height: 50px;

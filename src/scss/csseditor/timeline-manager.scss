@@ -1,3 +1,4 @@
+$timeline-background-color: #333;
 $timeline-property-width: 300px;
 $timeline-title-padding: 30px;
 $timeline-top-height: 40px;
@@ -20,7 +21,6 @@ $timeline-select-bounce-time: 1s;
 
 .timeline-view {
     position: absolute;
-    box-sizing: border-box;
     left: 0px;
     right: 0px;
     top: 0px;
@@ -28,9 +28,23 @@ $timeline-select-bounce-time: 1s;
 
     display: flex; 
     flex-direction: column;
+    background-color: $timeline-background-color;
+    color: #ececec;
 
     @import './timeline/top.scss';
     @import './timeline/header.scss';
     @import './timeline/body.scss';
     
+}
+
+.timeline-splitter {
+    position: absolute;
+    left:0px;
+    right:0px;
+    top:0px;
+    display: inline-block;
+    height: 2px;
+    cursor: n-resize;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 100;
 }

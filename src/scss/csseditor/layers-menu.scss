@@ -3,9 +3,7 @@ $direction-border: 2px solid $pointer-color;
 $button-size: 12px * 2;
 
 .gradient-layers-menu {
-    box-sizing: border-box;
     text-align: right;
-    // background-color: #333;
     display: flex;
     position: absolute;
     left: 0px;
@@ -26,7 +24,6 @@ $button-size: 12px * 2;
             border: 0px;
             background-color: white;
             padding: 0px;
-            box-sizing: border-box;
             vertical-align: middle;
             width: $button-size !important;
             height: $button-size !important;
@@ -52,7 +49,6 @@ $button-size: 12px * 2;
                     transform-origin: center center;
                     transform: translateX(-50%) translateY(-50%) rotate(45deg);
                     border-top: 1px solid black;
-                    box-sizing: border-box;
                 }
 
                 &:after {
@@ -75,15 +71,12 @@ $button-size: 12px * 2;
             &.stack-view {
                 position: relative;
                 display: inline-block;
-                box-sizing: border-box;
                 border: 1px solid black;
                 background-color: white;
-                box-sizing: border-box;
 
                 &:after {
                     border: 1px solid black;
                     background-color: white;
-                    box-sizing: border-box;
                     position: absolute;
                     width: $button-size;
                     height: $button-size;
@@ -96,7 +89,6 @@ $button-size: 12px * 2;
                 &:before {
                     border: 1px solid black;
                     background-color: white;
-                    box-sizing: border-box;
                     top: -3px;
                     left: -3px;
                     position: absolute;
@@ -110,19 +102,15 @@ $button-size: 12px * 2;
             &.only-view {
                 position: relative;
                 display: inline-block;
-                box-sizing: border-box;
                 border: 1px solid black;
                 background-color: gray;
-                box-sizing: border-box;
             }
 
             &.show-angle {
                 position: relative;
                 display: inline-block;
-                box-sizing: border-box;
                 border: 1px dashed black;
                 background-color: white;
-                box-sizing: border-box;
 
                 &:before {
                     content: "";
@@ -130,10 +118,8 @@ $button-size: 12px * 2;
                     width: 10px;
                     height: 10px;
                     display: inline-block;
-                    box-sizing: border-box;
                     border: 1px solid black;
                     background-color: white;
-                    box-sizing: border-box;
                     border-radius: 50%;
                     left: 50%;
                     top: 50%;

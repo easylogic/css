@@ -9,9 +9,8 @@
         bottom: 0px;
         top: 0px;
         width: $timeline-property-width;
-        box-sizing: border-box;
-        border-right:1px solid $border-color;            
-        border-bottom: 1px solid $border-color;        
+        border-right:1px solid $timeline-keyframe-border-color;            
+        border-bottom: 1px solid $timeline-keyframe-border-color;        
         line-height: 1.6;
         padding-left: 5px;
         padding-top: 5px;
@@ -19,6 +18,7 @@
 
         .title {
             cursor:pointer;
+            color: #ececec;
         }
     }
 
@@ -29,7 +29,6 @@
         top: 0px;
         right: 0px;
         overflow: hidden;
-        box-sizing: border-box;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $timeline-keyframe-border-color;
     }
 }

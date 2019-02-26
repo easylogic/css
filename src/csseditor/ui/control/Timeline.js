@@ -4,13 +4,15 @@ import { CLICK, SCROLL, DEBOUNCE, DROP, WHEEL, ALT } from "../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_IDS } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
-import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, TOGGLE_TIMELINE } from "../../types/ToolTypes";
+import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE } from "../../types/ToolTypes";
 import TimelineObjectList from "./timeline/TimelineObjectList";
 import KeyframeObjectList from "./timeline/KeyframeObjectList";
 import { TIMELINE_PUSH, TIMELINE_NOT_EXISTS } from "../../types/TimelineTypes";
 import KeyframeTimeView from "./timeline/KeyframeTimeView";
 import TimelineTopToolbar from "./timeline/TimelineTopToolbar";
 import { isFunction } from '../../../util/functions/func';
+import TimelineSplitter from './timeline/TimelineSplitter';
+
 
 export default class Timeline extends UIElement {
 
@@ -28,6 +30,7 @@ export default class Timeline extends UIElement {
 
     components() {
         return { 
+            TimelineSplitter,
             TimelineTopToolbar,            
             KeyframeTimeView,
             TimelineObjectList,

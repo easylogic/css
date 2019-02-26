@@ -6,7 +6,6 @@ $layer-item-padding: 4px;
 
 .feature-control {
     position: absolute;
-    box-sizing: border-box;
     left: 0px;
     right: 0px;
     top: 65px;
@@ -20,7 +19,6 @@ $layer-item-padding: 4px;
         right: 0px;
         bottom: 0px;
         top: 0px;
-        box-sizing: border-box; 
 
         &.selected {
             display: block;

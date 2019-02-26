@@ -7,8 +7,6 @@ $mini-layer-view-height: 420px;
 $lock-color: #333;
 
 .layers {
-    // border-bottom: 1px solid $border-color;
-    box-sizing: border-box;
     position: relative;
     flex: 1 1 auto;
     display: flex;
@@ -18,7 +16,6 @@ $lock-color: #333;
         appearance: none;
         width: auto;
         height: 100%;
-        box-sizing: border-box;
         border: 1px solid #dedede;
         vertical-align: middle;
         font-size: 12px;
@@ -32,7 +29,6 @@ $lock-color: #333;
         flex: none;
         height: 30px;
         padding: 5px;
-        box-sizing: border-box;
         position: relative;
 
         h1 {
@@ -53,21 +49,15 @@ $lock-color: #333;
     .layer-list {
         flex: 1 1 auto;
         overflow: auto; 
-        // border-top: 1px solid #ececec;
-        box-sizing: border-box;
         position: relative;    
-        // padding-left: 2px;
-        // padding-right: 2px;
         
         button {
             display: inline-block;      
             vertical-align: middle;
-            box-sizing: border-box;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             padding: 5px;
-            // margin-right: 5px;
             text-align: center;
             appearance: none;
             background-color: transparent;
@@ -104,20 +94,6 @@ $lock-color: #333;
                 pointer-events: none;
             }
 
-            // &:hover {
-            //     .item-tools {
-            //         display: inline-block;
-            //         vertical-align: middle;
-
-            //         button {
-
-            //             &.copy-item {
-            //                 font-weight: bold;
-            //             }
-            //         }
-            //     }
-            // }
-
             .item-tools {
                 display: block;
                 text-align: right;
@@ -130,7 +106,6 @@ $lock-color: #333;
                     &.lock-item {
                         width: 15px;
                         height: 15px;
-                        box-sizing:border-box;
                         background-image: linear-gradient(to right, $border-color, $border-color);
                         background-size: 10px 10px;
                         background-repeat: no-repeat;
@@ -153,8 +128,6 @@ $lock-color: #333;
                             height: 10px;
                             top: -4px;
                             left: 2px;
-                            box-sizing:border-box;
-                            // transition: transform 0.3s linear; 
                             transform:  rotate(0deg);
                             transform-origin: center bottom;
                             background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, $border-color 2px, $border-color 4px, transparent 4px, transparent 100%)
@@ -164,7 +137,6 @@ $lock-color: #333;
                     &.visible-item {
                         width: 15px !important;
                         height: 15px !important;
-                        box-sizing: border-box;
                         border-top-left-radius:   0px;
                         border-top-right-radius:   100%;
                         border-bottom-left-radius:   100%;

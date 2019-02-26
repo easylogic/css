@@ -6,7 +6,6 @@ $direction-border: 2px solid $pointer-color;
     right: 0px;
     bottom: 0px;
     top: 0px;
-    box-sizing: border-box;
     
     .page-menu { 
         position: absolute; 
@@ -15,7 +14,6 @@ $direction-border: 2px solid $pointer-color;
         top: 0px;
         height: 160px;
         z-index: 5;
-        box-sizing: border-box;        
 
         .layer-menu-tab {
             position: absolute;
@@ -33,9 +31,7 @@ $direction-border: 2px solid $pointer-color;
         bottom: 0px;
         top: 0px;
         overflow: auto;
-        background-color: #ececec;
-        // border: 1px solid #c9c9c9;
-        box-sizing: border-box;        
+        background-color: #ececec; 
     }
 
     .page-canvas {
@@ -45,16 +41,13 @@ $direction-border: 2px solid $pointer-color;
         align-items: center;       
         width: 100%;
         height: 100%; 
-        box-sizing: border-box;
     }
 
     .gradient-color-view-container {
         position: relative;
         display: inline-block;
         background-color: white;
-        box-shadow: 8px 9px 20px -5px #777;   
-        box-sizing: border-box;           
-        
+        box-shadow: 8px 9px 20px -5px #777;       
 
         &::before {
             position: absolute;
@@ -97,7 +90,6 @@ $direction-border: 2px solid $pointer-color;
         top: 50%;
         transform: translateX(-50%) translateY(-50%);
         background-color: white;
-        box-sizing: border-box;
 
         &.showGrid {
             background-image: 
@@ -129,11 +121,9 @@ $direction-border: 2px solid $pointer-color;
     }
 
     @import './guide/page-resizer.scss';
-    // @import './guide/layer-resizer.scss';
     @import './guide/group-layer-resizer.scss';
     @import './guide/layer-shape-editor.scss';
     @import './guide/move-guide.scss';
     @import './guide/colorpicker-layer.scss'; 
     
-
 }

@@ -2,14 +2,12 @@ $pointer-color: rgba(#ececec, 0.8);
 
 
 .gradient-info {
-    // background-color:#ececec;
     overflow: auto;
     height: 200px !important;
 
     .form-item {
         display: flex; 
         font-size: 12px;
-        box-sizing: border-box;
         margin: 2px 0px;
 
         > label {
@@ -60,7 +58,6 @@ $pointer-color: rgba(#ececec, 0.8);
             .color-view {
                 width: 20px;
                 height: 20px;
-                box-sizing: border-box;
                 position: relative;
                 @include transparent-background();
                 border: 1px solid #ececec;

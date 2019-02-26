@@ -11,7 +11,6 @@ $layer-item-padding: 8px;
 
 .blend-list {
     display: block !important;
-    box-sizing: border-box;
     overflow: auto;
 
     > div {
@@ -43,9 +42,7 @@ $layer-item-padding: 8px;
             pointer-events: none;
             display: inline-block;
             vertical-align: middle;
-            box-sizing: border-box;
             flex: 1 1 auto;  
-            // padding: 14px;
         }
 
         .blend-item-view {

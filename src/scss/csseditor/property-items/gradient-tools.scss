@@ -2,7 +2,6 @@ $typetool-size: 34px;
 &.gradient-tools {
     display:block;
     width: 100%;
-    box-sizing: border-box;
 
     .menu-buttons {
         display: inline-block;
@@ -15,7 +14,6 @@ $typetool-size: 34px;
             appearance: none;
             width: 100px;
             height: 100%;
-            box-sizing: border-box;
             border: 1px solid #dedede;
             vertical-align: middle;
             font-size: 12px;

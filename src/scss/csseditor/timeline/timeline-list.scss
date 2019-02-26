@@ -6,8 +6,7 @@
     width: $timeline-property-width;
     top: 0px;
     bottom: 0px;
-    border-right:1px solid $border-color;
-    box-sizing: border-box;
+    border-right:1px solid $timeline-keyframe-border-color;
     overflow:auto;
 
     .timeline-object {
@@ -21,7 +20,6 @@
                         content: '';
                         display: inline-block;
                         border-radius: 50%;
-                        box-sizing: border-box;
                         background-color: blue;
                         width: 5px;
                         height: 5px;
@@ -54,7 +52,6 @@
                             content: '';
                             display: inline-block;
                             border-radius: 50%;
-                            box-sizing: border-box;
                             background-color: blue;
                             width: 5px;
                             height: 5px;
@@ -84,7 +81,6 @@
                         height: 18px;
                         border: 1px solid $border-color;
                         vertical-align: middle;
-                        box-sizing: border-box;
                     } 
 
                     input {
@@ -100,7 +96,6 @@
                         width: 20px;
                         height: 20px;
                         @include transparent-background();
-                        box-sizing: border-box;
                         border:1px solid $border-color;
                         cursor: pointer;
                         vertical-align: middle;

@@ -20,7 +20,8 @@ import HotKey from '../ui/control/HotKey';
 import { LOAD_START } from '../types/LoadTypes';
 import UIElement, { EVENT } from '../../colorpicker/UIElement';
 import { RESIZE } from '../../util/Event';
-import { RESIZE_WINDOW, TOGGLE_TIMELINE } from '../types/ToolTypes';
+import { RESIZE_WINDOW, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE, INIT_HEIGHT_TIMELINE } from '../types/ToolTypes';
+import TimelineSplitter from '../ui/control/timeline/TimelineSplitter';
 
 export default class CSSEditor extends UIElement {
 
@@ -52,7 +53,8 @@ export default class CSSEditor extends UIElement {
                         <ClipPathImageList />
                     </div>
                 </div>
-                <div class="layout-footer">
+                <div class="layout-footer" ref="$footer">
+                    <TimelineSplitter />
                     <Timeline />
                 </div>
                 <ExportWindow />
@@ -77,6 +79,7 @@ export default class CSSEditor extends UIElement {
             HandleView,
             FeatureControl, 
             SubFeatureControl, 
+            TimelineSplitter,
             Timeline
         }
     } 
@@ -142,5 +145,13 @@ export default class CSSEditor extends UIElement {
 
     [RESIZE('window')] (e) {
         this.emit(RESIZE_WINDOW)
+    }
+
+    [EVENT(INIT_HEIGHT_TIMELINE)] () {
+        this.initFooterHeight = this.refs.$footer.height()
+    }
+
+    [EVENT(CHANGE_HEIGHT_TIMELINE)] (size) {
+        this.refs.$footer.px('height', this.initFooterHeight - size.dy); 
     }
 }

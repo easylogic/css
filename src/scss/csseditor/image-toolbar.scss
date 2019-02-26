@@ -4,7 +4,6 @@
     left: 0px;
     right: 0px;
     text-align: center;
-    box-sizing: border-box;
     padding: 1px 10px;
     z-index: 100;    
 
@@ -13,7 +12,6 @@
         line-height: 2;
         padding: 2px 5px;
         height: 100%;
-        box-sizing: border-box;
         vertical-align: middle;
     }
 
@@ -35,7 +33,6 @@
             &.cut {
                 width: 18px;
                 height: 18px;
-                box-sizing: border-box;
                 border: 1px solid $border-color;
                 cursor: pointer;
                 background-image: linear-gradient(to top, black 0%,black 100%);

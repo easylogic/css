@@ -13,14 +13,5 @@ $move-line-border: 1px solid #f9b8ff;
         position: absolute;
         border-top: $move-line-border;
         border-left: $move-line-border;
-        box-sizing: border-box;
-
-        // &.horizontal {
-        //     transform: translateY(-0.5px);
-        // }
-
-        // &.vertical {
-        //     transform: translateX(-0.5px);
-        // }
     }
 }
