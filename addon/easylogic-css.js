@@ -7385,6 +7385,8 @@ var TOOL_SAVE_DATA = 'tool/save/data';
 var TOOL_RESTORE_DATA = 'tool/restore/data';
 var RESIZE_WINDOW = 'resize/window';
 var RESIZE_TIMELINE = 'resize/timeline';
+var CHANGE_HEIGHT_TIMELINE = 'change/height/timeline';
+var INIT_HEIGHT_TIMELINE = 'init/height/timeline';
 var SCROLL_LEFT_TIMELINE = 'scroll/left/timeline';
 var TOGGLE_TIMELINE = 'toggle/timeline';
 var MOVE_TIMELINE = 'move/timeline';
@@ -7398,6 +7400,231 @@ var REFERENCE_PROPERTY = 'ref';
 var TEMP_DIV = new Dom("div");
 var QUERY_PROPERTY = '[' + REFERENCE_PROPERTY + ']';
 
+var matchPath = function matchPath(el, selector) {
+  if (el) {
+    if (el.matches(selector)) {
+      return el;
+    }
+    return matchPath(el.parentElement, selector);
+  }
+  return null;
+};
+
+var hasDelegate = function hasDelegate(e, eventObject) {
+  return matchPath(e.target || e.srcElement, eventObject.delegate);
+};
+
+var makeCallback = function makeCallback(context, eventObject, callback) {
+
+  if (eventObject.delegate) {
+    return makeDelegateCallback(context, eventObject, callback);
+  } else {
+    return makeDefaultCallback(context, eventObject, callback);
+  }
+};
+
+var makeDefaultCallback = function makeDefaultCallback(context, eventObject, callback) {
+  return function (e) {
+    var returnValue = runEventCallback(context, e, eventObject, callback);
+    if (!isNotUndefined(returnValue)) return returnValue;
+  };
+};
+
+var makeDelegateCallback = function makeDelegateCallback(context, eventObject, callback) {
+  return function (e) {
+    var delegateTarget = hasDelegate(e, eventObject);
+
+    if (delegateTarget) {
+      // delegate target 이 있는 경우만 callback 실행 
+      e.$delegateTarget = new Dom(delegateTarget);
+
+      var returnValue = runEventCallback(context, e, eventObject, callback);
+      if (!isNotUndefined(returnValue)) return returnValue;
+    }
+  };
+};
+
+var runEventCallback = function runEventCallback(context, e, eventObject, callback) {
+  e.xy = Event.posXY(e);
+
+  if (checkEventType(context, e, eventObject)) {
+    var returnValue = callback(e, e.$delegateTarget, e.xy);
+
+    if (eventObject.afterMethods.length) {
+      eventObject.afterMethods.forEach(function (after) {
+        return context[after.target].call(context, after.param, e);
+      });
+    }
+
+    return returnValue;
+  }
+};
+
+var checkEventType = function checkEventType(context, e, eventObject) {
+
+  // 특정 keycode 를 가지고 있는지 체크 
+  // keyup.pagedown  이라고 정의하면 pagedown 키를 눌렀을때만 동작 함 
+  var hasKeyCode = true;
+  if (eventObject.codes.length) {
+
+    hasKeyCode = (e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false) || (e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false);
+  }
+
+  // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
+  var isAllCheck = true;
+  if (eventObject.checkMethodList.length) {
+    isAllCheck = eventObject.checkMethodList.every(function (field) {
+      var fieldValue = context[field];
+      if (isFunction(fieldValue) && fieldValue) {
+        // check method 
+        return fieldValue.call(context, e);
+      } else if (isNotUndefined(fieldValue)) {
+        // check field value
+        return !!fieldValue;
+      }
+      return true;
+    });
+  }
+
+  return hasKeyCode && isAllCheck;
+};
+
+var getDefaultDomElement = function getDefaultDomElement(context, dom) {
+  var el = void 0;
+
+  if (dom) {
+    el = context.refs[dom] || context[dom] || window[dom];
+  } else {
+    el = context.el || context.$el || context.$root;
+  }
+
+  if (el instanceof Dom) {
+    return el.getElement();
+  }
+
+  return el;
+};
+
+var getDefaultEventObject = function getDefaultEventObject(context, eventName, checkMethodFilters) {
+  var arr = checkMethodFilters;
+  var checkMethodList = arr.filter(function (code) {
+    return !!context[code];
+  });
+
+  var afters = arr.filter(function (code) {
+    return code.indexOf('after(') > -1;
+  });
+
+  var afterMethods = afters.map(function (code) {
+    var _code$split$1$split$ = code.split('after(')[1].split(')')[0].trim().split(' '),
+        _code$split$1$split$2 = slicedToArray(_code$split$1$split$, 2),
+        target = _code$split$1$split$2[0],
+        param = _code$split$1$split$2[1];
+
+    return { target: target, param: param };
+  });
+
+  // TODO: split debounce check code 
+  var delay = arr.filter(function (code) {
+    if (code.indexOf('debounce(') > -1) {
+      return true;
+    }
+    return false;
+  });
+
+  var debounceTime = 0;
+  if (delay.length) {
+    debounceTime = getDebounceTime(delay[0]);
+  }
+
+  // capture 
+  var capturing = arr.filter(function (code) {
+    return code.indexOf('capture') > -1;
+  });
+  var useCapture = !!capturing.length;
+
+  arr = arr.filter(function (code) {
+    return checkMethodList.includes(code) === false && delay.includes(code) === false && afters.includes(code) === false && capturing.includes(code) === false && fit.includes(code) === false;
+  }).map(function (code) {
+    return code.toLowerCase();
+  });
+
+  // TODO: split debounce check code     
+
+  return {
+    eventName: eventName,
+    codes: arr,
+    useCapture: useCapture,
+    afterMethods: afterMethods,
+    debounce: debounceTime,
+    checkMethodList: checkMethodList
+  };
+};
+
+var getDebounceTime = function getDebounceTime(code) {
+  var debounceTime = 0;
+  if (code.indexOf('debounce(') > -1) {
+    debounceTime = +code.replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING);
+  }
+
+  return debounceTime;
+};
+
+var addEvent = function addEvent(context, eventObject, callback) {
+  eventObject.callback = makeCallback(context, eventObject, callback);
+  context.addBinding(eventObject);
+  Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, eventObject.useCapture);
+};
+
+var bindingEvent = function bindingEvent(context, _ref, checkMethodFilters, callback) {
+  var _ref2 = toArray(_ref),
+      eventName = _ref2[0],
+      dom = _ref2[1],
+      delegate = _ref2.slice(2);
+
+  var eventObject = getDefaultEventObject(context, eventName, checkMethodFilters);
+
+  eventObject.dom = getDefaultDomElement(context, dom);
+  eventObject.delegate = delegate.join(SAPARATOR);
+
+  if (eventObject.debounce) {
+    callback = debounce(callback, eventObject.debounce);
+  }
+
+  addEvent(context, eventObject, callback);
+};
+
+var getEventNames = function getEventNames(eventName) {
+  var results = [];
+
+  eventName.split(NAME_SAPARATOR).forEach(function (e) {
+    var arr = e.split(NAME_SAPARATOR);
+
+    results.push.apply(results, toConsumableArray(arr));
+  });
+
+  return results;
+};
+
+var parseEvent = function parseEvent(context, key) {
+  var checkMethodFilters = key.split(CHECK_SAPARATOR).map(function (it) {
+    return it.trim();
+  });
+  var eventSelectorAndBehave = checkMethodFilters.shift();
+
+  var _eventSelectorAndBeha = eventSelectorAndBehave.split(SAPARATOR),
+      _eventSelectorAndBeha2 = toArray(_eventSelectorAndBeha),
+      eventName = _eventSelectorAndBeha2[0],
+      params = _eventSelectorAndBeha2.slice(1);
+
+  var eventNames = getEventNames(eventName);
+  var callback = context[key].bind(context);
+
+  eventNames.forEach(function (eventName) {
+    bindingEvent(context, [eventName].concat(toConsumableArray(params)), checkMethodFilters, callback);
+  });
+};
+
 var EventMachin = function () {
   function EventMachin() {
     classCallCheck(this, EventMachin);
@@ -7405,6 +7632,7 @@ var EventMachin = function () {
     this.state = new State(this);
     this.refs = {};
     this.children = {};
+    this._bindings = [];
     this.childComponents = this.components();
   }
 
@@ -7420,6 +7648,9 @@ var EventMachin = function () {
 
       this.afterRender();
     }
+  }, {
+    key: 'initialize',
+    value: function initialize() {}
   }, {
     key: 'afterRender',
     value: function afterRender() {}
@@ -7541,9 +7772,6 @@ var EventMachin = function () {
       return null;
     }
   }, {
-    key: 'initialize',
-    value: function initialize() {}
-  }, {
     key: 'eachChildren',
     value: function eachChildren(callback) {
       if (!isFunction(callback)) return;
@@ -7592,7 +7820,11 @@ var EventMachin = function () {
   }, {
     key: 'initializeEventMachin',
     value: function initializeEventMachin() {
-      this.filterProps(CHECK_PATTERN).forEach(this.parseEvent.bind(this));
+      var _this4 = this;
+
+      this.filterProps(CHECK_PATTERN).forEach(function (key) {
+        return parseEvent(_this4, key);
+      });
     }
 
     /**
@@ -7624,59 +7856,6 @@ var EventMachin = function () {
         return key.match(pattern);
       });
     }
-  }, {
-    key: 'getEventNames',
-    value: function getEventNames(eventName) {
-      var results = [];
-
-      eventName.split(NAME_SAPARATOR).forEach(function (e) {
-        var arr = e.split(NAME_SAPARATOR);
-
-        results.push.apply(results, toConsumableArray(arr));
-      });
-
-      return results;
-    }
-  }, {
-    key: 'parseEvent',
-    value: function parseEvent(key) {
-      var _this4 = this;
-
-      var checkMethodFilters = key.split(CHECK_SAPARATOR).map(function (it) {
-        return it.trim();
-      });
-      var eventSelectorAndBehave = checkMethodFilters.shift();
-
-      var _eventSelectorAndBeha = eventSelectorAndBehave.split(SAPARATOR),
-          _eventSelectorAndBeha2 = toArray(_eventSelectorAndBeha),
-          eventName = _eventSelectorAndBeha2[0],
-          params = _eventSelectorAndBeha2.slice(1);
-
-      var eventNames = this.getEventNames(eventName);
-      var callback = this[key].bind(this);
-
-      eventNames.forEach(function (eventName) {
-        var eventInfo = [eventName].concat(toConsumableArray(params));
-        _this4.bindingEvent(eventInfo, checkMethodFilters, callback);
-      });
-    }
-  }, {
-    key: 'getDefaultDomElement',
-    value: function getDefaultDomElement(dom) {
-      var el = void 0;
-
-      if (dom) {
-        el = this.refs[dom] || this[dom] || window[dom];
-      } else {
-        el = this.el || this.$el || this.$root;
-      }
-
-      if (el instanceof Dom) {
-        return el.getElement();
-      }
-
-      return el;
-    }
 
     /* magic check method  */
 
@@ -7705,16 +7884,7 @@ var EventMachin = function () {
     value: function isMetaKey(e) {
       return e.metaKey;
     }
-  }, {
-    key: 'getDebounceTime',
-    value: function getDebounceTime(code) {
-      var debounceTime = 0;
-      if (code.indexOf('debounce(') > -1) {
-        debounceTime = +code.replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING);
-      }
 
-      return debounceTime;
-    }
     /* magic check method */
 
     /* after check method */
@@ -7736,98 +7906,6 @@ var EventMachin = function () {
     /* after check method */
 
   }, {
-    key: 'getDefaultEventObject',
-    value: function getDefaultEventObject(eventName, checkMethodFilters) {
-      var _this5 = this;
-
-      var arr = checkMethodFilters;
-      var checkMethodList = arr.filter(function (code) {
-        return !!_this5[code];
-      });
-
-      var afters = arr.filter(function (code) {
-        return code.indexOf('after(') > -1;
-      });
-
-      var afterMethods = afters.map(function (code) {
-        var _code$split$1$split$ = code.split('after(')[1].split(')')[0].trim().split(' '),
-            _code$split$1$split$2 = slicedToArray(_code$split$1$split$, 2),
-            target = _code$split$1$split$2[0],
-            param = _code$split$1$split$2[1];
-
-        return { target: target, param: param };
-      });
-
-      // TODO: split debounce check code 
-      var delay = arr.filter(function (code) {
-        if (code.indexOf('debounce(') > -1) {
-          return true;
-        }
-        return false;
-      });
-
-      var debounceTime = 0;
-      if (delay.length) {
-        debounceTime = this.getDebounceTime(delay[0]);
-      }
-
-      // capture 
-      var capturing = arr.filter(function (code) {
-        return code.indexOf('capture') > -1;
-      });
-      var useCapture = !!capturing.length;
-
-      // FIT 
-      var fit$$1 = arr.filter(function (code) {
-        return code.indexOf('fit') > -1;
-      });
-      var useFit = !!fit$$1.length;
-
-      arr = arr.filter(function (code) {
-        return checkMethodList.includes(code) === false && delay.includes(code) === false && afters.includes(code) === false && capturing.includes(code) === false && fit$$1.includes(code) === false;
-      }).map(function (code) {
-        return code.toLowerCase();
-      });
-
-      // TODO: split debounce check code     
-
-      return {
-        eventName: eventName,
-        codes: arr,
-        useCapture: useCapture,
-        useFit: useFit,
-        afterMethods: afterMethods,
-        debounce: debounceTime,
-        checkMethodList: checkMethodList
-      };
-    }
-  }, {
-    key: 'bindingEvent',
-    value: function bindingEvent(_ref, checkMethodFilters, callback) {
-      var _ref2 = toArray(_ref),
-          eventName = _ref2[0],
-          dom = _ref2[1],
-          delegate = _ref2.slice(2);
-
-      var eventObject = this.getDefaultEventObject(eventName, checkMethodFilters);
-
-      eventObject.dom = this.getDefaultDomElement(dom);
-      eventObject.delegate = delegate.join(SAPARATOR);
-
-      this.addEvent(eventObject, callback);
-    }
-  }, {
-    key: 'matchPath',
-    value: function matchPath(el, selector) {
-      if (el) {
-        if (el.matches(selector)) {
-          return el;
-        }
-        return this.matchPath(el.parentElement, selector);
-      }
-      return null;
-    }
-  }, {
     key: 'getBindings',
     value: function getBindings() {
 
@@ -7848,100 +7926,12 @@ var EventMachin = function () {
       this._bindings = [];
     }
   }, {
-    key: 'checkEventType',
-    value: function checkEventType(e, eventObject) {
-      var _this6 = this;
-
-      // 특정 keycode 를 가지고 있는지 체크 
-      // keyup.pagedown  이라고 정의하면 pagedown 키를 눌렀을때만 동작 함 
-      var hasKeyCode = true;
-      if (eventObject.codes.length) {
-
-        hasKeyCode = (e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false) || (e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false);
-      }
-
-      // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
-      var isAllCheck = true;
-      if (eventObject.checkMethodList.length) {
-        isAllCheck = eventObject.checkMethodList.every(function (field) {
-          var fieldValue = _this6[field];
-          if (isFunction(fieldValue) && fieldValue) {
-            // check method 
-            return fieldValue.call(_this6, e);
-          } else if (isNotUndefined(fieldValue)) {
-            // check field value
-            return !!fieldValue;
-          }
-          return true;
-        });
-      }
-
-      return hasKeyCode && isAllCheck;
-    }
-  }, {
-    key: 'makeCallback',
-    value: function makeCallback(eventObject, callback) {
-      var _this7 = this;
-
-      if (eventObject.debounce) {
-        callback = debounce(callback, eventObject.debounce);
-      } else if (eventObject.useFit) {
-        callback = fit(callback);
-      }
-
-      if (eventObject.delegate) {
-        return function (e) {
-          var delegateTarget = _this7.matchPath(e.target || e.srcElement, eventObject.delegate);
-
-          if (delegateTarget) {
-            // delegate target 이 있는 경우만 callback 실행 
-            e.$delegateTarget = new Dom(delegateTarget);
-            e.xy = Event.posXY(e);
-
-            if (_this7.checkEventType(e, eventObject)) {
-              var returnValue = callback(e, e.$delegateTarget, e.xy);
-
-              if (eventObject.afterMethods.length) {
-                eventObject.afterMethods.forEach(function (after) {
-                  return _this7[after.target].call(_this7, after.param);
-                });
-              }
-
-              return returnValue;
-            }
-          }
-        };
-      } else {
-        return function (e) {
-          e.xy = Event.posXY(e);
-          if (_this7.checkEventType(e, eventObject)) {
-            var returnValue = callback(e);
-
-            if (eventObject.afterMethods.length) {
-              eventObject.afterMethods.forEach(function (after) {
-                _this7[after.target].call(_this7, after.param);
-              });
-            }
-
-            return returnValue;
-          }
-        };
-      }
-    }
-  }, {
-    key: 'addEvent',
-    value: function addEvent(eventObject, callback) {
-      eventObject.callback = this.makeCallback(eventObject, callback);
-      this.addBinding(eventObject);
-      Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, eventObject.useCapture);
-    }
-  }, {
     key: 'removeEventAll',
     value: function removeEventAll() {
-      var _this8 = this;
+      var _this5 = this;
 
       this.getBindings().forEach(function (obj) {
-        _this8.removeEvent(obj);
+        _this5.removeEvent(obj);
       });
       this.initBindings();
     }
@@ -18511,10 +18501,9 @@ var LayerAngle = function (_UIElement) {
         value: function setAngle(rotate) {
             var _this2 = this;
 
-            this.read(SELECTION_CURRENT_LAYER_ID, function (ids) {
-                ids.forEach(function (id) {
-                    _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
-                });
+            this.read(SELECTION_IDS).forEach(function (id) {
+                var newRotate = (_this2.cachedRotate[id] + (rotate - _this2.cachedRotate[id])) % 360;
+                _this2.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: newRotate });
             });
         }
     }, {
@@ -18536,13 +18525,14 @@ var LayerAngle = function (_UIElement) {
             this.refreshUI(true);
         }
     }, {
-        key: POINTERSTART('$drag_pointer') + MOVE(),
-        value: function value(e) {
-            e.preventDefault();
-        }
-    }, {
         key: POINTERSTART('$dragAngle') + MOVE(),
         value: function value(e) {
+            var _this3 = this;
+
+            this.cachedRotate = {};
+            this.read(SELECTION_IDS).forEach(function (id) {
+                _this3.cachedRotate[id] = _this3.get(id).rotate || 0;
+            });
             this.refreshUI(e);
         }
     }]);
@@ -21032,7 +21022,7 @@ var TimelineObjectList = function (_UIElement) {
             var groupCollapsed = $parent.hasClass('group-collapsed');
 
             this.run(ITEM_SET, { id: id, groupCollapsed: groupCollapsed });
-            this.emit('collapsedGroupTimelineTree', id, $parent.hasClass('group-collapsed'));
+            this.emit('collapsedGroupTimelineTree', id, groupCollapsed);
         }
     }, {
         key: CLICK('$el .timeline-collapse > .property-title'),
@@ -21040,14 +21030,17 @@ var TimelineObjectList = function (_UIElement) {
             var $parent = e.$delegateTarget.parent();
             $parent.toggleClass('collapsed');
 
-            var subkey = $parent.attr('data-sub-key');
-            var id = $parent.attr('data-timeline-id');
+            var _$parent$attrs = $parent.attrs('data-sub-key', 'data-timeline-id'),
+                _$parent$attrs2 = slicedToArray(_$parent$attrs, 2),
+                subkey = _$parent$attrs2[0],
+                id = _$parent$attrs2[1];
 
             var timeline = this.get(id);
-            var collapse = _extends({}, timeline.collapse, defineProperty({}, subkey, $parent.hasClass('collapsed')));
+            var isCollapsed = $parent.hasClass('collapsed');
+            var collapse = _extends({}, timeline.collapse, defineProperty({}, subkey, isCollapsed));
 
             this.run(ITEM_SET, { id: id, collapse: collapse });
-            this.emit('collapsedTimelineTree', id, subkey, $parent.hasClass('collapsed'));
+            this.emit('collapsedTimelineTree', id, subkey, isCollapsed);
         }
     }, {
         key: EVENT('collapsedTimelineTree'),
@@ -21062,13 +21055,8 @@ var TimelineObjectList = function (_UIElement) {
             $propertyGroup.toggleClass('group-collapsed', isGroupCollapsed);
         }
     }, {
-        key: EVENT(CHANGE_TIMELINE),
+        key: EVENT(CHANGE_TIMELINE, ADD_TIMELINE),
         value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(ADD_TIMELINE),
-        value: function value$$1(id) {
             this.refresh();
         }
     }, {
@@ -21583,7 +21571,7 @@ var KeyframeTimeView = function (_UIElement) {
             this.refs.$canvas.update(function () {
                 var rect = this.rect();
 
-                this.drawOption(_extends({ strokeStyle: 'rgba(0, 0, 0, 0.5)', lineWidth: 0.5 }, textOption));
+                this.drawOption(_extends({ strokeStyle: 'rgba(204, 204, 204, 0.3)', lineWidth: 0.5 }, textOption));
                 var startSecond = startTime;
                 var viewSecond = viewTime;
                 var distSecond = timeDist;
@@ -21598,7 +21586,7 @@ var KeyframeTimeView = function (_UIElement) {
                         if (viewSecond % one_second === 0) {
                             var y = rect.height / 2;
                             // this.drawLine(startX, y, startX, rect.height);
-                            this.drawOption({ fillStyle: '#333' });
+                            this.drawOption({ fillStyle: '#ececec' });
                             this.drawText(startX, y, secondStringS);
                         } else {
                             var y = rect.height / 2;
@@ -21606,16 +21594,16 @@ var KeyframeTimeView = function (_UIElement) {
                             // this.drawLine(startX, y, startX, rect.height);
 
                             if (width > 0.4) {
-                                this.drawOption({ fillStyle: '#333' });
+                                this.drawOption({ fillStyle: '#ececec' });
                                 this.drawText(startX, y, secondStringS);
                             } else {
                                 var currentView = viewSecond % 1000 / 100;
                                 if (currentView === 5) {
-                                    this.drawOption({ fillStyle: '#333' });
+                                    this.drawOption({ fillStyle: '#ececec' });
                                     this.drawText(startX, y, secondString);
                                 } else {
-                                    this.drawOption({ fillStyle: 'rgba(0, 0, 0, 0.5)' });
-                                    this.drawCircle(startX, y, 0.5);
+                                    this.drawOption({ fillStyle: 'rgba(204, 204, 204, 0.3)' });
+                                    this.drawCircle(startX, y, 1);
                                 }
                             }
                         }
@@ -21629,7 +21617,7 @@ var KeyframeTimeView = function (_UIElement) {
                 var left = (cursorTime - currentTime) * width;
                 var markTop = 10;
                 var markWidth = 4;
-                this.drawOption({ strokeStyle: 'rgba(0, 0, 0, 0.5)', fillStyle: 'rgba(236, 236, 236, 0.5)', lineWidth: 1 });
+                this.drawOption({ strokeStyle: 'rgba(204, 204, 204, 0.3)', fillStyle: 'rgba(204, 204, 204, 0.3)', lineWidth: 1 });
                 this.drawPath([left - markWidth, rect.height - markTop], [left + markWidth, rect.height - markTop], [left + markWidth, rect.height - markWidth], [left, rect.height], [left - markWidth, rect.height - markWidth], [left - markWidth, rect.height - markTop]);
             });
         }
@@ -21674,6 +21662,35 @@ var TimelineTopToolbar = function (_UIElement) {
     return TimelineTopToolbar;
 }(UIElement);
 
+var TimelineSplitter = function (_UIElement) {
+    inherits(TimelineSplitter, _UIElement);
+
+    function TimelineSplitter() {
+        classCallCheck(this, TimelineSplitter);
+        return possibleConstructorReturn(this, (TimelineSplitter.__proto__ || Object.getPrototypeOf(TimelineSplitter)).apply(this, arguments));
+    }
+
+    createClass(TimelineSplitter, [{
+        key: "templateClass",
+        value: function templateClass() {
+            return 'timeline-splitter';
+        }
+    }, {
+        key: "move",
+        value: function move() {
+            var dy = this.config('pos').y - this.initXY.y;
+            this.emit(CHANGE_HEIGHT_TIMELINE, { dy: dy });
+        }
+    }, {
+        key: POINTERSTART() + MOVE(),
+        value: function value(e) {
+            this.initXY = e.xy;
+            this.emit(INIT_HEIGHT_TIMELINE);
+        }
+    }]);
+    return TimelineSplitter;
+}(UIElement);
+
 var Timeline = function (_UIElement) {
     inherits(Timeline, _UIElement);
 
@@ -21698,6 +21715,7 @@ var Timeline = function (_UIElement) {
         key: "components",
         value: function components() {
             return {
+                TimelineSplitter: TimelineSplitter,
                 TimelineTopToolbar: TimelineTopToolbar,
                 KeyframeTimeView: KeyframeTimeView,
                 TimelineObjectList: TimelineObjectList,
@@ -25348,7 +25366,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-middle">\n                    <div class="layout-left">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class="layout-body">\n                        <LayerToolbar />\n                        <VerticalColorStep />\n                        <HandleView />\n                    </div>                \n                    <div class="layout-right">\n                        <Alignment />\n                        <FeatureControl />\n                        <ClipPathImageList />\n                    </div>\n                </div>\n                <div class="layout-footer">\n                    <Timeline />\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />                \n            </div>\n  \n        ';
+            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-middle">\n                    <div class="layout-left">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class="layout-body">\n                        <LayerToolbar />\n                        <VerticalColorStep />\n                        <HandleView />\n                    </div>                \n                    <div class="layout-right">\n                        <Alignment />\n                        <FeatureControl />\n                        <ClipPathImageList />\n                    </div>\n                </div>\n                <div class="layout-footer" ref="$footer">\n                    <TimelineSplitter />\n                    <Timeline />\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />                \n            </div>\n  \n        ';
         }
     }, {
         key: 'components',
@@ -25366,6 +25384,7 @@ var CSSEditor$1 = function (_UIElement) {
                 HandleView: HandleView,
                 FeatureControl: FeatureControl,
                 SubFeatureControl: SubFeatureControl,
+                TimelineSplitter: TimelineSplitter,
                 Timeline: Timeline
             };
         }
@@ -25436,6 +25455,16 @@ var CSSEditor$1 = function (_UIElement) {
         key: RESIZE('window'),
         value: function value(e) {
             this.emit(RESIZE_WINDOW);
+        }
+    }, {
+        key: EVENT(INIT_HEIGHT_TIMELINE),
+        value: function value() {
+            this.initFooterHeight = this.refs.$footer.height();
+        }
+    }, {
+        key: EVENT(CHANGE_HEIGHT_TIMELINE),
+        value: function value(size) {
+            this.refs.$footer.px('height', this.initFooterHeight - size.dy);
         }
     }]);
     return CSSEditor;

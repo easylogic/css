@@ -41,7 +41,7 @@ export default class KeyframeTimeView extends UIElement {
         this.refs.$canvas.update(function () {
             var rect = this.rect();
 
-            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)',  lineWidth: 0.5, ...textOption})
+            this.drawOption({strokeStyle: 'rgba(204, 204, 204, 0.3)',  lineWidth: 0.5, ...textOption})
             var startSecond = startTime; 
             var viewSecond = viewTime;
             var distSecond = timeDist; 
@@ -55,7 +55,7 @@ export default class KeyframeTimeView extends UIElement {
                     if (viewSecond % one_second === 0) {
                         var y = rect.height / 2;
                         // this.drawLine(startX, y, startX, rect.height);
-                        this.drawOption({ fillStyle: '#333'})
+                        this.drawOption({ fillStyle: '#ececec'})
                         this.drawText(startX, y, secondStringS)
                     } else {
                         var y = rect.height / 2;
@@ -63,16 +63,16 @@ export default class KeyframeTimeView extends UIElement {
                         // this.drawLine(startX, y, startX, rect.height);
 
                         if (width > 0.4) {
-                            this.drawOption({ fillStyle: '#333'})                            
+                            this.drawOption({ fillStyle: '#ececec'})                            
                             this.drawText(startX, y, secondStringS)
                         } else {
                             var currentView = (viewSecond % 1000)/100;
                             if ( currentView === 5) {
-                                this.drawOption({ fillStyle: '#333'})                                
+                                this.drawOption({ fillStyle: '#ececec'})                                
                                 this.drawText(startX, y, secondString)
                             } else {
-                                this.drawOption({ fillStyle: 'rgba(0, 0, 0, 0.5)'})
-                                this.drawCircle(startX, y, 0.5)
+                                this.drawOption({ fillStyle: 'rgba(204, 204, 204, 0.3)'})
+                                this.drawCircle(startX, y, 1)
                             }
 
                         }
@@ -87,7 +87,7 @@ export default class KeyframeTimeView extends UIElement {
             var left =  (cursorTime - currentTime) * width;
             var markTop = 10
             var markWidth = 4
-            this.drawOption({strokeStyle: 'rgba(0, 0, 0, 0.5)',fillStyle: 'rgba(236, 236, 236, 0.5)', lineWidth: 1})
+            this.drawOption({strokeStyle: 'rgba(204, 204, 204, 0.3)',fillStyle: 'rgba(204, 204, 204, 0.3)', lineWidth: 1})
             this.drawPath(
                 [left - markWidth, rect.height - markTop],
                 [left + markWidth, rect.height - markTop],

@@ -10,16 +10,13 @@
     height: 100%;
     pointer-events: none;
     z-index: 100;
-    box-sizing: border-box;      
 
     .predefined-layer-resizer {
         display: block;
         text-align: center;
         position: absolute;
         pointer-events: none;
-        // border:2px solid $editor-line-color;
         box-shadow: 0 0 0 1px $editor-line-color;
-        box-sizing: border-box;      
 
         &:before {
             position: absolute;
@@ -46,7 +43,6 @@
             left: 0px;
             right: 0px;
             bottom: 0px;
-            box-sizing: border-box;
         }
 
         .event-panel {
@@ -56,7 +52,6 @@
             left: 0px;
             right: 0px;
             bottom: 0px;
-            box-sizing: border-box;
         }
         
         .guide-horizontal {
@@ -91,7 +86,6 @@
             cursor: pointer;
             position: absolute;
             display: inline-block;
-            box-sizing: border-box;
             width: $editor-resizer-width;
             height: $editor-resizer-width;
             border-radius: 100%;     
@@ -164,7 +158,6 @@
                 top: -30px;
                 transform: translateX(-50%);
                 background-color: rgba(255, 255, 255, 0.5);
-                box-sizing: border-box;
                 border-radius: 50%;          
 
                 &:before {
@@ -175,7 +168,6 @@
                     width: 7px;
                     height: 7px;
                     transform: translateX(-50%) translateY(-50%);
-                    box-sizing: border-box;
                     border-radius: 50%;
                     border: 1px solid rgba(0, 0, 0, 0.8);
                     

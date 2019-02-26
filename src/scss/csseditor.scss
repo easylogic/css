@@ -3,6 +3,13 @@ html,body {
     padding:0px;
     margin:0px;
     overflow: hidden;
+    box-sizing: border-box;    
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
 }
 
 .csseditor {

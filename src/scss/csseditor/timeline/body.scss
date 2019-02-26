@@ -5,7 +5,6 @@
 
     .row {
         position: relative;
-        box-sizing: border-box;
         display: block;
         height: $timeline-row-height;
         padding: 2px 0px;
@@ -13,7 +12,7 @@
         background-position: 0% 100%;
         background-size: 100% 1px;
         background-repeat: no-repeat;
-        background-image: linear-gradient(to right, $timeline-keyframe-border-color, $timeline-keyframe-border-color);
+        background-image: linear-gradient(to right, rgba($timeline-keyframe-border-color, 0.1), rgba($timeline-keyframe-border-color, 0.1));
     }
 
     @import './timeline-list.scss';

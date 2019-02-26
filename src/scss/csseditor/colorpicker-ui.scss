@@ -8,18 +8,14 @@
             width: 240px;
 
             .color-list {
-                // padding-top: 5px;
-                // padding-left: 5px;
                 .current-color-sets {
                     .color-item {
                         width: 20px;
                         height: 20px;
                         margin: 2px !important;
-                        box-sizing: border-box;
                     }
 
                     .add-color-item {
-                        box-sizing: border-box;
                         width: 20px;
                         height: 20px;
                         margin: 0px !important;                        

@@ -19,8 +19,6 @@
             right: -1px;
             position: absolute;
             z-index: 0;
-            // border: 1px solid #ececec;
-            box-sizing: border-box;
             @include transparent-background();             
         }
 
@@ -28,12 +26,7 @@
             position: relative;
             padding: 0px;
             margin: 0px;
-            // border:1px solid #ececec;        
-            box-sizing: border-box;
             cursor: pointer;
-            // overflow:hidden;
-
-
 
             > .step-list {
                 position: relative;
@@ -54,9 +47,7 @@
                 box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.6);            
                 width: 10px;
                 height: 10px;                    
-                box-sizing: border-box;
                 transform: none;
-                // overflow: hidden;
                 border-radius: 50%;
                 display: inline-block;
                 left: 0px;
@@ -69,12 +60,10 @@
                 transition: top 0.3s ease-out;
 
                 .guide-line {
-                    // display: none;
                     pointer-events: none;
                     position: absolute;
                     width: 1px;
                     height: 0px;
-                    box-sizing: border-box;
                     bottom: 8px;
                     left: 3px;
                     transform: translateX(-1px);                    

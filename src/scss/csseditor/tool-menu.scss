@@ -1,6 +1,5 @@
 .tool-menu {
     height: 100%;
-    box-sizing: border-box;
     display: flex; 
     padding-left: 10px;
     padding-right: 10px;
@@ -9,7 +8,6 @@
         flex: 1 1 auto;
         text-align: center;
         height: 100%;
-        box-sizing: border-box;
         padding: 0px 5px;
 
         &.flex-2 {
@@ -35,7 +33,6 @@
             border: 0px;
             display: inline-block;
             padding: 10px 2px;
-            box-sizing: border-box;
             text-decoration: none;
             color: #333333;
             line-height: 1.6;
@@ -57,12 +54,10 @@
             width : 30px;
             height: 30px;
             background-color: rgba(206, 206, 206, 0.5);
-            box-sizing: border-box;
 
             &.rect {
                 background-color: transparent;
                 border: 1px solid $border-color;
-
             }
 
             &.circle {

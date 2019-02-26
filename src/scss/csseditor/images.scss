@@ -3,13 +3,11 @@ $image-item-width: 30px;
 
 .image-list {
     display: inline-block;
-    box-sizing: border-box;
     text-align: center;
     border-left: 1px solid #ececec;
     
     .tree-item {
         display: inline-block;
-        // margin-bottom: 5px;
         cursor: pointer;
         position: relative;
         overflow: hidden;
@@ -17,7 +15,6 @@ $image-item-width: 30px;
         vertical-align: middle;
         height: $image-item-height;
         width: $image-item-width;
-        box-sizing: border-box;
         margin-right: 1px;
 
         &.selected {
@@ -32,11 +29,9 @@ $image-item-width: 30px;
 
         .item-view-container {
             position: relative; 
-            // @include transparent-background();
             pointer-events: none;
             display: inline-block;
             vertical-align: middle;
-            box-sizing: border-box;
             height: $image-item-height *2;
             width: $image-item-width *2;
             transform: scale(0.5);

@@ -2,7 +2,7 @@ import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../colorpicker/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
-import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
+import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IDS } from '../../../types/SelectionTypes';
 import { isUndefined } from '../../../../util/functions/func';
 
 export default class LayerAngle extends UIElement {
@@ -90,11 +90,9 @@ export default class LayerAngle extends UIElement {
     }
 
     setAngle (rotate) {
-
-        this.read(SELECTION_CURRENT_LAYER_ID, (ids) => {
-            ids.forEach(id => {
-                this.commit(CHANGE_LAYER_ROTATE, {id, rotate});
-            })
+        this.read(SELECTION_IDS).forEach( id => {
+            var newRotate = (this.cachedRotate[id] + (rotate - this.cachedRotate[id]) ) % 360
+            this.commit(CHANGE_LAYER_ROTATE, {id, rotate: newRotate});
         })
     }
 
@@ -113,11 +111,11 @@ export default class LayerAngle extends UIElement {
         this.refreshUI(true);
     }
 
-    [POINTERSTART('$drag_pointer') + MOVE()] (e) {
-        e.preventDefault();
-    }
-
     [POINTERSTART('$dragAngle') + MOVE()] (e) {
+        this.cachedRotate = {}
+        this.read(SELECTION_IDS).forEach( id => {
+            this.cachedRotate[id] = this.get(id).rotate || 0;
+        })
         this.refreshUI(e);        
     }     
 

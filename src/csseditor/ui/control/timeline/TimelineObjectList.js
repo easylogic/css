@@ -140,21 +140,21 @@ export default class TimelineObjectList extends UIElement {
         var groupCollapsed = $parent.hasClass('group-collapsed')
 
         this.run(ITEM_SET, {id, groupCollapsed })
-        this.emit('collapsedGroupTimelineTree', id, $parent.hasClass('group-collapsed'));
+        this.emit('collapsedGroupTimelineTree', id, groupCollapsed);
     }
 
     [CLICK('$el .timeline-collapse > .property-title')] (e) {
         var $parent = e.$delegateTarget.parent();
         $parent.toggleClass('collapsed')
 
-        var subkey = $parent.attr('data-sub-key');
-        var id = $parent.attr('data-timeline-id')
+        var [subkey, id] = $parent.attrs('data-sub-key', 'data-timeline-id');
 
         var timeline = this.get(id);
-        var collapse = {...timeline.collapse, [subkey]: $parent.hasClass('collapsed')}
+        var isCollapsed = $parent.hasClass('collapsed')
+        var collapse = {...timeline.collapse, [subkey]: isCollapsed}
 
         this.run(ITEM_SET, {id, collapse })
-        this.emit('collapsedTimelineTree', id, subkey, $parent.hasClass('collapsed'));
+        this.emit('collapsedTimelineTree', id, subkey, isCollapsed);
     }
 
     [EVENT('collapsedTimelineTree')] (id, subkey, isCollapsed) {
@@ -167,11 +167,7 @@ export default class TimelineObjectList extends UIElement {
         $propertyGroup.toggleClass('group-collapsed', isGroupCollapsed)
     }
 
-    [EVENT(CHANGE_TIMELINE)] () {
-        this.refresh();
-    }
-
-    [EVENT(ADD_TIMELINE)] (id) {
+    [EVENT(CHANGE_TIMELINE, ADD_TIMELINE)] () {
         this.refresh();
     }
 

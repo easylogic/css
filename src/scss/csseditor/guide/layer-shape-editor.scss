@@ -6,9 +6,6 @@
     height: 100%;
     pointer-events: none;
     z-index: 10000;
-    box-sizing: border-box;      
-    // border: 1px solid black; 
-
 
     .layer-shape-circle-editor,
     .layer-shape-ellipse-editor {
@@ -23,7 +20,6 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            box-sizing: border-box;
             transform: translateX(-50%) translateY(-50%);
             background-color: rgba(red, 0.8); 
             pointer-events: all;
@@ -37,7 +33,6 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            box-sizing: border-box;            
             transform: translateX(-50%) translateY(-50%);
             background-color: rgba(green, 0.8); 
             pointer-events: all;
@@ -54,19 +49,11 @@
         top: 0px;
         bottom: 0px;
 
-        // > .drag-item {
-        //     background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-        //     background-size: 1px 1px;
-        //     background-position: center 0px, 0px center;
-        //     background-repeat: repeat-y, repeat-x;
-        // }
-
         .top {
             position: absolute;
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            box-sizing: border-box;
             left: 50%;
             transform: translateX(-50%) translateY(-50%);
             background-color: rgba(red, 0.8); 
@@ -81,7 +68,6 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            box-sizing: border-box;
             left: 50%;
             top: 100%;
             transform: translateX(-50%) translateY(-50%);
@@ -96,7 +82,6 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            box-sizing: border-box;
             top: 50%;
             transform: translateY(-50%) translateX(-50%);
             background-color: rgba(rgb(0, 146, 12), 0.8); 
@@ -110,7 +95,6 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            box-sizing: border-box;
             top: 50%;
             left: 100%;
             transform: translateY(-50%) translateX(-50%);
@@ -130,15 +114,12 @@
         bottom: 0px;
         pointer-events: all;
         border: 1px solid rgba(0, 146, 12, 0.9);
-        box-sizing: border-box;
-
 
         > .drag-item {
             position: absolute;
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            box-sizing: border-box;
             top: 50%;
             left: 100%;
             transform: translateY(-50%) translateX(-50%);

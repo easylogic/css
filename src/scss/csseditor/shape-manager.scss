@@ -6,19 +6,16 @@ $layer-item-padding: 4px;
 
 .shapes {
     position: relative;
-    box-sizing: border-box;
     border-bottom: 1px solid $border-color;
 
     > h1 {
         font-size: 11px;
         margin: 0 auto;
         padding: 5px;
-        // background-color: #ececec;
         font-weight: 400;
     }
     
     .shapes-list {
-        box-sizing: border-box;
         display: grid;
         grid-template-columns:  1fr 1fr 1fr;
         width: 100%;
@@ -29,7 +26,6 @@ $layer-item-padding: 4px;
             appearance: none;
             display: inline-block;
             margin: 10px;
-            box-sizing: border-box;
             border: 1px solid #ececec;
             cursor: pointer;
             position: relative;

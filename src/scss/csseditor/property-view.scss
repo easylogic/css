@@ -4,7 +4,6 @@
     right: 0px;
     bottom: 0px;
     top: 0px;
-    box-sizing: border-box;
     overflow: auto;
 
     .property {
@@ -22,7 +21,6 @@
             font-size: 11px;
             font-weight: 400;
             padding: 8px 5px !important;
-            box-sizing: border-box;
             height: 24px;
             color: #333;
             cursor: pointer;
@@ -38,7 +36,6 @@
                 button {
                     appearance: none;
                     border: 1px solid #ececec;
-                    box-sizing: border-box;
                     display: inline-block;
                     height: 100%;
                 }
@@ -168,18 +165,14 @@
 
     .property-item {
         padding: 0px;
-        // border-bottom: 1px solid #ececec;
         font-size: 11px;
         overflow: hidden; 
-        // margin-bottom: 2px;
         
         > .title {
             font-size: 11px;
             font-weight: 400;
             padding: 8px 5px !important;
-            box-sizing: border-box;
             height: 30px;
-            // background-color: #f3f3f3;
             color: #333;
             cursor: pointer;
 
@@ -189,7 +182,6 @@
                 button {
                     appearance: none;
                     border: 1px solid #ececec;
-                    box-sizing: border-box;
                     display: inline-block;
                     height: 100%;
                 }
@@ -249,7 +241,6 @@
                 margin-left: 4px;
                 text-align: right;
                 padding-right: 5px;
-                box-sizing: border-box;
 
                 &.left {
                     text-align: left;
@@ -291,8 +282,7 @@
 
                 input[type=number], input[type=text] {
                     width: 40px;
-                    vertical-align: middle;        
-                    box-sizing: border-box;            
+                    vertical-align: middle;               
 
                     &.middle {
                         width: 50px;
@@ -343,7 +333,6 @@
                     margin-left: 4px; 
                     margin-right: 10px;
                     vertical-align: middle;
-                    box-sizing: border-box;
 
                     &.background-transparent {
                         height: 30px;
@@ -355,8 +344,7 @@
                             display:  block;
                             height: 100%;
                             width: 100%;
-                            border: 1px solid $border-color;
-                            box-sizing: border-box;               
+                            border: 1px solid $border-color;         
                         }
                     }
 
@@ -396,7 +384,6 @@
                 margin-left: 4px;
                 text-align: left;
                 padding-right: 5px;
-                box-sizing: border-box;
             }
 
             > div {
@@ -411,8 +398,7 @@
 
                 input[type=number], input[type=text] {
                     width: 60px;
-                    vertical-align: middle;        
-                    box-sizing: border-box;            
+                    vertical-align: middle;                 
 
                     &.full {
                         width: 160px;
@@ -421,7 +407,6 @@
 
                     &:disabled {
                         background-color: $border-color;
-                        // appearance: none;
                         border:1px solid $border-color;
                         cursor: not-allowed;
                     }
@@ -430,7 +415,6 @@
                 .input {
                     display: flex;
                     input[type=number], input[type=text] {
-                        // width: 30px;
                         flex:1 1 auto;
                     }
 

@@ -37,7 +37,6 @@ $title-height: 30px;
             right: 0px;
             height: 300px;
             top: 0px;
-            box-sizing: border-box;
 
             .title {
                 position: absolute;
@@ -47,7 +46,6 @@ $title-height: 30px;
                 height: $title-height;
                 background-color: #ececec;
                 font-size: 12px;
-                box-sizing: border-box;        
                 
                 .tools {
                     float: left; 
@@ -58,7 +56,6 @@ $title-height: 30px;
                         min-width: 80px;
                         height: 100%;
                         text-align: center;
-                        box-sizing: border-box;
                         padding:5px;
                         cursor: pointer;
                         &.selected {
@@ -84,7 +81,6 @@ $title-height: 30px;
                         display: inline-block;
                         appearance: none;
                         height: 100%;
-                        box-sizing: border-box;
                         margin: 0px;
                         padding: 5px;
                         border: 1px solid $border-color;
@@ -99,7 +95,6 @@ $title-height: 30px;
                 right: 0px;
                 bottom: 0px;
                 top: $title-height;
-                box-sizing: border-box;
     
                 .CodeMirror {
                     height: 100%;
@@ -132,7 +127,6 @@ $title-height: 30px;
             left: 0px;
             top: 300px;
             bottom: 0px;
-            box-sizing: border-box;
             overflow: auto;
 
             .title {
@@ -143,8 +137,7 @@ $title-height: 30px;
                 height: $title-height;
                 background-color: #ececec;
                 font-size: 12px;
-                padding: 5px;
-                box-sizing: border-box;                
+                padding: 5px;        
             }
 
             .preview {
@@ -153,7 +146,6 @@ $title-height: 30px;
                 left: 0px;
                 top: $title-height;
                 bottom: 0px;
-                box-sizing: border-box;
                 overflow: auto;
             }        
         }         

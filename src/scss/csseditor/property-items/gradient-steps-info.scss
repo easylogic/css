@@ -7,7 +7,6 @@
 
         .form-item {
             font-size: 12px;
-            box-sizing: border-box;
             margin: 2px 0px;
             width: 100%;
 
@@ -70,7 +69,6 @@
                     height: 16px;
                     margin-top: 2px;
                     margin-right: 2px;
-                    box-sizing: border-box;
                     position: relative;
                     @include transparent-background(5px);
                     border: 1px solid #ececec;
@@ -92,7 +90,6 @@
                     flex: none;
                     height: 20px;
                     margin-right: 2px;
-                    box-sizing: border-box;
                     position: relative;
                     vertical-align: middle;
 
@@ -100,7 +97,6 @@
                         position: absolute;
                         width: 12px;
                         height: 12px;
-                        box-sizing: border-box;
                         top: 50%;
                         left: 0px;
                         transform: translateY(-50%);

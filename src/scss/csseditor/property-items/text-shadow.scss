@@ -7,7 +7,6 @@
             display: block;
             margin-top: 2px;
             padding: 2px 4px;
-            box-sizing: border-box;
             box-shadow: inset 0px 0px 0px 1px $border-color;            
 
             > div {
@@ -34,7 +33,6 @@
                     position: absolute;
                     width: 80px;
                     height: 80px;
-                    box-sizing: border-box;
                     right: 30px;
                     top: 28px;
                     border: 1px solid #ececec;
@@ -53,7 +51,6 @@
                         transform-origin: center center;
                         transform: translateX(-50%) translateY(-50%);
                         pointer-events: none;
-                        box-sizing: border-box;
                     }
                 }
             }
@@ -67,7 +64,6 @@
                 height: 20px;
                 border:1px solid black; 
                 cursor: pointer;
-                box-sizing: border-box;
                 display: inline-block;
                 vertical-align: middle;
             }
