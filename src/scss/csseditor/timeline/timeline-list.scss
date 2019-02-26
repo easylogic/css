@@ -79,8 +79,9 @@
                         background-color: transparent;
                         display: inline-block;
                         height: 18px;
-                        border: 1px solid $border-color;
+                        border: 1px solid rgba($border-color, 0.1);
                         vertical-align: middle;
+                        color: #ececec;
                     } 
 
                     input {

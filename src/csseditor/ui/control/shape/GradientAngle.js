@@ -124,12 +124,6 @@ export default class GradientAngle extends UIElement {
         this.refreshUI(true);
     }
 
-    [POINTERSTART('$drag_pointer') + MOVE()] (e) {
-        e.preventDefault();
-    }
-
-    [POINTERSTART('$dragAngle') + MOVE()] (e) {
-
-    }     
+    [POINTERSTART('$dragAngle') + MOVE()] (e) { }     
 
 }

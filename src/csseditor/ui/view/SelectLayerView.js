@@ -1,5 +1,7 @@
 import BaseTab from "../BaseTab";
 import layerItems from "./layer-items/index";
+import OutlineTabView from "./OutlineTabView";
+
 
 
 
@@ -16,10 +18,10 @@ export default class SelectLayerView extends BaseTab {
                 </div>
                 <div class="tab-body" ref="$body">
                     <div class="tab-content" data-id="page">
-                        <PageListView />
+                        <PageSampleListView />
                     </div> 
                     <div class="tab-content selected" data-id="outline">
-                        <LayerListView />
+                        <OutlineTabView />
                     </div>
                     <div class="tab-content" data-id="layers">
                         <ShapeListView />
@@ -39,7 +41,8 @@ export default class SelectLayerView extends BaseTab {
 
     components() {
         return {
-            ...layerItems
+            ...layerItems,
+            OutlineTabView
         }
     }
 }

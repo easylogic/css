@@ -19,7 +19,7 @@ import { STORAGE_LOAD } from '../types/StorageTypes';
 import HotKey from '../ui/control/HotKey';
 import { LOAD_START } from '../types/LoadTypes';
 import UIElement, { EVENT } from '../../colorpicker/UIElement';
-import { RESIZE } from '../../util/Event';
+import { RESIZE, DEBOUNCE } from '../../util/Event';
 import { RESIZE_WINDOW, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE, INIT_HEIGHT_TIMELINE } from '../types/ToolTypes';
 import TimelineSplitter from '../ui/control/timeline/TimelineSplitter';
 
@@ -143,7 +143,7 @@ export default class CSSEditor extends UIElement {
         this.$el.toggleClass('has-layer-panel')
     }
 
-    [RESIZE('window')] (e) {
+    [RESIZE('window') + DEBOUNCE(100)] (e) {
         this.emit(RESIZE_WINDOW)
     }
 

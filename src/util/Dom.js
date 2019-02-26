@@ -194,15 +194,18 @@ export default class Dom {
     }
 
     appendHTML (html) {
-        const list = new Dom("div").html(html).children()
+        var $dom = new Dom("div").html(html)
+
+        this.append($dom.createChildrenFragment());
+    }
+
+    createChildrenFragment () {
+        const list = this.children()
     
         var fragment = document.createDocumentFragment()
+        list.forEach($el => fragment.appendChild($el.el))
 
-        list.forEach($el => {
-            fragment.appendChild($el.el);
-        })
-
-        this.append(fragment);
+        return fragment;
     }
     
     appendTo (target) {

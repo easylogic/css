@@ -10,6 +10,7 @@ import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
 import { SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { GUIDE_SNAP_LAYER } from '../../../types/GuideTypes';
 import { EMPTY_STRING, GUIDE_TYPE_HORIZONTAL } from '../../../../util/css/types';
+import { RESIZE_WINDOW } from '../../../types/ToolTypes';
 
 export default class MoveGuide extends UIElement {
 
@@ -63,9 +64,8 @@ export default class MoveGuide extends UIElement {
         CHANGE_SELECTION
     )] () { this.refresh() }
 
-
-    [RESIZE('window') + DEBOUNCE(300)] (e) {
+    [EVENT(RESIZE_WINDOW)] () {
         this.refresh();
-    }    
+    }
 
 }

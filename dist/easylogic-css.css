@@ -1412,11 +1412,11 @@ html, body {
       left: 5px;
       right: 5px;
       bottom: 5px; }
-      .csseditor .tab.inner .tab-header .tab-item {
+      .csseditor .tab.inner > .tab-header > .tab-item {
         border: 0px; }
-      .csseditor .tab.inner .tab-body {
+      .csseditor .tab.inner > .tab-body {
         border: 0px; }
-    .csseditor .tab .tab-header {
+    .csseditor .tab > .tab-header {
       position: absolute;
       left: 0px;
       right: 0px;
@@ -1425,9 +1425,9 @@ html, body {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex; }
-      .csseditor .tab .tab-header.no-border .tab-item {
+      .csseditor .tab > .tab-header.no-border > .tab-item {
         border: 0px !important; }
-      .csseditor .tab .tab-header .tab-item {
+      .csseditor .tab > .tab-header > .tab-item {
         -webkit-box-flex: 1;
             -ms-flex: 1;
                 flex: 1;
@@ -1440,21 +1440,23 @@ html, body {
         color: black;
         border: 1px solid #cccccc;
         min-width: 50px; }
-        .csseditor .tab .tab-header .tab-item:not(.selected) {
+        .csseditor .tab > .tab-header > .tab-item:not(.selected) {
           background-color: white;
           color: black; }
-        .csseditor .tab .tab-header .tab-item.selected {
+        .csseditor .tab > .tab-header > .tab-item.selected {
           background-color: #cccccc; }
-        .csseditor .tab .tab-header .tab-item.small-font {
+        .csseditor .tab > .tab-header > .tab-item.small-font {
           font-size: 11px; }
-    .csseditor .tab .tab-body {
+    .csseditor .tab > .tab-body {
       position: absolute;
       left: 0px;
       right: 0px;
       top: 30px;
       bottom: 0px;
       border: 1px solid #cccccc; }
-      .csseditor .tab .tab-body .tab-content {
+      .csseditor .tab > .tab-body.no-border {
+        border: 0px; }
+      .csseditor .tab > .tab-body > .tab-content {
         position: absolute;
         left: 0px;
         right: 0px;
@@ -1462,9 +1464,9 @@ html, body {
         bottom: 0px;
         display: none;
         overflow: auto; }
-        .csseditor .tab .tab-body .tab-content.selected {
+        .csseditor .tab > .tab-body > .tab-content.selected {
           display: block; }
-          .csseditor .tab .tab-body .tab-content.selected.flex {
+          .csseditor .tab > .tab-body > .tab-content.selected.flex {
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -1472,17 +1474,17 @@ html, body {
             -webkit-box-direction: normal;
                 -ms-flex-direction: column;
                     flex-direction: column; }
-        .csseditor .tab .tab-body .tab-content .fixed {
+        .csseditor .tab > .tab-body > .tab-content .fixed {
           -webkit-box-flex: 0;
               -ms-flex: none;
                   flex: none; }
-        .csseditor .tab .tab-body .tab-content .scroll {
+        .csseditor .tab > .tab-body > .tab-content .scroll {
           -webkit-box-flex: 1;
               -ms-flex: 1 1 auto;
                   flex: 1 1 auto;
           overflow: auto;
           position: relative; }
-          .csseditor .tab .tab-body .tab-content .scroll .tab-element-title {
+          .csseditor .tab > .tab-body > .tab-content .scroll .tab-element-title {
             position: absolute;
             top: 0px;
             left: 0px;
@@ -1499,71 +1501,47 @@ html, body {
     .csseditor .tab.bottom > .tab-header {
       top: auto;
       bottom: 1px; }
-      .csseditor .tab.bottom > .tab-header .tab-item.selected {
+      .csseditor .tab.bottom > .tab-header > .tab-item.selected {
         border-top: 1px solid #ffffff;
         border-bottom: 1px solid #cccccc; }
     .csseditor .tab.bottom > .tab-body {
       top: 0px;
       bottom: 30px; }
-    .csseditor .tab.horizontal.left .tab-header {
+    .csseditor .tab.horizontal.left > .tab-header {
       left: 0px;
       width: 50px;
       display: inline-block; }
-      .csseditor .tab.horizontal.left .tab-header .tab-item {
+      .csseditor .tab.horizontal.left > .tab-header > .tab-item {
         height: 50px;
         overflow: auto;
         line-height: 3;
         min-width: 50px; }
-    .csseditor .tab.horizontal.left .tab-body {
+    .csseditor .tab.horizontal.left > .tab-body {
       left: 50px;
       right: 0px;
       border-left: 1px solid #cccccc;
       border-right: 0px; }
-    .csseditor .tab.horizontal .tab-header {
+    .csseditor .tab.horizontal > .tab-header {
       left: auto;
       top: 0px;
       bottom: 0px;
       width: 60px;
       height: auto;
       display: inline-block; }
-      .csseditor .tab.horizontal .tab-header .tab-item {
+      .csseditor .tab.horizontal > .tab-header > .tab-item {
         border: 0px;
         border-bottom: 1px solid #cccccc;
         text-align: center;
         line-height: 3;
         height: 50px;
         min-width: 60px; }
-        .csseditor .tab.horizontal .tab-header .tab-item.selected {
+        .csseditor .tab.horizontal > .tab-header > .tab-item.selected {
           background-color: rgba(204, 204, 204, 0.5); }
-    .csseditor .tab.horizontal .tab-body {
+    .csseditor .tab.horizontal > .tab-body {
       top: 0px;
       right: 60px;
       border: 0px;
       border-right: 1px solid #cccccc; }
-  .csseditor .layer-menu-tab > .tab-header,
-  .csseditor .page-menu-tab > .tab-header,
-  .csseditor .image-menu-tab > .tab-header {
-    height: 32px; }
-    .csseditor .layer-menu-tab > .tab-header > .tab-item,
-    .csseditor .page-menu-tab > .tab-header > .tab-item,
-    .csseditor .image-menu-tab > .tab-header > .tab-item {
-      border: 0px;
-      border-right: 1px solid #cccccc;
-      text-align: center;
-      vertical-align: middle;
-      line-height: 1.2;
-      padding: 10px 5px;
-      font-size: 12px; }
-      .csseditor .layer-menu-tab > .tab-header > .tab-item:last-child,
-      .csseditor .page-menu-tab > .tab-header > .tab-item:last-child,
-      .csseditor .image-menu-tab > .tab-header > .tab-item:last-child {
-        border-right: 0px; }
-  .csseditor .layer-menu-tab > .tab-body,
-  .csseditor .page-menu-tab > .tab-body,
-  .csseditor .image-menu-tab > .tab-body {
-    top: 32px;
-    border: 0px;
-    border-top: 1px solid #cccccc; }
   .csseditor .unit-range {
     pointer-events: all;
     display: block !important; }
@@ -1881,9 +1859,10 @@ html, body {
     .csseditor .pages .page-list .tree-item {
       cursor: pointer;
       position: relative;
-      height: 50px;
       padding: 10px 10px;
-      vertical-align: top; }
+      vertical-align: top;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
       .csseditor .pages .page-list .tree-item.selected {
         background-color: white;
         border-right: 1px solid white;
@@ -1892,14 +1871,15 @@ html, body {
         .csseditor .pages .page-list .tree-item.selected:not(:first-child) {
           border-top: 1px solid #cccccc; }
       .csseditor .pages .page-list .tree-item .item-preview {
-        height: 40px;
-        width: 40px;
-        background-color: #333;
+        height: 120px;
+        width: 228px;
         border-radius: 3px;
         margin-bottom: 5px;
         pointer-events: none;
         display: inline-block;
-        vertical-align: middle; }
+        vertical-align: middle;
+        position: relative;
+        overflow: hidden; }
       .csseditor .pages .page-list .tree-item .item-title {
         display: inline-block;
         vertical-align: middle;
@@ -2758,8 +2738,9 @@ html, body {
               background-color: transparent;
               display: inline-block;
               height: 18px;
-              border: 1px solid #cccccc;
-              vertical-align: middle; }
+              border: 1px solid rgba(204, 204, 204, 0.1);
+              vertical-align: middle;
+              color: #ececec; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property input {
               width: 50px; }
             .csseditor .timeline-view > .timeline-body .timeline-list .timeline-object .timeline-group .timeline-collapse .timeline-property select {
@@ -2851,7 +2832,7 @@ html, body {
                   -webkit-transform: translateY(-50%);
                           transform: translateY(-50%);
                   height: 10px;
-                  background-color: rgba(219, 219, 219, 0.5);
+                  background-color: rgba(73, 131, 255, 0.5);
                   cursor: move;
                   text-align: center; }
                   .csseditor .timeline-view > .timeline-body .timeline-panel .keyframe-list .keyframe-object .keyframe-group .keyframe-collapse .keyframe-property-list .keyframe-property .keyframe-item .bar .timing-icon {
@@ -2887,7 +2868,7 @@ html, body {
                           transform: translateX(-50%) translateY(-50%);
                   width: 3px;
                   height: 10px;
-                  background-color: #4d6dff;
+                  background-color: #00ff1f;
                   z-index: 3;
                   cursor: e-resize;
                   border-radius: 2px; }
