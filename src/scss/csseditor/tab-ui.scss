@@ -34,8 +34,7 @@ $tab-horizontal-header-right-width: 60px;
         left: 0px;
         right: 0px;
         height: $tab-header-height;
-        // top: 1px;
-        // background-color: #ececec;
+
         z-index: 1;
         display: flex;
 
@@ -69,6 +68,19 @@ $tab-horizontal-header-right-width: 60px;
 
             &.small-font {
                 font-size: 11px;
+            }
+
+            &.select-reverse {
+
+                &:not(.selected) {
+                    background-color: rgba($tab-selected-color, 0.5); 
+                    color: black;
+                }
+
+                &.selected {
+                    background-color: $tab-background-color;
+                }
+
             }
             
         }

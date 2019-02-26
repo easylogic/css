@@ -25319,7 +25319,7 @@ var OutlineTabView = function (_BaseTab) {
     createClass(OutlineTabView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"tab outline-tab-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"layers\">Layers</div>                \n                    <div class=\"tab-item\" data-id=\"pages\">Pages</div>       \n                </div>\n                <div class=\"tab-body no-border\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"layers\">\n                        <LayerListView />\n                    </div>                \n                    <div class=\"tab-content\" data-id=\"pages\">\n                        <PageListView />\n                    </div> \n\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"tab outline-tab-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item select-reverse selected\" data-id=\"layers\">Layers</div>                \n                    <div class=\"tab-item select-reverse\" data-id=\"pages\">Pages</div>       \n                </div>\n                <div class=\"tab-body no-border\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"layers\">\n                        <LayerListView />\n                    </div>                \n                    <div class=\"tab-content\" data-id=\"pages\">\n                        <PageListView />\n                    </div> \n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",
@@ -26683,6 +26683,8 @@ var convertStyle = function convertStyle(item) {
     keyEach(item, function (key, value$$1) {
         if (updateUnitField[key]) {
             item[key] = string2unit(value$$1);
+        } else if (key == 'index' && value$$1 == Number.MAX_SAFE_INTEGER) {
+            item[key] = 0;
         }
     });
 
