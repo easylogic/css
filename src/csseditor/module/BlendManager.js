@@ -43,7 +43,6 @@ export default class BlendManager extends BaseModule {
     }        
 
     [GETTER(BLEND_TO_STRING_WITHOUT_DIMENSION_FOR_IMAGE)] ($store, item, blend = 'normal') {
-        // console.log(item, blend);
         var cssText = $store.read(BLEND_IMAGE_TO_STRING, item, blend, false);
 
         cssText = cssText.split(';').map(it => {

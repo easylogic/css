@@ -51,7 +51,6 @@ import BoxSizing from "./BoxSizing";
 import BorderWidth from "./BorderWidth";
 import BackgroundPosition from "./BackgroundPosition";
 import BorderColorFixed from "./BorderColorFixed";
-import LayerBorderPreview from "./LayerBorderPreview";
 
 
 var patterns = {
@@ -61,7 +60,6 @@ var patterns = {
 export default {
     ...patterns,
     BackgroundPosition,
-    LayerBorderPreview,
     LayerBorderColorPickerPanel,
     BorderColorFixed,
     BoxSizing,
@@ -112,5 +110,4 @@ export default {
     Position,
     Radius,
     Clip
-
 }

@@ -4,6 +4,10 @@ export default class LayerBorderProperty extends BaseProperty {
 
     getTitle () { return 'Border'; }
     getBody () {
-        return `<LayerBorderPreview /><BorderFixed /><BorderWidth /><BorderColorFixed />`
+        return `
+            <BorderFixed />
+            <BorderWidth />
+            <BorderColorFixed />
+        `
     }
 }

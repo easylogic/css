@@ -10,7 +10,7 @@ import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../..
 export default class Radius extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item radius'>
+            <div class='property-item radius show'>
                 <div class='items'>         
                     <div>
                         <label >Top Left</label>
