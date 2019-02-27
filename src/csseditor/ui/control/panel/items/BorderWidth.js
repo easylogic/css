@@ -10,7 +10,7 @@ import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../..
 export default class BorderWidth extends BasePropertyItem {
     template () {
         return `
-            <div class='property-item border'>
+            <div class='property-item border show'>
                 <div class='items'>         
                     <div>
                         <label >Top</label>

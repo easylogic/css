@@ -11367,7 +11367,7 @@ var Radius = function (_BasePropertyItem) {
     createClass(Radius, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item radius'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item radius show'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_RADIUS, CHANGE_EDITOR$1, CHANGE_SELECTION),
@@ -12465,6 +12465,8 @@ function IMAGE_TYPE_IS_NOT_GRADIENT(type) {
 }
 
 function PATTERN_MAKE(item) {
+    var patterns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     var patternOption = item.pattern || {};
     var patternList = Object.keys(patternOption);
 
@@ -12494,10 +12496,12 @@ function PATTERN_GET(item, patternName) {
 }
 
 function generateImagePattern(images) {
+    var patterns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     var results = [];
 
     images.forEach(function (item) {
-        var patternedItems = PATTERN_MAKE(item);
+        var patternedItems = PATTERN_MAKE(item, patterns);
         if (patternedItems) {
             results.push.apply(results, toConsumableArray(patternedItems));
         } else {
@@ -12508,17 +12512,7 @@ function generateImagePattern(images) {
     return results;
 }
 
-function LAYER_BORDER_PREVIEW() {
-    var layer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-    var css = {};
-
-    css['box-sizing'] = layer.boxSizing || 'border-box';
-
-    var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer));
-
-    return CSS_TO_STRING(cleanObject(results));
-}
 
 function LAYER_MAKE_FONT(layer) {
     var results = {};
@@ -17344,7 +17338,7 @@ var BorderWidth = function (_BasePropertyItem) {
     createClass(BorderWidth, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item border'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\" value=\"0\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item border show'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\" value=\"0\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: EVENT(CHANGE_LAYER_BORDER, CHANGE_EDITOR$1, CHANGE_SELECTION),
@@ -17849,48 +17843,14 @@ var BorderColorFixed = function (_BasePropertyItem) {
     return BorderColorFixed;
 }(BasePropertyItem);
 
-var _templateObject$13 = taggedTemplateLiteral(['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview"></div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item border-preview show\'>\n            <div class=\'items\'>         \n                <div style=\'margin-bottom:10px\'>\n                    <div class=\'border-preview\' ref="$borderPreview"></div>\n                </div>\n            </div>\n        </div>\n        ']);
-
-var LayerBorderPreview = function (_BasePropertyItem) {
-    inherits(LayerBorderPreview, _BasePropertyItem);
-
-    function LayerBorderPreview() {
-        classCallCheck(this, LayerBorderPreview);
-        return possibleConstructorReturn(this, (LayerBorderPreview.__proto__ || Object.getPrototypeOf(LayerBorderPreview)).apply(this, arguments));
-    }
-
-    createClass(LayerBorderPreview, [{
-        key: 'template',
-        value: function template() {
-            return html(_templateObject$13);
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var _this2 = this;
-
-            this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                _this2.refs.$borderPreview.cssText('width: 100%;height: 100px; ' + LAYER_BORDER_PREVIEW(layer));
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_LAYER_RADIUS, CHANGE_EDITOR$1, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return LayerBorderPreview;
-}(BasePropertyItem);
-
 var _babelHelpers$extends;
 
-var patterns$1 = {
+var patterns = {
     RotatePattern: RotatePattern
 };
 
-var items = _extends({}, patterns$1, (_babelHelpers$extends = {
+var items = _extends({}, patterns, (_babelHelpers$extends = {
     BackgroundPosition: BackgroundPosition,
-    LayerBorderPreview: LayerBorderPreview,
     LayerBorderColorPickerPanel: LayerBorderColorPickerPanel,
     BorderColorFixed: BorderColorFixed,
     BoxSizing: BoxSizing,
@@ -18485,7 +18445,7 @@ var BackgroundCodeProperty = function (_BaseProperty) {
     return BackgroundCodeProperty;
 }(BaseProperty);
 
-var _templateObject$14 = taggedTemplateLiteral(["\n            <BackgroundInfo />\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "], ["\n            <BackgroundInfo />\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "]);
+var _templateObject$13 = taggedTemplateLiteral(["\n            <BackgroundInfo />\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "], ["\n            <BackgroundInfo />\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "]);
 
 var BackgroundProperty = function (_BaseProperty) {
     inherits(BackgroundProperty, _BaseProperty);
@@ -18503,7 +18463,7 @@ var BackgroundProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return html(_templateObject$14);
+            return html(_templateObject$13);
         }
     }]);
     return BackgroundProperty;
@@ -18547,7 +18507,7 @@ var LayerBorderProperty = function (_BaseProperty) {
     }, {
         key: "getBody",
         value: function getBody() {
-            return "<LayerBorderPreview /><BorderFixed /><BorderWidth /><BorderColorFixed />";
+            return "\n            <BorderFixed />\n            <BorderWidth />\n            <BorderColorFixed />\n        ";
         }
     }]);
     return LayerBorderProperty;
@@ -21068,7 +21028,7 @@ var TIMELINE_MAX_SECOND = 300;
 var TIMELINE_1_SECOND_WIDTH = 100;
 var TIMELINE_TOTAL_WIDTH = TIMELINE_1_SECOND_WIDTH * TIMELINE_MAX_SECOND;
 
-var _templateObject$15 = taggedTemplateLiteral(["", ""], ["", ""]);
+var _templateObject$14 = taggedTemplateLiteral(["", ""], ["", ""]);
 var _templateObject2$1 = taggedTemplateLiteral(["\n            <div class='timeline-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "], ["\n            <div class='timeline-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row' >", "</div>\n                <div class='timeline-property-list' data-property='", "'>\n                    ", "\n                </div>\n            </div>\n            "]);
 
 var TimelineObjectList = function (_UIElement) {
@@ -21137,7 +21097,7 @@ var TimelineObjectList = function (_UIElement) {
 
             var list = GET_PROPERTY_LIST(targetItem);
 
-            return html(_templateObject$15, list.map(function (it) {
+            return html(_templateObject$14, list.map(function (it) {
                 var collapse = timeline.collapse[it.key] ? 'collapsed' : '';
                 return html(_templateObject2$1, collapse, it.key, timeline.id, it.title, it.key, it.properties.map(function (property) {
                     return _this3.makeTimelineProperty(property, timeline, targetItem, index);
@@ -21326,7 +21286,7 @@ var TimelineObjectList = function (_UIElement) {
     return TimelineObjectList;
 }(UIElement);
 
-var _templateObject$16 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
+var _templateObject$15 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
 var _templateObject2$2 = taggedTemplateLiteral(["", ""], ["", ""]);
 var _templateObject3 = taggedTemplateLiteral(["\n            <div class='keyframe-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row'></div>\n                <div class='keyframe-property-list' data-property='", "'>\n                    ", "\n                </div>                            \n            </div>\n\n            "], ["\n            <div class='keyframe-collapse ", "' data-sub-key='", "' data-timeline-id=\"", "\">\n                <div class='property-title row'></div>\n                <div class='keyframe-property-list' data-property='", "'>\n                    ", "\n                </div>                            \n            </div>\n\n            "]);
 
@@ -21406,7 +21366,7 @@ var KeyframeObjectList = function (_UIElement) {
 
             var keyframes = timeline.keyframes[property] || [];
 
-            return html(_templateObject$16, property, timeline.id, keyframes.map(function (keyframe) {
+            return html(_templateObject$15, property, timeline.id, keyframes.map(function (keyframe) {
                 return _this3.makeKeyFrameItem(keyframe, timeline);
             }));
         }
@@ -24908,7 +24868,7 @@ var SHAPE_GET = 'shape/get';
 
 var SHAPE_TO_CSS_TEXT = 'shape/toCSSText';
 
-var _templateObject$17 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
+var _templateObject$16 = taggedTemplateLiteral(["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "], ["\n            <div class='shapes'>         \n                <div class='layer-title'>Basic Layer</div>\n                <div class=\"shapes-list\" ref=\"$shapeList\">\n                    ", "\n                </div>\n            </div>\n        "]);
 
 var ShapeListView = function (_UIElement) {
     inherits(ShapeListView, _UIElement);
@@ -24923,7 +24883,7 @@ var ShapeListView = function (_UIElement) {
         value: function template() {
             var _this2 = this;
 
-            return html(_templateObject$17, this.read(SHAPE_LIST).map(function (key) {
+            return html(_templateObject$16, this.read(SHAPE_LIST).map(function (key) {
                 return "<button type=\"button\" class='add-layer' data-shape='" + key + "'>\n                            <div class='shape' style='" + _this2.read(SHAPE_TO_CSS_TEXT, key) + "'></div>\n                        </button>";
             }));
         }
@@ -24944,7 +24904,7 @@ var ShapeListView = function (_UIElement) {
     return ShapeListView;
 }(UIElement);
 
-var _templateObject$18 = taggedTemplateLiteral(["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"], ["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"]);
+var _templateObject$17 = taggedTemplateLiteral(["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"], ["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"]);
 var _templateObject2$3 = taggedTemplateLiteral(["", ""], ["", ""]);
 
 var PageListView = function (_UIElement) {
@@ -24994,7 +24954,7 @@ var PageListView = function (_UIElement) {
 
             var transform = "transform: scale(" + rateX + ", " + rateY + ");  transform-origin: 0px 0px;";
 
-            return html(_templateObject$18, data.css, stringUnit(width), stringUnit(height), transform, page.layers.map(function (layer) {
+            return html(_templateObject$17, data.css, stringUnit(width), stringUnit(height), transform, page.layers.map(function (layer) {
                 var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                 return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
             }));
@@ -25050,7 +25010,7 @@ var PageListView = function (_UIElement) {
     return PageListView;
 }(UIElement);
 
-var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
+var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -25090,7 +25050,7 @@ var LayerListView = function (_UIElement) {
             var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING;
             var lock = item.lock ? 'lock' : EMPTY_STRING;
             var visible = item.visible ? 'visible' : EMPTY_STRING;
-            return html(_templateObject$19, selected, item.id, index + 1, item.name || "Layer ", lock, item.id, visible, item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
+            return html(_templateObject$18, selected, item.id, index + 1, item.name || "Layer ", lock, item.id, visible, item.id, item.id, item.id, this.read(ITEM_MAP_IMAGE_CHILDREN, item.id, function (item) {
                 return _this2.makeItemNodeImage(item);
             }));
         }
@@ -25292,7 +25252,7 @@ var HistoryListView = function (_UIElement) {
     return HistoryListView;
 }(UIElement);
 
-var _templateObject$20 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
+var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
 var _templateObject2$4 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
@@ -25330,7 +25290,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "transform: scale(" + rateX + " " + rateY + ")";
 
-                return html(_templateObject$20, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject$19, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), index);
@@ -26060,6 +26020,116 @@ var layerList = [
     // sample
 ];
 
+var DEFINED_ANGLES$2 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var rotate$1 = function () {
+    function rotate() {
+        classCallCheck(this, rotate);
+    }
+
+    createClass(rotate, [{
+        key: "make",
+        value: function make(item) {
+            var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            // return always array 
+
+            var results = [];
+
+            if (IMAGE_TYPE_IS_LINEAR(item.type)) {
+                results.push.apply(results, toConsumableArray(this.makeClone(item, opt)));
+            }
+
+            return results;
+        }
+    }, {
+        key: "makeClone",
+        value: function makeClone(image, opt) {
+            var _this = this;
+
+            var results = [];
+            opt = opt || { clone: 1, blend: 'normal' };
+
+            var count = opt.clone || 1;
+            var blend = opt.blend || 'normal';
+            var randomPosition = opt.randomPosition || false;
+            var randomSize = opt.randomSize || false;
+
+            if (count < 2) return results;
+
+            var degree = 360 / count;
+
+            return repeat(count - 1).map(function (_, index) {
+                var newItem = _extends({}, image);
+                newItem.angle = _this.caculateAngle(newItem, (index + 1) * degree);
+
+                if (randomPosition) {
+                    newItem.backgroundPositionX = _this.getBackgroundPositionX(index);
+                    newItem.backgroundPositionY = _this.getBackgroundPositionY(index);
+                }
+
+                if (randomSize) {
+                    newItem.backgroundSizeWidth = _this.getBackgroundSizeWidth(index);
+                    newItem.backgroundSizeHeight = _this.getBackgroundSizeHeight(index);
+                }
+
+                newItem.backgroundBlendMode = blend;
+
+                return newItem;
+            });
+        }
+    }, {
+        key: "getBackgroundSizeWidth",
+        value: function getBackgroundSizeWidth(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "getBackgroundSizeHeight",
+        value: function getBackgroundSizeHeight(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "getBackgroundPositionX",
+        value: function getBackgroundPositionX(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "getBackgroundPositionY",
+        value: function getBackgroundPositionY(index) {
+            var value$$1 = Math.random() * 100;
+            return percentUnit(value$$1);
+        }
+    }, {
+        key: "caculateAngle",
+        value: function caculateAngle(image) {
+            var plusAngle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+            var angle = isNotUndefined(DEFINED_ANGLES$2[image.angle]) ? DEFINED_ANGLES$2[image.angle] : image.angle;
+
+            angle = angle || 0;
+
+            return (angle + plusAngle) % 360;
+        }
+    }]);
+    return rotate;
+}();
+
+var patterns$1 = {
+    rotate: new rotate$1()
+};
+
 var LayerManager = function (_BaseModule) {
     inherits(LayerManager, _BaseModule);
 
@@ -26158,7 +26228,7 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
         value: function value$$1($store, image) {
-            var images = generateImagePattern([image]);
+            var images = generateImagePattern([image], patterns$1);
             return CSS_GENERATE(this.generateImageCSS($store, images));
         }
     }, {
@@ -26215,9 +26285,10 @@ var LayerManager = function (_BaseModule) {
     }, {
         key: GETTER(LAYER_MAKE_MAP_IMAGE),
         value: function value$$1($store, layer, isExport) {
-            var images = generateImagePattern($store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(function (it) {
+            var list = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(function (it) {
                 return it.visible;
-            }));
+            });
+            var images = generateImagePattern(list, patterns$1);
 
             return this.generateImageCSS($store, images, isExport);
         }
@@ -26498,7 +26569,6 @@ var BlendManager = function (_BaseModule) {
         value: function value$$1($store, item) {
             var blend = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
 
-            // console.log(item, blend);
             var cssText = $store.read(BLEND_IMAGE_TO_STRING, item, blend, false);
 
             cssText = cssText.split(';').map(function (it) {
@@ -30632,116 +30702,6 @@ var ExportManager = function (_BaseModule) {
     }]);
     return ExportManager;
 }(BaseModule);
-
-var DEFINED_ANGLES$2 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var rotate$1 = function () {
-    function rotate() {
-        classCallCheck(this, rotate);
-    }
-
-    createClass(rotate, [{
-        key: "make",
-        value: function make(item) {
-            var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            // return always array 
-
-            var results = [];
-
-            if (IMAGE_TYPE_IS_LINEAR(item.type)) {
-                results.push.apply(results, toConsumableArray(this.makeClone(item, opt)));
-            }
-
-            return results;
-        }
-    }, {
-        key: "makeClone",
-        value: function makeClone(image, opt) {
-            var _this = this;
-
-            var results = [];
-            opt = opt || { clone: 1, blend: 'normal' };
-
-            var count = opt.clone || 1;
-            var blend = opt.blend || 'normal';
-            var randomPosition = opt.randomPosition || false;
-            var randomSize = opt.randomSize || false;
-
-            if (count < 2) return results;
-
-            var degree = 360 / count;
-
-            return repeat(count - 1).map(function (_, index) {
-                var newItem = _extends({}, image);
-                newItem.angle = _this.caculateAngle(newItem, (index + 1) * degree);
-
-                if (randomPosition) {
-                    newItem.backgroundPositionX = _this.getBackgroundPositionX(index);
-                    newItem.backgroundPositionY = _this.getBackgroundPositionY(index);
-                }
-
-                if (randomSize) {
-                    newItem.backgroundSizeWidth = _this.getBackgroundSizeWidth(index);
-                    newItem.backgroundSizeHeight = _this.getBackgroundSizeHeight(index);
-                }
-
-                newItem.backgroundBlendMode = blend;
-
-                return newItem;
-            });
-        }
-    }, {
-        key: "getBackgroundSizeWidth",
-        value: function getBackgroundSizeWidth(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "getBackgroundSizeHeight",
-        value: function getBackgroundSizeHeight(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "getBackgroundPositionX",
-        value: function getBackgroundPositionX(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "getBackgroundPositionY",
-        value: function getBackgroundPositionY(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "caculateAngle",
-        value: function caculateAngle(image) {
-            var plusAngle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            var angle = isNotUndefined(DEFINED_ANGLES$2[image.angle]) ? DEFINED_ANGLES$2[image.angle] : image.angle;
-
-            angle = angle || 0;
-
-            return (angle + plusAngle) % 360;
-        }
-    }]);
-    return rotate;
-}();
-
-{
-    rotate: new rotate$1()
-};
 
 var PatternManager = function (_BaseModule) {
     inherits(PatternManager, _BaseModule);

@@ -12,6 +12,7 @@ import { FILTER_TO_CSS } from "../types/FilterTypes";
 import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, generateImagePattern, LAYER_MAKE_FONT, LAYER_CACHE_TO_IMAGE_CSS } from "../../util/css/make";
 import { ITEM_CONVERT_STYLE } from "../types/ItemTypes";
 import BaseModule from "../../util/BaseModule";
+import patterns from "./patterns/index";
 
 export default class LayerManager extends BaseModule {
    
@@ -88,7 +89,7 @@ export default class LayerManager extends BaseModule {
 
 
     [GETTER(LAYER_IMAGE_TO_IMAGE_CSS)] ($store, image) {    
-        var images = generateImagePattern([image]);        
+        var images = generateImagePattern([image], patterns);        
         return CSS_GENERATE(this.generateImageCSS($store, images));
     }    
 
@@ -146,9 +147,10 @@ export default class LayerManager extends BaseModule {
 
 
     [GETTER(LAYER_MAKE_MAP_IMAGE)] ($store, layer, isExport) {
-        var images = generateImagePattern($store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(it => {
+        var list = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(it => {
             return it.visible;
-        }));
+        })
+        var images = generateImagePattern(list, patterns);
 
         return this.generateImageCSS($store, images, isExport);
     }

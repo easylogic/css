@@ -718,7 +718,7 @@ export function IMAGE_TYPE_IS_NOT_GRADIENT (type) {
 }    
 
 
-export function PATTERN_MAKE (item) {
+export function PATTERN_MAKE (item, patterns = {}) {
     var patternOption = item.pattern  || {}
     var patternList = Object.keys(patternOption);
 
@@ -746,11 +746,11 @@ export function PATTERN_GET (item, patternName) {
     return pattern[patternName] || {}
 }
 
-export function generateImagePattern (images) {
+export function generateImagePattern (images, patterns = {}) {
     var results = [];
 
     images.forEach(item => {
-        var patternedItems = PATTERN_MAKE(item);
+        var patternedItems = PATTERN_MAKE(item, patterns);
         if (patternedItems) {
             results.push(...patternedItems);
         } else {
