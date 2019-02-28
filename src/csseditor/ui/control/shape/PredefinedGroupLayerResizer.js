@@ -10,7 +10,7 @@ import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
 import { TOOL_SET, RESIZE_WINDOW } from '../../../types/ToolTypes';
 import { GUIDE_SNAP_CACULATE } from '../../../types/GuideTypes';
-import { CSS_TO_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS } from '../../../../util/css/make';
+import { CSS_TO_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS, LAYER_NAME } from '../../../../util/css/make';
 
 const SNAP_GRID = 20; 
 
@@ -43,7 +43,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
                 backgroundCSS = IMAGE_BACKGROUND_SIZE_TO_CSS(backgroundImage);
             }
             
-            var title = `${1 + (item.index/100)}. ${item.name || 'Layer'}`
+            var title = LAYER_NAME(item)
 
             
             return ` 

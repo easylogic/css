@@ -14,7 +14,7 @@ import { ITEM_SET } from '../../../types/ItemTypes';
 import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
 import { HISTORY_PUSH } from '../../../types/HistoryTypes';
 import { IMAGE_TO_LINEAR_RIGHT } from '../../../types/ImageTypes';
-import { ITEM_MAP_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from '../../../types/ItemSearchTypes';
+import { ITEM_MAP_COLORSTEP_CHILDREN } from '../../../types/ItemSearchTypes';
 import { COLORSTEP_REMOVE, COLORSTEP_ADD, COLORSTEP_SORT, COLORSTEP_UNIT_VALUE } from '../../../types/ColorStepTypes';
 import { IMAGE_TYPE_IS_GRADIENT } from '../../../../util/css/make';
 
@@ -83,7 +83,7 @@ export default class GradientSteps extends UIElement {
 
         if (!item) return EMPTY_STRING;
 
-        return this.read(ITEM_MAP_CHILDREN, item.id, (step) => {
+        return this.read(ITEM_MAP_COLORSTEP_CHILDREN, item.id, (step) => {
 
             var cut = step.cut ? 'cut' : EMPTY_STRING; 
             var unitValue = this.read(COLORSTEP_UNIT_VALUE, step, this.getMaxValue());

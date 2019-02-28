@@ -32,12 +32,12 @@ export default class PredefinedPageResizer extends UIElement {
 
     setPosition () {
         var page = this.read(SELECTION_CURRENT_PAGE)
-
         if (!page) return; 
 
-        var {width, height} = page; 
         var toolSize = this.config('tool.size');
+        if (!toolSize) return;  
 
+        var {width, height} = page;         
         var boardOffset = toolSize['board.offset']
         var pageOffset = toolSize['page.offset']
         var canvasScrollLeft = toolSize['board.scrollLeft'];

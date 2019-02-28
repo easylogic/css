@@ -10,6 +10,7 @@ import { COLLECT_PAGE_ONE } from "../../../types/CollectTypes";
 import { PAGE_CACHE_TO_STRING } from "../../../types/PageTypes";
 import { LAYER_CACHE_TO_STRING } from "../../../types/LayerTypes";
 import { RESIZE_WINDOW } from "../../../types/ToolTypes";
+import { PAGE_NAME } from "../../../../util/css/make";
 
 export default class PageListView extends UIElement {
 
@@ -62,10 +63,10 @@ export default class PageListView extends UIElement {
     makeItemNodePage (item, index, selectedId) {
         var selected = item.id == selectedId ? 'selected' : EMPTY_STRING; 
         var preview = this.makePagePreview(item.id);
-        var index = (item.index/100) + 1;
+        var title = PAGE_NAME(item)
         return `<div class='tree-item ${selected}' id="${item.id}" type='page'>
             <div class="item-preview">${preview}</div>
-            <div class="item-title">${item.name || `Project ${index}`}</div>   
+            <div class="item-title">${title}</div>   
         </div>`
     }
 

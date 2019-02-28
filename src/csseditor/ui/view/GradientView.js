@@ -46,10 +46,10 @@ import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD, SCROLL } from '../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../types/SelectionTypes';
 import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH } from '../../types/LayerTypes';
-import { ITEM_MAP_CHILDREN, ITEM_COUNT_CHILDREN } from '../../types/ItemSearchTypes';
+import { ITEM_MAP_LAYER_CHILDREN } from '../../types/ItemSearchTypes';
 import { PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS } from '../../types/PageTypes';
 import { RESIZE_WINDOW } from '../../types/ToolTypes';
-import { BOUND_TO_CSS_ARRAY, IS_PAGE } from '../../../util/css/make';
+import { BOUND_TO_CSS_ARRAY, LAYER_NAME } from '../../../util/css/make';
 
 export default class GradientView extends UIElement {
 
@@ -104,9 +104,9 @@ export default class GradientView extends UIElement {
 
         this.initializeLayerCache();
 
-        var list = this.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
+        var list = this.read(ITEM_MAP_LAYER_CHILDREN, page.id, (item, index) => {
             var content = item.content || EMPTY_STRING;
-            var title = `${1 + (item.index/100)}. ${item.name || 'Layer'}`
+            var title = LAYER_NAME(item)
             return `<div 
                     tabindex='${index}'
                     class='layer' 
@@ -122,14 +122,9 @@ export default class GradientView extends UIElement {
         this.load();
     }
 
-    refresh (isDrag) {
-        //this.hasScroll = false; 
+    refresh () {
         this.setBackgroundColor();
         this.load();
-
-        if (!isDrag) {
-            // this.refs.$page.el.scrollIntoView()
-        }
     }
     
     refreshLayer () {
@@ -168,8 +163,6 @@ export default class GradientView extends UIElement {
 
                     this.layerItems[item.id] = $el; 
                 }
-
-                // this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
                 this.layerItems[item.id].cssArray(BOUND_TO_CSS_ARRAY(item))
             })
@@ -216,17 +209,6 @@ export default class GradientView extends UIElement {
             this.refs.$board.el.scrollTop = Math.floor(top);
             this.refs.$board.el.scrollLeft = Math.floor(left);
             this.hasScroll = true; 
-        }
-
-        var item = this.read(SELECTION_CURRENT_PAGE)
-
-        this.refs.$page.toggle(item)
-
-        if (item) {
-            if (IS_PAGE(item)) {
-                var count = this.read(ITEM_COUNT_CHILDREN, item.id);
-                this.refs.$colorview.toggle(count)
-            }
         }
     }
 

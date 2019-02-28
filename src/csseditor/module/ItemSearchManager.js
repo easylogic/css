@@ -8,9 +8,7 @@ import {
     ITEM_LIST_PAGE, 
     ITEM_EACH_CHILDREN, 
     ITEM_LIST, 
-    ITEM_LIST_CHILDREN, 
-    ITEM_COUNT_CHILDREN, 
-    ITEM_MAP_CHILDREN, 
+    ITEM_LIST_CHILDREN,  
     ITEM_MAP_TYPE_CHILDREN, 
     ITEM_MAP_LAYER_CHILDREN, 
     ITEM_MAP_IMAGE_CHILDREN, 
@@ -83,17 +81,7 @@ export default class ItemSearchManager extends BaseModule {
             return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
         }
     }
-
-    [GETTER(ITEM_COUNT_CHILDREN)] ($store, parentId) {
-        return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).length;
-    }    
-
-    [GETTER(ITEM_MAP_CHILDREN)] ($store, parentId, callback = DEFAULT_FUNCTION) {
-        return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) { 
-            return callback($store.items[id], index)
-        });
-    }    
-
+    
     getChildrenMapForType ($store, parentId, itemType, callback = DEFAULT_FUNCTION) {
         var parent = this.get(parentId);
 

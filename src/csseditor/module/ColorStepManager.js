@@ -9,7 +9,7 @@ import { GETTER, ACTION } from "../../util/Store";
 import { SELECTION_CURRENT_IMAGE } from "../types/SelectionTypes";
 import { COLORSTEP_COLOR_SOURCE, COLORSTEP_CURRENT, COLORSTEP_LIST, COLORSTEP_ADD, COLORSTEP_REMOVE, COLORSTEP_SORT, COLORSTEP_SORT_LIST, COLORSTEP_CURRENT_INDEX, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON, COLORSTEP_UNIT_VALUE, COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT } from "../types/ColorStepTypes";
 import { ITEM_CREATE_COLORSTEP } from "../types/ItemCreateTypes";
-import { ITEM_MAP_CHILDREN, ITEM_LIST_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_LIST_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
 import BaseModule from "../../util/BaseModule";
 
 const INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP
@@ -113,7 +113,7 @@ export default class ColorStepManager extends BaseModule {
     }
 
     [GETTER(COLORSTEP_SORT_LIST)] ($store, parentId) {
-        var colorsteps = $store.read(ITEM_MAP_CHILDREN, parentId);
+        var colorsteps = $store.read(ITEM_MAP_COLORSTEP_CHILDREN, parentId);
 
         colorsteps.sort( (a, b) => {
             if (a.index == b.index) return 0; 
