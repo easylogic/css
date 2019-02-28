@@ -1034,8 +1034,8 @@
       border: 1px solid #cecece; }
       .codemirror-colorpicker.xd .color-panel > .saturation > .value > .drag-pointer {
         border: 2px solid white;
-        width: 7px;
-        height: 7px;
+        width: 10px;
+        height: 10px;
         -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
                 box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black; }
     .codemirror-colorpicker.xd .control {
@@ -1098,8 +1098,8 @@
     border: 1px solid #cecece; }
     .codemirror-colorpicker.xd-tab .color-panel > .saturation > .value > .drag-pointer {
       border: 2px solid white;
-      width: 7px;
-      height: 7px;
+      width: 10px;
+      height: 10px;
       -webkit-box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black;
               box-shadow: 0 0 1px 0px black, inset 0 0 1px 0px black; }
   .codemirror-colorpicker.xd-tab .control {
@@ -3184,6 +3184,7 @@ html, body {
             transition: all 0.3s ease-out;
             border: 1px solid #cccccc;
             pointer-events: none;
+            background-color: white;
             background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
             background-image: linear-gradient(to top, black 0%, black 100%);
             background-size: 2px 2px;

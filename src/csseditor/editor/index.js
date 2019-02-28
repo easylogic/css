@@ -7,7 +7,6 @@ import Timeline from '../ui/control/Timeline';
 import DropView from '../ui/control/DropView';
 import VerticalColorStep from '../ui/control/VerticalColorStep';
 import Animation from '../../util/animation/Animation';
-import ClipPathImageList from '../ui/control/panel/ClipPathImageList';
 import { CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
@@ -22,7 +21,7 @@ import UIElement, { EVENT } from '../../util/UIElement';
 import { RESIZE, DEBOUNCE } from '../../util/Event';
 import { RESIZE_WINDOW, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE, INIT_HEIGHT_TIMELINE } from '../types/ToolTypes';
 import TimelineSplitter from '../ui/control/timeline/TimelineSplitter';
-
+ 
 export default class CSSEditor extends UIElement {
 
     afterRender() { 
@@ -50,7 +49,6 @@ export default class CSSEditor extends UIElement {
                     <div class="layout-right">
                         <Alignment />
                         <FeatureControl />
-                        <ClipPathImageList />
                     </div>
                 </div>
                 <div class="layout-footer" ref="$footer">
@@ -72,7 +70,6 @@ export default class CSSEditor extends UIElement {
             SelectLayerView,
             ToolMenu,
             LayerToolbar,
-            ClipPathImageList,
             VerticalColorStep, 
             DropView,
             ExportWindow,

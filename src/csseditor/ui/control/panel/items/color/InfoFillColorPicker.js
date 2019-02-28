@@ -47,7 +47,9 @@ export default class InfoFillColorPicker extends UIElement {
             this.commit(this.eventType, {id, [this.eventKey]: color, ...this.eventOpt})
         })
     }
-
+    setColor (color) {
+        this.colorPicker.initColorWithoutChangeEvent(color);
+    }  
     
     [EVENT (
         CHANGE_LAYER_BACKGROUND_COLOR,
@@ -60,18 +62,9 @@ export default class InfoFillColorPicker extends UIElement {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
                 var color = layer.backgroundColor || 'rgba(0, 0, 0, 1)'
-                this.colorPicker.initColorWithoutChangeEvent(color);
+                this.setColor(color);
 
             })
         }
     }
-
-
-    [EVENT('selectLayerColor')] (color, key, eventType, opt = {}) {
-        this.eventKey = key
-        this.eventType = eventType;
-        this.eventOpt = opt
-
-        this.colorPicker.initColorWithoutChangeEvent(color);
-    }
-}
+} 

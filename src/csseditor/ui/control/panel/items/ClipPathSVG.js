@@ -1,12 +1,12 @@
 import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION } from "../../../../types/event";
+import { CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION, CHANGE_SVG_LIST } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
-import { defaultValue, isObject, isUndefined } from "../../../../../util/functions/func";
+import { defaultValue, isObject } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
-import { EMPTY_STRING, CLIP_PATH_TYPE_SVG, WHITE_STRING } from "../../../../../util/css/types";
+import { EMPTY_STRING, WHITE_STRING } from "../../../../../util/css/types";
 import { SVG_LIST, SVG_GET } from "../../../../types/SVGTypes";
 import { CLIP_PATH_IS_SVG } from "../../../../../util/css/make";
 
@@ -56,10 +56,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
         if (isShow) {
 
-            if (this.count < 4) {
-                this.load();
-                this.count++;
-            }
+            this.load();
 
             this.updateView();
                 
@@ -75,11 +72,6 @@ export default class ClipPathSVG extends BasePropertyItem {
         
         if (CLIP_PATH_IS_SVG(item)) return true; 
     } 
-
-
-    [CLICK('$clipPath')] () {
-        this.emit('toggleClipPathImageList')
-    }
 
     [CLICK('$fit')] () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
@@ -104,21 +96,8 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
 
-    [EVENT('changeSvgList')] () {
-        this.refresh()
-    }
-
-    [EVENT('toggleClipPathSVG')] (isShow) {
-        if (isUndefined(isShow)) {
-            this.$el.toggleClass('show')
-        } else {
-            this.$el.toggleClass('show', isShow)
-        }
-
-        if (this.$el.hasClass('show')) {
-            this.refresh();
-        }
-        
+    [EVENT(CHANGE_SVG_LIST)] () {
+        this.load()
     }
 
     setClipPathSvg (id, svg, callback) {

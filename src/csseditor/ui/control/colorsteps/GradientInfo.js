@@ -118,10 +118,6 @@ export default class GradientInfo extends UIElement {
         CHANGE_SELECTION
     )] () { this.refresh(); }
 
-    initColor (color) {
-        this.dispatch('colorstep/initColor', color)        
-    }
-
     selectStep (e) {
         var item = this.get( e.$delegateTarget.attr('colorstep-id'));
             
@@ -133,10 +129,8 @@ export default class GradientInfo extends UIElement {
         })
 
         item.selected = true; 
-
-        this.initColor(item.color)   
-        var newValue = {id: item.id, selected: item.selected};  
-        this.commit(CHANGE_COLOR_STEP, newValue);
+        var newValue = {id: item.id, selected: item.selected, color: item.color};  
+        this.commit(CHANGE_COLOR_STEP, newValue);  
         this.refresh();        
     }    
 

@@ -15,7 +15,7 @@ export default class FillColorPicker extends UIElement {
             type: 'xd-tab',
             tabTitle: 'Fill',            
             position: 'inline',
-            container: this.$el.el,
+            container: this.$el.el, 
             color: defaultColor,
             onChange: (c) => {
                 this.changeColor(c);

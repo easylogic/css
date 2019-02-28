@@ -4,7 +4,6 @@ import UIElement, { EVENT } from '../../../../../../util/UIElement';
 import { 
     CHANGE_EDITOR,
     CHANGE_SELECTION,
-    CHANGE_LAYER_BACKGROUND_COLOR,
     CHANGE_LAYER_BORDER
 } from '../../../../../types/event';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../../types/SelectionTypes';
@@ -50,7 +49,7 @@ export default class BorderFillColorPicker extends UIElement {
 
     
     [EVENT (
-        CHANGE_LAYER_BACKGROUND_COLOR,
+        CHANGE_LAYER_BORDER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -59,7 +58,7 @@ export default class BorderFillColorPicker extends UIElement {
         if (this.read(SELECTION_IS_LAYER)) {
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
                 if (layer.borderColor) {
-                    this.colorPicker.initColorWithoutChangeEvent(layer.borderColor);
+                    this.setColor(layer.borderColor);
                 }
 
             })
@@ -67,11 +66,16 @@ export default class BorderFillColorPicker extends UIElement {
     }
 
 
+    setColor (color) {
+        this.colorPicker.initColorWithoutChangeEvent(color);
+    }    
+
+
     [EVENT('selectBorderColor')] (color, key, eventType, opt = {}) {
         this.eventKey = key
         this.eventType = eventType;
         this.eventOpt = opt
 
-        this.colorPicker.initColorWithoutChangeEvent(color);
+        this.setColor(color);
     }
 }

@@ -82,8 +82,6 @@ const convertStyle = (item) => {
     return item; 
 }
 
-export const DEFAULT_FUNCTION = (item) => item; 
-
 export default class ItemManager extends BaseModule {
 
     afterDispatch () {

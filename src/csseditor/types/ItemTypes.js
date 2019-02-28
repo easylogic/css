@@ -1,4 +1,4 @@
-import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit, EMPTY_STRING, ITEM_TYPE_PAGE, IS_OBJECT, CLIP_PATH_SIDE_TYPE_NONE, ITEM_TYPE_LAYER, SHAPE_TYPE_RECT, SHAPE_TYPE_CIRCLE, SHAPE_TYPE_POLYGON, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, IS_ATTRIBUTE, IMAGE_ITEM_TYPE_STATIC, POSITION_CENTER, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME } from "../../util/css/types";
+import { UNIT_PX, UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, pxUnit, percentUnit, EMPTY_STRING, ITEM_TYPE_PAGE, IS_OBJECT, CLIP_PATH_SIDE_TYPE_NONE, ITEM_TYPE_LAYER, SHAPE_TYPE_RECT, SHAPE_TYPE_CIRCLE, SHAPE_TYPE_POLYGON, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, IS_ATTRIBUTE, IMAGE_ITEM_TYPE_STATIC, POSITION_CENTER, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, ITEM_TYPE_MASK_IMAGE, ITEM_TYPE_BORDER_IMAGE, ITEM_TYPE_BOX_IMAGE } from "../../util/css/types";
 import { isNotUndefined } from "../../util/functions/func";
 
 export const ITEM_SET = 'item/set';
@@ -132,6 +132,31 @@ export const GROUP_DEFAULT_OBJECT = {
     visible: true,
     x: pxUnit(0),
     y: pxUnit(0)
+}
+
+export const MASK_IMAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_MASK_IMAGE,
+    is: IS_ATTRIBUTE,
+    type: IMAGE_ITEM_TYPE_STATIC,
+    fileType: EMPTY_STRING,       // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    index: 0,    
+    parentId: EMPTY_STRING,    
+    angle: 90,
+    color: 'red',
+    radialType: 'ellipse',
+    radialPosition: POSITION_CENTER,
+    visible: true,
+    isClipPath: false
+}
+
+export const BORDER_IMAGE_DEFAULT_OBJECT = { 
+    ...MASK_IMAGE_DEFAULT_OBJECT,
+    itemType: ITEM_TYPE_BORDER_IMAGE
+}
+
+export const BOX_IMAGE_DEFAULT_OBJECT = { 
+    ...MASK_IMAGE_DEFAULT_OBJECT,
+    itemType: ITEM_TYPE_BOX_IMAGE
 }
 
 export const IMAGE_DEFAULT_OBJECT = {

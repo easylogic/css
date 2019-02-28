@@ -13,7 +13,6 @@ import PageSize from "./PageSize";
 import PageName from "./PageName";
 import PageExport from "./PageExport";
 import FilterList from "./FilterList";
-import BackgroundColor from "./BackgroundColor"; 
 import ImageResource from "./ImageResource";
 import ClipPath from "./ClipPath";
 import PageShowGrid from "./PageShowGrid";
@@ -93,7 +92,6 @@ export default {
     PageShowGrid,
     ClipPath,
     ImageResource,
-    BackgroundColor,
     BackgroundBlend,    
     FilterList,    
     PageExport,

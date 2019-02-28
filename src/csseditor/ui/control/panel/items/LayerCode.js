@@ -18,7 +18,8 @@ import {
     CHANGE_LAYER_MOVE,
     SELECT_TAB_LAYER,
     CHANGE_LAYER_BACKDROP_FILTER,
-    CHANGE_LAYER_CLIPPATH_POLYGON
+    CHANGE_LAYER_CLIPPATH_POLYGON,
+    CHANGE_LAYER_BORDER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
@@ -76,6 +77,7 @@ export default class LayerCode extends BasePropertyItem {
         CHANGE_LAYER_POSITION,
         CHANGE_LAYER_MOVE,
         CHANGE_LAYER_BACKGROUND_COLOR,
+        CHANGE_LAYER_BORDER,
         CHANGE_LAYER_CLIPPATH,
         CHANGE_LAYER_CLIPPATH_POLYGON,
         CHANGE_LAYER_FILTER,
