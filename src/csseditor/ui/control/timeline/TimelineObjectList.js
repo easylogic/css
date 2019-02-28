@@ -4,7 +4,7 @@ import { TIMELINE_LIST, TIMELINE_SEEK } from "../../../types/TimelineTypes";
 import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION, CHANGE_IMAGE_COLOR } from "../../../types/event";
 import { unitValue, EMPTY_STRING } from "../../../../util/css/types";
 import { defaultValue, html, isNotUndefined } from "../../../../util/functions/func";
-import { IS_LAYER, PROPERTY_GET_DEFAULT_VALUE, IS_IMAGE, GET_PROPERTY_LIST } from "../../../../util/css/make";
+import { IS_LAYER, PROPERTY_GET_DEFAULT_VALUE, IS_IMAGE, GET_PROPERTY_LIST, LAYER_NAME } from "../../../../util/css/make";
 import { ITEM_SET } from "../../../types/ItemTypes";
 import { MOVE_TIMELINE } from "../../../types/ToolTypes";
 
@@ -102,18 +102,14 @@ export default class TimelineObjectList extends UIElement {
         
     }
 
-    getLayerName (item) {
-        return item.name ||  ((item.index/100) + 1) + '. ' + 'Layer'
-    }
-
     makeTimelineObjectForLayer (timeline, targetItem, index) {
         var name = EMPTY_STRING;
 
         if (IS_LAYER(targetItem)) {
-            name = this.getLayerName(targetItem)
+            name = LAYER_NAME(targetItem)
         } else if (IS_IMAGE(targetItem)) {
             var layer = this.get(targetItem.parentId)
-            name = `${this.getLayerName(layer)} -&gt; ${targetItem.type}`
+            name = `${LAYER_NAME(layer)} -&gt; ${targetItem.type}`
         }
         var collapse = timeline.groupCollapsed ? 'group-collapsed': ''
         return `

@@ -4,7 +4,7 @@ import { SELECTION_CURRENT_PAGE } from "../types/SelectionTypes";
 import { EXPORT_GENERATE_CODE, EXPORT_CODEPEN_CODE } from "../types/ExportTpyes";
 import { LAYER_TO_STRING_CLIPPATH, LAYER_TOEXPORT } from "../types/LayerTypes";
 import { EMPTY_STRING, WHITE_STRING } from "../../util/css/types";
-import { ITEM_MAP_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_MAP_LAYER_CHILDREN } from "../types/ItemSearchTypes";
 import { PAGE_TO_CSS } from "../types/PageTypes";
 import { CSS_TO_STRING } from "../../util/css/make";
 
@@ -31,7 +31,7 @@ export default class ExportManager extends BaseModule {
     }
 
     getPageHtml ($store, page) {
-        var html = `<div id="page-1">\n${$store.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
+        var html = `<div id="page-1">\n${$store.read(ITEM_MAP_LAYER_CHILDREN, page.id, (item, index) => {
 
             var idString = item.idString || 'layer-' + (index+1)
             var className = item.className
@@ -65,7 +65,7 @@ export default class ExportManager extends BaseModule {
     }
 
     getLayerStyle ($store, page) {
-        var layerStyle = $store.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
+        var layerStyle = $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, (item, index) => {
 
             var idString = item.idString || 'layer-' + (index+1)
             var className = item.className

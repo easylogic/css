@@ -11,6 +11,18 @@ import { format } from "../functions/formatter";
 
 export const DEFAULT_FUNCTION = (item) => item; 
 
+export const LAYER_NAME = (item) => {
+    var {index, name} = item; 
+    if (index == Number.MAX_SAFE_INTEGER) index = 0;
+    return `${1 + (index/100)}. ${name || 'Layer'}`
+}
+
+export const PAGE_NAME = (item) => {
+    var {index, name} = item; 
+    if (index == Number.MAX_SAFE_INTEGER) index = 0;
+    return `${1 + (index/100)}. ${name || 'Page'}`
+}
+
 export function IS_PAGE (item) { return item.itemType == ITEM_TYPE_PAGE }
 export function IS_LAYER (item) { return item.itemType == ITEM_TYPE_LAYER }
 export function IS_CIRCLE (item) { return item.itemType == ITEM_TYPE_CIRCLE }

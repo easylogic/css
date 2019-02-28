@@ -7,7 +7,7 @@ import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { ITEM_MOVE_IN_LAYER, ITEM_MOVE_IN, ITEM_MOVE_LAST } from "../../../types/ItemMoveTypes";
 import { ITEM_ADD_COPY, ITEM_COPY_IN, ITEM_COPY_IN_LAYER } from "../../../types/ItemRecoverTypes";
-import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_CHILDREN } from "../../../types/ItemSearchTypes";
+import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_LAYER_CHILDREN } from "../../../types/ItemSearchTypes";
 import { html } from "../../../../util/functions/func";
 
 export default class LayerListView extends UIElement {
@@ -70,7 +70,7 @@ export default class LayerListView extends UIElement {
             return EMPTY_STRING;
         }
 
-        return this.read(ITEM_MAP_CHILDREN, page.id, (item, index) => {
+        return this.read(ITEM_MAP_LAYER_CHILDREN, page.id, (item, index) => {
             return this.makeItemNode(item, index); 
         }).reverse();
     }

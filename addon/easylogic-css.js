@@ -11495,8 +11495,6 @@ var ITEM_LIST = 'item/list';
 var ITEM_LIST_PAGE = 'item/list/page';
 var ITEM_LIST_CHILDREN = 'item/list/children';
 var ITEM_MAP_PAGE = 'item/map/page';
-var ITEM_COUNT_CHILDREN = 'item/count/children';
-var ITEM_MAP_CHILDREN = 'item/map/children';
 var ITEM_MAP_TYPE_CHILDREN = 'item/map/type/children';
 var ITEM_MAP_LAYER_CHILDREN = 'item/map/layer/children';
 var ITEM_MAP_TIMELINE_CHILDREN = 'item/map/timeline/children';
@@ -11573,6 +11571,22 @@ var _DEFINED_POSITIONS;
 
 var DEFAULT_FUNCTION = function DEFAULT_FUNCTION(item) {
     return item;
+};
+
+var LAYER_NAME = function LAYER_NAME(item) {
+    var index = item.index,
+        name = item.name;
+
+    if (index == Number.MAX_SAFE_INTEGER) index = 0;
+    return 1 + index / 100 + ". " + (name || 'Layer');
+};
+
+var PAGE_NAME = function PAGE_NAME(item) {
+    var index = item.index,
+        name = item.name;
+
+    if (index == Number.MAX_SAFE_INTEGER) index = 0;
+    return 1 + index / 100 + ". " + (name || 'Page');
 };
 
 function IS_PAGE(item) {
@@ -12474,7 +12488,7 @@ var GradientSteps = function (_UIElement) {
 
             if (!item) return EMPTY_STRING;
 
-            return this.read(ITEM_MAP_CHILDREN, item.id, function (step) {
+            return this.read(ITEM_MAP_COLORSTEP_CHILDREN, item.id, function (step) {
 
                 var cut = step.cut ? 'cut' : EMPTY_STRING;
                 var unitValue$$1 = _this2.read(COLORSTEP_UNIT_VALUE, step, _this2.getMaxValue());
@@ -20892,20 +20906,15 @@ var TimelineObjectList = function (_UIElement) {
             }));
         }
     }, {
-        key: "getLayerName",
-        value: function getLayerName(item) {
-            return item.name || item.index / 100 + 1 + '. ' + 'Layer';
-        }
-    }, {
         key: "makeTimelineObjectForLayer",
         value: function makeTimelineObjectForLayer(timeline, targetItem, index) {
             var name = EMPTY_STRING;
 
             if (IS_LAYER(targetItem)) {
-                name = this.getLayerName(targetItem);
+                name = LAYER_NAME(targetItem);
             } else if (IS_IMAGE(targetItem)) {
                 var layer = this.get(targetItem.parentId);
-                name = this.getLayerName(layer) + " -&gt; " + targetItem.type;
+                name = LAYER_NAME(layer) + " -&gt; " + targetItem.type;
             }
             var collapse = timeline.groupCollapsed ? 'group-collapsed' : '';
             return "\n            <div class='timeline-object " + collapse + "' data-type='" + targetItem.itemType + "' data-timeline-id=\"" + timeline.id + "\">\n                <div class='timeline-object-title row'>\n                    <div class='icon'></div>    \n                    <div class='title'>" + name + "</div>\n                </div>\n                <div class='timeline-group'>\n                    " + this.makeTimelinePropertyGroup(timeline, targetItem, index) + "\n                </div>\n            </div>\n        ";
@@ -21913,13 +21922,13 @@ var PredefinedPageResizer = function (_UIElement) {
         key: 'setPosition',
         value: function setPosition() {
             var page = this.read(SELECTION_CURRENT_PAGE);
-
             if (!page) return;
+
+            var toolSize = this.config('tool.size');
+            if (!toolSize) return;
 
             var width = page.width,
                 height = page.height;
-
-            var toolSize = this.config('tool.size');
 
             var boardOffset = toolSize['board.offset'];
             var pageOffset = toolSize['page.offset'];
@@ -22115,7 +22124,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
                     backgroundCSS = IMAGE_BACKGROUND_SIZE_TO_CSS(backgroundImage);
                 }
 
-                var title = 1 + item.index / 100 + '. ' + (item.name || 'Layer');
+                var title = LAYER_NAME(item);
 
                 return ' \n                <div class="predefined-layer-resizer ' + image + '" predefined-layer-id="' + item.id + '" style="' + CSS_TO_STRING(css) + '" title="' + title + '" >\n                    <div class="event-panel" data-value="' + SEGMENT_TYPE_MOVE + '"></div>\n                    <div class="image-panel" style="display:none;' + CSS_TO_STRING(backgroundCSS) + '"></div>\n                    <div class=\'button-group\' predefined-layer-id="' + item.id + '">\n                        <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n                        <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n                    </div>\n                </div> \n            ';
             });
@@ -23454,9 +23463,9 @@ var GradientView = function (_UIElement) {
 
             this.initializeLayerCache();
 
-            var list = this.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
+            var list = this.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
                 var content = item.content || EMPTY_STRING;
-                var title = 1 + item.index / 100 + '. ' + (item.name || 'Layer');
+                var title = LAYER_NAME(item);
                 return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + title + '" \n                    style=\'' + _this2.read(LAYER_TO_STRING, item, true) + '\'>' + content + _this2.read(LAYER_TO_STRING_CLIPPATH, item) + '</div>';
             });
 
@@ -23469,12 +23478,9 @@ var GradientView = function (_UIElement) {
         }
     }, {
         key: 'refresh',
-        value: function refresh(isDrag) {
-            //this.hasScroll = false; 
+        value: function refresh() {
             this.setBackgroundColor();
             this.load();
-
-            
         }
     }, {
         key: 'refreshLayer',
@@ -23519,8 +23525,6 @@ var GradientView = function (_UIElement) {
 
                         _this4.layerItems[item.id] = $el;
                     }
-
-                    // this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
                     _this4.layerItems[item.id].cssArray(BOUND_TO_CSS_ARRAY(item));
                 });
@@ -23568,17 +23572,6 @@ var GradientView = function (_UIElement) {
                 this.refs.$board.el.scrollTop = Math.floor(top);
                 this.refs.$board.el.scrollLeft = Math.floor(left);
                 this.hasScroll = true;
-            }
-
-            var item = this.read(SELECTION_CURRENT_PAGE);
-
-            this.refs.$page.toggle(item);
-
-            if (item) {
-                if (IS_PAGE(item)) {
-                    var count = this.read(ITEM_COUNT_CHILDREN, item.id);
-                    this.refs.$colorview.toggle(count);
-                }
             }
         }
     }, {
@@ -24633,8 +24626,8 @@ var PageListView = function (_UIElement) {
         value: function makeItemNodePage(item, index, selectedId) {
             var selected = item.id == selectedId ? 'selected' : EMPTY_STRING;
             var preview = this.makePagePreview(item.id);
-            var index = item.index / 100 + 1;
-            return "<div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n            <div class=\"item-preview\">" + preview + "</div>\n            <div class=\"item-title\">" + (item.name || "Project " + index) + "</div>   \n        </div>";
+            var title = PAGE_NAME(item);
+            return "<div class='tree-item " + selected + "' id=\"" + item.id + "\" type='page'>\n            <div class=\"item-preview\">" + preview + "</div>\n            <div class=\"item-title\">" + title + "</div>   \n        </div>";
         }
     }, {
         key: LOAD('$pageList'),
@@ -24734,7 +24727,7 @@ var LayerListView = function (_UIElement) {
                 return EMPTY_STRING;
             }
 
-            return this.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
+            return this.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
                 return _this3.makeItemNode(item, index);
             }).reverse();
         }
@@ -25429,7 +25422,7 @@ var ColorStepManager = function (_BaseModule) {
     }, {
         key: GETTER(COLORSTEP_SORT_LIST),
         value: function value$$1($store, parentId) {
-            var colorsteps = $store.read(ITEM_MAP_CHILDREN, parentId);
+            var colorsteps = $store.read(ITEM_MAP_COLORSTEP_CHILDREN, parentId);
 
             colorsteps.sort(function (a, b) {
                 if (a.index == b.index) return 0;
@@ -27418,7 +27411,7 @@ var CollectManager = function (_BaseModule) {
     createClass(CollectManager, [{
         key: GETTER(COLLECT_COLORSTEPS),
         value: function value$$1($store, imageId) {
-            return $store.read(ITEM_MAP_CHILDREN, imageId, function (colorstep) {
+            return $store.read(ITEM_MAP_COLORSTEP_CHILDREN, imageId, function (colorstep) {
                 var colorstep = _extends({}, $store.items[colorstep.id]);
                 delete colorstep.id;
                 delete colorstep.parentId;
@@ -27520,7 +27513,7 @@ var CollectManager = function (_BaseModule) {
     }, {
         key: GETTER(COLLECT_LAYERS),
         value: function value$$1($store, pageId) {
-            return $store.read(ITEM_MAP_CHILDREN, pageId, function (layer) {
+            return $store.read(ITEM_MAP_LAYER_CHILDREN, pageId, function (layer) {
                 return $store.read(COLLECT_LAYER_ONE, layer.id);
             });
         }
@@ -30022,20 +30015,6 @@ var ItemSearchManager = function (_BaseModule) {
             }
         }
     }, {
-        key: GETTER(ITEM_COUNT_CHILDREN),
-        value: function value$$1($store, parentId) {
-            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).length;
-        }
-    }, {
-        key: GETTER(ITEM_MAP_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
         key: "getChildrenMapForType",
         value: function getChildrenMapForType($store, parentId, itemType) {
             var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
@@ -30204,7 +30183,7 @@ var ExportManager = function (_BaseModule) {
     }, {
         key: "getPageHtml",
         value: function getPageHtml($store, page) {
-            var html = "<div id=\"page-1\">\n" + $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
+            var html = "<div id=\"page-1\">\n" + $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
 
                 var idString = item.idString || 'layer-' + (index + 1);
                 var className = item.className;
@@ -30239,7 +30218,7 @@ var ExportManager = function (_BaseModule) {
         value: function getLayerStyle($store, page) {
             var _this2 = this;
 
-            var layerStyle = $store.read(ITEM_MAP_CHILDREN, page.id, function (item, index) {
+            var layerStyle = $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
 
                 var idString = item.idString || 'layer-' + (index + 1);
                 var className = item.className;

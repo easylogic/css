@@ -1,13 +1,13 @@
 import BaseModule from "../../util/BaseModule";
 import { GETTER } from "../../util/Store";
 import { COLLECT_COLORSTEPS, COLLECT_ONE, COLLECT_PAGE_ONE, COLLECT_LAYER_ONE, COLLECT_IMAGE_ONE, COLLECT_BOXSHADOW_ONE, COLLECT_TEXTSHADOW_ONE, COLLECT_IMAGES, COLLECT_BOXSHADOWS, COLLECT_TEXTSHADOWS, COLLECT_LAYERS } from "../types/CollectTypes";
-import { ITEM_MAP_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_BOXSHADOW_CHILDREN, ITEM_MAP_TEXTSHADOW_CHILDREN } from "../types/ItemSearchTypes";
+import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_BOXSHADOW_CHILDREN, ITEM_MAP_TEXTSHADOW_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN, ITEM_MAP_LAYER_CHILDREN } from "../types/ItemSearchTypes";
 import { ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
 
 export default class CollectManager extends BaseModule {
 
     [GETTER(COLLECT_COLORSTEPS)] ($store, imageId) {
-        return $store.read(ITEM_MAP_CHILDREN, imageId, (colorstep) => {
+        return $store.read(ITEM_MAP_COLORSTEP_CHILDREN, imageId, (colorstep) => {
             var colorstep = {...$store.items[colorstep.id]};
             delete colorstep.id;
             delete colorstep.parentId;
@@ -100,7 +100,7 @@ export default class CollectManager extends BaseModule {
     }
 
     [GETTER(COLLECT_LAYERS)] ($store, pageId) {
-        return $store.read(ITEM_MAP_CHILDREN, pageId, (layer) => {
+        return $store.read(ITEM_MAP_LAYER_CHILDREN, pageId, (layer) => {
             return $store.read(COLLECT_LAYER_ONE, layer.id)
         })
     }
