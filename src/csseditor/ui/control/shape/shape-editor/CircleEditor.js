@@ -10,7 +10,7 @@ import {
 import { defaultValue } from "../../../../../util/functions/func";
 import { px2percent } from "../../../../../util/filter/functions";
 import { percentUnit, value2px, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE } from "../../../../../util/css/types";
-import { POINTEREND, POINTERMOVE, POINTERSTART, MOVE } from "../../../../../util/Event";
+import { POINTERSTART, MOVE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIP_PATH_IS_CIRCLE } from "../../../../../util/css/make";
 

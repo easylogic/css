@@ -19,7 +19,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
     template () {
         return `
-            <div class='property-item clip-path-svg show'>
+            <div class='property-item clip-path-svg'> 
                 <div class='items'>
                     <div>
                         <label>Fit Size</label>
@@ -70,7 +70,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
         if (!item) return false;
         
-        if (CLIP_PATH_IS_SVG(item)) return true; 
+        return CLIP_PATH_IS_SVG(item)
     } 
 
     [CLICK('$fit')] () {
@@ -83,6 +83,7 @@ export default class ClipPathSVG extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
+        CHANGE_LAYER_CLIPPATH,
         CHANGE_SELECTION
     )] (value) {
         this.refresh();
