@@ -30117,16 +30117,16 @@ var ItemSearchManager = function (_BaseModule) {
 
             if (!children) {
                 children = $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
+            }
+
+            if (children.colorstep) {
+                return children.colorstep.forEach(function (id, index) {
+                    callback($store.items[id], index);
+                });
             } else {
-                if (children.colorstep) {
-                    return children.colorstep.forEach(function (id, index) {
-                        callback($store.items[id], index);
-                    });
-                } else {
-                    return children.forEach(function (id, index) {
-                        callback($store.items[id], index);
-                    });
-                }
+                return children.forEach(function (id, index) {
+                    callback($store.items[id], index);
+                });
             }
         }
     }, {
