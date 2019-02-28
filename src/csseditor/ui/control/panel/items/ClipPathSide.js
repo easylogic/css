@@ -21,7 +21,7 @@ const CLIP_PATH_SIDE_TYPES = [
 export default class ClipPathSide extends BasePropertyItem {
     template () {
         return html`
-            <div class='property-item clip-path-side'>
+            <div class='property-item clip-path-side show'>
                 <div class='items'>            
                     <div>
                         <label>Side</label>
@@ -50,7 +50,7 @@ export default class ClipPathSide extends BasePropertyItem {
 
         var isShow = this.isShow();
 
-        this.$el.toggleClass('show', isShow);
+        // this.$el.toggleClass('show', isShow);
 
         if (isShow) {
 

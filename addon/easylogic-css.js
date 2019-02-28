@@ -14780,7 +14780,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class='property-item clip-path-svg show'>\n                <div class='items'>\n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\"></div>\n                    </div>                            \n                    <div class='image-resource' ref=\"$imageList\"></div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item clip-path-svg'> \n                <div class='items'>\n                    <div>\n                        <label>Fit Size</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$fit\" /> fit to layer</label>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Clip</label>\n                        <div class='clip-path-container' ref=\"$clipPath\" title=\"Click me!!\"></div>\n                    </div>                            \n                    <div class='image-resource' ref=\"$imageList\"></div>\n                </div>\n            </div>\n        ";
         }
     }, {
         key: LOAD('$imageList'),
@@ -14815,7 +14815,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
 
             if (!item) return false;
 
-            if (CLIP_PATH_IS_SVG(item)) return true;
+            return CLIP_PATH_IS_SVG(item);
         }
     }, {
         key: CLICK('$fit'),
@@ -14829,7 +14829,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION),
         value: function value$$1(_value) {
             this.refresh();
         }
@@ -14919,7 +14919,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
     return ClipPathSVG;
 }(BasePropertyItem);
 
-var _templateObject$8 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
+var _templateObject$8 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side show'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side show'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
 
 var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
 
@@ -14950,7 +14950,7 @@ var ClipPathSide = function (_BasePropertyItem) {
 
             var isShow = this.isShow();
 
-            this.$el.toggleClass('show', isShow);
+            // this.$el.toggleClass('show', isShow);
 
             if (isShow) {
 
@@ -22887,7 +22887,7 @@ var InsetEditor = function (_UIElement) {
 
             this.read(SELECTION_CURRENT_LAYER, function (layer) {
 
-                if (CLIP_PATH_IS_INSET(layer)) return;
+                if (!CLIP_PATH_IS_INSET(layer)) return;
 
                 var _getRectangle = _this2.getRectangle(),
                     width = _getRectangle.width,
@@ -23006,6 +23006,7 @@ var InsetEditor = function (_UIElement) {
     }, {
         key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER),
         value: function value$$1() {
+            this.cachedRectangle = null;
             this.refresh();
         }
 
@@ -23021,11 +23022,8 @@ var InsetEditor = function (_UIElement) {
         value: function value$$1(e) {
             e.preventDefault();
             this.currentType = e.$delegateTarget.attr('data-type');
-        }
-    }, {
-        key: POINTERSTART(),
-        value: function value$$1(e) {
             this.layer = this.read(SELECTION_CURRENT_LAYER);
+            this.cachedRectangle = null;
         }
     }]);
     return InsetEditor;

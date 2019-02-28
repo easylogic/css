@@ -10,7 +10,7 @@ import {
 import { defaultValue } from "../../../../../util/functions/func";
 import { percentUnit, value2px, CLIP_PATH_TYPE_INSET } from "../../../../../util/css/types";
 import { px2percent } from "../../../../../util/filter/functions";
-import { POINTEREND, POINTERMOVE, POINTERSTART, MOVE } from "../../../../../util/Event";
+import { POINTERSTART, MOVE } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { CLIP_PATH_IS_INSET } from "../../../../../util/css/make";
 
@@ -43,7 +43,7 @@ export default class InsetEditor extends UIElement {
     refreshPointer () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
-            if (CLIP_PATH_IS_INSET(layer)) return;
+            if (!CLIP_PATH_IS_INSET(layer)) return;
 
             var { width, height } = this.getRectangle()
 
@@ -151,6 +151,7 @@ export default class InsetEditor extends UIElement {
         CHANGE_LAYER_CLIPPATH,
         CHANGE_LAYER
     )] () {
+        this.cachedRectangle = null;
         this.refresh()
     }
 
@@ -163,10 +164,8 @@ export default class InsetEditor extends UIElement {
     [POINTERSTART('$el .drag-item') + MOVE()] (e) {
         e.preventDefault();
         this.currentType = e.$delegateTarget.attr('data-type');
+        this.layer = this.read(SELECTION_CURRENT_LAYER);          
+        this.cachedRectangle = null; 
     }
-
-    [POINTERSTART()] (e) {
-        this.layer = this.read(SELECTION_CURRENT_LAYER);  
-    }    
     
 }
