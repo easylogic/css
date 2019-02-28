@@ -270,7 +270,7 @@ export default class GradientView extends UIElement {
         CHANGE_IMAGE_COLOR,
         CHANGE_IMAGE_ANGLE,
         CHANGE_IMAGE_LINEAR_ANGLE,
-        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE_RADIAL_POSITION,   
         CHANGE_IMAGE_RADIAL_TYPE,
         CHANGE_COLOR_STEP
     )]() { 
