@@ -10,7 +10,7 @@ import {
 } from '../../../../../types/event';
 import { isNotUndefined } from '../../../../../../util/functions/func';
 import { SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../../types/SelectionTypes';
-import { ITEM_EACH_CHILDREN } from '../../../../../types/ItemSearchTypes';
+import { ITEM_EACH_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from '../../../../../types/ItemSearchTypes';
 import { IMAGE_TYPE_IS_GRADIENT, IMAGE_TYPE_IS_STATIC } from '../../../../../../util/css/make';
 
 export default class ColorPickerLayer extends UIElement {
@@ -34,8 +34,8 @@ export default class ColorPickerLayer extends UIElement {
         
     }    
 
-    template () { 
-        return `<div class='colorpicker-layer'> </div>`
+    templateClass () { 
+        return `colorpicker-layer`
     }
 
     changeColor (color) {
@@ -63,13 +63,13 @@ export default class ColorPickerLayer extends UIElement {
 
     [EVENT(CHANGE_COLOR_STEP)] (newValue) {
         if (isNotUndefined(newValue.color)) {
-            this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
+            this.setColor(newValue.color);
         }
     }
 
-    [EVENT('changeColor')] () {
-        this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
-    } 
+    // [EVENT('changeColor')] () {
+    //     this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
+    // } 
 
     [EVENT(
       CHANGE_IMAGE,
@@ -77,13 +77,19 @@ export default class ColorPickerLayer extends UIElement {
       CHANGE_SELECTION
     )] () { this.refresh() }    
 
+    setColor (color) {
+        this.colorPicker.initColorWithoutChangeEvent(color);
+    }
+
     refresh() {
         if (this.read(SELECTION_IS_IMAGE)) {
             this.read(SELECTION_CURRENT_IMAGE, (image) => {
                 if (IMAGE_TYPE_IS_STATIC(image.type)) {
-                    this.colorPicker.initColorWithoutChangeEvent(image.color);
+                    this.setColor(image.color);
                 } else if (IMAGE_TYPE_IS_GRADIENT(image.type)) {
-                    
+                    this.read(ITEM_MAP_COLORSTEP_CHILDREN, image.id).filter(it => it.selected).forEach(it => {
+                        this.setColor(it.color)
+                    })
                 }
             })
         }

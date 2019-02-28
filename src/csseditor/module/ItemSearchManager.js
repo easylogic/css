@@ -1,15 +1,13 @@
 import BaseModule from "../../util/BaseModule";
 import Dom from "../../util/Dom";
 import { GETTER } from "../../util/Store";
-import { isUndefined, keyEach } from "../../util/functions/func";
+import { isUndefined } from "../../util/functions/func";
 import { EMPTY_STRING, ITEM_TYPE_PAGE, ITEM_TYPE_LAYER, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, ITEM_TYPE_IMAGE, ITEM_TYPE_COLORSTEP, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
 import { 
     ITEM_MAP_PAGE, 
     ITEM_LIST_PAGE, 
-    ITEM_GET_ALL, 
     ITEM_EACH_CHILDREN, 
     ITEM_LIST, 
-    ITEM_FILTER, 
     ITEM_LIST_CHILDREN, 
     ITEM_COUNT_CHILDREN, 
     ITEM_MAP_CHILDREN, 
@@ -19,48 +17,34 @@ import {
     ITEM_MAP_COLORSTEP_CHILDREN, 
     ITEM_MAP_BOXSHADOW_CHILDREN, 
     ITEM_MAP_TEXTSHADOW_CHILDREN, 
-    ITEM_FILTER_CHILDREN, 
-    ITEM_EACH_TYPE_CHILDREN, 
-    ITEM_TRAVERSE, 
-    ITEM_TREE, 
-    ITEM_TREE_NORMALIZE, 
+    ITEM_EACH_TYPE_CHILDREN,  
     ITEM_PATH, 
     ITEM_DOM, 
     ITEM_MAP_TIMELINE_CHILDREN, 
     ITEM_MAP_KEYFRAME_CHILDREN 
 } from "../types/ItemSearchTypes";
-export const DEFAULT_FUNCTION = (item) => item; 
+import { DEFAULT_FUNCTION } from "../../util/css/make";
 
 export default class ItemSearchManager extends BaseModule {
 
-    [GETTER(ITEM_GET_ALL)] ($store, parentId) {
-        var items = {}
+    initialize() {
+        super.initialize()
 
-        $store.read(ITEM_EACH_CHILDREN, parentId, (item) => {
-            items[item.id] = {...item};
-
-            var children = $store.read(ITEM_GET_ALL, item.id)
-            keyEach(children, (key, value) => {
-                items[key] = value;
-            })
-        })
-
-        return items; 
+        this.sort_function = (aId, bId) => {
+            var aIndex = this.$store.items[aId].index
+            var bIndex = this.$store.items[bId].index;
+            if (aIndex == bIndex) return 0;
+            return aIndex > bIndex ? 1 : -1;
+        }
     }
 
     [GETTER(ITEM_LIST)] ($store, filterCallback) {
         var list = $store.itemKeys.filter(filterCallback)
 
-        list.sort( (aId, bId) => {
-            return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
-        })
+        list.sort(this.sort_function)
 
         return list; 
     }
-
-    [GETTER(ITEM_FILTER)] ($store, filterCallback) {
-        return $store.read(ITEM_LIST, filterCallback)
-    }    
 
     [GETTER(ITEM_LIST_PAGE)] ($store) {
         return $store.read(ITEM_LIST, this.checkOnlyItemTypeCallback($store, ITEM_TYPE_PAGE));
@@ -156,12 +140,6 @@ export default class ItemSearchManager extends BaseModule {
         return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW, callback);
     }            
 
-    [GETTER(ITEM_FILTER_CHILDREN)] ($store, parentId, callback) {
-        return $store.read(ITEM_LIST_CHILDREN, parentId).filter(function (id, index) { 
-            return callback($store.items[id], index)
-        });
-    }  
-
     [GETTER(ITEM_EACH_CHILDREN)] ($store, parentId, callback) {
         var parent = this.get(parentId);
 
@@ -169,11 +147,18 @@ export default class ItemSearchManager extends BaseModule {
 
         if (!children) {
             children = $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId))
+        } else {
+            if (children.colorstep) {
+                return children.colorstep.forEach(function (id, index) { 
+                    callback($store.items[id], index)
+                });
+            } else {
+                return children.forEach(function (id, index) { 
+                    callback($store.items[id], index)
+                });
+            }
         }
 
-        return children.forEach(function (id, index) { 
-            callback($store.items[id], index)
-        });
     }        
 
     [GETTER(ITEM_EACH_TYPE_CHILDREN)] ($store, parentId, itemType, callback) {
@@ -181,44 +166,6 @@ export default class ItemSearchManager extends BaseModule {
             callback($store.items[id], index)
         });
     }            
-
-    [GETTER(ITEM_TRAVERSE)] ($store, parentId) {
-        var list = $store.read(ITEM_LIST_CHILDREN, parentId);
-        
-        list.sort( (a, b) => {
-            var $a = $store.items[a];
-            var $b = $store.items[b];
-
-            if ($a.order == $b.order) {
-                
-                if (a > b) return 1; 
-                if (a < b) return -1;  
-
-                return 0; 
-            }
-            return $a.order > $b.order ? 1 : -1; 
-        })
-        
-        return list.map(childId => {
-            return { id: childId, children: $store.read(ITEM_TRAVERSE, childId)}
-        })
-    }
-
-    [GETTER(ITEM_TREE)] ($store) {
-        return $store.read(ITEM_TRAVERSE, EMPTY_STRING);
-    }
-
-    [GETTER(ITEM_TREE_NORMALIZE)] ($store, root = [], children = [], depth = 0) {
-        var results = [] 
-
-        var list = (root != null ? $store.read(ITEM_TREE) : children);
-        list.forEach(item => {
-            results.push({ id: item.id, depth })
-            results.push(... $store.read(ITEM_TREE_NORMALIZE, null, item.children, depth + 1))
-        });
-
-        return results; 
-    }   
     
     [GETTER(ITEM_PATH)] ($store, id) {
         var results = [id] 

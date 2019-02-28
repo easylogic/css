@@ -3,10 +3,7 @@ import { isFunction, isUndefined, clone } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { EMPTY_STRING } from "../../util/css/types";
 import { 
-    TOOL_COLOR_SOURCE, 
     TOOL_GET, 
-    TOOL_SET_COLOR_SOURCE, 
-    TOOL_CHANGE_COLOR, 
     TOOL_SET, 
     TOOL_TOGGLE, 
     TOOL_SAVE_DATA, 
@@ -42,24 +39,9 @@ export default class ToolManager extends BaseModule {
         this.$store.toolStack = []
     } 
 
-    [GETTER(TOOL_COLOR_SOURCE)] ($store) {
-        return $store.tool.colorSource
-    }
-
     [GETTER(TOOL_GET)] ($store, key, defaultValue) {
         return isUndefined($store.tool[key]) ? defaultValue : $store.tool[key]
     }    
-
-    [ACTION(TOOL_SET_COLOR_SOURCE)] ($store, colorSource) {
-        $store.tool.colorSource = colorSource;
-    }
-
-    [ACTION(TOOL_CHANGE_COLOR)] ($store, color) {
-        $store.tool.color = color 
-
-        $store.emit('changeColor')
-    }
-
 
     [ACTION(TOOL_SET)] ($store, key, value) {
         $store.tool[key] = value

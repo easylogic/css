@@ -1,21 +1,32 @@
 import { 
     stringUnit, valueUnit, percentUnit, EMPTY_STRING,
-    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING, PROPERTY_DEFAULT_VALUE, PROPERTY_LIST
+    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING, PROPERTY_DEFAULT_VALUE, PROPERTY_LIST, ITEM_TYPE_BORDER_IMAGE, ITEM_TYPE_MASK_IMAGE, ITEM_TYPE_BOX_IMAGE
 } from "./types";
 import { parseParamNumber } from "../filter/functions";
 import { defaultValue, isNotUndefined, get, isNumber, isUndefined, keyEach, isArray, cleanObject, combineKeyArray } from "../functions/func";
 import Timing from "../animation/Timing";
-import Scale from "../animation/Scale";
 import { parse } from "../functions/parser";
 import { interpolateRGBObject } from "../functions/mixin";
 import { format } from "../functions/formatter";
+
+export const DEFAULT_FUNCTION = (item) => item; 
 
 export function IS_PAGE (item) { return item.itemType == ITEM_TYPE_PAGE }
 export function IS_LAYER (item) { return item.itemType == ITEM_TYPE_LAYER }
 export function IS_CIRCLE (item) { return item.itemType == ITEM_TYPE_CIRCLE }
 export function IS_SHAPE (item) { return item.itemType == ITEM_TYPE_SHAPE }
 export function IS_GROUP (item) { return item.itemType == ITEM_TYPE_GROUP }
-export function IS_IMAGE (item) { return item.itemType == ITEM_TYPE_IMAGE }
+export function IS_IMAGE (item) { 
+    switch(item.itemType) {
+        case ITEM_TYPE_IMAGE:
+        case ITEM_TYPE_BORDER_IMAGE:
+        case ITEM_TYPE_MASK_IMAGE:
+        case ITEM_TYPE_BOX_IMAGE:
+            return true; 
+        default: 
+            return false; 
+    }
+}
 export function IS_BOXSHADOW (item) { return item.itemType == ITEM_TYPE_BOXSHADOW }
 export function IS_TEXTSHADOW (item) { return item.itemType == ITEM_TYPE_TEXTSHADOW }
 export function IS_COLORSTEP (item) { return item.itemType == ITEM_TYPE_COLORSTEP }

@@ -2,9 +2,9 @@ import BaseModule from "../../util/BaseModule";
 import SVGList from "./svg/index";
 import Dom from "../../util/Dom";
 import { GETTER, ACTION } from "../../util/Store";
-import { clone } from "../../util/functions/func";
 import { EMPTY_STRING } from "../../util/css/types";
 import { SVG_LIST_LOAD, SVG_LIST, SVG_GET_CLIPPATH, SVG_GET_BLOB, SVG_GET } from "../types/SVGTypes";
+import { CHANGE_SVG_LIST } from "../types/event";
 
 export default class SVGManager extends BaseModule {
 
@@ -15,11 +15,11 @@ export default class SVGManager extends BaseModule {
     }
 
     afterDispatch( ) {
-        this.$store.emit('changeSvgList')
+        this.$store.emit(CHANGE_SVG_LIST)
     }
  
     [GETTER(SVG_LIST)] ($store) {
-        return [...SVGList, ...$store.svgList];
+        return [...$store.svgList];
     } 
 
     [ACTION(SVG_LIST_LOAD)] ($store, loadList = []) {s

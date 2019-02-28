@@ -1,21 +1,11 @@
 import BaseModule from "../../util/BaseModule";
 import { CHANGE_SELECTION } from "../types/event";
 import { unitValue, pxUnit, EMPTY_STRING, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE } from "../../util/css/types";
-import { isFunction } from "../../util/functions/func";
+import { isFunction, isArray } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
 import { SELECTION_INITIALIZE_DATA, SELECTION_IDS, SELECTION_CHECK, SELECTION_IS_EMPTY, SELECTION_IS_NOT_EMPTY, SELECTION_HAS_ONE, SELECTION_HAS_MANY, SELECTION_TYPE, SELECTION_CURRENT, SELECTION_UNIT_VALUES, SELECTION_IS_ONE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_BOXSHADOW, SELECTION_CURRENT_BOXSHADOW_ID, SELECTION_CURRENT_TEXTSHADOW, SELECTION_CURRENT_TEXTSHADOW_ID, SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID, SELECTION_MODE, SELECTION_IS, SELECTION_IS_ITEM, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_PAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW, SELECTION_IS_FILTER, SELECTION_IS_BACKDROP_FILTER, SELECTION_IS_GROUP, SELECTION_IS_AREA, SELECTION_LAYERS, SELECTION_ONE, SELECTION_CHANGE, SELECTION_AREA, SELECTION_RECT } from "../types/SelectionTypes";
-import { ITEM_FILTER, ITEM_PATH, ITEM_LIST_PAGE } from "../types/ItemSearchTypes";
+import { ITEM_PATH, ITEM_LIST_PAGE, ITEM_MAP_LAYER_CHILDREN } from "../types/ItemSearchTypes";
 import { IS_LAYER, IS_IMAGE, IS_PAGE, IS_BOXSHADOW, IS_TEXTSHADOW } from "../../util/css/make";
-
-export const EDITOR_MODE_PAGE = 'page';
-export const EDITOR_GROUP_SELECT = 'layer-group'
-export const EDITOR_MODE_LAYER = 'layer-rect';
-export const EDITOR_MODE_LAYER_BORDER = 'layer-border';
-export const EDITOR_MODE_IMAGE = 'image'; 
-export const EDITOR_MODE_IMAGE_LINEAR = 'image-linear'; 
-export const EDITOR_MODE_IMAGE_RADIAL = 'image-radial'; 
-export const EDITOR_MODE_IMAGE_STATIC = 'image-static'; 
-export const EDITOR_MODE_IMAGE_IMAGE = 'image-image'; 
 
 export const SELECT_MODE_ONE = `SELECT_MODE_ONE`
 export const SELECT_MODE_AREA = `SELECT_MODE_AREA`
@@ -117,7 +107,7 @@ export default class SelectionManager extends BaseModule {
             var items = $store.read(SELECTION_CURRENT)
         }
 
-        if (Array.isArray(items) && items.length) {
+        if (isArray(items) && items.length) {
             if ($store.read(SELECTION_IS_ONE)) {
                 if (isFunction(callback)) callback (items[0])
                 return items[0]
@@ -138,7 +128,7 @@ export default class SelectionManager extends BaseModule {
             var items = $store.read(SELECTION_CURRENT)
         }
 
-        if (Array.isArray(items) && items.length) {
+        if (isArray(items) && items.length) {
             if ($store.read(SELECTION_IS_ONE) ) {
                 if (isFunction(callback)) callback (items[0].id)
                 return items[0].id
@@ -151,7 +141,7 @@ export default class SelectionManager extends BaseModule {
         return items;
     }
 
-    [GETTER(SELECTION_CURRENT_IMAGE)] ($store, callback) {
+    [GETTER(SELECTION_CURRENT_IMAGE)] ($store, callback) { 
         return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
     }
 
@@ -178,7 +168,7 @@ export default class SelectionManager extends BaseModule {
     [GETTER(SELECTION_CURRENT_LAYER)] ($store, callback) {
         var layers = ($store.selection.layers || [] ).map( id => this.get(id)) ;
 
-        if (Array.isArray(layers) && layers.length) {
+        if (isArray(layers) && layers.length) {
             if ($store.read(SELECTION_IS_ONE)) {
                 if (isFunction(callback)) callback (layers[0])
                 return layers[0]
@@ -194,7 +184,7 @@ export default class SelectionManager extends BaseModule {
     [GETTER(SELECTION_CURRENT_LAYER_ID)] ($store, callback) {
         var layers = $store.selection.layers || [] ;
 
-        if (Array.isArray(layers) && layers.length) {
+        if (isArray(layers) && layers.length) {
             if ($store.read(SELECTION_IS_ONE) ) {
                 if (isFunction(callback)) callback (layers[0])
                 return layers[0]
@@ -211,11 +201,10 @@ export default class SelectionManager extends BaseModule {
         var page = this.get($store.selection.pageId)
 
         if (!page) {
-            var pages = $store.read(ITEM_LIST_PAGE)
-            page = pages[0]
+            var [page] = $store.read(ITEM_LIST_PAGE)
         }
 
-        if (page ) {
+        if (page) {
             if (isFunction(callback)) callback (page)
             return page
         }
@@ -300,10 +289,9 @@ export default class SelectionManager extends BaseModule {
     }        
 
     [GETTER(SELECTION_LAYERS)] ($store) {
-        return $store.read(ITEM_FILTER, (id) => {
-            return IS_LAYER($store.items[id])
-        }).map(id => {
-            var {x, y, width, height, lock, visible} = $store.items[id]
+
+        return $store.read(ITEM_MAP_LAYER_CHILDREN, $store.selection.pageId).map(item => {
+            var {x, y, width, height, lock, visible, id} = item
 
             x = unitValue(x);
             y = unitValue(y);
@@ -314,6 +302,7 @@ export default class SelectionManager extends BaseModule {
 
             return {x, y, width, height, x2, y2, id, lock, visible} 
         })
+
     }
 
     [ACTION(SELECTION_ONE)] ($store, selectedId = EMPTY_STRING) {

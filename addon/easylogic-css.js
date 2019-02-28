@@ -256,7 +256,6 @@ function crop() {
     };
 }
 
-// Image manupulate 
 function resize(dstWidth, dstHeight) {
     return function (bitmap, done) {
         var c = Canvas.drawPixels(bitmap);
@@ -686,9 +685,6 @@ function bitonal(darkColor, lightColor) {
     });
 }
 
-/*
- * @param {Number} amount  -100..100  ,  value < 0  is darken, value > 0 is brighten 
- */
 function brightness() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -716,10 +712,6 @@ function brownie() {
     });
 }
 
-/**
- * 
- * @param {Number} amount from 0 to 100 
- */
 function clip() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -734,10 +726,6 @@ function clip() {
     }, { $C: $C });
 }
 
-/**
- * 
- * @param {*} amount   min = -128, max = 128 
- */
 function contrast() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -762,10 +750,6 @@ function gamma() {
     }, { $C: $C });
 }
 
-/**
- * F.gradient('red', 'blue', 'yellow', 'white', 10)
- * F.gradient('red, blue, yellow, white, 10')
- */
 function gradient() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
@@ -839,9 +823,6 @@ function grayscale() {
     });
 }
 
-/*
- * @param {Number} amount   0..360  
- */
 function hue() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 360;
 
@@ -925,10 +906,6 @@ function matrix() {
     });
 }
 
-/**
- * 
- * @param {Number} amount 1..100
- */
 function noise() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -972,9 +949,6 @@ function polaroid() {
     });
 }
 
-/*
- * @param {Number} amount  -100..100 
- */
 function saturation() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
 
@@ -994,9 +968,6 @@ function saturation() {
     });
 }
 
-/*
- * @param {Number} amount  0..1 
- */
 function sepia() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -1049,12 +1020,6 @@ function shift() {
     });
 }
 
-/**
- * change the relative darkness of (a part of an image) by overexposure to light.
- * @param {*} r 
- * @param {*} g 
- * @param {*} b 
- */
 function solarize(redValue, greenValue, blueValue) {
     var $redValue = parseParamNumber$1(redValue);
     var $greenValue = parseParamNumber$1(greenValue);
@@ -1114,9 +1079,6 @@ function thresholdColor() {
     });
 }
 
-/*
- * @param {Number} amount  0..100 
- */
 function threshold() {
   var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
   var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
@@ -1178,11 +1140,6 @@ function blur () {
     return convolution(createBlurMatrix(amount));
 }
 
-/*
- * carve, mold, or stamp a design on (a surface) so that it stands out in relief.
- * 
- * @param {Number} amount   0.0 .. 4.0 
- */
 function emboss() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
@@ -3005,7 +2962,10 @@ var ITEM_TYPE_LAYER = 'layer';
 var ITEM_TYPE_CIRCLE = 'circle';
 
 var ITEM_TYPE_GROUP = 'group';
-var ITEM_TYPE_IMAGE = 'image';
+var ITEM_TYPE_IMAGE = 'image'; // background-image
+var ITEM_TYPE_MASK_IMAGE = 'mask-image'; // mask image
+var ITEM_TYPE_BORDER_IMAGE = 'border-image'; // border image
+var ITEM_TYPE_BOX_IMAGE = 'box-image'; // box image
 var ITEM_TYPE_BOXSHADOW = 'boxshadow';
 var ITEM_TYPE_TEXTSHADOW = 'textshadow';
 var ITEM_TYPE_COLORSTEP = 'colorstep';
@@ -3333,24 +3293,6 @@ var func = Object.freeze({
 	html: html
 });
 
-/**
- * @method format
- *
- * convert color to format string
- *
- *     // hex
- *     color.format({ r : 255, g : 255, b : 255 }, 'hex')  // #FFFFFF
- *
- *     // rgb
- *     color.format({ r : 255, g : 255, b : 255 }, 'rgb') // rgba(255, 255, 255, 0.5);
- *
- *     // rgba
- *     color.format({ r : 255, g : 255, b : 255, a : 0.5 }, 'rgb') // rgba(255, 255, 255, 0.5);
- *
- * @param {Object} obj  obj has r, g, b and a attributes
- * @param {"hex"/"rgb"} type  format string type
- * @returns {*}
- */
 function format(obj, type) {
     var defaultColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(0, 0, 0, 0)';
 
@@ -3540,18 +3482,6 @@ var fromLAB = Object.freeze({
 	LABtoRGB: LABtoRGB
 });
 
-/**
- * @method RGBtoHSV
- *
- * convert rgb to hsv
- *
- * 		color.RGBtoHSV(0, 0, 255) === { h : 240, s : 1, v : 1 } === '#FFFF00'
- *
- * @param {Number} R  red color value
- * @param {Number} G  green color value
- * @param {Number} B  blue color value
- * @return {Object}  hsv color code
- */
 function RGBtoHSV(r, g, b) {
 
     if (arguments.length == 1) {
@@ -3782,18 +3712,6 @@ var fromCMYK = Object.freeze({
 	CMYKtoRGB: CMYKtoRGB
 });
 
-/**
- * @method HSVtoRGB
- *
- * convert hsv to rgb
- *
- * 		color.HSVtoRGB(0,0,1) === #FFFFF === { r : 255, g : 0, b : 0 }
- *
- * @param {Number} H  hue color number  (min : 0, max : 360)
- * @param {Number} S  Saturation number  (min : 0, max : 1)
- * @param {Number} V  Value number 		(min : 0, max : 1 )
- * @returns {Object}
- */
 function HSVtoRGB(h, s, v) {
 
     if (arguments.length == 1) {
@@ -4227,15 +4145,6 @@ var parser = Object.freeze({
 	parseGradient: parseGradient
 });
 
-/**
- * @deprecated 
- * 
- * instead of this,  use blend function 
- *  
- * @param {*} startColor 
- * @param {*} endColor 
- * @param {*} t 
- */
 function interpolateRGB(startColor, endColor) {
     var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
     var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
@@ -4934,11 +4843,6 @@ function normal () {
     return convolution$1([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 }
 
-/*
- * carve, mold, or stamp a design on (a surface) so that it stands out in relief.
- * 
- * @param {Number} amount   0.0 .. 4.0 
- */
 function emboss$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
@@ -4946,10 +4850,6 @@ function emboss$1() {
     return convolution$1([amount * -2.0, -amount, 0.0, -amount, 1.0, amount, 0.0, amount, amount * 2.0]);
 }
 
-/**
- * 
- * @param {Number} amount 0..1
- */
 function gaussianBlur$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5066,9 +4966,6 @@ function bitonal$1(darkColor, lightColor) {
     return shader('\n        if ((pixelColor.r + pixelColor.g + pixelColor.b) > ' + checkVlue + ') {\n            outColor = vec4(' + lightColorString + '.rgb, pixelColor.a);\n        } else {\n            outColor = vec4(' + darkColorString + '.rgb, pixelColor.a);\n        }\n    ');
 }
 
-/*
- * @param {Number} amount  -1..1  ,  value < 0  is darken, value > 0 is brighten 
- */
 function brightness$2() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5106,9 +5003,6 @@ function brownie$1() {
     return matrix$3(0.5997023498159715, 0.34553243048391263, -0.2708298674538042, 0, -0.037703249837783157, 0.8609577587992641, 0.15059552388459913, 0, 0.24113635128153335, -0.07441037908422492, 0.44972182064877153, 0, 0, 0, 0, 1);
 }
 
-/*
- * @param {Number} amount 0..1
- */
 function clip$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -5125,9 +5019,6 @@ function chaos() {
     return shader('\n        vec2 st = pixelColor.st;\n        st *= ' + C + ';\n        \n        vec2 ipos = floor(st);  // get the integer coords\n\n        vec3 color = vec3(random( ipos ));\n\n        outColor = vec4(color, pixelColor.a);\n    ');
 }
 
-/*
- * @param {Number} amount  0..1
- */
 function contrast$2() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5136,9 +5027,6 @@ function contrast$2() {
     return shader('\n        outColor = pixelColor * ' + C + ';\n    ');
 }
 
-/*
- * @param {Number} amount  -1..1  ,  value < 0  is darken, value > 0 is brighten 
- */
 function gamma$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5147,10 +5035,6 @@ function gamma$1() {
     return shader('\n        outColor = vec4(pow(pixelColor.r, ' + C + '), pow(pixelColor.g, ' + C + '), pow(pixelColor.b, ' + C + '), pixelColor.a );\n    ');
 }
 
-/**
- * F.gradient('red', 'blue', 'yellow', 'white', 10)
- * F.gradient('red, blue, yellow, white, 10')
- */
 function gradient$2() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
@@ -5198,10 +5082,6 @@ function gradient$2() {
     return shader('\n        float rate = (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722); \n\n        ' + temp.join('\n') + '        \n    ');
 }
 
-/**
- * 
- * @param {Number} amount 0..1
- */
 function grayscale$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5213,9 +5093,6 @@ function grayscale$1() {
 }
 
 //http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
-/*
- * @param {Number} amount  0..1  ,  (real value 0..360)
- */
 function hue$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5237,10 +5114,6 @@ function kodachrome$1() {
     return matrix$3(1.1285582396593525, -0.3967382283601348, -0.03992559172921793, 0, -0.16404339962244616, 1.0835251566291304, -0.05498805115633132, 0, -0.16786010706155763, -0.5603416277695248, 1.6014850761964943, 0, 0, 0, 0, 1);
 }
 
-/**
- * 
- * @param {Number} amount 0..1
- */
 function noise$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5251,10 +5124,6 @@ function noise$1() {
     return shader('\n        float rnd = ' + min + ' + random( pixelColor.st ) * (' + max + ' - ' + min + ');\n\n        outColor = vec4(pixelColor.rgb + rnd, 1.0);\n    ');
 }
 
-/**
- * 
- * @param {Number} amount 0..1
- */
 function opacity$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5268,9 +5137,6 @@ function polaroid$1() {
     return matrix$3(1.438, -0.062, -0.062, 0, -0.122, 1.378, -0.122, 0, -0.016, -0.016, 1.483, 0, 0, 0, 0, 1);
 }
 
-/*
- * @param {Number} amount  0..1 
- */
 function saturation$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -5279,9 +5145,6 @@ function saturation$1() {
     return matrix$3(L, 0, 0, 0, 0, L, 0, 0, 0, 0, L, 0, 0, 0, 0, L);
 }
 
-/*
- * @param {Number} amount  0..100 
- */
 function sepia$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5329,9 +5192,6 @@ function thresholdColor$1() {
     return shader('\n        float c = ( (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722) ) >= ' + scale + ' ? 1.0 : 0.0;\n\n        outColor = vec4(c, c, c, pixelColor.a);\n    ');
 }
 
-/*
- * @param {Number} amount  0..100 
- */
 function threshold$1() {
   var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
   var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
@@ -5339,12 +5199,6 @@ function threshold$1() {
   return thresholdColor$1(scale, amount, false);
 }
 
-/**
- * 
- * @param {*} redTint  0..1
- * @param {*} greenTint 0..1
- * @param {*} blueTint 0..1
- */
 function tint$1 () {
     var redTint = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     var greenTint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -7248,10 +7102,7 @@ var Event = {
     }
 };
 
-var TOOL_COLOR_SOURCE = 'tool/colorSource';
 var TOOL_GET = 'tool/get';
-var TOOL_SET_COLOR_SOURCE = 'tool/setColorSource';
-var TOOL_CHANGE_COLOR = 'tool/changeColor';
 var TOOL_SET = 'tool/set';
 var TOOL_TOGGLE = 'tool/toggle';
 
@@ -7614,6 +7465,29 @@ var GROUP_DEFAULT_OBJECT = {
     x: pxUnit(0),
     y: pxUnit(0)
 };
+
+var MASK_IMAGE_DEFAULT_OBJECT = {
+    itemType: ITEM_TYPE_MASK_IMAGE,
+    is: IS_ATTRIBUTE,
+    type: IMAGE_ITEM_TYPE_STATIC,
+    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
+    index: 0,
+    parentId: EMPTY_STRING,
+    angle: 90,
+    color: 'red',
+    radialType: 'ellipse',
+    radialPosition: POSITION_CENTER,
+    visible: true,
+    isClipPath: false
+};
+
+var BORDER_IMAGE_DEFAULT_OBJECT = _extends({}, MASK_IMAGE_DEFAULT_OBJECT, {
+    itemType: ITEM_TYPE_BORDER_IMAGE
+});
+
+var BOX_IMAGE_DEFAULT_OBJECT = _extends({}, MASK_IMAGE_DEFAULT_OBJECT, {
+    itemType: ITEM_TYPE_BOX_IMAGE
+});
 
 var IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_IMAGE,
@@ -8323,7 +8197,6 @@ var EventMachine = function () {
   return EventMachine;
 }();
 
-// const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
 var PREFIX = '@';
@@ -11163,6 +11036,8 @@ var TEXT_FILL_COLOR = 'TEXT_FILL_COLOR';
 var SELECT_TAB_LAYER = 'SELECT_TAB_LAYER';
 var SELECT_TAB_IMAGE = 'SELECT_TAB_IMAGE';
 
+var CHANGE_SVG_LIST = 'CHANGE_SVG_LIST';
+
 var SELECTION_INITIALIZE_DATA = 'selection/initialize/data';
 var SELECTION_IDS = 'selection/ids';
 var SELECTION_CHECK = 'selection/check';
@@ -11616,12 +11491,9 @@ var IMAGE_TO_STRING = 'image/toString';
 
 var IMAGE_TO_LINEAR_RIGHT = 'image/toLinearRight';
 
-var ITEM_GET_ALL = 'item/get/all';
 var ITEM_LIST = 'item/list';
 var ITEM_LIST_PAGE = 'item/list/page';
 var ITEM_LIST_CHILDREN = 'item/list/children';
-var ITEM_FILTER = 'item/filter';
-var ITEM_FILTER_CHILDREN = 'item/filter/children';
 var ITEM_MAP_PAGE = 'item/map/page';
 var ITEM_COUNT_CHILDREN = 'item/count/children';
 var ITEM_MAP_CHILDREN = 'item/map/children';
@@ -11635,15 +11507,11 @@ var ITEM_MAP_BOXSHADOW_CHILDREN = 'item/map/boxshadow/children';
 var ITEM_MAP_TEXTSHADOW_CHILDREN = 'item/map/textshadow/children';
 var ITEM_EACH_CHILDREN = 'item/each/children';
 var ITEM_EACH_TYPE_CHILDREN = 'item/each/type/children';
-var ITEM_TRAVERSE = 'item/traverse';
-var ITEM_TREE = 'item/tree';
-var ITEM_TREE_NORMALIZE = 'item/tree/normalize';
 var ITEM_PATH = 'item/path';
 var ITEM_DOM = 'item/dom';
 
 var COLORSTEP_COLOR_SOURCE = 'colorstep/colorSource';
 var COLORSTEP_CURRENT = 'colorstep/current';
-var COLORSTEP_INIT_COLOR = 'colorstep/initColor';
 var COLORSTEP_ADD = 'colorstep/add';
 var COLORSTEP_REMOVE = 'colorstep/remove';
 var COLORSTEP_SORT = 'colorstep/sort';
@@ -11701,83 +11569,11 @@ bezierList.forEach(function (arr) {
     Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
 });
 
-var _ScaleFunctions;
-
-var ScaleFunctions = (_ScaleFunctions = {
-    'color': 'makeScaleFunctionForColor',
-    'number': 'makeScaleFunctionForNumber'
-}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
-
-var Scale = {
-    makeScaleFunctionForColor: function makeScaleFunctionForColor(start, end) {
-        return function (currentPercent) {
-            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
-
-            return interpolateRGBObject(start, end, rate);
-        };
-    },
-    makeScaleFunctionForNumber: function makeScaleFunctionForNumber(start, end) {
-        return function (currentPercent) {
-            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
-
-            return start.value + (end.value - start.value) * rate;
-        };
-    },
-    makeScaleFunctionForPercent: function makeScaleFunctionForPercent(start, end) {
-        return this.makeScaleFunctionForNumber(start, end);
-    },
-    makeScaleFunctionForPx: function makeScaleFunctionForPx(start, end) {
-        return this.makeScaleFunctionForNumber(start, end);
-    },
-    makeScaleFunctionForEm: function makeScaleFunctionForEm(start, end) {
-        return this.makeScaleFunctionForNumber(start, end);
-    },
-    makeScaleFunction: function makeScaleFunction(start, end, isLast) {
-        var itemType = start.itemType || 'number';
-
-        return this[ScaleFunctions[itemType]].call(this, start, end);
-    },
-    makeCheckFunction: function makeCheckFunction(start, end, isLast) {
-        if (isLast) {
-            return function (currentPercent) {
-                return start.percent <= currentPercent && currentPercent <= end.percent;
-            };
-        } else {
-            return function (currentPercent) {
-                return start.percent <= currentPercent && currentPercent < end.percent;
-            };
-        }
-    },
-    makeSetupFunction: function makeSetupFunction(start, end, isLast) {
-        var check = this.makeCheckFunction(start, end, isLast);
-        var scale$$1 = this.makeScaleFunction(start, end, isLast);
-
-        if (start.itemType == 'color') {
-            return this.makeSetupColorScaleFunction(check, scale$$1, start, end);
-        } else {
-            return this.makeSetupNumberScaleFunction(check, scale$$1, start, end);
-        }
-    },
-    makeSetupColorScaleFunction: function makeSetupColorScaleFunction(check, scale$$1, start, end) {
-        return function (ani, progress) {
-            if (check(progress)) {
-                ani.obj[start.key] = rgb(scale$$1(ani.timing(progress, ani.duration, start, end)));
-            }
-        };
-    },
-    makeSetupNumberScaleFunction: function makeSetupNumberScaleFunction(check, scale$$1, start, end) {
-
-        return function (ani, progress) {
-            if (check(progress)) {
-                var value$$1 = scale$$1(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
-
-                ani.obj[start.key] = string2unit(value$$1);
-            }
-        };
-    }
-};
-
 var _DEFINED_POSITIONS;
+
+var DEFAULT_FUNCTION = function DEFAULT_FUNCTION(item) {
+    return item;
+};
 
 function IS_PAGE(item) {
     return item.itemType == ITEM_TYPE_PAGE;
@@ -11791,7 +11587,15 @@ function IS_CIRCLE(item) {
 
 
 function IS_IMAGE(item) {
-    return item.itemType == ITEM_TYPE_IMAGE;
+    switch (item.itemType) {
+        case ITEM_TYPE_IMAGE:
+        case ITEM_TYPE_BORDER_IMAGE:
+        case ITEM_TYPE_MASK_IMAGE:
+        case ITEM_TYPE_BOX_IMAGE:
+            return true;
+        default:
+            return false;
+    }
 }
 function IS_BOXSHADOW(item) {
     return item.itemType == ITEM_TYPE_BOXSHADOW;
@@ -12459,9 +12263,7 @@ function IMAGE_TYPE_IS_GRADIENT(type) {
     return IMAGE_TYPE_IS_LINEAR(type) || IMAGE_TYPE_IS_RADIAL(type) || IMAGE_TYPE_IS_CONIC(type);
 }
 
-function IMAGE_TYPE_IS_NOT_GRADIENT(type) {
-    return IMAGE_TYPE_IS_GRADIENT(type) == false;
-}
+
 
 function PATTERN_MAKE(item) {
     var patterns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -12612,7 +12414,7 @@ var GradientSteps = function (_UIElement) {
     createClass(GradientSteps, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'gradient-steps\'>\n                <div class="hue-container" ref="$back"></div>            \n                <div class="hue" ref="$steps">\n                    <div class=\'step-list\' ref="$stepList">\n                    </div>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'gradient-steps\'>\n                <div class="hue-container" ref="$back"></div>            \n                <div class="hue" ref="$steps">\n                    <div class=\'step-list\' ref="$stepList"></div>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'getStepPosition',
@@ -12779,7 +12581,6 @@ var GradientSteps = function (_UIElement) {
                     px$$1 = Math.floor(px$$1); // control + drag is floor number 
                 }
                 this.currentStepBox.px('left', px$$1);
-                // var percent = Math.floor((current - min) / (max - min) * 100)
 
                 var item = this.get(this.currentStepBox.attr('id'));
 
@@ -12798,26 +12599,6 @@ var GradientSteps = function (_UIElement) {
                     this.run(COLORSTEP_SORT, newValue.id, this.getSortedStepList());
                     this.commit(CHANGE_COLOR_STEP, newValue);
                     this.setBackgroundColor();
-                }
-            }
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value$$1() {
-
-            if (IMAGE_TYPE_IS_NOT_GRADIENT(this.read(SELECTION_CURRENT_IMAGE$1))) return;
-            if (this.read(TOOL_COLOR_SOURCE) != this.read(COLORSTEP_COLOR_SOURCE)) return;
-
-            if (this.currentStep) {
-
-                var item = this.get(this.currentStep.attr('id'));
-
-                if (item) {
-                    var color$$1 = this.config('color');
-                    var newValue = { id: item.id, color: color$$1 };
-
-                    this.commit(CHANGE_COLOR_STEP, newValue);
-                    this.refresh();
                 }
             }
         }
@@ -12872,11 +12653,6 @@ var GradientSteps = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: 'initColor',
-        value: function initColor(color$$1) {
-            this.dispatch(COLORSTEP_INIT_COLOR, color$$1);
-        }
-    }, {
         key: 'getSortedStepList',
         value: function getSortedStepList() {
             var list = this.refs.$stepList.$$('.drag-bar').map(function (it) {
@@ -12909,8 +12685,6 @@ var GradientSteps = function (_UIElement) {
 
             item.selected = true;
 
-            this.initColor(item.color);
-
             this.currentStepBox = this.currentStepBox || parent;
             var $selected = this.refs.$stepList.$('.selected');
             if ($selected && !$selected.is(this.currentStepBox)) {
@@ -12918,7 +12692,7 @@ var GradientSteps = function (_UIElement) {
             }
 
             this.currentStepBox.addClass('selected');
-            this.run(ITEM_SET, item);
+            this.commit(CHANGE_COLOR_STEP, item);
             this.dispatch(COLORSTEP_SORT, item.id, this.getSortedStepList());
             this.setBackgroundColor();
         }
@@ -12939,11 +12713,8 @@ var GradientSteps = function (_UIElement) {
             var item = this.get(id);
 
             if (item.id) {
-                // var cut = !item.cut;
-                var newValue = { id: item.id, cut: !item.cut };
-                this.commit(CHANGE_COLOR_STEP, newValue);
+                this.commit(CHANGE_COLOR_STEP, { id: id, cut: !item.cut });
                 this.run(HISTORY_PUSH, 'Apply cut option');
-
                 this.refresh();
             }
         }
@@ -12991,7 +12762,6 @@ var GradientSteps = function (_UIElement) {
                 };
 
                 this.currentStepBox.px('left', newValue.px);
-                // this.currentUnitPercent.val(item.percent);
                 this.currentUnitPx.val(newValue.px);
                 this.currentUnitEm.val(newValue.em);
 
@@ -13236,11 +13006,6 @@ var GradientInfo = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: "initColor",
-        value: function initColor(color$$1) {
-            this.dispatch('colorstep/initColor', color$$1);
-        }
-    }, {
         key: "selectStep",
         value: function selectStep(e) {
             var _this3 = this;
@@ -13255,9 +13020,7 @@ var GradientInfo = function (_UIElement) {
             });
 
             item.selected = true;
-
-            this.initColor(item.color);
-            var newValue = { id: item.id, selected: item.selected };
+            var newValue = { id: item.id, selected: item.selected, color: item.color };
             this.commit(CHANGE_COLOR_STEP, newValue);
             this.refresh();
         }
@@ -13470,9 +13233,9 @@ var ColorPickerLayer = function (_UIElement) {
             }, 100);
         }
     }, {
-        key: 'template',
-        value: function template() {
-            return '<div class=\'colorpicker-layer\'> </div>';
+        key: 'templateClass',
+        value: function templateClass() {
+            return 'colorpicker-layer';
         }
     }, {
         key: 'changeColor',
@@ -13503,18 +13266,23 @@ var ColorPickerLayer = function (_UIElement) {
         key: EVENT(CHANGE_COLOR_STEP),
         value: function value(newValue) {
             if (isNotUndefined(newValue.color)) {
-                this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
+                this.setColor(newValue.color);
             }
         }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
-        }
+
+        // [EVENT('changeColor')] () {
+        //     this.colorPicker.initColorWithoutChangeEvent(this.config('color'));
+        // } 
+
     }, {
         key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
+        }
+    }, {
+        key: 'setColor',
+        value: function setColor(color) {
+            this.colorPicker.initColorWithoutChangeEvent(color);
         }
     }, {
         key: 'refresh',
@@ -13524,8 +13292,14 @@ var ColorPickerLayer = function (_UIElement) {
             if (this.read(SELECTION_IS_IMAGE)) {
                 this.read(SELECTION_CURRENT_IMAGE$1, function (image) {
                     if (IMAGE_TYPE_IS_STATIC(image.type)) {
-                        _this4.colorPicker.initColorWithoutChangeEvent(image.color);
-                    } else if (IMAGE_TYPE_IS_GRADIENT(image.type)) {}
+                        _this4.setColor(image.color);
+                    } else if (IMAGE_TYPE_IS_GRADIENT(image.type)) {
+                        _this4.read(ITEM_MAP_COLORSTEP_CHILDREN, image.id).filter(function (it) {
+                            return it.selected;
+                        }).forEach(function (it) {
+                            _this4.setColor(it.color);
+                        });
+                    }
                 });
             }
         }
@@ -14394,53 +14168,6 @@ var FilterList$1 = function (_BasePropertyItem) {
     return FilterList;
 }(BasePropertyItem);
 
-var BackgroundColor = function (_BasePropertyItem) {
-    inherits(BackgroundColor, _BasePropertyItem);
-
-    function BackgroundColor() {
-        classCallCheck(this, BackgroundColor);
-        return possibleConstructorReturn(this, (BackgroundColor.__proto__ || Object.getPrototypeOf(BackgroundColor)).apply(this, arguments));
-    }
-
-    createClass(BackgroundColor, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='property-item background-color show'>\n                <div class='items'>            \n                    <div>\n                        <label > Background Color</label>                    \n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='background-transparent'>\n                                <span class='color' ref='$color'></span>\n                            </span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div> \n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR),
-        value: function value(newValue) {
-            this.refs.$color.css('background-color', newValue.backgroundColor);
-            this.refs.$colortext.text(newValue.backgroundColor);
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var _this2 = this;
-
-            this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                _this2.refs.$color.css('background-color', layer.backgroundColor);
-                _this2.refs.$colortext.text(layer.backgroundColor);
-            });
-        }
-    }, {
-        key: CLICK('$colorview'),
-        value: function value() {
-            var _this3 = this;
-
-            this.read(SELECTION_CURRENT_LAYER, function (layer) {
-                _this3.emit('selectLayerColor', layer.backgroundColor, 'backgroundColor', CHANGE_LAYER_BACKGROUND_COLOR);
-            });
-        }
-    }]);
-    return BackgroundColor;
-}(BasePropertyItem);
-
 var ITEM_KEYS = 'item/keys';
 
 var ITEM_KEYS_GENERATE = 'item/keys/generate';
@@ -14451,6 +14178,9 @@ var ITEM_CREATE_LAYER = 'item/create/layer';
 var ITEM_CREATE_TIMELINE = 'item/create/timeline';
 var ITEM_CREATE_KEYFRAME = 'item/create/keyframe';
 var ITEM_CREATE_IMAGE = 'item/create/image';
+var ITEM_CREATE_MASK_IMAGE = 'item/create/mask-image';
+var ITEM_CREATE_BORDER_IMAGE = 'item/create/border-image';
+var ITEM_CREATE_BOX_IMAGE = 'item/create/box-image';
 var ITEM_CREATE_BOXSHADOW = 'item/create/boxshadow';
 var ITEM_CREATE_TEXTSHADOW = 'item/create/textshadow';
 var ITEM_CREATE_CIRCLE = 'item/create/circle';
@@ -15059,10 +14789,7 @@ var ClipPathSVG = function (_BasePropertyItem) {
 
             if (isShow) {
 
-                if (this.count < 4) {
-                    this.load();
-                    this.count++;
-                }
+                this.load();
 
                 this.updateView();
             }
@@ -15075,11 +14802,6 @@ var ClipPathSVG = function (_BasePropertyItem) {
             if (!item) return false;
 
             if (CLIP_PATH_IS_SVG(item)) return true;
-        }
-    }, {
-        key: CLICK('$clipPath'),
-        value: function value$$1() {
-            this.emit('toggleClipPathImageList');
         }
     }, {
         key: CLICK('$fit'),
@@ -15108,22 +14830,9 @@ var ClipPathSVG = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT('changeSvgList'),
+        key: EVENT(CHANGE_SVG_LIST),
         value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('toggleClipPathSVG'),
-        value: function value$$1(isShow) {
-            if (isUndefined$1(isShow)) {
-                this.$el.toggleClass('show');
-            } else {
-                this.$el.toggleClass('show', isShow);
-            }
-
-            if (this.$el.hasClass('show')) {
-                this.refresh();
-            }
+            this.load();
         }
     }, {
         key: "setClipPathSvg",
@@ -16065,7 +15774,6 @@ var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
 
 
 var LAYER_TO_STRING_CLIPPATH = 'layer/toStringClipPath';
-var LAYER_GET_CLIPPATH = 'layer/getClipPath';
 
 var LAYER_TO_CSS = 'layer/toCSS';
 var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
@@ -16117,7 +15825,7 @@ var LayerCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_MOVE, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_EDITOR$1, CHANGE_SELECTION, SELECT_TAB_LAYER),
+        key: EVENT(CHANGE_LAYER, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_MOVE, CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_LAYER_BORDER, CHANGE_LAYER_CLIPPATH, CHANGE_LAYER_CLIPPATH_POLYGON, CHANGE_LAYER_FILTER, CHANGE_LAYER_BACKDROP_FILTER, CHANGE_LAYER_RADIUS, CHANGE_LAYER_ROTATE, CHANGE_LAYER_OPACITY, CHANGE_LAYER_TRANSFORM, CHANGE_LAYER_TRANSFORM_3D, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_EDITOR$1, CHANGE_SELECTION, SELECT_TAB_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -16397,11 +16105,16 @@ var TextFillColorPicker = function (_UIElement) {
             this.refresh();
         }
     }, {
+        key: 'setColor',
+        value: function setColor(color) {
+            this.colorPicker.initColorWithoutChangeEvent(color);
+        }
+    }, {
         key: 'refresh',
         value: function refresh() {
             if (this.changeColorId) {
                 var item = this.get(this.changeColorId);
-                this.colorPicker.initColorWithoutChangeEvent(item.color);
+                this.setColor(item.color);
             }
         }
     }]);
@@ -16484,6 +16197,11 @@ var InfoFillColorPicker = function (_UIElement) {
             });
         }
     }, {
+        key: 'setColor',
+        value: function setColor(color) {
+            this.colorPicker.initColorWithoutChangeEvent(color);
+        }
+    }, {
         key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
@@ -16497,20 +16215,9 @@ var InfoFillColorPicker = function (_UIElement) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
 
                     var color = layer.backgroundColor || 'rgba(0, 0, 0, 1)';
-                    _this4.colorPicker.initColorWithoutChangeEvent(color);
+                    _this4.setColor(color);
                 });
             }
-        }
-    }, {
-        key: EVENT('selectLayerColor'),
-        value: function value(color, key, eventType) {
-            var opt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-            this.eventKey = key;
-            this.eventType = eventType;
-            this.eventOpt = opt;
-
-            this.colorPicker.initColorWithoutChangeEvent(color);
         }
     }]);
     return InfoFillColorPicker;
@@ -16591,7 +16298,7 @@ var BorderFillColorPicker = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER_BACKGROUND_COLOR, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER_BORDER, CHANGE_EDITOR$1, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16603,10 +16310,15 @@ var BorderFillColorPicker = function (_UIElement) {
             if (this.read(SELECTION_IS_LAYER)) {
                 this.read(SELECTION_CURRENT_LAYER, function (layer) {
                     if (layer.borderColor) {
-                        _this4.colorPicker.initColorWithoutChangeEvent(layer.borderColor);
+                        _this4.setColor(layer.borderColor);
                     }
                 });
             }
+        }
+    }, {
+        key: 'setColor',
+        value: function setColor(color) {
+            this.colorPicker.initColorWithoutChangeEvent(color);
         }
     }, {
         key: EVENT('selectBorderColor'),
@@ -16617,7 +16329,7 @@ var BorderFillColorPicker = function (_UIElement) {
             this.eventType = eventType;
             this.eventOpt = opt;
 
-            this.colorPicker.initColorWithoutChangeEvent(color);
+            this.setColor(color);
         }
     }]);
     return BorderFillColorPicker;
@@ -17873,7 +17585,7 @@ var items = _extends({}, patterns, (_babelHelpers$extends = {
     FillColorPickerPanel: FillColorPickerPanel,
     TextShadow: TextShadow,
     BoxShadow: BoxShadow
-}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "BorderFixed", BorderFixed), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundColor", BackgroundColor), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
+}, defineProperty(_babelHelpers$extends, "ClipPathSVG", ClipPathSVG), defineProperty(_babelHelpers$extends, "Opacity", Opacity$3), defineProperty(_babelHelpers$extends, "BorderFixed", BorderFixed), defineProperty(_babelHelpers$extends, "RadiusFixed", RadiusFixed), defineProperty(_babelHelpers$extends, "Rotate", Rotate), defineProperty(_babelHelpers$extends, "LayerBlend", LayerBlend), defineProperty(_babelHelpers$extends, "GroupAlign", GroupAlign), defineProperty(_babelHelpers$extends, "PageShowGrid", PageShowGrid), defineProperty(_babelHelpers$extends, "ClipPath", ClipPath), defineProperty(_babelHelpers$extends, "ImageResource", ImageResource), defineProperty(_babelHelpers$extends, "BackgroundBlend", BackgroundBlend), defineProperty(_babelHelpers$extends, "FilterList", FilterList$1), defineProperty(_babelHelpers$extends, "PageExport", PageExport), defineProperty(_babelHelpers$extends, "PageSize", PageSize), defineProperty(_babelHelpers$extends, "PageName", PageName), defineProperty(_babelHelpers$extends, "BackgroundSize", BackgroundSize), defineProperty(_babelHelpers$extends, "Transform3d", Transform3d), defineProperty(_babelHelpers$extends, "Transform", Transform), defineProperty(_babelHelpers$extends, "ColorPickerPanel", ColorPickerPanel), defineProperty(_babelHelpers$extends, "ColorStepsInfo", ColorStepsInfo), defineProperty(_babelHelpers$extends, "ColorSteps", ColorSteps), defineProperty(_babelHelpers$extends, "Name", Name), defineProperty(_babelHelpers$extends, "Size", Size), defineProperty(_babelHelpers$extends, "Position", Position), defineProperty(_babelHelpers$extends, "Radius", Radius), defineProperty(_babelHelpers$extends, "Clip", Clip), _babelHelpers$extends));
 
 var BaseTab = function (_UIElement) {
     inherits(BaseTab, _UIElement);
@@ -20685,6 +20397,82 @@ var ExportWindow = function (_UIElement) {
     return ExportWindow;
 }(UIElement);
 
+var _ScaleFunctions;
+
+var ScaleFunctions = (_ScaleFunctions = {
+    'color': 'makeScaleFunctionForColor',
+    'number': 'makeScaleFunctionForNumber'
+}, defineProperty(_ScaleFunctions, UNIT_PERCENT, 'makeScaleFunctionForPercent'), defineProperty(_ScaleFunctions, UNIT_PX, 'makeScaleFunctionForPx'), defineProperty(_ScaleFunctions, UNIT_EM, 'makeScaleFunctionForEm'), _ScaleFunctions);
+
+var Scale = {
+    makeScaleFunctionForColor: function makeScaleFunctionForColor(start, end) {
+        return function (currentPercent) {
+            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
+
+            return interpolateRGBObject(start, end, rate);
+        };
+    },
+    makeScaleFunctionForNumber: function makeScaleFunctionForNumber(start, end) {
+        return function (currentPercent) {
+            var rate = (currentPercent - start.percent) / (end.percent - start.percent);
+
+            return start.value + (end.value - start.value) * rate;
+        };
+    },
+    makeScaleFunctionForPercent: function makeScaleFunctionForPercent(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunctionForPx: function makeScaleFunctionForPx(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunctionForEm: function makeScaleFunctionForEm(start, end) {
+        return this.makeScaleFunctionForNumber(start, end);
+    },
+    makeScaleFunction: function makeScaleFunction(start, end, isLast) {
+        var itemType = start.itemType || 'number';
+
+        return this[ScaleFunctions[itemType]].call(this, start, end);
+    },
+    makeCheckFunction: function makeCheckFunction(start, end, isLast) {
+        if (isLast) {
+            return function (currentPercent) {
+                return start.percent <= currentPercent && currentPercent <= end.percent;
+            };
+        } else {
+            return function (currentPercent) {
+                return start.percent <= currentPercent && currentPercent < end.percent;
+            };
+        }
+    },
+    makeSetupFunction: function makeSetupFunction(start, end, isLast) {
+        var check = this.makeCheckFunction(start, end, isLast);
+        var scale$$1 = this.makeScaleFunction(start, end, isLast);
+
+        if (start.itemType == 'color') {
+            return this.makeSetupColorScaleFunction(check, scale$$1, start, end);
+        } else {
+            return this.makeSetupNumberScaleFunction(check, scale$$1, start, end);
+        }
+    },
+    makeSetupColorScaleFunction: function makeSetupColorScaleFunction(check, scale$$1, start, end) {
+        return function (ani, progress) {
+            if (check(progress)) {
+                ani.obj[start.key] = rgb(scale$$1(ani.timing(progress, ani.duration, start, end)));
+            }
+        };
+    },
+    makeSetupNumberScaleFunction: function makeSetupNumberScaleFunction(check, scale$$1, start, end) {
+
+        return function (ani, progress) {
+            if (check(progress)) {
+                var value$$1 = scale$$1(ani.timing(progress, ani.duration, start.value, end.value)) + start.type;
+
+                ani.obj[start.key] = string2unit(value$$1);
+            }
+        };
+    }
+};
+
 var ValueGenerator = {
     make: function make(key, percent, transitionPropertyValue) {
 
@@ -22097,124 +21885,6 @@ var VerticalColorStep = function (_UIElement) {
     }]);
     return VerticalColorStep;
 }(UIElement);
-
-var ClipPathImageList = function (_BasePropertyItem) {
-    inherits(ClipPathImageList, _BasePropertyItem);
-
-    function ClipPathImageList() {
-        classCallCheck(this, ClipPathImageList);
-        return possibleConstructorReturn(this, (ClipPathImageList.__proto__ || Object.getPrototypeOf(ClipPathImageList)).apply(this, arguments));
-    }
-
-    createClass(ClipPathImageList, [{
-        key: "template",
-        value: function template() {
-            return "<div class='image-resource'><div class='items' ref=\"$imageList\"></div></div>";
-        }
-    }, {
-        key: LOAD('$imageList'),
-        value: function value$$1() {
-            return this.read(SVG_LIST).map(function (svg, index) {
-                if (isObject(svg)) {
-                    return "<div class='svg-item' data-key=\"" + svg.key + "\">" + svg.svg + "</div>";
-                } else {
-                    return "<div class='svg-item' data-index=\"" + index + "\">" + svg + "</div>";
-                }
-            });
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT('changeSvgList'),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: "toggle",
-        value: function toggle(isShow) {
-            if (isUndefined$1(isShow)) {
-                this.$el.toggleClass('show');
-            } else {
-                this.$el.toggleClass('show', isShow);
-            }
-        }
-    }, {
-        key: EVENT('toggleClipPathImageList'),
-        value: function value$$1(isShow) {
-            this.toggle(isShow);
-        }
-    }, {
-        key: "setClipPathSvg",
-        value: function setClipPathSvg(id, svg, callback) {
-            var newValue = {
-                id: id,
-                clipPathType: 'svg',
-                clipPathSvg: svg
-            };
-
-            var $temp = new Dom('div');
-            $temp.html(svg);
-
-            var $svg = $temp.$("svg");
-
-            var width = 0;
-            var height = 0;
-            if ($svg.attr('width')) {
-                width = parseParamNumber$1($svg.attr('width'));
-            }
-
-            if ($svg.attr('height')) {
-                height = parseParamNumber$1($svg.attr('height'));
-            }
-
-            if ($svg.attr('viewBox')) {
-                var box = $svg.attr('viewBox').split(WHITE_STRING);
-
-                width = parseParamNumber$1(box[2]);
-                height = parseParamNumber$1(box[3]);
-            }
-
-            newValue.clipPathSvgWidth = width;
-            newValue.clipPathSvgHeight = height;
-
-            $temp.remove();
-
-            callback && callback(newValue);
-        }
-    }, {
-        key: CLICK('$imageList .svg-item'),
-        value: function value$$1(e) {
-            var _this2 = this;
-
-            var index = e.$delegateTarget.attr('data-index');
-            var key = e.$delegateTarget.attr('data-key');
-
-            if (index) {
-                this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                    var svg = _this2.read(SVG_GET, +index);
-
-                    _this2.setClipPathSvg(id, svg, function (newValue) {
-                        _this2.commit(CHANGE_LAYER_CLIPPATH, newValue);
-                        _this2.toggle();
-                    });
-                });
-            } else if (key) {
-                this.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                    var svg = _this2.read(SVG_GET, Number.MAX_SAFE_INTEGER, key);
-
-                    _this2.setClipPathSvg(id, svg, function (newValue) {
-                        _this2.commit(CHANGE_LAYER_CLIPPATH, newValue);
-                        _this2.toggle();
-                    });
-                });
-            }
-        }
-    }]);
-    return ClipPathImageList;
-}(BasePropertyItem);
 
 var PredefinedPageResizer = function (_UIElement) {
     inherits(PredefinedPageResizer, _UIElement);
@@ -25537,7 +25207,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-middle">\n                    <div class="layout-left">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class="layout-body">\n                        <LayerToolbar />\n                        <VerticalColorStep />\n                        <HandleView />\n                    </div>                \n                    <div class="layout-right">\n                        <Alignment />\n                        <FeatureControl />\n                        <ClipPathImageList />\n                    </div>\n                </div>\n                <div class="layout-footer" ref="$footer">\n                    <TimelineSplitter />\n                    <Timeline />\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />                \n            </div>\n  \n        ';
+            return '\n            <div class="layout-main show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-middle">\n                    <div class="layout-left">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class="layout-body">\n                        <LayerToolbar />\n                        <VerticalColorStep />\n                        <HandleView />\n                    </div>                \n                    <div class="layout-right">\n                        <Alignment />\n                        <FeatureControl />\n                    </div>\n                </div>\n                <div class="layout-footer" ref="$footer">\n                    <TimelineSplitter />\n                    <Timeline />\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />                \n            </div>\n  \n        ';
         }
     }, {
         key: 'components',
@@ -25548,7 +25218,6 @@ var CSSEditor$1 = function (_UIElement) {
                 SelectLayerView: SelectLayerView,
                 ToolMenu: ToolMenu,
                 LayerToolbar: LayerToolbar,
-                ClipPathImageList: ClipPathImageList,
                 VerticalColorStep: VerticalColorStep,
                 DropView: DropView,
                 ExportWindow: ExportWindow,
@@ -25681,12 +25350,12 @@ var ColorStepManager = function (_BaseModule) {
                 })[0];
             }
         }
-    }, {
-        key: ACTION(COLORSTEP_INIT_COLOR),
-        value: function value$$1($store, color$$1) {
-            $store.run(TOOL_SET_COLOR_SOURCE, INIT_COLOR_SOURCE);
-            $store.run(TOOL_CHANGE_COLOR, color$$1);
-        }
+
+        // [ACTION(COLORSTEP_INIT_COLOR)] ($store, color) {
+        //     $store.run(TOOL_SET_COLOR_SOURCE,INIT_COLOR_SOURCE);
+        //     $store.run(TOOL_CHANGE_COLOR, color);
+        // }    
+
     }, {
         key: ACTION(COLORSTEP_ADD),
         value: function value$$1($store, item, percent$$1) {
@@ -26329,17 +25998,6 @@ var LayerManager = function (_BaseModule) {
             return svg;
         }
     }, {
-        key: GETTER(LAYER_GET_CLIPPATH),
-        value: function value$$1($store, layer) {
-            var items = $store.read(ITEM_FILTER_CHILDREN, layer.id, function (image) {
-                return image.isClipPath;
-            }).map(function (id) {
-                return $store.items[id];
-            });
-
-            return items.length ? items[0] : null;
-        }
-    }, {
         key: GETTER(LAYER_TO_CSS),
         value: function value$$1($store) {
             var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -26452,26 +26110,9 @@ var ToolManager = function (_BaseModule) {
             this.$store.toolStack = [];
         }
     }, {
-        key: GETTER(TOOL_COLOR_SOURCE),
-        value: function value$$1($store) {
-            return $store.tool.colorSource;
-        }
-    }, {
         key: GETTER(TOOL_GET),
         value: function value$$1($store, key, defaultValue$$1) {
             return isUndefined$1($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
-        }
-    }, {
-        key: ACTION(TOOL_SET_COLOR_SOURCE),
-        value: function value$$1($store, colorSource) {
-            $store.tool.colorSource = colorSource;
-        }
-    }, {
-        key: ACTION(TOOL_CHANGE_COLOR),
-        value: function value$$1($store, color$$1) {
-            $store.tool.color = color$$1;
-
-            $store.emit('changeColor');
         }
     }, {
         key: ACTION(TOOL_SET),
@@ -26910,8 +26551,6 @@ var convertStyle = function convertStyle(item) {
 
     return item;
 };
-
-
 
 var ItemManager = function (_BaseModule) {
     inherits(ItemManager, _BaseModule);
@@ -27702,12 +27341,12 @@ var SVGManager = function (_BaseModule) {
     }, {
         key: "afterDispatch",
         value: function afterDispatch() {
-            this.$store.emit('changeSvgList');
+            this.$store.emit(CHANGE_SVG_LIST);
         }
     }, {
         key: GETTER(SVG_LIST),
         value: function value$$1($store) {
-            return [].concat(toConsumableArray(SVGList), toConsumableArray($store.svgList));
+            return [].concat(toConsumableArray($store.svgList));
         }
     }, {
         key: ACTION(SVG_LIST_LOAD),
@@ -28268,7 +27907,7 @@ var SelectionManager = function (_BaseModule) {
                 var items = $store.read(SELECTION_CURRENT);
             }
 
-            if (Array.isArray(items) && items.length) {
+            if (isArray(items) && items.length) {
                 if ($store.read(SELECTION_IS_ONE)) {
                     if (isFunction(callback)) callback(items[0]);
                     return items[0];
@@ -28289,7 +27928,7 @@ var SelectionManager = function (_BaseModule) {
                 var items = $store.read(SELECTION_CURRENT);
             }
 
-            if (Array.isArray(items) && items.length) {
+            if (isArray(items) && items.length) {
                 if ($store.read(SELECTION_IS_ONE)) {
                     if (isFunction(callback)) callback(items[0].id);
                     return items[0].id;
@@ -28344,7 +27983,7 @@ var SelectionManager = function (_BaseModule) {
                 return _this2.get(id);
             });
 
-            if (Array.isArray(layers) && layers.length) {
+            if (isArray(layers) && layers.length) {
                 if ($store.read(SELECTION_IS_ONE)) {
                     if (isFunction(callback)) callback(layers[0]);
                     return layers[0];
@@ -28361,7 +28000,7 @@ var SelectionManager = function (_BaseModule) {
         value: function value$$1($store, callback) {
             var layers = $store.selection.layers || [];
 
-            if (Array.isArray(layers) && layers.length) {
+            if (isArray(layers) && layers.length) {
                 if ($store.read(SELECTION_IS_ONE)) {
                     if (isFunction(callback)) callback(layers[0]);
                     return layers[0];
@@ -28379,8 +28018,9 @@ var SelectionManager = function (_BaseModule) {
             var page = this.get($store.selection.pageId);
 
             if (!page) {
-                var pages = $store.read(ITEM_LIST_PAGE);
-                page = pages[0];
+                var _$store$read = $store.read(ITEM_LIST_PAGE),
+                    _$store$read2 = slicedToArray(_$store$read, 1),
+                    page = _$store$read2[0];
             }
 
             if (page) {
@@ -28478,16 +28118,15 @@ var SelectionManager = function (_BaseModule) {
     }, {
         key: GETTER(SELECTION_LAYERS),
         value: function value$$1($store) {
-            return $store.read(ITEM_FILTER, function (id) {
-                return IS_LAYER($store.items[id]);
-            }).map(function (id) {
-                var _$store$items$id = $store.items[id],
-                    x = _$store$items$id.x,
-                    y = _$store$items$id.y,
-                    width = _$store$items$id.width,
-                    height = _$store$items$id.height,
-                    lock = _$store$items$id.lock,
-                    visible = _$store$items$id.visible;
+
+            return $store.read(ITEM_MAP_LAYER_CHILDREN, $store.selection.pageId).map(function (item) {
+                var x = item.x,
+                    y = item.y,
+                    width = item.width,
+                    height = item.height,
+                    lock = item.lock,
+                    visible = item.visible,
+                    id = item.id;
 
 
                 x = unitValue(x);
@@ -28593,11 +28232,11 @@ var SelectionManager = function (_BaseModule) {
             var maxY = Number.MIN_SAFE_INTEGER;
 
             var items = $store.selection.ids.map(function (id) {
-                var _$store$items$id2 = $store.items[id],
-                    x = _$store$items$id2.x,
-                    y = _$store$items$id2.y,
-                    width = _$store$items$id2.width,
-                    height = _$store$items$id2.height;
+                var _$store$items$id = $store.items[id],
+                    x = _$store$items$id.x,
+                    y = _$store$items$id.y,
+                    width = _$store$items$id.width,
+                    height = _$store$items$id.height;
 
 
                 x = unitValue(x);
@@ -29715,6 +29354,27 @@ var ItemCreateManager = function (_BaseModule) {
             return $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
         }
     }, {
+        key: GETTER(ITEM_CREATE_MASK_IMAGE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, MASK_IMAGE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_BORDER_IMAGE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, BORDER_IMAGE_DEFAULT_OBJECT);
+        }
+    }, {
+        key: GETTER(ITEM_CREATE_BOX_IMAGE),
+        value: function value$$1($store) {
+            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+            return $store.read(ITEM_CREATE_OBJECT, obj, BOX_IMAGE_DEFAULT_OBJECT);
+        }
+    }, {
         key: GETTER(ITEM_CREATE_IMAGE_WITH_COLORSTEP),
         value: function value$$1($store) {
             var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -30019,8 +29679,6 @@ var ItemCreateManager = function (_BaseModule) {
 var INDEX_DIST$1 = 100;
 var COPY_INDEX_DIST = 1;
 
-
-
 var ItemMoveManager = function (_BaseModule) {
     inherits(ItemMoveManager, _BaseModule);
 
@@ -30286,10 +29944,6 @@ var ItemRecoverManager = function (_BaseModule) {
     return ItemRecoverManager;
 }(BaseModule);
 
-var DEFAULT_FUNCTION$2 = function DEFAULT_FUNCTION(item) {
-    return item;
-};
-
 var ItemSearchManager = function (_BaseModule) {
     inherits(ItemSearchManager, _BaseModule);
 
@@ -30299,36 +29953,27 @@ var ItemSearchManager = function (_BaseModule) {
     }
 
     createClass(ItemSearchManager, [{
-        key: GETTER(ITEM_GET_ALL),
-        value: function value$$1($store, parentId) {
-            var items = {};
+        key: "initialize",
+        value: function initialize() {
+            var _this2 = this;
 
-            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
-                items[item.id] = _extends({}, item);
+            get$1(ItemSearchManager.prototype.__proto__ || Object.getPrototypeOf(ItemSearchManager.prototype), "initialize", this).call(this);
 
-                var children = $store.read(ITEM_GET_ALL, item.id);
-                keyEach(children, function (key, value$$1) {
-                    items[key] = value$$1;
-                });
-            });
-
-            return items;
+            this.sort_function = function (aId, bId) {
+                var aIndex = _this2.$store.items[aId].index;
+                var bIndex = _this2.$store.items[bId].index;
+                if (aIndex == bIndex) return 0;
+                return aIndex > bIndex ? 1 : -1;
+            };
         }
     }, {
         key: GETTER(ITEM_LIST),
         value: function value$$1($store, filterCallback) {
             var list = $store.itemKeys.filter(filterCallback);
 
-            list.sort(function (aId, bId) {
-                return $store.items[aId].index > $store.items[bId].index ? 1 : -1;
-            });
+            list.sort(this.sort_function);
 
             return list;
-        }
-    }, {
-        key: GETTER(ITEM_FILTER),
-        value: function value$$1($store, filterCallback) {
-            return $store.read(ITEM_LIST, filterCallback);
         }
     }, {
         key: GETTER(ITEM_LIST_PAGE),
@@ -30384,7 +30029,7 @@ var ItemSearchManager = function (_BaseModule) {
     }, {
         key: GETTER(ITEM_MAP_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId)).map(function (id, index) {
                 return callback($store.items[id], index);
@@ -30393,7 +30038,7 @@ var ItemSearchManager = function (_BaseModule) {
     }, {
         key: "getChildrenMapForType",
         value: function getChildrenMapForType($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
 
             var parent = this.get(parentId);
 
@@ -30410,65 +30055,58 @@ var ItemSearchManager = function (_BaseModule) {
     }, {
         key: GETTER(ITEM_MAP_TYPE_CHILDREN),
         value: function value$$1($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, itemType, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_LAYER_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_LAYER, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_TIMELINE_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TIMELINE, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_KEYFRAME_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_KEYFRAME, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_IMAGE_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_IMAGE, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_COLORSTEP_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_COLORSTEP, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_BOXSHADOW_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_BOXSHADOW, callback);
         }
     }, {
         key: GETTER(ITEM_MAP_TEXTSHADOW_CHILDREN),
         value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION$2;
+            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
 
             return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW, callback);
-        }
-    }, {
-        key: GETTER(ITEM_FILTER_CHILDREN),
-        value: function value$$1($store, parentId, callback) {
-            return $store.read(ITEM_LIST_CHILDREN, parentId).filter(function (id, index) {
-                return callback($store.items[id], index);
-            });
         }
     }, {
         key: GETTER(ITEM_EACH_CHILDREN),
@@ -30479,11 +30117,17 @@ var ItemSearchManager = function (_BaseModule) {
 
             if (!children) {
                 children = $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
+            } else {
+                if (children.colorstep) {
+                    return children.colorstep.forEach(function (id, index) {
+                        callback($store.items[id], index);
+                    });
+                } else {
+                    return children.forEach(function (id, index) {
+                        callback($store.items[id], index);
+                    });
+                }
             }
-
-            return children.forEach(function (id, index) {
-                callback($store.items[id], index);
-            });
         }
     }, {
         key: GETTER(ITEM_EACH_TYPE_CHILDREN),
@@ -30491,51 +30135,6 @@ var ItemSearchManager = function (_BaseModule) {
             return $store.read(ITEM_LIST_CHILDREN, parentId, itemType).forEach(function (id, index) {
                 callback($store.items[id], index);
             });
-        }
-    }, {
-        key: GETTER(ITEM_TRAVERSE),
-        value: function value$$1($store, parentId) {
-            var list = $store.read(ITEM_LIST_CHILDREN, parentId);
-
-            list.sort(function (a, b) {
-                var $a = $store.items[a];
-                var $b = $store.items[b];
-
-                if ($a.order == $b.order) {
-
-                    if (a > b) return 1;
-                    if (a < b) return -1;
-
-                    return 0;
-                }
-                return $a.order > $b.order ? 1 : -1;
-            });
-
-            return list.map(function (childId) {
-                return { id: childId, children: $store.read(ITEM_TRAVERSE, childId) };
-            });
-        }
-    }, {
-        key: GETTER(ITEM_TREE),
-        value: function value$$1($store) {
-            return $store.read(ITEM_TRAVERSE, EMPTY_STRING);
-        }
-    }, {
-        key: GETTER(ITEM_TREE_NORMALIZE),
-        value: function value$$1($store) {
-            var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-            var children = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-            var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-            var results = [];
-
-            var list = root != null ? $store.read(ITEM_TREE) : children;
-            list.forEach(function (item) {
-                results.push({ id: item.id, depth: depth });
-                results.push.apply(results, toConsumableArray($store.read(ITEM_TREE_NORMALIZE, null, item.children, depth + 1)));
-            });
-
-            return results;
         }
     }, {
         key: GETTER(ITEM_PATH),

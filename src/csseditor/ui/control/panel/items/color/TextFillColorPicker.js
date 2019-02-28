@@ -6,7 +6,6 @@ import {
     CHANGE_SELECTION,
     TEXT_FILL_COLOR
 } from '../../../../../types/event';
-import { ITEM_GET } from '../../../../../types/ItemTypes';
 
 export default class TextFillColorPicker extends UIElement {
  
@@ -51,12 +50,16 @@ export default class TextFillColorPicker extends UIElement {
     [EVENT (
         CHANGE_EDITOR,
         CHANGE_SELECTION
-    )] () { this.refresh() }    
+    )] () { this.refresh() }   
+    
+    setColor (color) {
+        this.colorPicker.initColorWithoutChangeEvent(color);
+    }  
 
     refresh() {
         if (this.changeColorId) {
             var item = this.get( this.changeColorId);
-            this.colorPicker.initColorWithoutChangeEvent(item.color);
+            this.setColor(item.color);
         }
 
     }

@@ -1,6 +1,5 @@
 export const COLORSTEP_COLOR_SOURCE = 'colorstep/colorSource'
 export const COLORSTEP_CURRENT = 'colorstep/current'
-export const COLORSTEP_INIT_COLOR = 'colorstep/initColor'
 export const COLORSTEP_ADD = 'colorstep/add'
 export const COLORSTEP_REMOVE = 'colorstep/remove'
 export const COLORSTEP_SORT = 'colorstep/sort'

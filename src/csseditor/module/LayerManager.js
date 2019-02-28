@@ -6,8 +6,8 @@ import { isArray, cleanObject, combineKeyArray, keyEach } from "../../util/funct
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_TO_STRING_CLIPPATH, LAYER_GET_CLIPPATH, LAYER_MAKE_MAP_IMAGE} from "../types/LayerTypes";
-import { ITEM_FILTER_CHILDREN, ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_TO_STRING_CLIPPATH, LAYER_MAKE_MAP_IMAGE} from "../types/LayerTypes";
+import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
 import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, generateImagePattern, LAYER_MAKE_FONT, LAYER_CACHE_TO_IMAGE_CSS } from "../../util/css/make";
 import { ITEM_CONVERT_STYLE } from "../types/ItemTypes";
@@ -186,16 +186,6 @@ export default class LayerManager extends BaseModule {
         var svg = `<svg height="0" width="0"><defs><clipPath id="clippath-${layer.id}" ${transform ? `transform="${transform}"` : ""} >${paths}</clipPath></defs></svg>`
 
         return svg 
-    }
-
-    [GETTER(LAYER_GET_CLIPPATH)] ($store, layer) {
-        var items = $store.read(ITEM_FILTER_CHILDREN, layer.id, function (image) {
-            return image.isClipPath
-        }).map(id => {
-            return $store.items[id]
-        })
-
-        return items.length ? items[0] : null;
     }
 
     [GETTER(LAYER_TO_CSS)] ($store, layer = null, withStyle = true, image = null, isExport = false) {
