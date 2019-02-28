@@ -4570,15 +4570,15 @@ function getCenteroid(assigned) {
 
 function unique_array(arrays) {
     return arrays;
-    var set = {};
-    var count = arrays.length;
-    var it = null;
-    while (count--) {
-        it = arrays[count];
-        set[JSON.stringify(it)] = it;
-    }
+    // var set = {};
+    // var count = arrays.length;
+    // let it = null;
+    // while (count--) {
+    //     it = arrays[count];
+    //     set[JSON.stringify(it)] = it;
+    // }
 
-    return Object.values(set);
+    // return Object.values(set);
 }
 
 function splitK(k, points, centeroids, distance) {
