@@ -5832,7 +5832,7 @@ html, body {
               margin-right: 1px; }
               .csseditor .property-view .sub-feature .property-item > .items .size-list > button:after {
                 content: attr(title);
-                font-size: 8px;
+                font-size: 10px;
                 color: black; }
               .csseditor .property-view .sub-feature .property-item > .items .size-list > button.selected {
                 border: 1px solid black;
