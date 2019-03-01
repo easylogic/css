@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_TRANSFORM, CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
@@ -41,11 +41,11 @@ export default class Rotate extends BasePropertyItem {
 
             if (type == 'rotate') {
                 var rotate = this.refs.$rotate.val();
-                this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate})
+                this.commit(CHANGE_LAYER_ROTATE, {id, rotate})
                 this.refs.$rotateRange.val(rotate)
             } else if (type == 'range') {
                 var rotate = this.refs.$rotateRange.val()
-                this.commit(CHANGE_LAYER_TRANSFORM, {id, rotate})
+                this.commit(CHANGE_LAYER_ROTATE, {id, rotate})
                 this.refs.$rotate.val(rotate)
             }
             

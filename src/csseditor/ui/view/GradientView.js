@@ -45,11 +45,11 @@ import {
 import { px, EMPTY_STRING } from '../../../util/css/types';
 import { LOAD, SCROLL } from '../../../util/Event';
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_LAYER } from '../../types/SelectionTypes';
-import { LAYER_TO_STRING, LAYER_TO_STRING_CLIPPATH } from '../../types/LayerTypes';
+import { LAYER_TO_STRING } from '../../types/LayerTypes';
 import { ITEM_MAP_LAYER_CHILDREN } from '../../types/ItemSearchTypes';
 import { PAGE_TO_CSS, PAGE_COLORVIEW_TO_CSS } from '../../types/PageTypes';
 import { RESIZE_WINDOW } from '../../types/ToolTypes';
-import { BOUND_TO_CSS_ARRAY, LAYER_NAME } from '../../../util/css/make';
+import { BOUND_TO_CSS_ARRAY, LAYER_NAME, LAYER_TO_STRING_CLIPPATH } from '../../../util/css/make';
 
 export default class GradientView extends UIElement {
 
@@ -112,7 +112,7 @@ export default class GradientView extends UIElement {
                     class='layer' 
                     item-layer-id="${item.id}" 
                     title="${title}" 
-                    style='${this.read(LAYER_TO_STRING, item, true)}'>${content}${this.read(LAYER_TO_STRING_CLIPPATH, item)}</div>`
+                    style='${this.read(LAYER_TO_STRING, item, true)}'>${content}${LAYER_TO_STRING_CLIPPATH(item)}</div>`
         });
 
         return list; 
@@ -145,7 +145,7 @@ export default class GradientView extends UIElement {
                 this.layerItems[item.id].cssText(this.read(LAYER_TO_STRING, item, true))
 
                 var content = item.content || EMPTY_STRING;
-                this.layerItems[item.id].html(content + this.read(LAYER_TO_STRING_CLIPPATH, item))
+                this.layerItems[item.id].html(content + LAYER_TO_STRING_CLIPPATH(item))
             })
         })
     }
@@ -165,6 +165,9 @@ export default class GradientView extends UIElement {
                 }
 
                 this.layerItems[item.id].cssArray(BOUND_TO_CSS_ARRAY(item))
+
+                var content = item.content || EMPTY_STRING;
+                this.layerItems[item.id].html(content + LAYER_TO_STRING_CLIPPATH(item))
             })
         })
     }    

@@ -95,8 +95,9 @@ export const start = (opt) => {
         }
 
         [POINTEREND('document')] (e) {
+            var newPos = Event.pos(e) || EMPTY_POS;
             this.initConfig('bodyEvent', e);
-            this.initConfig('pos', Event.pos(e));
+            this.initConfig('pos', newPos);
             this.removeBodyMoves()
         }        
     }
