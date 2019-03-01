@@ -1232,6 +1232,8 @@ html, body {
             flex-direction: column; }
     .csseditor .layout-main.show-timeline .layout-footer {
       height: 299px; }
+    .csseditor .layout-main:not(.show-timeline) .layout-footer {
+      height: 29px !important; }
     .csseditor .layout-main .layout-header {
       -webkit-box-flex: 0;
           -ms-flex: none;
@@ -1302,105 +1304,6 @@ html, body {
         display: block; }
       .csseditor .layout-main .select-layer-view .item-info .layers {
         top: 0px; }
-  .csseditor [type='range'] {
-    -webkit-appearance: none;
-       -moz-appearance: none;
-            appearance: none;
-    background: transparent;
-    margin: 5px 0;
-    width: 95%; }
-    .csseditor [type='range']::-moz-focus-outer {
-      border: 0; }
-    .csseditor [type='range']:focus {
-      outline: 0; }
-      .csseditor [type='range']:focus::-webkit-slider-runnable-track {
-        background: #fbfbfc; }
-      .csseditor [type='range']:focus::-ms-fill-lower {
-        background: #eceff1; }
-      .csseditor [type='range']:focus::-ms-fill-upper {
-        background: #fbfbfc; }
-    .csseditor [type='range']::-webkit-slider-runnable-track {
-      cursor: default;
-      height: 2px;
-      -webkit-transition: all .2s ease;
-      transition: all .2s ease;
-      width: 95%;
-      -webkit-box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
-              box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
-      background: #eceff1;
-      border: 1px solid #cfd8dc;
-      border-radius: 0px; }
-    .csseditor [type='range']::-webkit-slider-thumb {
-      -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
-              box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
-      background: #03A9F4;
-      border: 0px solid #eceff1;
-      border-radius: 10px;
-      cursor: default;
-      height: 10px;
-      width: 10px;
-      -webkit-appearance: none;
-      margin-top: -5px; }
-    .csseditor [type='range']::-moz-range-track {
-      box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
-      cursor: default;
-      height: 2px;
-      -webkit-transition: all .2s ease;
-      transition: all .2s ease;
-      width: 95%;
-      background: #eceff1;
-      border: 1px solid #cfd8dc;
-      border-radius: 0px;
-      height: 1px; }
-    .csseditor [type='range']::-moz-range-thumb {
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
-      background: #03A9F4;
-      border: 0px solid #eceff1;
-      border-radius: 10px;
-      cursor: default;
-      height: 6px;
-      width: 6px; }
-    .csseditor [type='range']::-ms-track {
-      cursor: default;
-      height: 2px;
-      -webkit-transition: all .2s ease;
-      transition: all .2s ease;
-      width: 95%;
-      background: transparent;
-      border-color: transparent;
-      border-width: 5px 0;
-      color: transparent; }
-    .csseditor [type='range']::-ms-fill-lower {
-      box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
-      background: #dde3e6;
-      border: 1px solid #cfd8dc;
-      border-radius: 0px; }
-    .csseditor [type='range']::-ms-fill-upper {
-      box-shadow: 0px 0px 0px black, 0 0 0px #0d0d0d;
-      background: #eceff1;
-      border: 1px solid #cfd8dc;
-      border-radius: 0px; }
-    .csseditor [type='range']::-ms-thumb {
-      box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0 0 0px rgba(13, 13, 13, 0);
-      background: #03A9F4;
-      border: 0px solid #eceff1;
-      border-radius: 10px;
-      cursor: default;
-      height: 6px;
-      width: 6px;
-      margin-top: 0.5px; }
-    .csseditor [type='range']:disabled::-webkit-slider-thumb {
-      cursor: not-allowed; }
-    .csseditor [type='range']:disabled::-moz-range-thumb {
-      cursor: not-allowed; }
-    .csseditor [type='range']:disabled::-ms-thumb {
-      cursor: not-allowed; }
-    .csseditor [type='range']:disabled::-webkit-slider-runnable-track {
-      cursor: not-allowed; }
-    .csseditor [type='range']:disabled::-ms-fill-lower {
-      cursor: not-allowed; }
-    .csseditor [type='range']:disabled::-ms-fill-upper {
-      cursor: not-allowed; }
   .csseditor .tab {
     position: absolute;
     left: 0px;
@@ -6116,7 +6019,8 @@ html, body {
             background-color: transparent; }
           .csseditor .filter-list .filter-item .filter-item-input > .filter .title {
             width: 60px;
-            text-align: left; }
+            text-align: left;
+            font-size: 11px; }
             .csseditor .filter-list .filter-item .filter-item-input > .filter .title.long {
               width: 120px; }
           .csseditor .filter-list .filter-item .filter-item-input > .filter .input-value {
