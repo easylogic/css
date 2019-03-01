@@ -33,6 +33,12 @@ $layer-toolbar-height: 0px;
         }
     }
 
+    &:not(.show-timeline) {
+        .layout-footer {
+            height: $timeline-header-size - 1px !important; 
+        }
+    }
+
 
     .layout-header {
         flex: none; 

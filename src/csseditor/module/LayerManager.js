@@ -1,12 +1,10 @@
-
-import Dom from "../../util/Dom";
 import layerList from './layers/index';
-import { EMPTY_STRING, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW } from "../../util/css/types";
+import { ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, unitValue, CLIP_PATH_TYPE_SVG } from "../../util/css/types";
 import { isArray, cleanObject, combineKeyArray, keyEach } from "../../util/functions/func";
 import { GETTER } from "../../util/Store";
 import { BACKDROP_TO_CSS } from "../types/BackdropTypes";
 import { CLIPPATH_TO_CSS } from "../types/ClipPathTypes";
-import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_TO_STRING_CLIPPATH, LAYER_MAKE_MAP_IMAGE} from "../types/LayerTypes";
+import { LAYER_LIST_SAMPLE, LAYER_TO_STRING, LAYER_TO_CSS, LAYER_CACHE_TO_STRING, LAYER_CACHE_TO_CSS, LAYER_TOEXPORT, LAYER_MAKE_CLIPPATH, LAYER_MAKE_FILTER, LAYER_MAKE_BACKDROP, LAYER_TO_IMAGE_CSS, LAYER_IMAGE_TO_IMAGE_CSS, LAYER_MAKE_MAP, LAYER_MAKE_BOXSHADOW, LAYER_MAKE_IMAGE, LAYER_MAKE_TEXTSHADOW, LAYER_MAKE_MAP_IMAGE} from "../types/LayerTypes";
 import { ITEM_MAP_IMAGE_CHILDREN, ITEM_MAP_COLORSTEP_CHILDREN } from "../types/ItemSearchTypes";
 import { FILTER_TO_CSS } from "../types/FilterTypes";
 import { MAKE_BORDER_WIDTH, MAKE_BORDER_RADIUS, MAKE_BORDER_COLOR, MAKE_BORDER_STYLE, MAKE_TRANSFORM, BOUND_TO_CSS, CSS_TO_STRING, CSS_GENERATE, IMAGE_TO_CSS, generateImagePattern, LAYER_MAKE_FONT, LAYER_CACHE_TO_IMAGE_CSS } from "../../util/css/make";
@@ -166,27 +164,6 @@ export default class LayerManager extends BaseModule {
     [GETTER(LAYER_MAKE_TEXTSHADOW)] ($store, layer, isExport) {
         return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW, isExport);
     }    
-
-    [GETTER(LAYER_TO_STRING_CLIPPATH)] ($store, layer) {
-        
-        if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING; 
-        if (!layer.clipPathSvg) return EMPTY_STRING; 
-
-        let transform = EMPTY_STRING;
-
-        if (layer.fitClipPathSize) {
-            const widthScale = layer.width.value / layer.clipPathSvgWidth;
-            const heightScale = layer.height.value / layer.clipPathSvgHeight;
-    
-            transform = `scale(${widthScale} ${heightScale})`    
-        }
-
-        var $div = new Dom ('div');
-        var paths = $div.html(layer.clipPathSvg).$('svg').html();
-        var svg = `<svg height="0" width="0"><defs><clipPath id="clippath-${layer.id}" ${transform ? `transform="${transform}"` : ""} >${paths}</clipPath></defs></svg>`
-
-        return svg 
-    }
 
     [GETTER(LAYER_TO_CSS)] ($store, layer = null, withStyle = true, image = null, isExport = false) {
         var css = {};

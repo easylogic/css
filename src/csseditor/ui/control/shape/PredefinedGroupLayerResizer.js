@@ -395,7 +395,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.moveY = null; 
         this.rectItems = null 
         this.currentId = null; 
-        this.run(TOOL_SET, 'moving', false);
+        this.initConfig('moving', false);
         
     }
 

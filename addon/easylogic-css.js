@@ -2987,7 +2987,7 @@ var IMAGE_ITEM_TYPE_CONIC = 'conic';
 var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
 var IMAGE_ITEM_TYPE_STATIC = 'static';
 
-var IMAGE_ITEM_TYPE_IMAGE$1 = 'image';
+var IMAGE_ITEM_TYPE_IMAGE = 'image';
 
 var CLIP_PATH_TYPE_NONE = 'none';
 var CLIP_PATH_TYPE_CIRCLE = 'circle';
@@ -8476,8 +8476,9 @@ var start = function start(opt) {
         }, {
             key: POINTEREND('document'),
             value: function value(e) {
+                var newPos = Event.pos(e) || EMPTY_POS;
                 this.initConfig('bodyEvent', e);
-                this.initConfig('pos', Event.pos(e));
+                this.initConfig('pos', newPos);
                 this.removeBodyMoves();
             }
         }]);
@@ -12242,7 +12243,7 @@ function IMAGE_TO_CSS$1() {
 var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
 var RADIAL_GRADIENT_LIST = [IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL];
 var CONIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE$1];
+var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
 var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
 
 function IMAGE_TYPE_IS_LINEAR(type) {
@@ -12381,6 +12382,27 @@ function LAYER_CACHE_TO_IMAGE_CSS(images) {
     });
 
     return combineKeyArray(results);
+}
+
+function LAYER_TO_STRING_CLIPPATH(layer) {
+
+    if (layer.clipPathType != CLIP_PATH_TYPE_SVG) return EMPTY_STRING;
+    if (!layer.clipPathSvg) return EMPTY_STRING;
+
+    var transform = EMPTY_STRING;
+
+    if (layer.fitClipPathSize) {
+        var widthScale = unitValue(layer.width) / layer.clipPathSvgWidth;
+        var heightScale = unitValue(layer.height) / layer.clipPathSvgHeight;
+
+        transform = "scale(" + widthScale + " " + heightScale + ")";
+    }
+
+    var $div = new Dom('div');
+    var paths = $div.html(layer.clipPathSvg).$('svg').html();
+    var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"clippath-" + layer.id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
+
+    return svg;
 }
 
 function PROPERTY_GET_DEFAULT_VALUE(property) {
@@ -14588,11 +14610,11 @@ var Rotate = function (_BasePropertyItem) {
 
                 if (type == 'rotate') {
                     var rotate = _this3.refs.$rotate.val();
-                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, rotate: rotate });
+                    _this3.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
                     _this3.refs.$rotateRange.val(rotate);
                 } else if (type == 'range') {
                     var rotate = _this3.refs.$rotateRange.val();
-                    _this3.commit(CHANGE_LAYER_TRANSFORM, { id: id, rotate: rotate });
+                    _this3.commit(CHANGE_LAYER_ROTATE, { id: id, rotate: rotate });
                     _this3.refs.$rotate.val(rotate);
                 }
             });
@@ -15787,7 +15809,6 @@ var LAYER_MAKE_IMAGE = 'layer/make/image';
 var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
 
 
-var LAYER_TO_STRING_CLIPPATH = 'layer/toStringClipPath';
 
 var LAYER_TO_CSS = 'layer/toCSS';
 var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
@@ -17783,12 +17804,12 @@ var PageProperty = function (_BaseProperty) {
     createClass(PageProperty, [{
         key: "getTitle",
         value: function getTitle() {
-            return 'Page property';
+            return 'Page';
         }
     }, {
         key: "getBody",
         value: function getBody() {
-            return "<PageName /><PageSize /><clip /><Page3D />";
+            return "\n            <PageName />\n            <PageSize />\n            <clip />\n            <Page3D />\n        ";
         }
     }]);
     return PageProperty;
@@ -18626,11 +18647,34 @@ var ImageTabView = function (_BaseTab) {
     createClass(ImageTabView, [{
         key: 'template',
         value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient">Gradient</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <RotatePatternProperty />\n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected" data-id="gradient" ref="$gradientTabTitle">Gradient</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><ColorPickerPanel /></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <RotatePatternProperty />\n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
+        }
+    }, {
+        key: LOAD('$gradientTabTitle'),
+        value: function value() {
+            var item = this.read(SELECTION_CURRENT_IMAGE$1);
+            var title = 'Gradient';
+
+            if (item && IMAGE_TYPE_IS_IMAGE(item.type)) {
+                title = 'Image';
+            }
+
+            return '<span>' + title + '</span>';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR$1, CHANGE_IMAGE),
+        value: function value() {
+            this.refresh();
         }
     }, {
         key: 'onTabShow',
         value: function onTabShow() {
+            this.load();
             this.config('tool.tabs.image.selectedId', this.selectedTabId);
             this.emit(SELECT_TAB_IMAGE, this.selectedTabId);
         }
@@ -22518,7 +22562,7 @@ var PredefinedGroupLayerResizer = function (_UIElement) {
             this.moveY = null;
             this.rectItems = null;
             this.currentId = null;
-            this.run(TOOL_SET, 'moving', false);
+            this.initConfig('moving', false);
         }
     }, {
         key: EVENT(RESIZE_WINDOW),
@@ -23464,7 +23508,7 @@ var GradientView = function (_UIElement) {
             var list = this.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
                 var content = item.content || EMPTY_STRING;
                 var title = LAYER_NAME(item);
-                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + title + '" \n                    style=\'' + _this2.read(LAYER_TO_STRING, item, true) + '\'>' + content + _this2.read(LAYER_TO_STRING_CLIPPATH, item) + '</div>';
+                return '<div \n                    tabindex=\'' + index + '\'\n                    class=\'layer\' \n                    item-layer-id="' + item.id + '" \n                    title="' + title + '" \n                    style=\'' + _this2.read(LAYER_TO_STRING, item, true) + '\'>' + content + LAYER_TO_STRING_CLIPPATH(item) + '</div>';
             });
 
             return list;
@@ -23502,7 +23546,7 @@ var GradientView = function (_UIElement) {
                     _this3.layerItems[item.id].cssText(_this3.read(LAYER_TO_STRING, item, true));
 
                     var content = item.content || EMPTY_STRING;
-                    _this3.layerItems[item.id].html(content + _this3.read(LAYER_TO_STRING_CLIPPATH, item));
+                    _this3.layerItems[item.id].html(content + LAYER_TO_STRING_CLIPPATH(item));
                 });
             });
         }
@@ -23525,6 +23569,9 @@ var GradientView = function (_UIElement) {
                     }
 
                     _this4.layerItems[item.id].cssArray(BOUND_TO_CSS_ARRAY(item));
+
+                    var content = item.content || EMPTY_STRING;
+                    _this4.layerItems[item.id].html(content + LAYER_TO_STRING_CLIPPATH(item));
                 });
             });
         }
@@ -25341,47 +25388,42 @@ var ColorStepManager = function (_BaseModule) {
                 })[0];
             }
         }
-
-        // [ACTION(COLORSTEP_INIT_COLOR)] ($store, color) {
-        //     $store.run(TOOL_SET_COLOR_SOURCE,INIT_COLOR_SOURCE);
-        //     $store.run(TOOL_CHANGE_COLOR, color);
-        // }    
-
     }, {
         key: ACTION(COLORSTEP_ADD),
         value: function value$$1($store, item, percent$$1) {
 
-            var list = $store.read(ITEM_LIST_CHILDREN, item.id);
+            var parentId = item.id;
+            var list = $store.read(ITEM_MAP_COLORSTEP_CHILDREN, parentId);
 
             if (!list.length) {
 
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
 
-                $store.run(ITEM_SET, item);
+                $store.run(ITEM_INIT_CHILDREN, parentId);
                 return;
             }
 
-            var colorsteps = list.map(function (id) {
-                return $store.items[id];
-            });
+            var colorsteps = list;
 
             if (percent$$1 < colorsteps[0].percent) {
 
                 colorsteps[0].index = 1;
 
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: 0, color: colorsteps[0].color, percent: percent$$1 });
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, index: 0, color: colorsteps[0].color, percent: percent$$1 });
                 $store.run(ITEM_SET, colorsteps[0]);
-                $store.run(ITEM_SET, item);
+                $store.run(ITEM_INIT_CHILDREN, parentId);
+
                 return;
             }
 
-            if (colorsteps[colorsteps.length - 1].percent < percent$$1) {
-                var color$$1 = colorsteps[colorsteps.length - 1].color;
-                var index = colorsteps[colorsteps.length - 1].index;
+            var lastIndex = colorsteps.length - 1;
+            if (colorsteps[lastIndex].percent < percent$$1) {
+                var color$$1 = colorsteps[lastIndex].color;
+                var index = colorsteps[lastIndex].index + 1;
 
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: index + 1, color: color$$1, percent: percent$$1 });
-                $store.run(ITEM_SET, item);
+                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, index: index, color: color$$1, percent: percent$$1 });
+                $store.run(ITEM_INIT_CHILDREN, parentId);
                 return;
             }
 
@@ -25392,8 +25434,8 @@ var ColorStepManager = function (_BaseModule) {
                 if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
                     var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
 
-                    $store.read(ITEM_CREATE_COLORSTEP, { parentId: item.id, index: step.index + 1, color: color$$1, percent: percent$$1 });
-                    $store.run(ITEM_SET, item);
+                    $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, index: step.index + 1, color: color$$1, percent: percent$$1 });
+                    $store.run(ITEM_INIT_CHILDREN, parentId);
                     return;
                 }
             }
@@ -25965,28 +26007,6 @@ var LayerManager = function (_BaseModule) {
         key: GETTER(LAYER_MAKE_TEXTSHADOW),
         value: function value$$1($store, layer, isExport) {
             return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_TO_STRING_CLIPPATH),
-        value: function value$$1($store, layer) {
-
-            if (['circle'].includes(layer.clipPathType)) return EMPTY_STRING;
-            if (!layer.clipPathSvg) return EMPTY_STRING;
-
-            var transform = EMPTY_STRING;
-
-            if (layer.fitClipPathSize) {
-                var widthScale = layer.width.value / layer.clipPathSvgWidth;
-                var heightScale = layer.height.value / layer.clipPathSvgHeight;
-
-                transform = "scale(" + widthScale + " " + heightScale + ")";
-            }
-
-            var $div = new Dom('div');
-            var paths = $div.html(layer.clipPathSvg).$('svg').html();
-            var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"clippath-" + layer.id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
-
-            return svg;
         }
     }, {
         key: GETTER(LAYER_TO_CSS),
@@ -30198,7 +30218,7 @@ var ExportManager = function (_BaseModule) {
                     selector.push("id=\"layer-" + (index + 1) + "\"");
                 }
 
-                var clipPath = $store.read(LAYER_TO_STRING_CLIPPATH, item);
+                var clipPath = LAYER_TO_STRING_CLIPPATH(item);
 
                 if (clipPath) {
                     clipPath = "\t\t\n" + clipPath;

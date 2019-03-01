@@ -1,6 +1,6 @@
 import { 
     stringUnit, valueUnit, percentUnit, EMPTY_STRING,
-    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING, PROPERTY_DEFAULT_VALUE, PROPERTY_LIST, ITEM_TYPE_BORDER_IMAGE, ITEM_TYPE_MASK_IMAGE, ITEM_TYPE_BOX_IMAGE
+    IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC, IMAGE_ITEM_TYPE_IMAGE, IMAGE_ITEM_TYPE_STATIC, ITEM_TYPE_LAYER, ITEM_TYPE_PAGE, ITEM_TYPE_CIRCLE, ITEM_TYPE_SHAPE, ITEM_TYPE_GROUP, ITEM_TYPE_IMAGE, ITEM_TYPE_BOXSHADOW, ITEM_TYPE_TEXTSHADOW, ITEM_TYPE_COLORSTEP, ITEM_TYPE_TIMELINE, ITEM_TYPE_KEYFRAME, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_SVG, WHITE_STRING, PROPERTY_DEFAULT_VALUE, PROPERTY_LIST, ITEM_TYPE_BORDER_IMAGE, ITEM_TYPE_MASK_IMAGE, ITEM_TYPE_BOX_IMAGE, unitValue
 } from "./types";
 import { parseParamNumber } from "../filter/functions";
 import { defaultValue, isNotUndefined, get, isNumber, isUndefined, keyEach, isArray, cleanObject, combineKeyArray } from "../functions/func";
@@ -8,6 +8,7 @@ import Timing from "../animation/Timing";
 import { parse } from "../functions/parser";
 import { interpolateRGBObject } from "../functions/mixin";
 import { format } from "../functions/formatter";
+import Dom from "../Dom";
 
 export const DEFAULT_FUNCTION = (item) => item; 
 
@@ -860,6 +861,27 @@ export function LAYER_CACHE_TO_IMAGE_CSS (images) {
 
     return combineKeyArray(results);
 }    
+
+export function LAYER_TO_STRING_CLIPPATH (layer) {
+        
+    if (layer.clipPathType != CLIP_PATH_TYPE_SVG) return EMPTY_STRING; 
+    if (!layer.clipPathSvg) return EMPTY_STRING; 
+
+    let transform = EMPTY_STRING;
+
+    if (layer.fitClipPathSize) {
+        const widthScale = unitValue(layer.width) / layer.clipPathSvgWidth;
+        const heightScale = unitValue(layer.height) / layer.clipPathSvgHeight;
+
+        transform = `scale(${widthScale} ${heightScale})`    
+    }
+
+    var $div = new Dom ('div');
+    var paths = $div.html(layer.clipPathSvg).$('svg').html();
+    var svg = `<svg height="0" width="0"><defs><clipPath id="clippath-${layer.id}" ${transform ? `transform="${transform}"` : ""} >${paths}</clipPath></defs></svg>`
+
+    return svg 
+}
 
 export function PROPERTY_GET_DEFAULT_VALUE (property) {
     return PROPERTY_DEFAULT_VALUE[property] || {defaultValue: 0, step: 1, min: -1000, max: 1000};

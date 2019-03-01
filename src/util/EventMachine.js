@@ -234,8 +234,6 @@ const parseEvent = (context, key) => {
   })
 }
 
-
-
 export default class EventMachine { 
 
   constructor() { 

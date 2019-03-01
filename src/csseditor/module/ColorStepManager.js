@@ -2,7 +2,7 @@
 import Color from "../../util/Color";
 import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from "../../util/filter/functions";
 import { CHANGE_EDITOR } from "../types/event";
-import { ITEM_SET, ITEM_SORT, ITEM_REMOVE } from "../types/ItemTypes";
+import { ITEM_SET, ITEM_SORT, ITEM_REMOVE, ITEM_INIT_CHILDREN } from "../types/ItemTypes";
 import { isPX, isEM, ITEM_TYPE_COLORSTEP } from "../../util/css/types";
 import { isUndefined, defaultValue } from "../../util/functions/func";
 import { GETTER, ACTION } from "../../util/Store";
@@ -40,45 +40,41 @@ export default class ColorStepManager extends BaseModule {
             return $store.read(COLORSTEP_LIST).filter(item => !!item.selected)[0]
         }
     }
-
-    // [ACTION(COLORSTEP_INIT_COLOR)] ($store, color) {
-    //     $store.run(TOOL_SET_COLOR_SOURCE,INIT_COLOR_SOURCE);
-    //     $store.run(TOOL_CHANGE_COLOR, color);
-    // }    
-
+    
     [ACTION(COLORSTEP_ADD)] ($store, item, percent) {
-
-        var list = $store.read(ITEM_LIST_CHILDREN, item.id)
+    
+        var parentId = item.id;
+        var list = $store.read(ITEM_MAP_COLORSTEP_CHILDREN, parentId)
 
         if (!list.length) {
 
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: item.id, color: 'rgba(216,216,216, 0)', percent, index: 0});
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: item.id, color: 'rgba(216,216,216, 1)', percent: 100, index: 100});
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId, color: 'rgba(216,216,216, 0)', percent, index: 0});
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100});
 
-            $store.run(ITEM_SET, item);
+            $store.run(ITEM_INIT_CHILDREN, parentId);            
             return; 
         }
 
-        var colorsteps = list.map(id => {
-            return $store.items[id]
-        })
+        var colorsteps = list
     
         if (percent < colorsteps[0].percent) {
 
             colorsteps[0].index = 1; 
 
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: item.id, index: 0, color: colorsteps[0].color, percent});
-            $store.run(ITEM_SET, colorsteps[0]);
-            $store.run(ITEM_SET, item);
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId, index: 0, color: colorsteps[0].color, percent});
+            $store.run(ITEM_SET, colorsteps[0]);      
+            $store.run(ITEM_INIT_CHILDREN, parentId);
+
             return;             
         }
 
-        if (colorsteps[colorsteps.length -1].percent < percent) {
-            var color = colorsteps[colorsteps.length -1].color;  
-            var index = colorsteps[colorsteps.length -1].index;         
+        var lastIndex = colorsteps.length -1
+        if (colorsteps[lastIndex].percent < percent) {
+            var color = colorsteps[lastIndex].color;  
+            var index = colorsteps[lastIndex].index + 1;         
 
-            $store.read(ITEM_CREATE_COLORSTEP, {parentId: item.id, index: index + 1,  color, percent});
-            $store.run(ITEM_SET, item);
+            $store.read(ITEM_CREATE_COLORSTEP, {parentId, index,  color, percent});
+            $store.run(ITEM_INIT_CHILDREN, parentId);            
             return;             
         }        
        
@@ -89,8 +85,8 @@ export default class ColorStepManager extends BaseModule {
             if (step.percent <= percent && percent <= nextStep.percent) {
                 var color = Color.mix(step.color, nextStep.color, (percent - step.percent)/(nextStep.percent - step.percent), 'rgb');
 
-                $store.read(ITEM_CREATE_COLORSTEP, {parentId: item.id, index: step.index + 1, color, percent});
-                $store.run(ITEM_SET, item);            
+                $store.read(ITEM_CREATE_COLORSTEP, {parentId, index: step.index + 1, color, percent});
+                $store.run(ITEM_INIT_CHILDREN, parentId);
                 return; 
             }
         }
