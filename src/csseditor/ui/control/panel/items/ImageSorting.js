@@ -2,10 +2,8 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_EDITOR, CHANGE_SELECTION } from '../../../../types/event';
 import { CLICK } from '../../../../../util/Event';
 import { EVENT } from '../../../../../util/UIElement';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE } from '../../../../types/SelectionTypes';
 import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../../../types/ColorStepTypes';
-import { HISTORY_PUSH } from '../../../../types/HistoryTypes';
-import { IMAGE_TYPE_IS_IMAGE } from '../../../../../util/css/make';
+import { editor } from '../../../../../editor/editor';
 
 export default class ImageSorting extends BasePropertyItem {
 
@@ -46,15 +44,11 @@ export default class ImageSorting extends BasePropertyItem {
 
     isShow() {
         
-        var isImage = this.read(SELECTION_IS_IMAGE);
+        var image = editor.selection.backgroundImage;
+        if (!image) return false; 
 
-        if (!isImage) return false; 
 
-        var image = this.read(SELECTION_CURRENT_IMAGE);
-
-        if (!image) return false;
-
-        if (IMAGE_TYPE_IS_IMAGE(image.type)) {
+        if (image.image.isImage()) {
             return false; 
         }
 
@@ -64,27 +58,22 @@ export default class ImageSorting extends BasePropertyItem {
 
     [CLICK('$ordering')] (e) {
         this.dispatch(COLORSTEP_ORDERING_EQUALS)
-        this.dispatch(HISTORY_PUSH, `Ordering gradient` );        
     } 
 
     [CLICK('$orderingLeft')] (e) {
         this.dispatch(COLORSTEP_ORDERING_EQUALS_LEFT)
-        this.dispatch(HISTORY_PUSH, `Ordering gradient` );        
     }    
 
     [CLICK('$orderingRight')] (e) {
         this.dispatch(COLORSTEP_ORDERING_EQUALS_RIGHT)
-        this.dispatch(HISTORY_PUSH, `Ordering gradient` );        
     }        
 
     [CLICK('$cutOff')] (e) {
         this.dispatch(COLORSTEP_CUT_OFF)
-        this.dispatch(HISTORY_PUSH, `Cut off static gradient pattern` );
     }
 
     [CLICK('$cutOn')] (e) {
         this.dispatch(COLORSTEP_CUT_ON)
-        this.dispatch(HISTORY_PUSH, `Cut on static gradient pattern` );
     }    
 
 }

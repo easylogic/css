@@ -6,7 +6,6 @@ export default class BackgroundProperty extends BaseProperty {
     getTitle () { return 'Background Image'; }
     getBody () {
         return html`
-            <BackgroundInfo />
             <BackgroundBlend />        
             <div class='sub-feature'>
                 <BackgroundSize />

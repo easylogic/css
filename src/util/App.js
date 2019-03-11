@@ -4,7 +4,12 @@ import Event, { POINTERMOVE, POINTEREND } from "./Event";
 import { ADD_BODY_MOUSEMOVE, ADD_BODY_MOUSEUP } from "../csseditor/types/ToolTypes";
 import BaseStore from "./BaseStore";
 import UIElement, { EVENT } from "./UIElement";
+
+import {editor} from '../editor/editor'
+import { debounce } from "./functions/func";
+
 const EMPTY_POS = {x: 0, y : 0}
+
 export const start = (opt) => {
     class App extends UIElement {
 
@@ -15,6 +20,8 @@ export const start = (opt) => {
                     ...modules
                 ]
             });
+
+            editor.setStore(this.$store);
 
             this.$body = new Dom(this.getContainer());
             this.$root = new Dom('div', this.getClassName());
@@ -32,13 +39,15 @@ export const start = (opt) => {
         initBodyMoves () {
             this.moves = new Set()
             this.ends = new Set();
-            this.funcBodyMoves = this.loopBodyMoves.bind(this)
-            requestAnimationFrame(this.funcBodyMoves)
+            this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 10);
         }
 
         loopBodyMoves () {
+            var oldPos = editor.config.get('oldPos');
+            var pos = editor.config.get('pos');
+            var isRealMoved = (oldPos.x != pos.x ) || (oldPos.y != pos.y);
 
-            if (this.bodyMoved) {
+            if (isRealMoved && this.moves.size) {
                 this.moves.forEach(v => {
                     v.func.call(v.context);
                 })
@@ -85,20 +94,25 @@ export const start = (opt) => {
         }
 
         [POINTERMOVE('document')] (e) {
-            var pos = this.config('pos') || EMPTY_POS;
+            var oldPos = editor.config.get('pos') || EMPTY_POS;
             var newPos = Event.pos(e) || EMPTY_POS;
 
-            this.bodyMoved = !(pos.x == newPos.x && pos.y == newPos.y);  
-            this.initConfig('bodyEvent', e);
-            this.initConfig('pos', newPos);
+            this.bodyMoved = !(oldPos.x == newPos.x && oldPos.y == newPos.y);  
+            editor.config.set('bodyEvent', e);
+            editor.config.set('pos', newPos);
+            editor.config.set('oldPos', oldPos);
 
+            if (!this.requestId) {
+                this.requestId = requestAnimationFrame(this.funcBodyMoves)
+            }
         }
 
         [POINTEREND('document')] (e) {
             var newPos = Event.pos(e) || EMPTY_POS;
-            this.initConfig('bodyEvent', e);
-            this.initConfig('pos', newPos);
+            editor.config.set('bodyEvent', e);
+            editor.config.set('pos', newPos);
             this.removeBodyMoves()
+            this.requestId = null; 
         }        
     }
 

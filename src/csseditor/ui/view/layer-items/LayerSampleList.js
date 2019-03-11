@@ -1,12 +1,11 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
 import { unitValue } from "../../../../util/css/types";
 import { LOAD, CLICK } from "../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";
 import { LAYER_LIST_SAMPLE, LAYER_CACHE_TO_STRING } from "../../../types/LayerTypes";
-import { COLLECT_LAYER_ONE } from "../../../types/CollectTypes";
-import { ITEM_ADD_CACHE } from "../../../types/ItemRecoverTypes";
-import { STORAGE_LOAD_LAYER, STORAGE_LAYERS, STORAGE_REMOVE_LAYER, STORAGE_ADD_LAYER } from "../../../types/StorageTypes";
+import { STORAGE_LOAD_LAYER, STORAGE_LAYERS } from "../../../types/StorageTypes";
 import { repeat } from "../../../../util/functions/func";
+import { editor } from "../../../../editor/editor";
+import { Rect } from "../../../../editor/shape/Rect";
 
 export default class LayerSampleList extends UIElement {
  
@@ -105,35 +104,27 @@ export default class LayerSampleList extends UIElement {
         var newLayer = this.list[index];
 
         if (newLayer) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.dispatch(ITEM_ADD_CACHE, newLayer, layer.id );
-            })
+            editor.selection.addCurrent(newLayer);
         }
     }    
 
     [CLICK('$el .layer-cached-item .add-item')] (e) {
-        var newLayer = this.read(STORAGE_LAYERS, e.$delegateTarget.attr('data-sample-id'));
+        var newLayer = editor.storage.get(e.$delegateTarget.attr('data-sample-id'));
         
         if (newLayer) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.dispatch(ITEM_ADD_CACHE, newLayer, layer.id );
-            })            
+            editor.selection.addCurrent(newLayer);
         }
     }
 
     [CLICK('$el .layer-cached-item .delete-item')] (e) {
-        this.dispatch(STORAGE_REMOVE_LAYER, e.$delegateTarget.attr('data-sample-id'));
-        this.refresh();
+        var sampleId = e.$delegateTarget.attr('data-sample-id')
+        editor.storage.layerList.remove(sampleId)
     }    
 
     [CLICK('$el .add-current-layer')] (e) {
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            var newLayer = this.read(COLLECT_LAYER_ONE, layer.id)
-
-            this.dispatch(STORAGE_ADD_LAYER, newLayer);
-            this.refresh();
-        })
-        
+        var rect = new Rect()
+        editor.selection.addCurrent(rect)
+        rect.select()
     }
 
 } 

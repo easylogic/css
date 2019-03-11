@@ -7,7 +7,6 @@ import { ITEM_KEYS, ITEM_INITIALIZE } from "../types/ItemCreateTypes";
 import { SELECTION_ONE } from "../types/SelectionTypes";
 import { keyEach } from "../../util/functions/func";
 import { ITEM_LIST_CHILDREN, ITEM_LIST_PAGE, ITEM_EACH_CHILDREN, ITEM_DOM } from "../types/ItemSearchTypes";
-import { HISTORY_INITIALIZE } from "../types/HistoryTypes";
 
 export const INDEX_DIST = 100 ; 
 const NONE_INDEX = -99999;
@@ -217,8 +216,6 @@ export default class ItemManager extends BaseModule {
         $store.read(ITEM_KEYS).forEach(id => {
             $store.items[id] = convertStyle($store.items[id])
         })
-
-        $store.run(HISTORY_INITIALIZE);
     }  
 
     [ACTION(ITEM_INIT_CHILDREN)] ($store, parentId) {

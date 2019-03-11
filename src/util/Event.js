@@ -23,6 +23,18 @@ export class EventAfterRunner {
 }
 
 
+export class EventBeforeRunner {
+    constructor (value, split = CHECK_SAPARATOR) {
+        this.value = value; 
+        this.split = split
+    }
+
+    toString () {
+        return ` ${this.split} before(${this.value})`;
+    }
+}
+
+
 // event name regular expression
 export const CHECK_LOAD_PATTERN = /^load (.*)/ig;
 
@@ -113,6 +125,10 @@ export const AFTER = (value, split = CHECK_SAPARATOR) => {
     return new EventAfterRunner(value, split);
 }
 
+export const BEFORE = (value, split = CHECK_SAPARATOR) => {
+    return new EventBeforeRunner(value, split);
+}
+
 export const IF = CHECKER;
 
 export const KEY_ALT = 'ALT'
@@ -154,6 +170,14 @@ export const MOVE = (method = 'move') => {
 export const END = (method = 'end') => {
     return AFTER(`bodyMouseUp ${method}`)
 } 
+
+export const PREVENT = () => {
+    return BEFORE(`preventDefault`)
+}
+
+export const STOP = () => {
+    return BEFORE(`stopPropagation`)
+}
 
 
 // Predefined LOADER

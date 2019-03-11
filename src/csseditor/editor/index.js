@@ -33,7 +33,7 @@ export default class CSSEditor extends UIElement {
 
     template () {
         return `
-            <div class="layout-main show-timeline" ref="$layoutMain">
+            <div class="layout-main -show-timeline" ref="$layoutMain">
                 <div class="layout-header">
                     <div class="page-tab-menu"><ToolMenu /></div>
                 </div>
@@ -52,8 +52,8 @@ export default class CSSEditor extends UIElement {
                     </div>
                 </div>
                 <div class="layout-footer" ref="$footer">
-                    <TimelineSplitter />
-                    <Timeline />
+                    <!-- TimelineSplitter /-->
+                    <!-- Timeline /-->
                 </div>
                 <ExportWindow />
                 <DropView />
@@ -118,14 +118,15 @@ export default class CSSEditor extends UIElement {
     }
 
     [EVENT(LOAD_START)] (isAdd) {
-        this.dispatch(STORAGE_LOAD, (isLoaded) => {
-            if (!isLoaded && isAdd) { 
-                this.dispatch(ITEM_ADD_PAGE, true)
-            } else {
-                this.dispatch(ITEM_LOAD);
-            }
-            this.emit(CHANGE_PAGE)
-        });
+        console.log('최초 로딩은 어디서 할까요?')
+        // this.dispatch(STORAGE_LOAD, (isLoaded) => {
+        //     if (!isLoaded && isAdd) { 
+        //         this.dispatch(ITEM_ADD_PAGE, true)
+        //     } else {
+        //         this.dispatch(ITEM_LOAD);
+        //     }
+        //     this.emit(CHANGE_PAGE)
+        // });
     }
 
     [EVENT(TOGGLE_TIMELINE)] () {

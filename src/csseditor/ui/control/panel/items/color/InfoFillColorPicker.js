@@ -6,7 +6,7 @@ import {
     CHANGE_SELECTION,
     CHANGE_LAYER_BACKGROUND_COLOR
 } from '../../../../../types/event';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../../types/SelectionTypes';
+import { editor } from '../../../../../../editor/editor';
 
 export default class InfoFillColorPicker extends UIElement {
  
@@ -15,7 +15,6 @@ export default class InfoFillColorPicker extends UIElement {
 
         this.eventType = CHANGE_LAYER_BACKGROUND_COLOR
         this.eventKey = 'backgroundColor'
-        this.eventOpt = {} 
     }
 
     afterRender () {
@@ -43,9 +42,7 @@ export default class InfoFillColorPicker extends UIElement {
     }
 
     changeColor (color) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(this.eventType, {id, [this.eventKey]: color, ...this.eventOpt})
-        })
+        editor.selection.updateLayer(this.eventType, {[this.eventKey]: color})
     }
     setColor (color) {
         this.colorPicker.initColorWithoutChangeEvent(color);
@@ -58,13 +55,10 @@ export default class InfoFillColorPicker extends UIElement {
     )] () { this.refresh() }    
 
     refresh() {
-        if (this.read(SELECTION_IS_LAYER)) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-
-                var color = layer.backgroundColor || 'rgba(0, 0, 0, 1)'
-                this.setColor(color);
-
-            })
+        var layer = editor.selection.layer;
+        if (layer) {
+            var color = layer.backgroundColor || 'rgba(0, 0, 0, 1)'
+            this.setColor(color);
         }
     }
 } 

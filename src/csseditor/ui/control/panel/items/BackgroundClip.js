@@ -3,7 +3,7 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
 import { CHANGE } from '../../../../../util/Event';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../types/SelectionTypes';
+import { editor } from '../../../../../editor/editor';
 
 export default class BackgroundClip extends BasePropertyItem {
 
@@ -27,15 +27,14 @@ export default class BackgroundClip extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read(SELECTION_IS_LAYER); 
+        return editor.selection.layer;
     }    
 
     refresh () {
-
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
+        var layer = editor.selection.currentLayer;
+        if (layer) {
             this.refs.$clip.val(layer.backgroundClip)
-        })
-
+        }
     }
 
     [EVENT(
@@ -46,9 +45,11 @@ export default class BackgroundClip extends BasePropertyItem {
     }
 
     [CHANGE('$clip')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER, {id, backgroundClip: this.refs.$clip.val() }, true)
-        });
+        var layer = editor.selection.currentLayer;
+        if (layer) {
+            layer.backgroundClip = this.refs.$clip;
+            editor.send(CHANGE_LAYER, layer);
+        }
     }
 
 }

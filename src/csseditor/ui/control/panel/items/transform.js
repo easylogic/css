@@ -7,7 +7,7 @@ import {
 import { EVENT } from "../../../../../util/UIElement";
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { CHANGEINPUT, INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class Transform extends BasePropertyItem {
     template () {
@@ -71,30 +71,33 @@ export default class Transform extends BasePropertyItem {
     }
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
+        var layer = editor.selection.layer;
+        if (layer) {
 
             var attr = ['rotate', 'skewX', 'skewY', 'scale', 'translateX', 'translateY']
 
             attr.forEach( key => {
-                if (item[key]) {
-                    this.refs[`$${key}Range`].val(item[key])    
-                    this.refs[`$${key}`].val(item[key])    
+                var value = layer[key];
+                if (value) {
+                    this.refs[`$${key}Range`].val(value)    
+                    this.refs[`$${key}`].val(value)    
                 }
             })        
-        })
-        
+        }        
     }
 
     updateTransform (key, postfix = EMPTY_STRING) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
+        var layer = editor.selection.layer; 
+        if (layer) {
             var value = this.refs['$' + key + postfix].val();
             if (postfix == EMPTY_STRING) {
                 this.refs['$' + key + 'Range'].val(value);
             } else {
                 this.refs['$' + key].val(value);
             }
-            this.commit(CHANGE_LAYER_TRANSFORM, {id, [key]: value })
-        })
+            layer[key] = value; 
+            editor.send(CHANGE_LAYER_TRANSFORM, layer)
+        }
     }
 
     [CHANGEINPUT('$rotateRange')] () { this.updateTransform('rotate','Range'); }

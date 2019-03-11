@@ -1,22 +1,21 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL } from "../../../types/event";
-import { SELECTION_CURRENT_PAGE } from "../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
+import { editor } from "../../../../editor/editor";
 
 
 export default class ShowGrid extends MenuItem {
     getIcon() { return 'show-grid'; }
     getTitle () { return 'Show Grid'; }
-    getChecked () { return this.config('show.grid'); }
+    getChecked () { return editor.config.get('show.grid'); }
 
     clickButton (e) {
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            this.checked = !this.checked; 
-            this.initConfig('show.grid', this.checked)
-            this.config('snap.grid', this.checked)
-        });
 
+        this.checked = !this.checked; 
+        editor.config.set('show.grid', this.checked)
+        editor.config.set('snap.grid', this.checked)
+        editor.send(CHANGE_TOOL);
         this.refresh();
     }
 

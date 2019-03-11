@@ -5,8 +5,8 @@ import {
     CHANGE_SELECTION
 } from '../../types/event';
 import { CLICK } from '../../../util/Event';
-import { HISTORY_PUSH } from '../../types/HistoryTypes';
 import { COLORSTEP_ORDERING_EQUALS, COLORSTEP_ORDERING_EQUALS_LEFT, COLORSTEP_ORDERING_EQUALS_RIGHT, COLORSTEP_CUT_OFF, COLORSTEP_CUT_ON } from '../../types/ColorStepTypes';
+import { editor } from '../../../editor/editor';
 
 export default class ImageToolbar extends UIElement {
 
@@ -45,33 +45,28 @@ export default class ImageToolbar extends UIElement {
     }
 
     isShow() {
-        return this.read(SELECTION_IS_IMAGE);
+        return editor.selection.backgroundImage;
     }
 
 
     [CLICK('$ordering')] (e) {
         this.dispatch(COLORSTEP_ORDERING_EQUALS)
-        this.dispatch(HISTORY_PUSH, `Ordering gradient` );        
     } 
 
     [CLICK('$orderingLeft')] (e) {
         this.dispatch(COLORSTEP_ORDERING_EQUALS_LEFT)
-        this.dispatch(HISTORY_PUSH, `Ordering gradient` );        
     }    
 
     [CLICK('$orderingRight')] (e) {
         this.dispatch(COLORSTEP_ORDERING_EQUALS_RIGHT)
-        this.dispatch(HISTORY_PUSH, `Ordering gradient` );        
     }        
 
     [CLICK('$cutOff')] (e) {
         this.dispatch(COLORSTEP_CUT_OFF)
-        this.dispatch(HISTORY_PUSH, `Cut off static gradient pattern` );
     }
 
     [CLICK('$cutOn')] (e) {
         this.dispatch(COLORSTEP_CUT_ON)
-        this.dispatch(HISTORY_PUSH, `Cut on static gradient pattern` );
     }    
 
 }

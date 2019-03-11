@@ -9,13 +9,11 @@ import {
     CHANGE_LAYER_CLIPPATH_POLYGON, 
     CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
 } from "../../../../types/event";
-import { defaultValue } from "../../../../../util/functions/func";
-import { px2percent } from "../../../../../util/filter/functions";
-import { percentUnit, stringUnit, EMPTY_STRING } from "../../../../../util/css/types";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 import { CLICK, POINTERSTART, ALT, CAPTURE, LOAD, MOVE } from "../../../../../util/Event";
 import Dom from "../../../../../util/Dom";
-import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { CLIP_PATH_IS_POLYGON } from "../../../../../util/css/make";
+import { Length } from "../../../../../editor/unit/Length";
+import { editor } from "../../../../../editor/editor";
 
 export default class PolygonEditor extends UIElement {
 
@@ -24,9 +22,9 @@ export default class PolygonEditor extends UIElement {
     }
 
     [LOAD()] () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.layer;
         if (!layer) return EMPTY_STRING;
-        var points =  defaultValue( layer.clipPathPolygonPoints, [])
+        var points = layer.clippath.points
         if (!points.length) return EMPTY_STRING;
 
         var startIndex = 0;
@@ -37,7 +35,7 @@ export default class PolygonEditor extends UIElement {
             var start = index == startIndex ? 'start' : EMPTY_STRING;
             var end = index == lastIndex ? 'end' : EMPTY_STRING;
 
-            return `<div class="drag-item ${start} ${end}" data-point-index="${index}" style='left: ${stringUnit(p.x)};top: ${stringUnit(p.y)}'></div>`
+            return `<div class="drag-item ${start} ${end}" data-point-index="${index}" style='left: ${p.x};top: ${p.y}'></div>`
         })
     }
 
@@ -54,11 +52,13 @@ export default class PolygonEditor extends UIElement {
     }
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_LAYER)
+        var layer = editor.selection.currentLayer
+        if (!layer) return false; 
 
-        if (!item) return false; 
+        var clippath = layer.clippath;
+        if (!clippath) return false; 
 
-        return CLIP_PATH_IS_POLYGON(item) && !!item.showClipPathEditor; 
+        return clippath.isPolygon() && !!layer.showClipPathEditor; 
     }
 
     getRectangle () {
@@ -94,8 +94,8 @@ export default class PolygonEditor extends UIElement {
         if (isUpdate) {
 
             this.$dragPoint =  {
-                x: percentUnit( px2percent( left, width) ),
-                y: percentUnit( px2percent( top, height) )
+                x: Length.px(left).toPercent(width),
+                y: Length.px(top).toPercent(right),
             }
 
             this.updateClipPath();
@@ -104,17 +104,20 @@ export default class PolygonEditor extends UIElement {
     }
 
     updateClipPath () {
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            var polygonIndex = +this.$dragItem.attr('data-point-index');
-            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
-            clipPathPolygonPoints[polygonIndex] = this.$dragPoint;
+        var layer = editor.selection.currentLayer;
+        if (!layer) return;
+        
+        var clippath = layer.clippath;
+        if (!clippath) return; 
+        if (!clippath.isPolygon()) return;
 
-            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, {
-                id: layer.id, 
-                polygonIndex,
-                clipPathPolygonPoints
-            });
-        }) 
+        var polygonIndex = +this.$dragItem.attr('data-point-index');
+        var points = clippath.points
+        points[polygonIndex] = this.$dragPoint;
+
+
+
+        this.emit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION);
     }
 
     [EVENT(
@@ -154,29 +157,32 @@ export default class PolygonEditor extends UIElement {
 
 
         var point =  {
-            x: percentUnit( px2percent( left, width) ),
-            y: percentUnit( px2percent( top, height) )
+            x: Length.px(left).toPercent(width),
+            y: Length.px(top).toPercent(height)
         }
 
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
-            clipPathPolygonPoints.push(point);
+        var layer = editor.selection.layer
+        if (layer) {
+            var clippath = layer.clippath; 
+            clippath.points.push(point);
 
-            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {id: layer.id, clipPathPolygonPoints});
+            this.emit(CHANGE_LAYER_CLIPPATH_POLYGON, layer);
             this.refresh();
-        })
+        }
     }
 
     deletePoint (e) {
         var index = +e.$delegateTarget.attr('data-point-index')
+        var layer = editor.selection.layer;
+        if (!layer) return;
+        
+        var clippath = layer.clippath;
+        if (!clippath) return; 
+        if (!clippath.isPolygon()) return;
 
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
-            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, [])
-            clipPathPolygonPoints.splice(index, 1);
-
-            this.commit(CHANGE_LAYER_CLIPPATH_POLYGON, {id: layer.id, clipPathPolygonPoints});
-            this.refresh();
-        })
+        clippath.points.splice(index, 1);
+        this.emit(CHANGE_LAYER_CLIPPATH_POLYGON) 
+        this.refresh();
     } 
 
     isNotDragItem (e) {

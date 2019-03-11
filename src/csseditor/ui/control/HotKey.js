@@ -1,11 +1,11 @@
 import UIElement from "../../../util/UIElement";
 import { KEYDOWN} from "../../../util/Event";
-import { HOTKEY_EXECUTE } from "../../types/HotkeyTypes";
+// import { HOTKEY_EXECUTE } from "../../types/HotkeyTypes";
 
 export default class HotKey extends UIElement {
 
     [KEYDOWN('document')] (e) {
-        this.dispatch(HOTKEY_EXECUTE, e);
+        // this.dispatch(HOTKEY_EXECUTE, e);
     }    
 
 }

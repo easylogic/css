@@ -6,11 +6,11 @@ import {
     CHANGE_LAYER_POSITION, 
     CHANGE_SELECTION
 } from '../../../types/event';
-import { RESIZE, DEBOUNCE, LOAD } from '../../../../util/Event';
-import { SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
+import { LOAD } from '../../../../util/Event';
 import { GUIDE_SNAP_LAYER } from '../../../types/GuideTypes';
 import { EMPTY_STRING, GUIDE_TYPE_HORIZONTAL } from '../../../../util/css/types';
 import { RESIZE_WINDOW } from '../../../types/ToolTypes';
+import { editor } from '../../../../editor/editor';
 
 export default class MoveGuide extends UIElement {
 
@@ -19,10 +19,9 @@ export default class MoveGuide extends UIElement {
     }
 
     [LOAD()] () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.layer
         if (!layer) return []; 
-        var toolSize = this.config('tool.size')
-
+        var toolSize = editor.config.get('tool.size')
         if (!toolSize) return EMPTY_STRING; 
 
         var list = this.read(GUIDE_SNAP_LAYER, 3);
@@ -53,7 +52,7 @@ export default class MoveGuide extends UIElement {
     }
 
     isShow() {
-        return  this.config('moving');
+        return  editor.config.get('moving');
     }
 
     [EVENT(

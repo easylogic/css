@@ -9,8 +9,7 @@ import {
     CHANGE_LAYER_POSITION, 
     CHANGE_LAYER_ROTATE 
 } from '../../../types/event';
-import { pxUnit, stringUnit, unitValue } from '../../../../util/css/types';
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER, SELECTION_IS_IMAGE, SELECTION_IS_BOXSHADOW, SELECTION_IS_TEXTSHADOW } from '../../../types/SelectionTypes';
+import { editor } from '../../../../editor/editor';
 
 
 export default class LayerShapeEditor extends UIElement {
@@ -38,32 +37,24 @@ export default class LayerShapeEditor extends UIElement {
         }
     }
 
-    setRectangle ({x, y, width, height, id}) {
-        var toolSize = this.config('tool.size');
+    setRectangle (item) {
+
+        var toolSize = editor.config.get('tool.size');
         var boardOffset = this.boardOffset || toolSize['board.offset']
         var pageOffset = this.pageOffset || toolSize['page.offset']
         var canvasScrollLeft = this.canvasScrollLeft || toolSize['board.scrollLeft'];
         var canvasScrollTop = this.canvasScrollTop || toolSize['board.scrollTop'];
 
-        x = pxUnit( unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
-        y = pxUnit( unitValue(y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
+        var width = item.width; 
+        var height = item.height;
+        var left = Length.px( (+item.x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
+        var top = Length.px( (+item.y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
 
-        var left = stringUnit(x);
-        var top = stringUnit(y);
-        width = stringUnit(width);
-        height = stringUnit(height);
-
-        // var transform = "none"; 
-        
-        // if (id) {
-        //     // transform = this.read(LAYER_MAKE_TRANSFORM_ROTATE, this.get( id));
-        // }
-
-        return { width, height, left, top}
+        return { width, height, left, top }
     }    
 
     setPosition () {
-        var item = this.read(SELECTION_CURRENT_LAYER)
+        var item = editor.selection.layer
 
         if (!item) return; 
         if (!item.showClipPathEditor) return;
@@ -72,10 +63,7 @@ export default class LayerShapeEditor extends UIElement {
     }
 
     isShow () {
-        return this.read(SELECTION_IS_LAYER) 
-            || this.read(SELECTION_IS_IMAGE)
-            || this.read(SELECTION_IS_BOXSHADOW)
-            || this.read(SELECTION_IS_TEXTSHADOW);                        
+        return editor.selection.layer;                
     }
 
     [EVENT(

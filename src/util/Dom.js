@@ -404,6 +404,21 @@ export default class Dom {
     
         return this;
     }
+
+    realVal() {
+        switch(this.el.nodeType) {
+        case 'INPUT':
+            var type = this.attr('type')
+            if (type == 'checkbox' || type == 'radio') {
+                return this.checked()
+            }
+        case 'SELECT':
+        case 'TEXTAREA': 
+            return this.el.value;
+        }
+
+        return ''; 
+    }
     
     int () {
         return parseInt(this.val(), 10);
@@ -426,13 +441,18 @@ export default class Dom {
         var currentHide = this.css('display') == 'none'
 
         if (arguments.length == 1) {
-            currentHide = isForce
-        }
-
-        if (currentHide) {
-            return this.show();
+            if (currentHide && isForce) {
+                return this.show();
+            } else {
+                return this.hide();
+            }
+            
         } else {
-            return this.hide();
+            if (currentHide) {
+                return this.show();
+            } else {
+                return this.hide();
+            }
         }
     }
 

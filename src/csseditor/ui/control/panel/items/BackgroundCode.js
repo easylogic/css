@@ -14,10 +14,9 @@ import {
 import { EVENT } from "../../../../../util/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
-import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
-import { LAYER_IMAGE_TO_IMAGE_CSS } from "../../../../types/LayerTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 import { keyMap } from "../../../../../util/functions/func";
+import { editor } from "../../../../../editor/editor";
 
 export default class BackgroundCode extends BasePropertyItem {
     template () {
@@ -29,11 +28,10 @@ export default class BackgroundCode extends BasePropertyItem {
     }
 
     [LOAD('$keys')] () {
-        var image = this.read(SELECTION_CURRENT_IMAGE);
-
+        var image = editor.selection.currentBackgroundImage;
         if (!image) return EMPTY_STRING; 
 
-        var obj = this.read(LAYER_IMAGE_TO_IMAGE_CSS, image)
+        var obj = image.toCSS()
 
         return keyMap(obj, (key, value) => {
             if (key == 'background-image') {
@@ -71,7 +69,7 @@ export default class BackgroundCode extends BasePropertyItem {
 
     refresh() {
 
-        if (this.config('tool.tabs.image.selectedId') == 'css') {
+        if (editor.config.get('tool.tabs.image.selectedId') == 'css') {
             this.load();
         }
 

@@ -24,27 +24,27 @@ import {
 import { EVENT } from "../../../../../util/UIElement";
 import { convertMatches, reverseMatches } from "../../../../../util/functions/parser";
 import { LOAD } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { LAYER_TOEXPORT } from "../../../../types/LayerTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
+import { editor } from "../../../../../editor/editor";
+import { keyMap } from "../../../../../util/functions/func";
 
 export default class LayerCode extends BasePropertyItem {
     template () {
         return `
             <div class='property-item layer-code show'>
-                <div class='items'><div class="key-value-view" ref="$keys"></div></div>
+                <div class='items'>
+                    <div class="key-value-view" ref="$keys"></div>
+                </div>
             </div>
         `
     }
 
     [LOAD('$keys')] () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.layer;
 
         if (!layer) return EMPTY_STRING; 
 
-        return this.read(LAYER_TOEXPORT, layer, true).split(';').map(it => {
-            var [key, value] = it.split(':');
-
+        return keyMap(layer.toCSS(), (key, value) => {
             if (key == 'background-image' || key == 'box-shadow' || key == 'text-shadow') {
                 var ret = convertMatches(value) ;
 
@@ -96,7 +96,7 @@ export default class LayerCode extends BasePropertyItem {
 
     refresh() {
 
-        if (this.config('tool.tabs.layer.selectedId') === 'css') {
+        if (editor.config.get('tool.tabs.layer.selectedId') === 'css') {
             this.load();
         }
 

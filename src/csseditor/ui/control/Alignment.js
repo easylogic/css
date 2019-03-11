@@ -34,7 +34,9 @@ export default class Alignment extends UIElement {
     }
 
     [CLICK('$groupAlign button')] (e) {
+        console.log('sstart', e);
         this.dispatch(ORDERING_TYPE, e.$delegateTarget.attr('data-value'))
+        console.log('end', e);
     }
 
     [CLICK('$groupOrdering button')] (e) {

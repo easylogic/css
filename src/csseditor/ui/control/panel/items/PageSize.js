@@ -1,8 +1,8 @@
 import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_PAGE_SIZE, CHANGE_EDITOR } from "../../../../types/event";
-import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
+import { UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class PageSize extends UIElement {
     template () {
@@ -35,38 +35,38 @@ export default class PageSize extends UIElement {
     }
 
     refresh() {
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            this.refs.$width.val(unitValue(item.width))
-            this.refs.$height.val(unitValue(item.height))
-        })
+        var artboard = editor.selection.currentArtBoard;
+        if (artboard) {                    
+            this.refs.$width.val(+(artboard.width))
+            this.refs.$height.val(+(artboard.height))
+        }
         
     }
 
     [CLICK('$rect')] (e) {
-
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            var newValue = {
-                id: item.id, 
-                width: pxUnit( this.refs.$width.int() )
-            }
-
-            newValue.height = newValue.width; 
-
-            this.commit(CHANGE_PAGE_SIZE, newValue);
-        })
+        var artboard = editor.selection.currentArtBoard;
+        if (artboard) {
+            artboard.reset({
+                width: Length.px( this.refs.$width.int() ),
+                height: Length.px( this.refs.$width.int() )
+            });
+            editor.send(CHANGE_PAGE_SIZE, artboard)
+        }
     }
-
+ 
     [INPUT('$width')] () {
-
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-            this.commit(CHANGE_PAGE_SIZE, { id, width: pxUnit(this.refs.$width.int() ) });
-        })
+        var artboard = editor.selection.currentArtBoard;
+        if (artboard) {
+            artboard.width = Length.px(this.refs.$width.int())
+            editor.send(CHANGE_PAGE_SIZE, artboard);
+        }
     }
 
     [INPUT('$height')] () {
-
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-            this.commit(CHANGE_PAGE_SIZE, { id, height: pxUnit(this.refs.$height.int()) });            
-        })
+        var artboard = editor.selection.currentArtBoard;
+        if (artboard) {
+            artboard.height = Length.px(this.refs.$height.int())
+            editor.send(CHANGE_PAGE_SIZE, artboard);
+        }
     }    
 }

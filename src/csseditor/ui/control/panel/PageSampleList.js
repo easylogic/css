@@ -18,7 +18,7 @@ export default class PageSampleList extends UIElement {
         super.initialize();
 
         this.list = [] 
-        this.dispatch(STORAGE_LOAD_PAGE)
+        // this.dispatch(STORAGE_LOAD_PAGE)
 
     }
 

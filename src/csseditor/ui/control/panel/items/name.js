@@ -2,8 +2,8 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_NAME, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
+import { editor } from "../../../../../editor/editor";
 
 export default class Name extends BasePropertyItem {
     template () {
@@ -32,11 +32,7 @@ export default class Name extends BasePropertyItem {
     }
 
     refresh() {
-        var item = this.read(SELECTION_CURRENT);
-
-        if (!item.length) return;
-
-        item = item[0];
+        var item = editor.selection.layer;
         
         var name = EMPTY_STRING;
         var idString = EMPTY_STRING;
@@ -53,20 +49,26 @@ export default class Name extends BasePropertyItem {
     }
 
     [INPUT('$name')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_NAME , {id, name: this.refs.$name.val()});
-        });
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.name = this.refs.$name.val()
+            this.commit(CHANGE_LAYER_NAME , layer);
+        }
     }
 
     [INPUT('$class')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_NAME , {id, className: this.refs.$class.val()});
-        });        
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.className = this.refs.$class.val()
+            editor.send(CHANGE_LAYER_NAME, layer);
+        }
     }    
 
     [INPUT('$id')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_NAME , {id, idString: this.refs.$id.val()});
-        });          
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.idString = this.refs.$id.val()
+            editor.send(CHANGE_LAYER_NAME , layer);
+        }
     }        
 }

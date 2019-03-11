@@ -4,10 +4,9 @@ import {
     CHANGE_SELECTION, 
     CHANGE_IMAGE
 } from '../../../types/event';
-import { POINTERSTART, POINTERMOVE, POINTEREND, MOVE } from '../../../../util/Event';
-import { defaultValue } from '../../../../util/functions/func';
-import { percentUnit, EMPTY_STRING } from '../../../../util/css/types';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
+import { POINTERSTART, MOVE } from '../../../../util/Event';
+import { EMPTY_STRING } from '../../../../util/css/types';
+import { editor } from '../../../../editor/editor';
 
 export default class BackgroundResizer extends UIElement {
 
@@ -32,7 +31,7 @@ export default class BackgroundResizer extends UIElement {
     }
 
     isShow () {
-        return this.read(SELECTION_IS_IMAGE);
+        return editor.selection.backgroundImage;
     }
 
     getCurrentXY(isUpdate, position) {
@@ -60,14 +59,13 @@ export default class BackgroundResizer extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read(SELECTION_CURRENT_IMAGE);
-
+        var item = editor.selection.backgroundImage
         if (!item) return EMPTY_STRING; 
 
-        var x = defaultValue(item.backgroundPositionX, percentUnit(0)).value;
-        var y = defaultValue(item.backgroundPositionY, percentUnit(0)).value;
-        var width = defaultValue(item.backgroundSizeWidth, percentUnit(100)).value;
-        var height = defaultValue(item.backgroundSizeHeight, percentUnit(100)).value;
+        var x = +item.x;
+        var y = +item.y;
+        var width = +item.width;
+        var height = +item.height;
 
         return { x, y, width, height }
 
@@ -101,15 +99,17 @@ export default class BackgroundResizer extends UIElement {
         if (isUpdate) {
             var newLeft = (left / (maxX - minX)) * 100
             var newTop = (top / (maxY - minY)) * 100
-            this.setBackgroundPosition( percentUnit(newLeft), percentUnit(newTop));
+            this.setBackgroundPosition( Length.percent(newLeft), Length.percent(newTop));
         }
 
     }
 
-    setBackgroundPosition (backgroundPositionX, backgroundPositionY) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE, {id, backgroundPositionX, backgroundPositionY});
-        });
+    setBackgroundPosition (x, y) {
+        var image = editor.selection.backgroundImage; 
+        if (image) {
+            image.reset({ x, y})
+            editor.send(CHANGE_IMAGE);
+        }
     }
 
     [EVENT(

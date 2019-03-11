@@ -1,6 +1,5 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import Dom from '../../../../util/Dom';
-import { px2em, px2percent, percent2px, percent2em, em2percent, em2px } from '../../../../util/filter/functions';
 import { 
     CHANGE_COLOR_STEP, 
     REMOVE_COLOR_STEP, 
@@ -8,15 +7,11 @@ import {
     CHANGE_EDITOR,
     CHANGE_SELECTION
 } from '../../../types/event';
-import { isPX, UNIT_PX, UNIT_EM, isPercent, isEM, UNIT_PERCENT, EMPTY_STRING } from '../../../../util/css/types';
+import { UNIT_PX, UNIT_EM, UNIT_PERCENT, EMPTY_STRING } from '../../../../util/css/types';
 import { CHANGE, INPUT, POINTERSTART, CLICK, SHIFT, IF, LOAD, MOVE, END } from '../../../../util/Event';
-import { ITEM_SET } from '../../../types/ItemTypes';
-import { SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_IS_IMAGE, SELECTION_CURRENT_LAYER } from '../../../types/SelectionTypes';
-import { HISTORY_PUSH } from '../../../types/HistoryTypes';
-import { IMAGE_TO_LINEAR_RIGHT } from '../../../types/ImageTypes';
-import { ITEM_MAP_COLORSTEP_CHILDREN } from '../../../types/ItemSearchTypes';
-import { COLORSTEP_REMOVE, COLORSTEP_ADD, COLORSTEP_SORT, COLORSTEP_UNIT_VALUE } from '../../../types/ColorStepTypes';
-import { IMAGE_TYPE_IS_GRADIENT } from '../../../../util/css/make';
+import { editor } from '../../../../editor/editor';
+import { LinearGradient } from '../../../../editor/image-resource/LinearGradient';
+import { Length } from '../../../../editor/unit/Length';
 
 export default class GradientSteps extends UIElement {
 
@@ -39,7 +34,7 @@ export default class GradientSteps extends UIElement {
         min -= left;
         max -= left;
 
-        if (isPX(step.unit)) {
+        if (step.isPx) {
             return step.px;
         } 
 
@@ -58,35 +53,30 @@ export default class GradientSteps extends UIElement {
 
     getUnitSelect (step) {
 
-        var unit = step.unit || UNIT_PERCENT
-
-        if ([UNIT_PX, UNIT_EM].includes(unit) == false) {
-            unit = UNIT_PERCENT;
-        }
-
         return `
         <select class='unit' data-colorstep-id="${step.id}">
-            <option value='${UNIT_PERCENT}' ${isPercent(unit) ? 'selected' : EMPTY_STRING}>%</option>
-            <option value='${UNIT_PX}' ${isPX(unit) ? 'selected' : EMPTY_STRING}>px</option>
-            <option value='${UNIT_EM}' ${isEM(unit) ? 'selected' : EMPTY_STRING}>em</option>
+            <option value='percent' ${step.isPercent ? 'selected' : EMPTY_STRING}>%</option>
+            <option value='px' ${step.isPx ? 'selected' : EMPTY_STRING}>px</option>
+            <option value='em' ${step.isEm ? 'selected' : EMPTY_STRING}>em</option>
         </select>
         `
     }
 
     getMaxValue () {
-        return this.$store.step.width;
+        return editor.config.get('step.width') || 400;
     }
 
     // load 후에 이벤트를 재설정 해야한다. 
     [LOAD('$stepList')] () {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
-
+        var item = editor.selection.image;
         if (!item) return EMPTY_STRING;
 
-        return this.read(ITEM_MAP_COLORSTEP_CHILDREN, item.id, (step) => {
+        if (!image.isGradient()) return EMPTY_STRING;
+
+        return image.colorsteps.map(step => {
 
             var cut = step.cut ? 'cut' : EMPTY_STRING; 
-            var unitValue = this.read(COLORSTEP_UNIT_VALUE, step, this.getMaxValue());
+            var unitValue = step.getUnitValue(this.getMaxValue());
             return `
                 <div 
                     class='drag-bar ${step.selected ? 'selected' : EMPTY_STRING}' 
@@ -97,10 +87,10 @@ export default class GradientSteps extends UIElement {
                     <div class='guide-line' 
                         style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ${step.color} 10%) ;"></div>
                     <div class="guide-change ${cut}" data-colorstep-id="${step.id}"></div>
-                    <div class="guide-unit ${this.getUnitName(step)}">
-                        <input type="number" class="${UNIT_PERCENT}" min="-100" max="100" step="0.1"  value="${unitValue.percent}" data-colorstep-id="${step.id}"  />
-                        <input type="number" class="${UNIT_PX}" min="-100" max="1000" step="1"  value="${unitValue.px}" data-colorstep-id="${step.id}"  />
-                        <input type="number" class="${UNIT_EM}" min="-100" max="500" step="0.1"  value="${unitValue.em}" data-colorstep-id="${step.id}"  />
+                    <div class="guide-unit ${step.getUnit()}">
+                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="${unitValue.percent}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="px" min="-100" max="1000" step="1"  value="${unitValue.px}" data-colorstep-id="${step.id}"  />
+                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="${unitValue.em}" data-colorstep-id="${step.id}"  />
                         ${this.getUnitSelect(step)}
                     </div>       
                 </div>
@@ -110,37 +100,21 @@ export default class GradientSteps extends UIElement {
 
     isShow() {
 
-        var item = this.read(SELECTION_CURRENT);
+        var item = editor.selection.image;
+        if (!item) return false; 
 
-        if (!item.length) return false; 
-
-        item = item[0];
-
-        if (!IMAGE_TYPE_IS_GRADIENT(item.type)) {
-            return false;
-        }
-
-        if (!this.read(SELECTION_IS_IMAGE)) {
-            return false; 
-        }
-
-        return true; 
+        return item.isGradient()
     }
 
     refresh () {
 
         this.$el.toggle(this.isShow())
 
-
-        this.read(SELECTION_CURRENT_IMAGE, item => {
-            var type = item ? item.type : EMPTY_STRING 
-    
-            if (IMAGE_TYPE_IS_GRADIENT(type)) {
-                this.load()
-                this.setColorUI()
-            }
-        })
-        
+        var item = editor.selection.image;
+        if (item && item.isGradient()) {
+            this.load()
+            this.setColorUI()
+        }        
     }
 
     setColorUI() {
@@ -149,11 +123,10 @@ export default class GradientSteps extends UIElement {
 
     setBackgroundColor() {
 
-        this.refs.$stepList.css(
-            'background-image', 
-            this.read(IMAGE_TO_LINEAR_RIGHT, this.read(SELECTION_CURRENT_IMAGE))
-        )
-
+        var item = editor.selection.image;
+        if (item && item.isGradient()) {
+            this.refs.$stepList.css( 'background-image', LinearGradient.toLinearGradient(item) )   
+        }
     }
 
     /* slide 영역 min,max 구하기  */
@@ -168,7 +141,7 @@ export default class GradientSteps extends UIElement {
     /* 현재 위치 구하기  */ 
     getCurrent () {
         var {min, max} = this.getMinMax()
-        var {x} = this.config('pos')
+        var {x} = editor.config.get('pos')
  
         var current = Math.min(Math.max(min, x), max)
 
@@ -190,27 +163,27 @@ export default class GradientSteps extends UIElement {
             var posX = Math.max(min, current)
             var px = posX - this.refs.$steps.offsetLeft();
 
-            if (this.config('bodyEvent').ctrlKey) {
+            if (editor.config.get('bodyEvent').ctrlKey) {
                 px = Math.floor(px);    // control + drag is floor number 
             }
             this.currentStepBox.px('left', px)
 
-            var item = this.get( this.currentStepBox.attr('id'));
+            var item = editor.get( this.currentStepBox.attr('id'));
 
             if (item) {
 
                 // item.px = px; 
-                var percent = px2percent(px, max - min);
-                var em = px2em(px, max- min);
-                var newValue = {id: item.id, px, percent, em}
+                var maxValue = max - min; 
+                var percent = Length.px(px).toPercent(maxValue);
+                var em = Length.px(px).toEm(maxValue);
+
+                item.reset({px, percent, em})
 
                 this.currentUnitPercent.val(percent);
                 this.currentUnitPx.val(px);
                 this.currentUnitEm.val(em);
 
-                this.run(ITEM_SET, newValue);
-                this.run(COLORSTEP_SORT, newValue.id, this.getSortedStepList());
-                this.commit(CHANGE_COLOR_STEP, newValue);
+                editor.send(CHANGE_COLOR_STEP, item);
                 this.setBackgroundColor();
             }
         }
@@ -223,12 +196,7 @@ export default class GradientSteps extends UIElement {
         CHANGE_SELECTION
     )] () { this.refresh(); }
 
-    'checkTarget' (e) {
-        return this.refs.$back.is(e.target)
-    }
-
     // 이미 선언된 메소드를 사용하여 메타 데이타로 쓴다. 
-    // checkTarget 이라는 메소드가 true 를 리턴해줘야 아래 이벤트는 실행된다. 
     [CLICK('$back')] (e) {
         this.addStep(e);
     }
@@ -237,27 +205,19 @@ export default class GradientSteps extends UIElement {
 
         var id = e.$delegateTarget.attr('id')
 
-        this.run(COLORSTEP_REMOVE, id);
-        this.emit(REMOVE_COLOR_STEP, id);
-        this.run(HISTORY_PUSH, 'Remove colorstep');        
-        this.refresh();
+        editor.remove(id);
+        editor.send(REMOVE_COLOR_STEP, id);
     }
 
     addStep (e) {
         var {min, max} = this.getMinMax()
-
         var current = this.getCurrent(e)
-
         var percent = Math.floor((current - min) / (max - min) * 100)
-
-        var item = this.read(SELECTION_CURRENT_IMAGE);
-
+        var item = editor.selection.image;
         if (!item) return; 
 
-        this.dispatch(COLORSTEP_ADD, item, percent);
-        this.emit(ADD_COLOR_STEP, item, percent);
-        this.run(HISTORY_PUSH, 'Add colorstep');
-        this.refresh()
+        image.insertColorStep(percent) 
+        editor.send(ADD_COLOR_STEP, image);
     }
 
     getSortedStepList () {
@@ -275,16 +235,10 @@ export default class GradientSteps extends UIElement {
 
     selectStep (e) {
         var parent = e.$delegateTarget.parent();
-        var item = this.get( parent.attr('id'));
-            
-        this.read(ITEM_MAP_COLORSTEP_CHILDREN, item.parentId, (step) => {
-            if (step.selected) {
-                step.selected = false;
-                this.run(ITEM_SET, step);
-            } 
-        })
-
-        item.selected = true; 
+        var item = editor.get( parent.attr('id'));
+         
+        item.select()
+        editor.send(CHANGE_COLOR_STEP, item); 
 
         this.currentStepBox = this.currentStepBox || parent;
         var $selected = this.refs.$stepList.$('.selected');
@@ -293,8 +247,7 @@ export default class GradientSteps extends UIElement {
         }
 
         this.currentStepBox.addClass('selected')
-        this.commit(CHANGE_COLOR_STEP, item); 
-        this.dispatch(COLORSTEP_SORT, item.id, this.getSortedStepList());
+
         this.setBackgroundColor();
     }
 
@@ -308,12 +261,12 @@ export default class GradientSteps extends UIElement {
 
     [CLICK('$steps .guide-change')] (e) {
         var id = e.$delegateTarget.attr('data-colorstep-id');
-        var item = this.get( id);
 
-        if (item.id) {
-            this.commit(CHANGE_COLOR_STEP, {id, cut : !item.cut})
-            this.run(HISTORY_PUSH, 'Apply cut option');
-            this.refresh();
+        var item = editor.get( id);
+
+        if (item) {
+            item.reset({cut : !item.cut})
+            editor.send(CHANGE_COLOR_STEP, item)
         }
 
     }
@@ -323,104 +276,83 @@ export default class GradientSteps extends UIElement {
         var unit = e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.get( id)
+        var step = editor.get( id)
 
         if (step) {
-            step.unit = unit;
-
-            var unitValue = this.read(COLORSTEP_UNIT_VALUE,step, this.getMaxValue());
-            var newValue = {id: step.id, unit, ...unitValue}
-  
-            this.commit(CHANGE_COLOR_STEP, newValue);
+            step.changeUnit(unit, this.getMaxValue())
+            editor.send(CHANGE_COLOR_STEP, step);
 
             var $parent = e.$delegateTarget.parent();
-            $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(this.getUnitName(step));
+            $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(step.getUnit());
         }        
     }
 
 
     [INPUT('$steps input.percent')] (e) {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
+        var item = editor.selection.colorstep;
         if (!item) return; 
-
-        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         var percent = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.get( id)
+        var step = editor.get( id)
 
         if (step) {
 
-            var newValue = {
-                id: step.id,
-                percent,
-                px: percent2px(percent, this.getMaxValue(layer) ),
-                em: percent2em(percent, this.getMaxValue(layer) )
-            }
+            step.percent = percent;
+            step.changeUnit('percent', this.getMaxValue())
 
-            this.currentStepBox.px('left', newValue.px)
-            this.currentUnitPx.val(newValue.px);
-            this.currentUnitEm.val(newValue.em);
+            this.currentStepBox.px('left', step.px)
+            this.currentUnitPx.val(step.px);
+            this.currentUnitEm.val(step.em);
 
-            this.commit(CHANGE_COLOR_STEP, newValue);
+            editor.send(CHANGE_COLOR_STEP, step);
             this.setBackgroundColor();         
         }
     }
 
     [INPUT('$steps input.px')] (e) {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
+        var item = editor.selection.colorstep
         if (!item) return; 
-
-        var layer = this.read(SELECTION_CURRENT_LAYER);
 
         var px = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.get( id)
+        var step = editor.get( id)
 
         if (step) {
-            var newValue = {
-                id: step.id,
-                px,
-                percent: px2percent(px, this.getMaxValue(layer)),
-                em: px2em(px, this.getMaxValue(layer))
-            }
+            
+            step.px = px;
+            step.changeUnit('px', this.getMaxValue()) 
 
-            this.currentStepBox.px('left', newValue.px)                
-            this.currentUnitPercent.val(newValue.percent);
-            this.currentUnitEm.val(newValue.em);
+            this.currentStepBox.px('left', step.px)                
+            this.currentUnitPercent.val(step.percent);
+            this.currentUnitEm.val(step.em);
 
-            this.commit(CHANGE_COLOR_STEP, newValue);
+            editor.send(CHANGE_COLOR_STEP, step);
             this.setBackgroundColor();                    
         }
     }
     
     [INPUT('$steps input.em')] (e) {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
+        var item = editor.selection.colorstep;
         if (!item) return; 
-
-        var layer = this.read(SELECTION_CURRENT_LAYER);        
 
         var em = +e.$delegateTarget.val()
         var id = e.$delegateTarget.attr('data-colorstep-id')
         
-        var step = this.get( id)
+        var step = editor.get( id)
 
         if (step) {
-            var newValue = {
-                id: step.id, 
-                em, 
-                percent: em2percent(em, this.getMaxValue(layer)),
-                px: em2px(em, this.getMaxValue(layer))
-            }
+                      
+            step.em = em;
+            step.changeUnit('em', this.getMaxValue()) 
             
-            this.currentStepBox.px('left', newValue.px)                
-            this.currentUnitPercent.val(newValue.percent);
-            this.currentUnitPx.val(newValue.px);
-            // this.currentUnitEm.val(item.em);
-        
-            this.commit(CHANGE_COLOR_STEP, newValue);
+            this.currentStepBox.px('left', step.px)                
+            this.currentUnitPercent.val(step.percent);
+            this.currentUnitPx.val(step.px);
+
+            editor.send(CHANGE_COLOR_STEP, step);
             this.setBackgroundColor();         
         }
     }        
@@ -429,7 +361,6 @@ export default class GradientSteps extends UIElement {
     end () { 
         if (this.refs.$stepList) {
             this.refs.$stepList.removeClass('mode-drag')       
-            this.run(HISTORY_PUSH, 'Moved colorstep');
         }
     }
 

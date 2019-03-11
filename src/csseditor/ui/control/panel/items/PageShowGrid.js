@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../../util/UIElement";
-import { CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_TOOL } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_PAGE } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class PageShowGrid extends UIElement {
     template () {
@@ -28,15 +28,14 @@ export default class PageShowGrid extends UIElement {
     }    
 
     refresh() {
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            this.refs.$check.checked(this.config('show.grid'));
-        })        
+        this.refs.$check.checked(editor.config.get('show.grid'));   
     }
 
     [CLICK('$check')] () {
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            this.config('show.grid', this.refs.$check.checked())
-            this.config('snap.grid', this.refs.$check.checked())
-        })
+
+        editor.config.set('show.grid', this.refs.$check.checked())
+        editor.config.set('snap.grid', this.refs.$check.checked())
+
+        editor.send(CHANGE_TOOL);
     }
 }

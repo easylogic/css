@@ -2,6 +2,7 @@ import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_PAGE, CHANGE_EDITOR, CHANGE_PAGE_SIZE } from "../../../../types/event";
 import { CLICK } from "../../../../../util/Event";
 import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class Clip extends UIElement {
     template () {
@@ -27,14 +28,15 @@ export default class Clip extends UIElement {
     }
 
     refresh() {
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            this.refs.$check.checked(item.clip)
-        })        
+        var artboard = editor.selection.currentArtBoard;
+        if (artboard) {
+            this.refs.$check.checked(artboard.clip)
+        }
     }
 
     [CLICK('$check')] () {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-            this.commit(CHANGE_PAGE_SIZE, {id, clip: this.refs.$check.checked() } )
+        editor.selection.updateArtBoard(CHANGE_PAGE_SIZE, {
+            clip: this.refs.$check.checked()
         })
     }
 }

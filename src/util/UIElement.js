@@ -67,6 +67,7 @@ class UIElement extends EventMachine {
                 e = this.getRealEventName(e);
                 var callback = this[key].bind(this)
                 callback.displayName = e;
+                callback.source = this.source
                 this.storeEvents[e] = callback                
                 this.$store.on(e, this.storeEvents[e], this);
             })

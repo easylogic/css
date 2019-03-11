@@ -1,8 +1,7 @@
 import BaseProperty from "./BaseProperty";
 import { CHANGE_SELECTION, CHANGE_EDITOR } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
-import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
-import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_IMAGE } from "../../../../../util/css/make";
+import { editor } from "../../../../../editor/editor";
 
 export default class ImageSortingProperty extends BaseProperty {
 
@@ -21,9 +20,10 @@ export default class ImageSortingProperty extends BaseProperty {
     }
 
     isShow () { 
-        var image = this.read(SELECTION_CURRENT_IMAGE);
+        var image = editor.selection.backgroundImage;
         if (image) {
-            if (IMAGE_TYPE_IS_STATIC(image.type) || IMAGE_TYPE_IS_IMAGE(image.type)) {
+            var gradient = image.image;
+            if (gradient.isStatic() || gradient.isImage()) {
                 return false; 
             }
         }

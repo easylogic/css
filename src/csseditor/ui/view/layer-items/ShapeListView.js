@@ -1,10 +1,9 @@
 import UIElement from "../../../../util/UIElement";
 import { CLICK } from "../../../../util/Event";
-import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
-import { HISTORY_PUSH } from "../../../types/HistoryTypes";
 import { SHAPE_LIST, SHAPE_GET, SHAPE_TO_CSS_TEXT } from "../../../types/ShapeTypes";
-import { ITEM_ADD_SHAPE } from "../../../types/ItemCreateTypes";
 import { html } from "../../../../util/functions/func";
+import { editor } from "../../../../editor/editor";
+import { Shape } from "../../../../editor/shape/Shape";
 
 
 export default class ShapeListView extends UIElement {
@@ -29,10 +28,7 @@ export default class ShapeListView extends UIElement {
         var $button = e.$delegateTarget;
         var key = $button.attr('data-shape');
 
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-            this.dispatch(ITEM_ADD_SHAPE, this.read(SHAPE_GET, key), true, id)
-            this.dispatch(HISTORY_PUSH, 'Add a shape');
-        });
+        editor.selection.add(new Shape({ data : this.read(SHAPE_GET, key)}))
     }
 
 } 

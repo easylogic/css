@@ -7,6 +7,7 @@ import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { isUndefined, html } from "../../../../../util/functions/func";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { FILTER_GET, FILTER_LIST } from "../../../../types/FilterTypes";
+import { editor } from "../../../../../editor/editor";
 
 const DROPSHADOW_FILTER_KEYS = [
     'filterDropshadowOffsetX',
@@ -137,7 +138,6 @@ export default class FilterList extends BasePropertyItem {
     }
 
     updateFilterKeyChecked (key, checked) {
-
         this.read(SELECTION_CURRENT_LAYER, layer => {
             var id = layer.id;             
             var value = layer[key] || {...FILTER_DEFAULT_OBJECT[key]};

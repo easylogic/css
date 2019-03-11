@@ -7,6 +7,8 @@ import { PATTERN_SET } from "../../../../../types/PatternTypes";
 import { BLEND_LIST } from "../../../../../types/BlendTypes";
 import { html } from "../../../../../../util/functions/func";
 import { PATTERN_GET } from "../../../../../../util/css/make";
+import { editor } from "../../../../../../editor/editor";
+
 
 export default class RotatePattern extends BasePropertyItem {
     template () {
@@ -71,7 +73,9 @@ export default class RotatePattern extends BasePropertyItem {
     }
 
     changePatternValue () {
-        this.read(SELECTION_CURRENT_IMAGE, (image) => {
+        var image = editor.selection.backgroundImage;
+        if (image) {
+
             this.run(PATTERN_SET, image, 'rotate', {
                 enable: this.refs.$enable.checked(),
                 clone: this.refs.$cloneCount.int(),
@@ -80,8 +84,10 @@ export default class RotatePattern extends BasePropertyItem {
                 randomSize: this.refs.$randomSize.checked()
             });
 
-            this.emit(CHANGE_IMAGE)
-        })
+            editor.send(CHANGE_IMAGE)
+
+        }
+
     }
 
     [CLICK('$enable')] () { this.changePatternValue(); }

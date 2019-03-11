@@ -2,8 +2,8 @@ import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
-import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IDS } from '../../../types/SelectionTypes';
 import { isUndefined } from '../../../../util/functions/func';
+import { editor } from '../../../../editor/editor';
 
 export default class LayerAngle extends UIElement {
 
@@ -29,14 +29,12 @@ export default class LayerAngle extends UIElement {
     }
 
     isShow () {
-        if (!this.read(SELECTION_IS_LAYER)) return false; 
-
-
-        return this.config('guide.angle')
+        if (!editor.selection.layer) return false; 
+        return editor.config.get('guide.angle')
     }
 
     getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
-        return isUpdate ? this.config('pos') : getXYInCircle(angle, radius, centerX, centerY)
+        return isUpdate ? editor.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY)
     }
 
     getRectangle () {
@@ -53,7 +51,7 @@ export default class LayerAngle extends UIElement {
     }    
 
     getDefaultValue() {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.layer;
         if (!layer) return -90
         if (isUndefined(layer.rotate)) return -90;
         
@@ -83,16 +81,15 @@ export default class LayerAngle extends UIElement {
         this.refreshAngleText (lastAngle)
 
         if (isUpdate) {
-
             this.setAngle (lastAngle)
         }
 
     }
 
     setAngle (rotate) {
-        this.read(SELECTION_IDS).forEach( id => {
-            var newRotate = (this.cachedRotate[id] + (rotate - this.cachedRotate[id]) ) % 360
-            this.commit(CHANGE_LAYER_ROTATE, {id, rotate: newRotate});
+        editor.selection.items.forEach( item => {
+            item.rotate = (this.cachedRotate[id] + (rotate - this.cachedRotate[id]) ) % 360
+            this.commit(CHANGE_LAYER_ROTATE);
         })
     }
 
@@ -113,8 +110,8 @@ export default class LayerAngle extends UIElement {
 
     [POINTERSTART('$dragAngle') + MOVE()] (e) {
         this.cachedRotate = {}
-        this.read(SELECTION_IDS).forEach( id => {
-            this.cachedRotate[id] = this.get(id).rotate || 0;
+        editor.selection.items.forEach( item => {
+            this.cachedRotate[item.id] = item.rotate || 0;
         })
         this.refreshUI(e);        
     }     

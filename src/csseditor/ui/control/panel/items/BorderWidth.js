@@ -1,10 +1,11 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_BORDER } from "../../../../types/event";
-import { value2px, pxUnit, unitValue, UNIT_PX } from "../../../../../util/css/types";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_BORDER } from "../../../../types/event";
+import {  UNIT_PX } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
-import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
+import { defaultValue } from "../../../../../util/functions/func";
+import { Length } from "../../../../../editor/unit/Length";
 
 
 export default class BorderWidth extends BasePropertyItem {
@@ -52,11 +53,11 @@ export default class BorderWidth extends BasePropertyItem {
     )] () { this.refresh() }
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-
+        var item = editor.selection.currentLayer;
+        if (item) {
             if (item.fixedBorderWidth) {
-                var borderWidth = defaultValue (item.borderWidth, pxUnit(0));
-                var border = unitValue(borderWidth);
+                var borderWidth = item.borderWidth;
+                var border = +borderWidth;
 
                 this.refs.$topWidthRange.val(border)
                 this.refs.$rightWidthRange.val(border)
@@ -69,38 +70,34 @@ export default class BorderWidth extends BasePropertyItem {
 
             } else {
 
-                var value = defaultValue(item.borderTopWidth, pxUnit(0));
+                var value = defaultValue(item.borderTopWidth, Length.px(0))
+                this.refs.$topWidth.val(value.value)
+                this.refs.$topWidthRange.val(value.value)
 
-                this.refs.$topWidth.val(unitValue(value))
-                this.refs.$topWidthRange.val(unitValue(value))
+                var value = defaultValue(item.borderRightWidth, Length.px(0))
+                this.refs.$rightWidth.val(value.value)
+                this.refs.$rightWidthRange.val(value.value)
 
-                var value = defaultValue(item.borderRightWidth, pxUnit(0));                
-                this.refs.$rightWidth.val(unitValue(value))
-                this.refs.$rightWidthRange.val(unitValue(value))
+                var value = defaultValue(item.borderLeftWidth, Length.px(0));
+                this.refs.$leftWidth.val(value.value)
+                this.refs.$leftWidthRange.val(value.value)
 
-                var value = defaultValue(item.borderLeftWidth, pxUnit(0));
-                this.refs.$leftWidth.val(unitValue(value))
-                this.refs.$leftWidthRange.val(unitValue(value))
-
-                var value = defaultValue(item.borderBottomWidth, pxUnit(0));
-                this.refs.$bottomWidth.val(unitValue(value))
-                this.refs.$bottomWidthRange.val(unitValue(value))
+                var value = defaultValue(item.borderBottomWidth, Length.px(0))
+                this.refs.$bottomWidth.val(value.value)
+                this.refs.$bottomWidthRange.val(value.value)
             }
 
-        })
+        }
         
     }
 
     refreshValue () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_BORDER, { 
-                id, 
-                borderTopWidth: pxUnit( this.refs.$topWidth.val()), 
-                borderRightWidth: pxUnit( this.refs.$rightWidth.val()), 
-                borderLeftWidth: pxUnit( this.refs.$leftWidth.val()), 
-                borderBottomWidth: pxUnit( this.refs.$bottomWidth.val()), 
-                fixedBorderWidth: false 
-            })
+        editor.selection.updateLayer(CHANGE_LAYER_BORDER, { 
+            borderTopWidth: Length.px( this.refs.$topWidth.val()), 
+            borderRightWidth: Length.px( this.refs.$rightWidth.val()), 
+            borderLeftWidth: Length.px( this.refs.$leftWidth.val()), 
+            borderBottomWidth: Length.px( this.refs.$bottomWidth.val()), 
+            fixedBorderWidth: false 
         })
     }
 

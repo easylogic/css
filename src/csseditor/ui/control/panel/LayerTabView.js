@@ -23,29 +23,51 @@ export default class LayerTabView extends BaseTab {
                 <div class="tab-item" data-id="css">CSS</div>
             </div>
             <div class="tab-body" ref="$body">
-                <div class="tab-content" data-id="page"><PageProperty /></div>
+                <div class="tab-content" data-id="page">
+                    <PageProperty />
+                </div>
                 <div class="tab-content selected flex" data-id="property">
-                    <div class='fixed'><LayerInfoColorPickerPanel /></div>
-                    <div class='scroll' ref="$layerInfoScroll"><LayerProperty /></div>
+                    <!-- <div class='fixed'><LayerInfoColorPickerPanel /></div> -->
+                    <div class='scroll' ref="$layerInfoScroll">
+                        <LayerProperty />
+                    </div>
                 </div>
                 <div class="tab-content flex" data-id="border">
-                    <div class='fixed'><LayerBorderColorPickerPanel /></div>
-                    <div class='scroll' ref="$layerBorderScroll"><LayerBorderProperty /><LayerBorderRadiusProperty /></div>
-                </div>                
-                <div class="tab-content flex" data-id="text">
-                    <div class='fixed'><LayerTextColorPickerPanel /></div>
-                    <div class='scroll' ref="$layerTextScroll"><LayerFontProperty /><LayerTextProperty /><TextShadowProperty /></div>
-                </div>
-                <div class="tab-content flex" data-id="fill">
-                    <div class='fixed'><FillColorPickerPanel /></div>
-                    <div class='scroll' ref="$layerFillScroll">
-                        <BoxShadowProperty /><FilterProperty /><BackdropProperty /><EmptyArea height="100px" />      
+                    <!-- <div class='fixed'><LayerBorderColorPickerPanel /></div> -->
+                    <div class='scroll' ref="$layerBorderScroll">
+                        <LayerBorderProperty />
+                        <LayerBorderRadiusProperty />
                     </div>
                 </div>                
-                <div class="tab-content" data-id="clip-path"><ClipPathProperty /></div>
-                <div class="tab-content" data-id="transform"><Transform2DProperty /></div>
-                <div class="tab-content" data-id="transform3d"><Transform3DProperty /></div>
-                <div class="tab-content" data-id="css"><LayerCodeProperty/></div>
+                <div class="tab-content flex" data-id="text">
+                    <!-- <div class='fixed'><LayerTextColorPickerPanel /></div> -->
+                    <div class='scroll' ref="$layerTextScroll">
+                        <LayerFontProperty />
+                        <LayerTextProperty />
+                        <TextShadowProperty />
+                    </div>
+                </div>
+                <div class="tab-content flex" data-id="fill">
+                    <!--<div class='fixed'><FillColorPickerPanel /></div> -->
+                    <div class='scroll' ref="$layerFillScroll">
+                        <BoxShadowProperty />
+                        <FilterProperty />
+                        <BackdropProperty />
+                        <EmptyArea height="100px" />      
+                    </div>
+                </div>                
+                <div class="tab-content" data-id="clip-path">
+                    <ClipPathProperty />
+                </div>
+                <div class="tab-content" data-id="transform">
+                    <Transform2DProperty />
+                </div>
+                <div class="tab-content" data-id="transform3d">
+                    <Transform3DProperty />
+                </div>
+                <div class="tab-content" data-id="css">
+                    <LayerCodeProperty/>
+                </div>
             </div>
         </div>`
     }

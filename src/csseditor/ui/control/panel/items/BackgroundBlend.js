@@ -3,9 +3,9 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
 import { CHANGE } from '../../../../../util/Event';
-import { BLEND_LIST } from '../../../../types/BlendTypes';
-import { SELECTION_CURRENT_IMAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../../types/SelectionTypes';
 import { html } from '../../../../../util/functions/func';
+import { editor } from '../../../../../editor/editor';
+import { BLEND_LIST } from '../../../../../editor/Layer';
 
 export default class BackgroundBlend extends BasePropertyItem {
 
@@ -17,7 +17,7 @@ export default class BackgroundBlend extends BasePropertyItem {
                     <label>Blend</label>
                     <div class='size-list full-size' ref="$size">
                         <select ref="$blend">
-                        ${this.read(BLEND_LIST).map(blend => {
+                        ${BLEND_LIST.map(blend => {
                             return `<option value="${blend}">${blend}</option>`
                         })}
                         </select>
@@ -29,15 +29,14 @@ export default class BackgroundBlend extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read(SELECTION_IS_IMAGE); 
+        return editor.selection.backgroundImage; 
     }    
 
     refresh () {
-
-        this.read(SELECTION_CURRENT_IMAGE, (image) => {
-            this.refs.$blend.val(image.backgroundBlendMode)
-        })
-
+        var image = editor.selection.backgroundImage;
+        if (image) {
+            this.refs.$blend.val(image.blendMode)
+        }
     }
 
     [EVENT(
@@ -48,9 +47,11 @@ export default class BackgroundBlend extends BasePropertyItem {
     }
 
     [CHANGE('$blend')] (e) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: this.refs.$blend.val() }, true)
-        });
+        var image = editor.selection.backgroundImage;
+        if (image) {
+            image.blendMode = this.refs.$blend.val()
+            editor.send(CHANGE_IMAGE, image)
+        }
     }
 
 }

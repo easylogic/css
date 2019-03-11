@@ -1,8 +1,8 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH } from "../../../types/event";
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from "../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../util/css/types";
+import { editor } from "../../../../editor/editor";
 
 
 export default class ShowClipPath extends MenuItem {
@@ -10,14 +10,14 @@ export default class ShowClipPath extends MenuItem {
     getIcon() { return 'show-clip-path'; }
     getTitle () { return 'Show ClipPath'; }
 
-    clickButton (e) {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            this.commit(CHANGE_LAYER_CLIPPATH, {
-                id: item.id, 
-                showClipPathEditor: !item.showClipPathEditor
-            })
+    clickButton () {
+
+        editor.selection.layers.forEach(item => {
+            item.showClipPathEditor = !item.showClipPathEditor
+            this.emit(CHANGE_LAYER_CLIPPATH)
             this.refresh();            
         })
+
     }
 
     [EVENT(
@@ -27,22 +27,15 @@ export default class ShowClipPath extends MenuItem {
         this.refresh();
     }
 
-    isShow () {
-        return this.read(SELECTION_IS_LAYER);
-    }
-
     refresh () {
 
-        var isShow = this.isShow();
+        var layers = editor.selection.layers;
 
-        this.$el.css('display',  isShow ? 'inline-block' : 'none');
+        this.$el.css('display',  layers.length ? 'inline-block' : 'none');
 
-        if (isShow) {
-            this.read(SELECTION_CURRENT_LAYER, item => {
-                this.$el.attr('checked', item.showClipPathEditor ? 'checked' : EMPTY_STRING);
-            })
-        }
-
+        layers.forEach(item => {
+            this.$el.attr('checked', item.showClipPathEditor ? 'checked' : EMPTY_STRING);
+        })
         
     }
 }

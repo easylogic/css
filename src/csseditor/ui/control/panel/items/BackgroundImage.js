@@ -3,6 +3,7 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_IMAGE,  CHANGE_SELECTION } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
 import { CLICK, SELF } from '../../../../../util/Event';
+import { editor } from '../../../../../editor/editor';
 
 export default class BackgroundImage extends BasePropertyItem {
 
@@ -34,10 +35,10 @@ export default class BackgroundImage extends BasePropertyItem {
         this.$el.toggle(isShow);
 
         if (isShow) {
-            this.read(SELECTION_CURRENT_IMAGE, (image) => {
-                this.refs.$image.attr('src', image.backgroundImageDataURI)
-            })
-    
+            var image = editor.selection.currentBackgroundImage;
+            if (image) {
+                this.refs.$image.attr('src', image.url)
+            }
         }
     }
 
@@ -52,11 +53,9 @@ export default class BackgroundImage extends BasePropertyItem {
 
 
     [CLICK('$blendList .blend-item') + SELF] (e) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE, {id, backgroundBlendMode: e.$delegateTarget.attr('data-mode')}, true)
-            this.refresh();
-        });
-        
+        editor.selection.updateBackgroundImage(CHANGE_IMAGE, {
+            blendMode: e.$delegateTarget.attr('data-mode')
+        })
     }
 
 }

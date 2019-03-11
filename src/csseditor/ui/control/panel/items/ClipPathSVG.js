@@ -38,7 +38,7 @@ export default class ClipPathSVG extends BasePropertyItem {
     }
 
     [LOAD('$imageList')] () {
-        return this.read(SVG_LIST).map((svg, index) => {
+        return /*this.read(SVG_LIST)*/[].map((svg, index) => {
             if (isObject(svg)) {
                 return `<div class='svg-item' data-key="${svg.key}">${svg.svg}</div>`
             }  else {

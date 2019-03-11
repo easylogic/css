@@ -7,8 +7,8 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../../../util/css/types";
+import { editor } from "../../../../../editor/editor";
 
 export default class Text extends BasePropertyItem {
     template () {
@@ -57,7 +57,8 @@ export default class Text extends BasePropertyItem {
     }
 
     refresh () {
-        this.read(SELECTION_CURRENT_LAYER, layer => {
+        var layer = editor.selection.layer;
+        if (layer) {
             this.refs.$color.css('background-color', layer.color);
             this.refs.$colorText.val(layer.color || EMPTY_STRING);
             this.refs.$content.val(layer.content || EMPTY_STRING);
@@ -65,31 +66,38 @@ export default class Text extends BasePropertyItem {
             this.refs.$clipText.checked(layer.clipText || false); 
             
             this.$el.toggleClass('has-clip-text', layer.clipText || false)
-        })
+        }
     }
 
     [INPUT('$content')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, id => {
-            this.commit(CHANGE_LAYER_TEXT, {id, content: this.refs.$content.val()})
-        })
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.content = this.refs.$content
+            editor.send(CHANGE_LAYER_TEXT, layer)
+        }
     }
 
     [CLICK('$color')] (e) {
-        this.read(SELECTION_CURRENT_LAYER, item => {
-            this.emit(TEXT_FILL_COLOR, item.id, CHANGE_LAYER_TEXT);
-        })
+        var layer = editor.selection.layer; 
+        if (layer) {
+            editor.send(TEXT_FILL_COLOR, layer.id, CHANGE_LAYER_TEXT);
+        }
     }
 
 
     [CHANGE('$clip')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, backgroundClip: this.refs.$clip.val() }, true)
-        });
+        var layer = editor.selection.layer; 
+        if (layer) {
+            layer.backgroundClip = this.refs.$clip;
+            editor.send(CHANGE_LAYER_TEXT, layer);
+        }
     }
 
     [CLICK('$clipText')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, clipText: this.refs.$clipText.checked() }, true)
-        });
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.clipText = this.refs.$clipText
+            editor.send(CHANGE_LAYER_TEXT, layer);
+        }
     }
 }

@@ -1,8 +1,23 @@
 import UIElement from "../../../../util/UIElement";
 import { CLICK } from "../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../types/SelectionTypes";
-import { HISTORY_PUSH } from "../../../types/HistoryTypes";
-import { ITEM_PREPEND_IMAGE } from "../../../types/ItemCreateTypes";
+import { editor } from "../../../../editor/editor";
+import BackgroundImage from "../../control/panel/items/BackgroundImage";
+import { LinearGradient } from "../../../../editor/image-resource/LinearGradient";
+import { ColorStep } from "../../../../editor/image-resource/ColorStep";
+import { RepeatingLinearGradient } from "../../../../editor/image-resource/RepeatingLinearGradient";
+import { RadialGradient } from "../../../../editor/image-resource/RadialGradient";
+import { RepeatingRadialGradient } from "../../../../editor/image-resource/RepeatingRadialGradient";
+import { ConicGradient } from "../../../../editor/image-resource/ConicGradient";
+import { RepeatingConicGradient } from "../../../../editor/image-resource/RepeatingConicGradient";
+
+const GradientClassList = {
+    'linear': LinearGradient,
+    'repeating-linear': RepeatingLinearGradient,
+    'radial': RadialGradient,
+    'repeating-radial': RepeatingRadialGradient,
+    'conic': ConicGradient,
+    'conic-linear': RepeatingConicGradient,        
+}
 
 export default class BasicGradient extends UIElement  {
 
@@ -37,12 +52,18 @@ export default class BasicGradient extends UIElement  {
     }
 
     [CLICK('$gradientType .gradient-item')] (e) {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            var type = e.$delegateTarget.attr('data-type')
+        var image = editor.selection.layer.addBackgroundImage(new BackgroundImage({
+            index: -1
+        }));
 
-            this.dispatch(ITEM_PREPEND_IMAGE, type, true, item.id)
-            this.dispatch(HISTORY_PUSH, `Add ${type} gradient` );        
-        }); 
+        var type = e.$delegateTarget.attr('data-type');
+
+        var gradient, GradientClass = GradientClassList[type];
+        gradient = image.add(new GradientClass());
+        gradient.addColorStep(new ColorStep({color: 'rgba(255, 255, 255, 0)', precent: 0}))
+        gradient.addColorStep(new ColorStep({color: 'rgba(222, 222, 222, 1)', precent: 100}))
+
+        image.select()
     }     
 
 } 

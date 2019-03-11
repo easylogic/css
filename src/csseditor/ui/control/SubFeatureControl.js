@@ -10,10 +10,9 @@ import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
 import PerspectiveOriginPosition from "./shape/PerspectiveOriginPosition";
-import { SELECTION_CURRENT_PAGE, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_IS_LAYER } from "../../types/SelectionTypes";
 import LayerAngle from "./shape/LayerAngle";
 import PredefinedLayerAngle from "./shape/PredefinedLayerAngle";
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_TYPE_IS_RADIAL } from "../../../util/css/make";
+import { editor } from "../../../editor/editor";
 
 
 export default class SubFeatureControl extends UIElement {
@@ -77,58 +76,47 @@ export default class SubFeatureControl extends UIElement {
 
 
     isShow () {
-        //if (!this.read(SELECTION_IS_IMAGE)) return false;         
         return true;
     }
 
     isNotImage () {
-        return this.read(SELECTION_IS_IMAGE) == false;
+        return !editor.selection.backgroundImage;
     }
 
     isNotLayer () {
-        return this.read(SELECTION_IS_LAYER) == false;
+        return !editor.selection.layer;
     }
 
     isNotPage () {
-        if (!this.read('selection/is/page')) return true; 
-
-        var item = this.read(SELECTION_CURRENT_PAGE);
-        if (!item) return true; 
-
-        return !item.preserve
+        return !editor.selection.artboard
     }
 
     isLinearShow () {
-        if (!this.read(SELECTION_IS_IMAGE)) return false; 
+        var backgroundImage = editor.selection.backgroundImage; 
+        if (!backgroundImage) return false; 
 
-        var item = this.read(SELECTION_CURRENT_IMAGE)
+        var image = backgroundImage.image;
+        if (!image) return false; 
 
-        if (!item) return false; 
-
-        var isLinear = IMAGE_TYPE_IS_LINEAR(item.type)
-        var isConic = IMAGE_TYPE_IS_CONIC(item.type)
-
-        if (isLinear == false && isConic == false) {
+        if (image.isLinear() == false && image.isConic() == false) {
             return false; 
         }
 
-        return this.config('guide.angle')
+        return editor.config.get('guide.angle')
     }
 
     isRadialShow () {
-        if (!this.read(SELECTION_IS_IMAGE)) return false; 
+        var backgroundImage = editor.selection.backgroundImage; 
+        if (!backgroundImage) return false; 
 
-        var item = this.read(SELECTION_CURRENT_IMAGE)
-        if (!item) return false; 
+        var image = backgroundImage.image;
+        if (!image) return false; 
 
-        var isRadial = IMAGE_TYPE_IS_RADIAL(item.type)
-        var isConic = IMAGE_TYPE_IS_CONIC(item.type)
-
-        if (isRadial == false && isConic == false) {
+        if (image.isRadial() == false && image.isConic() == false) {
             return false; 
         }
 
-        return this.config('guide.angle')
+        return editor.config.get('guide.angle')
     }
 
     [EVENT(

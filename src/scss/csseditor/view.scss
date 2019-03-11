@@ -1,5 +1,8 @@
 $pointer-color: rgba(#0f72cf, 0.8);
 $direction-border: 2px solid $pointer-color;
+$editor-button-color: #5f80de;
+$editor-line-color: rgba($editor-button-color, 0.3);
+$editor-resizer-width : 10px;
 .page-view {
     position: absolute;
     left: 0px;
@@ -34,86 +37,162 @@ $direction-border: 2px solid $pointer-color;
         background-color: #ececec; 
     }
 
+
+    .item-resizer{
+        position: absolute;
+        left: -10000px;
+        top: -10000px;
+        width: 0px;
+        height: 0px;
+
+        &.artboard {
+            button {
+                &[data-value='move'] {
+                    display: none;
+                }   
+            }
+        }
+        button {
+            pointer-events: all;
+            padding: 0px;
+            background-color: rgba(white, 1);
+            border: 1px solid $editor-button-color;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            position: absolute;
+            display: inline-block;
+            width: $editor-resizer-width;
+            height: $editor-resizer-width;     
+            box-shadow: 1px 1px 1px 0px rgba(#000000, 0.3);
+
+            &[data-value='move'] {
+                top: 0px;
+                left: 0px;
+                background-color: transparent;
+                border:0px;
+                width: 100%;
+                height: 100%;
+                cursor: move;
+                box-shadow: none;
+            }
+
+            /* linear */
+            &[data-value='to top'] {
+                top: 0px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-100%);
+                cursor: n-resize;
+            }
+
+            &[data-value='to top right'] {
+                top: 0px;
+                right: 0px;
+                transform: translateX(100%) translateY(-100%);
+                cursor: ne-resize;                
+            }
+
+            &[data-value='to right'] {
+                top: 50%;
+                right: 0px;
+                transform: translateX(100%) translateY(-50%);
+                cursor: e-resize;                
+            }
+
+            &[data-value='to bottom right'] {
+                bottom: 0px;
+                right: 0px;
+                transform: translateX(100%) translateY(100%);                        
+                cursor: se-resize;                
+            }
+
+            &[data-value='to bottom'] {
+                bottom: 0px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100%);
+                cursor: s-resize;                
+            }
+
+            &[data-value='to bottom left'] {
+                left: 0px;
+                bottom: 0px;
+                transform: translateX(-100%) translateY(100%);
+                cursor: sw-resize;                
+            }
+
+            &[data-value='to left'] {
+                top: 50%;
+                left: 0px;
+                transform: translateX(-100%) translateY(-50%);
+                cursor: w-resize;                
+            }
+
+            &[data-value='to top left'] {
+                top: 0px;
+                left: 0px;
+                transform: translateX(-100%) translateY(-100%);
+                cursor: nw-resize;                
+            }
+ 
+        }
+    }
+
     .page-canvas {
         position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;       
         width: 100%;
         height: 100%; 
-    }
 
-    .gradient-color-view-container {
-        position: relative;
-        display: inline-block;
-        background-color: white;
-        box-shadow: 8px 9px 20px -5px #777;       
-
-        &::before {
+        .area {
             position: absolute;
-            bottom: 100%;
-            content: attr(title);
-            display: inline-block;
-            padding-bottom: 5px;
-        }
-
-        &.moving {
-            .predefined-layer-resizer {
-                display: none !important;
-            }
-            .predefined-page-resizer {
-                display: none !important;
-            }       
-            
-            .move-guide {
-                display: block !important;
-            }
-        }
-
-         &.showGrid {
-            background-image: 
-                linear-gradient(to bottom,rgba(0,0,0, 0.03) 2px, rgba(0, 0, 0, 0) 2px),
-                linear-gradient(to right,rgba(0,0,0, 0.03) 2px, rgba(0, 0, 0, 0) 2px),
-                linear-gradient(to bottom, rgba(0,0,0,0.03) 1px,rgba(0, 0, 0, 0) 1px), 
-                linear-gradient(to right, rgba(0,0,0,0.03) 1px,rgba(0, 0, 0, 0) 1px);                   
-            
-            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-            background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;        
-        }
-    }
-
-    .gradient-color-view {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translateX(-50%) translateY(-50%);
-        background-color: white;
-
-        &.showGrid {
-            background-image: 
-                linear-gradient(to bottom,rgba(0,0,0, 0.03) 2px, rgba(0, 0, 0, 0) 2px),
-                linear-gradient(to right,rgba(0,0,0, 0.03) 2px, rgba(0, 0, 0, 0) 2px),
-                linear-gradient(to bottom, rgba(0,0,0,0.03) 1px,rgba(0, 0, 0, 0) 1px), 
-                linear-gradient(to right, rgba(0,0,0,0.03) 1px,rgba(0, 0, 0, 0) 1px);                   
-            
-            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-            background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;        
-        }
-
-    }
-
-    .gradient-color-view {
-
-        .layer {
-            position: absolute; 
             left: 0px;
+            right: 0px;
             top: 0px;
-            width: 100%;
-            height: 100%;      
-            outline: none;      
+            bottom: 0px;
         }
+
+        .artboard-area {
+            pointer-events: none;
+
+            .artboard-title {
+                pointer-events: all;
+            }
+
+            .artboard {
+                box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25);
+            }
+        }
+        .layer-area {
+            pointer-events: none;
+
+            .layer {
+                pointer-events: all;
+            }
+        }
+    }
+
+    .page-selection {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        pointer-events: none;
+
+        .drag-area-view {
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 1px rgba(#b5b5b5, 0.5);
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.466);
+        }
+    }
+
+    .page-guide-line {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        pointer-events: none;
     }
 
     .dropzone {

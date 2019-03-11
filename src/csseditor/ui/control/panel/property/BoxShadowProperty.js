@@ -1,8 +1,7 @@
 import BaseProperty from "./BaseProperty";
 import { CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
-import { HISTORY_PUSH } from "../../../../types/HistoryTypes";
-import { ITEM_ADD_BOXSHADOW } from "../../../../types/ItemCreateTypes";
+import { BoxShadow } from "../../../../../editor/css-property/BoxShadow";
+import { CHANGE_EDITOR } from "../../../../types/event";
 
 export default class BoxShadowProperty extends BaseProperty {
 
@@ -15,9 +14,10 @@ export default class BoxShadowProperty extends BaseProperty {
     }
 
     [CLICK('$add')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.dispatch(ITEM_ADD_BOXSHADOW, false, id)
-            this.dispatch(HISTORY_PUSH, `Add Box Shadow` );
-        }); 
+        var layer = editor.selection.layer; 
+        if (layer) {
+            var boxShadow = layer.addBoxShadow(new BoxShadow());
+            editor.send(CHANGE_EDITOR, boxShadow);
+        }
     }
 }

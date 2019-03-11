@@ -2,7 +2,7 @@ import UIElement, { EVENT } from "../../../util/UIElement";
 import LayerView from "./panel/LayerView";
 import ImageView from "./panel/ImageView";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
-import { SELECTION_CURRENT, SELECTION_IS_LAYER, SELECTION_IS_GROUP, SELECTION_IS_IMAGE } from "../../types/SelectionTypes";
+import { editor } from "../../../editor/editor";
 
 
 export default class FeatureControl extends UIElement {
@@ -28,21 +28,16 @@ export default class FeatureControl extends UIElement {
     }
 
     selectFeature () {
-
-        var item = this.read(SELECTION_CURRENT);
-
-        if (!item.length) return false; 
         
-        var selectedFeature = this.$el.$('.feature.selected');
-        
+        var selectedFeature = this.$el.$('.feature.selected');        
         if (selectedFeature) selectedFeature.removeClass('selected');
 
         var selectType = 'layer'; 
 
-        if (this.read(SELECTION_IS_LAYER) || this.read(SELECTION_IS_GROUP)) {
-            selectType = 'layer';
-        } else if (this.read(SELECTION_IS_IMAGE)) {
+        if (editor.selection.currentImage) {
             selectType = 'image';
+        } else {
+            selectType = 'layer';
         }
 
         this.$el.$(`.feature[data-type=${selectType}]`).addClass('selected')

@@ -1,11 +1,11 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
-import { unitValue, pxUnit, stringUnit } from '../../../../util/css/types';
-import { POINTERSTART, DEBOUNCE, RESIZE, MOVE, END } from '../../../../util/Event';
-import { SELECTION_CURRENT_PAGE, SELECTION_IS_PAGE } from '../../../types/SelectionTypes';
-import { HISTORY_PUSH } from '../../../types/HistoryTypes';
+import { POINTERSTART, MOVE, END } from '../../../../util/Event';
 import { RESIZE_WINDOW } from '../../../types/ToolTypes';
 import { keyEach } from '../../../../util/functions/func';
+import { editor } from '../../../../editor/editor';
+import { Length } from '../../../../editor/unit/Length';
+
 
 export default class PredefinedPageResizer extends UIElement {
 
@@ -31,35 +31,27 @@ export default class PredefinedPageResizer extends UIElement {
 
 
     setPosition () {
-        var page = this.read(SELECTION_CURRENT_PAGE)
+        var page = editor.selection.artboard
         if (!page) return; 
 
-        var toolSize = this.config('tool.size');
+        var toolSize = editor.config.get('tool.size');
         if (!toolSize) return;  
 
-        var {width, height} = page;         
+        var width = page.width;
+        var height = page.height; 
         var boardOffset = toolSize['board.offset']
         var pageOffset = toolSize['page.offset']
         var canvasScrollLeft = toolSize['board.scrollLeft'];
         var canvasScrollTop = toolSize['board.scrollTop'];
 
-        var x = pxUnit (pageOffset.left - boardOffset.left + canvasScrollLeft); 
-        var y = pxUnit (pageOffset.top - boardOffset.top + canvasScrollTop) ; 
+        var left = Length.px (pageOffset.left - boardOffset.left + canvasScrollLeft); 
+        var top = Length.px (pageOffset.top - boardOffset.top + canvasScrollTop) ; 
 
-        x = stringUnit(x);
-        y = stringUnit(y);
-        width = stringUnit(width);
-        height = stringUnit(height);
-
-        this.$el.css({ 
-            width, height, 
-            left: x, top: y
-        })
-
+        this.$el.css({  width, height,  left, top })
     }    
 
     isShow () { 
-        return this.read(SELECTION_IS_PAGE)
+        return editor.selection.artboard
     }
 
     [EVENT(
@@ -73,33 +65,33 @@ export default class PredefinedPageResizer extends UIElement {
         let style = {...style1, ...style2}
 
         keyEach(style, (key, value) => {
-            style[key] = pxUnit(value) 
+            style[key] = Length.px(value) 
         })
 
-        var page = this.read(SELECTION_CURRENT_PAGE)
-        page = {...page, ...style}
-        this.commit(CHANGE_PAGE_SIZE, page)
-        this.emit(RESIZE_WINDOW)
+        var page = editor.selection.currentArtBoard
+        page.reset(style);
+        editor.send(CHANGE_PAGE_SIZE, page)
+        editor.send(RESIZE_WINDOW)
         this.refresh();
     }
 
     changeX (dx) {
         var width = this.width + dx; 
 
-        this.change({ width: pxUnit( width ) });
+        this.change({ width: Length.px( width ) });
     }
 
     changeY (dy) {
         var height = this.height + dy; 
 
-        this.change({ height: pxUnit( height ) });        
+        this.change({ height: Length.px( height ) });        
     }
 
     changeXY (dx, dy) {
         var width = this.width + dx; 
         var height = this.height + dy; 
 
-        this.change({ width: pxUnit( width ), height: pxUnit( height ) });        
+        this.change({ width: Length.px( width ), height: Length.px( height ) });        
     }
 
     toTop () {
@@ -156,13 +148,13 @@ export default class PredefinedPageResizer extends UIElement {
         var type = e.$delegateTarget.attr('data-value');
         this.currentType = type; 
         this.xy = e.xy;
-        this.page = this.read(SELECTION_CURRENT_PAGE)
-        this.width = unitValue(this.page.width)
-        this.height = unitValue(this.page.height)
+        this.page = editor.selection.artboard
+        this.width = +this.page.width
+        this.height = +this.page.height
     }
 
     resizeEnd () {
-        this.dispatch(HISTORY_PUSH, 'Resize a layer');        
+        this.page = null; 
     }
 
     [EVENT(RESIZE_WINDOW)] (e) {

@@ -1,50 +1,62 @@
 $pointer-color: rgba(#ececec, 0.8);
 $direction-border: 2px solid $pointer-color;
-$page-item-height: 35px;
 $button-size: 24px;
 $layer-item-padding: 4px;
 $mini-layer-view-height: 420px;
 $lock-color: #333;
 
-.layers {
+.layer-list-view {
     position: relative;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
 
-    button {
-        appearance: none;
-        width: auto;
-        height: 100%;
-        border: 1px solid #dedede;
-        vertical-align: middle;
-        font-size: 12px;
-        cursor: pointer;
-        outline: none;
-        position: relative;
-        pointer-events: all;
+        
+    .layer-list-toolbar {
+        display: flex;
+        border-bottom: 1px solid $border-color;
+        box-sizing: border-box; 
+        background-color: white;         
+
+        > .title {
+            flex:none;
+            display: inline-block;
+            width:100px;
+            font-size: 12px;
+            box-sizing: border-box;
+            padding:2px 5px;
+
+        }
+
+        > .layer-tools {
+            flex: 1 1 auto; 
+            display: inline-block;
+        }
     }
 
-    > .title {
-        flex: none;
-        height: 30px;
-        padding: 5px;
-        position: relative;
-
-        h1 {
-            font-size: 12px; 
-            float:left;
+    .layer-tools {
+        text-align: right;
+        
+        .button-group {
+            display: inline-flex;
+        }
+        button {
+            flex:1;
+            appearance: none;
+            border: 0px solid $border-color;
+            background-color: transparent;
+            display: inline-block;
             vertical-align: middle;
-            margin: 0px;
+            outline: none;
+            text-decoration: none;
+            font-weight: bold;
+            color: black;
+            font-size: 14px;
+            cursor: pointer;            
         }
-        .tools {
-            display: inline-block; 
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            bottom: 0px;
-        }
-    }    
+    }
+
+
 
     .layer-list {
         flex: 1 1 auto;
@@ -73,7 +85,7 @@ $lock-color: #333;
             overflow: hidden;
             line-height: 1.5;
             border-left: 5px solid rgba(204, 204, 204, 0.39);
-            padding: 0px 5px;
+            padding: 5px 5px;
             border-bottom: 1px solid rgba(128, 128, 128, 0.15);            
 
             &.image {
@@ -87,6 +99,14 @@ $lock-color: #333;
                     visibility: visible;
                 }
             }
+
+            @for $i from 1 through 10 {
+                &.depth-#{$i} {
+                    .item-title { padding-left: 20px * ($i - 1); }
+                }
+            }
+                
+
 
             .item-title {
                 display: inline-block;

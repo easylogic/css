@@ -5,17 +5,17 @@
     <title>EasyLogic Studio - Enjoyable CSS Gradient Editor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="description" content="This tool has easy way to make css gradient. It's really really simple. Let's make a beautiful gradient for the web. ">    
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.css" />
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.css" /> -->
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.js" ></script>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/codemirror.js" ></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/xml/xml.min.js" ></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/javascript/javascript.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/css/css.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/htmlmixed/htmlmixed.min.js" ></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.23.0/mode/htmlmixed/htmlmixed.min.js" ></script> -->
     <link rel="stylesheet" href="./addon/easylogic-css.css" />
     <script type="text/javascript" src="./addon/easylogic-css.js" ></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>    
+    <!-- <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>     -->
 </head>
 <body>
 <script type="text/javascript">
@@ -23,16 +23,16 @@
     var picker = new EasyLogicCSS.createCSSEditor();
     picker.emit('load/start', true);
 
-    var icon_url = "https://cdn.jsdelivr.net/npm/material-design-icons-svg@2.0.0/paths.json";
+    // var icon_url = "https://cdn.jsdelivr.net/npm/material-design-icons-svg@2.0.0/paths.json";
 
-    axios.get(icon_url).then(function (response) {
-        var icons = Object.keys(response.data).map(key => {
-            return { key: key, svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="' + response.data[key] + '" /></svg>' }            
-        })
+    // axios.get(icon_url).then(function (response) {
+    //     var icons = Object.keys(response.data).map(key => {
+    //         return { key: key, svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="' + response.data[key] + '" /></svg>' }            
+    //     })
 
-        picker.dispatch('svg/list/load', icons);
+    //     // picker.dispatch('svg/list/load', icons);
 
-    });
+    // });
 
 </script>
 

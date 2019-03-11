@@ -2,11 +2,10 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_BACKDROP_FILTER } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
-import { BACKDROP_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
 import { CLICK, INPUT, CHANGEINPUT, LOAD } from "../../../../../util/Event";
-import { isUndefined, clone, html } from "../../../../../util/functions/func";
-import { BACKDROP_GET, BACKDROP_LIST } from "../../../../types/BackdropTypes";
-import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { isUndefined, html } from "../../../../../util/functions/func";
+import { BACKDROP_GET } from "../../../../types/BackdropTypes";
+import { editor } from "../../../../../editor/editor";
 
 const DROPSHADOW_FILTER_KEYS = [
     'backdropDropshadowOffsetX',
@@ -92,20 +91,16 @@ export default class BackdropList extends BasePropertyItem {
 
     [LOAD('$filterList')] () {
 
-        var layer = this.read(SELECTION_CURRENT_LAYER);
-
+        var layer = editor.selection.currentLayer;
         if (!layer) return EMPTY_STRING 
 
-        var filterKeys = this.read(BACKDROP_LIST, layer.id) 
+        
 
-        return filterKeys.map(key => {
-            var realKey = key
-            var viewObject = this.read(BACKDROP_GET, realKey);
-            var dataObject = layer || {}
+        return layer.backdropFilters.map(filter => {
              return `
                 <div class='filter-item'>
                     <div class="filter-item-input">
-                        ${this.makeInputItem(realKey, viewObject, dataObject)}
+                        ${this.makeInputItem(filter)}
                     </div>
                 </div>`
         })
@@ -140,30 +135,7 @@ export default class BackdropList extends BasePropertyItem {
 
     updateFilterKeyValue (key, lastValue) {
 
-        this.read(SELECTION_CURRENT_LAYER, layer => {
-            var id = layer.id; 
-            var value = layer[key] || {...BACKDROP_DEFAULT_OBJECT[key]};
-            value.value = lastValue 
-
-            this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })
-        });
-    }
-
-    updateFilterKeyChecked (key, checked) {
-
-        this.read(SELECTION_CURRENT_LAYER, layer => {
-            var id = layer.id;             
-            var value = layer[key] || {...BACKDROP_DEFAULT_OBJECT[key]};
-            value.checked = checked 
-
-            this.commit(CHANGE_LAYER_BACKDROP_FILTER, {id, [key]: value })
-        });
-    }
-
-    [CLICK('$filterList input[type=checkbox]')] (e) {
-        var $check = e.$delegateTarget;
-        var key = $check.attr('data-key');
-        this.updateFilterKeyChecked(key, $check.checked())
+        console.log('구현해줘요')
     }
 
     [CHANGEINPUT('$filterList input[type=range]')] (e) {

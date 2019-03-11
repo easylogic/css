@@ -4,18 +4,18 @@ import {
     CHANGE_IMAGE_RADIAL_POSITION, 
     CHANGE_SELECTION 
 } from '../../../types/event';
-import { percent, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
-import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
+import { EMPTY_STRING, WHITE_STRING } from '../../../../util/css/types';
+import { POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
 import { isString } from '../../../../util/functions/func';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_RADIAL, IMAGE_TYPE_IS_CONIC } from '../../../../util/css/make';
+import { Position } from '../../../../editor/unit/Length';
+import { editor } from '../../../../editor/editor';
 
 const DEFINE_POSITIONS = { 
-    [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
-    [POSITION_RIGHT]: [POSITION_RIGHT, POSITION_CENTER],
-    [POSITION_TOP]: [POSITION_CENTER, POSITION_TOP],
-    [POSITION_LEFT]: [POSITION_LEFT, POSITION_CENTER],
-    [POSITION_BOTTOM]: [POSITION_CENTER, POSITION_BOTTOM]
+    [Position.CENTER]: [Position.CENTER, Position.CENTER],
+    [Position.RIGHT]: [Position.RIGHT, Position.CENTER],
+    [Position.TOP]: [Position.CENTER, Position.TOP],
+    [Position.LEFT]: [Position.LEFT, Position.CENTER],
+    [Position.BOTTOM]: [Position.CENTER, Position.BOTTOM]
 }
 
 export default class GradientPosition extends UIElement {
@@ -40,26 +40,23 @@ export default class GradientPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read(SELECTION_IS_IMAGE)) return false; 
+        var image = editor.selection.backgroundImage
+        if (!image) return false; 
 
-        var item = this.read(SELECTION_CURRENT_IMAGE)
-        if (!item) return false; 
-
-
-        var isRadial = IMAGE_TYPE_IS_RADIAL(item.type);
-        var isConic = IMAGE_TYPE_IS_CONIC(item.type);
+        var isRadial = image.image.isRadial()
+        var isConic = image.image.isConic()
 
         if (isRadial == false && isConic == false) {    // radial , conic 만 보여주기 
             return false; 
         }
 
-        return this.config('guide.angle')
+        return editor.config.get('guide.angle')
     }
 
     getCurrentXY(isUpdate, position) {
 
         if (isUpdate) {
-            var xy = this.config('pos');
+            var xy = editor.config.get('pos');
 
             return [xy.x, xy.y]
         }
@@ -74,19 +71,19 @@ export default class GradientPosition extends UIElement {
         }
 
         p = p.map((item, index) => {
-            if (item == POSITION_CENTER) {
+            if (item == 'center') {
                 if (index == 0) {
                     return minX + width/2
                 } else if (index == 1) {
                     return minY + height/2
                 }
-            } else if (item === POSITION_LEFT) {
+            } else if (item === 'left') {
                 return minX;
-            } else if (item === POSITION_RIGHT) {
+            } else if (item === 'right') {
                 return maxX;
-            } else if (item === POSITION_TOP) {
+            } else if (item === 'top') {
                 return minY;
-            } else if (item === POSITION_BOTTOM) { 
+            } else if (item === 'bottom') { 
                 return maxY;
             } else {
                 if (index == 0) {
@@ -114,11 +111,10 @@ export default class GradientPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read(SELECTION_CURRENT_IMAGE);
+        var image = editor.selection.backgroundImage
+        if (!image) return EMPTY_STRING; 
 
-        if (!item) return EMPTY_STRING; 
-
-        return item.radialPosition || EMPTY_STRING
+        return image.image.radialPosition || EMPTY_STRING
 
     }
 
@@ -138,18 +134,19 @@ export default class GradientPosition extends UIElement {
         if (isUpdate) {
 
             this.setRadialPosition([
-                percent( Math.floor(left/width * 100) ), 
-                percent( Math.floor(top/height * 100) )
+                Length.percent( Math.floor(left/width * 100) ), 
+                Length.percent( Math.floor(top/height * 100) )
             ]);
         }
 
     }
 
     setRadialPosition (radialPosition) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-
-            this.commit(CHANGE_IMAGE_RADIAL_POSITION, {id, radialPosition});
-        });
+        var image = editor.selection.backgroundImage; 
+        if (image) {
+            image.image.radialPosition = radialPosition
+            editor.send(CHANGE_IMAGE_RADIAL_POSITION, image.image);
+        }
     }
 
     [EVENT(
@@ -178,7 +175,7 @@ export default class GradientPosition extends UIElement {
     
     [DOUBLECLICK('$dragPointer')] (e) {
         e.preventDefault()
-        this.setRadialPosition(POSITION_CENTER)
+        this.setRadialPosition(Position.CENTER)
         this.refreshUI()
     }
 }

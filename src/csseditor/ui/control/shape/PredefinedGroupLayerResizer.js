@@ -1,16 +1,16 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_TRANSFORM, CHANGE_SELECTION, CHANGE_LAYER_MOVE,CHANGE_LAYER_ROTATE,CHANGE_PAGE_SIZE,CHANGE_IMAGE,CHANGE_LAYER_BORDER} from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
-import { UNIT_PX, unitValue, pxUnit, stringUnit, EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE, SEGMENT_TYPE_ROTATE } from '../../../../util/css/types';
-import { POINTERSTART, RESIZE, DEBOUNCE, LOAD, MOVE, END } from '../../../../util/Event';
-import { defaultValue, isNotUndefined, isArray } from '../../../../util/functions/func';
-import { ITEM_SET,DEFAULT_TOOL_SIZE } from '../../../types/ItemTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT, SELECTION_TYPE, SELECTION_IS_NOT_EMPTY } from '../../../types/SelectionTypes';
-import { HISTORY_PUSH } from '../../../types/HistoryTypes';
+import { EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE, SEGMENT_TYPE_ROTATE } from '../../../../util/css/types';
+import { POINTERSTART, LOAD, MOVE, END } from '../../../../util/Event';
+import { isNotUndefined } from '../../../../util/functions/func';
+import { DEFAULT_TOOL_SIZE } from '../../../types/ItemTypes';
 import { ITEM_DOM } from '../../../types/ItemSearchTypes';
-import { TOOL_SET, RESIZE_WINDOW } from '../../../types/ToolTypes';
+import { RESIZE_WINDOW } from '../../../types/ToolTypes';
 import { GUIDE_SNAP_CACULATE } from '../../../types/GuideTypes';
-import { CSS_TO_STRING, IMAGE_BACKGROUND_SIZE_TO_CSS, LAYER_NAME } from '../../../../util/css/make';
+import { CSS_TO_STRING } from '../../../../util/css/make';
+import { editor } from '../../../../editor/editor';
+import { Length } from '../../../../editor/unit/Length';
 
 const SNAP_GRID = 20; 
 
@@ -22,34 +22,16 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     [LOAD()] () {
 
-        var layers = this.read(SELECTION_CURRENT_LAYER);
-        var isImage = this.read(SELECTION_IS_IMAGE);
-
-        if (!layers) return EMPTY_STRING;
-
-        if (isArray(layers) == false) {
-            layers = [layers]
-        }
+        var layers = editor.selection.layers
+        if (!layers.length) return EMPTY_STRING;
 
         return layers.map( (item) => { 
             var css = this.setRectangle(item);
-            var image = isImage ? 'image' : EMPTY_STRING; 
-
-            var backgroundCSS = {} 
-
-            if (image == 'image') {
-                var backgroundImage = this.read(SELECTION_CURRENT_IMAGE);
-
-                backgroundCSS = IMAGE_BACKGROUND_SIZE_TO_CSS(backgroundImage);
-            }
-            
-            var title = LAYER_NAME(item)
-
+            var image = item.backgroundImage ? 'image' : EMPTY_STRING;             
             
             return ` 
-                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${CSS_TO_STRING(css)}" title="${title}" >
+                <div class="predefined-layer-resizer ${image}" predefined-layer-id="${item.id}" style="${CSS_TO_STRING(css)}" title="${item.title}" >
                     <div class="event-panel" data-value="${SEGMENT_TYPE_MOVE}"></div>
-                    <div class="image-panel" style="display:none;${CSS_TO_STRING(backgroundCSS)}"></div>
                     <div class='button-group' predefined-layer-id="${item.id}">
                         <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
                         <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>
@@ -66,42 +48,34 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
 
-    setRectangle ({x, y, width, height, id}) {
-        var toolSize = this.config('tool.size') || DEFAULT_TOOL_SIZE
+    setRectangle (item) {
+        var toolSize = editor.config.get('tool.size') || DEFAULT_TOOL_SIZE
         var boardOffset = toolSize['board.offset']
         var pageOffset = toolSize['page.offset']
         var canvasScrollLeft = toolSize['board.scrollLeft'];
         var canvasScrollTop = toolSize['board.scrollTop'];
 
-        x = pxUnit( unitValue(x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
-        y = pxUnit( unitValue(y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
-
-        var left = stringUnit(x);
-        var top = stringUnit(y);
-        width = stringUnit(width); 
-        height = stringUnit(height);
-
-        // var transform = "none"; 
-        
-        if (id) {
-            // transform = this.read(LAYER_MAKE_TRANSFORM, this.get( id));
-        }
+        var width = item.width;
+        var height = item.height;
+        var id = item.id; 
+        var left = Length.px( (+item.x) + pageOffset.left - boardOffset.left + canvasScrollLeft ); 
+        var top = Length.px( (+item.y) + pageOffset.top - boardOffset.top  + canvasScrollTop ); 
 
         return { width, height, left, top}
     }
 
     refresh () {
         var isShow = this.isShow();
-        this.$el.toggle(isShow).attr('line-type', this.read(SELECTION_TYPE))
+        this.$el.toggle(isShow)
 
         if (isShow) {
             this.load()
         }
     }
 
-    caculatePosition (list, key, align, unit = UNIT_PX ) {
+    caculatePosition (list, key, align ) {
 
-        var valueList = list.filter(it => it.align == align).map(it => unitValue(it[key]) )
+        var valueList = list.filter(it => it.align == align).map(it => +it[key] )
 
         if (valueList.length) {
             return Math.max(  Number.MIN_SAFE_INTEGER,  ...valueList )
@@ -111,7 +85,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }    
 
     isShow () {
-        return this.read(SELECTION_IS_NOT_EMPTY)
+        return editor.selection.isNotEmpty()
     }
 
     [EVENT(
@@ -124,18 +98,15 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         CHANGE_EDITOR,
         CHANGE_SELECTION,
         CHANGE_PAGE_SIZE,
-    )] () { this.refresh() }
-
-    [EVENT(
         CHANGE_IMAGE
-    )] () { this.refresh() }    
+    )] () { this.refresh() }
 
     caculateRightSize (item, list) {
         var x = this.caculatePosition(list, 'x', 'right')
 
         if (isNotUndefined(x)) {
             var newWidth = Math.abs(this.moveX - x)
-            item.width = pxUnit(newWidth); 
+            item.width = Length.px(newWidth); 
         }
     }
 
@@ -145,8 +116,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         if (isNotUndefined(x)) {
             var newWidth = this.width + (this.moveX - x)
 
-            item.x = pxUnit(x) 
-            item.width = pxUnit(newWidth); 
+            item.x = Length.px(x) 
+            item.width = Length.px(newWidth); 
         }
     }
 
@@ -155,7 +126,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         if (isNotUndefined(y)) {
             var newHeight = Math.abs(this.moveY - y);
-            item.height = pxUnit(newHeight); 
+            item.height = Length.px(newHeight); 
         }
     }
 
@@ -165,8 +136,8 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         if (isNotUndefined(y)) {
             var newHeight = this.height + (this.moveY - y)
 
-            item.y = pxUnit(y) 
-            item.height = pxUnit(newHeight); 
+            item.y = Length.px(y) 
+            item.height = Length.px(newHeight); 
         }
     }
 
@@ -214,63 +185,37 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     toRight (item) {
         var {dx} = this;
-
-        this.run(ITEM_SET, {
-            id: item.id,
-            width: pxUnit (item.width + dx)
-        });            
+        item.width.plus(dx)
     }
 
     toLeft (item) { 
         var {dx} = this;
-
-        this.run(ITEM_SET, {
-            id: item.id,
-            width: pxUnit (item.width - dx),
-            x: pxUnit (item.x + dx)
-        });            
+        item.width.plus(-dx);
+        item.x.plus(dx);
     }    
 
     toBottom (item) {
         var {dy} = this;
-
-        this.run(ITEM_SET, {
-            id: item.id,
-            height: pxUnit (item.height + dy) 
-        });            
+        item.height.plus(dy);
     }    
 
     toTop (item) {
         var {dy} = this;
-        
-        this.run(ITEM_SET, {
-            id: item.id,
-            height: pxUnit (item.height - dy) ,
-            y: pxUnit (item.y + dy)
-        });            
+        item.height.plus(-dy);
+        item.y.plus(dy);
     }    
     
     moveXY (item) {
         var {dx, dy} = this;
-        
-        this.run(ITEM_SET, {
-            id: item.id,
-            x: pxUnit (item.x + dx) ,
-            y: pxUnit (item.y + dy)
-        });
+        item.x.plus(dx);
+        item.y.plus(dy);        
     }
 
     rotate (item) {
         var {angle} = this; 
+        var rotate = item.rotate;
 
-        var {rotate} =item;
-
-        rotate = defaultValue(rotate, 0);
-
-        this.run(ITEM_SET, {
-            id: item.id, 
-            rotate: (rotate + Math.floor(angle) - 270)
-        });
+        item.rotate = (rotate + Math.floor(angle) - 270)
     }
 
     resizeComponent () {
@@ -305,7 +250,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         }
 
         this.caculateSnap();
-        this.emit(event)    
+        editor.send(event)    
 
         this.updatePosition(items)        
            
@@ -322,31 +267,22 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.currentType = type; 
         var layerId = e.$delegateTarget.parent().attr('predefined-layer-id')
         this.$dom = this.read(ITEM_DOM, layerId);
-        this.$selectLayer = this.get( layerId);
+        this.$selectLayer = editor.get(layerId);
 
         if (this.$dom) {
             var rect = this.$dom.rect()
-            this.layerX = unitValue(this.$selectLayer.x);
-            this.layerY = unitValue(this.$selectLayer.y);
+            this.layerX = +this.$selectLayer.x;
+            this.layerY = +this.$selectLayer.y;
             this.layerCenterX = rect.left + rect.width/2;
             this.layerCenterY = rect.top + rect.height/2;
         }
         this.xy = e.xy;
-        this.rectItems = this.read(SELECTION_CURRENT).map(it => {
-            return {
-                id: it.id,
-                x: unitValue(it.x),
-                y: unitValue(it.y),
-                width: unitValue(it.width),
-                height: unitValue(it.height),
-                rotate: unitValue(it.rotate || 0)
-            }
-        })
+        this.rectItems = editor.selection.items
 
     }
 
     moveLayer () {
-        this.targetXY = this.config('pos'); 
+        this.targetXY = editor.config.get('pos'); 
 
         this.dx = this.targetXY.x - this.xy.x;
         this.dy = this.targetXY.y - this.xy.y;
@@ -355,7 +291,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             this.angle = caculateAngle (targetXY.x - this.layerCenterX,  targetXY.y - this.layerCenterY);
         }
 
-        if (this.config('snap.grid')) {
+        if (editor.config.get('snap.grid')) {
 
             if (this.currentType == 'move') {
                 var moveX = this.layerX + this.dx
@@ -370,24 +306,14 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
         }
 
-        this.initConfig('moving', true);
-
+        if (!editor.config.get('moving')) {
+            editor.config.set('moving', true);
+        }
+        
         this.resizeComponent();
     }
 
     moveEndLayer () {
-
-        switch (this.currentType)  {
-        case SEGMENT_TYPE_MOVE:  
-            this.dispatch(HISTORY_PUSH, 'Move layer');
-            break; 
-        case SEGMENT_TYPE_ROTATE:  
-            this.dispatch(HISTORY_PUSH, 'Rotate layer');
-            break;             
-        default: 
-            this.dispatch(HISTORY_PUSH, 'Resize layer');
-            break; 
-        }
 
         this.currentType = null; 
         this.xy = null 
@@ -395,7 +321,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
         this.moveY = null; 
         this.rectItems = null 
         this.currentId = null; 
-        this.initConfig('moving', false);
+        editor.config.set('moving', false);
         
     }
 

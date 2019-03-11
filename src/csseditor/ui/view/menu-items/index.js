@@ -6,15 +6,15 @@ import ShowGrid from "./ShowGrid";
 import Github from "./Github";
 import ExportCodePen from "./ExportCodPen";
 import ExportJSFiddle from "./ExportJSFiddle";
-import Rect from "./Rect";
-import Circle from "./Circle";
+import AddRect from "./AddRect";
+import AddCircle from "./AddCircle";
 import ShowClipPath from "./ShowClipPath";
 
 
 export default {
     ShowClipPath,
-    Rect,
-    Circle,
+    AddRect,
+    AddCircle,
     ExportJSFiddle,
     ExportCodePen,
     Github,

@@ -5,41 +5,41 @@ import {
     CHANGE_IMAGE
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { valueUnit, POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../../util/css/types';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
+import { Position } from '../../../../editor/unit/Length';
+import { editor } from '../../../../editor/editor';
 
 const defined_position = {
     'to right': { 
-        backgroundPositionX: valueUnit(POSITION_RIGHT), 
-        backgroundPositionY: valueUnit(POSITION_CENTER)
+        x: Position.RIGHT, 
+        y: Position.CENTER
     },
     'to left': { 
-        backgroundPositionX: valueUnit(POSITION_LEFT), 
-        backgroundPositionY: valueUnit(POSITION_CENTER)
+        x: Position.LEFT, 
+        y: Position.CENTER
     },
     'to top': { 
-        backgroundPositionX: valueUnit(POSITION_CENTER), 
-        backgroundPositionY: valueUnit(POSITION_TOP)
+        x: Position.CENTER, 
+        y: Position.TOP
     },
     'to bottom': { 
-        backgroundPositionX: valueUnit(POSITION_CENTER), 
-        backgroundPositionY: valueUnit(POSITION_BOTTOM)
+        x: Position.CENTER, 
+        y: Position.BOTTOM
     },
     'to top right': { 
-        backgroundPositionX: valueUnit(POSITION_RIGHT), 
-        backgroundPositionY: valueUnit(POSITION_TOP)
+        x: Position.RIGHT, 
+        y: Position.TOP
     },
     'to bottom right': { 
-        backgroundPositionX: valueUnit(POSITION_RIGHT), 
-        backgroundPositionY: valueUnit(POSITION_BOTTOM)
+        x: Position.RIGHT, 
+        y: Position.BOTTOM
     },
     'to bottom left': { 
-        backgroundPositionX: valueUnit(POSITION_LEFT), 
-        backgroundPositionY: valueUnit(POSITION_BOTTOM)
+        x: Position.LEFT, 
+        y: Position.BOTTOM
     },
     'to top left': { 
-        backgroundPositionX: valueUnit(POSITION_LEFT), 
-        backgroundPositionY: valueUnit(POSITION_TOP)
+        x: Position.LEFT, 
+        y: Position.TOP
     }
 }
 
@@ -66,21 +66,22 @@ export default class PredefinedBackgroundPosition extends UIElement {
 
 
     isShow () {
-        return this.read(SELECTION_IS_IMAGE)
+        return editor.selection.backgroundImage
     }
 
     getPosition (type) {
         return defined_position[type] || {
-            backgroundPositionX: valueUnit(POSITION_CENTER),
-            backgroundPositionY: valueUnit(POSITION_CENTER)
+            x: Position.CENTER,
+            y: Position.CENTER
         }
     }
 
     [CLICK('$el button') + SELF] (e) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
-            this.commit(CHANGE_IMAGE, {id, ...pos})
-        })
+        var image = editor.selection.backgroundImage;
+        if (image) {
+            image.reset(this.getPosition(e.$delegateTarget.attr('data-value')))
+            editor.send(CHANGE_IMAGE, image)
+        }
     }
 
     [EVENT(

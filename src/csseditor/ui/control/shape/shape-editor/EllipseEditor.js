@@ -7,12 +7,10 @@ import {
     CHANGE_LAYER_POSITION, 
     CHANGE_LAYER_SIZE 
 } from "../../../../types/event";
-import { defaultValue } from "../../../../../util/functions/func";
-import { percentUnit, value2px, CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_TYPE_ELLIPSE } from "../../../../../util/css/types";
-import { px2percent } from "../../../../../util/filter/functions";
-import { POINTEREND, POINTERMOVE, POINTERSTART, MOVE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { CLIP_PATH_IS_ELLIPSE } from "../../../../../util/css/make";
+import { POINTERSTART, MOVE, END } from "../../../../../util/Event";
+import { EllipseClipPath } from "../../../../../editor/css-property/ClipPath";
+import { Length } from "../../../../../editor/unit/Length";
+import { editor } from "../../../../../editor/editor";
 
 export default class EllipseEditor extends UIElement {
 
@@ -33,41 +31,35 @@ export default class EllipseEditor extends UIElement {
         if (isShow) {
             this.cachedRectangle = false;         
             
-            this.read(SELECTION_CURRENT_LAYER, layer => {
-                var sideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE)
-                this.refs.$radius.toggle(sideType == CLIP_PATH_SIDE_TYPE_NONE)
-            })   
+            var layer = editor.selection.layer;
+            if (layer) {
+                this.refs.$radius.toggle(layer.clippath.isSideType('none'))
+            }
+
             this.refreshPointer()
         }
 
     }
 
     refreshPointer () {
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
-
-            if (!CLIP_PATH_IS_ELLIPSE(layer)) return;
+        var layer = editor.selection.layer;
+        if (layer && layer.clipapth.isEllipse()) {
+            var clippath = layer.clippath;
             var { width, height } = this.getRectangle()
 
-            var centerX =  defaultValue(layer.clipPathCenterX, percentUnit(50))
-            var centerY =  defaultValue(layer.clipPathCenterY, percentUnit(50))
+            this.refs.$center.px('left', clippath.centerX.toPx(width))
+            this.refs.$center.px('top', clippath.centerY.toPx(height));
 
-            var radiusX =  defaultValue(layer.clipPathRadiusX, percentUnit(100))
-            var radiusY =  defaultValue(layer.clipPathRadiusY, percentUnit(100))            
-
-            this.refs.$center.px('left', value2px(centerX, width))
-            this.refs.$center.px('top', value2px(centerY, height));
-
-            this.refs.$radius.px('left', value2px(radiusX, width));
-            this.refs.$radius.px('top', value2px(radiusY, height));                  
-        })
+            this.refs.$radius.px('left', clippath.radiusX.toPx(width));
+            this.refs.$radius.px('top', clippath.radiusY.toPx(height));                  
+        }
     }
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_LAYER)
-
+        var item = editor.selection.layer
         if (!item) return false; 
 
-        return CLIP_PATH_IS_ELLIPSE(item) && !!item.showClipPathEditor; 
+        return item.clippath.isEllipse() && !!item.showClipPathEditor; 
     }
 
     getRectangle () {
@@ -115,14 +107,14 @@ export default class EllipseEditor extends UIElement {
         var center = this.centerpos || [width/2, height/2];
 
         var item = this.layer;
-        item.clipPathType = CLIP_PATH_TYPE_ELLIPSE
-        item.clipPathCenterX = percentUnit( px2percent( center[0], width) );
-        item.clipPathCenterY = percentUnit( px2percent( center[1], height) );
-        item.clipPathRadiusX = percentUnit( px2percent( radius[0], width) );
-        item.clipPathRadiusY = percentUnit( px2percent( radius[1], height) );
+        item.clippath = new EllipseClipPath({
+            centerX: Length.px(center[0]).toPercent(width),
+            centerY: Length.px(center[1]).toPercent(height),
+            radiusX: Length.px(radius[0]).toPercent(width),
+            radiusX: Length.px(radius[1]).toPercent(height)
+        })
 
-        this.commit(CHANGE_LAYER_CLIPPATH, item);
-
+        editor.send(CHANGE_LAYER_CLIPPATH, item);
     }
 
     [EVENT(
@@ -142,13 +134,17 @@ export default class EllipseEditor extends UIElement {
         this.refreshUI(true);
     }
 
-    [POINTERSTART('$el .drag-item') + MOVE()] (e) {
-        e.preventDefault();
-        this.currentType = e.$delegateTarget.attr('data-type');
+    end () {
+        this.currentType = null;
+        this.layer = null; 
     }
 
-    [POINTERSTART()] (e) {
-        this.layer = this.read(SELECTION_CURRENT_LAYER);
-    }    
+    [POINTERSTART('$el .drag-item') + MOVE() + END()] (e) {
+        e.preventDefault();
+        this.currentType = e.$delegateTarget.attr('data-type');
+        this.layer = editor.selection.layer        
+    }
+
+
     
 }

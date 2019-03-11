@@ -1,11 +1,10 @@
 import UnitRange from "./element/UnitRange";
 import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
-import { UNIT_PX, percentUnit, convertPercentUnit, unitValue } from "../../../../../util/css/types";
-import { defaultValue } from "../../../../../util/functions/func";
-import { SELECTION_CURRENT_IMAGE_ID, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { UNIT_PX} from "../../../../../util/css/types";
 import PredefinedBackgroundPosition from "../../shape/PredefinedBackgroundPosition";
 import BackgroundResizer from "../../shape/BackgroundResizer";
+import { editor } from "../../../../../editor/editor";
 
 export default class BackgroundPosition extends UIElement {
     components () {
@@ -55,49 +54,44 @@ export default class BackgroundPosition extends UIElement {
         `
     }
 
-    updateX (backgroundPositionX) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE, {id, backgroundPositionX})
-        })
+    updateX (x) {
+        editor.selection.updateBackgroundImage(CHANGE_IMAGE, { x })
     }    
 
-    updateY (backgroundPositionY) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE, {id, backgroundPositionY})
-        })
+    updateY (y) {
+        editor.selection.updateBackgroundImage(CHANGE_IMAGE, { y })
     }        
 
 
     getMaxHeight () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
-
+        var layer = editor.selection.currentLayer;
         if (!layer) return 0;
 
-        return unitValue(layer.height)
+        return +layer.height
     }
 
     getMaxY () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.currentLayer;
 
         if (!layer) return 0;
 
-        return unitValue(layer.height) * 2; 
+        return (+layer.height) * 2; 
     }
 
     getMaxWidth () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.currentLayer;
 
         if (!layer) return 0;
 
-        return unitValue(layer.width)
+        return (+layer.width)
     }
 
     getMaxX () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.currentLayer;
 
         if (!layer) return 0;
 
-        return unitValue(layer.width) * 2; 
+        return (+layer.width) * 2; 
     }  
 
     [EVENT(
@@ -115,15 +109,11 @@ export default class BackgroundPosition extends UIElement {
         this.$el.toggle(isShow)
 
         if (isShow) {
-            this.read(SELECTION_CURRENT_IMAGE, (image) => {
-
-                var x = convertPercentUnit( defaultValue(image.backgroundPositionX, percentUnit(0)) )
-                var y = convertPercentUnit( defaultValue(image.backgroundPositionY, percentUnit(0)) )
-                
-                this.children.$x.refresh(x);
-                this.children.$y.refresh(y);
-
-            })   
+            var image = editor.selection.currentBackgroundImage;
+            if (image) {
+                this.children.$x.refresh(image.x);
+                this.children.$y.refresh(image.y);
+            }
         }
 
     }

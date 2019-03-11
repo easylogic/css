@@ -1,10 +1,10 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
-import { value2px, pxUnit, unitValue } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
+import { Length } from "../../../../../editor/unit/Length";
 
 
 export default class Radius extends BasePropertyItem {
@@ -52,12 +52,13 @@ export default class Radius extends BasePropertyItem {
     )] () { this.refresh() }
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            var maxWidth = unitValue(item.width);
+        var layer = editor.selection.layer;
+        if (layer) {
+            var maxWidth = +(layer.width);
 
-            if (item.fixedRadius) {
-                var borderRadius = defaultValue (item.borderRadius, pxUnit(0));
-                var radius = value2px(borderRadius, maxWidth)
+            if (layer.fixedRadius) {
+                var borderRadius = defaultValue (layer.borderRadius, Length.px(0));
+                var radius = +borderRadius.toPx(maxWidth)
                 this.refs.$topLeftRadiusRange.val(radius)
                 this.refs.$topRightRadiusRange.val(radius)
                 this.refs.$bottomLeftRadiusRange.val(radius)
@@ -68,39 +69,45 @@ export default class Radius extends BasePropertyItem {
                 this.refs.$bottomRightRadius.val(radius)
 
             } else {
-                if (item.borderTopLeftRadius) {
-                    this.refs.$topLeftRadius.val(value2px(item.borderTopLeftRadius, maxWidth))
-                    this.refs.$topLeftRadiusRange.val(value2px(item.borderTopLeftRadius, maxWidth))
+                
+
+                if (layer.borderTopLeftRadius) {
+                    var value = +layer.borderTopLeftRadius.toPx(maxWidth)
+                    this.refs.$topLeftRadius.val(value)
+                    this.refs.$topLeftRadiusRange.val(value)
                 }
-                if (item.borderTopRightRadius) {
-                    this.refs.$topRightRadius.val(value2px(item.borderTopRightRadius, maxWidth))
-                    this.refs.$topRightRadiusRange.val(value2px(item.borderTopRightRadius, maxWidth))
+                if (layer.borderTopRightRadius) {
+                    var value = layer.borderTopRightRadius.toPx(maxWidth)
+                    this.refs.$topRightRadius.val(+value)
+                    this.refs.$topRightRadiusRange.val(+value)
                 }
-                if (item.borderBottomLeftRadius) {
-                    this.refs.$bottomLeftRadius.val(value2px(item.borderBottomLeftRadius, maxWidth))
-                    this.refs.$bottomLeftRadiusRange.val(value2px(item.borderBottomLeftRadius, maxWidth))
+                if (layer.borderBottomLeftRadius) {
+                    var value = +layer.borderBottomLeftRadius.toPx(maxWidth);
+                    this.refs.$bottomLeftRadius.val(value)
+                    this.refs.$bottomLeftRadiusRange.val(value)
                 }
-                if (item.borderBottomRightRadius) {
-                    this.refs.$bottomRightRadius.val(value2px(item.borderBottomRightRadius, maxWidth))
-                    this.refs.$bottomRightRadiusRange.val(value2px(item.borderBottomRightRadius, maxWidth))
+                if (layer.borderBottomRightRadius) {
+                    var value = +layer.borderBottomRightRadius.toPx(maxWidth)
+                    this.refs.$bottomRightRadius.val(value)
+                    this.refs.$bottomRightRadiusRange.val(value)
                 }
             }
-
-        })
+        }
         
     }
 
     refreshValue () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_RADIUS, { 
-                id, 
-                borderTopLeftRadius: pxUnit( this.refs.$topLeftRadius.val()), 
-                borderTopRightRadius: pxUnit( this.refs.$topRightRadius.val()), 
-                borderBottomLeftRadius: pxUnit( this.refs.$bottomLeftRadius.val()), 
-                borderBottomRightRadius: pxUnit( this.refs.$bottomRightRadius.val()), 
+        var layer = editor.selection.layer; 
+        if (layer) {
+            layer.reset({
+                borderTopLeftRadius: Length.px( this.refs.$topLeftRadius.val()), 
+                borderTopRightRadius: Length.px( this.refs.$topRightRadius.val()), 
+                borderBottomLeftRadius: Length.px( this.refs.$bottomLeftRadius.val()), 
+                borderBottomRightRadius: Length.px( this.refs.$bottomRightRadius.val()), 
                 fixedRadius: false 
             })
-        })
+            editor.send(CHANGE_LAYER_RADIUS, layer);
+        }
     }
 
     [CHANGEINPUT('$topLeftRadiusRange')] () {

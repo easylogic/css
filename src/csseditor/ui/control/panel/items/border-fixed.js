@@ -5,11 +5,11 @@ import {
     CHANGE_SELECTION, 
     CHANGE_LAYER_BORDER
 } from "../../../../types/event";
-import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
+import { CLICK, CHANGEINPUT } from "../../../../../util/Event";
+import { editor } from "../../../../../editor/editor";
 import { defaultValue } from "../../../../../util/functions/func";
-import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { Length } from "../../../../../editor/unit/Length";
 
 export default class BorderFixed extends BasePropertyItem {
     template () {
@@ -42,17 +42,17 @@ export default class BorderFixed extends BasePropertyItem {
         this.$el.toggleClass('show', isShow);
 
         if (isShow) {
-
-            this.read(SELECTION_CURRENT_LAYER, (item) => {
-                var borderWidth = defaultValue(string2unit(item.borderWidth), pxUnit(0) )
-                this.refs.$borderWidthRange.val(borderWidth.value)
-                this.refs.$borderWidth.val(borderWidth.value)
-            })
+            var layer = editor.selection.currentLayer; 
+            if (layer) {
+                var borderWidth = defaultValue(layer.borderWidth, Length.px(0))
+                this.refs.$borderWidthRange.val(+borderWidth)
+                this.refs.$borderWidth.val(+borderWidth)
+            }
         }
     }
 
     isShow () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.currentLayer
 
         if (!layer) return false; 
 
@@ -60,27 +60,27 @@ export default class BorderFixed extends BasePropertyItem {
     }
 
     updateTransform (type) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-
-            if (type == 'border') {
-                var borderWidthValue = this.refs.$borderWidth.val()
-                this.commit(CHANGE_LAYER_BORDER, {
-                    id, 
-                    fixedBorderWidth: true, 
-                    borderWidth: pxUnit( borderWidthValue )
-                })
-                this.refs.$borderWidthRange.val(borderWidthValue)
-            } else if (type == 'range') {
-                var borderWidthValue = this.refs.$borderWidthRange.val()
-                this.commit(CHANGE_LAYER_BORDER, {
-                    id, 
-                    fixedBorderWidth: true, 
-                    borderWidth: pxUnit( borderWidthValue )
-                })
-                this.refs.$borderWidth.val(borderWidthValue)
+        var items = {}
+        if (type == 'border') {
+            var borderWidthValue = this.refs.$borderWidth.val()
+            this.refs.$borderWidthRange.val(borderWidthValue)                
+            items = {
+                fixedBorderWidth: true, 
+                borderWidth: Length.px( borderWidthValue )
             }
+
+        } else if (type == 'range') {
+            var borderWidthValue = this.refs.$borderWidthRange.val()
+            this.refs.$borderWidth.val(borderWidthValue)                
+            items = {
+                fixedBorderWidth: true, 
+                borderWidth: Length.px( borderWidthValue )
+            }
+
+        }
             
-        })
+
+        editor.selection.updateLayer(CHANGE_LAYER_BORDER, items);
     }
 
     [CHANGEINPUT('$borderWidthRange')] () { this.updateTransform('range'); }

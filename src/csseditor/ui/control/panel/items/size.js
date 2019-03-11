@@ -6,9 +6,10 @@ import {
     CHANGE_SELECTION
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
-import { UNIT_PX, pxUnit, unitValue } from "../../../../../util/css/types";
+import { UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT, SELECTION_IS_IMAGE } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
+import { Length } from "../../../../../editor/unit/Length";
 
 export default class Size extends BasePropertyItem {
     template () {
@@ -56,68 +57,57 @@ export default class Size extends BasePropertyItem {
     )] ()  { this.refresh() }
 
     refresh() {
-        var item = this.read(SELECTION_CURRENT)
+        var item = editor.selection.layer;
         if (!item) return; 
-        if (!item.length) return; 
 
-        item = item[0];
-        if (this.read(SELECTION_IS_IMAGE)) return; 
         if (item.width) {
-            this.refs.$width.val(unitValue(item.width))
+            this.refs.$width.val(+item.width)
         }
 
         if (item.height) {
-            this.refs.$height.val(unitValue(item.height))
+            this.refs.$height.val(+(item.height))
         }
 
         if (item.x) {
-            this.refs.$x.val(unitValue(item.x))
+            this.refs.$x.val(+(item.x))
         }
 
         if (item.y) {
-            this.refs.$y.val(unitValue(item.y))
+            this.refs.$y.val(+(item.y))
         }        
-        
     }
 
     [CLICK('$rect')] (e) {
-
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var widthValue = this.refs.$width.val()
-            var width = pxUnit(+widthValue)
-            var height = width;
-            this.commit(CHANGE_LAYER_SIZE, {id, width, height});
-            this.refs.$height.val(widthValue);            
-        })
-
+        var widthValue = this.refs.$width.int()
+        this.refs.$height.val(widthValue); 
+        editor.selection.updateLayer(CHANGE_LAYER_SIZE, {
+            width : Length.px(widthValue),
+            height: Length.px(widthValue)
+        }, this)
     }
 
     [INPUT('$width')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var width = pxUnit(this.refs.$width.int())
-            this.commit(CHANGE_LAYER_SIZE, {id, width});
-        })        
+        editor.selection.updateLayer(CHANGE_LAYER_SIZE, {
+            width : Length.px(this.refs.$width.int())
+        }, this)
     }
 
-    [INPUT('$height')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var height = pxUnit(this.refs.$height.int())
-            this.commit(CHANGE_LAYER_SIZE, {id, height});
-        })        
+    [INPUT('$height')] () {      
+        editor.selection.updateLayer(CHANGE_LAYER_SIZE, {
+            height : Length.px(this.refs.$height.int())
+        }, this)
     }    
 
 
     [INPUT('$x')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var x = pxUnit(this.refs.$x.int())
-            this.commit(CHANGE_LAYER_POSITION, {id, x});
-        })
+        editor.selection.updateLayer(CHANGE_LAYER_POSITION, {
+            x : Length.px(this.refs.$x.int())
+        }, this)
     }
 
     [INPUT('$y')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var y = pxUnit(this.refs.$y.int())
-            this.commit(CHANGE_LAYER_POSITION, {id, y});
-        })
+        editor.selection.updateLayer(CHANGE_LAYER_POSITION, {
+            y : Length.px(this.refs.$y.int())
+        }, this)        
     }        
 }

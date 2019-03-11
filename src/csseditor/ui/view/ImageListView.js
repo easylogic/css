@@ -11,11 +11,9 @@ import {
     CHANGE_SELECTION 
 } from '../../types/event';
 import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CHECK, SELECTION_ONE } from '../../types/SelectionTypes';
-import { IMAGE_TO_STRING } from '../../types/ImageTypes';
 import { EMPTY_STRING } from '../../../util/css/types';
 import { ITEM_MOVE_IN, ITEM_MOVE_LAST } from '../../types/ItemMoveTypes';
-import { ITEM_MAP_IMAGE_CHILDREN } from '../../types/ItemSearchTypes';
+import { editor } from '../../../editor/editor';
 
 export default class ImageListView extends UIElement {
 
@@ -24,24 +22,21 @@ export default class ImageListView extends UIElement {
     }
 
     makeItemNodeImage (item) {
-        var selected = this.read(SELECTION_CHECK, item.id) ? 'selected' : EMPTY_STRING
+        var selected = item.selected ? 'selected' : EMPTY_STRING
         return `
             <div class='tree-item ${selected}' data-id="${item.id}" draggable="true" title="${item.type}" >
                 <div class="item-view-container">
-                    <div class="item-view"  style='${this.read(IMAGE_TO_STRING, item)}'></div>
+                    <div class="item-view"  style='${item}'></div>
                 </div>
             </div>
             ` 
     }       
 
     [LOAD()] () {
-        var id = this.read(SELECTION_CURRENT_LAYER_ID);
+        var layer = editor.selection.layer; 
+        if (!layer) return ''; 
 
-        if (!id) {
-            return EMPTY_STRING;
-        }
-
-        return this.read(ITEM_MAP_IMAGE_CHILDREN, id, (item) => {
+        return layer.backgroundImages.map(item => {
             return this.makeItemNodeImage(item)
         })
     }
@@ -67,8 +62,7 @@ export default class ImageListView extends UIElement {
         var id = e.$delegateTarget.attr('data-id')
 
         if (id) {
-            this.dispatch(SELECTION_ONE, id);
-            this.refresh();
+            editor.selection.select(id);
         }
 
     }

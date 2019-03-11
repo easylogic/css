@@ -1,9 +1,8 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE_LINEAR_ANGLE } from '../../../types/event';
-import { POINTERSTART, POINTEREND, POINTERMOVE, DEBOUNCE, IF, MOVE } from '../../../../util/Event';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC, IMAGE_ANGLE } from '../../../../util/css/make';
+import { POINTERSTART, MOVE } from '../../../../util/Event';
+import { editor } from '../../../../editor/editor';
 
 export default class GradientAngle extends UIElement {
 
@@ -30,24 +29,18 @@ export default class GradientAngle extends UIElement {
     }
 
     isShow () {
-        if (!this.read(SELECTION_IS_IMAGE)) return false; 
+        var image = editor.selection.backgroundImage
 
-        var item = this.read(SELECTION_CURRENT_IMAGE)
-
-        if (!item) return false; 
-
-        var isLinear = IMAGE_TYPE_IS_LINEAR(item.type)
-        var isConic = IMAGE_TYPE_IS_CONIC(item.type)
-
-        if (isLinear == false && isConic == false) {
+        if (!image) return false; 
+        if (!image.image.hasAngle()) {
             return false; 
         }
 
-        return this.config('guide.angle')
+        return editor.config.get('guide.angle')
     }
 
     getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
-        return isUpdate ? this.config('pos') : getXYInCircle(angle, radius, centerX, centerY)
+        return isUpdate ? editor.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY)
     }
 
     getRectangle () {
@@ -64,11 +57,10 @@ export default class GradientAngle extends UIElement {
     }    
 
     getDefaultValue() {
-        var image = this.read(SELECTION_CURRENT_IMAGE);
+        var image = editor.selection.backgroundImage;
         if (!image) return 0 
 
-        var angle = IMAGE_ANGLE(image.angle) 
-        return angle - 90
+        return image.image.caculateAngle() - 90 
     }
 
     refreshAngleText (angleText) {
@@ -101,11 +93,11 @@ export default class GradientAngle extends UIElement {
     }
 
     setAngle (angle) {
-
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE_ANGLE, {id, angle});
-        })
-
+        var image = editor.selection.backgroundImage;
+        if (image) {
+            image.image.angle = angle; 
+            editor.send(CHANGE_IMAGE_ANGLE, image.image)
+        }
     }
 
     [EVENT(

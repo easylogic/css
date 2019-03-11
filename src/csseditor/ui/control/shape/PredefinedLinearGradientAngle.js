@@ -5,8 +5,7 @@ import {
     CHANGE_SELECTION
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { SELECTION_IS_IMAGE, SELECTION_CURRENT_IMAGE, SELECTION_CURRENT_IMAGE_ID } from '../../../types/SelectionTypes';
-import { IMAGE_TYPE_IS_LINEAR, IMAGE_TYPE_IS_CONIC } from '../../../../util/css/make';
+import { editor } from '../../../../editor/editor';
 
 export default class PredefinedLinearGradientAngle extends UIElement {
 
@@ -31,22 +30,21 @@ export default class PredefinedLinearGradientAngle extends UIElement {
 
 
     isShow () {
-        if (!this.read(SELECTION_IS_IMAGE)) return false;         
-        var image = this.read(SELECTION_CURRENT_IMAGE)
-
+        var image = editor.selection.backgroundImage;
         if (!image) { return false; }
 
-        var isLinear = IMAGE_TYPE_IS_LINEAR(image.type);
-        var isConic = IMAGE_TYPE_IS_CONIC(image.type);
+        var isLinear = image.image.isLinear()
+        var isConic = image.image.isConic()
 
-        return this.config('guide.angle') && (isLinear || isConic);
+        return editor.config.get('guide.angle') && (isLinear || isConic);
     }
 
-    
     [CLICK('$el button') + SELF] (e) {
-        this.read(SELECTION_CURRENT_IMAGE_ID, (id) => {
-            this.commit(CHANGE_IMAGE_LINEAR_ANGLE, {id, angle: e.$delegateTarget.attr('data-value')})
-        })
+        var image = editor.selection.backgroundImage;
+        if(image) {
+            image.image.angle = e.$delegateTarget.attr('data-value')
+            editor.send(CHANGE_IMAGE_LINEAR_ANGLE, image);
+        }
     }
 
     [EVENT(

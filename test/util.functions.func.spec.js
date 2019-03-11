@@ -12,19 +12,19 @@ test('func - html 2', () => {
 });
 
 test('func - html short tag ', () => {
-    var str = html`<Image a='1' /> <Image b='2' />`
-    expect(str).toEqual(`<Image a='1' ></Image> <Image b='2' ></Image>`);
+    var str = html`<b a='1' /> <b b='2' />`
+    expect(str).toEqual(`<b a='1' ></b> <b b='2' ></b>`);
 });
 
 test('func - html object import', () => {
     var Obj = {b: 10}
-    var str = html`<Image a='1' ${Obj} />`
-    expect(str).toEqual(`<Image a='1' b="10" ></Image>`);
+    var str = html`<B a='1' ${Obj} />`
+    expect(str).toEqual(`<B a='1' b="10" ></B>`);
 })
 
 test('func - html function import', () => {
     var Obj = {b: 10}
-    var str = html`<Image a='1' ${() => Obj} />`
-    expect(str).toEqual(`<Image a='1' b="10" ></Image>`);
+    var str = html`<B a='1' ${() => Obj} />`
+    expect(str).toEqual(`<B a='1' b="10" ></B>`);
 })
 

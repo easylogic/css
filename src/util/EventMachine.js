@@ -65,6 +65,10 @@ const makeDelegateCallback = (context, eventObject, callback) => {
 const runEventCallback = (context, e, eventObject, callback) => {
   e.xy = Event.posXY(e)
 
+  eventObject.beforeMethods.every(before => {
+    return context[before.target].call(context, before.param, e);
+  })
+
   if (checkEventType(context, e, eventObject)) {
     var returnValue = callback(e, e.$delegateTarget, e.xy);
 
@@ -141,6 +145,16 @@ const getDefaultEventObject = (context, eventName, checkMethodFilters) => {
     return {target, param}
   })
 
+  const befores = arr.filter(code => {
+    return code.indexOf('before(') > -1; 
+  })
+
+  const beforeMethods = befores.map(code => {
+    var [target, param] = code.split('before(')[1].split(')')[0].trim().split(' ')
+
+    return {target, param}
+  })  
+
   // TODO: split debounce check code 
   const delay = arr.filter(code => {
     if (code.indexOf('debounce(')  > -1) {
@@ -162,8 +176,8 @@ const getDefaultEventObject = (context, eventName, checkMethodFilters) => {
     return checkMethodList.includes(code) === false 
           && delay.includes(code) === false 
           && afters.includes(code) === false
+          && befores.includes(code) === false
           && capturing.includes(code) === false
-          && fit.includes(code) === false; 
   }).map(code => {
     return code.toLowerCase() 
   });
@@ -175,6 +189,7 @@ const getDefaultEventObject = (context, eventName, checkMethodFilters) => {
     codes : arr,
     useCapture,
     afterMethods, 
+    beforeMethods,
     debounce: debounceTime,
     checkMethodList: checkMethodList
   }
@@ -428,11 +443,17 @@ export default class EventMachine {
   }
 
   /* magic check method  */ 
-  self (e) { return e.$delegateTarget.is(e.target); }
+  self (e) { return e && e.$delegateTarget && e.$delegateTarget.is(e.target); }
   isAltKey (e) { return e.altKey }
   isCtrlKey (e) { return e.ctrlKey }
   isShiftKey (e) { return e.shiftKey }
   isMetaKey (e) { return e.metaKey }
+  preventDefault(e) {
+    e.preventDefault();
+  } 
+  stopPropagation (e) {
+    e.stopPropagation();
+  }
 
   /* magic check method */ 
 

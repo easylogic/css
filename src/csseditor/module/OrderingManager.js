@@ -10,7 +10,9 @@ import { ORDERING_INDEX, ORDERING_TYPE } from "../types/OrderingTypes";
 export default class OrderingManager extends BaseModule {
 
     afterDispatch () {
+        console.log('afterDispatch')
         this.$store.emit(CHANGE_EDITOR)
+        console.log('afterDispatch', 'after', CHANGE_EDITOR)
     }
 
     horizontal ($store) {
@@ -191,6 +193,7 @@ export default class OrderingManager extends BaseModule {
 
     [ACTION(ORDERING_TYPE)] ($store, type) {
         if (this[type]) {
+            console.log('type', type);
             this[type].call(this, $store);
         }
     }

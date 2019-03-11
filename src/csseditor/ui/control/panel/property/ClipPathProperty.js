@@ -4,6 +4,11 @@ export default class ClipPathProperty extends BaseProperty {
 
     getTitle () { return 'Clip Path'; }
     getBody () {
-        return `<ClipPath /><ClipPathSide /><ClipPathPolygon /><ClipPathSVG />`
+        return `
+            <ClipPath />
+            <ClipPathSide />
+            <ClipPathPolygon />
+            <!-- ClipPathSVG /-->
+        `
     }
 }

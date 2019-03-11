@@ -7,7 +7,7 @@ import {
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
 import { CHANGEINPUT, INPUT, CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class Transform3d extends BasePropertyItem {
     template () {
@@ -104,15 +104,16 @@ export default class Transform3d extends BasePropertyItem {
 
     [CLICK('$preserve')] (e) {
 
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var preserve = this.refs.$preserve.checked();
-
-            this.commit(CHANGE_LAYER_TRANSFORM, {id, preserve});
-        })
+        var layer = editor.selection.layer; 
+        if (layer) {
+            layer.preserve = this.refs.$preserve;
+            editor.send(CHANGE_LAYER_TRANSFORM, layer);
+        }
     }    
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
+        var layer = editor.selection.layer; 
+        if (layer) {
 
             var attr = [
                 'perspective',
@@ -122,27 +123,29 @@ export default class Transform3d extends BasePropertyItem {
             ]
 
             attr.forEach( key => {
-                if (item[key]) {
-                    this.refs[`$${key}Range`].val(item[key])    
-                    this.refs[`$${key}`].val(item[key])    
+                if (layer[key]) {
+                    this.refs[`$${key}Range`].val(layer[key])    
+                    this.refs[`$${key}`].val(layer[key])    
                 }
             })       
             
-            this.refs.$preserve.checked(!!item.preserve);            
-        })
+            this.refs.$preserve.checked(!!layer.preserve);            
+        }
         
     }
 
     updateTransform (key, postfix = EMPTY_STRING) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
+        var layer = editor.selection.layer;
+        if (layer) {
             var value = this.refs['$' + key + postfix].val();
             if (postfix == EMPTY_STRING) {
                 this.refs['$' + key + 'Range'].val(value);
             } else {
                 this.refs['$' + key].val(value);
             }
-            this.commit(CHANGE_LAYER_TRANSFORM, {id, [key]: value })
-        })
+            layer[key] = value; 
+            editor.send(CHANGE_LAYER_TRANSFORM)
+        }
     } 
 
     [CHANGEINPUT('$el input[type=range]')] (e) {

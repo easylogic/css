@@ -8,11 +8,9 @@ import {
     TEXT_FILL_COLOR
 } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
-import { unitValue, pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
-import { CLICK, INPUT, LOAD, POINTERMOVE, POINTEREND, POINTERSTART, MOVE, END } from '../../../../../util/Event';
-import { ITEM_INITIALIZE } from '../../../../types/ItemCreateTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_CHECK, SELECTION_ONE } from '../../../../types/SelectionTypes';
-import { ITEM_MAP_TEXTSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
+import { pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
+import { CLICK, INPUT, LOAD, POINTERSTART, MOVE, END } from '../../../../../util/Event';
+import { editor } from '../../../../../editor/editor';
 
 export default class TextShadow extends BasePropertyItem {
 
@@ -28,10 +26,10 @@ export default class TextShadow extends BasePropertyItem {
 
     makeItemNodetextShadow (item) {
 
-        var offsetX = unitValue(item.offsetX);
-        var offsetY = unitValue(item.offsetY);
-        var blurRadius = unitValue(item.blurRadius);
-        var checked = this.read(SELECTION_CHECK, item.id) ? 'checked': EMPTY_STRING;
+        var offsetX = +(item.offsetX);
+        var offsetY = +(item.offsetY);
+        var blurRadius = +(item.blurRadius);
+        var checked = item.selected ? 'checked': EMPTY_STRING;
 
         return `
             <div class='text-shadow-item ${checked}' text-shadow-id="${item.id}">  
@@ -68,32 +66,16 @@ export default class TextShadow extends BasePropertyItem {
     }
 
     [LOAD('$textShadowList')] () {
-        var item = this.read(SELECTION_CURRENT_LAYER)
-        if (!item) { return EMPTY_STRING; }
+        var layer = editor.selection.layer;
+        if (!layer) { return EMPTY_STRING; }
 
-        var results =  this.read(ITEM_MAP_TEXTSHADOW_CHILDREN, item.id, (item) => {
+        return layer.textShadows.map(item => {
             return this.makeItemNodetextShadow(item)
         })
-
-        return results;
     }
 
-
-
-    isShow () {
-        return true; 
-        // return this.read(SELECTION_IS_LAYER); 
-    }    
-
     refresh () {
-
-        var isShow = this.isShow();
-
-        this.$el.toggle(isShow);
-
-        if(isShow) {
-            this.load()
-        }
+        this.load()
     }
     getTextShadowId($el) {
         return $el.closest('text-shadow-item').attr('text-shadow-id')
@@ -144,9 +126,8 @@ export default class TextShadow extends BasePropertyItem {
     [CLICK('$textShadowList .delete-textshadow')] (e) {
         var $el = e.$delegateTarget;
         var id = this.getTextShadowId($el)
-
-        this.run(ITEM_INITIALIZE, id);
-        this.emit(CHANGE_TEXTSHADOW)
+        editor.remove(id);
+        editor.send(CHANGE_TEXTSHADOW)
         this.refresh();
     }
 
@@ -154,8 +135,8 @@ export default class TextShadow extends BasePropertyItem {
         var $el = e.$delegateTarget;
         var id = this.getTextShadowId($el)
 
-        this.dispatch(SELECTION_ONE, id);
-        this.emit(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
+        editor.selection.select(id);
+        editor.send(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
         this.refresh();
     }
 
@@ -192,7 +173,7 @@ export default class TextShadow extends BasePropertyItem {
 
     // Event Bindings 
     end () {
-        this.selectedPointArea = false;
+        this.selectedPointArea = null;
     }
 
     move () {

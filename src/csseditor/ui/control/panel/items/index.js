@@ -16,19 +16,17 @@ import FilterList from "./FilterList";
 import ImageResource from "./ImageResource";
 import ClipPath from "./ClipPath";
 import PageShowGrid from "./PageShowGrid";
-import GroupAlign from "./GroupAlign";
 import BackgroundBlend from "./BackgroundBlend";
 import LayerBlend from "./LayerBlend";
 import Rotate from "./rotate";
 import RadiusFixed from "./radius-fixed";
 import Opacity from "./opacity";
-import ClipPathSVG from "./ClipPathSVG";
+// import ClipPathSVG from "./ClipPathSVG";
 import ClipPathSide from "./ClipPathSide";
 import ClipPathPolygon from "./ClipPathPolygon";
 import BoxShadow from "./BoxShadow";
 import TextShadow from "./TextShadow";
 import FillColorPickerPanel from "./FillColorPickerPanel";
-import BackgroundInfo from "./BackgroundInfo";
 import Text from "./text";
 import LayerCode from "./LayerCode";
 import BackgroundCode from "./BackgroundCode";
@@ -68,7 +66,7 @@ export default {
     Page3D,
     ClipPathSide,
     ClipPathPolygon,
-    ClipPathSVG,
+    // ClipPathSVG,
     EmptyArea,
     BackdropList,
     LayerInfoColorPickerPanel,
@@ -78,17 +76,15 @@ export default {
     BackgroundCode,
     LayerCode,
     Text,
-    BackgroundInfo,
     FillColorPickerPanel,
     TextShadow,
     BoxShadow,
-    ClipPathSVG,
+    // ClipPathSVG,
     Opacity,
     BorderFixed,
     RadiusFixed,
     Rotate,
-    LayerBlend,
-    GroupAlign,    
+    LayerBlend,    
     PageShowGrid,
     ClipPath,
     ImageResource,

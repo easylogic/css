@@ -1,10 +1,9 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_EDITOR } from "../../../../types/event";
-import { UNIT_PX, unitValue, pxUnit } from "../../../../../util/css/types";
+import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION } from "../../../../types/event";
+import { UNIT_PX } from "../../../../../util/css/types";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
-import { ITEM_SET } from "../../../../types/ItemTypes";
-import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class Position extends BasePropertyItem {
     template () {
@@ -27,29 +26,35 @@ export default class Position extends BasePropertyItem {
         `
     }
 
-    [EVENT(CHANGE_EDITOR)] () {
+    [EVENT(
+        CHANGE_EDITOR, 
+        CHANGE_LAYER, 
+        CHANGE_SELECTION
+    )] () {
         this.refresh()
     }
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            this.refs.$x.val(unitValue(item.x))
-            this.refs.$y.val(unitValue(item.y))
-        })
-        
+        var layer = editor.selection.layer;
+        if (layer) {
+            this.refs.$x.val(+layer.x)
+            this.refs.$y.val(+layer.y)
+        }        
     }
 
     [INPUT('$x')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var x = pxUnit(this.refs.$x.int())
-            this.dispatch(ITEM_SET, {id, x })
-        })
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.x = Length.px(this.refs.$x.int())
+            editor.send(CHANGE_LAYER, layer);
+        }        
     }
 
     [INPUT('$y')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var y = pxUnit(this.refs.$y.int())
-            this.dispatch(ITEM_SET, {id, y})
-        })
+        var layer = editor.selection.layer;
+        if (layer) {
+            layer.y = Length.px(this.refs.$y.int())
+            editor.send(CHANGE_LAYER, layer);
+        }
     }    
 }

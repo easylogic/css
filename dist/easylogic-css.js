@@ -23605,18 +23605,18 @@ var PAGE_COLORVIEW_TO_CSS = 'page/colorview/toCSS';
 var PAGE_CACHE_TO_CSS = 'page/cache/toCSS';
 var PAGE_CACHE_TO_STRING = 'page/cache/toString';
 
-var GradientView = function (_UIElement) {
-    inherits(GradientView, _UIElement);
+var CanvasView = function (_UIElement) {
+    inherits(CanvasView, _UIElement);
 
-    function GradientView() {
-        classCallCheck(this, GradientView);
-        return possibleConstructorReturn(this, (GradientView.__proto__ || Object.getPrototypeOf(GradientView)).apply(this, arguments));
+    function CanvasView() {
+        classCallCheck(this, CanvasView);
+        return possibleConstructorReturn(this, (CanvasView.__proto__ || Object.getPrototypeOf(CanvasView)).apply(this, arguments));
     }
 
-    createClass(GradientView, [{
+    createClass(CanvasView, [{
         key: 'initialize',
         value: function initialize() {
-            get$1(GradientView.prototype.__proto__ || Object.getPrototypeOf(GradientView.prototype), 'initialize', this).call(this);
+            get$1(CanvasView.prototype.__proto__ || Object.getPrototypeOf(CanvasView.prototype), 'initialize', this).call(this);
 
             this.hasScroll = false;
             this.initializeLayerCache();
@@ -23834,11 +23834,11 @@ var GradientView = function (_UIElement) {
             this.updateToolSize();
         }
     }]);
-    return GradientView;
+    return CanvasView;
 }(UIElement);
 
-var HandleView = function (_GradientView) {
-    inherits(HandleView, _GradientView);
+var HandleView = function (_CanvasView) {
+    inherits(HandleView, _CanvasView);
 
     function HandleView() {
         classCallCheck(this, HandleView);
@@ -23960,7 +23960,7 @@ var HandleView = function (_GradientView) {
         }
     }]);
     return HandleView;
-}(GradientView);
+}(CanvasView);
 
 var DEFAULT_TITLE = EMPTY_STRING;
 var DEFAULT_ICON = EMPTY_STRING;
@@ -24765,15 +24765,15 @@ var ShapeListView = function (_UIElement) {
 var _templateObject$17 = taggedTemplateLiteral(["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"], ["\n            <div style=\"", "; position:relative; width: ", "; height: ", "; ", "\">\n            ", "\n            </div>"]);
 var _templateObject2$3 = taggedTemplateLiteral(["", ""], ["", ""]);
 
-var PageListView = function (_UIElement) {
-    inherits(PageListView, _UIElement);
+var ProjectListView = function (_UIElement) {
+    inherits(ProjectListView, _UIElement);
 
-    function PageListView() {
-        classCallCheck(this, PageListView);
-        return possibleConstructorReturn(this, (PageListView.__proto__ || Object.getPrototypeOf(PageListView)).apply(this, arguments));
+    function ProjectListView() {
+        classCallCheck(this, ProjectListView);
+        return possibleConstructorReturn(this, (ProjectListView.__proto__ || Object.getPrototypeOf(ProjectListView)).apply(this, arguments));
     }
 
-    createClass(PageListView, [{
+    createClass(ProjectListView, [{
         key: "template",
         value: function template() {
             return "<div class='pages'>         \n            <div class=\"page-list\" ref=\"$pageList\"></div>\n        </div>";
@@ -24865,7 +24865,7 @@ var PageListView = function (_UIElement) {
             this.refresh();
         }
     }]);
-    return PageListView;
+    return ProjectListView;
 }(UIElement);
 
 var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "], ["\n            <div class='tree-item ", "' id=\"", "\" item-type='layer' draggable=\"true\">\n                <div class=\"item-title\"> ", ". ", "</div>\n                <div class='item-tools'>\n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock a layer\"></button>                \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\"></button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">&times;</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">+</button>\n                </div>                \n            </div>\n            <div class=\"gradient-list-group\" >\n                <div class=\"tree-item-children\">\n                    ", "\n                </div>\n            </div>       \n            "]);
@@ -25269,7 +25269,7 @@ var PageSampleListView = function (_UIElement) {
 var layerItems = {
     HistoryListView: HistoryListView,
     LayerListView: LayerListView,
-    PageListView: PageListView,
+    ProjectListView: ProjectListView,
     PageSampleListView: PageSampleListView,
     ShapeListView: ShapeListView,
     LayerSampleList: LayerSampleList,
@@ -25288,7 +25288,7 @@ var OutlineTabView = function (_BaseTab) {
     createClass(OutlineTabView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"tab outline-tab-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item select-reverse selected\" data-id=\"layers\">Layers</div>                \n                    <div class=\"tab-item select-reverse\" data-id=\"pages\">Pages</div>       \n                </div>\n                <div class=\"tab-body no-border\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"layers\">\n                        <LayerListView />\n                    </div>                \n                    <div class=\"tab-content\" data-id=\"pages\">\n                        <PageListView />\n                    </div> \n\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"tab outline-tab-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item select-reverse selected\" data-id=\"layers\">Layers</div>                \n                    <div class=\"tab-item select-reverse\" data-id=\"pages\">Pages</div>       \n                </div>\n                <div class=\"tab-body no-border\" ref=\"$body\">\n                    <div class=\"tab-content selected\" data-id=\"layers\">\n                        <LayerListView />\n                    </div>                \n                    <div class=\"tab-content\" data-id=\"pages\">\n                        <ProjectListView />\n                    </div> \n\n                </div>\n            </div>\n        ";
         }
     }, {
         key: "components",

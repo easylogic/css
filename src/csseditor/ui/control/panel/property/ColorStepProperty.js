@@ -1,8 +1,7 @@
 import BaseProperty from "./BaseProperty";
 import { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
-import { IMAGE_TYPE_IS_STATIC, IMAGE_TYPE_IS_IMAGE } from "../../../../../util/css/make";
-import { SELECTION_CURRENT_IMAGE } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class ColorStepProperty extends BaseProperty {
 
@@ -21,9 +20,10 @@ export default class ColorStepProperty extends BaseProperty {
     }
 
     isShow () { 
-        var image = this.read(SELECTION_CURRENT_IMAGE);
+        var image = editor.selection.backgroundImage;
         if (image) {
-            if (IMAGE_TYPE_IS_STATIC(image.type) || IMAGE_TYPE_IS_IMAGE(image.type)) {
+            var gradient = image.image;
+            if (gradient.isStatic() || gradient.isImage()) {
                 return false; 
             }
         }

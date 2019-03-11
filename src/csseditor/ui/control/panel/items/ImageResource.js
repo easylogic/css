@@ -7,6 +7,7 @@ import { IMAGE_GET_BLOB } from "../../../../types/ImageTypes";
 import { ITEM_SET_IMAGE_FILE } from "../../../../types/ItemCreateTypes";
 import { SVG_LIST, SVG_GET_BLOB } from "../../../../types/SVGTypes";
 import { IMAGE_TYPE_IS_IMAGE } from "../../../../../util/css/make";
+import { editor } from "../../../../../editor/editor";
 
 export default class ImageResource extends BasePropertyItem {
     template () {
@@ -47,31 +48,31 @@ export default class ImageResource extends BasePropertyItem {
     }    
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
-
+        var item = editor.selection.backgroundImage
         if (!item) return false; 
 
-        return IMAGE_TYPE_IS_IMAGE(item.type); 
+        return item.gradient.isImage(); 
     }
 
     [CLICK('$imageList .svg-item')] (e) {
         var [index, key] = e.$delegateTarget.attrs('data-index', 'data-key')
 
         if (index) { 
-            this.read(SELECTION_CURRENT_IMAGE, (image) => {
+            var image = editor.selection.backgroundImage
+            if (image) {
                 var file = this.read(SVG_GET_BLOB, +index);
                 this.read(IMAGE_GET_BLOB, [file], (newImage) => {
                     this.dispatch(ITEM_SET_IMAGE_FILE, image.id, newImage)
                 });
-            })
+            }
         } else if (key) {
-
-            this.read(SELECTION_CURRENT_IMAGE, (image) => {
+            var image = editor.selection.backgroundImage
+            if (image) {
                 var file = this.read(SVG_GET_BLOB, Number.MAX_SAFE_INTEGER, key);
                 this.read(IMAGE_GET_BLOB, [file], (newImage) => {
                     this.dispatch(ITEM_SET_IMAGE_FILE, image.id, newImage)
                 });
-            })
+            }
         } 
 
     }

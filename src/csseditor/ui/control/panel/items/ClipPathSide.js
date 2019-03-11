@@ -7,10 +7,9 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CHANGE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { html } from "../../../../../util/functions/func";
-import { CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE } from "../../../../../util/css/types";
-import { CLIP_PATH_IS_CIRCLE, CLIP_PATH_IS_ELLIPSE } from "../../../../../util/css/make";
+import { CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST } from "../../../../../util/css/types";
+import { editor } from "../../../../../editor/editor";
 
 const CLIP_PATH_SIDE_TYPES = [
     CLIP_PATH_SIDE_TYPE_NONE,
@@ -50,24 +49,26 @@ export default class ClipPathSide extends BasePropertyItem {
 
         var isShow = this.isShow();
 
-        // this.$el.toggleClass('show', isShow);
-
         if (isShow) {
-
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.refs.$clipSideType.val(layer.clipPathSideType || CLIP_PATH_SIDE_TYPE_NONE);
-            });
+            var layer = editor.selection.currentLayer;
+            if (layer) {
+                this.refs.$clipSideType.val(layer.clippath.sideType || 'none'); 
+            }
         }
 
     }
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_LAYER);
-
+        var item = editor.selection.currentLayer;
         if (!item) return false;
+
+        var clippath = item.clippath;
+        if (!clippath) return false; 
         
-        if (CLIP_PATH_IS_CIRCLE(item)) return true; 
-        if (CLIP_PATH_IS_ELLIPSE(item)) return true; 
+        if (clippath.isCircle()) return true; 
+        if (clippath.isEllipse()) return true; 
+
+        return false; 
     }    
 
     [EVENT('toggleClipPathSideType')] () {
@@ -75,12 +76,16 @@ export default class ClipPathSide extends BasePropertyItem {
     }
 
     [CHANGE('$clipSideType')] () {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_CLIPPATH, {
-                id, 
-                clipPathSideType: this.refs.$clipSideType.val()
-            })
-        })
+
+        var layer = editor.selection.layer;
+        if (layer) {
+            var clippath = layer.clippath
+            if (clippath) {
+                clippath.sideType = this.refs.$clipSideType.val()    
+            }
+            editor.send(CHANGE_LAYER_CLIPPATH);
+        }
+
     }
 
 }

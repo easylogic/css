@@ -1,5 +1,3 @@
-export const SELECTION_INITIALIZE_DATA = 'selection/initialize/data'
-export const SELECTION_IDS = 'selection/ids'
 export const SELECTION_CHECK = 'selection/check'
 export const SELECTION_IS_EMPTY = 'selection/is/empty'
 export const SELECTION_IS_NOT_EMPTY = 'selection/is/not/empty'

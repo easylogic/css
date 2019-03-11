@@ -1,8 +1,7 @@
 import UIElement, { EVENT } from "../../../util/UIElement";
 import GradientSteps from "./colorsteps/GradientSteps";
 import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
-import { SELECTION_CURRENT_IMAGE } from "../../types/SelectionTypes";
-import { IMAGE_TYPE_IS_GRADIENT } from "../../../util/css/make";
+import { editor } from "../../../editor/editor";
 
 export default class VerticalColorStep extends UIElement {
 
@@ -24,7 +23,7 @@ export default class VerticalColorStep extends UIElement {
 
     refresh () {
         this.$el.toggle(this.isShow())
-        this.refs.$verticalColorstep.px('width', this.$store.step.width);
+        this.refs.$verticalColorstep.px('width', editor.config.get('step.width'));
     }
 
     [EVENT(
@@ -33,11 +32,10 @@ export default class VerticalColorStep extends UIElement {
     )] () { this.refresh() }
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
-
+        var item = editor.selection.backgroundImage;
         if (!item) return false; 
 
-        return IMAGE_TYPE_IS_GRADIENT(item.type)
+        return item.isGradient()
     }    
 
 }

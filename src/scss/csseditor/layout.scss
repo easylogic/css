@@ -126,10 +126,11 @@ $layer-toolbar-height: 0px;
 @import './element/unit-range.scss';
 
 @import './select-layer-view.scss';
+@import './outline.scss';
 @import './colorpicker-ui.scss';
 @import './tool-menu.scss';
 @import './shape-manager.scss';
-@import './page-manager.scss';
+@import './project-manager.scss';
 @import './layer-manager.scss';
 @import './layer-toolbar.scss';
 @import './image-toolbar.scss';

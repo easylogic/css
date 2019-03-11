@@ -1,9 +1,9 @@
 import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM } from "../../../../types/event";
-import { UNIT_PERCENT, unitString, unitValue, percentUnit, pxUnit, UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
+import { Length } from "../../../../../editor/unit/Length";
 
 export default class Page3D extends UIElement {
     template () {
@@ -20,21 +20,21 @@ export default class Page3D extends UIElement {
                         <label> Perspective </label>
                         <div>
                             <input type="range" ref="$perspectiveRange" min="-2000" max="2000" /> 
-                            <input type="number" ref="$perspective" /> <span class='unit'>${unitString(UNIT_PX)}</span>
+                            <input type="number" ref="$perspective" /> <span class='unit'>%</span>
                         </div>                        
                     </div>                                 
                     <div>
                         <label>Origin  X </label>
                         <div>
                             <input type="range" ref="$xRange" min="-100" max="100" />                         
-                            <input type="number" ref="$x" /> <span class='unit'>${unitString(UNIT_PERCENT)}</span>
+                            <input type="number" ref="$x" /> <span class='unit'>%</span>
                         </div>
                     </div>                                            
                     <div>
                         <label>Origin Y </label>
                         <div>
                             <input type="range" ref="$yRange" min="-100" max="100" />                                                 
-                            <input type="number" ref="$y" /> <span class='unit'>${unitString(UNIT_PERCENT)}</span>
+                            <input type="number" ref="$y" /> <span class='unit'>%</span>
                         </div>
                     </div>                                                                
                 </div>
@@ -51,91 +51,90 @@ export default class Page3D extends UIElement {
     }
 
     refresh() {
-        this.read(SELECTION_CURRENT_PAGE, (item) => {
-            var perspective = unitValue( defaultValue(item.perspective, pxUnit (0)) );
-            var perspectiveOriginPositionX = unitValue( defaultValue(item.perspectiveOriginPositionX, percentUnit(0)) );
-            var perspectiveOriginPositionY = unitValue( defaultValue(item.perspectiveOriginPositionY, percentUnit(0)) );
+        var item = editor.selection.artboard;
+        if (item) {    
+            var perspective = defaultValue(item.perspective, Length.px (0));
+            var perspectiveOriginPositionX = defaultValue(item.perspectiveOriginPositionX, Length.percent(0));
+            var perspectiveOriginPositionY = defaultValue(item.perspectiveOriginPositionY, Length.percent(0));
 
-            this.refs.$perspective.val(perspective);
-            this.refs.$x.val(perspectiveOriginPositionX);
-            this.refs.$y.val(perspectiveOriginPositionY);
-
-            this.refs.$perspectiveRange.val(perspective);
-            this.refs.$xRange.val(perspectiveOriginPositionX);
-            this.refs.$yRange.val(perspectiveOriginPositionY);            
+            this.refs.$perspective.val(+perspective);
+            this.refs.$perspectiveRange.val(+perspective);            
+            this.refs.$x.val(+perspectiveOriginPositionX);
+            this.refs.$y.val(+perspectiveOriginPositionY);
+            this.refs.$xRange.val(+perspectiveOriginPositionX);
+            this.refs.$yRange.val(+perspectiveOriginPositionY);            
             this.refs.$preserve.checked(!!item.preserve);
-        })
+        }
         
     }
 
     [CLICK('$preserve')] (e) {
-
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-            var preserve = this.refs.$preserve.checked();
-
-            this.commit(CHANGE_PAGE, {id, preserve});
-        })
+        var artboard = editor.selection.artboard;
+        if (artboard) {      
+            artboard.preserve = this.refs.$preserve;
+            editor.send(CHANGE_PAGE, artboard);
+        }
     }
 
     [INPUT('$perspective')] (e) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+        var artboard = editor.selection.artboard;
+        if (artboard) {        
             var value = this.refs.$perspective.val();
-            var perspective = pxUnit(+value);
-
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspective});
+            artboard.perspective = Length.px(+value);
             this.refs.$perspectiveRange.val(value)
-        })
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }
 
     [CHANGEINPUT('$perspectiveRange')] (e) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+        var artboard = editor.selection.artboard;
+        if (artboard) {        
             var value = this.refs.$perspectiveRange.val();
-            var perspective = pxUnit(+value);
-
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspective});
+            artboard.perspective = Length.px(+value);
             this.refs.$perspective.val(value)
-        })
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }    
 
     [INPUT('$x')] (e) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+        var artboard = editor.selection.artboard;
+        if (artboard) {
             var value = this.refs.$x.val()
-            var perspectiveOriginPositionX = percentUnit(+value);
-
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionX});
+            artboard.perspectiveOriginPositionX = Length.percent(+value);
             this.refs.$xRange.val(value);
-        })
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }    
 
     [CHANGEINPUT('$xRange')] (e) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+        var artboard = editor.selection.artboard;
+        if (artboard) {
             var value = this.refs.$xRange.val();
-            var perspectiveOriginPositionX = percentUnit(+value);
-
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionX});
-            this.refs.$x.val(value);
-        })
+            this.refs.$x.val(value);            
+            artboard.perspectiveOriginPositionX = Length.percent(+value);
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }        
 
 
     [INPUT('$y')] (e) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+        var artboard = editor.selection.artboard;
+        if (artboard) {
             var value = this.refs.$y.val();
-            var perspectiveOriginPositionY = percentUnit(+value);
-
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionY});
+            artboard.perspectiveOriginPositionY = Length.percent(+value);
             this.refs.$yRange.val(value);
-        })
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }        
 
 
     [CHANGEINPUT('$yRange')] (e) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
+        var artboard = editor.selection.artboard;
+        if (artboard) {
             var value = this.refs.$yRange.val();
-            var perspectiveOriginPositionY = percentUnit(+value);
-
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionY});
             this.refs.$y.val(value);
-        })
+            artboard.perspectiveOriginPositionY = Length.percent(value);
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }        
     }            
 }

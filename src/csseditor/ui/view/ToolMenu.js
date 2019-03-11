@@ -20,7 +20,8 @@ export default class ToolMenu extends UIElement {
                     <ShowBackgroundImageSize />
                 </div>
                 <div class='items flex-2'>
-                    <Rect /><Circle />
+                    <AddRect />
+                    <AddCircle />
                 </div>
                 <div class='items  right'>
                     <Save />

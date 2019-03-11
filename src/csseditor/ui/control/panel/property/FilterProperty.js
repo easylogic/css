@@ -4,6 +4,6 @@ export default class FilterProperty extends BaseProperty {
 
     getTitle () { return 'Filter'; }
     getBody () {
-        return `<FilterList />`
+        return `<!-- FilterList /-->`
     }
 }

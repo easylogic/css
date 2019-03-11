@@ -8,11 +8,9 @@ import {
     CHANGE_LAYER_SIZE 
 } from "../../../../types/event";
 import { defaultValue } from "../../../../../util/functions/func";
-import { percentUnit, value2px, CLIP_PATH_TYPE_INSET } from "../../../../../util/css/types";
-import { px2percent } from "../../../../../util/filter/functions";
-import { POINTERSTART, MOVE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { CLIP_PATH_IS_INSET } from "../../../../../util/css/make";
+import { POINTERSTART, MOVE, END } from "../../../../../util/Event";
+import { InsetClipPath } from "../../../../../editor/css-property/ClipPath";
+import { editor } from "../../../../../editor/editor";
 
 export default class InsetEditor extends UIElement {
 
@@ -41,21 +39,24 @@ export default class InsetEditor extends UIElement {
     }
 
     refreshPointer () {
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
+        var layer = editor.selection.layer;
 
-            if (!CLIP_PATH_IS_INSET(layer)) return;
+        if (layer) {
+            var clippath = layer.clippath; 
+            if (!clippath) return; 
+            if (!clippath.isInset()) return; 
 
             var { width, height } = this.getRectangle()
 
-            var top = defaultValue(layer.clipPathInsetTop, percentUnit(0));
-            var left = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
-            var right = defaultValue(layer.clipPathInsetRight, percentUnit(0));
-            var bottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
+            var top = clippath.top;
+            var left = clippath.left;
+            var right = clippath.right;
+            var bottom = clippath.bottom;
 
-            var topValue = value2px(top, height)
-            var leftValue = value2px(left, width)
-            var rightValue = value2px(percentUnit(100 - right.value) , width)
-            var bottomValue = value2px(percentUnit( 100 - bottom.value), height)
+            var topValue = top.toPx(height)
+            var leftValue = left.toPx(width)
+            var rightValue = Length.percent(100 - right).toPx(width)
+            var bottomValue = Length.percent(100 - bottom).toPx(height)
 
             var centerX = leftValue + (rightValue - leftValue)/2; 
             var centerY = topValue + (bottomValue - topValue)/2; 
@@ -71,15 +72,16 @@ export default class InsetEditor extends UIElement {
 
             this.refs.$bottom.px('left', centerX);            
             this.refs.$bottom.px('top', bottomValue);
-        })
+        }
     }
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_LAYER)
-
+        var item = editor.selection.layer
         if (!item) return false; 
+        var clippath = item.clippath; 
+        if (!clippath) return false; 
 
-        return CLIP_PATH_IS_INSET(item) && !!item.showClipPathEditor; ; 
+        return clippath.isInset() && !!item.showClipPathEditor;
     }
 
     getRectangle () {
@@ -131,14 +133,15 @@ export default class InsetEditor extends UIElement {
         var { width, height } = this.getRectangle()        
 
         // TODO:  value must be with a unit. 
-        var item = this.layer;
-        item.clipPathType = CLIP_PATH_TYPE_INSET
-        item.clipPathInsetTop = percentUnit( px2percent(defaultValue(this.toppos, 0), height))
-        item.clipPathInsetLeft = percentUnit( px2percent(defaultValue(this.leftpos, 0), width))
-        item.clipPathInsetRight = percentUnit( px2percent(width - defaultValue(this.rightpos, width), width) )
-        item.clipPathInsetBottom = percentUnit( px2percent(height - defaultValue(this.bottompos, height), height) )
+        var item = this.layer; 
+        item.clippath = new InsetClipPath({
+            top: Length.px(defaultValue(this.toppos, 0)).toPercent(height),
+            left: Length.px(defaultValue(this.leftpos, 0)).toPercent(width),
+            right: Length.px(width - defaultValue(this.rightpos, width)).toPercent(width),
+            bottom: Length.px(height - defaultValue(this.bottompos, height)).toPercent(height)
+        })
 
-        this.commit(CHANGE_LAYER_CLIPPATH, item);
+        this.emit(CHANGE_LAYER_CLIPPATH, item);
 
         this.refreshPointer();
     }
@@ -161,10 +164,15 @@ export default class InsetEditor extends UIElement {
         this.refreshUI(true);
     }
 
-    [POINTERSTART('$el .drag-item') + MOVE()] (e) {
+    end () {
+        this.layer = null; 
+        this.currentType = null;
+    }
+
+    [POINTERSTART('$el .drag-item') + MOVE() + END()] (e) {
         e.preventDefault();
         this.currentType = e.$delegateTarget.attr('data-type');
-        this.layer = this.read(SELECTION_CURRENT_LAYER);          
+        this.layer = editor.selection.layer;          
         this.cachedRectangle = null; 
     }
     

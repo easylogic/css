@@ -268,6 +268,10 @@ export function CSS_FILTERING (style) {
         delete newStyle['transform-style'];
     }
 
+    if (newStyle['clip-path'] == 'none') {
+        delete newStyle['clip-path'];
+    }
+
     return newStyle; 
 }
 

@@ -5,12 +5,11 @@ import {
     CHANGE_SELECTION, 
     CHANGE_LAYER_RADIUS 
 } from "../../../../types/event";
-import { pxUnit, string2unit } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CLICK, INPUT } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
-import { IS_CIRCLE } from "../../../../../util/css/make";
+import { editor } from "../../../../../editor/editor";
+import { Length } from "../../../../../editor/unit/Length";
 
 export default class RadiusFixed extends BasePropertyItem {
     template () {
@@ -44,45 +43,47 @@ export default class RadiusFixed extends BasePropertyItem {
 
         if (isShow) {
 
-            this.read(SELECTION_CURRENT_LAYER, (item) => {
-                var radius = defaultValue(string2unit(item.borderRadius), pxUnit(0) )
+            var layer = editor.selection.layer;
+            if (layer) {
+                var radius = defaultValue(layer.borderRadius, Length.px(0) )
                 this.refs.$radiusRange.val(radius.value)
                 this.refs.$radius.val(radius.value)
-            })
+            }
         }
     }
 
     isShow () {
-        var layer = this.read(SELECTION_CURRENT_LAYER);
+        var layer = editor.selection.layer;
 
         if (!layer) return false; 
-        if (IS_CIRCLE(layer)) return false;
+        if (layer.type == 'circle') return false;
 
         return true;
     }
 
     updateTransform (type) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
+        var layer = editor.selection.layer;
+        if (layer) {
 
             if (type == 'radius') {
                 var borderRadiusValue = this.refs.$radius.val()
-                this.commit(CHANGE_LAYER_RADIUS, {
-                    id, 
+                layer.reset({
                     fixedRadius: true, 
-                    borderRadius: pxUnit( borderRadiusValue )
+                    borderRadius: Length.px( borderRadiusValue )
                 })
+                editor.send(CHANGE_LAYER_RADIUS, layer)
                 this.refs.$radiusRange.val(borderRadiusValue)
             } else if (type == 'range') {
                 var borderRadiusValue = this.refs.$radiusRange.val()
-                this.commit(CHANGE_LAYER_RADIUS, {
-                    id, 
+                layer.reset({
                     fixedRadius: true, 
-                    borderRadius: pxUnit( borderRadiusValue )
+                    borderRadius: Length.px( borderRadiusValue )
                 })
+                editor.send(CHANGE_LAYER_RADIUS, layer)
                 this.refs.$radius.val(borderRadiusValue)
             }
-            
-        })
+        }
+       
     }
 
     [INPUT('$radiusRange')] () { this.updateTransform('range'); }

@@ -1,5 +1,4 @@
 import MenuItem from "./MenuItem";
-import { HISTORY_UNDO } from "../../../types/HistoryTypes";
 
 export default class Undo extends MenuItem {
     getIcon() { return 'undo'; }
@@ -7,6 +6,5 @@ export default class Undo extends MenuItem {
 
 
     clickButton (e) {
-        this.dispatch(HISTORY_UNDO)
     }
 }

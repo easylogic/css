@@ -3,6 +3,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { IMAGE_TYPE_IS_GRADIENT } from "../../../../../util/css/make";
+import { editor } from "../../../../../editor/editor";
 
 export default class ColorSteps extends BasePropertyItem {
     template () {
@@ -29,11 +30,11 @@ export default class ColorSteps extends BasePropertyItem {
     }
 
     isShow () {
-        var item = this.read(SELECTION_CURRENT_IMAGE)
+        var item = editor.selection.backgroundImage
 
         if (!item) return false; 
 
-        return IMAGE_TYPE_IS_GRADIENT(item.type)
+        return item.image.isGradient()
     }
 
 }

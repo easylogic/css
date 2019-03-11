@@ -8,8 +8,8 @@ import { EVENT } from "../../../../../util/UIElement";
 import UnitRange from "./element/UnitRange";
 import { UNIT_PX } from "../../../../../util/css/types";
 import { CHANGE } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { html } from "../../../../../util/functions/func";
+import { editor } from "../../../../../editor/editor";
 
 
 
@@ -97,12 +97,13 @@ export default class Font extends BasePropertyItem {
     }    
 
     refresh () {
-        this.read(SELECTION_CURRENT_LAYER, layer => {
+        var layer = editor.selection.layer;
+        if (layer) {
             this.refs.$fontFamily.val(layer.fontFamily);
             this.refs.$fontWeight.val(layer.fontWeight);
             this.children.$fontSize.refresh(layer.fontSize);
             this.children.$lineHeight.refresh(layer.lineHeight);
-        })
+        }
     }
 
     [EVENT(
@@ -113,28 +114,24 @@ export default class Font extends BasePropertyItem {
         this.refresh();
     }
 
+    updateFont(attrs = {}) {
+        editor.selection.updateLayer(CHANGE_LAYER_TEXT, attrs)
+    }
+
     updateFontSize (fontSize) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, fontSize})
-        })
+        this.updateFont({ fontSize })
     }
 
     updateLineHeight (lineHeight) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, lineHeight})
-        })
+        this.updateFont( { lineHeight })        
     }    
 
     updateFontFamily (fontFamily) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, fontFamily})
-        })
+        this.updateFont( { fontFamily })
     }
 
     updateFontWeight (fontWeight) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER_TEXT, {id, fontWeight})
-        })
+        this.updateFont({ fontWeight })        
     }    
 
     [CHANGE('$fontFamily')] (e) {

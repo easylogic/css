@@ -1,8 +1,9 @@
 import UIElement from "../../../util/UIElement";
 import { DROP, DRAGOUT, DRAGOVER, PASTE } from "../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
-import { ITEM_PREPEND_IMAGE_URL, ITEM_PREPEND_IMAGE_FILE } from "../../types/ItemCreateTypes";
 import { IMAGE_GET_URL, IMAGE_GET_FILE } from "../../types/ImageTypes";
+import { BackgroundImage } from "../../../editor/css-property/BackgroundImage";
+import { URLImageResource, FileImageResource } from "../../../editor/image-resource/URLImageResource";
+import { editor } from "../../../editor/editor";
 
 export default class DropView extends UIElement {
 
@@ -24,66 +25,44 @@ export default class DropView extends UIElement {
         this.$el.hide();
     }
 
-    [DROP('document')] (e) {
-        e.preventDefault(); 
+    addImageResource (dataTransfer) {
 
-        var dataTransfer = e.dataTransfer;
+        var imageResources = []
 
         var items = [...dataTransfer.items]
-        var types = [...dataTransfer.types].filter(type => type == 'text/uri-list');
-        
-        var dataList = types.map(type => {
-            return dataTransfer.getData(type);
-        })
+        var dataList = [...dataTransfer.types].filter(type => {
+            return type == 'text/uri-list'
+        }).map(type => dataTransfer.getData(type))
 
         if (dataList.length) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read(IMAGE_GET_URL, dataList, (img) => {
-                    this.dispatch(ITEM_PREPEND_IMAGE_URL, img, true, layer.id);
-                })
-            })            
+            this.read(IMAGE_GET_URL, dataList, (img) => imageResources.push(new URLImageResource(img)) )
         }
 
         var files = [...dataTransfer.files]; 
+
         if (files.length) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read(IMAGE_GET_FILE, files, (img) => {
-                    this.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layer.id);
-                })
+            this.read(IMAGE_GET_FILE, files, (img) => imageResources.push(new FileImageResource(img)) )
+        }
+
+        var layer = editor.selection.currentLayer;
+        if (layer) {
+            imageResources.forEach(resource => {
+                //이미지 태그를 넣을까? 
+                var backgroundImage = layer.addBackgroundImage(new BackgroundImage({
+                    index: -1   // 가장 앞으로 추가 
+                }));
+                backgroundImage.addImageResource(resource)
             })
         }
 
     }
 
+    [DROP('document')] (e) {
+        e.preventDefault(); 
+        this.addImageResource(e.dataTransfer);
+    }    
 
     [PASTE('document')] (e) {
-
-        var dataTransfer = e.clipboardData;
-
-        var items = [...dataTransfer.items]
-        var types = [...dataTransfer.types].filter(type => type == 'text/uri-list');
-        
-        var dataList = types.map(type => {
-            return dataTransfer.getData(type);
-        })
-
-        if (dataList.length) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read(IMAGE_GET_URL, dataList, (url) => {
-                    this.dispatch(ITEM_PREPEND_IMAGE_URL, url, true, layer.id);
-                })
-            })            
-        }
-
-        var files = [...dataTransfer.files]; 
-        if (files.length) {
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                this.read(IMAGE_GET_FILE, files, (img) => {
-                    this.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layer.id);
-                    this.refresh();
-                })
-            })
-        }
-
+        this.addImageResource(e.clipboardData);
     }
 }

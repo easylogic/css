@@ -58,6 +58,7 @@ export default class ExportWindow extends UIElement {
 
     afterRender () {
         ColorPickerCodeMirror.load();
+        if (!window.CodeMirror) return;
         var mixedMode = {
             name: "htmlmixed",
             scriptTypes: [{matches: /\/x-handlebars-template|\/x-mustache/i,

@@ -3,7 +3,7 @@ import BasePropertyItem from './BasePropertyItem';
 import { CHANGE_SELECTION, CHANGE_LAYER } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
 import { CHANGE } from '../../../../../util/Event';
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../types/SelectionTypes';
+import { editor } from '../../../../../editor/editor';
 
 export default class BoxSizing extends BasePropertyItem {
 
@@ -27,15 +27,14 @@ export default class BoxSizing extends BasePropertyItem {
     }
 
     isShow () {
-        return this.read(SELECTION_IS_LAYER); 
+        return editor.selection.currentLayer;
     }    
 
     refresh () {
-
-        this.read(SELECTION_CURRENT_LAYER, (layer) => {
+        var layer = editor.selection.currentLayer;
+        if (layer) {
             this.refs.$boxSizing.val(layer.boxSizing)
-        })
-
+        }
     }
 
     [EVENT(
@@ -46,9 +45,9 @@ export default class BoxSizing extends BasePropertyItem {
     }
 
     [CHANGE('$boxSizing')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.commit(CHANGE_LAYER, {id, boxSizing: this.refs.$boxSizing.val() }, true)
-        });
+        editor.selection.updateLayer(CHANGE_LAYER, {
+            boxSizing: this.refs.$boxSizing.val()
+        })
     }
 
 }

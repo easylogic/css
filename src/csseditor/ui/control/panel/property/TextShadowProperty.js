@@ -1,8 +1,7 @@
 import BaseProperty from "./BaseProperty";
 import { CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
-import { HISTORY_PUSH } from "../../../../types/HistoryTypes";
-import { ITEM_ADD_TEXTSHADOW } from "../../../../types/ItemCreateTypes";
+import { CHANGE_EDITOR } from "../../../../types/event";
+import { TextShadow } from "../../../../../editor/css-property/TextShadow";
 
 export default class TextShadowProperty extends BaseProperty {
 
@@ -15,9 +14,10 @@ export default class TextShadowProperty extends BaseProperty {
     }
 
     [CLICK('$add')] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            this.dispatch(ITEM_ADD_TEXTSHADOW, false, id)
-            this.dispatch(HISTORY_PUSH, `Add Text Shadow` );
-        }); 
+        var layer = editor.selection.layer; 
+        if (layer) {
+            var textShadow = layer.addTextShadow(new TextShadow())
+            editor.send(CHANGE_EDITOR, textShadow)
+        }
     }
 }

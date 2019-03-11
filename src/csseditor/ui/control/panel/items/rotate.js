@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
-import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class Rotate extends BasePropertyItem {
     template () {
@@ -29,27 +29,25 @@ export default class Rotate extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            this.refs.$rotateRange.val(item.rotate || "0")
-            this.refs.$rotate.val(item.rotate || "0")
-        })
-        
+        var layer = editor.selection.layer; 
+        if (layer) {
+            this.refs.$rotateRange.val(layer.rotate || "0")
+            this.refs.$rotate.val(layer.rotate || "0")
+        }        
     }
 
     updateTransform (type) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-
+        var layer = editor.selection.layer;
+        if (layer) {
             if (type == 'rotate') {
-                var rotate = this.refs.$rotate.val();
-                this.commit(CHANGE_LAYER_ROTATE, {id, rotate})
-                this.refs.$rotateRange.val(rotate)
+                layer.rotate = this.refs.$rotate;
+                this.refs.$rotateRange.val(layer.rotate)
             } else if (type == 'range') {
-                var rotate = this.refs.$rotateRange.val()
-                this.commit(CHANGE_LAYER_ROTATE, {id, rotate})
-                this.refs.$rotate.val(rotate)
+                layer.rotate = this.refs.$rotateRange
+                this.refs.$rotate.val(layer.rotate)
             }
-            
-        })
+            editor.send(CHANGE_LAYER_ROTATE, layer)
+        }
     }
 
     [INPUT('$rotateRange')] () { this.updateTransform('range'); }

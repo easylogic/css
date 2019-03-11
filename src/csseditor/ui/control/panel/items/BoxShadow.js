@@ -8,10 +8,10 @@ import {
 } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
 import { pxUnit, unitValue, EMPTY_STRING } from '../../../../../util/css/types';
-import { CLICK, INPUT, LOAD, POINTEREND, POINTERMOVE, POINTERSTART, MOVE, END } from '../../../../../util/Event';
+import { CLICK, INPUT, LOAD, POINTERSTART, MOVE, END } from '../../../../../util/Event';
 import { ITEM_INITIALIZE} from '../../../../types/ItemCreateTypes';
-import { SELECTION_CURRENT_LAYER, SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
-import { ITEM_MAP_BOXSHADOW_CHILDREN } from '../../../../types/ItemSearchTypes';
+import { SELECTION_ONE, SELECTION_CHECK } from '../../../../types/SelectionTypes';
+import { editor } from '../../../../../editor/editor';
 
 export default class BoxShadow extends BasePropertyItem {
 
@@ -84,10 +84,10 @@ export default class BoxShadow extends BasePropertyItem {
     }
 
     [LOAD('$boxShadowList')] () {
-        var item = this.read(SELECTION_CURRENT_LAYER)
+        var item = editor.selection.currentLayer;
         if (!item) { return EMPTY_STRING; }
 
-        var results =  this.read(ITEM_MAP_BOXSHADOW_CHILDREN, item.id, (item) => {
+        var results =  item.boxShadows.map(item => {
             return this.makeItemNodeBoxShadow(item)
         })
 

@@ -1,7 +1,7 @@
 import ColorPicker from '../../../colorpicker/index'
 import UIElement, { EVENT } from "../../../util/UIElement";
 import { CLICK, SCROLL, DEBOUNCE, DROP, WHEEL, ALT } from "../../../util/Event";
-import { SELECTION_CURRENT_LAYER, SELECTION_IDS } from "../../types/SelectionTypes";
+import { SELECTION_CURRENT_LAYER } from "../../types/SelectionTypes";
 import Animation from "../../../util/animation/Animation";
 import { ITEM_SET } from "../../types/ItemTypes";
 import { TOOL_SAVE_DATA, TOOL_RESTORE_DATA, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE } from "../../types/ToolTypes";
@@ -12,6 +12,7 @@ import KeyframeTimeView from "./timeline/KeyframeTimeView";
 import TimelineTopToolbar from "./timeline/TimelineTopToolbar";
 import { isFunction } from '../../../util/functions/func';
 import TimelineSplitter from './timeline/TimelineSplitter';
+import { editor } from '../../../editor/editor';
 
 
 export default class Timeline extends UIElement {
@@ -112,7 +113,7 @@ export default class Timeline extends UIElement {
     }
 
     [CLICK('$addSelection')] (e) {
-        this.read(SELECTION_IDS).forEach(id => {
+        editor.selection.ids.forEach(id => {
             if (this.read(TIMELINE_NOT_EXISTS, id)) {
                 this.run(TIMELINE_PUSH, id);
             }

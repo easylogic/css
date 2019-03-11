@@ -145,6 +145,16 @@ export default class BaseStore {
 
     }
 
+    sendMessage (source, event, $2, $3, $4, $5) {
+        setTimeout(() => {
+            this.cachedCallback[event].forEach(f => {
+                if (f.originalCallback.source != source) {
+                    f.callback($2, $3, $4, $5);
+                }
+            })
+        }, 0)
+    }
+
     emit ($1, $2, $3, $4, $5) {
         var event = $1;
 
@@ -154,11 +164,7 @@ export default class BaseStore {
             });
         } 
 
-        
-        this.cachedCallback[event].forEach(f => {
-            if (f.context.source != this.source) {
-                f.callback($2, $3, $4, $5);
-            }
-        })
+        this.sendMessage(this.source, $1, $2, $3, $4, $5)
+
     }    
 }

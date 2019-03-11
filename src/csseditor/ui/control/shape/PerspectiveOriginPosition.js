@@ -4,10 +4,11 @@ import {
     CHANGE_SELECTION, 
     CHANGE_PAGE_TRANSFORM 
 } from '../../../types/event';
-import { percentUnit, unitValue, valueUnit, EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
-import { POINTEREND, POINTERMOVE, POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
-import { defaultValue, isString } from '../../../../util/functions/func';
-import { SELECTION_CURRENT_PAGE, SELECTION_CURRENT_PAGE_ID } from '../../../types/SelectionTypes';
+import { EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
+import { POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
+import { isString } from '../../../../util/functions/func';
+import { Length, Position } from '../../../../editor/unit/Length';
+import { editor } from '../../../../editor/editor';
 
 const DEFINE_POSITIONS = { 
     [POSITION_CENTER]: [POSITION_CENTER, POSITION_CENTER],
@@ -39,12 +40,10 @@ export default class PerspectiveOriginPosition extends UIElement {
     }
 
     isShow () {
-        if (!this.read('selection/is/page')) return false; 
+        var artboard = editor.selection.artboard
+        if (!artboard) return false; 
 
-        var page = this.read(SELECTION_CURRENT_PAGE)
-        if (!page) return false; 
-
-        return !!page.preserve;  
+        return !!artboard.preserve;  
     }
 
     getCurrentXY(isUpdate, position) {
@@ -63,23 +62,23 @@ export default class PerspectiveOriginPosition extends UIElement {
         } else if (isString(p)) {
             p = p.split(WHITE_STRING);
         } else {
-            p = [unitValue(p.perspectiveOriginPositionX), unitValue(p.perspectiveOriginPositionY)]
+            p = [p.perspectiveOriginPositionX.value, p.perspectiveOriginPositionY.value]
         }
 
         p = p.map((item, index) => {
-            if (item == POSITION_CENTER) {
+            if (item == 'center') {
                 if (index == 0) {
                     return minX + width/2
                 } else if (index == 1) {
                     return minY + height/2
                 }
-            } else if (item === POSITION_LEFT) {
+            } else if (item === 'left') {
                 return minX;
-            } else if (item === POSITION_RIGHT) {
+            } else if (item === 'right') {
                 return maxX;
-            } else if (item === POSITION_TOP) {
+            } else if (item === 'top') {
                 return minY;
-            } else if (item === POSITION_BOTTOM) { 
+            } else if (item === 'bottom') { 
                 return maxY;
             } else {
                 if (index == 0) {
@@ -107,13 +106,12 @@ export default class PerspectiveOriginPosition extends UIElement {
 
     getDefaultValue() {
 
-        var item = this.read(SELECTION_CURRENT_PAGE);
-
-        if (!item) return EMPTY_STRING; 
+        var artboard = editor.selection.artboard
+        if (!artboard) return EMPTY_STRING; 
 
         return {
-            perspectiveOriginPositionX: defaultValue(item.perspectiveOriginPositionX, percentUnit(0)),
-            perspectiveOriginPositionY: defaultValue(item.perspectiveOriginPositionY, percentUnit(0))
+            perspectiveOriginPositionX: item.perspectiveOriginPositionX,
+            perspectiveOriginPositionY: item.perspectiveOriginPositionY
          } || EMPTY_STRING
 
     }
@@ -134,17 +132,23 @@ export default class PerspectiveOriginPosition extends UIElement {
         if (isUpdate) {
 
             this.setPerspectiveOriginPosition(
-                percentUnit( Math.floor(left/width * 100) ), 
-                percentUnit( Math.floor(top/height * 100) )
+                Length.percent( Math.floor(left/width * 100) ), 
+                Length.percent( Math.floor(top/height * 100) )
             );
         }
 
     }
 
     setPerspectiveOriginPosition (perspectiveOriginPositionX, perspectiveOriginPositionY) {
-        this.read(SELECTION_CURRENT_PAGE_ID, (id) => {
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, perspectiveOriginPositionX, perspectiveOriginPositionY});
-        });
+        var artboard = editor.selection.artboard; 
+        if (artboard) {
+            artboard.reset({
+                perspectiveOriginPositionX,
+                perspectiveOriginPositionY
+            })
+
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }
 
     [EVENT(
@@ -164,15 +168,10 @@ export default class PerspectiveOriginPosition extends UIElement {
     [POINTERSTART('$dragPointer') + MOVE()] (e) {
         e.preventDefault();
     }
-
-    [POINTERSTART()] (e) {
-        this.isDown = true; 
-        // this.refreshUI(e);        
-    }    
     
     [DOUBLECLICK('$dragPointer')] (e) {
         e.preventDefault()
-        this.setPerspectiveOriginPosition(valueUnit(POSITION_CENTER), valueUnit(POSITION_CENTER))
+        this.setPerspectiveOriginPosition(Position.CENTER, Position.CENTER)
         this.refreshUI()
     }
 }

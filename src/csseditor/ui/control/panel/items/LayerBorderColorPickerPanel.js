@@ -6,7 +6,7 @@ export default class LayerBorderColorPickerPanel extends UIElement {
         return `
             <div class='property-item text-colorpicker show'>
                 <div class='items'>            
-                    <BorderFillColorPicker />
+                    <!--BorderFillColorPicker /-->
                 </div>
                 <div class="items bar"></div>
             </div>

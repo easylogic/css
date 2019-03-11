@@ -1,13 +1,12 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
-    CHANGE_IMAGE_LINEAR_ANGLE, 
     CHANGE_SELECTION,
     CHANGE_LAYER_ROTATE,
     CHANGE_TOOL
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { SELECTION_IS_LAYER, SELECTION_CURRENT_LAYER_ID } from '../../../types/SelectionTypes';
+import { editor } from '../../../../editor/editor';
 
 const DEFINED_ANGLES = {
     'to top': 0,
@@ -44,27 +43,25 @@ export default class PredefinedLayerAngle extends UIElement {
 
 
     isShow () {
-        if (!this.read(SELECTION_IS_LAYER)) return false;         
+        if (!editor.selection.layer) return false;
 
-        return this.config('guide.angle')
+        return editor.config.get('guide.angle')
     }
 
     
     [CLICK('$el button') + SELF] (e) {
-        this.read(SELECTION_CURRENT_LAYER_ID, (id) => {
-            var rotate = DEFINED_ANGLES[e.$delegateTarget.attr('data-value')];
-            this.commit(CHANGE_LAYER_ROTATE, {id, rotate })
-        })
+        var layer = editor.selection.layer; 
+        if (layer) {
+            layer.rotate = DEFINED_ANGLES[e.$delegateTarget.attr('data-value')];
+            editor.send(CHANGE_LAYER_ROTATE, layer)
+        }
     }
 
     [EVENT(
         CHANGE_LAYER_ROTATE,
         CHANGE_EDITOR,
-        CHANGE_SELECTION
+        CHANGE_SELECTION,
+        CHANGE_TOOL
     )] () { this.refresh() }
-
-    [EVENT(CHANGE_TOOL)] () {
-        this.refresh();
-    }
 
 }

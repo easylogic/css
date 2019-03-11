@@ -5,41 +5,41 @@ import {
     CHANGE_PAGE_TRANSFORM
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
-import { percentUnit, valueUnit, POSITION_RIGHT, POSITION_CENTER, POSITION_LEFT, POSITION_TOP, POSITION_BOTTOM } from '../../../../util/css/types';
-import { SELECTION_CURRENT_PAGE } from '../../../types/SelectionTypes';
+import { editor } from '../../../../editor/editor';
+import { Length, Position } from '../../../../editor/unit/Length';
 
 const defined_position = {
     'to right': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_RIGHT), 
-        perspectiveOriginPositionY: valueUnit(POSITION_CENTER)
+        perspectiveOriginPositionX: Position.RIGHT, 
+        perspectiveOriginPositionY: Position.CENTER
     },
     'to left': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_LEFT), 
-        perspectiveOriginPositionY: valueUnit(POSITION_CENTER)
+        perspectiveOriginPositionX: Position.LEFT, 
+        perspectiveOriginPositionY: Position.CENTER
     },
     'to top': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_CENTER), 
-        perspectiveOriginPositionY: valueUnit(POSITION_TOP)
+        perspectiveOriginPositionX: Position.CENTER, 
+        perspectiveOriginPositionY: Position.TOP
     },
     'to bottom': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_CENTER), 
-        perspectiveOriginPositionY: valueUnit(POSITION_BOTTOM)
+        perspectiveOriginPositionX: Position.CENTER, 
+        perspectiveOriginPositionY: Position.BOTTOM
     },
     'to top right': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_RIGHT), 
-        perspectiveOriginPositionY: valueUnit(POSITION_TOP)
+        perspectiveOriginPositionX: Position.RIGHT, 
+        perspectiveOriginPositionY: Position.TOP
     },
     'to bottom right': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_RIGHT), 
-        perspectiveOriginPositionY: valueUnit(POSITION_BOTTOM)
+        perspectiveOriginPositionX: Position.RIGHT, 
+        perspectiveOriginPositionY: Position.BOTTOM
     },
     'to bottom left': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_LEFT), 
-        perspectiveOriginPositionY: valueUnit(POSITION_BOTTOM)
+        perspectiveOriginPositionX: Position.LEFT, 
+        perspectiveOriginPositionY: Position.BOTTOM
     },
     'to top left': { 
-        perspectiveOriginPositionX: valueUnit(POSITION_LEFT), 
-        perspectiveOriginPositionY: valueUnit(POSITION_TOP)
+        perspectiveOriginPositionX: Position.LEFT, 
+        perspectiveOriginPositionY: Position.TOP
     }
 }
 
@@ -66,27 +66,25 @@ export default class PredefinedPerspectiveOriginPosition extends UIElement {
 
 
     isShow () {
-        if (!this.read('selection/is/page')) return false; 
+        var artboard = editor.selection.artboard;
+        if (!artboard) return false; 
 
-        var page = this.read(SELECTION_CURRENT_PAGE)
-
-        if (!page) return false; 
-
-        return !!page.preserve
+        return !!artboard.preserve
     }
 
     getPosition (type) {
         return defined_position[type] || {
-            perspectiveOriginPositionX: percentUnit(0),
-            perspectiveOriginPositionY: percentUnit(0)
+            perspectiveOriginPositionX: Length.percent(0),
+            perspectiveOriginPositionY: Length.percent(0)
         }
     }
 
     [CLICK('$el button') + SELF] (e) {
-        this.read(SELECTION_CURRENT_PAGE_IDs, (id) => {
-            var pos = this.getPosition(e.$delegateTarget.attr('data-value'))
-            this.commit(CHANGE_PAGE_TRANSFORM, {id, ...pos})
-        })
+        var artboard = editor.selection.artboard;
+        if (artboard) {
+            artboard.reset(this.getPosition(e.$delegateTarget.attr('data-value')))
+            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+        }
     }
 
     [EVENT(

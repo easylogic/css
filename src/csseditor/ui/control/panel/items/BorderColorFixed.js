@@ -7,7 +7,7 @@ import {
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CLICK } from "../../../../../util/Event";
-import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
+import { editor } from "../../../../../editor/editor";
 
 export default class BorderColorFixed extends BasePropertyItem {
     template () {
@@ -36,16 +36,16 @@ export default class BorderColorFixed extends BasePropertyItem {
     )] () { this.refresh() }    
 
     refresh() {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            this.refs.$color.css('background-color', item.borderColor)
-            this.refs.$colortext.text(item.borderColor)
-        })
+        var layer = editor.selection.currentLayer; 
+        if (layer) {
+            this.refs.$color.css('background-color', layer.borderColor)
+            this.refs.$colortext.text(layer.borderColor)
+        }
     }
 
     [CLICK('$colorview')] () {
-        this.read(SELECTION_CURRENT_LAYER, (item) => {
-            this.emit('selectBorderColor', item.borderColor, 'borderColor', CHANGE_LAYER_BORDER);
-        })        
+
+        alert('컬러 피커를 뛰워주세요')
         
     }
 }
