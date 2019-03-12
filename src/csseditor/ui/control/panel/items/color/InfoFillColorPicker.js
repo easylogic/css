@@ -4,7 +4,7 @@ import UIElement, { EVENT } from '../../../../../../util/UIElement';
 import { 
     CHANGE_EDITOR,
     CHANGE_SELECTION,
-    CHANGE_LAYER_BACKGROUND_COLOR
+    CHANGE_LAYER
 } from '../../../../../types/event';
 import { editor } from '../../../../../../editor/editor';
 
@@ -13,7 +13,7 @@ export default class InfoFillColorPicker extends UIElement {
     initialize() {
         super.initialize();
 
-        this.eventType = CHANGE_LAYER_BACKGROUND_COLOR
+        this.eventType = CHANGE_LAYER
         this.eventKey = 'backgroundColor'
     }
 
@@ -49,7 +49,7 @@ export default class InfoFillColorPicker extends UIElement {
     }  
     
     [EVENT (
-        CHANGE_LAYER_BACKGROUND_COLOR,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    

@@ -7,14 +7,11 @@ import Timeline from '../ui/control/Timeline';
 import DropView from '../ui/control/DropView';
 import VerticalColorStep from '../ui/control/VerticalColorStep';
 import Animation from '../../util/animation/Animation';
-import { CHANGE_EDITOR, CHANGE_PAGE } from '../types/event';
+import { CHANGE_EDITOR, CHANGE_ARTBOARD } from '../types/event';
 import HandleView from '../ui/view/HandleView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import Alignment from '../ui/control/Alignment';
-import { ITEM_ADD_PAGE } from '../types/ItemCreateTypes';
-import { ITEM_LOAD } from '../types/ItemTypes';
-import { STORAGE_LOAD } from '../types/StorageTypes';
 import HotKey from '../ui/control/HotKey';
 import { LOAD_START } from '../types/LoadTypes';
 import UIElement, { EVENT } from '../../util/UIElement';
@@ -125,7 +122,7 @@ export default class CSSEditor extends UIElement {
         //     } else {
         //         this.dispatch(ITEM_LOAD);
         //     }
-        //     this.emit(CHANGE_PAGE)
+        //     this.emit(CHANGE_ARTBOARD)
         // });
     }
 

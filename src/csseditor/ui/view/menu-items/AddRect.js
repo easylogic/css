@@ -3,7 +3,7 @@ import { editor } from "../../../../editor/editor";
 import { Rect } from "../../../../editor/shape/Rect";
 import { Project } from "../../../../editor/Project";
 import { ArtBoard } from "../../../../editor/ArtBoard";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ID } from "../../../types/event";
+import { CHANGE_EDITOR } from "../../../types/event";
 
 export default class AddRect extends MenuItem {
     getIcon() { return 'rect'; }

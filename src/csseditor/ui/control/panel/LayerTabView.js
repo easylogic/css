@@ -4,6 +4,7 @@ import { SELECT_TAB_LAYER } from '../../../types/event';
 import { SCROLL } from '../../../../util/Event';
 
 import property from './property/index';
+import { editor } from '../../../../editor/editor';
 
 
 export default class LayerTabView extends BaseTab {
@@ -90,7 +91,7 @@ export default class LayerTabView extends BaseTab {
 
     
     onTabShow () {
-        this.config('tool.tabs.layer.selectedId', this.selectedTabId);
+        editor.config.set('tool.tabs.layer.selectedId', this.selectedTabId);
         this.emit(SELECT_TAB_LAYER, this.selectedTabId)
     }
 

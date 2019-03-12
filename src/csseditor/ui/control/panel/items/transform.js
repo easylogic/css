@@ -1,8 +1,7 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    CHANGE_LAYER_TRANSFORM, 
     CHANGE_EDITOR, 
-    CHANGE_LAYER_ROTATE
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
@@ -63,9 +62,8 @@ export default class Transform extends BasePropertyItem {
     }
 
     [EVENT (
-        CHANGE_LAYER_TRANSFORM,
         CHANGE_EDITOR,
-        CHANGE_LAYER_ROTATE
+        CHANGE_LAYER
     )] () {
         this.refresh()
     }
@@ -96,7 +94,7 @@ export default class Transform extends BasePropertyItem {
                 this.refs['$' + key].val(value);
             }
             layer[key] = value; 
-            editor.send(CHANGE_LAYER_TRANSFORM, layer)
+            editor.send(CHANGE_LAYER, layer)
         }
     }
 

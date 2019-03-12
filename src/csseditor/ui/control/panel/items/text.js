@@ -2,8 +2,8 @@ import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR,
     CHANGE_SELECTION,
-    CHANGE_LAYER_TEXT,
-    TEXT_FILL_COLOR
+    CHANGE_LAYER,
+    // TEXT_FILL_COLOR
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CLICK, INPUT, CHANGE } from "../../../../../util/Event";
@@ -51,7 +51,7 @@ export default class Text extends BasePropertyItem {
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_TEXT
+        CHANGE_LAYER
     )] () {
         this.refresh();
     }
@@ -73,14 +73,14 @@ export default class Text extends BasePropertyItem {
         var layer = editor.selection.layer;
         if (layer) {
             layer.content = this.refs.$content
-            editor.send(CHANGE_LAYER_TEXT, layer)
+            editor.send(CHANGE_LAYER, layer)
         }
     }
 
     [CLICK('$color')] (e) {
         var layer = editor.selection.layer; 
         if (layer) {
-            editor.send(TEXT_FILL_COLOR, layer.id, CHANGE_LAYER_TEXT);
+            // editor.send(TEXT_FILL_COLOR, layer.id, CHANGE_LAYER);
         }
     }
 
@@ -89,7 +89,7 @@ export default class Text extends BasePropertyItem {
         var layer = editor.selection.layer; 
         if (layer) {
             layer.backgroundClip = this.refs.$clip;
-            editor.send(CHANGE_LAYER_TEXT, layer);
+            editor.send(CHANGE_LAYER, layer);
         }
     }
 
@@ -97,7 +97,7 @@ export default class Text extends BasePropertyItem {
         var layer = editor.selection.layer;
         if (layer) {
             layer.clipText = this.refs.$clipText
-            editor.send(CHANGE_LAYER_TEXT, layer);
+            editor.send(CHANGE_LAYER, layer);
         }
     }
 }

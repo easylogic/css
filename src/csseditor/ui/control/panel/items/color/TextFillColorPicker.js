@@ -4,7 +4,7 @@ import UIElement, { EVENT } from '../../../../../../util/UIElement';
 import { 
     CHANGE_EDITOR,
     CHANGE_SELECTION,
-    TEXT_FILL_COLOR
+    // TEXT_FILL_COLOR
 } from '../../../../../types/event';
 
 export default class TextFillColorPicker extends UIElement {
@@ -39,13 +39,13 @@ export default class TextFillColorPicker extends UIElement {
         }
     }
 
-    [EVENT(TEXT_FILL_COLOR)] (id, eventType) {
-        this.changeColorId = id;
-        this.itemType = this.get( id).itemType;
-        this.eventType = eventType;
+    // [EVENT(TEXT_FILL_COLOR)] (id, eventType) {
+    //     this.changeColorId = id;
+    //     this.itemType = this.get( id).itemType;
+    //     this.eventType = eventType;
 
-        this.refresh();
-    }
+    //     this.refresh();
+    // }
 
     [EVENT (
         CHANGE_EDITOR,

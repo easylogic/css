@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR,
     CHANGE_SELECTION,
-    CHANGE_LAYER_TEXT
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import UnitRange from "./element/UnitRange";
@@ -107,7 +107,7 @@ export default class Font extends BasePropertyItem {
     }
 
     [EVENT(
-        CHANGE_LAYER_TEXT,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () {
@@ -115,7 +115,7 @@ export default class Font extends BasePropertyItem {
     }
 
     updateFont(attrs = {}) {
-        editor.selection.updateLayer(CHANGE_LAYER_TEXT, attrs)
+        editor.selection.updateLayer(CHANGE_LAYER, attrs)
     }
 
     updateFontSize (fontSize) {

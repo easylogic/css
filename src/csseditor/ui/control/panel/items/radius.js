@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_RADIUS, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
+import { CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
 import { CHANGEINPUT } from "../../../../../util/Event";
@@ -46,7 +46,7 @@ export default class Radius extends BasePropertyItem {
     }
 
     [ EVENT(
-        CHANGE_LAYER_RADIUS,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }
@@ -106,7 +106,7 @@ export default class Radius extends BasePropertyItem {
                 borderBottomRightRadius: Length.px( this.refs.$bottomRightRadius.val()), 
                 fixedRadius: false 
             })
-            editor.send(CHANGE_LAYER_RADIUS, layer);
+            editor.send(CHANGE_LAYER, layer);
         }
     }
 

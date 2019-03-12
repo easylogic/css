@@ -1628,8 +1628,10 @@ html, body {
       .csseditor .tool-menu .items .icon {
         margin: 0 auto;
         width: 30px;
-        height: 30px;
-        background-color: rgba(206, 206, 206, 0.5); }
+        height: 30px; }
+        .csseditor .tool-menu .items .icon svg {
+          width: 100%;
+          height: 100%; }
         .csseditor .tool-menu .items .icon.rect {
           background-color: transparent;
           border: 1px solid #cccccc; }
@@ -1714,7 +1716,6 @@ html, body {
     top: 0px;
     bottom: 0px;
     overflow: auto;
-    background-color: rgba(199, 199, 199, 0.2);
     border-bottom: 1px solid #cccccc;
     -webkit-box-sizing: border-box;
             box-sizing: border-box; }
@@ -1725,7 +1726,8 @@ html, body {
       border-bottom: 1px solid #cccccc;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      background-color: white; }
+      height: 30px;
+      padding: 5px 10px; }
       .csseditor .project-list-view .project-toolbar > .title {
         -webkit-box-flex: 0;
             -ms-flex: none;
@@ -1763,47 +1765,51 @@ html, body {
         font-weight: bold;
         color: black;
         font-size: 14px;
-        cursor: pointer; }
-    .csseditor .project-list-view .project-list button {
-      display: block;
-      height: 80px;
-      cursor: pointer;
-      position: relative;
-      padding: 5px;
-      text-align: center;
-      border: 0px;
-      pointer-events: all;
-      outline: none; }
-      .csseditor .project-list-view .project-list button.add-project {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        padding: 0px; }
+        .csseditor .project-list-view .project-tools button svg {
+          width: 100%;
+          height: 100%; }
+    .csseditor .project-list-view .project-list {
+      background-color: white; }
+      .csseditor .project-list-view .project-list button {
+        display: block;
+        height: 80px;
+        cursor: pointer;
         position: relative;
-        width: 100%;
-        height: 70px;
-        background-color: transparent;
-        color: white;
-        padding: 10px;
-        background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-        background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-        background-size: 1px 30px, 30px 1px;
-        background-position: center center, center center;
-        background-repeat: no-repeat; }
-    .csseditor .project-list-view .project-list .tree-item {
-      cursor: pointer;
-      position: relative;
-      padding: 10px 10px;
-      vertical-align: top;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
-      .csseditor .project-list-view .project-list .tree-item.selected {
-        background-color: white;
-        border-right: 1px solid white;
-        border-bottom: 1px solid #cccccc; }
-        .csseditor .project-list-view .project-list .tree-item.selected:not(:first-child) {
-          border-top: 1px solid #cccccc; }
-      .csseditor .project-list-view .project-list .tree-item .item-title {
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 12px;
-        pointer-events: none; }
+        padding: 5px;
+        text-align: center;
+        border: 0px;
+        pointer-events: all;
+        outline: none; }
+        .csseditor .project-list-view .project-list button.add-project {
+          position: relative;
+          width: 100%;
+          height: 70px;
+          background-color: transparent;
+          color: white;
+          padding: 10px;
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 30px, 30px 1px;
+          background-position: center center, center center;
+          background-repeat: no-repeat; }
+      .csseditor .project-list-view .project-list .tree-item {
+        cursor: pointer;
+        position: relative;
+        padding: 5px 10px;
+        vertical-align: top;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
+        .csseditor .project-list-view .project-list .tree-item.selected {
+          background-color: #dbf3ff; }
+        .csseditor .project-list-view .project-list .tree-item .item-title {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 12px;
+          pointer-events: none; }
   .csseditor .layer-list-view {
     position: relative;
     -webkit-box-flex: 1;
@@ -1823,7 +1829,9 @@ html, body {
       border-bottom: 1px solid #cccccc;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
-      background-color: white; }
+      background-color: white;
+      height: 30px;
+      padding: 5px 10px; }
       .csseditor .layer-list-view .layer-list-toolbar > .title {
         -webkit-box-flex: 0;
             -ms-flex: none;
@@ -1861,7 +1869,13 @@ html, body {
         font-weight: bold;
         color: black;
         font-size: 14px;
-        cursor: pointer; }
+        cursor: pointer;
+        padding: 0px;
+        width: 18px;
+        height: 18px; }
+        .csseditor .layer-list-view .layer-tools button svg {
+          width: 100%;
+          height: 100%; }
     .csseditor .layer-list-view .layer-list {
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
@@ -1888,36 +1902,51 @@ html, body {
         position: relative;
         overflow: hidden;
         line-height: 1.5;
-        border-left: 5px solid rgba(204, 204, 204, 0.39);
-        padding: 5px 5px;
-        border-bottom: 1px solid rgba(128, 128, 128, 0.15); }
+        padding: 5px 5px; }
         .csseditor .layer-list-view .layer-list .tree-item.image {
           padding-left: 30px; }
         .csseditor .layer-list-view .layer-list .tree-item.selected {
-          border-left-color: #333;
-          background-color: #ececec; }
-          .csseditor .layer-list-view .layer-list .tree-item.selected .item-tools {
-            visibility: visible; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-1 .item-title {
-          padding-left: 0px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-2 .item-title {
-          padding-left: 20px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-3 .item-title {
-          padding-left: 40px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-4 .item-title {
-          padding-left: 60px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-5 .item-title {
-          padding-left: 80px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-6 .item-title {
-          padding-left: 100px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-7 .item-title {
-          padding-left: 120px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-8 .item-title {
-          padding-left: 140px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-9 .item-title {
-          padding-left: 160px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-10 .item-title {
-          padding-left: 180px; }
+          background-color: #dbf3ff; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-1 .item-depth {
+          width: 20px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-2 .item-depth {
+          width: 40px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-3 .item-depth {
+          width: 60px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-4 .item-depth {
+          width: 80px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-5 .item-depth {
+          width: 100px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-6 .item-depth {
+          width: 120px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-7 .item-depth {
+          width: 140px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-8 .item-depth {
+          width: 160px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-9 .item-depth {
+          width: 180px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-10 .item-depth {
+          width: 200px; }
+        .csseditor .layer-list-view .layer-list .tree-item .item-depth {
+          display: inline-block;
+          vertical-align: middle; }
+        .csseditor .layer-list-view .layer-list .tree-item .item-icon {
+          display: inline-block;
+          vertical-align: middle;
+          width: 18px;
+          height: 18px; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon svg {
+            width: 100%;
+            height: 100%; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-icon svg path {
+              fill: #5e5e5e; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon .icon-rect {
+            height: 100%;
+            display: inline-block;
+            width: 100%;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            border: 1px solid #cccccc; }
         .csseditor .layer-list-view .layer-list .tree-item .item-title {
           display: inline-block;
           font-size: 11px;
@@ -1927,58 +1956,30 @@ html, body {
           text-align: right;
           float: right; }
           .csseditor .layer-list-view .layer-list .tree-item .item-tools button {
-            height: 20px;
-            display: inline-block; }
-            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item {
-              width: 15px;
-              height: 15px;
-              background-image: -webkit-gradient(linear, left top, right top, from(#cccccc), to(#cccccc));
-              background-image: linear-gradient(to right, #cccccc, #cccccc);
-              background-size: 10px 10px;
-              background-repeat: no-repeat;
-              background-position: center bottom;
-              position: relative; }
-              .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item.lock {
-                background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
-                background-image: linear-gradient(to right, #333, #333); }
-                .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item.lock:before {
-                  -webkit-transform: rotate(0deg);
-                          transform: rotate(0deg);
-                  background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, #333 2px, #333 4px, transparent 4px, transparent 100%); }
-              .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item:before {
-                content: "";
-                position: absolute;
-                display: block;
-                width: 10px;
-                height: 10px;
-                top: -4px;
-                left: 2px;
-                -webkit-transform: rotate(0deg);
-                        transform: rotate(0deg);
-                -webkit-transform-origin: center bottom;
-                        transform-origin: center bottom;
-                background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, #cccccc 2px, #cccccc 4px, transparent 4px, transparent 100%); }
-            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item {
-              width: 15px !important;
-              height: 15px !important;
-              border-top-left-radius: 0px;
-              border-top-right-radius: 100%;
-              border-bottom-left-radius: 100%;
-              border-bottom-right-radius: 0px;
-              -webkit-transform: rotate(315deg);
-                      transform: rotate(315deg);
-              background-color: rgba(0, 0, 0, 0.1);
-              text-align: center; }
-              .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item:before {
-                background-color: rgba(0, 0, 0, 0.7);
-                border-radius: 100%;
-                vertical-align: middle;
-                display: inline-block;
-                content: '';
-                width: 6px;
-                height: 6px; }
-              .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item:not(.visible):before {
-                background-color: rgba(0, 0, 0, 0.1); }
+            padding: 0px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            height: 18px;
+            width: 18px;
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button svg {
+              width: 100%;
+              height: 100%; }
+              .csseditor .layer-list-view .layer-list .tree-item .item-tools button svg path {
+                fill: #5e5e5e; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item svg path {
+              fill: rgba(94, 94, 94, 0.3); }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item.lock svg path {
+              fill: #5e5e5e; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item svg path {
+              fill: rgba(94, 94, 94, 0.3); }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item.visible svg path {
+              fill: #5e5e5e; }
   .csseditor .layer-toolbar {
     position: absolute;
     z-index: 5;
@@ -3519,7 +3520,9 @@ html, body {
       left: -10000px;
       top: -10000px;
       width: 0px;
-      height: 0px; }
+      height: 0px;
+      -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+              box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); }
       .csseditor .page-view .item-resizer.artboard button[data-value='move'] {
         display: none; }
       .csseditor .page-view .item-resizer button {

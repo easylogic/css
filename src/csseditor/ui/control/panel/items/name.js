@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_LAYER_NAME, CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_LAYER, CHANGE_EDITOR } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
 import { EMPTY_STRING } from "../../../../../util/css/types";
@@ -52,7 +52,7 @@ export default class Name extends BasePropertyItem {
         var layer = editor.selection.layer;
         if (layer) {
             layer.name = this.refs.$name.val()
-            this.commit(CHANGE_LAYER_NAME , layer);
+            this.commit(CHANGE_LAYER , layer);
         }
     }
 
@@ -60,7 +60,7 @@ export default class Name extends BasePropertyItem {
         var layer = editor.selection.layer;
         if (layer) {
             layer.className = this.refs.$class.val()
-            editor.send(CHANGE_LAYER_NAME, layer);
+            editor.send(CHANGE_LAYER, layer);
         }
     }    
 
@@ -68,7 +68,7 @@ export default class Name extends BasePropertyItem {
         var layer = editor.selection.layer;
         if (layer) {
             layer.idString = this.refs.$id.val()
-            editor.send(CHANGE_LAYER_NAME , layer);
+            editor.send(CHANGE_LAYER , layer);
         }
     }        
 }

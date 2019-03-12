@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from "../../../../../util/UIElement";
-import { CHANGE_PAGE_NAME, CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION } from "../../../../types/event";
+import { CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { editor } from "../../../../../editor/editor";
 
@@ -21,8 +21,7 @@ export default class PageName extends UIElement {
 
     [EVENT(
         CHANGE_EDITOR,
-        CHANGE_PAGE_NAME,
-        CHANGE_PAGE,
+        CHANGE_ARTBOARD,
         CHANGE_SELECTION
     )] () {
         this.refresh()
@@ -36,7 +35,7 @@ export default class PageName extends UIElement {
     }
 
     [INPUT('$name')] () {
-        editor.selection.updateArtBoard(CHANGE_PAGE_NAME, {
+        editor.selection.updateArtBoard(CHANGE_ARTBOARD, {
             name: this.refs.$name.val()
         })
     }

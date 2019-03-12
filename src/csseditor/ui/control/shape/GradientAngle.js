@@ -1,6 +1,6 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_EDITOR, CHANGE_IMAGE_ANGLE, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE_LINEAR_ANGLE } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
 import { editor } from '../../../../editor/editor';
 
@@ -96,13 +96,12 @@ export default class GradientAngle extends UIElement {
         var image = editor.selection.backgroundImage;
         if (image) {
             image.image.angle = angle; 
-            editor.send(CHANGE_IMAGE_ANGLE, image.image)
+            editor.send(CHANGE_IMAGE, image.image)
         }
     }
 
     [EVENT(
-        CHANGE_IMAGE_LINEAR_ANGLE,
-        CHANGE_IMAGE_ANGLE,
+        CHANGE_IMAGE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

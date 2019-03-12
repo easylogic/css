@@ -2,7 +2,7 @@ import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION,
-    CHANGE_LAYER_ROTATE,
+    CHANGE_LAYER,
     CHANGE_TOOL
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
@@ -53,12 +53,12 @@ export default class PredefinedLayerAngle extends UIElement {
         var layer = editor.selection.layer; 
         if (layer) {
             layer.rotate = DEFINED_ANGLES[e.$delegateTarget.attr('data-value')];
-            editor.send(CHANGE_LAYER_ROTATE, layer)
+            editor.send(CHANGE_LAYER, layer)
         }
     }
 
     [EVENT(
-        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
         CHANGE_TOOL

@@ -1,9 +1,7 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_MOVE,
-    CHANGE_LAYER_POSITION, 
+    CHANGE_LAYER, 
     CHANGE_SELECTION
 } from '../../../types/event';
 import { LOAD } from '../../../../util/Event';
@@ -56,9 +54,7 @@ export default class MoveGuide extends UIElement {
     }
 
     [EVENT(
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_MOVE,
-        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

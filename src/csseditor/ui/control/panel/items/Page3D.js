@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from "../../../../../util/UIElement";
-import { CHANGE_EDITOR, CHANGE_PAGE, CHANGE_SELECTION, CHANGE_PAGE_TRANSFORM } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_ARTBOARD, CHANGE_SELECTION } from "../../../../types/event";
 import { CLICK, INPUT, CHANGEINPUT } from "../../../../../util/Event";
 import { defaultValue } from "../../../../../util/functions/func";
 import { editor } from "../../../../../editor/editor";
@@ -45,7 +45,7 @@ export default class Page3D extends UIElement {
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_PAGE_TRANSFORM
+        CHANGE_ARTBOARD
     )] () {
         this.refresh()
     }
@@ -72,7 +72,7 @@ export default class Page3D extends UIElement {
         var artboard = editor.selection.artboard;
         if (artboard) {      
             artboard.preserve = this.refs.$preserve;
-            editor.send(CHANGE_PAGE, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }
 
@@ -82,7 +82,7 @@ export default class Page3D extends UIElement {
             var value = this.refs.$perspective.val();
             artboard.perspective = Length.px(+value);
             this.refs.$perspectiveRange.val(value)
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }
 
@@ -92,7 +92,7 @@ export default class Page3D extends UIElement {
             var value = this.refs.$perspectiveRange.val();
             artboard.perspective = Length.px(+value);
             this.refs.$perspective.val(value)
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }    
 
@@ -102,7 +102,7 @@ export default class Page3D extends UIElement {
             var value = this.refs.$x.val()
             artboard.perspectiveOriginPositionX = Length.percent(+value);
             this.refs.$xRange.val(value);
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }    
 
@@ -112,7 +112,7 @@ export default class Page3D extends UIElement {
             var value = this.refs.$xRange.val();
             this.refs.$x.val(value);            
             artboard.perspectiveOriginPositionX = Length.percent(+value);
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }        
 
@@ -123,7 +123,7 @@ export default class Page3D extends UIElement {
             var value = this.refs.$y.val();
             artboard.perspectiveOriginPositionY = Length.percent(+value);
             this.refs.$yRange.val(value);
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }        
 
@@ -134,7 +134,7 @@ export default class Page3D extends UIElement {
             var value = this.refs.$yRange.val();
             this.refs.$y.val(value);
             artboard.perspectiveOriginPositionY = Length.percent(value);
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }        
     }            
 }

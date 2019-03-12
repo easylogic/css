@@ -2,6 +2,9 @@ import { Item } from "./Item";
 import { EMPTY_STRING } from "../util/css/types";
 import { CSS_TO_STRING, CSS_SORTING } from "../util/css/make";
 import { Length } from "./unit/Length";
+import { Directory } from "./Directory";
+
+
 
 export class ArtBoard extends Item {
 
@@ -54,6 +57,34 @@ export class ArtBoard extends Item {
     get layers () {
         return this.search({itemType: 'layer'})
     }        
+
+
+    traverse (item, results) {
+        if (item.isAttribute()) return; 
+        results.push(item);
+
+        item.children.forEach(child => {
+            this.traverse(child, results);
+        })
+    }
+
+    tree () {
+        var results = [] 
+        
+        this.children.forEach(item => {
+            this.traverse(item, results);
+        })
+
+        return results
+    }
+
+    get allDirectories () {
+        return this.tree().filter(it => it.itemType == 'directory'); 
+    }
+
+    get allLayers () {
+        return this.tree().filter(it => it.itemType != 'directory'); 
+    }
 
     get texts () {
         return this.search({itemType: 'layer', type: 'text'})

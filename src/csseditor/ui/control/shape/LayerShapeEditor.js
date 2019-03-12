@@ -3,11 +3,7 @@ import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER, 
-    CHANGE_LAYER_CLIPPATH, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_ROTATE 
+    CHANGE_LAYER
 } from '../../../types/event';
 import { editor } from '../../../../editor/editor';
 
@@ -68,10 +64,6 @@ export default class LayerShapeEditor extends UIElement {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_POSITION,
-        CHANGE_LAYER_CLIPPATH,
-        CHANGE_LAYER_ROTATE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

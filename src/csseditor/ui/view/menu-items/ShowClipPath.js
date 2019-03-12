@@ -1,6 +1,6 @@
 import MenuItem from "./MenuItem";
 import { EVENT } from "../../../../util/UIElement";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_CLIPPATH } from "../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { editor } from "../../../../editor/editor";
 
@@ -14,7 +14,7 @@ export default class ShowClipPath extends MenuItem {
 
         editor.selection.layers.forEach(item => {
             item.showClipPathEditor = !item.showClipPathEditor
-            this.emit(CHANGE_LAYER_CLIPPATH)
+            this.emit(CHANGE_LAYER)
             this.refresh();            
         })
 

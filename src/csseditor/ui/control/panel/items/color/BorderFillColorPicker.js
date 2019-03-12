@@ -4,7 +4,7 @@ import UIElement, { EVENT } from '../../../../../../util/UIElement';
 import { 
     CHANGE_EDITOR,
     CHANGE_SELECTION,
-    CHANGE_LAYER_BORDER
+    CHANGE_LAYER
 } from '../../../../../types/event';
 import { SELECTION_CURRENT_LAYER_ID, SELECTION_CURRENT_LAYER, SELECTION_IS_LAYER } from '../../../../../types/SelectionTypes';
 
@@ -13,7 +13,7 @@ export default class BorderFillColorPicker extends UIElement {
     initialize() {
         super.initialize();
 
-        this.eventType = CHANGE_LAYER_BORDER
+        this.eventType = CHANGE_LAYER
         this.eventKey = 'borderColor'
     }
 
@@ -49,7 +49,7 @@ export default class BorderFillColorPicker extends UIElement {
 
     
     [EVENT (
-        CHANGE_LAYER_BORDER,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    

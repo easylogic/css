@@ -1,9 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR, 
-    CHANGE_LAYER, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_BORDER
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CLICK } from "../../../../../util/Event";
@@ -30,7 +29,6 @@ export default class BorderColorFixed extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_BORDER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    

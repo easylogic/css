@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_BORDER } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../../types/event";
 import {  UNIT_PX } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
 import { CHANGEINPUT } from "../../../../../util/Event";
@@ -47,7 +47,7 @@ export default class BorderWidth extends BasePropertyItem {
     }
 
     [ EVENT(
-        CHANGE_LAYER_BORDER,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }
@@ -92,7 +92,7 @@ export default class BorderWidth extends BasePropertyItem {
     }
 
     refreshValue () {
-        editor.selection.updateLayer(CHANGE_LAYER_BORDER, { 
+        editor.selection.updateLayer(CHANGE_LAYER, { 
             borderTopWidth: Length.px( this.refs.$topWidth.val()), 
             borderRightWidth: Length.px( this.refs.$rightWidth.val()), 
             borderLeftWidth: Length.px( this.refs.$leftWidth.val()), 

@@ -2,7 +2,7 @@ import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_PAGE_TRANSFORM 
+    CHANGE_ARTBOARD 
 } from '../../../types/event';
 import { EMPTY_STRING, POSITION_CENTER, POSITION_RIGHT, POSITION_TOP, POSITION_LEFT, POSITION_BOTTOM, WHITE_STRING } from '../../../../util/css/types';
 import { POINTERSTART, DOUBLECLICK, MOVE } from '../../../../util/Event';
@@ -147,12 +147,12 @@ export default class PerspectiveOriginPosition extends UIElement {
                 perspectiveOriginPositionY
             })
 
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }
 
     [EVENT(
-        CHANGE_PAGE_TRANSFORM,
+        CHANGE_ARTBOARD,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { 

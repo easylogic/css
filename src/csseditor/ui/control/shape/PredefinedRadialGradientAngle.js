@@ -1,7 +1,6 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_IMAGE_RADIAL_POSITION, CHANGE_IMAGE_RADIAL_TYPE, CHANGE_EDITOR, CHANGE_SELECTION } from '../../../types/event';
+import { CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION } from '../../../types/event';
 import { CLICK, CHANGE } from '../../../../util/Event';
-import { Length } from '../../../../editor/unit/Length';
 import { editor } from '../../../../editor/editor';
 
 
@@ -35,8 +34,7 @@ export default class PredefinedRadialGradientAngle extends UIElement {
     }
 
     [EVENT(
-        CHANGE_IMAGE_RADIAL_POSITION,
-        CHANGE_IMAGE_RADIAL_TYPE,
+        CHANGE_IMAGE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -45,7 +43,7 @@ export default class PredefinedRadialGradientAngle extends UIElement {
         var image = editor.selection.backgroundImage; 
         if (image) {
             image.image.radialType = this.refs.$select.val();
-            editor.send(CHANGE_IMAGE_RADIAL_TYPE, image)
+            editor.send(CHANGE_IMAGE, image)
         };
 
     }
@@ -54,7 +52,7 @@ export default class PredefinedRadialGradientAngle extends UIElement {
         var image = editor.selection.backgroundImage; 
         if (image) {
             image.image.radialPosition = Position.CENTER
-            editor.send(CHANGE_IMAGE_RADIAL_POSITION, image)
+            editor.send(CHANGE_IMAGE, image)
         }
     }
 }

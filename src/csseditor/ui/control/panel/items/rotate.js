@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_ROTATE } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../../types/event";
 import { INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
 import { editor } from "../../../../../editor/editor";
@@ -23,7 +23,6 @@ export default class Rotate extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_ROTATE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -46,7 +45,7 @@ export default class Rotate extends BasePropertyItem {
                 layer.rotate = this.refs.$rotateRange
                 this.refs.$rotate.val(layer.rotate)
             }
-            editor.send(CHANGE_LAYER_ROTATE, layer)
+            editor.send(CHANGE_LAYER, layer)
         }
     }
 

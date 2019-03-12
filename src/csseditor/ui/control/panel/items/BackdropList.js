@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_BACKDROP_FILTER } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { CLICK, INPUT, CHANGEINPUT, LOAD } from "../../../../../util/Event";
@@ -110,10 +110,6 @@ export default class BackdropList extends BasePropertyItem {
         Object.keys(obj).filter(key => key.includes('backdrop')).forEach(key => {
             console.log(key);
         })
-    }
-
-    [EVENT(CHANGE_LAYER_BACKDROP_FILTER)] (obj) {
-        this.refreshFilter(obj);
     }
 
     [EVENT(

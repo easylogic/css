@@ -1,10 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    CHANGE_LAYER_TRANSFORM, 
     CHANGE_EDITOR, 
-    CHANGE_LAYER, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_OPACITY
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { INPUT } from "../../../../../util/Event";
@@ -29,7 +27,6 @@ export default class Opacity extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_OPACITY,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -53,7 +50,7 @@ export default class Opacity extends BasePropertyItem {
                 this.refs.$opacity.val(opacity)
             }
             layer.opacity = opacity;                   
-            editor.send(CHANGE_LAYER_TRANSFORM, layer)            
+            editor.send(CHANGE_LAYER, layer)            
             
         }
     }

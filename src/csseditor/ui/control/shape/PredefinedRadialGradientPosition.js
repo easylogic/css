@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_EDITOR, CHANGE_IMAGE_RADIAL_POSITION, CHANGE_SELECTION, CHANGE_TOOL } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_IMAGE, CHANGE_SELECTION, CHANGE_TOOL } from '../../../types/event';
 import { CLICK } from '../../../../util/Event';
 import { editor } from '../../../../editor/editor';
 
@@ -20,7 +20,7 @@ export default class PredefinedRadialGradientPosition extends UIElement {
         var image = editor.selection.backgroundImage
         if (image) {
             image.radialPosition = e.$delegateTarget.attr('data-value')
-            editor.send(CHANGE_IMAGE_RADIAL_POSITION, image);
+            editor.send(CHANGE_IMAGE, image);
         }
     }
 
@@ -39,7 +39,7 @@ export default class PredefinedRadialGradientPosition extends UIElement {
     }
 
     [EVENT(
-        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
         CHANGE_TOOL

@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_EDITOR, CHANGE_PAGE_SIZE, CHANGE_SELECTION } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_ARTBOARD, CHANGE_SELECTION } from '../../../types/event';
 import { POINTERSTART, MOVE, END } from '../../../../util/Event';
 import { RESIZE_WINDOW } from '../../../types/ToolTypes';
 import { keyEach } from '../../../../util/functions/func';
@@ -55,7 +55,7 @@ export default class PredefinedPageResizer extends UIElement {
     }
 
     [EVENT(
-        CHANGE_PAGE_SIZE,
+        CHANGE_ARTBOARD,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -70,7 +70,7 @@ export default class PredefinedPageResizer extends UIElement {
 
         var page = editor.selection.currentArtBoard
         page.reset(style);
-        editor.send(CHANGE_PAGE_SIZE, page)
+        editor.send(CHANGE_ARTBOARD, page)
         editor.send(RESIZE_WINDOW)
         this.refresh();
     }

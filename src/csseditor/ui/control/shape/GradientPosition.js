@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
-    CHANGE_IMAGE_RADIAL_POSITION, 
+    CHANGE_IMAGE, 
     CHANGE_SELECTION 
 } from '../../../types/event';
 import { EMPTY_STRING, WHITE_STRING } from '../../../../util/css/types';
@@ -145,12 +145,12 @@ export default class GradientPosition extends UIElement {
         var image = editor.selection.backgroundImage; 
         if (image) {
             image.image.radialPosition = radialPosition
-            editor.send(CHANGE_IMAGE_RADIAL_POSITION, image.image);
+            editor.send(CHANGE_IMAGE, image.image);
         }
     }
 
     [EVENT(
-        CHANGE_IMAGE_RADIAL_POSITION,
+        CHANGE_IMAGE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { 

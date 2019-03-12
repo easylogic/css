@@ -46,7 +46,7 @@ export default class ImageTabView extends BaseTab {
 
     onTabShow () {
         this.load()
-        editor.config.get('tool.tabs.image.selectedId', this.selectedTabId);        
+        editor.config.set('tool.tabs.image.selectedId', this.selectedTabId);        
         this.emit(SELECT_TAB_IMAGE, this.selectedTabId)
     }
 

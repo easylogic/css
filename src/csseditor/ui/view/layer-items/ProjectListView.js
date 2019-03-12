@@ -1,10 +1,10 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, SELF } from "../../../../util/Event";
-import { CHANGE_PAGE, CHANGE_EDITOR, CHANGE_SELECTION} from "../../../types/event";
+import { CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION} from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { editor } from "../../../../editor/editor";
-import { ArtBoard } from "../../../../editor/ArtBoard";
 import { Project } from "../../../../editor/Project";
+import icon from "../../icon/icon";
 
 export default class ProjectListView extends UIElement {
 
@@ -15,7 +15,7 @@ export default class ProjectListView extends UIElement {
                 <span class='title'>Project</span>
                 <span class='project-tools'>
                     <div class="button-group">
-                        <button type="button" ref="$addProject">+</button>
+                        <button type="button" ref="$addProject">${icon.add}</button>
                     </div>
                 </span>
             </div>
@@ -25,9 +25,8 @@ export default class ProjectListView extends UIElement {
 
     makeItemNodeProject (project) {
         var selected = project.selected ? 'selected' : EMPTY_STRING; 
-        var title = project.title
         return `<div class='tree-item ${selected}' id="${project.id}" type='project'>
-            <div class="item-title">${title}</div>   
+            <div class="item-title">${project.title}</div>   
         </div>`
     }
 
@@ -42,7 +41,7 @@ export default class ProjectListView extends UIElement {
     }
 
     [EVENT(
-        CHANGE_PAGE,
+        CHANGE_ARTBOARD,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () {

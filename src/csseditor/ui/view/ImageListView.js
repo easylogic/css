@@ -2,12 +2,7 @@ import UIElement, { EVENT } from '../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
     CHANGE_IMAGE, 
-    CHANGE_IMAGE_ANGLE, 
-    CHANGE_IMAGE_COLOR, 
-    CHANGE_IMAGE_RADIAL_POSITION, 
-    CHANGE_IMAGE_RADIAL_TYPE, 
-    CHANGE_IMAGE_LINEAR_ANGLE, 
-    CHANGE_COLOR_STEP, 
+    CHANGE_COLORSTEP, 
     CHANGE_SELECTION 
 } from '../../types/event';
 import { CLICK, DRAGSTART, DRAGEND, DRAGOVER, DROP, SELF, LOAD } from '../../../util/Event';
@@ -48,12 +43,7 @@ export default class ImageListView extends UIElement {
     // individual effect
     [EVENT(
         CHANGE_IMAGE,
-        CHANGE_IMAGE_ANGLE,
-        CHANGE_IMAGE_COLOR,
-        CHANGE_IMAGE_LINEAR_ANGLE,
-        CHANGE_IMAGE_RADIAL_POSITION,
-        CHANGE_IMAGE_RADIAL_TYPE,
-        CHANGE_COLOR_STEP,
+        CHANGE_COLORSTEP,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] (newValue) { this.refresh() }

@@ -1,7 +1,10 @@
 import MenuItem from "./MenuItem";
+import icon from "../../icon/icon";
 
 export default class Redo extends MenuItem {
-    getIcon() { return 'redo'; }
+    getIconString() {
+        return icon.redo
+    }
     getTitle () { return 'Redo'; }
 
     clickButton (e) {

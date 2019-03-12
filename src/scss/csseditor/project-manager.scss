@@ -12,7 +12,6 @@ $layer-item-padding: 4px;
     top: 0px;
     bottom: 0px;
     overflow: auto;
-    background-color: rgba(#c7c7c7, 0.2);
     border-bottom: 1px solid $border-color;
     box-sizing: border-box; 
     
@@ -20,7 +19,8 @@ $layer-item-padding: 4px;
         display: flex;
         border-bottom: 1px solid $border-color;
         box-sizing: border-box; 
-        background-color: white;         
+        height: 30px;      
+        padding:5px 10px;
 
         > .title {
             flex:none;
@@ -28,7 +28,7 @@ $layer-item-padding: 4px;
             width:100px;
             font-size: 12px;
             box-sizing: border-box;
-            padding:2px 5px;
+            padding:2px 0px;
 
         }
 
@@ -56,13 +56,21 @@ $layer-item-padding: 4px;
             font-weight: bold;
             color: black;
             font-size: 14px;
-            cursor: pointer;            
+            cursor: pointer;       
+            width: 18px;
+            height: 18px;
+            padding: 0px;
+            
+            svg {
+                width: 100%;
+                height: 100%;
+            }
         }
     }
 
     .project-list {
 
-        
+        background-color: white; 
         button {
             display:block;
             height: 80px;
@@ -93,18 +101,13 @@ $layer-item-padding: 4px;
         .tree-item {
             cursor: pointer;
             position: relative;
-            padding: 10px 10px;     
+            padding: 5px 10px;     
             vertical-align: top;    
             box-sizing: border-box;   
 
-            &.selected {
-                background-color: white;
-                border-right: 1px solid white;
-                border-bottom: 1px solid $border-color; 
 
-                &:not(:first-child) {
-                    border-top: 1px solid $border-color; 
-                }
+            &.selected {
+                background-color: $item-selected-color;
             }
 
             .item-title {

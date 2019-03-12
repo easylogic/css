@@ -1,13 +1,13 @@
 import BasePropertyItem from "./BasePropertyItem";
 import Dom from "../../../../../util/Dom";
 import { parseParamNumber } from "../../../../../util/filter/functions";
-import { CHANGE_LAYER, CHANGE_LAYER_CLIPPATH, CHANGE_SELECTION, CHANGE_SVG_LIST } from "../../../../types/event";
+import { CHANGE_LAYER, CHANGE_SELECTION, CHANGE_SVG_LIST } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue, isObject } from "../../../../../util/functions/func";
 import { CLICK, LOAD } from "../../../../../util/Event";
 import { SELECTION_CURRENT_LAYER, SELECTION_CURRENT_LAYER_ID } from "../../../../types/SelectionTypes";
 import { EMPTY_STRING, WHITE_STRING } from "../../../../../util/css/types";
-import { SVG_LIST, SVG_GET } from "../../../../types/SVGTypes";
+import { SVG_GET } from "../../../../types/SVGTypes";
 import { CLIP_PATH_IS_SVG } from "../../../../../util/css/make";
 
 export default class ClipPathSVG extends BasePropertyItem {
@@ -76,14 +76,13 @@ export default class ClipPathSVG extends BasePropertyItem {
     [CLICK('$fit')] () {
         this.read(SELECTION_CURRENT_LAYER, (layer) => {
 
-            this.commit(CHANGE_LAYER_CLIPPATH, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
+            this.commit(CHANGE_LAYER, {id: layer.id, fitClipPathSize: this.refs.$fit.checked()})
             this.refresh();            
         })
     }
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_CLIPPATH,
         CHANGE_SELECTION
     )] (value) {
         this.refresh();

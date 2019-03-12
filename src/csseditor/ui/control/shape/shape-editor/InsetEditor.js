@@ -2,10 +2,7 @@ import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_CLIPPATH, 
-    CHANGE_LAYER, 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_SIZE 
+    CHANGE_LAYER 
 } from "../../../../types/event";
 import { defaultValue } from "../../../../../util/functions/func";
 import { POINTERSTART, MOVE, END } from "../../../../../util/Event";
@@ -141,7 +138,7 @@ export default class InsetEditor extends UIElement {
             bottom: Length.px(height - defaultValue(this.bottompos, height)).toPercent(height)
         })
 
-        this.emit(CHANGE_LAYER_CLIPPATH, item);
+        this.emit(CHANGE_LAYER, item);
 
         this.refreshPointer();
     }
@@ -149,9 +146,6 @@ export default class InsetEditor extends UIElement {
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_POSITION,        
-        CHANGE_LAYER_CLIPPATH,
         CHANGE_LAYER
     )] () {
         this.cachedRectangle = null;

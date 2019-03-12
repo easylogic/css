@@ -3,12 +3,7 @@ import {
     CHANGE_EDITOR, 
     CHANGE_SELECTION,
     CHANGE_IMAGE,
-    CHANGE_IMAGE_COLOR,
-    CHANGE_IMAGE_ANGLE,
-    CHANGE_IMAGE_LINEAR_ANGLE,
-    CHANGE_IMAGE_RADIAL_POSITION,
-    CHANGE_IMAGE_RADIAL_TYPE,
-    CHANGE_COLOR_STEP,
+    CHANGE_COLORSTEP,
     SELECT_TAB_IMAGE
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
@@ -56,12 +51,7 @@ export default class BackgroundCode extends BasePropertyItem {
 
     [EVENT(
         CHANGE_IMAGE,
-        CHANGE_IMAGE_COLOR,
-        CHANGE_IMAGE_ANGLE,
-        CHANGE_IMAGE_LINEAR_ANGLE,
-        CHANGE_IMAGE_RADIAL_POSITION,
-        CHANGE_IMAGE_RADIAL_TYPE,
-        CHANGE_COLOR_STEP,
+        CHANGE_COLORSTEP,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
         SELECT_TAB_IMAGE

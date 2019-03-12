@@ -1,5 +1,5 @@
 import BasePropertyItem from "./BasePropertyItem";
-import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_LAYER_FILTER } from "../../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { unitString, isColorUnit, unitValue, EMPTY_STRING } from "../../../../../util/css/types";
 import { FILTER_DEFAULT_OBJECT } from "../../../../types/ItemTypes";
@@ -7,7 +7,6 @@ import { CHANGEINPUT, INPUT, CLICK, LOAD } from "../../../../../util/Event";
 import { isUndefined, html } from "../../../../../util/functions/func";
 import { SELECTION_CURRENT_LAYER } from "../../../../types/SelectionTypes";
 import { FILTER_GET, FILTER_LIST } from "../../../../types/FilterTypes";
-import { editor } from "../../../../../editor/editor";
 
 const DROPSHADOW_FILTER_KEYS = [
     'filterDropshadowOffsetX',
@@ -111,7 +110,6 @@ export default class FilterList extends BasePropertyItem {
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_FILTER,
         CHANGE_LAYER
     )] () {
         this.refresh()
@@ -133,7 +131,7 @@ export default class FilterList extends BasePropertyItem {
             var value = layer[key] || {...FILTER_DEFAULT_OBJECT[key]};
             value.value = lastValue 
 
-            this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
+            this.commit(CHANGE_LAYER, {id, [key]: value })
         });
     }
 
@@ -143,7 +141,7 @@ export default class FilterList extends BasePropertyItem {
             var value = layer[key] || {...FILTER_DEFAULT_OBJECT[key]};
             value.checked = checked 
 
-            this.commit(CHANGE_LAYER_FILTER, {id, [key]: value })
+            this.commit(CHANGE_LAYER, {id, [key]: value })
         });
     }
 

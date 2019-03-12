@@ -2,7 +2,7 @@ import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION,
-    CHANGE_LAYER_TRANSFORM
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { UNIT_DEG, UNIT_PX, EMPTY_STRING } from "../../../../../util/css/types";
 import { EVENT } from "../../../../../util/UIElement";
@@ -94,7 +94,7 @@ export default class Transform3d extends BasePropertyItem {
     }
 
     [EVENT(
-        CHANGE_LAYER_TRANSFORM,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () {
@@ -107,7 +107,7 @@ export default class Transform3d extends BasePropertyItem {
         var layer = editor.selection.layer; 
         if (layer) {
             layer.preserve = this.refs.$preserve;
-            editor.send(CHANGE_LAYER_TRANSFORM, layer);
+            editor.send(CHANGE_LAYER, layer);
         }
     }    
 
@@ -144,7 +144,7 @@ export default class Transform3d extends BasePropertyItem {
                 this.refs['$' + key].val(value);
             }
             layer[key] = value; 
-            editor.send(CHANGE_LAYER_TRANSFORM)
+            editor.send(CHANGE_LAYER)
         }
     } 
 

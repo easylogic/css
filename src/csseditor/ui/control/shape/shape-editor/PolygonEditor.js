@@ -2,12 +2,7 @@ import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_CLIPPATH, 
-    CHANGE_LAYER, 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_CLIPPATH_POLYGON, 
-    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EMPTY_STRING } from "../../../../../util/css/types";
 import { CLICK, POINTERSTART, ALT, CAPTURE, LOAD, MOVE } from "../../../../../util/Event";
@@ -117,18 +112,13 @@ export default class PolygonEditor extends UIElement {
 
 
 
-        this.emit(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION);
+        this.emit(CHANGE_LAYER);
     }
 
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_POSITION,        
-        CHANGE_LAYER_CLIPPATH,
-        CHANGE_LAYER,
-        CHANGE_LAYER_CLIPPATH_POLYGON,
-        CHANGE_LAYER_CLIPPATH_POLYGON_POSITION
+        CHANGE_LAYER
     )] () {
         this.refresh()
     }
@@ -166,7 +156,7 @@ export default class PolygonEditor extends UIElement {
             var clippath = layer.clippath; 
             clippath.points.push(point);
 
-            this.emit(CHANGE_LAYER_CLIPPATH_POLYGON, layer);
+            this.emit(CHANGE_LAYER, layer);
             this.refresh();
         }
     }
@@ -181,7 +171,7 @@ export default class PolygonEditor extends UIElement {
         if (!clippath.isPolygon()) return;
 
         clippath.points.splice(index, 1);
-        this.emit(CHANGE_LAYER_CLIPPATH_POLYGON) 
+        this.emit(CHANGE_LAYER) 
         this.refresh();
     } 
 

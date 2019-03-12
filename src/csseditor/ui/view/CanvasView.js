@@ -8,42 +8,18 @@ import SubFeatureControl from '../control/SubFeatureControl';
 import { 
     CHANGE_EDITOR, 
     CHANGE_LAYER, 
-    CHANGE_LAYER_BACKGROUND_COLOR, 
-    CHANGE_LAYER_CLIPPATH, 
-    CHANGE_LAYER_FILTER, 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_RADIUS, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_TRANSFORM, 
     CHANGE_IMAGE, 
-    CHANGE_IMAGE_COLOR, 
-    CHANGE_IMAGE_RADIAL_POSITION, 
-    CHANGE_IMAGE_RADIAL_TYPE, 
-    CHANGE_LAYER_TRANSFORM_3D, 
-    CHANGE_IMAGE_ANGLE, 
-    CHANGE_IMAGE_LINEAR_ANGLE, 
-    CHANGE_COLOR_STEP, 
-    CHANGE_PAGE_SIZE, 
-    CHANGE_PAGE, 
-    CHANGE_LAYER_MOVE, 
-    CHANGE_LAYER_ROTATE,
-    CHANGE_LAYER_OPACITY,
+    CHANGE_COLORSTEP, 
+    CHANGE_ARTBOARD, 
     CHANGE_BOXSHADOW,
     CHANGE_TEXTSHADOW,
-    CHANGE_LAYER_TEXT,
-    CHANGE_LAYER_BACKDROP_FILTER,
-    CHANGE_LAYER_CLIPPATH_POLYGON,
-    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    CHANGE_PAGE_TRANSFORM,
-    CHANGE_PAGE_NAME,
-    CHANGE_LAYER_BORDER,
     CHANGE_SELECTION
 } from '../../types/event';
 import { EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE } from '../../../util/css/types';
-import { LOAD, POINTERSTART, MOVE, END, SELF, STOP, IF, PREVENT } from '../../../util/Event';
+import { LOAD, POINTERSTART, MOVE, END, SELF } from '../../../util/Event';
 import { editor } from '../../../editor/editor';
 import { Length } from '../../../editor/unit/Length';
-import { html, isUndefined } from '../../../util/functions/func';
+import { html } from '../../../util/functions/func';
 import { ArtBoard } from '../../../editor/ArtBoard';
 import { Layer } from '../../../editor/Layer';
 import { ItemPositionCalc } from '../../../editor/ItemPositionCalc';
@@ -203,7 +179,7 @@ export default class CanvasView extends UIElement {
         var list = project.artboards;
 
         return list.map( (artboard ) => {
-            return artboard.layers.map(layer => {
+            return artboard.allLayers.map(layer => {
                 return this.makeLayer(layer)
             })
         });
@@ -354,9 +330,9 @@ export default class CanvasView extends UIElement {
         this.setItemResizer();
 
         if (editor.selection.current instanceof ArtBoard) {
-            this.emit(CHANGE_PAGE_SIZE);
+            this.emit(CHANGE_ARTBOARD);
         } else {
-            this.emit(CHANGE_LAYER_SIZE)
+            this.emit(CHANGE_LAYER)
         }
 
     }
@@ -379,16 +355,15 @@ export default class CanvasView extends UIElement {
     moveArtBoard () {
        this.movePosition();
        this.refreshLayerPosition(this.item);       
-       editor.send(CHANGE_PAGE_TRANSFORM, this.item, this);       
+       editor.send(CHANGE_ARTBOARD, this.item, this);       
     }
 
     moveLayer () {
         this.movePosition();   
-        editor.send(CHANGE_LAYER_POSITION, this.item, this);
+        editor.send(CHANGE_LAYER, this.item, this);
     }    
     
     refreshLayer () {
-        console.log('refreshLayer')
         editor.selection.layers.forEach(item => {
             var $el = this.getCachedLayerElement(item.id); 
 
@@ -425,48 +400,17 @@ export default class CanvasView extends UIElement {
     }
 
     [EVENT(
-        CHANGE_PAGE_SIZE,
-        CHANGE_PAGE,
-        CHANGE_PAGE_TRANSFORM
+        CHANGE_ARTBOARD
     )] () { this.setBackgroundColor(); }
 
-    [EVENT(CHANGE_PAGE_NAME)] () {
-        this.setBackgroundColor();
-    }
-
-    [EVENT(
-        CHANGE_LAYER_POSITION,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_MOVE,        
-    )] () {
-        this.refreshLayer();
-    }
 
     // indivisual layer effect 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_BACKGROUND_COLOR,
-        CHANGE_LAYER_CLIPPATH,
-        CHANGE_LAYER_FILTER,
-        CHANGE_LAYER_BACKDROP_FILTER,
-        CHANGE_LAYER_RADIUS,
-        CHANGE_LAYER_BORDER,
-        CHANGE_LAYER_ROTATE,
-        CHANGE_LAYER_OPACITY,
-        CHANGE_LAYER_TRANSFORM,
-        CHANGE_LAYER_TRANSFORM_3D,
-        CHANGE_LAYER_TEXT,
-        CHANGE_LAYER_CLIPPATH_POLYGON,
-        CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
         CHANGE_BOXSHADOW,
         CHANGE_TEXTSHADOW,
         CHANGE_IMAGE,
-        CHANGE_IMAGE_COLOR,
-        CHANGE_IMAGE_ANGLE,
-        CHANGE_IMAGE_LINEAR_ANGLE,
-        CHANGE_IMAGE_RADIAL_POSITION,   
-        CHANGE_IMAGE_RADIAL_TYPE,
-        CHANGE_COLOR_STEP
+        CHANGE_COLORSTEP
     )]() { 
         this.refreshLayer(); 
     }

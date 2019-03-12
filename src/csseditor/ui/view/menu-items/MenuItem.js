@@ -11,7 +11,7 @@ export default class MenuItem extends UIElement {
     template () {
         return `
             <button type="button" class='menu-item' checked="${this.getChecked() ? 'checked' : EMPTY_STRING}">
-                <div class="icon ${this.getIcon()}"></div>
+                <div class="icon ${this.getIcon()}">${this.getIconString()}</div>
                 <div class="title">${this.getTitle()}</div>
             </button>
         `
@@ -29,6 +29,10 @@ export default class MenuItem extends UIElement {
 
     getIcon () { 
         return DEFAULT_ICON; 
+    }
+
+    getIconString() {
+        return DEFAULT_ICON;
     }
 
     [CLICK()] (e) {

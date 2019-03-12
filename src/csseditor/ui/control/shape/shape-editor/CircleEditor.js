@@ -2,10 +2,7 @@ import UIElement, { EVENT } from "../../../../../util/UIElement";
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_CLIPPATH, 
-    CHANGE_LAYER, 
-    CHANGE_LAYER_SIZE, 
-    CHANGE_LAYER_POSITION
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { POINTERSTART, MOVE, END } from "../../../../../util/Event";
 import { CircleClipPath } from "../../../../../editor/css-property/ClipPath";
@@ -115,15 +112,12 @@ export default class CircleEditor extends UIElement {
             radiusY: Length.px(raidus[1]).toPercent(height)
         })
 
-        editor.send(CHANGE_LAYER_CLIPPATH, item);
+        editor.send(CHANGE_LAYER, item);
     }
 
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_POSITION,        
-        CHANGE_LAYER_CLIPPATH,
         CHANGE_LAYER
     )] () {
         this.refresh()

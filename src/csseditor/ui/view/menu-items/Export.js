@@ -1,8 +1,9 @@
 import MenuItem from "./MenuItem";
+import icon from "../../icon/icon";
 
 export default class Export extends MenuItem {
 
-    getIcon() { return 'export'; }
+    getIconString() { return icon.export; }
     getTitle () { return 'Export'; }
 
 

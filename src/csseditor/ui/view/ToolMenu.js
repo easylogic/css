@@ -12,7 +12,8 @@ export default class ToolMenu extends UIElement {
         return `
             <div class='tool-menu'>
                 <div class='items left'>
-                    <Undo /><Redo />
+                    <Undo />
+                    <Redo />
                 </div>
                 <div class="items left">
                     <ShowGrid />

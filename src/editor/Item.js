@@ -148,6 +148,11 @@ export class Item {
     get selected () { 
         return editor.selection.check(this.id); 
     }
+
+    get selectedOne () {
+        return editor.selection.checkOne(this.id);
+    }
+
     get id() { return this.json.id; }
     get parentId () { return this.json.parentId }
     get children () { return editor.children(this.id) }

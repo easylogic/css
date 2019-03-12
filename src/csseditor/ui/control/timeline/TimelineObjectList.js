@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, CHANGEINPUT } from "../../../../util/Event";
 import { TIMELINE_LIST, TIMELINE_SEEK } from "../../../types/TimelineTypes";
-import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER_TRANSFORM, CHANGE_KEYFRAME_SELECTION, CHANGE_IMAGE_COLOR } from "../../../types/event";
+import { CHANGE_TIMELINE, ADD_TIMELINE, CHANGE_LAYER, CHANGE_KEYFRAME_SELECTION, CHANGE_IMAGE } from "../../../types/event";
 import { unitValue, EMPTY_STRING } from "../../../../util/css/types";
 import { defaultValue, html, isNotUndefined } from "../../../../util/functions/func";
 import { IS_LAYER, PROPERTY_GET_DEFAULT_VALUE, IS_IMAGE, GET_PROPERTY_LIST, LAYER_NAME } from "../../../../util/css/make";
@@ -205,7 +205,7 @@ export default class TimelineObjectList extends UIElement {
             $input.val(value);
         }
 
-        this.commit(CHANGE_LAYER_TRANSFORM, {id: targetId, [property]: value})
+        this.commit(CHANGE_LAYER, {id: targetId, [property]: value})
 
     }
 
@@ -229,7 +229,7 @@ export default class TimelineObjectList extends UIElement {
                 keyframe[valueField] = value; 
 
                 this.run(ITEM_SET, {id: selectedId, [valueField]: value })
-                this.commit(CHANGE_LAYER_TRANSFORM, {id: targetId, [property]: value})
+                this.commit(CHANGE_LAYER, {id: targetId, [property]: value})
             }
         }
     }
@@ -255,7 +255,7 @@ export default class TimelineObjectList extends UIElement {
                 this.emit('openTimelineColorPicker', e.xy, oldColor, (newColor) => {
                     $colorPanel.css('background-color', newColor)                    
                     this.run(ITEM_SET, {id: selectedId, [valueField]: newColor })
-                    this.commit(CHANGE_IMAGE_COLOR, {id: targetId, [property]: newColor})
+                    this.commit(CHANGE_IMAGE, {id: targetId, [property]: newColor})
                 })
             }
         }

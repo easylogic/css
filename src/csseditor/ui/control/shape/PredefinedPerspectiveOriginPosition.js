@@ -2,7 +2,7 @@ import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_PAGE_TRANSFORM
+    CHANGE_ARTBOARD
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
 import { editor } from '../../../../editor/editor';
@@ -83,12 +83,12 @@ export default class PredefinedPerspectiveOriginPosition extends UIElement {
         var artboard = editor.selection.artboard;
         if (artboard) {
             artboard.reset(this.getPosition(e.$delegateTarget.attr('data-value')))
-            editor.send(CHANGE_PAGE_TRANSFORM, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }
 
     [EVENT(
-        CHANGE_PAGE_TRANSFORM,
+        CHANGE_ARTBOARD,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

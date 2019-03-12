@@ -5,7 +5,7 @@ import GradientPosition from "./shape/GradientPosition";
 import PredefinedLinearGradientAngle from "./shape/PredefinedLinearGradientAngle";
 import PredefinedRadialGradientPosition from "./shape/PredefinedRadialGradientPosition";
 import PredefinedRadialGradientAngle from "./shape/PredefinedRadialGradientAngle";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_PAGE } from "../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_ARTBOARD } from "../../types/event";
 import BackgroundResizer from "./shape/BackgroundResizer";
 import PredefinedBackgroundPosition from "./shape/PredefinedBackgroundPosition";
 import PredefinedPerspectiveOriginPosition from "./shape/PredefinedPerspectiveOriginPosition";
@@ -120,7 +120,7 @@ export default class SubFeatureControl extends UIElement {
     }
 
     [EVENT(
-        CHANGE_PAGE,
+        CHANGE_ARTBOARD,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh(); }

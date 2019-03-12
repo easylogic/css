@@ -1,9 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    CHANGE_LAYER, 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_CLIPPATH
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CHANGE, CLICK } from "../../../../../util/Event";
@@ -47,10 +46,9 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     [EVENT(
-        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_CLIPPATH
+        CHANGE_LAYER
     )] () { this.refresh() }
 
     refresh() {
@@ -62,13 +60,13 @@ export default class ClipPath extends BasePropertyItem {
     }
 
     [CHANGE('$clipType')] () {
-        editor.selection.updateLayer(CHANGE_LAYER_CLIPPATH, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             clipPathType: this.refs.$clipType.val()
         })        
     }
 
     [CLICK('$showClipPathEditor')] () {
-        editor.selection.updateLayer(CHANGE_LAYER_CLIPPATH, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             showClipPathEditor: this.refs.$showClipPathEditor.checked()
         })
     }

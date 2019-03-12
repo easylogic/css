@@ -1540,6 +1540,28 @@ html, body {
             -ms-flex: none;
                 flex: none;
         border-bottom: 1px solid #cccccc; }
+  .csseditor .outline {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    height: 100%; }
+    .csseditor .outline > .project-list-view {
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      width: 100%;
+      height: 200px;
+      overflow: auto;
+      display: block;
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none; }
   .csseditor .colorpicker-layer .codemirror-colorpicker {
     background-color: transparent;
     width: 100%;
@@ -1606,8 +1628,10 @@ html, body {
       .csseditor .tool-menu .items .icon {
         margin: 0 auto;
         width: 30px;
-        height: 30px;
-        background-color: rgba(206, 206, 206, 0.5); }
+        height: 30px; }
+        .csseditor .tool-menu .items .icon svg {
+          width: 100%;
+          height: 100%; }
         .csseditor .tool-menu .items .icon.rect {
           background-color: transparent;
           border: 1px solid #cccccc; }
@@ -1684,7 +1708,7 @@ html, body {
         .csseditor .shapes .shapes-list button .shape {
           width: 100% !important;
           height: 100% !important; }
-  .csseditor .pages {
+  .csseditor .project-list-view {
     display: none;
     position: absolute;
     left: 0px;
@@ -1692,20 +1716,40 @@ html, body {
     top: 0px;
     bottom: 0px;
     overflow: auto;
-    background-color: rgba(199, 199, 199, 0.2);
-    border-right: 1px solid rgba(199, 199, 199, 0.2); }
-    .csseditor .pages .project-tools {
-      padding: 10px;
-      text-align: right;
-      overflow: hidden; }
-      .csseditor .pages .project-tools .property-item {
+    border-bottom: 1px solid #cccccc;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box; }
+    .csseditor .project-list-view .project-toolbar {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      border-bottom: 1px solid #cccccc;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      height: 30px;
+      padding: 5px 10px; }
+      .csseditor .project-list-view .project-toolbar > .title {
         -webkit-box-flex: 0;
             -ms-flex: none;
                 flex: none;
         display: inline-block;
-        padding: 5px 5px;
-        border-left: 1px solid #cccccc; }
-      .csseditor .pages .project-tools a.button {
+        width: 100px;
+        font-size: 12px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        padding: 2px 0px; }
+      .csseditor .project-list-view .project-toolbar > .project-tools {
+        -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+                flex: 1 1 auto;
+        display: inline-block; }
+    .csseditor .project-list-view .project-tools {
+      text-align: right; }
+      .csseditor .project-list-view .project-tools .button-group {
+        display: -webkit-inline-box;
+        display: -ms-inline-flexbox;
+        display: inline-flex; }
+      .csseditor .project-list-view .project-tools button {
         -webkit-box-flex: 1;
             -ms-flex: 1;
                 flex: 1;
@@ -1713,88 +1757,60 @@ html, body {
            -moz-appearance: none;
                 appearance: none;
         border: 0px solid #cccccc;
-        padding: 0px 20px;
-        height: 100%;
+        background-color: transparent;
         display: inline-block;
         vertical-align: middle;
-        border-left: 1px solid #cccccc;
         outline: none;
-        line-height: 34px;
         text-decoration: none;
         font-weight: bold;
         color: black;
         font-size: 14px;
-        cursor: pointer; }
-      .csseditor .pages .project-tools button {
-        width: 100%;
-        height: 50px;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        display: inline-block;
-        vertical-align: middle;
-        outline: none;
-        border: 0px;
         cursor: pointer;
-        background-color: white; }
-        .csseditor .pages .project-tools button.view-sample {
-          background-image: radial-gradient(ellipse at center, rgba(216, 216, 216, 0) 0%, rgba(119, 119, 119, 0.45) 0%, rgba(119, 119, 119, 0.45) 33.33%, rgba(67, 67, 67, 0.69) 33.33%, rgba(67, 67, 67, 0.69) 66.67%, black 66.67%, black 100%);
-          background-size: 30px 30px;
-          background-position: 30px 30px;
-          background-repeat: round; }
-    .csseditor .pages .page-list button {
-      display: block;
-      height: 80px;
-      cursor: pointer;
-      position: relative;
-      padding: 5px;
-      text-align: center;
-      border: 0px;
-      pointer-events: all;
-      outline: none; }
-      .csseditor .pages .page-list button.add-page {
+        width: 18px;
+        height: 18px;
+        padding: 0px; }
+        .csseditor .project-list-view .project-tools button svg {
+          width: 100%;
+          height: 100%; }
+    .csseditor .project-list-view .project-list {
+      background-color: white; }
+      .csseditor .project-list-view .project-list button {
+        display: block;
+        height: 80px;
+        cursor: pointer;
         position: relative;
-        width: 100%;
-        height: 70px;
-        background-color: transparent;
-        color: white;
-        padding: 10px;
-        background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-        background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
-        background-size: 1px 30px, 30px 1px;
-        background-position: center center, center center;
-        background-repeat: no-repeat; }
-    .csseditor .pages .page-list .tree-item {
-      cursor: pointer;
-      position: relative;
-      padding: 10px 10px;
-      vertical-align: top;
-      -webkit-box-sizing: border-box;
-              box-sizing: border-box; }
-      .csseditor .pages .page-list .tree-item.selected {
-        background-color: white;
-        border-right: 1px solid white;
-        border-bottom: 1px solid #cccccc;
-        margin-right: -1px; }
-        .csseditor .pages .page-list .tree-item.selected:not(:first-child) {
-          border-top: 1px solid #cccccc; }
-      .csseditor .pages .page-list .tree-item .item-preview {
-        height: 120px;
-        width: 228px;
-        border-radius: 3px;
-        margin-bottom: 5px;
-        pointer-events: none;
-        display: inline-block;
-        vertical-align: middle;
+        padding: 5px;
+        text-align: center;
+        border: 0px;
+        pointer-events: all;
+        outline: none; }
+        .csseditor .project-list-view .project-list button.add-project {
+          position: relative;
+          width: 100%;
+          height: 70px;
+          background-color: transparent;
+          color: white;
+          padding: 10px;
+          background-image: -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+          background-image: linear-gradient(to right, black, black), linear-gradient(to right, black, black);
+          background-size: 1px 30px, 30px 1px;
+          background-position: center center, center center;
+          background-repeat: no-repeat; }
+      .csseditor .project-list-view .project-list .tree-item {
+        cursor: pointer;
         position: relative;
-        overflow: hidden;
-        background-color: rgba(204, 204, 204, 0.5); }
-      .csseditor .pages .page-list .tree-item .item-title {
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 12px;
-        pointer-events: none; }
-  .csseditor .layers {
+        padding: 5px 10px;
+        vertical-align: top;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box; }
+        .csseditor .project-list-view .project-list .tree-item.selected {
+          background-color: #dbf3ff; }
+        .csseditor .project-list-view .project-list .tree-item .item-title {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 12px;
+          pointer-events: none; }
+  .csseditor .layer-list-view {
     position: relative;
     -webkit-box-flex: 1;
         -ms-flex: 1 1 auto;
@@ -1806,44 +1822,67 @@ html, body {
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column; }
-    .csseditor .layers button {
-      -webkit-appearance: none;
-         -moz-appearance: none;
-              appearance: none;
-      width: auto;
-      height: 100%;
-      border: 1px solid #dedede;
-      vertical-align: middle;
-      font-size: 12px;
-      cursor: pointer;
-      outline: none;
-      position: relative;
-      pointer-events: all; }
-    .csseditor .layers > .title {
-      -webkit-box-flex: 0;
-          -ms-flex: none;
-              flex: none;
+    .csseditor .layer-list-view .layer-list-toolbar {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      border-bottom: 1px solid #cccccc;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      background-color: white;
       height: 30px;
-      padding: 5px;
-      position: relative; }
-      .csseditor .layers > .title h1 {
-        font-size: 12px;
-        float: left;
-        vertical-align: middle;
-        margin: 0px; }
-      .csseditor .layers > .title .tools {
+      padding: 5px 10px; }
+      .csseditor .layer-list-view .layer-list-toolbar > .title {
+        -webkit-box-flex: 0;
+            -ms-flex: none;
+                flex: none;
         display: inline-block;
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        bottom: 0px; }
-    .csseditor .layers .layer-list {
+        width: 100px;
+        font-size: 12px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        padding: 2px 5px; }
+      .csseditor .layer-list-view .layer-list-toolbar > .layer-tools {
+        -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+                flex: 1 1 auto;
+        display: inline-block; }
+    .csseditor .layer-list-view .layer-tools {
+      text-align: right; }
+      .csseditor .layer-list-view .layer-tools .button-group {
+        display: -webkit-inline-box;
+        display: -ms-inline-flexbox;
+        display: inline-flex; }
+      .csseditor .layer-list-view .layer-tools button {
+        -webkit-box-flex: 1;
+            -ms-flex: 1;
+                flex: 1;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 0px solid #cccccc;
+        background-color: transparent;
+        display: inline-block;
+        vertical-align: middle;
+        outline: none;
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 0px;
+        width: 18px;
+        height: 18px; }
+        .csseditor .layer-list-view .layer-tools button svg {
+          width: 100%;
+          height: 100%; }
+    .csseditor .layer-list-view .layer-list {
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
               flex: 1 1 auto;
       overflow: auto;
       position: relative; }
-      .csseditor .layers .layer-list button {
+      .csseditor .layer-list-view .layer-list button {
         display: inline-block;
         vertical-align: middle;
         cursor: pointer;
@@ -1857,83 +1896,90 @@ html, body {
         background-color: transparent;
         border: 0px;
         line-height: 0; }
-      .csseditor .layers .layer-list .tree-item {
+      .csseditor .layer-list-view .layer-list .tree-item {
         display: block;
         cursor: pointer;
         position: relative;
         overflow: hidden;
         line-height: 1.5;
-        border-left: 5px solid rgba(204, 204, 204, 0.39);
-        padding: 0px 5px;
-        border-bottom: 1px solid rgba(128, 128, 128, 0.15); }
-        .csseditor .layers .layer-list .tree-item.image {
+        padding: 5px 5px; }
+        .csseditor .layer-list-view .layer-list .tree-item.image {
           padding-left: 30px; }
-        .csseditor .layers .layer-list .tree-item.selected {
-          border-left-color: #333;
-          background-color: #ececec; }
-          .csseditor .layers .layer-list .tree-item.selected .item-tools {
-            visibility: visible; }
-        .csseditor .layers .layer-list .tree-item .item-title {
+        .csseditor .layer-list-view .layer-list .tree-item.selected {
+          background-color: #dbf3ff; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-1 .item-depth {
+          width: 20px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-2 .item-depth {
+          width: 40px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-3 .item-depth {
+          width: 60px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-4 .item-depth {
+          width: 80px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-5 .item-depth {
+          width: 100px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-6 .item-depth {
+          width: 120px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-7 .item-depth {
+          width: 140px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-8 .item-depth {
+          width: 160px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-9 .item-depth {
+          width: 180px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-10 .item-depth {
+          width: 200px; }
+        .csseditor .layer-list-view .layer-list .tree-item .item-depth {
+          display: inline-block;
+          vertical-align: middle; }
+        .csseditor .layer-list-view .layer-list .tree-item .item-icon {
+          display: inline-block;
+          vertical-align: middle;
+          width: 18px;
+          height: 18px; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon svg {
+            width: 100%;
+            height: 100%; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-icon svg path {
+              fill: #5e5e5e; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon .icon-rect {
+            height: 100%;
+            display: inline-block;
+            width: 100%;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            border: 1px solid #cccccc; }
+        .csseditor .layer-list-view .layer-list .tree-item .item-title {
           display: inline-block;
           font-size: 11px;
           pointer-events: none; }
-        .csseditor .layers .layer-list .tree-item .item-tools {
+        .csseditor .layer-list-view .layer-list .tree-item .item-tools {
           display: block;
           text-align: right;
           float: right; }
-          .csseditor .layers .layer-list .tree-item .item-tools button {
-            height: 20px;
-            display: inline-block; }
-            .csseditor .layers .layer-list .tree-item .item-tools button.lock-item {
-              width: 15px;
-              height: 15px;
-              background-image: -webkit-gradient(linear, left top, right top, from(#cccccc), to(#cccccc));
-              background-image: linear-gradient(to right, #cccccc, #cccccc);
-              background-size: 10px 10px;
-              background-repeat: no-repeat;
-              background-position: center bottom;
-              position: relative; }
-              .csseditor .layers .layer-list .tree-item .item-tools button.lock-item.lock {
-                background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
-                background-image: linear-gradient(to right, #333, #333); }
-                .csseditor .layers .layer-list .tree-item .item-tools button.lock-item.lock:before {
-                  -webkit-transform: rotate(0deg);
-                          transform: rotate(0deg);
-                  background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, #333 2px, #333 4px, transparent 4px, transparent 100%); }
-              .csseditor .layers .layer-list .tree-item .item-tools button.lock-item:before {
-                content: "";
-                position: absolute;
-                display: block;
-                width: 10px;
-                height: 10px;
-                top: -4px;
-                left: 2px;
-                -webkit-transform: rotate(0deg);
-                        transform: rotate(0deg);
-                -webkit-transform-origin: center bottom;
-                        transform-origin: center bottom;
-                background-image: radial-gradient(circle at 50% 100%, transparent, transparent 2px, #cccccc 2px, #cccccc 4px, transparent 4px, transparent 100%); }
-            .csseditor .layers .layer-list .tree-item .item-tools button.visible-item {
-              width: 15px !important;
-              height: 15px !important;
-              border-top-left-radius: 0px;
-              border-top-right-radius: 100%;
-              border-bottom-left-radius: 100%;
-              border-bottom-right-radius: 0px;
-              -webkit-transform: rotate(315deg);
-                      transform: rotate(315deg);
-              background-color: rgba(0, 0, 0, 0.1);
-              text-align: center; }
-              .csseditor .layers .layer-list .tree-item .item-tools button.visible-item:before {
-                background-color: rgba(0, 0, 0, 0.7);
-                border-radius: 100%;
-                vertical-align: middle;
-                display: inline-block;
-                content: '';
-                width: 6px;
-                height: 6px; }
-              .csseditor .layers .layer-list .tree-item .item-tools button.visible-item:not(.visible):before {
-                background-color: rgba(0, 0, 0, 0.1); }
+          .csseditor .layer-list-view .layer-list .tree-item .item-tools button {
+            padding: 0px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            height: 18px;
+            width: 18px;
+            display: inline-block;
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button svg {
+              width: 100%;
+              height: 100%; }
+              .csseditor .layer-list-view .layer-list .tree-item .item-tools button svg path {
+                fill: #5e5e5e; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item svg path {
+              fill: rgba(94, 94, 94, 0.3); }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.lock-item.lock svg path {
+              fill: #5e5e5e; }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item svg path {
+              fill: rgba(94, 94, 94, 0.3); }
+            .csseditor .layer-list-view .layer-list .tree-item .item-tools button.visible-item.visible svg path {
+              fill: #5e5e5e; }
   .csseditor .layer-toolbar {
     position: absolute;
     z-index: 5;
@@ -3469,61 +3515,133 @@ html, body {
       top: 0px;
       overflow: auto;
       background-color: #ececec; }
+    .csseditor .page-view .item-resizer {
+      position: absolute;
+      left: -10000px;
+      top: -10000px;
+      width: 0px;
+      height: 0px;
+      -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+              box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); }
+      .csseditor .page-view .item-resizer.artboard button[data-value='move'] {
+        display: none; }
+      .csseditor .page-view .item-resizer button {
+        pointer-events: all;
+        padding: 0px;
+        background-color: white;
+        border: 1px solid #5f80de;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        outline: none;
+        cursor: pointer;
+        position: absolute;
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
+                box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
+        /* linear */ }
+        .csseditor .page-view .item-resizer button[data-value='move'] {
+          top: 0px;
+          left: 0px;
+          background-color: transparent;
+          border: 0px;
+          width: 100%;
+          height: 100%;
+          cursor: move;
+          -webkit-box-shadow: none;
+                  box-shadow: none; }
+        .csseditor .page-view .item-resizer button[data-value='to top'] {
+          top: 0px;
+          left: 50%;
+          -webkit-transform: translateX(-50%) translateY(-100%);
+                  transform: translateX(-50%) translateY(-100%);
+          cursor: n-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to top right'] {
+          top: 0px;
+          right: 0px;
+          -webkit-transform: translateX(100%) translateY(-100%);
+                  transform: translateX(100%) translateY(-100%);
+          cursor: ne-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to right'] {
+          top: 50%;
+          right: 0px;
+          -webkit-transform: translateX(100%) translateY(-50%);
+                  transform: translateX(100%) translateY(-50%);
+          cursor: e-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to bottom right'] {
+          bottom: 0px;
+          right: 0px;
+          -webkit-transform: translateX(100%) translateY(100%);
+                  transform: translateX(100%) translateY(100%);
+          cursor: se-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to bottom'] {
+          bottom: 0px;
+          left: 50%;
+          -webkit-transform: translateX(-50%) translateY(100%);
+                  transform: translateX(-50%) translateY(100%);
+          cursor: s-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to bottom left'] {
+          left: 0px;
+          bottom: 0px;
+          -webkit-transform: translateX(-100%) translateY(100%);
+                  transform: translateX(-100%) translateY(100%);
+          cursor: sw-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to left'] {
+          top: 50%;
+          left: 0px;
+          -webkit-transform: translateX(-100%) translateY(-50%);
+                  transform: translateX(-100%) translateY(-50%);
+          cursor: w-resize; }
+        .csseditor .page-view .item-resizer button[data-value='to top left'] {
+          top: 0px;
+          left: 0px;
+          -webkit-transform: translateX(-100%) translateY(-100%);
+                  transform: translateX(-100%) translateY(-100%);
+          cursor: nw-resize; }
     .csseditor .page-view .page-canvas {
       position: relative;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
       width: 100%;
       height: 100%; }
-    .csseditor .page-view .gradient-color-view-container {
-      position: relative;
-      display: inline-block;
-      background-color: white;
-      -webkit-box-shadow: 8px 9px 20px -5px #777;
-              box-shadow: 8px 9px 20px -5px #777; }
-      .csseditor .page-view .gradient-color-view-container::before {
+      .csseditor .page-view .page-canvas .area {
         position: absolute;
-        bottom: 100%;
-        content: attr(title);
-        display: inline-block;
-        padding-bottom: 5px; }
-      .csseditor .page-view .gradient-color-view-container.moving .predefined-layer-resizer {
-        display: none !important; }
-      .csseditor .page-view .gradient-color-view-container.moving .predefined-page-resizer {
-        display: none !important; }
-      .csseditor .page-view .gradient-color-view-container.moving .move-guide {
-        display: block !important; }
-      .csseditor .page-view .gradient-color-view-container.showGrid {
-        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
-        background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-        background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px; }
-    .csseditor .page-view .gradient-color-view {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      -webkit-transform: translateX(-50%) translateY(-50%);
-              transform: translateX(-50%) translateY(-50%);
-      background-color: white; }
-      .csseditor .page-view .gradient-color-view.showGrid {
-        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0) 2px), linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
-        background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-        background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px; }
-    .csseditor .page-view .gradient-color-view .layer {
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px; }
+      .csseditor .page-view .page-canvas .artboard-area {
+        pointer-events: none; }
+        .csseditor .page-view .page-canvas .artboard-area .artboard-title {
+          pointer-events: all; }
+        .csseditor .page-view .page-canvas .artboard-area .artboard {
+          -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25);
+                  box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25); }
+      .csseditor .page-view .page-canvas .layer-area {
+        pointer-events: none; }
+        .csseditor .page-view .page-canvas .layer-area .layer {
+          pointer-events: all; }
+    .csseditor .page-view .page-selection {
       position: absolute;
       left: 0px;
       top: 0px;
-      width: 100%;
-      height: 100%;
-      outline: none; }
+      right: 0px;
+      bottom: 0px;
+      pointer-events: none; }
+      .csseditor .page-view .page-selection .drag-area-view {
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        -webkit-box-shadow: inset 0 0 0 1px rgba(181, 181, 181, 0.5);
+                box-shadow: inset 0 0 0 1px rgba(181, 181, 181, 0.5);
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.466); }
+    .csseditor .page-view .page-guide-line {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      pointer-events: none; }
     .csseditor .page-view .dropzone {
       display: none; }
     .csseditor .page-view .predefined-page-resizer {

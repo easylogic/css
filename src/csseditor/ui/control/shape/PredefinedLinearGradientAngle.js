@@ -1,7 +1,7 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { 
     CHANGE_EDITOR, 
-    CHANGE_IMAGE_LINEAR_ANGLE, 
+    CHANGE_IMAGE, 
     CHANGE_SELECTION
 } from '../../../types/event';
 import { CLICK, SELF } from '../../../../util/Event';
@@ -43,12 +43,12 @@ export default class PredefinedLinearGradientAngle extends UIElement {
         var image = editor.selection.backgroundImage;
         if(image) {
             image.image.angle = e.$delegateTarget.attr('data-value')
-            editor.send(CHANGE_IMAGE_LINEAR_ANGLE, image);
+            editor.send(CHANGE_IMAGE, image);
         }
     }
 
     [EVENT(
-        CHANGE_IMAGE_LINEAR_ANGLE,
+        CHANGE_IMAGE,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

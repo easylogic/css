@@ -2,15 +2,12 @@ import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_CLIPPATH_POLYGON,
-    CHANGE_LAYER_CLIPPATH_POLYGON_POSITION,
-    CHANGE_LAYER_CLIPPATH
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
-import { stringUnit, EMPTY_STRING } from "../../../../../util/css/types";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 import { isUndefined, html } from "../../../../../util/functions/func";
 import { CHANGEINPUT, CLICK, LOAD } from "../../../../../util/Event";
-import { CLIPPATH_SAMPLE_LIST} from "../../../../types/ClipPathTypes";
 import { editor } from "../../../../../editor/editor";
 
 export default class ClipPathPolygon extends BasePropertyItem {
@@ -78,13 +75,8 @@ export default class ClipPathPolygon extends BasePropertyItem {
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_LAYER_CLIPPATH,
-        CHANGE_LAYER_CLIPPATH_POLYGON,
+        CHANGE_LAYER
     )] () { this.refresh() }
-
-    [EVENT(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION)] (newValue) {
-        alert('업데이트 구현해주세요')
-    }
 
     refresh() {
 
@@ -128,7 +120,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
                 var clippath = layer.clippath;
                 if (clippath) {
                     clippath.removePoint(polygonIndex)
-                    editor.send(CHANGE_LAYER_CLIPPATH_POLYGON, layer);
+                    editor.send(CHANGE_LAYER, layer);
                 }
 
             }
@@ -138,7 +130,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
                 var clippath = layer.clippath;
                 if (clippath) {
                     clippath.copyPoint(polygonIndex)
-                    editor.send(CHANGE_LAYER_CLIPPATH_POLYGON, layer);
+                    editor.send(CHANGE_LAYER, layer);
                 }
 
             }            
@@ -158,7 +150,7 @@ export default class ClipPathPolygon extends BasePropertyItem {
 
             if (clippath) {
                 clippath.updatePoint(polygonIndex, key, Length.percent(value));
-                editor.send(CHANGE_LAYER_CLIPPATH_POLYGON_POSITION, layer)
+                editor.send(CHANGE_LAYER, layer)
             }
         }
     }

@@ -1,9 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR, 
-    CHANGE_LAYER, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_RADIUS 
+    CHANGE_LAYER 
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { defaultValue } from "../../../../../util/functions/func";
@@ -30,7 +29,6 @@ export default class RadiusFixed extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_RADIUS,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -71,7 +69,7 @@ export default class RadiusFixed extends BasePropertyItem {
                     fixedRadius: true, 
                     borderRadius: Length.px( borderRadiusValue )
                 })
-                editor.send(CHANGE_LAYER_RADIUS, layer)
+                editor.send(CHANGE_LAYER, layer)
                 this.refs.$radiusRange.val(borderRadiusValue)
             } else if (type == 'range') {
                 var borderRadiusValue = this.refs.$radiusRange.val()
@@ -79,7 +77,7 @@ export default class RadiusFixed extends BasePropertyItem {
                     fixedRadius: true, 
                     borderRadius: Length.px( borderRadiusValue )
                 })
-                editor.send(CHANGE_LAYER_RADIUS, layer)
+                editor.send(CHANGE_LAYER, layer)
                 this.refs.$radius.val(borderRadiusValue)
             }
         }

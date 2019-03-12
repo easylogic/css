@@ -5,7 +5,7 @@ import {
     CHANGE_SELECTION, 
     CHANGE_EDITOR, 
     CHANGE_LAYER, 
-    TEXT_FILL_COLOR
+    // TEXT_FILL_COLOR
 } from '../../../../types/event';
 import { EVENT } from '../../../../../util/UIElement';
 import { pxUnit, EMPTY_STRING } from '../../../../../util/css/types';
@@ -136,7 +136,7 @@ export default class TextShadow extends BasePropertyItem {
         var id = this.getTextShadowId($el)
 
         editor.selection.select(id);
-        editor.send(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
+        // editor.send(TEXT_FILL_COLOR, id, CHANGE_TEXTSHADOW);
         this.refresh();
     }
 

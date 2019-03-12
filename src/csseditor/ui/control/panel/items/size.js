@@ -1,7 +1,6 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
-    CHANGE_LAYER_POSITION, 
-    CHANGE_LAYER_SIZE, 
+    CHANGE_LAYER, 
     CHANGE_EDITOR,
     CHANGE_SELECTION
 } from "../../../../types/event";
@@ -50,8 +49,7 @@ export default class Size extends BasePropertyItem {
     }
 
     [EVENT(
-        CHANGE_LAYER_POSITION,
-        CHANGE_LAYER_SIZE,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] ()  { this.refresh() }
@@ -80,33 +78,33 @@ export default class Size extends BasePropertyItem {
     [CLICK('$rect')] (e) {
         var widthValue = this.refs.$width.int()
         this.refs.$height.val(widthValue); 
-        editor.selection.updateLayer(CHANGE_LAYER_SIZE, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             width : Length.px(widthValue),
             height: Length.px(widthValue)
         }, this)
     }
 
     [INPUT('$width')] () {
-        editor.selection.updateLayer(CHANGE_LAYER_SIZE, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             width : Length.px(this.refs.$width.int())
         }, this)
     }
 
     [INPUT('$height')] () {      
-        editor.selection.updateLayer(CHANGE_LAYER_SIZE, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             height : Length.px(this.refs.$height.int())
         }, this)
     }    
 
 
     [INPUT('$x')] () {
-        editor.selection.updateLayer(CHANGE_LAYER_POSITION, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             x : Length.px(this.refs.$x.int())
         }, this)
     }
 
     [INPUT('$y')] () {
-        editor.selection.updateLayer(CHANGE_LAYER_POSITION, {
+        editor.selection.updateLayer(CHANGE_LAYER, {
             y : Length.px(this.refs.$y.int())
         }, this)        
     }        

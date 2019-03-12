@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from "../../../../../util/UIElement";
-import { CHANGE_PAGE_SIZE, CHANGE_EDITOR } from "../../../../types/event";
+import { CHANGE_ARTBOARD, CHANGE_EDITOR } from "../../../../types/event";
 import { UNIT_PX } from "../../../../../util/css/types";
 import { CLICK, INPUT } from "../../../../../util/Event";
 import { editor } from "../../../../../editor/editor";
@@ -29,7 +29,7 @@ export default class PageSize extends UIElement {
 
     [EVENT(
         CHANGE_EDITOR,
-        CHANGE_PAGE_SIZE
+        CHANGE_ARTBOARD
     )] () {
         this.refresh()
     }
@@ -50,7 +50,7 @@ export default class PageSize extends UIElement {
                 width: Length.px( this.refs.$width.int() ),
                 height: Length.px( this.refs.$width.int() )
             });
-            editor.send(CHANGE_PAGE_SIZE, artboard)
+            editor.send(CHANGE_ARTBOARD, artboard)
         }
     }
  
@@ -58,7 +58,7 @@ export default class PageSize extends UIElement {
         var artboard = editor.selection.currentArtBoard;
         if (artboard) {
             artboard.width = Length.px(this.refs.$width.int())
-            editor.send(CHANGE_PAGE_SIZE, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }
 
@@ -66,7 +66,7 @@ export default class PageSize extends UIElement {
         var artboard = editor.selection.currentArtBoard;
         if (artboard) {
             artboard.height = Length.px(this.refs.$height.int())
-            editor.send(CHANGE_PAGE_SIZE, artboard);
+            editor.send(CHANGE_ARTBOARD, artboard);
         }
     }    
 }

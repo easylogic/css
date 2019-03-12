@@ -1,5 +1,5 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
-import { CHANGE_COLOR_STEP, REMOVE_COLOR_STEP, CHANGE_EDITOR, CHANGE_SELECTION } from "../../../types/event";
+import { CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../types/event";
 import { UNIT_PX, UNIT_EM, UNIT_PERCENT, EMPTY_STRING } from "../../../../util/css/types";
 import { CLICK, INPUT, CHANGE, LOAD } from "../../../../util/Event";
 import { html } from "../../../../util/functions/func";
@@ -68,8 +68,7 @@ export default class GradientInfo extends UIElement {
     }
 
     [EVENT(
-        CHANGE_COLOR_STEP,
-        REMOVE_COLOR_STEP,
+        CHANGE_COLORSTEP,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh(); }
@@ -91,7 +90,7 @@ export default class GradientInfo extends UIElement {
 
         if (step) {
             step.color = color; 
-            editor.send(CHANGE_COLOR_STEP, step)
+            editor.send(CHANGE_COLORSTEP, step)
 
             this.refs.$stepList.$(`.color-view-item[colorstep-id="${step.id}"]`).css({
                 'background-color': color 
@@ -113,7 +112,7 @@ export default class GradientInfo extends UIElement {
 
         if (step) {
             step.changeUnit(unit, this.getMaxValue())
-            editor.send(CHANGE_COLOR_STEP, step )
+            editor.send(CHANGE_COLORSTEP, step )
 
             var $parent = e.$delegateTarget.parent();
             $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(unit);
@@ -131,7 +130,7 @@ export default class GradientInfo extends UIElement {
             step.percent = +percent;
             step.changeUnit(step.unit, this.getMaxValue())
 
-            editor.send(CHANGE_COLOR_STEP, step);
+            editor.send(CHANGE_COLORSTEP, step);
 
         }
     }
@@ -146,7 +145,7 @@ export default class GradientInfo extends UIElement {
             step.px = +px; 
             step.changeUnit(step.unit, this.getMaxValue());
 
-            editor.send(CHANGE_COLOR_STEP, step);       
+            editor.send(CHANGE_COLORSTEP, step);       
         }
     }
     
@@ -160,7 +159,7 @@ export default class GradientInfo extends UIElement {
         if (step) {
             step.em = +em; 
             step.changeUnit(step.unit, this.getMaxValue());
-            editor.send(CHANGE_COLOR_STEP, step);
+            editor.send(CHANGE_COLORSTEP, step);
         }
     }    
 
@@ -173,7 +172,7 @@ export default class GradientInfo extends UIElement {
         if (step) {
             step.remove();
         }
-        editor.send(REMOVE_COLOR_STEP, id);
+        editor.send(CHANGE_LAYER, id);
     }
 
 
@@ -183,7 +182,7 @@ export default class GradientInfo extends UIElement {
 
         if (item) {
             item.cut = !item.cut; 
-            editor.send(CHANGE_COLOR_STEP, item)
+            editor.send(CHANGE_COLORSTEP, item)
         }
 
     }    

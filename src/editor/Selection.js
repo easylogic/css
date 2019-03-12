@@ -136,6 +136,10 @@ export class Selection {
         return true; 
     }
 
+    checkOne (id) {
+        return this._idSet.has(id);
+    }
+
     isEmpty () {
         return this._ids.length === 0; 
     }

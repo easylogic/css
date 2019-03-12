@@ -1,14 +1,14 @@
 import BaseModule from "../../util/BaseModule";
-import { CHANGE_LAYER_POSITION } from "../types/event";
 import { pxUnit, unitValue } from "../../util/css/types";
 import { ACTION } from "../../util/Store";
 import { ITEM_SET } from "../types/ItemTypes";
+import { CHANGE_LAYER } from "../types/event";
 
 
 export default class MatrixManager extends BaseModule {
 
     afterDispatch() {
-        this.$store.emit(CHANGE_LAYER_POSITION);
+        this.$store.emit(CHANGE_LAYER);
     }
 
     [ACTION('matrix/move')] ($store, newValue) {

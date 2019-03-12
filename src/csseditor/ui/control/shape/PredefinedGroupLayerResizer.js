@@ -1,5 +1,10 @@
 import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_EDITOR, CHANGE_LAYER_SIZE, CHANGE_LAYER_POSITION, CHANGE_LAYER_TRANSFORM, CHANGE_SELECTION, CHANGE_LAYER_MOVE,CHANGE_LAYER_ROTATE,CHANGE_PAGE_SIZE,CHANGE_IMAGE,CHANGE_LAYER_BORDER} from '../../../types/event';
+import { 
+    CHANGE_EDITOR, 
+    CHANGE_LAYER, 
+    CHANGE_SELECTION, 
+    CHANGE_ARTBOARD,
+    CHANGE_IMAGE} from '../../../types/event';
 import { caculateAngle } from '../../../../util/functions/math';
 import { EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE, SEGMENT_TYPE_ROTATE } from '../../../../util/css/types';
 import { POINTERSTART, LOAD, MOVE, END } from '../../../../util/Event';
@@ -89,15 +94,10 @@ export default class PredefinedGroupLayerResizer extends UIElement {
     }
 
     [EVENT(
-        CHANGE_LAYER_TRANSFORM,
-        CHANGE_LAYER_SIZE,
-        CHANGE_LAYER_ROTATE,
-        CHANGE_LAYER_MOVE,
-        CHANGE_LAYER_BORDER,
-        CHANGE_LAYER_POSITION,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION,
-        CHANGE_PAGE_SIZE,
+        CHANGE_ARTBOARD,
         CHANGE_IMAGE
     )] () { this.refresh() }
 
@@ -220,7 +220,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
 
     resizeComponent () {
         var items = this.rectItems;
-        var event = CHANGE_LAYER_SIZE;
+        var event = CHANGE_LAYER;
 
         if (this.currentType == SEGMENT_TYPE_TOP) {
             items.forEach(item => { this.toTop(item) })
@@ -246,7 +246,7 @@ export default class PredefinedGroupLayerResizer extends UIElement {
             items.forEach(item => { this.moveXY(item) })
         } else if (this.currentType == SEGMENT_TYPE_ROTATE) {
             items.forEach(item => { this.rotate(item) })      
-            event = CHANGE_LAYER_ROTATE 
+            event = CHANGE_LAYER 
         }
 
         this.caculateSnap();

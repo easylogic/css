@@ -1,9 +1,8 @@
 import BasePropertyItem from "./BasePropertyItem";
 import { 
     CHANGE_EDITOR, 
-    CHANGE_LAYER, 
     CHANGE_SELECTION, 
-    CHANGE_LAYER_BORDER
+    CHANGE_LAYER
 } from "../../../../types/event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CLICK, CHANGEINPUT } from "../../../../../util/Event";
@@ -30,7 +29,6 @@ export default class BorderFixed extends BasePropertyItem {
 
     [EVENT(
         CHANGE_LAYER,
-        CHANGE_LAYER_BORDER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }    
@@ -80,7 +78,7 @@ export default class BorderFixed extends BasePropertyItem {
         }
             
 
-        editor.selection.updateLayer(CHANGE_LAYER_BORDER, items);
+        editor.selection.updateLayer(CHANGE_LAYER, items);
     }
 
     [CHANGEINPUT('$borderWidthRange')] () { this.updateTransform('range'); }

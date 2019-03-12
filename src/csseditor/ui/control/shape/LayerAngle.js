@@ -1,6 +1,6 @@
 import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER_ROTATE, CHANGE_TOOL } from '../../../types/event';
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_TOOL } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
 import { isUndefined } from '../../../../util/functions/func';
 import { editor } from '../../../../editor/editor';
@@ -89,12 +89,12 @@ export default class LayerAngle extends UIElement {
     setAngle (rotate) {
         editor.selection.items.forEach( item => {
             item.rotate = (this.cachedRotate[id] + (rotate - this.cachedRotate[id]) ) % 360
-            this.commit(CHANGE_LAYER_ROTATE);
+            this.commit(CHANGE_LAYER);
         })
     }
 
     [EVENT(
-        CHANGE_LAYER_ROTATE,
+        CHANGE_LAYER,
         CHANGE_EDITOR,
         CHANGE_SELECTION
     )] () { this.refresh() }

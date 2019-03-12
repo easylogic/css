@@ -7,7 +7,7 @@ import { SELECTION_CURRENT_PAGE_ID } from "../../../types/SelectionTypes";
 import { LAYER_CACHE_TO_STRING } from "../../../types/LayerTypes";
 import { COLLECT_PAGE_ONE } from "../../../types/CollectTypes";
 import { ITEM_ADD_CACHE } from "../../../types/ItemRecoverTypes";
-import { CHANGE_PAGE } from "../../../types/event";
+import { CHANGE_ARTBOARD } from "../../../types/event";
 import { PAGE_CACHE_TO_STRING } from "../../../types/PageTypes";
 import { STORAGE_LOAD_PAGE, STORAGE_PAGES, STORAGE_REMOVE_PAGE, STORAGE_ADD_PAGE } from "../../../types/StorageTypes";
 
@@ -113,7 +113,7 @@ export default class PageSampleList extends UIElement {
         if (newPage) {
             this.read(SELECTION_CURRENT_PAGE_ID, id => {
                 this.dispatch(ITEM_ADD_CACHE, newPage, id );
-                this.emit(CHANGE_PAGE);                
+                this.emit(CHANGE_ARTBOARD);                
             })
         }
     }    
@@ -123,7 +123,7 @@ export default class PageSampleList extends UIElement {
         if (newPage) {
             this.read(SELECTION_CURRENT_PAGE_ID, id => {
                 this.dispatch(ITEM_ADD_CACHE, newPage, id );
-                this.emit(CHANGE_PAGE);
+                this.emit(CHANGE_ARTBOARD);
             })
             
         }
