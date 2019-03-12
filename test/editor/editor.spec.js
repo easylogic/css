@@ -1,6 +1,7 @@
 import { editor } from "../../src/editor/editor";
 import { Project } from "../../src/editor/Project";
 import { ArtBoard } from "../../src/editor/ArtBoard";
+import { Layer } from "../../src/editor/Layer";
 
 beforeEach(() => {
     editor.removeChildren()
@@ -43,4 +44,29 @@ test('Editor - config', () => {
     editor.config.a = 'b';
 
     expect(editor.config.a).toEqual('b')
+})
+
+test('Editor - clone', () => {
+    var project = editor.addProject(new Project());
+    var artboard = project.addArtBoard(new ArtBoard());
+    var layer = artboard.addLayer(new Layer());
+
+    var cloneLayer = layer.clone(true)
+
+    expect(layer.id != cloneLayer.id).toEqual(true);
+})
+
+test('Editor - copy', () => {
+    var project = editor.addProject(new Project());
+    var artboard = project.addArtBoard(new ArtBoard());
+    artboard.addLayer(new Layer());
+    artboard.addLayer(new Layer());
+    artboard.addLayer(new Layer());
+    artboard.addLayer(new Layer());
+    artboard.addLayer(new Layer());
+
+    var newArtBoard = artboard.copy()
+
+    expect(artboard.layers.length).toEqual(newArtBoard.length-1)
+
 })

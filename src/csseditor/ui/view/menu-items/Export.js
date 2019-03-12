@@ -3,7 +3,7 @@ import icon from "../../icon/icon";
 
 export default class Export extends MenuItem {
 
-    getIconString() { return icon.export; }
+    getIconString() { return icon.publish; }
     getTitle () { return 'Export'; }
 
 

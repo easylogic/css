@@ -448,11 +448,14 @@ export default class EventMachine {
   isCtrlKey (e) { return e.ctrlKey }
   isShiftKey (e) { return e.shiftKey }
   isMetaKey (e) { return e.metaKey }
-  preventDefault(e) {
-    e.preventDefault();
-  } 
+  preventDefault(e) { 
+    e.preventDefault()
+    return true; 
+  }
+
   stopPropagation (e) {
     e.stopPropagation();
+    return true; 
   }
 
   /* magic check method */ 

@@ -34,7 +34,7 @@ export class Project extends Item {
         return results; 
     }
 
-    getDefaultTitle () { return 'Project' }    
+    getDefaultTitle () { return 'New Project' }    
 
     getDefaultObject (obj = {}) {
         return super.getDefaultObject({

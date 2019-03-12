@@ -1823,6 +1823,9 @@ html, body {
         -ms-flex-direction: column;
             flex-direction: column; }
     .csseditor .layer-list-view .layer-list-toolbar {
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none;
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -1831,7 +1834,7 @@ html, body {
               box-sizing: border-box;
       background-color: white;
       height: 30px;
-      padding: 5px 10px; }
+      padding: 5px; }
       .csseditor .layer-list-view .layer-list-toolbar > .title {
         -webkit-box-flex: 0;
             -ms-flex: none;
@@ -1871,11 +1874,15 @@ html, body {
         font-size: 14px;
         cursor: pointer;
         padding: 0px;
-        width: 18px;
-        height: 18px; }
+        width: 16px;
+        height: 16px; }
         .csseditor .layer-list-view .layer-tools button svg {
           width: 100%;
           height: 100%; }
+          .csseditor .layer-list-view .layer-tools button svg path {
+            fill: #5e5e5e; }
+    .csseditor .layer-list-view.dragging .item-title {
+      pointer-events: none; }
     .csseditor .layer-list-view .layer-list {
       -webkit-box-flex: 1;
           -ms-flex: 1 1 auto;
@@ -1896,51 +1903,71 @@ html, body {
         background-color: transparent;
         border: 0px;
         line-height: 0; }
+      .csseditor .layer-list-view .layer-list .tree-children {
+        pointer-events: none; }
       .csseditor .layer-list-view .layer-list .tree-item {
         display: block;
         cursor: pointer;
         position: relative;
         overflow: hidden;
         line-height: 1.5;
-        padding: 5px 5px; }
+        padding: 5px 5px;
+        pointer-events: all; }
+        .csseditor .layer-list-view .layer-list .tree-item[item-type="artboard"] {
+          border-top: 1px solid rgba(128, 128, 128, 0.15);
+          border-bottom: 1px solid rgba(128, 128, 128, 0.15); }
+        .csseditor .layer-list-view .layer-list .tree-item.collapsed .item-icon-group {
+          -webkit-transform-origin: center center;
+                  transform-origin: center center;
+          -webkit-transform: rotate(90deg);
+                  transform: rotate(90deg); }
+        .csseditor .layer-list-view .layer-list .tree-item.collapsed + .tree-children {
+          height: 0px;
+          overflow: hidden; }
         .csseditor .layer-list-view .layer-list .tree-item.image {
           padding-left: 30px; }
-        .csseditor .layer-list-view .layer-list .tree-item.selected {
+        .csseditor .layer-list-view .layer-list .tree-item.selected, .csseditor .layer-list-view .layer-list .tree-item:hover {
           background-color: #dbf3ff; }
+          .csseditor .layer-list-view .layer-list .tree-item.selected > .item-tools, .csseditor .layer-list-view .layer-list .tree-item:hover > .item-tools {
+            display: block; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-1 .item-depth {
-          width: 20px; }
+          width: 14px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-2 .item-depth {
-          width: 40px; }
+          width: 28px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-3 .item-depth {
-          width: 60px; }
+          width: 42px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-4 .item-depth {
-          width: 80px; }
+          width: 56px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-5 .item-depth {
-          width: 100px; }
+          width: 70px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-6 .item-depth {
-          width: 120px; }
+          width: 84px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-7 .item-depth {
-          width: 140px; }
+          width: 98px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-8 .item-depth {
-          width: 160px; }
+          width: 112px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-9 .item-depth {
-          width: 180px; }
+          width: 126px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-10 .item-depth {
-          width: 200px; }
+          width: 140px; }
         .csseditor .layer-list-view .layer-list .tree-item .item-depth {
           display: inline-block;
           vertical-align: middle; }
-        .csseditor .layer-list-view .layer-list .tree-item .item-icon {
+        .csseditor .layer-list-view .layer-list .tree-item .item-icon, .csseditor .layer-list-view .layer-list .tree-item .item-icon-group {
           display: inline-block;
           vertical-align: middle;
-          width: 18px;
-          height: 18px; }
-          .csseditor .layer-list-view .layer-list .tree-item .item-icon svg {
+          width: 16px;
+          height: 16px;
+          -webkit-transition: -webkit-transform 0.1s linear;
+          transition: -webkit-transform 0.1s linear;
+          transition: transform 0.1s linear;
+          transition: transform 0.1s linear, -webkit-transform 0.1s linear; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon svg, .csseditor .layer-list-view .layer-list .tree-item .item-icon-group svg {
             width: 100%;
             height: 100%; }
-            .csseditor .layer-list-view .layer-list .tree-item .item-icon svg path {
+            .csseditor .layer-list-view .layer-list .tree-item .item-icon svg path, .csseditor .layer-list-view .layer-list .tree-item .item-icon-group svg path {
               fill: #5e5e5e; }
-          .csseditor .layer-list-view .layer-list .tree-item .item-icon .icon-rect {
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon .icon-rect, .csseditor .layer-list-view .layer-list .tree-item .item-icon-group .icon-rect {
             height: 100%;
             display: inline-block;
             width: 100%;
@@ -1949,18 +1976,17 @@ html, body {
             border: 1px solid #cccccc; }
         .csseditor .layer-list-view .layer-list .tree-item .item-title {
           display: inline-block;
-          font-size: 11px;
-          pointer-events: none; }
+          font-size: 11px; }
         .csseditor .layer-list-view .layer-list .tree-item .item-tools {
-          display: block;
+          display: none;
           text-align: right;
           float: right; }
           .csseditor .layer-list-view .layer-list .tree-item .item-tools button {
             padding: 0px;
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
-            height: 18px;
-            width: 18px;
+            height: 16px;
+            width: 16px;
             display: inline-block;
             outline: none;
             cursor: pointer;
@@ -3521,8 +3547,8 @@ html, body {
       top: -10000px;
       width: 0px;
       height: 0px;
-      -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
-              box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3); }
+      -webkit-box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1);
+              box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1); }
       .csseditor .page-view .item-resizer.artboard button[data-value='move'] {
         display: none; }
       .csseditor .page-view .item-resizer button {

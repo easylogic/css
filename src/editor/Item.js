@@ -1,4 +1,4 @@
-import { uuidShort } from "../util/functions/math";
+import { uuidShort, uuid } from "../util/functions/math";
 import { isFunction, isUndefined, isNotUndefined } from "../util/functions/func";
 import { editor } from "./editor";
 import Dom from "../util/Dom";
@@ -61,6 +61,9 @@ export class Item {
      * @param {*} json 
      */
     convert (json) {
+        if (isUndefined(json.id)) {
+            json.id = uuidShort();
+        }
         return json; 
     }
 
@@ -90,10 +93,13 @@ export class Item {
     /**
      * clone Item 
      */
-    clone () {
+    clone (isNew = false) {
         var json = JSON.parse(JSON.stringify(this.json));
-        json.id = undefined;
-        return new Item(json);
+        if (isNew) json.id = undefined;
+
+        var ItemClass = this.constructor
+
+        return new ItemClass(json);
     }
 
     addItem (itemType , item, sortType) {
@@ -155,7 +161,15 @@ export class Item {
 
     get id() { return this.json.id; }
     get parentId () { return this.json.parentId }
-    get children () { return editor.children(this.id) }
+    get children () { 
+        var children = editor.children(this.id) 
+        children.sort( (a, b) => {
+            if (a.index === b.index) return 0;
+
+            return a.index > b.index ? 1 : -1; 
+        })
+        return children;
+    }
     get childrenIds() { return editor.childrenIds(this.id); }
 
     getDefaultObject (obj = {}) {
@@ -199,7 +213,6 @@ export class Item {
     }
 
     sort (itemType) {
-
         var children = this.children;
 
         if (itemType) {
@@ -218,12 +231,19 @@ export class Item {
     }
 
     copy () {
-        var newItem = this.clone();
-        newItem.index = this.json.index + 1; 
+        return editor.copy(this.id) 
+    }
 
-        console.log(newItem);
+    insertLast (source) {
 
-        this.parent().add(newItem);
+        var selfParent = this.parent();
+        var sourceParent = source.parent();
+
+        source.parentId = this.json.parentId;
+        source.index = this.json.index + 1; 
+
+        selfParent.sort()
+        sourceParent.sort();
     }
 
     moveLast() {

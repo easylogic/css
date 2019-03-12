@@ -19,18 +19,18 @@ export default class ProjectListView extends UIElement {
                     </div>
                 </span>
             </div>
-            <div class="project-list" ref="$pageList"></div>
+            <div class="project-list" ref="$projectList"></div>
         </div>`
     }
 
     makeItemNodeProject (project) {
         var selected = project.selected ? 'selected' : EMPTY_STRING; 
-        return `<div class='tree-item ${selected}' id="${project.id}" type='project'>
+        return `<div class='tree-item ${selected}' item-id="${project.id}" type='project'>
             <div class="item-title">${project.title}</div>   
         </div>`
     }
 
-    [LOAD('$pageList')] () {
+    [LOAD('$projectList')] () {
         return editor.projects.map(project => {
             return this.makeItemNodeProject(project); 
         });
@@ -40,17 +40,37 @@ export default class ProjectListView extends UIElement {
         this.load()
     }
 
-    [EVENT(
-        CHANGE_ARTBOARD,
-        CHANGE_EDITOR,
-        CHANGE_SELECTION
-    )] () {
+
+    toggleSelectedItem (id) {
+        var selected = this.refs.$projectList.$('.selected');
+        if (selected) {
+            selected.removeClass('selected')
+        }
+
+        var item = this.refs.$projectList.$(`[item-id="${id}"]`);
+        if (item) {
+            item.addClass('selected');
+        }
+    }
+
+    refreshSelection () {
+        var project = editor.selection.currentProject;
+        if (project) {
+            this.toggleSelectedItem(project.id)
+        }
+    }
+
+    [EVENT(CHANGE_EDITOR)] () {
         this.refresh()
+    }
+
+    [EVENT(CHANGE_SELECTION)] () {
+        this.refreshSelection();
     }
  
     [CLICK('$addProject')] (e) {
         var project = editor.addProject(new Project({ name: 'New Project'}))
         project.select();
-        editor.send(CHANGE_SELECTION);
+        editor.send(CHANGE_EDITOR);
     }
 } 

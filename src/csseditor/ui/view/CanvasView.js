@@ -112,7 +112,7 @@ export default class CanvasView extends UIElement {
 
     refreshLayerPosition (item) {
         if (item instanceof ArtBoard) {
-            item.layers.forEach(layer => {
+            item.allLayers.forEach(layer => {
                 var $el = this.getCachedLayerElement(layer.id);
                 if ($el) $el.css(layer.toBoundCSS());
             })

@@ -1,5 +1,23 @@
 import { isNotUndefined } from "../../util/functions/func";
 
+const stringToPercent = {
+    'center': 50,
+    'top' : 0,
+    'left': 0,
+    'right': 100,
+    'bottom': 100
+}
+
+export class Position { }
+
+Position.CENTER = 'center'
+Position.TOP = 'top'
+Position.RIGHT = 'right'
+Position.LEFT = 'left'
+Position.BOTTOM = 'bottom'
+
+
+
 export class Length {
     constructor(value = '', unit = '') {
         this.value = value; 
@@ -130,6 +148,23 @@ export class Length {
         return value / this.value; 
     }
 
+    stringToPercent() {
+
+        if (isNotUndefined(stringToPercent[this.value])) {
+            return Length.percent(stringToPercent[this.value]);
+        }
+
+        return Length.percent(0); 
+    }
+
+    stringToEm(maxValue) {
+        return this.stringToPercent().toEm(maxValue)
+    }
+
+    stringToPx(maxValue) {
+        return this.stringToPercent().toPx(maxValue)
+    }
+
     toPercent (maxValue, fontSize = 16) {
         if (this.isPercent()) {
             return this;
@@ -137,6 +172,8 @@ export class Length {
             return Length.percent((this.value * 100) / maxValue)
         } else if (this.isEm()) {
             return Length.percent((this.value * fontSize)*100 / maxValue)
+        } else if (this.isString()) {
+            return this.stringToPercent(maxValue);
         }
     }
 
@@ -147,6 +184,8 @@ export class Length {
             return Length.em(this.value / fontSize);
         } else if (this.isEm()) {
             return this; 
+        } else if (this.isString()) {
+            return this.stringToEm(maxValue);
         }
     }    
 
@@ -157,14 +196,8 @@ export class Length {
             return this;
         } else if (this.isEm()) {
             return Length.px((this.value / 100) * maxValue / 16);
+        } else if (this.isString()) {
+            return this.stringToPx(maxValue);            
         }
     }
 }
-
-export class Position { }
-
-Position.CENTER = 'center'
-Position.TOP = 'top'
-Position.RIGHT = 'right'
-Position.LEFT = 'left'
-Position.BOTTOM = 'bottom'

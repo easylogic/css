@@ -44,7 +44,7 @@ $editor-resizer-width : 10px;
         top: -10000px;
         width: 0px;
         height: 0px;
-        box-shadow: 0 0 0 0 rgba(#000000, 0.3);
+        box-shadow: 0 0 1px 0 rgba(#000000, 0.1);
 
         &.artboard {
             button {

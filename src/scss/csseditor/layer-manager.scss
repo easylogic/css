@@ -4,6 +4,7 @@ $button-size: 24px;
 $layer-item-padding: 4px;
 $mini-layer-view-height: 420px;
 $icon-color: rgb(94, 94, 94);
+$icon-size: 16px;
 
 .layer-list-view {
     position: relative;
@@ -13,12 +14,13 @@ $icon-color: rgb(94, 94, 94);
 
         
     .layer-list-toolbar {
+        flex: none; 
         display: flex;
         border-bottom: 1px solid $border-color;
         box-sizing: border-box; 
         background-color: white;      
         height: 30px;   
-        padding: 5px 10px;
+        padding: 5px;
 
         > .title {
             flex:none;
@@ -56,17 +58,25 @@ $icon-color: rgb(94, 94, 94);
             font-size: 14px;
             cursor: pointer;        
             padding:0px;
-            width: 18px; 
-            height: 18px;
+            width: $icon-size; 
+            height: $icon-size;
             
             svg {
                 width: 100%;
                 height: 100%;
+
+                path {
+                    fill: $icon-color;
+                }
             }    
         }
     }
 
-
+    &.dragging {
+        .item-title {
+            pointer-events: none;
+        }
+    }
 
     .layer-list {
         flex: 1 1 auto;
@@ -86,6 +96,10 @@ $icon-color: rgb(94, 94, 94);
             border:0px;
             line-height: 0;
         }
+
+        .tree-children {
+            pointer-events: none;
+        }
                 
         .tree-item {
             display: block;
@@ -94,19 +108,40 @@ $icon-color: rgb(94, 94, 94);
             overflow: hidden;
             line-height: 1.5;
             padding: 5px 5px;
-            // border-bottom: 1px solid rgba(128, 128, 128, 0.15);            
+            pointer-events: all; 
+
+            &[item-type="artboard"] {
+                border-top: 1px solid rgba(128, 128, 128, 0.15);
+                border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+            }
+            
+            &.collapsed {
+                .item-icon-group {
+                    transform-origin: center center; 
+                    transform: rotate(90deg);
+                }
+                &+ .tree-children {
+                    height: 0px;
+                    overflow: hidden;
+                }
+            }
 
             &.image {
                 padding-left: 30px;
             }
 
-            &.selected {
+            &.selected,
+            &:hover {
                 background-color: $item-selected-color;
+
+                > .item-tools {
+                    display: block;
+                }
             }
 
             @for $i from 1 through 10 {
                 &.depth-#{$i} {
-                    .item-depth { width: 20px * $i; }
+                    .item-depth { width: 14px * $i; }
                 }
             }
                 
@@ -115,11 +150,12 @@ $icon-color: rgb(94, 94, 94);
                 vertical-align: middle; 
             }
 
-            .item-icon { 
+            .item-icon, .item-icon-group { 
                 display: inline-block;
                 vertical-align: middle; 
-                width: 18px;
-                height: 18px;
+                width: $icon-size;
+                height: $icon-size;
+                transition: transform 0.1s linear;
 
                 svg {
                     width: 100%;
@@ -142,19 +178,18 @@ $icon-color: rgb(94, 94, 94);
             .item-title {
                 display: inline-block;
                 font-size: 11px;
-                pointer-events: none;
             }
 
+
             .item-tools {
-                display: block;
+                display: none;
                 text-align: right;
                 float:right;
-
                 button {
                     padding: 0px;
                     box-sizing: border-box;
-                    height: 18px;
-                    width:18px;                    
+                    height: $icon-size;
+                    width:$icon-size;                    
                     display: inline-block;
                     outline: none;
                     cursor: pointer;

@@ -24,18 +24,21 @@ export class ArtBoard extends Item {
     }
 
 
-    clone () {
-        var json = JSON.parse(JSON.stringify(this.json));
-        return new ArtBoard(json);
-    }    
+    // clone () {
+    //     var json = JSON.parse(JSON.stringify(this.json));
+    //     return new ArtBoard(json);
+    // }    
 
     convert (json) {
+        json = super.convert(json);
+
         json.width = Length.create(json.width)
         json.height = Length.create(json.height)
         json.x = Length.create(json.x)
         json.y = Length.create(json.y)        
         json.perspectiveOriginPositionX = Length.create(json.perspectiveOriginPositionX)
         json.perspectiveOriginPositionY = Length.create(json.perspectiveOriginPositionY)
+
         return json
     } 
 
@@ -83,7 +86,7 @@ export class ArtBoard extends Item {
     }
 
     get allLayers () {
-        return this.tree().filter(it => it.itemType != 'directory'); 
+        return this.tree().filter(it => it.itemType == 'layer'); 
     }
 
     get texts () {
@@ -133,4 +136,15 @@ export class ArtBoard extends Item {
         }
     }
 
+    insertLast (source) {
+
+        var sourceParent = source.parent()
+
+        source.parentId = this.id;
+        source.index = Number.MAX_SAFE_INTEGER;
+
+        sourceParent.sort();
+        this.sort();
+
+    }
 }

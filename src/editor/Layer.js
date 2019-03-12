@@ -32,11 +32,6 @@ export class Layer extends Item {
         }
     }
 
-    clone () {
-        var json = JSON.parse(JSON.stringify(this.json));
-        return new Layer(json);
-    }    
-
     addBackgroundImage (backgroundImage) { return this.addProperty('background-image', backgroundImage)}
     addFilter (filter) { return this.addProperty('filter', filter)}    
     addBackdropFilter (backdropFilter) { return this.addProperty('backdrop-filter', backdropFilter)}
@@ -64,8 +59,12 @@ export class Layer extends Item {
     }
 
     convert (json) {
+        json = super.convert(json)
+
+        json.x = Length.create(json.x)
+        json.y = Length.create(json.y)
         json.width = Length.create(json.width)
-        json.height = Length.create(json.height)
+        json.height = Length.create(json.height)        
         return json
     }
 

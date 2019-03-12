@@ -1,7 +1,31 @@
 import { Config } from "./Config";
 import { Selection } from "./Selection";
+import { uuidShort } from "../util/functions/math";
 
 const items = new Map();
+
+
+function traverse (item, results, parentId) {
+    var newItem = item.clone(true)
+    newItem.parentId = parentId; 
+    results.push(newItem);
+
+    item.children.forEach(child => {
+        traverse(child, results, newItem.id);
+    })
+}
+
+function tree (id) {
+    var item = editor.get(id)
+    var newItem = item.clone(true)
+    var results = [newItem] 
+    
+    item.children.forEach(item => {
+        traverse(item, results, newItem.id);
+    })
+
+    return results
+}
 
 export const EDITOR_ID = '';
 export const editor = new class {
@@ -78,6 +102,21 @@ export const editor = new class {
         this.removeChildren(id);
 
         items.delete(id);
+    }
+
+    copy (id) {
+        var data = tree(id, uuidShort());
+
+        data.forEach(it => {
+            this.set(it.id, it);
+        })
+
+        if (data.length) {
+            data[0].index = data[0].index + 1; 
+            data[0].parent().sort();            
+        }
+
+        return data; 
     }
 
     clear () {

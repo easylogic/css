@@ -158,6 +158,9 @@ export const SELF = CHECKER('self');
 export const CAPTURE = CHECKER('capture');
 export const FIT = CHECKER('fit')
 export const PASSIVE = CHECKER('passive');
+export const PREVENT = CHECKER(`preventDefault`)
+export const STOP = CHECKER(`stopPropagation`)
+
 
 export const DEBOUNCE = (debounce = 100) => {
     return CHECKER(`debounce(${debounce})`)
@@ -170,14 +173,6 @@ export const MOVE = (method = 'move') => {
 export const END = (method = 'end') => {
     return AFTER(`bodyMouseUp ${method}`)
 } 
-
-export const PREVENT = () => {
-    return BEFORE(`preventDefault`)
-}
-
-export const STOP = () => {
-    return BEFORE(`stopPropagation`)
-}
 
 
 // Predefined LOADER

@@ -53,3 +53,11 @@ test('ArtBoard - toCSS', () => {
     expect(css['height']).toEqual('400px')
     expect(css['perspective-origin']).toEqual('100% 200%')
 })
+
+test('ArtBoard - clone', () => {
+    var artboard = new ArtBoard();
+
+    var newArtBoard = artboard.clone();
+
+    expect(artboard.id == newArtBoard.id).toEqual(false)
+})

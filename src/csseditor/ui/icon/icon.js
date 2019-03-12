@@ -10,10 +10,14 @@ import redo from './redo';
 import save from './save';
 import exportIcon from './export'
 import add from './add';
-
-
+import add_note from './add_note';
+import publish from './publish';
+import folder from './folder';
 
 export default {
+    folder,
+    publish,
+    add_note,
     add,
     save,
     export: exportIcon,

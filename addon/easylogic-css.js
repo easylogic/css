@@ -7073,6 +7073,8 @@ var SELF = CHECKER('self');
 var CAPTURE = CHECKER('capture');
 var FIT = CHECKER('fit');
 var PASSIVE = CHECKER('passive');
+var PREVENT = CHECKER('preventDefault');
+var STOP = CHECKER('stopPropagation');
 
 var DEBOUNCE = function DEBOUNCE() {
     var debounce = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
@@ -7091,10 +7093,6 @@ var END = function END() {
 
     return AFTER('bodyMouseUp ' + method);
 };
-
-
-
-
 
 // Predefined LOADER
 var LOAD = function LOAD() {
@@ -8186,11 +8184,13 @@ var EventMachine = function () {
     key: 'preventDefault',
     value: function preventDefault(e) {
       e.preventDefault();
+      return true;
     }
   }, {
     key: 'stopPropagation',
     value: function stopPropagation(e) {
       e.stopPropagation();
+      return true;
     }
 
     /* magic check method */
@@ -8450,6 +8450,24 @@ var Config = function () {
     return Config;
 }();
 
+var _stringToPercent = {
+    'center': 50,
+    'top': 0,
+    'left': 0,
+    'right': 100,
+    'bottom': 100
+};
+
+var Position$1 = function Position() {
+    classCallCheck(this, Position);
+};
+
+Position$1.CENTER = 'center';
+Position$1.TOP = 'top';
+Position$1.RIGHT = 'right';
+Position$1.LEFT = 'left';
+Position$1.BOTTOM = 'bottom';
+
 var Length$1 = function () {
     function Length() {
         var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
@@ -8554,6 +8572,26 @@ var Length$1 = function () {
             return value / this.value;
         }
     }, {
+        key: 'stringToPercent',
+        value: function stringToPercent() {
+
+            if (isNotUndefined(_stringToPercent[this.value])) {
+                return Length.percent(_stringToPercent[this.value]);
+            }
+
+            return Length.percent(0);
+        }
+    }, {
+        key: 'stringToEm',
+        value: function stringToEm(maxValue) {
+            return this.stringToPercent().toEm(maxValue);
+        }
+    }, {
+        key: 'stringToPx',
+        value: function stringToPx(maxValue) {
+            return this.stringToPercent().toPx(maxValue);
+        }
+    }, {
         key: 'toPercent',
         value: function toPercent(maxValue) {
             var fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
@@ -8564,6 +8602,8 @@ var Length$1 = function () {
                 return Length.percent(this.value * 100 / maxValue);
             } else if (this.isEm()) {
                 return Length.percent(this.value * fontSize * 100 / maxValue);
+            } else if (this.isString()) {
+                return this.stringToPercent(maxValue);
             }
         }
     }, {
@@ -8577,6 +8617,8 @@ var Length$1 = function () {
                 return Length.em(this.value / fontSize);
             } else if (this.isEm()) {
                 return this;
+            } else if (this.isString()) {
+                return this.stringToEm(maxValue);
             }
         }
     }, {
@@ -8588,6 +8630,8 @@ var Length$1 = function () {
                 return this;
             } else if (this.isEm()) {
                 return Length.px(this.value / 100 * maxValue / 16);
+            } else if (this.isString()) {
+                return this.stringToPx(maxValue);
             }
         }
     }], [{
@@ -8681,16 +8725,6 @@ var Length$1 = function () {
     return Length;
 }();
 
-var Position$1 = function Position() {
-    classCallCheck(this, Position);
-};
-
-Position$1.CENTER = 'center';
-Position$1.TOP = 'top';
-Position$1.RIGHT = 'right';
-Position$1.LEFT = 'left';
-Position$1.BOTTOM = 'bottom';
-
 var Item = function () {
     function Item() {
         var _this = this;
@@ -8765,6 +8799,9 @@ var Item = function () {
     }, {
         key: "convert",
         value: function convert(json) {
+            if (isUndefined$1(json.id)) {
+                json.id = uuidShort();
+            }
             return json;
         }
 
@@ -8807,9 +8844,14 @@ var Item = function () {
     }, {
         key: "clone",
         value: function clone$$1() {
+            var isNew = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             var json = JSON.parse(JSON.stringify(this.json));
-            json.id = undefined;
-            return new Item(json);
+            if (isNew) json.id = undefined;
+
+            var ItemClass = this.constructor;
+
+            return new ItemClass(json);
         }
     }, {
         key: "addItem",
@@ -8906,7 +8948,6 @@ var Item = function () {
     }, {
         key: "sort",
         value: function sort(itemType) {
-
             var children = this.children;
 
             if (itemType) {
@@ -8927,12 +8968,20 @@ var Item = function () {
     }, {
         key: "copy",
         value: function copy() {
-            var newItem = this.clone();
-            newItem.index = this.json.index + 1;
+            return editor$1.copy(this.id);
+        }
+    }, {
+        key: "insertLast",
+        value: function insertLast(source) {
 
-            console.log(newItem);
+            var selfParent = this.parent();
+            var sourceParent = source.parent();
 
-            this.parent().add(newItem);
+            source.parentId = this.json.parentId;
+            source.index = this.json.index + 1;
+
+            selfParent.sort();
+            sourceParent.sort();
         }
     }, {
         key: "moveLast",
@@ -9070,7 +9119,13 @@ var Item = function () {
     }, {
         key: "children",
         get: function get$$1() {
-            return editor$1.children(this.id);
+            var children = editor$1.children(this.id);
+            children.sort(function (a, b) {
+                if (a.index === b.index) return 0;
+
+                return a.index > b.index ? 1 : -1;
+            });
+            return children;
         }
     }, {
         key: "childrenIds",
@@ -9094,10 +9149,14 @@ var CHANGE_KEYFRAME_SELECTION = 'CHANGE_KEYFRAME_SELECTION';
 
 var CHANGE_EDITOR$1 = 'CHANGE_EDITOR';
 
-
 var CHANGE_ARTBOARD = 'CHANGE_ARTBOARD';
+
 var CHANGE_LAYER = 'CHANGE_LAYER';
 var CHANGE_IMAGE = 'CHANGE_IMAGE';
+
+
+
+
 var CHANGE_BOXSHADOW = 'CHANGE_BOXSHADOW';
 var CHANGE_TEXTSHADOW = 'CHANGE_TEXTSHADOW';
 var CHANGE_COLORSTEP = 'CHANGE_COLORSTEP';
@@ -9589,6 +9648,28 @@ var Selection = function () {
 
 var items = new Map();
 
+function traverse(item, results, parentId) {
+    var newItem = item.clone(true);
+    newItem.parentId = parentId;
+    results.push(newItem);
+
+    item.children.forEach(function (child) {
+        traverse(child, results, newItem.id);
+    });
+}
+
+function tree(id) {
+    var item = editor$1.get(id);
+    var newItem = item.clone(true);
+    var results = [newItem];
+
+    item.children.forEach(function (item) {
+        traverse(item, results, newItem.id);
+    });
+
+    return results;
+}
+
 var EDITOR_ID = '';
 var editor$1 = new (function () {
     function _class() {
@@ -9704,6 +9785,24 @@ var editor$1 = new (function () {
             items.delete(id);
         }
     }, {
+        key: "copy",
+        value: function copy(id) {
+            var _this = this;
+
+            var data = tree(id, uuidShort());
+
+            data.forEach(function (it) {
+                _this.set(it.id, it);
+            });
+
+            if (data.length) {
+                data[0].index = data[0].index + 1;
+                data[0].parent().sort();
+            }
+
+            return data;
+        }
+    }, {
         key: "clear",
         value: function clear() {
             items.clear();
@@ -9718,7 +9817,7 @@ var editor$1 = new (function () {
          * @param {string} parentId 
          */
         value: function removeChildren() {
-            var _this = this;
+            var _this2 = this;
 
             var parentId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EDITOR_ID;
             var parentObject = arguments[1];
@@ -9739,8 +9838,8 @@ var editor$1 = new (function () {
 
             if (children.length) {
                 children.forEach(function (child) {
-                    _this.removeChildren(child.id);
-                    _this.remove(child.id);
+                    _this2.removeChildren(child.id);
+                    _this2.remove(child.id);
                 });
             }
         }
@@ -16381,12 +16480,6 @@ var Layer = function (_Item) {
             }
         }
     }, {
-        key: "clone",
-        value: function clone$$1() {
-            var json = JSON.parse(JSON.stringify(this.json));
-            return new Layer(json);
-        }
-    }, {
         key: "addBackgroundImage",
         value: function addBackgroundImage(backgroundImage) {
             return this.addProperty('background-image', backgroundImage);
@@ -16420,6 +16513,10 @@ var Layer = function (_Item) {
     }, {
         key: "convert",
         value: function convert(json) {
+            json = get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "convert", this).call(this, json);
+
+            json.x = Length$1.create(json.x);
+            json.y = Length$1.create(json.y);
             json.width = Length$1.create(json.width);
             json.height = Length$1.create(json.height);
             return json;
@@ -25099,21 +25196,24 @@ var ArtBoard = function (_Item) {
                 perspectiveOriginPositionY: Length$1.percent(0)
             }, obj));
         }
-    }, {
-        key: "clone",
-        value: function clone() {
-            var json = JSON.parse(JSON.stringify(this.json));
-            return new ArtBoard(json);
-        }
+
+        // clone () {
+        //     var json = JSON.parse(JSON.stringify(this.json));
+        //     return new ArtBoard(json);
+        // }    
+
     }, {
         key: "convert",
         value: function convert(json) {
+            json = get$1(ArtBoard.prototype.__proto__ || Object.getPrototypeOf(ArtBoard.prototype), "convert", this).call(this, json);
+
             json.width = Length$1.create(json.width);
             json.height = Length$1.create(json.height);
             json.x = Length$1.create(json.x);
             json.y = Length$1.create(json.y);
             json.perspectiveOriginPositionX = Length$1.create(json.perspectiveOriginPositionX);
             json.perspectiveOriginPositionY = Length$1.create(json.perspectiveOriginPositionY);
+
             return json;
         }
     }, {
@@ -25197,6 +25297,18 @@ var ArtBoard = function (_Item) {
             };
         }
     }, {
+        key: "insertLast",
+        value: function insertLast(source) {
+
+            var sourceParent = source.parent();
+
+            source.parentId = this.id;
+            source.index = Number.MAX_SAFE_INTEGER;
+
+            sourceParent.sort();
+            this.sort();
+        }
+    }, {
         key: "directories",
         get: function get() {
             return this.search({ itemType: 'directory' });
@@ -25217,7 +25329,7 @@ var ArtBoard = function (_Item) {
         key: "allLayers",
         get: function get() {
             return this.tree().filter(function (it) {
-                return it.itemType != 'directory';
+                return it.itemType == 'layer';
             });
         }
     }, {
@@ -25472,7 +25584,7 @@ var CanvasView = function (_UIElement) {
             var _this2 = this;
 
             if (item instanceof ArtBoard) {
-                item.layers.forEach(function (layer) {
+                item.allLayers.forEach(function (layer) {
                     var $el = _this2.getCachedLayerElement(layer.id);
                     if ($el) $el.css(layer.toBoundCSS());
                 });
@@ -25872,7 +25984,7 @@ var MenuItem = function (_UIElement) {
 
 var chevron_right = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\">\n    <path d=\"M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z\"/>\n</svg>";
 
-var create_folder = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\">\n    <path fill=\"none\" d=\"M0 0h24v24H0V0z\"/>\n    <path d=\"M22 6H12l-2-2H2v16h20V6zm-3 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z\"/>\n</svg>";
+var create_folder = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\">\n    <path d=\"M22 6H12l-2-2H2v16h20V6zm-3 8h-3v3h-2v-3h-3v-2h3V9h2v3h3v2z\"/>\n</svg>";
 
 var add_box = "\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z\"/><path d=\"M0 0h24v24H0z\" fill=\"none\"/></svg>";
 
@@ -25894,7 +26006,16 @@ var exportIcon = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=
 
 var add = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z\"/></svg>";
 
+var add_note = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 14h-3v3h-2v-3H8v-2h3v-3h2v3h3v2zm-3-7V3.5L18.5 9H13z\"/></svg>";
+
+var publish = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M5 4v2h14V4H5zm0 10h4v6h6v-6h4l-7-7-7 7z\"/></svg>";
+
+var folder = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z\"/></svg>";
+
 var icon = {
+    folder: folder,
+    publish: publish,
+    add_note: add_note,
     add: add,
     save: save,
     export: exportIcon,
@@ -25920,7 +26041,7 @@ var Export = function (_MenuItem) {
     createClass(Export, [{
         key: "getIconString",
         value: function getIconString() {
-            return icon.export;
+            return icon.publish;
         }
     }, {
         key: "getTitle",
@@ -26239,7 +26360,7 @@ var Project = function (_Item) {
     }, {
         key: 'getDefaultTitle',
         value: function getDefaultTitle() {
-            return 'Project';
+            return 'New Project';
         }
     }, {
         key: 'getDefaultObject',
@@ -26261,6 +26382,8 @@ var Project = function (_Item) {
     return Project;
 }(Item);
 
+var a = 0;
+
 var AddRect = function (_MenuItem) {
     inherits(AddRect, _MenuItem);
 
@@ -26277,7 +26400,7 @@ var AddRect = function (_MenuItem) {
     }, {
         key: "getTitle",
         value: function getTitle() {
-            return 'Rect';
+            return 'Rectangle';
         }
     }, {
         key: "clickButton",
@@ -26289,25 +26412,28 @@ var AddRect = function (_MenuItem) {
         value: function add() {
             var project = editor$1.selection.currentProject;
             if (!project) {
-                project = editor$1.addProject(new Project());
+                project = editor$1.addProject(new Project({ name: 'New Project' }));
                 project.select();
             }
 
             var artboard = project.artboard || editor$1.selection.currentArtBoard;
             if (!artboard) {
-                artboard = project.addArtBoard(new ArtBoard());
+                artboard = project.addArtBoard(new ArtBoard({ name: 'New ArtBoard' }));
                 artboard.select();
             }
 
             var directory = editor$1.selection.currentDirectory;
             var layer;
             if (directory) {
-                layer = directory.addLayer(new Rect());
+                layer = directory.addLayer(new Rect({
+                    name: a++ + '222'
+                }));
             } else {
                 var selectedLayer = editor$1.selection.currentLayer;
                 if (selectedLayer) {
                     layer = selectedLayer.parent().addLayer(new Rect({
-                        index: selectedLayer.index + 1
+                        index: selectedLayer.index + 1,
+                        name: a++ + '222'
                     }));
                 } else {
                     layer = artboard.addLayer(new Rect());
@@ -26330,14 +26456,27 @@ var Circle = function (_Layer) {
     }
 
     createClass(Circle, [{
-        key: 'getDefaultTitle',
+        key: "getDefaultTitle",
         value: function getDefaultTitle() {
             return 'Circle';
         }
     }, {
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(Circle.prototype.__proto__ || Object.getPrototypeOf(Circle.prototype), 'getDefaultObject', this).call(this, { type: 'circle' });
+            return get$1(Circle.prototype.__proto__ || Object.getPrototypeOf(Circle.prototype), "getDefaultObject", this).call(this, { type: 'circle' });
+        }
+
+        /**
+         * circle has only border-radius: 100%; 
+         */
+
+    }, {
+        key: "toBorderRadiusCSS",
+        value: function toBorderRadiusCSS() {
+            var css = {
+                'border-radius': Length$1.percent(100)
+            };
+            return css;
         }
     }]);
     return Circle;
@@ -26364,7 +26503,41 @@ var AddCircle = function (_MenuItem) {
     }, {
         key: "clickButton",
         value: function clickButton(e) {
-            editor$1.selection.add(new Circle());
+            this.add();
+        }
+    }, {
+        key: "add",
+        value: function add() {
+            var project = editor$1.selection.currentProject;
+            if (!project) {
+                project = editor$1.addProject(new Project({ name: 'New Project' }));
+                project.select();
+            }
+
+            var artboard = project.artboard || editor$1.selection.currentArtBoard;
+            if (!artboard) {
+                artboard = project.addArtBoard(new ArtBoard({ name: 'New ArtBoard' }));
+                artboard.select();
+            }
+
+            var directory = editor$1.selection.currentDirectory;
+            var layer;
+            if (directory) {
+                layer = directory.addLayer(new Circle({ name: 'New Circle' }));
+            } else {
+                var selectedLayer = editor$1.selection.currentLayer;
+                if (selectedLayer) {
+                    layer = selectedLayer.parent().addLayer(new Circle({
+                        index: selectedLayer.index + 1,
+                        name: 'New Circle'
+                    }));
+                } else {
+                    layer = artboard.addLayer(new Circle({ name: 'New Circle' }));
+                }
+            }
+
+            layer.select();
+            this.emit(CHANGE_EDITOR$1);
         }
     }]);
     return AddCircle;
@@ -27030,16 +27203,16 @@ var ProjectListView = function (_UIElement) {
     createClass(ProjectListView, [{
         key: "template",
         value: function template() {
-            return "\n        <div class='project-list-view'>         \n            <div class='project-toolbar'>\n                <span class='title'>Project</span>\n                <span class='project-tools'>\n                    <div class=\"button-group\">\n                        <button type=\"button\" ref=\"$addProject\">" + icon.add + "</button>\n                    </div>\n                </span>\n            </div>\n            <div class=\"project-list\" ref=\"$pageList\"></div>\n        </div>";
+            return "\n        <div class='project-list-view'>         \n            <div class='project-toolbar'>\n                <span class='title'>Project</span>\n                <span class='project-tools'>\n                    <div class=\"button-group\">\n                        <button type=\"button\" ref=\"$addProject\">" + icon.add + "</button>\n                    </div>\n                </span>\n            </div>\n            <div class=\"project-list\" ref=\"$projectList\"></div>\n        </div>";
         }
     }, {
         key: "makeItemNodeProject",
         value: function makeItemNodeProject(project) {
             var selected = project.selected ? 'selected' : EMPTY_STRING;
-            return "<div class='tree-item " + selected + "' id=\"" + project.id + "\" type='project'>\n            <div class=\"item-title\">" + project.title + "</div>   \n        </div>";
+            return "<div class='tree-item " + selected + "' item-id=\"" + project.id + "\" type='project'>\n            <div class=\"item-title\">" + project.title + "</div>   \n        </div>";
         }
     }, {
-        key: LOAD('$pageList'),
+        key: LOAD('$projectList'),
         value: function value$$1() {
             var _this2 = this;
 
@@ -27053,24 +27226,50 @@ var ProjectListView = function (_UIElement) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: "toggleSelectedItem",
+        value: function toggleSelectedItem(id) {
+            var selected = this.refs.$projectList.$('.selected');
+            if (selected) {
+                selected.removeClass('selected');
+            }
+
+            var item = this.refs.$projectList.$("[item-id=\"" + id + "\"]");
+            if (item) {
+                item.addClass('selected');
+            }
+        }
+    }, {
+        key: "refreshSelection",
+        value: function refreshSelection() {
+            var project = editor$1.selection.currentProject;
+            if (project) {
+                this.toggleSelectedItem(project.id);
+            }
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value$$1() {
             this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refreshSelection();
         }
     }, {
         key: CLICK('$addProject'),
         value: function value$$1(e) {
             var project = editor$1.addProject(new Project({ name: 'New Project' }));
             project.select();
-            editor$1.send(CHANGE_SELECTION);
+            editor$1.send(CHANGE_EDITOR$1);
         }
     }]);
     return ProjectListView;
 }(UIElement);
 
-var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", "' id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>\n                <div class='item-icon'>", "</div>\n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "], ["\n            <div class='tree-item depth-", " ", "' id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>\n                <div class='item-icon'>", "</div>\n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "]);
-var _templateObject2$3 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", "' id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon'>", "</div>            \n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock\">", "</button>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "], ["\n            <div class='tree-item depth-", " ", "' id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon'>", "</div>            \n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Lock\">", "</button>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "]);
-var _templateObject3$1 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", "' id=\"", "\" item-type='", "' draggable=\"draggable\">\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon'><span class='icon-", "'></span></div>            \n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            "], ["\n            <div class='tree-item depth-", " ", "' id=\"", "\" item-type='", "' draggable=\"draggable\">\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon'><span class='icon-", "'></span></div>            \n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            "]);
+var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", "' item-id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>\n                <div class='item-icon-group'>", "</div>\n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "], ["\n            <div class='tree-item depth-", " ", "' item-id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>\n                <div class='item-icon-group'>", "</div>\n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "]);
+var _templateObject2$3 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon-group'>", "</div>\n                <div class='item-icon'>", "</div>            \n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "'>\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon-group'>", "</div>\n                <div class='item-icon'>", "</div>            \n                <div class=\"item-title\"> ", "</div>\n                <div class='item-tools'>          \n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            <div class='tree-children'>\n                ", "\n            </div>\n            "]);
+var _templateObject3$1 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' draggable=\"true\">\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon'><span class='icon-", "'></span></div>            \n                <div class=\"item-title\"> ", "</div> \n                <div class='item-tools'>          \n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' draggable=\"true\">\n                <div class=\"item-depth\"></div>            \n                <div class='item-icon'><span class='icon-", "'></span></div>            \n                <div class=\"item-title\"> ", "</div> \n                <div class='item-tools'>          \n                    <button type=\"button\" class='lock-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='visible-item ", "' item-id='", "' title=\"Visible\">", "</button>\n                    <button type=\"button\" class='delete-item' item-id='", "' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' item-id='", "' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            "]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -27083,7 +27282,7 @@ var LayerListView = function (_UIElement) {
     createClass(LayerListView, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='layer-list-view'>\n                <div class=\"layer-list-toolbar\">\n                    <span class='title'>Art Board</span>\n                    <span class='layer-tools'>\n                        <div class=\"button-group\">\n                            <button type=\"button\" ref=\"$addArtBoard\" title=\"add ArtBoard\">" + icon.add + "</button>\n                            <button type=\"button\" ref=\"$addDirectory\" title=\"add Directory\">" + icon.create_folder + "</button>\n                        </div>\n                    </span> \n                </div>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+            return "\n            <div class='layer-list-view'>\n                <div class=\"layer-list-toolbar\">\n                    <span class='title'>Art Board</span>\n                    <span class='layer-tools'>\n                        <div class=\"button-group\">\n                            <button type=\"button\" ref=\"$addArtBoard\" title=\"add ArtBoard\">" + icon.add_note + "</button>\n                            <button type=\"button\" ref=\"$addDirectory\" title=\"add Directory\">" + icon.create_folder + "</button>\n                        </div>\n                    </span> \n                </div>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
         }
     }, {
         key: "makeItem",
@@ -27104,7 +27303,7 @@ var LayerListView = function (_UIElement) {
             var lock = item.lock ? 'lock' : EMPTY_STRING;
             var visible = item.visible ? 'visible' : EMPTY_STRING;
             var selected = item.selectedOne ? 'selected' : EMPTY_STRING;
-            return html(_templateObject$18, depth, selected, item.id, item.itemType, icon.chevron_right, item.title, visible, item.id, icon.visible, item.id, icon.remove, item.id, icon.copy, item.children.map(function (child) {
+            return html(_templateObject$18, isUndefined$1(depth) ? 0 : depth, selected, item.id, item.itemType, icon.chevron_right, item.title, visible, item.id, icon.visible, item.id, icon.remove, item.id, icon.copy, item.children.map(function (child) {
                 return _this2.makeItem(child, depth + 1);
             }));
         }
@@ -27116,7 +27315,8 @@ var LayerListView = function (_UIElement) {
             var lock = item.lock ? 'lock' : '';
             var visible = item.visible ? 'visible' : '';
             var selected = item.selected ? 'selected' : EMPTY_STRING;
-            return html(_templateObject2$3, depth, selected, item.id, item.itemType, icon.chevron_right, item.title, lock, item.id, icon.lock, visible, item.id, icon.visible, item.id, icon.remove, item.id, icon.copy, item.children.map(function (child) {
+            var collapsed = item.collapsed ? 'collapsed' : EMPTY_STRING;
+            return html(_templateObject2$3, depth, selected, collapsed, item.id, item.itemType, icon.chevron_right, icon.folder, item.title, visible, item.id, icon.visible, item.id, icon.remove, item.id, icon.copy, item.children.map(function (child) {
                 return _this3.makeItem(child, depth + 1);
             }));
         }
@@ -27126,7 +27326,7 @@ var LayerListView = function (_UIElement) {
             var lock = item.lock ? 'lock' : '';
             var visible = item.visible ? 'visible' : '';
             var selected = item.selectedOne ? 'selected' : EMPTY_STRING;
-            return html(_templateObject3$1, depth, selected, item.id, item.itemType, item.type, item.title, lock, item.id, icon.lock, visible, item.id, icon.visible, item.id, icon.remove, item.id, icon.copy);
+            return html(_templateObject3$1, depth, selected, item.index, item.id, item.itemType, item.type, item.title, lock, item.id, icon.lock, visible, item.id, icon.visible, item.id, icon.remove, item.id, icon.copy);
         }
     }, {
         key: LOAD('$layerList'),
@@ -27143,6 +27343,7 @@ var LayerListView = function (_UIElement) {
     }, {
         key: "refresh",
         value: function refresh() {
+            console.log('load');
             this.load();
         }
     }, {
@@ -27160,9 +27361,17 @@ var LayerListView = function (_UIElement) {
         // all effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR$1),
         value: function value$$1() {
             this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_SELECTION),
+        value: function value$$1() {
+            var current = editor$1.selection.current;
+            if (current) {
+                this.toggleSelectedItem(current.id);
+            }
         }
     }, {
         key: CLICK('$addArtBoard'),
@@ -27179,25 +27388,51 @@ var LayerListView = function (_UIElement) {
     }, {
         key: CLICK('$addDirectory'),
         value: function value$$1() {
-            var currentItem = editor$1.selection.currentDirectory || editor$1.selection.currentArtBoard;
+            var currentItem = editor$1.selection.current;
             if (currentItem) {
-                var directory = currentItem.addDirectory(new Directory({
-                    name: 'New Directory'
-                }));
+
+                if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
+                    var directory = currentItem.addDirectory(new Directory({
+                        name: 'New Directory'
+                    }));
+                } else if (currentItem instanceof Layer) {
+                    var directory = currentItem.parent().addDirectory(new Directory({
+                        name: 'New Directory',
+                        index: currentItem.index + 1
+                    }));
+                }
+                directory.select();
                 this.refresh();
+                editor$1.send(CHANGE_SELECTION);
             }
         }
     }, {
-        key: CLICK('$layerList .tree-item') + SELF,
-        value: function value$$1(e) {
+        key: "toggleSelectedItem",
+        value: function toggleSelectedItem(id) {
             var selected = this.refs.$layerList.$('.selected');
             if (selected) {
                 selected.removeClass('selected');
             }
 
-            e.$delegateTarget.toggleClass('selected', true);
-            var id = e.$delegateTarget.attr('id');
-
+            var item = this.refs.$layerList.$("[item-id=\"" + id + "\"]");
+            if (item) {
+                item.addClass('selected');
+            }
+        }
+    }, {
+        key: CLICK('$layerList .tree-item > .item-icon-group'),
+        value: function value$$1(e) {
+            var $dt = e.$delegateTarget.closest('tree-item');
+            var id = $dt.attr('item-id');
+            var item = editor$1.get(id);
+            item.collapsed = true;
+            $dt.toggleClass('collapsed');
+        }
+    }, {
+        key: CLICK('$layerList .tree-item > .item-title'),
+        value: function value$$1(e) {
+            var id = e.$delegateTarget.closest('tree-item').attr('item-id');
+            this.toggleSelectedItem(id);
             editor$1.selection.select(id);
             editor$1.send(CHANGE_SELECTION, null, this);
         }
@@ -27205,45 +27440,45 @@ var LayerListView = function (_UIElement) {
         key: DRAGSTART('$layerList .tree-item'),
         value: function value$$1(e) {
             this.draggedLayer = e.$delegateTarget;
-            this.draggedLayer.css('opacity', 0.5);
-            e.dataTransfer.setData('text', e.$delegateTarget.attr('id'));
-            // e.preventDefault();
-            console.log('아이템 드래그 구현해주세요');
+            this.draggedLayerId = e.$delegateTarget.attr('item-id');
+            this.draggedLayer.css('opacity', 0.5).css('background-color', 'yellow');
+            e.dataTransfer.setData('text', e.$delegateTarget.attr('item-id'));
+            this.$el.addClass('dragging');
         }
     }, {
         key: DRAGEND('$layerList .tree-item'),
         value: function value$$1(e) {
-            console.log('아이템 드래그 구현해주세요');
             if (this.draggedLayer) {
-                this.draggedLayer.css('opacity', 1);
+                this.draggedLayer.css('opacity', 1).css('background-color', '');
+                this.draggedLayer = null;
+                this.draggedLayerId = null;
             }
+            this.$el.removeClass('dragging');
         }
     }, {
-        key: DRAGOVER('$layerList .tree-item'),
+        key: DRAGOVER('$layerList .tree-item') + PREVENT,
         value: function value$$1(e) {
-            e.preventDefault();
+            // PREVENT
         }
     }, {
-        key: DROP('$layerList .tree-item') + SELF,
+        key: DROP('$layerList .tree-item') + SELF + PREVENT,
         value: function value$$1(e) {
-            e.preventDefault();
-            console.log('item drag 구현해주세요.');
-        }
-    }, {
-        key: DROP('$layerList'),
-        value: function value$$1(e) {
-            e.preventDefault();
+            var $item = e.$delegateTarget;
+            if (this.draggedLayerId) {
+                var source = editor$1.get(this.draggedLayerId);
+                var target = editor$1.get($item.attr('item-id'));
 
-            if (this.draggedLayer) {
-                var sourceId = this.draggedLayer.attr('id');
-                var item = editor$1.get(sourceId);
-                item.moveLast();
+                target.insertLast(source);
+                source.select();
+
+                editor$1.send(CHANGE_EDITOR$1);
             }
+
+            this.$el.removeClass('dragging');
         }
     }, {
         key: CLICK('$layerList .copy-item'),
         value: function value$$1(e) {
-            console.log('click copy', e);
             var id = e.$delegateTarget.attr('item-id');
             var item = editor$1.get(id);
             item.copy();
@@ -27252,19 +27487,21 @@ var LayerListView = function (_UIElement) {
     }, {
         key: CLICK('$layerList .delete-item'),
         value: function value$$1(e) {
-            console.log('click delete', e);
             var id = e.$delegateTarget.attr('item-id');
-            editor$1.remove(id);
+            var item = editor$1.get(id);
+            item.remove();
             editor$1.emit(CHANGE_EDITOR$1, null, this);
         }
     }, {
         key: CLICK('$layerList .visible-item'),
         value: function value$$1(e) {
-            console.log('click visible', e);
-            e.$delegateTarget.toggleClass('visible');
+
             var id = e.$delegateTarget.attr('item-id');
             var item = editor$1.get(id);
+
+            e.$delegateTarget.toggleClass('visible');
             item.toggle('visible');
+
             editor$1.emit(CHANGE_LAYER, null, this);
         }
     }, {
@@ -27497,7 +27734,7 @@ var SelectLayerView = function (_BaseTab) {
     createClass(SelectLayerView, [{
         key: "template",
         value: function template() {
-            return "    \n            <div class=\"tab horizontal left select-layer-view\">\n                <div class=\"tab-header no-border\" ref=\"$header\">\n                    <div class=\"tab-item selected\" data-id=\"outline\">Outline</div>       \n                    <div class=\"tab-item\" data-id=\"page\">Page</div>                                       \n                    <div class=\"tab-item\" data-id=\"layers\">Layer</div>\n                    <div class=\"tab-item small-font\" data-id=\"gradient\">Gradient</div>\n                    <div class=\"tab-item small-font\" data-id=\"history\">History</div>\n                </div>\n                <div class=\"tab-body\" ref=\"$body\">\n                    <div class=\"tab-content\" data-id=\"page\">\n                        <!-- <PageSampleListView /> -->\n                    </div> \n                    <div class=\"tab-content selected\" data-id=\"outline\">\n                        <OutlineTabView />\n                    </div>\n                    <div class=\"tab-content\" data-id=\"layers\">\n                        <!-- <ShapeListView /> -->\n                        <!-- <LayerSampleList /> -->\n                    </div>\n                    <div class=\"tab-content\" data-id=\"gradient\">\n                        <BasicGradient />\n                        <!-- <GradientSampleList /> -->\n                    </div> \n                    <div class=\"tab-content\" data-id=\"history\">\n                        <HistoryListView />\n                    </div>\n                </div>\n            </div>\n        ";
+            return "    \n            <div class=\"select-layer-view\">\n                <OutlineTabView />\n            </div>\n        ";
         }
     }, {
         key: "components",

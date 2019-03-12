@@ -1,12 +1,14 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
-import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP } from "../../../../util/Event";
+import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP, PREVENT } from "../../../../util/Event";
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
-import { html } from "../../../../util/functions/func";
+import { html, isUndefined } from "../../../../util/functions/func";
 import { editor } from "../../../../editor/editor";
 import { ArtBoard } from "../../../../editor/ArtBoard";
 import { Directory } from "../../../../editor/Directory";
 import icon from "../../icon/icon";
+import Dom from "../../../../util/Dom";
+import { Layer } from "../../../../editor/Layer";
 
 export default class LayerListView extends UIElement {
 
@@ -17,7 +19,7 @@ export default class LayerListView extends UIElement {
                     <span class='title'>Art Board</span>
                     <span class='layer-tools'>
                         <div class="button-group">
-                            <button type="button" ref="$addArtBoard" title="add ArtBoard">${icon.add}</button>
+                            <button type="button" ref="$addArtBoard" title="add ArtBoard">${icon.add_note}</button>
                             <button type="button" ref="$addDirectory" title="add Directory">${icon.create_folder}</button>
                         </div>
                     </span> 
@@ -43,9 +45,9 @@ export default class LayerListView extends UIElement {
         var visible = item.visible ? 'visible' : EMPTY_STRING     
         var selected = item.selectedOne ? 'selected' : EMPTY_STRING;   
         return html`
-            <div class='tree-item depth-${depth} ${selected}' id="${item.id}" item-type='${item.itemType}'>
+            <div class='tree-item depth-${isUndefined(depth) ? 0 : depth} ${selected}' item-id="${item.id}" item-type='${item.itemType}'>
                 <div class="item-depth"></div>
-                <div class='item-icon'>${icon.chevron_right}</div>
+                <div class='item-icon-group'>${icon.chevron_right}</div>
                 <div class="item-title"> ${item.title}</div>
                 <div class='item-tools'>          
                     <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible">${icon.visible}</button>
@@ -62,14 +64,15 @@ export default class LayerListView extends UIElement {
     makeDirectory (item, depth) {
         var lock = item.lock ? 'lock' : '';
         var visible = item.visible ? 'visible' : ''
-        var selected = item.selected ? 'selected' : EMPTY_STRING;           
+        var selected = item.selected ? 'selected' : EMPTY_STRING;   
+        var collapsed = item.collapsed ? 'collapsed': EMPTY_STRING        
         return html`
-            <div class='tree-item depth-${depth} ${selected}' id="${item.id}" item-type='${item.itemType}'>
+            <div class='tree-item depth-${depth} ${selected} ${collapsed}' item-id="${item.id}" item-type='${item.itemType}'>
                 <div class="item-depth"></div>            
-                <div class='item-icon'>${icon.chevron_right}</div>            
+                <div class='item-icon-group'>${icon.chevron_right}</div>
+                <div class='item-icon'>${icon.folder}</div>            
                 <div class="item-title"> ${item.title}</div>
                 <div class='item-tools'>          
-                    <button type="button" class='lock-item ${lock}' item-id='${item.id}' title="Lock">${icon.lock}</button>
                     <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible">${icon.visible}</button>
                     <button type="button" class='delete-item' item-id='${item.id}' title="Remove">${icon.remove}</button>
                     <button type="button" class='copy-item' item-id='${item.id}' title="Copy">${icon.copy}</button>
@@ -86,10 +89,10 @@ export default class LayerListView extends UIElement {
         var visible = item.visible ? 'visible' : ''  
         var selected = item.selectedOne ? 'selected' : EMPTY_STRING;                 
         return html`
-            <div class='tree-item depth-${depth} ${selected}' id="${item.id}" item-type='${item.itemType}' draggable="draggable">
+            <div class='tree-item depth-${depth} ${selected} ${item.index}' item-id="${item.id}" item-type='${item.itemType}' draggable="true">
                 <div class="item-depth"></div>            
                 <div class='item-icon'><span class='icon-${item.type}'></span></div>            
-                <div class="item-title"> ${item.title}</div>
+                <div class="item-title"> ${item.title}</div> 
                 <div class='item-tools'>          
                     <button type="button" class='lock-item ${lock}' item-id='${item.id}' title="Visible">${icon.lock}</button>
                     <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible">${icon.visible}</button>
@@ -111,6 +114,7 @@ export default class LayerListView extends UIElement {
     }
 
     refresh () {
+        console.log('load');
         this.load()
     }
 
@@ -126,9 +130,15 @@ export default class LayerListView extends UIElement {
 
     // all effect 
     [EVENT(
-        CHANGE_EDITOR,
-        CHANGE_SELECTION
+        CHANGE_EDITOR
     )] () { this.refresh(); }
+
+    [EVENT(CHANGE_SELECTION)] () {
+        var current = editor.selection.current;
+        if (current) {
+            this.toggleSelectedItem(current.id);
+        }
+    }
 
     [CLICK('$addArtBoard')] () {
         var project = editor.selection.currentProject;
@@ -142,66 +152,91 @@ export default class LayerListView extends UIElement {
     }
 
     [CLICK('$addDirectory')] () {
-        var currentItem = editor.selection.currentDirectory || editor.selection.currentArtBoard;
+        var currentItem = editor.selection.current;
         if (currentItem) {
-            var directory = currentItem.addDirectory(new Directory({
-                name: 'New Directory'
-            }))
-            this.refresh();
+
+            if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
+                var directory = currentItem.addDirectory(new Directory({
+                    name: 'New Directory'
+                }))    
+            } else if (currentItem instanceof Layer) {
+                var directory = currentItem.parent().addDirectory(new Directory({
+                    name: 'New Directory',
+                    index: currentItem.index + 1 
+                }))    
+            }
+            directory.select()
+            this.refresh()
+            editor.send(CHANGE_SELECTION);
 
         }
     }
 
-    [CLICK('$layerList .tree-item') + SELF] (e) { 
+    toggleSelectedItem (id) {
         var selected = this.refs.$layerList.$('.selected');
         if (selected) {
             selected.removeClass('selected')
         }
 
-        e.$delegateTarget.toggleClass('selected', true);
-        var id = e.$delegateTarget.attr('id');
+        var item = this.refs.$layerList.$(`[item-id="${id}"]`);
+        if (item) {
+            item.addClass('selected');
+        }
+    }
 
+    [CLICK('$layerList .tree-item > .item-icon-group')] (e) { 
+        var $dt = e.$delegateTarget.closest('tree-item')
+        var id = $dt.attr('item-id')
+        var item = editor.get(id);
+        item.collapsed = true; 
+        $dt.toggleClass('collapsed');
+    }
+
+
+    [CLICK('$layerList .tree-item > .item-title')] (e) { 
+        var id = e.$delegateTarget.closest('tree-item').attr('item-id')
+        this.toggleSelectedItem(id);
         editor.selection.select(id)
         editor.send(CHANGE_SELECTION, null, this);
     }
 
     [DRAGSTART('$layerList .tree-item')] (e) {
         this.draggedLayer = e.$delegateTarget;
-        this.draggedLayer.css('opacity', 0.5);
-        e.dataTransfer.setData('text', e.$delegateTarget.attr('id'))
-        // e.preventDefault();
-        console.log('아이템 드래그 구현해주세요')
+        this.draggedLayerId = e.$delegateTarget.attr('item-id')
+        this.draggedLayer.css('opacity', 0.5).css('background-color', 'yellow');
+        e.dataTransfer.setData('text', e.$delegateTarget.attr('item-id'))
+        this.$el.addClass('dragging')
     }
 
     [DRAGEND('$layerList .tree-item')] (e) {
-        console.log('아이템 드래그 구현해주세요')
         if (this.draggedLayer) {
-            this.draggedLayer.css('opacity', 1);        
+            this.draggedLayer.css('opacity', 1).css('background-color', '');       
+            this.draggedLayer = null; 
+            this.draggedLayerId = null;            
         }
+        this.$el.removeClass('dragging')        
     }    
 
-    [DRAGOVER('$layerList .tree-item')] (e) {
-        e.preventDefault();        
+    [DRAGOVER('$layerList .tree-item') + PREVENT] (e) {
+        // PREVENT
     }        
 
-    [DROP('$layerList .tree-item') + SELF] (e) {
-        e.preventDefault();        
-        console.log('item drag 구현해주세요.')
-    }       
-    
-    [DROP('$layerList')] (e) {
-        e.preventDefault();        
+    [DROP('$layerList .tree-item') + SELF + PREVENT] (e) {
+        var $item = e.$delegateTarget;
+        if (this.draggedLayerId) {
+            var source = editor.get(this.draggedLayerId);
+            var target = editor.get($item.attr('item-id'));
 
-        if (this.draggedLayer) {
-            var sourceId = this.draggedLayer.attr('id')
-            var item = editor.get(sourceId);
-            item.moveLast();
+            target.insertLast(source);
+            source.select()
+
+            editor.send(CHANGE_EDITOR);
         }
 
-    }           
+        this.$el.removeClass('dragging')
+    }       
 
     [CLICK('$layerList .copy-item')] (e) {
-        console.log('click copy', e);
         var id = e.$delegateTarget.attr('item-id');
         var item = editor.get(id);
         item.copy();
@@ -209,18 +244,20 @@ export default class LayerListView extends UIElement {
     }
 
     [CLICK('$layerList .delete-item')] (e) {
-        console.log('click delete', e);        
         var id = e.$delegateTarget.attr('item-id');
-        editor.remove(id);
+        var item = editor.get(id);
+        item.remove()
         editor.emit(CHANGE_EDITOR, null, this);
     } 
 
-    [CLICK('$layerList .visible-item')] (e) {
-        console.log('click visible', e);                
-        e.$delegateTarget.toggleClass('visible');
+    [CLICK('$layerList .visible-item')] (e) {          
+
         var id = e.$delegateTarget.attr('item-id');
         var item = editor.get(id);
+
+        e.$delegateTarget.toggleClass('visible');
         item.toggle('visible');
+
         editor.emit(CHANGE_LAYER, null, this);
     }     
 
