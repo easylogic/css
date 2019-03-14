@@ -9,7 +9,7 @@ export class Filter extends Property {
     } 
 
     toString () {
-        return `${this.json.func}(${this.json.value || ''})`
+        return `${this.json.type}(${this.json.value || ''})`
     }
 }
 
@@ -18,7 +18,7 @@ export class BlurFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'blur',
+            type: 'blur',
             value: BlurFilter.spec.defaultValue
         })
     }
@@ -30,7 +30,7 @@ export class GrayscaleFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'grayscale', 
+            type: 'grayscale', 
             value: GrayscaleFilter.spec.defaultValue 
         })
     }
@@ -42,7 +42,7 @@ export class HueRotateFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'hue-rotate',
+            type: 'hue-rotate',
             value: HueRotateFilter.spec.defaultValue
         })
     }
@@ -54,7 +54,7 @@ export class InvertFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'invert',
+            type: 'invert',
             value: InvertFilter.spec.defaultValue
         })
     }
@@ -66,7 +66,7 @@ export class BrightnessFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'brightness',
+            type: 'brightness',
             value: BrightnessFilter.spec.defaultValue
         })
     }
@@ -78,7 +78,7 @@ export class ContrastFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'contrast',
+            type: 'contrast',
             value: ContrastFilter.spec.defaultValue
         })
     }
@@ -91,7 +91,7 @@ export class OpacityFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({
-            func: 'opacity',
+            type: 'opacity',
             value: OpacityFilter.spec.defaultValue
         })
     }
@@ -103,7 +103,7 @@ export class SaturateFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'saturate', 
+            type: 'saturate', 
             value: SaturateFilter.spec.defaultValue 
         })
     }
@@ -115,7 +115,7 @@ export class SepiaFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'sepia',
+            type: 'sepia',
             value: SepiaFilter.spec.defaultValue
         })
     }
@@ -127,7 +127,7 @@ export class DropshadowFilter extends Filter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'drop-shadow', 
+            type: 'drop-shadow', 
             multi: true,
             offsetX: DropshadowFilter.spec.offsetX.defaultValue,
             offsetY: DropshadowFilter.spec.offsetY.defaultValue,
@@ -175,4 +175,9 @@ export const FilterClassName = {
     'drop-shadow': DropshadowFilter
 }
 
+Filter.parse = (obj) => {
+    var FilterClass = FilerClassName[obj.type];
+
+    return new FilterClass(obj);
+}
 

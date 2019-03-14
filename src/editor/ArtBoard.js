@@ -2,9 +2,6 @@ import { Item } from "./Item";
 import { EMPTY_STRING } from "../util/css/types";
 import { CSS_TO_STRING, CSS_SORTING } from "../util/css/make";
 import { Length } from "./unit/Length";
-import { Directory } from "./Directory";
-
-
 
 export class ArtBoard extends Item {
 
@@ -23,21 +20,19 @@ export class ArtBoard extends Item {
         })
     }
 
-
-    // clone () {
-    //     var json = JSON.parse(JSON.stringify(this.json));
-    //     return new ArtBoard(json);
-    // }    
+    getArtBoard () {
+        return this; 
+    }
 
     convert (json) {
         json = super.convert(json);
 
-        json.width = Length.create(json.width)
-        json.height = Length.create(json.height)
-        json.x = Length.create(json.x)
-        json.y = Length.create(json.y)        
-        json.perspectiveOriginPositionX = Length.create(json.perspectiveOriginPositionX)
-        json.perspectiveOriginPositionY = Length.create(json.perspectiveOriginPositionY)
+        json.width = Length.parse(json.width)
+        json.height = Length.parse(json.height)
+        json.x = Length.parse(json.x)
+        json.y = Length.parse(json.y)        
+        json.perspectiveOriginPositionX = Length.parse(json.perspectiveOriginPositionX)
+        json.perspectiveOriginPositionY = Length.parse(json.perspectiveOriginPositionY)
 
         return json
     } 
@@ -107,12 +102,13 @@ export class ArtBoard extends Item {
         var css ={
             overflow: json.overflow || EMPTY_STRING,
             'transform-style': json.preserve ? 'preserve-3d' : 'flat',
-            width: `${json.width}`,
-            height: `${json.height}`,
+            left: json.x,
+            top: json.y,
+            width: json.width,
+            height: json.height,
             position: 'absolute',
             display: 'inline-block',
-            'background-color': json.backgroundColor,
-            transform: `translateX(${json.x}) translateY(${json.y}) translateZ(0px)`
+            'background-color': json.backgroundColor
         } 
 
         if (json.perspective) {
@@ -125,15 +121,6 @@ export class ArtBoard extends Item {
  
         return CSS_SORTING(css); 
 
-    }
-
-    toBoundCSS () {
-        var json = this.json 
-        return {
-            width: json.width,
-            height: json.height,
-            transform: `translateX(${json.x}) translateY(${json.y}) translateZ(0px)`
-        }
     }
 
     insertLast (source) {

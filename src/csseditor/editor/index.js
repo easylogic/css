@@ -8,7 +8,7 @@ import DropView from '../ui/control/DropView';
 import VerticalColorStep from '../ui/control/VerticalColorStep';
 import Animation from '../../util/animation/Animation';
 import { CHANGE_EDITOR, CHANGE_ARTBOARD } from '../types/event';
-import HandleView from '../ui/view/HandleView';
+import CanvasView from '../ui/view/CanvasView';
 import ToolMenu from '../ui/view/ToolMenu';
 import SelectLayerView from '../ui/view/SelectLayerView';
 import Alignment from '../ui/control/Alignment';
@@ -41,7 +41,7 @@ export default class CSSEditor extends UIElement {
                     <div class="layout-body">
                         <LayerToolbar />
                         <VerticalColorStep />
-                        <HandleView />
+                        <CanvasView />
                     </div>                
                     <div class="layout-right">
                         <Alignment />
@@ -70,7 +70,7 @@ export default class CSSEditor extends UIElement {
             VerticalColorStep, 
             DropView,
             ExportWindow,
-            HandleView,
+            CanvasView,
             FeatureControl, 
             SubFeatureControl, 
             TimelineSplitter,

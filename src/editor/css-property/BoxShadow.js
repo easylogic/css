@@ -4,6 +4,9 @@ import { Property } from "../Property";
 
 export class BoxShadow extends Property {
 
+    static parse (obj) {
+        return new BoxShadow(obj);
+    }
     getDefaultObject() {
         return super.getDefaultObject({ 
             itemType: 'box-shadow', 

@@ -25,8 +25,27 @@ export class Gradient extends ImageResource {
         return "none";
     }
 
+    /**
+     * colorsteps = [ 
+     *    new ColorStep({color: 'red', percent: 0}),
+     *    new ColorStep({color: 'red', percent: 0}) 
+     * ] 
+     * 
+     * @param {*} obj 
+     */
     getDefaultObject(obj = {}) {
-        return super.getDefaultObject({ type: 'gradient', ...obj })
+        return super.getDefaultObject({ 
+            type: 'gradient', 
+            colorsteps: [],
+            ...obj 
+        })
+    }
+
+    convert (json) {
+         
+        json.colorsteps = json.colorsteps.map(c => new ColorStep(c))
+
+        return json;
     }
 
     caculateAngle () {
@@ -41,12 +60,11 @@ export class Gradient extends ImageResource {
      * @param {boolean} isSort 
      */
     addColorStep(colorstep, isSort = true) {
-
-        var item = this.addItem('colorstep', colorstep);
+        this.json.colorsteps.push(colorstep);
 
         if (isSort) this.sortColorStep();
 
-        return item; 
+        return colorstep; 
     }
 
     insertColorStep(percent, startColor = 'rgba(216,216,216,0)', endColor = 'rgba(216,216,216,1)') {
@@ -64,10 +82,9 @@ export class Gradient extends ImageResource {
         if (percent < colorsteps[0].percent) {
             colorsteps[0].index = 1; 
 
-            this.addColorStep(new ColorStep({
-                index: 0, color: colorsteps[0].color, percent
-            }))
-
+            this.addColorStep(
+                new ColorStep({ index: 0, color: colorsteps[0].color, percent})
+            )
             return;             
         }
 
@@ -76,9 +93,9 @@ export class Gradient extends ImageResource {
             var color = colorsteps[lastIndex].color;  
             var index = colorsteps[lastIndex].index + 1;      
             
-            this.addColorStep(new ColorStep({
-                index,  color, percent
-            }))
+            this.addColorStep(
+                new ColorStep({ index,  color, percent })
+            )
 
             return;             
         }        
@@ -90,9 +107,9 @@ export class Gradient extends ImageResource {
             if (step.percent <= percent && percent <= nextStep.percent) {
                 var color = Color.mix(step.color, nextStep.color, (percent - step.percent)/(nextStep.percent - step.percent), 'rgb');
                    
-                this.addColorStep(new ColorStep({
-                    index: step.index + 1, color, percent
-                }))
+                this.addColorStep(
+                    new ColorStep({ index: step.index + 1, color, percent})
+                )
 
                 return; 
             }
@@ -102,7 +119,7 @@ export class Gradient extends ImageResource {
 
     sortColorStep () {
 
-        var children = this.children.filter(it => it.itemType === 'colorstep')
+        var children = this.colorsteps
         
         children.sort( (a, b) => {
 
@@ -128,7 +145,25 @@ export class Gradient extends ImageResource {
             this.addColorStep(c, false);
         })
 
-        this.sort('colorstep');
+        this.sortColorStep();
+    }
+
+    /**
+     * get color step by id 
+     * 
+     * @param {string} id 
+     */
+    getColorStep (id) {
+        return this.json.colorsteps.filter(c => c.id == id)[0]
+    }
+
+    clear (...args) {
+        if (args.length) {
+            this.json.colorsteps.splice(+args[0], 1);
+        } else {
+            this.json.colorsteps = [] 
+        }
+
     }
 
     /**
@@ -137,7 +172,7 @@ export class Gradient extends ImageResource {
      * @return {Array<ColorStep>}
      */
     get colorsteps () {
-        return this.json.colorsteps || this.search({itemType: 'colorstep'}); 
+        return this.json.colorsteps; 
     }
 
     /**

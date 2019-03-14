@@ -44,8 +44,14 @@ export class LinearGradient extends Gradient {
             opt = `${opt}deg`
         }
 
-        return `${this.json.type}(${opt}, ${colorString})`
+        var result = `${this.json.type}(${opt}, ${colorString})`;
+
+        return result;
+
+        
     }
+
+
 
     static toLinearGradient (image) {
         if(image.isGradient()) {

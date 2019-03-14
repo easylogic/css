@@ -1,52 +1,107 @@
 import { editor } from "./editor";
-import { Length } from "./unit/Length";
 import { Layer } from "./Layer";
+import { keyEach } from "../util/functions/func";
+import { RectItem } from "./RectItem";
+import { Guide } from "./util/Guide";
+import { Segment } from "./util/Segment";
 
 export class ItemPositionCalc {
     constructor() {
-
+        this.guide = new Guide() 
     }
 
-    initialize () {
+    initialize (direction) {
+        this.direction = direction;
         this.cachedSelectionItems = {}
         editor.selection.items.map(it => it.clone()).forEach(it => {
             this.cachedSelectionItems[it.id] = it; 
         });
 
-        this.rect = editor.selection.rect();
+        this.rect = new RectItem(editor.selection.rect());
+        if (editor.selection.items[0] instanceof Layer) {
+            this.rect.parentId = editor.selection.items[0].getArtBoard().id
+        }
+        
+        this.newRect = this.rect.clone();
+
+        this.cachedPosition = {}
+        keyEach(this.cachedSelectionItems, (id, item) => {
+            this.cachedPosition[id] = {
+                x : this.setupX(item),
+                y : this.setupY(item)
+            }
+        })
+
+        this.guide.initialize(this.newRect, this.cachedSelectionItems, this.direction);
     }
 
-    caculateMove (item, dx, dy) {
-        const cacheItem = this.cachedSelectionItems[item.id]
-        var x = cacheItem.x.value + dx; 
-        var y = cacheItem.y.value + dy; 
-        item.x = Length.px(x);
-        item.y = Length.px(y);
-    }    
+    recover (item) {
+        let {xDistRate, x2DistRate} = this.cachedPosition[item.id].x
+        let {yDistRate, y2DistRate} = this.cachedPosition[item.id].y
+
+        var minX = this.newRect.screenX.value; 
+        var maxX = this.newRect.screenX2.value; 
+        var minY = this.newRect.screenY.value; 
+        var maxY = this.newRect.screenY2.value; 
+
+        var totalWidth = maxX - minX; 
+        var xr = totalWidth * xDistRate;
+        var x2r = totalWidth * x2DistRate; 
+
+        var totalHeight = maxY - minY; 
+        var yr = totalHeight * yDistRate;
+        var y2r = totalHeight * y2DistRate;         
+
+        this.setX(item, minX, maxX, xr, x2r);
+        this.setY(item, minY, maxY, yr, y2r);
+    }
+
+    caculate (dx, dy) {
+        var e = editor.config.get('bodyEvent');
+
+        var isAlt = e.altKey;
+        var direction = this.direction;
+
+        if (Segment.isMove(direction)) {  this.caculateMove(dx, dy, {isAlt}); }
+        else {
+            if (Segment.isRight(direction)) {  this.caculateRight(dx, dy, {isAlt}); }
+            if (Segment.isBottom(direction)) {  this.caculateBottom(dx, dy, {isAlt}); } 
+            if (Segment.isTop(direction)) { this.caculateTop(dx, dy, {isAlt}); } 
+            if (Segment.isLeft(direction)) { this.caculateLeft(dx, dy, {isAlt}); }
+        }
+
+        return this.caculateGuide();
+    }
+
+    caculateGuide () {
+        // TODO change newRect values 
+        var list = this.guide.caculate(2)
+
+        return list; 
+    }
 
 
     setupX (cacheItem) {
-        var minX = this.rect.x.value; 
-        var width = this.rect.width.value;         
-        var maxX = minX + width; 
+        var minX = this.rect.screenX.value; 
+        var maxX = this.rect.screenX2.value; 
+        var width = maxX - minX; 
 
         var xDistRate = (cacheItem.screenX.value - minX) / width;
         var x2DistRate = (cacheItem.screenX2.value - minX) / width;
 
-
-        return {minX, width, maxX, xDistRate, x2DistRate}
+        return {xDistRate, x2DistRate}
     }    
 
 
     setupY (cacheItem) {
-        var minY = this.rect.y.value; 
-        var height = this.rect.height.value;     
-        var maxY = minY + height; 
+        var minY = this.rect.screenY.value; 
+        var maxY = this.rect.screenY2.value; 
+        var height = maxY - minY; 
 
         var yDistRate = (cacheItem.screenY.value - minY) / height;
         var y2DistRate = (cacheItem.screenY2.value - minY) / height;
 
-        return {minY, height, maxY, yDistRate, y2DistRate}
+        return {yDistRate, y2DistRate}
     }
 
 
@@ -55,12 +110,12 @@ export class ItemPositionCalc {
         var distY2 = Math.round(y2rate);
         var height = distY2 - distY;
 
-        item.y = Length.px(distY + minY) 
+        item.y.set(distY + minY) 
         if (item instanceof Layer) {
-            item.y.minus(item.getArtBoard().y.value)
+            item.y.sub(item.getArtBoard().y)
         }
 
-        item.height = Length.px( height )
+        item.height.set(height )
     }
 
 
@@ -69,71 +124,101 @@ export class ItemPositionCalc {
         var distX2 = Math.round(x2rate);
         var width = distX2 - distX;
 
-        item.x = Length.px(distX + minX) 
+        item.x.set(distX + minX) 
         if (item instanceof Layer) {
-            item.x.minus(item.getArtBoard().x.value)
+            item.x.sub(item.getArtBoard().x)
         }
 
-        item.width = Length.px( width )
-    }
-
-    caculateRight (item, dx, dy) {
-        const cacheItem = this.cachedSelectionItems[item.id]
-        let {minX, width, maxX, xDistRate, x2DistRate} = this.setupX(cacheItem)
-
-        var totalWidth = width + dx; 
-        var xr = totalWidth * xDistRate;
-        var x2r = totalWidth * x2DistRate; 
-
-        if (totalWidth >= 0) {
-            this.setX(item, minX, maxX, xr, x2r);
-        }
-    }
-
-    caculateBottom (item, dx, dy) {    
-        const cacheItem = this.cachedSelectionItems[item.id]
-        let {minY, height, maxY, yDistRate, y2DistRate} = this.setupY(cacheItem)
-
-        var totalHeight = height + dy; 
-        var yr = totalHeight * yDistRate;
-        var y2r = totalHeight * y2DistRate; 
-
-        if (totalHeight >= 0) {
-            this.setY (item, minY, maxY, yr, y2r);
-        }
+        item.width.set(width )
     }
 
 
-    caculateTop (item, dx, dy) {   
+    caculateMove (dx, dy, opt) {
+        this.newRect.x.set(this.rect.x.value + dx);
+        this.newRect.y.set(this.rect.y.value + dy);
+    }    
 
-        const cacheItem = this.cachedSelectionItems[item.id]
-        let {minY, height, maxY, yDistRate, y2DistRate} = this.setupY(cacheItem)
+    caculateRight (dx, dy, opt) {
 
-        minY += dy; 
-        var totalHeight = maxY - minY; 
+        var minX = this.rect.screenX.value;
+        var maxX = this.rect.screenX2.value; 
 
-        var yr = totalHeight * yDistRate;
-        var y2r = totalHeight * y2DistRate;
-
-        if (minY <= maxY ) {
-            this.setY (item, minY, maxY, yr, y2r);
+        if (maxX + dx >= minX) {
+            var newX = maxX + dx
+            var dist = newX - minX; 
+            this.newRect.width.set(dist);
         }
+    }
+
+    caculateBottom (dx, dy, opt) {    
+        var minY = this.rect.screenY.value;
+        var maxY = this.rect.screenY2.value; 
+        var centerY = this.rect.centerY.value;
+
+        var newY = minY;        
+        var newY2 = maxY + dy ; 
+
+        if (newY2 < minY) {
+            this.newRect.y.set(minY);
+            this.newRect.height.set(1);                           
+            return;            
+        }
+
+        if (opt.isAlt && newY2 < centerY) {
+            this.newRect.y.set(centerY);
+            this.newRect.height.set(1);                           
+            return;
+        }
+
+        if (opt.isAlt) newY -= dy; 
+
+        var dist = newY2 - newY; 
+        this.newRect.y.set(newY);
+        this.newRect.height.set(dist);
+
+  
+    }
+
+
+    caculateTop (dx, dy, opt) {   
+        var minY = this.rect.screenY.value;
+        var maxY = this.rect.screenY2.value; 
+        var centerY = this.rect.centerY.value; 
+
+        var newY = minY + dy; 
+        var newY2 = maxY;
+
+        if (newY > maxY) {
+            this.newRect.y.set(maxY-1);
+            this.newRect.height.set(1);
+            return;                            
+        }
+
+        if (opt.isAlt && newY > centerY) {
+            this.newRect.y.set(centerY);
+            this.newRect.height.set(1);                
+            return;
+        }
+
+        if (opt.isAlt) newY2 += -dy; 
+
+        var dist = newY2 - newY; 
+        this.newRect.y.set(newY);
+        this.newRect.height.set(dist);
 
     }
 
 
-    caculateLeft (item, dx, dy) {
-        const cacheItem = this.cachedSelectionItems[item.id]
-        let {minX, width, maxX, xDistRate, x2DistRate} = this.setupX(cacheItem)
+    caculateLeft (dx, dy) {
+        var minX = this.rect.screenX.value;
+        var maxX = this.rect.screenX2.value; 
 
-        minX += dx; 
-        var totalWidth = maxX - minX; 
+        var newX = minX + dx; 
 
-        var xr = totalWidth * xDistRate;
-        var x2r = totalWidth * x2DistRate;
-
-        if (minX <= maxX ) {
-            this.setX(item, minX, maxX, xr, x2r);
+        if (newX <= maxX) {
+            var dist = maxX - newX; 
+            this.newRect.x.set(newX);
+            this.newRect.width.set(dist);
         }
     }
 

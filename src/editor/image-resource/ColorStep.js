@@ -4,7 +4,6 @@ export class ColorStep extends Item {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            itemType: 'colorstep',
             percent: 0,
             unit: '%',
             px: 0, 
@@ -45,24 +44,39 @@ export class ColorStep extends Item {
     }
     
 
-    plus (num) {
+    add (num) {
         var unit = this.getUnit()
         this.json[unit] += +num;
+
+        return this; 
     }
 
-    multi (num) {
+    sub (num) {
+        var unit = this.getUnit()
+        this.json[unit] -= +num;
+
+        return this; 
+    }
+
+    mul (num) {
         var unit = this.getUnit()
         this.json[unit] *= +num;
+
+        return this; 
     }
     
     div (num) {
         var unit = this.getUnit()
         this.json[unit] /= +num;
+
+        return this; 
     }
     
     mod (num) {
         var unit = this.getUnit()
         this.json[unit] %= +num;
+
+        return this; 
     }    
 
     get isPx () { return this.json.unit == 'px' }
@@ -76,7 +90,7 @@ export class ColorStep extends Item {
      */
     toLength (maxValue) {
         // TODO: apply maxValue
-        return Length.create(this.json);
+        return Length.parse(this.json);
     }
 
     /**

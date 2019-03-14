@@ -13,7 +13,7 @@ afterEach( () => {
 test('ColorStep - new ColorStep', () => {
     var colorstep = new ColorStep();
 
-    expect(colorstep.itemType).toEqual('colorstep');
+    expect(colorstep.percent).toEqual(0);
 });
 
 test('ColorStep - set color', () => {
@@ -67,15 +67,15 @@ test('ColorStep - math operation', () => {
         px: 100
     });
 
-    colorstep.plus(20);
+    colorstep.add(20);
 
     expect(colorstep.toLength().isPx()).toEqual(true);
     expect(colorstep+"").toEqual('red 120px');
 
-    colorstep.plus(-20);
+    colorstep.add(-20);
     expect(colorstep+"").toEqual('red 100px');
 
-    colorstep.multi(20);
+    colorstep.mul(20);
     expect(colorstep+"").toEqual('red 2000px');    
 
     colorstep.div(20);

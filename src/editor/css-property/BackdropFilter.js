@@ -9,7 +9,7 @@ export class BackdropFilter extends Property {
     } 
 
     toString () {
-        return `${this.json.func}(${this.json.value || ''})`
+        return `${this.json.type}(${this.json.value || ''})`
     }
 }
 
@@ -18,7 +18,7 @@ export class BackdropBlurFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'blur',
+            type: 'blur',
             value: BackdropBlurFilter.spec.defaultValue
         })
     }
@@ -30,7 +30,7 @@ export class BackdropGrayscaleFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'grayscale', 
+            type: 'grayscale', 
             value: BackdropGrayscaleFilter.spec.defaultValue 
         })
     }
@@ -42,7 +42,7 @@ export class BackdropHueRotateFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'hue-rotate',
+            type: 'hue-rotate',
             value: BackdropHueRotateFilter.spec.defaultValue
         })
     }
@@ -54,7 +54,7 @@ export class BackdropInvertFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'invert',
+            type: 'invert',
             value: BackdropInvertFilter.spec.defaultValue
         })
     }
@@ -66,7 +66,7 @@ export class BackdropBrightnessFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'brightness',
+            type: 'brightness',
             value: BackdropBrightnessFilter.spec.defaultValue
         })
     }
@@ -78,7 +78,7 @@ export class BackdropContrastFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'contrast',
+            type: 'contrast',
             value: BackdropContrastFilter.spec.defaultValue
         })
     }
@@ -91,7 +91,7 @@ export class BackdropOpacityFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({
-            func: 'opacity',
+            type: 'opacity',
             value: BackdropOpacityFilter.spec.defaultValue
         })
     }
@@ -103,7 +103,7 @@ export class BackdropSaturateFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'saturate', 
+            type: 'saturate', 
             value: BackdropSaturateFilter.spec.defaultValue 
         })
     }
@@ -115,7 +115,7 @@ export class BackdropSepiaFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'sepia',
+            type: 'sepia',
             value: BackdropSepiaFilter.spec.defaultValue
         })
     }
@@ -127,7 +127,7 @@ export class BackdropDropshadowFilter extends BackdropFilter {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
-            func: 'drop-shadow', 
+            type: 'drop-shadow', 
             multi: true,
             offsetX: BackdropDropshadowFilter.spec.offsetX.defaultValue,
             offsetY: BackdropDropshadowFilter.spec.offsetY.defaultValue,
@@ -176,3 +176,8 @@ export const BackdropFilterClassName = {
 }
 
 
+BackdropFilter.parse = (obj) => {
+    var BackdropFilterClass = BackdropFilterClassName[obj.type];
+
+    return new BackdropFilterClass(obj);
+}

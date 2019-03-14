@@ -4,7 +4,7 @@ import LayerManager from "./LayerManager";
 import ToolManager from "./ToolManager";
 import GradientManager from "./GradientManager";
 import ItemManager from "./ItemManager";
-import GuideManager from "./GuideManager";
+// import GuideManager from "./GuideManager";
 import StorageManager from "./StorageManager";
 import ExternalResourceManager from "./ExternalResourceManager";
 import SVGManager from "./SVGManager";

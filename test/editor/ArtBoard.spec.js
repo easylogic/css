@@ -54,10 +54,10 @@ test('ArtBoard - toCSS', () => {
     expect(css['perspective-origin']).toEqual('100% 200%')
 })
 
-test('ArtBoard - clone', () => {
+test('ArtBoard - new clone', () => {
     var artboard = new ArtBoard();
 
-    var newArtBoard = artboard.clone();
+    var newArtBoard = artboard.clone(true);
 
     expect(artboard.id == newArtBoard.id).toEqual(false)
 })

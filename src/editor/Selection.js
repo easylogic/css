@@ -237,18 +237,12 @@ export class Selection {
             if (isChanged && selectItems.length) {
                 this.select(...selectItems);
             } else {
-                var project = this.currentProject;
-                project && project.select();                
-            }
 
-            return isChanged;
+            }
         } else {
             var project = this.currentProject;
             project && project.select();                
-
-            return true; 
         }
-
     }
 
     rect () {

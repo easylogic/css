@@ -3,6 +3,10 @@ import { Property } from "../Property";
 
 export class TextShadow extends Property {
 
+    static parse (obj) {
+        return new TextShadow(obj);
+    }
+
     getDefaultObject() {
         return super.getDefaultObject({
             itemType: 'text-shadow',

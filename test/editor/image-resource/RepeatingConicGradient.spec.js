@@ -45,7 +45,7 @@ test('RepeatingConicGradient - add ColorStep with px', () => {
 
     expect(gradient+"").toEqual('repeating-conic-gradient(from 0deg at center center, yellow 0deg)')
 
-    gradient.colorsteps[0].multi(10); 
+    gradient.colorsteps[0].mul(10); 
 
     expect(gradient+"").toEqual('repeating-conic-gradient(from 0deg at center center, yellow 0deg)')
 });

@@ -1,8 +1,13 @@
-import { combineKeyArray, cleanObject } from "../util/functions/func";
+import { combineKeyArray, cleanObject, keyEach } from "../util/functions/func";
 import { CSS_TO_STRING, CSS_FILTERING } from "../util/css/make"; 
 import { Length } from "./unit/Length";
-import { NoneClipPath } from "./css-property/ClipPath";
+import { NoneClipPath, ClipPath } from "./css-property/ClipPath";
 import { Item } from "./Item";
+import { Filter } from "./css-property/Filter";
+import { BackdropFilter } from "./css-property/BackdropFilter";
+import { BackgroundImage } from "./css-property/BackgroundImage";
+import { BoxShadow } from "./css-property/BoxShadow";
+import { TextShadow } from "./css-property/TextShadow";
 
 export const BLEND_LIST = [
     'normal', 'multiply', 'screen', 'overlay', 'darken', 
@@ -20,10 +25,6 @@ export class Layer extends Item {
         return Math.sqrt(Math.pow(json.width.value, 2) + Math.pow(json.width.value, 2))/Math.sqrt(2)
     }
 
-    addProperty (itemType , item) {
-        return this.addItem(itemType, item, itemType);
-    }
-
     add (groupOrLayer) {
         if (groupOrLayer.itemType == 'group' || groupOrLayer.itemType == 'layer') {
             return super.add(groupOrLayer);
@@ -32,39 +33,55 @@ export class Layer extends Item {
         }
     }
 
-    addBackgroundImage (backgroundImage) { return this.addProperty('background-image', backgroundImage)}
-    addFilter (filter) { return this.addProperty('filter', filter)}    
-    addBackdropFilter (backdropFilter) { return this.addProperty('backdrop-filter', backdropFilter)}
-    addBoxShadow (boxShadow) { return this.addProperty('box-shadow', boxShadow) }
-    addTextShadow (textShadow) { return this.addProperty('text-shadow', textShadow)}    
-    addClipPath (clipPath) {
-        this.clear('clip-path');
-        return this.addProperty('clip-path', clipPath)
+    addBackgroundImage (item) { 
+        this.json.backgroundImages.push(item)
+        return item
     }
+
+    addFilter (item) { 
+        this.json.filters.push(item)
+        return item
+    }
+    
+    addBackdropFilter (item) { 
+        this.json.backdropFilters.push(item)
+        return item
+    }
+    
+    addBoxShadow (item) { 
+        this.json.boxShadows.push(item)
+        return item
+    }
+    addTextShadow (item) { 
+        this.json.textShadows.push(item)
+        return item
+    }    
 
     get texts () { return this.search({itemType: 'layer', type: 'text'}) }            
     get images () { return this.search({itemType: 'layer', type: 'image'}) }
 
-    get filters () { return this.search({itemType: 'filter'}) }
-    get backdropFilters () { return this.search({itemType: 'backdrop-filter'}) }    
-    get backgroundImages () { return this.search({itemType: 'background-image'}) }
-    get boxShadows () { return this.search({itemType: 'box-shadow'}) }    
-    get textShadows () { return this.search({itemType: 'text-shadow'}) }        
-
-    // clippath 객체는 only 하나만 가능 
-    get clippath () { return this.one({itemType: 'clip-path'}) || new NoneClipPath() }
-    set clippath (clippath) { 
-        this.addClipPath(clippath);
-        return true;
-    }
+    get filters () { return this.json.filters }
+    get backdropFilters () { return this.json.backdropFilters }    
+    get backgroundImages () { return this.json.backgroundImages }
+    get boxShadows () { return this.json.boxShadows }    
+    get textShadows () { return this.json.textShadows }        
 
     convert (json) {
         json = super.convert(json)
 
-        json.x = Length.create(json.x)
-        json.y = Length.create(json.y)
-        json.width = Length.create(json.width)
-        json.height = Length.create(json.height)        
+        json.x = Length.parse(json.x)
+        json.y = Length.parse(json.y)
+        json.width = Length.parse(json.width)
+        json.height = Length.parse(json.height)        
+
+        if (json.clippath) json.clippath = ClipPath.parse(json.clippath)
+
+        json.filters = json.filters.map(f => Filter.parse(f));
+        json.backdropFilters = json.backdropFilters.map(f => BackdropFilter.parse(f));
+        json.backgroundImages = json.backgroundImages.map(f => BackgroundImage.parse(f));
+        json.boxShadows = json.boxShadows.map(f => BoxShadow.parse(f));
+        json.textShadows = json.textShadows.map(f => TextShadow.parse(f));
+ 
         return json
     }
 
@@ -73,11 +90,17 @@ export class Layer extends Item {
             itemType: 'layer',
             width: Length.px(400),
             height: Length.px(300),
-            backgroundColor: 'black',
+            backgroundColor: 'rgba(222, 222, 222, 1)',
             position: 'absolute',
             x: Length.px(0),
             y: Length.px(0),
             rotate: 0,
+            filters: [],
+            backdropFilters: [],
+            backgroundImages: [],
+            boxShadows: [],
+            textShadows: [], 
+            clippath: new NoneClipPath(),
             ...obj
         })
     }
@@ -87,7 +110,6 @@ export class Layer extends Item {
     }
 
     get screenX () { 
-
         return Length.px(this.getArtBoard().x.value + this.json.x.value);
     }
 
@@ -107,7 +129,7 @@ export class Layer extends Item {
     toBoundString () { return CSS_TO_STRING(this.toCSS(true)); }
 
     toClipPathCSS() {
-        return this.clippath ? this.clippath.toCSS() : {}
+        return this.json.clippath.toCSS()
     }
 
     toPropertyCSS(list) {
@@ -352,8 +374,8 @@ export class Layer extends Item {
         var left  = json.x.clone();
         var top  = json.y.clone();
 
-        left.plus(this.getArtBoard().x);
-        top.plus(this.getArtBoard().y);
+        left.add(this.getArtBoard().x);
+        top.add(this.getArtBoard().y);
 
         return { left: this.screenX, top: this.screenY, width: json.width, height: json.height  }
     }

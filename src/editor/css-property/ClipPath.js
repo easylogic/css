@@ -150,7 +150,7 @@ export class PolygonClipPath extends ClipPath {
 
     copyPoint (index) {
         var copyItem = this.json.points[index]
-        var copy = {x: Length.create(copyItem.x), y : Length.create(copyItem.y) }
+        var copy = {x: Length.parse(copyItem.x), y : Length.parse(copyItem.y) }
         this.json.points.splice(index, 0, copy);
     }
 
@@ -183,4 +183,20 @@ export class SVGClipPath extends ClipPath {
     toString () {
         return `url(#clippath-${this.id})`
     }
+}
+
+const ClipPathClassName = {
+    'none': NoneClipPath,
+    'circle': CircleClipPath,
+    'ellipse': EllipseClipPath,
+    'inset': InsetClipPath,
+    'polygon': PolygonClipPath,
+    'svg': SVGClipPath
+}
+
+
+ClipPath.parse = (obj) => {
+    var ClipPathClass = ClipPathClassName[obj.type];
+
+    return new ClipPathClass(obj);
 }

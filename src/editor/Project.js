@@ -14,6 +14,24 @@ export class Project extends Item {
         return this.children.filter(it => it.itemType === 'artboard');
     }
 
+    get layers () {
+        var results = [] 
+        this.artboards.forEach((artboard) => {
+            results.push(...artboard.allLayers);
+        })
+
+        return results;
+    }
+
+    get allItems () {
+        var results = [] 
+        this.artboards.forEach((artboard) => {
+            results.push(artboard, ...artboard.allLayers);
+        })
+
+        return results;
+    }
+
     traverse (item, depth, results) {
         if (item.isAttribute()) return; 
         item.depth = depth;

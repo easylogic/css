@@ -98,8 +98,9 @@ export const editor = new class {
      * 
      * @param {string} id 
      */
-    remove (id) {
-        this.removeChildren(id);
+    remove (id, isDeleteChildren = true) {
+
+        if (isDeleteChildren) this.removeChildren(id);
 
         items.delete(id);
     }

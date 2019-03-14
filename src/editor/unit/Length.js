@@ -1,4 +1,4 @@
-import { isNotUndefined } from "../../util/functions/func";
+import { isNotUndefined, isString } from "../../util/functions/func";
 
 const stringToPercent = {
     'center': 50,
@@ -16,7 +16,7 @@ Position.RIGHT = 'right'
 Position.LEFT = 'left'
 Position.BOTTOM = 'bottom'
 
-
+const CSS_UNIT_REG = /([\d.]+)(px|pt|em|deg|vh|vw|%)/ig
 
 export class Length {
     constructor(value = '', unit = '') {
@@ -32,12 +32,47 @@ export class Length {
         return this.toString();
     }
 
+    static min (...args) {
+        var min = args.shift();
+
+        for(var i = 0, len = args.length; i < len; i++) {
+            if (min.value > args[i].value) {
+                min = args[i];
+            }
+        }
+
+        return min; 
+    }
+
+    static max (...args) {
+        var max = args.shift();
+
+        for(var i = 0, len = args.length; i < len; i++) {
+            if (max.value < args[i].value) {
+                max = args[i];
+            }
+        }
+
+        return max; 
+    }
+
     static string (value) { return new Length(value + "", ''); }
     static px (value) { return new Length(+value, 'px'); }
     static em (value) { return new Length(+value, 'em'); }
     static percent (value) { return new Length(+value, '%');  }   
     static deg(value) { return new Length(+value, 'deg'); }    
-    static create (obj) {
+    static parse (obj) {
+
+        if (isString(obj)) {
+            var arr = obj.replace(CSS_UNIT_REG, '$1 $2').split(' ');
+            var isNumberString = (+arr[0]) == (arr[0])
+            if (isNumberString) {
+                return new Length(+arr[0], arr[1])
+            } else {
+                return new Length(arr[0])
+            }
+        } 
+
         if (obj instanceof Length) {
             return obj;
         } else if (obj.unit) {
@@ -108,16 +143,17 @@ export class Length {
         this.value = value; 
     }
 
-    plus (obj) {
-        this.value += +obj; 
+    add (obj) {
+        this.value += (+obj); 
         return this; 
     }
 
-    minus (obj) {
-        return this.plus(-1 * obj);
+    sub (obj) {
+        return this.add(-1 * obj);
+
     }
 
-    multi (obj) {
+    mul (obj) {
         this.value *= +obj; 
         return this;  
     }    

@@ -2,9 +2,9 @@ $pointer-color: rgba(#ececec, 0.8);
 $direction-border: 2px solid $pointer-color;
 $button-size: 24px;
 $layer-item-padding: 4px;
-$mini-layer-view-height: 420px;
 $icon-color: rgb(94, 94, 94);
 $icon-size: 16px;
+$tree-item-row-height: 30px;
 
 .layer-list-view {
     position: relative;
@@ -99,16 +99,19 @@ $icon-size: 16px;
 
         .tree-children {
             pointer-events: none;
+            transition: all 1s linear; 
         }
                 
         .tree-item {
-            display: block;
+            display: flex;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             line-height: 1.5;
             padding: 5px 5px;
             pointer-events: all; 
+            box-sizing: border-box;
+            height: $tree-item-row-height; 
 
             &[item-type="artboard"] {
                 border-top: 1px solid rgba(128, 128, 128, 0.15);
@@ -125,11 +128,6 @@ $icon-size: 16px;
                     overflow: hidden;
                 }
             }
-
-            &.image {
-                padding-left: 30px;
-            }
-
             &.selected,
             &:hover {
                 background-color: $item-selected-color;
@@ -146,11 +144,13 @@ $icon-size: 16px;
             }
                 
             .item-depth {
+                flex: none; 
                 display: inline-block;
                 vertical-align: middle; 
             }
 
             .item-icon, .item-icon-group { 
+                flex: none; 
                 display: inline-block;
                 vertical-align: middle; 
                 width: $icon-size;
@@ -176,12 +176,16 @@ $icon-size: 16px;
             }
 
             .item-title {
+                flex: 1 1 auto; 
                 display: inline-block;
-                font-size: 11px;
+                font-size: 11px; 
+                box-sizing: border-box;
+                padding: 0px 5px;
             }
 
 
             .item-tools {
+                flex: none;
                 display: none;
                 text-align: right;
                 float:right;

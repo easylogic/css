@@ -47,7 +47,7 @@ test('RepeatingLinearGradient - add ColorStep with px', () => {
 
     expect(gradient+"").toEqual('repeating-linear-gradient(to top, yellow 100px)')
 
-    gradient.colorsteps[0].multi(10); 
+    gradient.colorsteps[0].mul(10); 
 
     expect(gradient+"").toEqual('repeating-linear-gradient(to top, yellow 1000px)')
 });

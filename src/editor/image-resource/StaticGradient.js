@@ -6,7 +6,7 @@ export class StaticGradient extends Gradient {
             type: 'static-gradient', 
             static: true, 
             color: 'rgba(0, 0, 0, 0)'
-        })
+        }) 
     }
 
     toString () {

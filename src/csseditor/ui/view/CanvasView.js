@@ -1,8 +1,5 @@
 import UIElement, { EVENT } from '../../../util/UIElement';
-// import PredefinedPageResizer from '../control/shape/PredefinedPageResizer';
-// import PredefinedGroupLayerResizer from '../control/shape/PredefinedGroupLayerResizer';
 import LayerShapeEditor from '../control/shape/LayerShapeEditor';
-import MoveGuide from '../control/shape/MoveGuide';
 import SubFeatureControl from '../control/SubFeatureControl';
 
 import { 
@@ -19,36 +16,13 @@ import { EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, 
 import { LOAD, POINTERSTART, MOVE, END, SELF } from '../../../util/Event';
 import { editor } from '../../../editor/editor';
 import { Length } from '../../../editor/unit/Length';
-import { html } from '../../../util/functions/func';
+import { html, isNotUndefined } from '../../../util/functions/func';
 import { ArtBoard } from '../../../editor/ArtBoard';
 import { Layer } from '../../../editor/Layer';
 import { ItemPositionCalc } from '../../../editor/ItemPositionCalc';
-
-const move = {
-    [SEGMENT_TYPE_MOVE] : true 
-}
-
-const right = {
-    [SEGMENT_TYPE_RIGHT]: true, 
-    [SEGMENT_TYPE_TOP_RIGHT]: true, 
-    [SEGMENT_TYPE_BOTTOM_RIGHT]: true
-}
-const left = {
-    [SEGMENT_TYPE_LEFT]: true, 
-    [SEGMENT_TYPE_TOP_LEFT]: true, 
-    [SEGMENT_TYPE_BOTTOM_LEFT]: true
-}
-const top = {
-    [SEGMENT_TYPE_TOP]: true, 
-    [SEGMENT_TYPE_TOP_RIGHT]: true, 
-    [SEGMENT_TYPE_TOP_LEFT]: true
-}
-
-const bottom = {
-    [SEGMENT_TYPE_BOTTOM]: true, 
-    [SEGMENT_TYPE_BOTTOM_LEFT]: true, 
-    [SEGMENT_TYPE_BOTTOM_RIGHT]: true
-}
+import { BackgroundImage } from '../../../editor/css-property/BackgroundImage';
+import { StaticGradient } from '../../../editor/image-resource/StaticGradient';
+import { CSS_TO_STRING } from '../../../util/css/make';
 
 export default class CanvasView extends UIElement {
 
@@ -90,8 +64,7 @@ export default class CanvasView extends UIElement {
     components () {
         return {  
             SubFeatureControl,
-            LayerShapeEditor,
-            MoveGuide
+            LayerShapeEditor
         }
     }
 
@@ -209,7 +182,7 @@ export default class CanvasView extends UIElement {
         this.x2 = this.x + this.width; 
         this.y2 = this.y + this.height; 
 
-        this.itemPositionCalc.initialize();
+        this.itemPositionCalc.initialize(this.direction);
     }
 
     selectItem ($target) {
@@ -224,6 +197,7 @@ export default class CanvasView extends UIElement {
         this.artboard.select();
         this.refs.$itemResizer.addClass('artboard').removeClass('layer');
         this.selectItem();
+        this.removeGuideLine();
     }
 
     moveEndArtBoard () {
@@ -297,11 +271,9 @@ export default class CanvasView extends UIElement {
 
     dragAreaEnd () {
         this.refs.$dragAreaView.css({left: Length.px(-10000)});
-        if (editor.selection.area(this.getDragRect())) {
-            this.setItemResizer();            
-            editor.send(CHANGE_SELECTION, null, this);
-        }        
-
+        editor.selection.area(this.getDragRect())
+        this.setItemResizer();            
+        editor.send(CHANGE_SELECTION, null, this);         
     }
 
 
@@ -317,17 +289,15 @@ export default class CanvasView extends UIElement {
 
         var items = editor.selection.items;
 
+        var guideList = this.itemPositionCalc.caculate(dx, dy)
+
         items.forEach(item => {
-            if (move[this.direction]) {  this.itemPositionCalc.caculateMove(item, dx, dy); }
-            if (right[this.direction]) {  this.itemPositionCalc.caculateRight(item, dx, dy); }
-            if (bottom[this.direction]) {  this.itemPositionCalc.caculateBottom(item, dx, dy); } 
-            if (top[this.direction]) { this.itemPositionCalc.caculateTop(item, dx, dy); } 
-            if (left[this.direction]) { this.itemPositionCalc.caculateLeft(item, dx, dy); }
-    
+            this.itemPositionCalc.recover(item);
             this.getCachedLayerElement(item.id).css(item.toBoundCSS());
         })
         
         this.setItemResizer();
+        this.setGuideLine(guideList);
 
         if (editor.selection.current instanceof ArtBoard) {
             this.emit(CHANGE_ARTBOARD);
@@ -342,9 +312,11 @@ export default class CanvasView extends UIElement {
 
         var dx = pos.x - this.targetXY.x;
         var dy = pos.y - this.targetXY.y;
-        
+
+        this.itemPositionCalc.caculateMove(dx, dy);
+
         editor.selection.items.forEach(item => {
-            this.itemPositionCalc.caculateMove(item, dx, dy);
+            this.itemPositionCalc.recover(item);
             this.getCachedLayerElement(item.id).css(item.toBoundCSS())
         })
 
@@ -379,6 +351,88 @@ export default class CanvasView extends UIElement {
         var canvasCSS = { width: Length.px( 2000 ), height: Length.px( 2000 )}
 
         this.refs.$panel.css(canvasCSS)
+    }
+
+    removeGuideLine() {
+        this.refs.$guide.cssText('');
+    }
+
+    setGuideLine (list) {
+        if (!list.length) {
+            this.removeGuideLine()
+            return
+        }
+
+        var layer = new Layer();
+
+        const lineWidth = Length.px(1.5); 
+
+        list.forEach(it => {
+
+            var target = it.B; 
+
+            if (isNotUndefined(it.ax)) {
+
+                var background = layer.addBackgroundImage(new BackgroundImage());
+                background.addGradient(new StaticGradient({ color: '#e600ff' }));
+                background.repeat = 'no-repeat' 
+                background.width = lineWidth
+                background.height = it.A.height;
+                background.x = Length.px(it.bx-1)
+                background.y = it.A.screenY;       
+                
+                if (target instanceof Layer) {
+                    var background = layer.addBackgroundImage(new BackgroundImage());
+                    background.addGradient(new StaticGradient({ color: '#e600ff' }));
+                    background.repeat = 'no-repeat' 
+                    background.width = lineWidth
+                    background.height = target.height;
+                    background.x = Length.px(it.bx-1)
+                    background.y = target.screenY;                           
+                }
+
+                var minY = Length.min(target.screenY, it.A.screenY);
+                var maxY = Length.max(target.screenY2, it.A.screenY2);
+
+                var background = layer.addBackgroundImage(new BackgroundImage());
+                background.addGradient(new StaticGradient({ color: '#4877ff' }));
+                background.repeat = 'no-repeat' 
+                background.width = lineWidth
+                background.height = Length.px(maxY.value - minY.value); 
+                background.x = Length.px(it.bx-1)
+                background.y = minY
+
+            } else {
+                var background = layer.addBackgroundImage(new BackgroundImage());
+                background.addGradient(new StaticGradient({ color: '#e600ff' }));
+                background.repeat = 'no-repeat' 
+                background.width = it.A.width
+                background.height = lineWidth
+                background.x = it.A.screenX;
+                background.y = Length.px(it.by)             
+
+                var minX = Length.min(target.screenX, it.A.screenX);
+                var maxX = Length.max(target.screenX2, it.A.screenX2);
+
+                var background = layer.addBackgroundImage(new BackgroundImage());
+                background.addGradient(new StaticGradient({ color: '#4877ff' }));
+                background.repeat = 'no-repeat' 
+                background.width = Length.px(maxX.value - minX.value); 
+                background.height = lineWidth
+                background.x = minX;
+                background.y = Length.px(it.by)
+                
+                
+            }
+
+        })
+        
+        
+        layer.remove()
+
+        var css = layer.toBackgroundImageCSS(); 
+
+        this.refs.$guide.cssText(CSS_TO_STRING(css));
     }
 
     setItemResizer () {

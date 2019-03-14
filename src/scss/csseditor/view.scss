@@ -3,6 +3,7 @@ $direction-border: 2px solid $pointer-color;
 $editor-button-color: #5f80de;
 $editor-line-color: rgba($editor-button-color, 0.3);
 $editor-resizer-width : 10px;
+$editor-canvas-background-color: rgba(236, 236, 236, 0.3);
 .page-view {
     position: absolute;
     left: 0px;
@@ -34,7 +35,7 @@ $editor-resizer-width : 10px;
         bottom: 0px;
         top: 0px;
         overflow: auto;
-        background-color: #ececec; 
+        background-color: $editor-canvas-background-color; 
     }
 
 

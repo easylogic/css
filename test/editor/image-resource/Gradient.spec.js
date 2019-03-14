@@ -46,33 +46,40 @@ test('Gradient - remove ColorStep', () => {
     gradient.addColorStep(new ColorStep({color: 'yellow',percent: 40}))
 
     expect(gradient.colorsteps.length).toEqual(5);
-    gradient.colorsteps.forEach(colorstep => {
-        colorstep.remove()
-    })
+    gradient.clear()
 
     expect(gradient.colorsteps.length).toEqual(0);
+})
 
+test('Gradient - remove ColorStep by index', () => {
+    var gradient = new Gradient();
+    gradient.addColorStep(new ColorStep({color: 'yellow',percent: 0}))
+    gradient.addColorStep(new ColorStep({color: 'yellow',percent: 10}))
+    gradient.addColorStep(new ColorStep({color: 'yellow',percent: 20}))
     gradient.addColorStep(new ColorStep({color: 'yellow',percent: 30}))
     gradient.addColorStep(new ColorStep({color: 'yellow',percent: 40}))
 
-    gradient.clear();
-    expect(gradient.colorsteps.length).toEqual(0);    
+    expect(gradient.colorsteps.length).toEqual(5);
+    gradient.clear(0)
+
+    expect(gradient.colorsteps.length).toEqual(4);
 })
 
 test('Gradient - add ColorStep List', () => {
-    var gradient = new Gradient();
-    gradient.addColorStepList([
-        new ColorStep({color: 'yellow',percent: 0}),
-        new ColorStep({color: 'yellow',percent: 10}),
-        new ColorStep({color: 'yellow',percent: 20}),
-        new ColorStep({color: 'yellow',percent: 30}),
-        new ColorStep({color: 'yellow',percent: 40})
-    ])
+    var gradient = new Gradient({
+        colorsteps: [
+            new ColorStep({color: 'yellow',percent: 0}),
+            new ColorStep({color: 'yellow',percent: 10}),
+            new ColorStep({color: 'yellow',percent: 20}),
+            new ColorStep({color: 'yellow',percent: 30}),
+            new ColorStep({color: 'yellow',percent: 40})
+        ]
+    });
     expect(gradient.colorsteps.length).toEqual(5);
-    gradient.colorsteps[2].remove()
+    gradient.clear(2);
 
     expect(gradient.colorsteps.length).toEqual(4);
-    gradient.colorsteps[2].remove();
+    gradient.clear(2);
 
     expect(gradient.getColorString()).toEqual('yellow 0%,yellow 10%,yellow 40%')
 

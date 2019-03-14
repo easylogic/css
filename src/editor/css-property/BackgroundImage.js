@@ -5,7 +5,11 @@ import { Gradient } from "../image-resource/Gradient";
 
 const RepeatList = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y']
 
-export class BackgroundImage extends Property {
+export class BackgroundImage extends Property { 
+
+    static parse (obj) {
+        return new BackgroundImage(obj);
+    }
  
     addImageResource (imageResource) {
         this.clear('image-resource')
@@ -27,6 +31,16 @@ export class BackgroundImage extends Property {
             x: Position.CENTER,
             y: Position.CENTER
         })
+    }
+
+    convert (json) {
+        json.x = Length.parse(json.x);
+        json.y = Length.parse(json.y);
+
+        if (json.width) json.width = Length.parse(json.width);
+        if (json.height) json.height = Length.parse(json.height);
+        
+        return json; 
     }
 
     checkField(key, value) {

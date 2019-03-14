@@ -16,7 +16,7 @@ export default class LayerListView extends UIElement {
         return `
             <div class='layer-list-view'>
                 <div class="layer-list-toolbar">
-                    <span class='title'>Art Board</span>
+                    <span class='title' ref="$title"></span>
                     <span class='layer-tools'>
                         <div class="button-group">
                             <button type="button" ref="$addArtBoard" title="add ArtBoard">${icon.add_note}</button>
@@ -30,78 +30,54 @@ export default class LayerListView extends UIElement {
     }
 
     makeItem (item, depth) {
-        if (item.itemType == 'artboard') {
-            return this.makeArtBoard(item, depth);
-        } else if (item.itemType == 'directory') {
-            return this.makeDirectory(item, depth);
-        } else if (item.itemType == 'layer') {
-            return this.makeLayer(item, depth);            
-        }
-    }
- 
-    
-    makeArtBoard (item, depth) {
-        var lock = item.lock ? 'lock' : EMPTY_STRING;
-        var visible = item.visible ? 'visible' : EMPTY_STRING     
-        var selected = item.selectedOne ? 'selected' : EMPTY_STRING;   
-        return html`
-            <div class='tree-item depth-${isUndefined(depth) ? 0 : depth} ${selected}' item-id="${item.id}" item-type='${item.itemType}'>
-                <div class="item-depth"></div>
-                <div class='item-icon-group'>${icon.chevron_right}</div>
-                <div class="item-title"> ${item.title}</div>
-                <div class='item-tools'>          
-                    <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible">${icon.visible}</button>
-                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">${icon.remove}</button>
-                    <button type="button" class='copy-item' item-id='${item.id}' title="Copy">${icon.copy}</button>
-                </div>                
-            </div>
-            <div class='tree-children'>
-                ${item.children.map(child => this.makeItem(child, depth + 1))}
-            </div>
-            `
-    }    
+        var isArtBoard = item.itemType == 'artboard'
+        var isDirectory = item.itemType == 'directory'
+        var isLayer = item.itemType == 'layer' 
 
-    makeDirectory (item, depth) {
-        var lock = item.lock ? 'lock' : '';
-        var visible = item.visible ? 'visible' : ''
-        var selected = item.selected ? 'selected' : EMPTY_STRING;   
-        var collapsed = item.collapsed ? 'collapsed': EMPTY_STRING        
+        var isGroup = isArtBoard || isDirectory
+        var hasLock = isDirectory || isLayer
+        var isDraggable = isLayer;
+        var hasIcon = isDirectory || isLayer
+        var hasVisible = isDirectory || isLayer
+
+
+        var draggable = isDraggable ? 'draggable="true"' : EMPTY_STRING
+        var lock = (hasLock && item.lock) ? 'lock' : EMPTY_STRING;
+        var visible = item.visible ? 'visible' : EMPTY_STRING  
+        var selected = item.selectedOne ? 'selected' : EMPTY_STRING;    
+
+        var iconString = EMPTY_STRING
+        if (isDirectory) {
+            iconString = `${icon.folder}`
+        } else if (isLayer) {
+            iconString = `<span class='icon-${item.type}'></span>`
+        }
+
+
         return html`
-            <div class='tree-item depth-${depth} ${selected} ${collapsed}' item-id="${item.id}" item-type='${item.itemType}'>
+            <div class='tree-item depth-${depth} ${selected} ${item.index}' item-id="${item.id}" item-type='${item.itemType}' ${draggable}>
                 <div class="item-depth"></div>            
-                <div class='item-icon-group'>${icon.chevron_right}</div>
-                <div class='item-icon'>${icon.folder}</div>            
-                <div class="item-title"> ${item.title}</div>
-                <div class='item-tools'>          
-                    <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible">${icon.visible}</button>
-                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">${icon.remove}</button>
-                    <button type="button" class='copy-item' item-id='${item.id}' title="Copy">${icon.copy}</button>
-                </div>                
-            </div>
-            <div class='tree-children'>
-                ${item.children.map(child => this.makeItem(child, depth + 1))}
-            </div>
-            `
-    }    
-    
-    makeLayer (item, depth) {
-        var lock = item.lock ? 'lock' : '';
-        var visible = item.visible ? 'visible' : ''  
-        var selected = item.selectedOne ? 'selected' : EMPTY_STRING;                 
-        return html`
-            <div class='tree-item depth-${depth} ${selected} ${item.index}' item-id="${item.id}" item-type='${item.itemType}' draggable="true">
-                <div class="item-depth"></div>            
-                <div class='item-icon'><span class='icon-${item.type}'></span></div>            
+                ${isGroup && `<div class='item-icon-group'>${icon.chevron_right}</div>`}
+                ${hasIcon && `<div class='item-icon'>${iconString}</div>`}
                 <div class="item-title"> ${item.title}</div> 
                 <div class='item-tools'>          
-                    <button type="button" class='lock-item ${lock}' item-id='${item.id}' title="Visible">${icon.lock}</button>
-                    <button type="button" class='visible-item ${visible}' item-id='${item.id}' title="Visible">${icon.visible}</button>
-                    <button type="button" class='delete-item' item-id='${item.id}' title="Remove">${icon.remove}</button>
-                    <button type="button" class='copy-item' item-id='${item.id}' title="Copy">${icon.copy}</button>
+                    ${hasLock && `<button type="button" class='lock-item ${lock}' title="Visible">${icon.lock}</button>`}
+                    ${hasVisible && `<button type="button" class='visible-item ${visible}' title="Visible">${icon.visible}</button>`}
+                    <button type="button" class='delete-item' title="Remove">${icon.remove}</button>
+                    <button type="button" class='copy-item' title="Copy">${icon.copy}</button>
                 </div>                
             </div>
-            `
-    }        
+            ${isGroup && html`<div class='tree-children'>
+                ${item.children.map(child => this.makeItem(child, depth + 1))}
+            </div>`}
+        ` 
+    }       
+    
+    [LOAD('$title')] () {
+        var project = editor.selection.currentProject
+        var title = project ? project.title : 'ArtBoard';
+        return `<span>${title}</span>`
+    }
 
     [LOAD('$layerList')] () {
 
@@ -184,19 +160,57 @@ export default class LayerListView extends UIElement {
         }
     }
 
-    [CLICK('$layerList .tree-item > .item-icon-group')] (e) { 
+    getItem (e) {
         var $dt = e.$delegateTarget.closest('tree-item')
         var id = $dt.attr('item-id')
         var item = editor.get(id);
+
+        return {item, $dt} 
+    }
+
+    [CLICK('$layerList .copy-item')] (e) {
+        var {item} = this.getItem(e)
+        item.copy();
+
+        editor.emit(CHANGE_EDITOR);
+    }
+
+    [CLICK('$layerList .delete-item')] (e) {
+        var {item} = this.getItem(e)
+        item.remove()
+        editor.emit(CHANGE_EDITOR, null, this);
+    } 
+
+    [CLICK('$layerList .visible-item')] (e) {          
+        var {item} = this.getItem(e)
+
+        e.$delegateTarget.toggleClass('visible');
+        item.toggle('visible');
+
+        editor.emit(CHANGE_LAYER, null, this);
+    }     
+
+    [CLICK('$layerList .lock-item')] (e) {
+
+        var {item} = this.getItem(e)
+
+        e.$delegateTarget.toggleClass('lock');        
+        item.toggle('lock');
+
+        editor.emit(CHANGE_LAYER, null, this);
+    }
+
+    [CLICK('$layerList .item-icon-group')] (e) { 
+        var {item, $dt} = this.getItem(e)
         item.collapsed = true; 
         $dt.toggleClass('collapsed');
     }
 
 
-    [CLICK('$layerList .tree-item > .item-title')] (e) { 
-        var id = e.$delegateTarget.closest('tree-item').attr('item-id')
-        this.toggleSelectedItem(id);
-        editor.selection.select(id)
+    [CLICK('$layerList .item-title')] (e) { 
+        var {item} = this.getItem(e)
+        this.toggleSelectedItem(item.id);
+        item.select()
         editor.send(CHANGE_SELECTION, null, this);
     }
 
@@ -236,36 +250,5 @@ export default class LayerListView extends UIElement {
         this.$el.removeClass('dragging')
     }       
 
-    [CLICK('$layerList .copy-item')] (e) {
-        var id = e.$delegateTarget.attr('item-id');
-        var item = editor.get(id);
-        item.copy();
-        editor.emit(CHANGE_EDITOR);
-    }
-
-    [CLICK('$layerList .delete-item')] (e) {
-        var id = e.$delegateTarget.attr('item-id');
-        var item = editor.get(id);
-        item.remove()
-        editor.emit(CHANGE_EDITOR, null, this);
-    } 
-
-    [CLICK('$layerList .visible-item')] (e) {          
-
-        var id = e.$delegateTarget.attr('item-id');
-        var item = editor.get(id);
-
-        e.$delegateTarget.toggleClass('visible');
-        item.toggle('visible');
-
-        editor.emit(CHANGE_LAYER, null, this);
-    }     
-
-    [CLICK('$layerList .lock-item')] (e) {
-        e.$delegateTarget.toggleClass('lock');
-        var id = e.$delegateTarget.attr('item-id');
-        var item = editor.get(id);
-        item.toggle('lock');
-        editor.emit(CHANGE_LAYER, null, this);
-    }
+   
 }
