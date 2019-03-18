@@ -8,7 +8,11 @@ export class Circle extends Layer {
     }
 
     getDefaultObject() {
-        return super.getDefaultObject({ type: 'circle' })
+        return super.getDefaultObject({ 
+            type: 'circle',
+            width: Length.px(100),
+            height: Length.px(100)
+        })
     }  
 
     /**

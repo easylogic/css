@@ -2,12 +2,13 @@ import { Item } from "./Item";
 
 export class Project extends Item {
 
-    addArtBoard (artboard) {
-        return this.addItem('artboard', artboard);
-    }
-
-    add (artboard) {
-        return this.addArtBoard(artboard);
+    add (item) {
+        if (item.itemType == 'artboard') {
+            return super.add(item);
+        } else {
+            throw new Error('It is able to only artboard in project ')
+        }
+            
     }
 
     get artboards () {

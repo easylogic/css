@@ -3,7 +3,7 @@ import { Layer } from "../Layer";
 export class Rect extends Layer {
 
     getDefaultTitle() {
-        return 'Rectangle'
+        return 'Rectangle' 
     }
 
     getDefaultObject() {

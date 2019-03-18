@@ -3,7 +3,7 @@ import Color from '../../util/Color'
 import Dom from '../../util/Dom'
 import Event, { POINTERSTART, POINTERMOVE, POINTEREND } from '../../util/Event'
 import UIElement, { EVENT } from '../../util/UIElement';
-import { getXYInCircle, caculateAngle } from '../../util/functions/math';
+import { getXYInCircle, calculateAngle } from '../../util/functions/math';
 
 export default class ColorWheel extends UIElement {
 
@@ -68,7 +68,7 @@ export default class ColorWheel extends UIElement {
                 var rx = x - cx + 1,
                 ry = y - cy + 1,
                 d = rx * rx + ry * ry,
-                hue = caculateAngle(rx, ry);
+                hue = calculateAngle(rx, ry);
 
                 var rgb = Color.HSVtoRGB(
                     hue,     // 0~360 hue 
@@ -165,7 +165,7 @@ export default class ColorWheel extends UIElement {
             centerY
         )
 
-        var rx = x - centerX, ry = y - centerY, d = rx * rx + ry * ry, hue = caculateAngle(rx, ry);
+        var rx = x - centerX, ry = y - centerY, d = rx * rx + ry * ry, hue = calculateAngle(rx, ry);
 
         if (d > radius * radius) {
             var {x, y} = this.getCurrentXY(null, hue, radius, centerX, centerY);

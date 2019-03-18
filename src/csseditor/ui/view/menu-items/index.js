@@ -8,11 +8,9 @@ import ExportCodePen from "./ExportCodPen";
 import ExportJSFiddle from "./ExportJSFiddle";
 import AddRect from "./AddRect";
 import AddCircle from "./AddCircle";
-import ShowClipPath from "./ShowClipPath";
 
 
 export default {
-    ShowClipPath,
     AddRect,
     AddCircle,
     ExportJSFiddle,

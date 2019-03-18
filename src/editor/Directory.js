@@ -2,19 +2,11 @@ import { Item } from "./Item";
 
 export class Directory extends Item {
 
-    getDefaultTitle () { return 'Directory' }
+    getDefaultTitle () { return 'Directory' }  
 
-    addDirectory (directory) {
-        return this.addItem('directory', directory);
-    }
-
-    addLayer (layer) {
-        return this.addItem('layer', layer);
-    }    
-
-    add (groupOrLayer) {
-        if (groupOrLayer.itemType == 'group' || groupOrLayer.itemType == 'layer') {
-            return super.add(groupOrLayer);
+    add (item) {
+        if (item.itemType == 'directory' || item.itemType == 'layer') {
+            return super.add(item);
         } else {
             throw new Error('잘못된 객체입니다.');
         }

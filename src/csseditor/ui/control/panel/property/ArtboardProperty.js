@@ -1,6 +1,6 @@
 import BaseProperty from "./BaseProperty";
 
-export default class PageProperty extends BaseProperty {
+export default class ArtboardProperty extends BaseProperty {
 
     getTitle () { return 'Page'; }
     getBody () {

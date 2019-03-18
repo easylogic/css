@@ -162,15 +162,26 @@ export class Item {
     //
     ///////////////////////
     get screenX () { return this.json.x }
-    set screenX (newX) { this.json.x.set(newX); }
     get screenY () { return this.json.y }
-    set screenY (newY) { this.json.y.set(newY); }
     get screenX2 () { return Length.px(this.screenX.value + this.json.width.value) }
     get screenY2 () { 
         return Length.px(this.screenY.value + this.json.height.value) 
     }    
-    get centerX () { return Length.px(this.screenX.value + Math.floor(this.json.width.value / 2)) }
-    get centerY () { return Length.px(this.screenY.value + Math.floor(this.json.height.value / 2)) }    
+    get centerX () { 
+        var half = 0; 
+        if (this.json.width.value != 0) {
+            half = Math.floor(this.json.width.value / 2)
+        }
+        return Length.px(this.screenX.value + half) 
+    }
+    get centerY () { 
+        var half = 0; 
+        if (this.json.height.value != 0) {
+            half = Math.floor(this.json.height.value / 2)
+        }
+        
+        return Length.px(this.screenY.value + half) 
+    }    
 
     /**
      * check selection status for item  
@@ -322,9 +333,9 @@ export class Item {
     /**
      * get hirachy path s
      */
-    path () {
+    path (parentId) {
         var path = [];
-        var currentId = this.id; 
+        var currentId = parentId || this.parentId; 
         do {
             var item = editor.get(currentId);
             if (item) {
@@ -352,10 +363,10 @@ export class Item {
 
     toBoundCSS() {
         return {
-            top: this.json.y,
-            left: this.json.x,
-            width: this.json.width,
-            height: this.json.height
+            top: `${this.json.y}`,
+            left: `${this.json.x}`,
+            width: `${this.json.width}`,
+            height: `${this.json.height}`
         }
     }
 }

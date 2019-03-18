@@ -13,8 +13,10 @@ import add from './add';
 import add_note from './add_note';
 import publish from './publish';
 import folder from './folder';
+import artboard from './artboard';
 
 export default {
+    artboard,
     folder,
     publish,
     add_note,

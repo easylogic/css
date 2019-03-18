@@ -23,8 +23,8 @@ export default class VerticalSlider extends BaseSlider {
         return this.refs.$container.offset().top;
     }
 
-    /** get caculated dist for domain value   */
-    getCaculatedDist (e) {
+    /** get calculated dist for domain value   */
+    getCalculatedDist (e) {
         var current = e ? this.getMousePosition(e) : this.getCurrent(this.getDefaultValue() / this.maxValue);
         var dist =  100 - this.getDist(current);
         

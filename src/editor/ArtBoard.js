@@ -2,6 +2,7 @@ import { Item } from "./Item";
 import { EMPTY_STRING } from "../util/css/types";
 import { CSS_TO_STRING, CSS_SORTING } from "../util/css/make";
 import { Length } from "./unit/Length";
+import { BlockDisplay, Display } from "./css-property/Display";
 
 export class ArtBoard extends Item {
 
@@ -16,6 +17,7 @@ export class ArtBoard extends Item {
             y: Length.px(100),
             perspectiveOriginPositionX: Length.percent(0),
             perspectiveOriginPositionY: Length.percent(0),
+            display: new BlockDisplay(),
             ...obj 
         })
     }
@@ -34,16 +36,10 @@ export class ArtBoard extends Item {
         json.perspectiveOriginPositionX = Length.parse(json.perspectiveOriginPositionX)
         json.perspectiveOriginPositionY = Length.parse(json.perspectiveOriginPositionY)
 
+        if (json.display) json.display = Display.parse(json.display);
+
         return json
     } 
-
-    addDirectory (directory) {
-        return this.addItem('directory', directory);
-    }
-
-    addLayer (layer) {
-        return this.addItem('layer', layer); 
-    }    
 
     getDefaultTitle () { return 'ArtBoard' }
      
@@ -57,8 +53,9 @@ export class ArtBoard extends Item {
     }        
 
 
-    traverse (item, results) {
+    traverse (item, results, hasLayoutItem) {
         if (item.isAttribute()) return; 
+        if (!hasLayoutItem && item.isLayoutItem()) return; 
         results.push(item);
 
         item.children.forEach(child => {
@@ -66,11 +63,11 @@ export class ArtBoard extends Item {
         })
     }
 
-    tree () {
+    tree (hasLayoutItem) {
         var results = [] 
         
         this.children.forEach(item => {
-            this.traverse(item, results);
+            this.traverse(item, results, hasLayoutItem);
         })
 
         return results
@@ -81,7 +78,7 @@ export class ArtBoard extends Item {
     }
 
     get allLayers () {
-        return this.tree().filter(it => it.itemType == 'layer'); 
+        return this.tree(true).filter(it => it.itemType == 'layer'); 
     }
 
     get texts () {
@@ -97,30 +94,43 @@ export class ArtBoard extends Item {
         return CSS_TO_STRING(this.toCSS())
     }
 
+
     toCSS () {
         var json = this.json ; 
         var css ={
             overflow: json.overflow || EMPTY_STRING,
             'transform-style': json.preserve ? 'preserve-3d' : 'flat',
-            left: json.x,
-            top: json.y,
-            width: json.width,
-            height: json.height,
             position: 'absolute',
-            display: 'inline-block',
             'background-color': json.backgroundColor
         } 
+     
+ 
+        return CSS_SORTING({
+            ...css,
+            ...this.toBoundCSS(),
+            ...this.toLayoutCSS(),
+            ...this.toPerspectiveCSS()
+        }); 
+
+    }
+
+    toLayoutCSS () { 
+        return this.json.display.toCSS()
+    }
+
+    toPerspectiveCSS() {
+        var css = {} 
+        var json = this.json; 
 
         if (json.perspective) {
-            css.perspective = `${json.perspective}`;
+            css.perspective = json.perspective;
         }
 
         if (json.perspectiveOriginPositionX.isPercent() && json.perspectiveOriginPositionY.isPercent() ) {
             css['perspective-origin'] = `${json.perspectiveOriginPositionX} ${json.perspectiveOriginPositionY}`;
-        }        
- 
-        return CSS_SORTING(css); 
+        }           
 
+        return css; 
     }
 
     insertLast (source) {

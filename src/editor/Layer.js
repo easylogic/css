@@ -8,6 +8,8 @@ import { BackdropFilter } from "./css-property/BackdropFilter";
 import { BackgroundImage } from "./css-property/BackgroundImage";
 import { BoxShadow } from "./css-property/BoxShadow";
 import { TextShadow } from "./css-property/TextShadow";
+import { Display, BlockDisplay } from "./css-property/Display";
+import { editor } from "./editor";
 
 export const BLEND_LIST = [
     'normal', 'multiply', 'screen', 'overlay', 'darken', 
@@ -18,18 +20,21 @@ export const BLEND_LIST = [
 
 export class Layer extends Item {
 
-    getDefaultTitle () { return 'Layer' }
-
-    dist () {
-        var json = this.json; 
-        return Math.sqrt(Math.pow(json.width.value, 2) + Math.pow(json.width.value, 2))/Math.sqrt(2)
+    getDefaultTitle () { 
+        return 'Layer' 
     }
 
-    add (groupOrLayer) {
-        if (groupOrLayer.itemType == 'group' || groupOrLayer.itemType == 'layer') {
-            return super.add(groupOrLayer);
+    isLayoutItem () {
+        var parent = this.parent()
+
+        return parent.itemType == 'layer'
+    }
+
+    add (layer) {
+        if (layer.itemType == 'layer') {
+            return super.add(layer);
         } else {
-            throw new Error('잘못된 객체입니다.');
+            throw new Error('layer 객체입니다.');
         }
     }
 
@@ -75,6 +80,7 @@ export class Layer extends Item {
         json.height = Length.parse(json.height)        
 
         if (json.clippath) json.clippath = ClipPath.parse(json.clippath)
+        if (json.display) json.display = Display.parse(json.display)
 
         json.filters = json.filters.map(f => Filter.parse(f));
         json.backdropFilters = json.backdropFilters.map(f => BackdropFilter.parse(f));
@@ -101,28 +107,57 @@ export class Layer extends Item {
             boxShadows: [],
             textShadows: [], 
             clippath: new NoneClipPath(),
+            display: new BlockDisplay(),
             ...obj
         })
+    }
+
+    checkField(key, value) {
+        if (key === 'parentId') {
+            this.json.parentPosition = this.getParentPosition(value).id;
+        }
+        return true; 
     }
 
     getArtBoard () {
         return this.path().filter(it => it.itemType == 'artboard')[0]
     }
 
-    get screenX () { 
-        return Length.px(this.getArtBoard().x.value + this.json.x.value);
+    getParentPosition (parentId) {
+        var path = this.path(parentId)
+
+        return path.filter(it => {
+            if (it.itemType == 'layer') {
+                if (it.display.type == 'block') return true; 
+                else if (it.display.type == 'inline-block') return true; 
+            } else if (it.itemType == 'artboard') { 
+                return true;             
+            }
+
+            return false; 
+        })[0]
+    }    
+
+    parentDirectory () {
+        var path = this.path()
+
+        return path.filter(it => {
+            if (it.itemType == 'directory') {
+                return true;
+            } else if (it.itemType == 'artboard') { 
+                return true;             
+            }
+
+            return false; 
+        })[0]
     }
 
-    set screenX (newX) {
-        this.json.x.set(Length.px(newX.value - this.getArtBoard().x.value));
+    get screenX () { 
+        return Length.px(editor.get(this.json.parentPosition).screenX.value + this.json.x.value);
     }
 
     get screenY () { 
-        return Length.px(this.getArtBoard().y.value + this.json.y.value);
-    }
-
-    set screenY (newY) {
-        this.json.y.set(Length.px(newY.value - this.getArtBoard().y.value));
+        return Length.px(editor.get(this.json.parentPosition).screenY.value + this.json.y.value);
     }
 
     toString () { return CSS_TO_STRING(this.toCSS()); }
@@ -131,6 +166,10 @@ export class Layer extends Item {
     toClipPathCSS() {
         return this.json.clippath.toCSS()
     }
+
+    toDisplayCSS() {
+        return this.json.display.toCSS()
+    }    
 
     toPropertyCSS(list) {
         var results = {}
@@ -332,23 +371,14 @@ export class Layer extends Item {
     }
 
     toDefaultCSS (isBound) {
-        var css = {};
+        var css = {
+            ...this.toBoundCSS(isBound)
+        };
         var json = this.json; 
 
-        css.width = json.width;
-        css.height = json.height;
         css['box-sizing'] = json.boxSizing || 'border-box';        
         css['visibility'] = json.visible ? 'visible' : 'hidden';        
         css.position = json.position;
-
-        if (json.x) {
-            css.left = isBound ? this.screenX : json.x
-        }
-
-        if (json.y) { 
-            css.top = isBound ? this.screenY : json.y
-        }        
-
         if (json.backgroundColor) {
             css['background-color'] = json.backgroundColor
         }         
@@ -369,15 +399,18 @@ export class Layer extends Item {
         return css; 
     }
 
-    toBoundCSS() {
+    toBoundCSS(isBound = true) {
         var json = this.json;
-        var left  = json.x.clone();
-        var top  = json.y.clone();
 
-        left.add(this.getArtBoard().x);
-        top.add(this.getArtBoard().y);
+        // isBound 가 true 이고  상위 
+        var isBoundRect = isBound && this.parent().itemType != 'layer'
 
-        return { left: this.screenX, top: this.screenY, width: json.width, height: json.height  }
+        return { 
+            left: isBoundRect === false ? json.x : this.screenX, 
+            top: isBoundRect === false ? json.y : this.screenY, 
+            width: json.width, 
+            height: json.height  
+        }
     }
 
     toCSS (isBound = false) {
@@ -389,6 +422,7 @@ export class Layer extends Item {
             ...this.toBorderColorCSS(),
             ...this.toBorderStyleCSS(),
             ...this.toTransformCSS(),
+            ...this.toDisplayCSS(),
             ...this.toClipPathCSS(),
             ...this.toFilterCSS(),
             ...this.toBackdropFilterCSS(),

@@ -5,12 +5,9 @@ $button-size: 24px;
 $layer-item-padding: 4px;
 
 .feature-control {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 65px;
-    bottom: 0px;
+    flex: 1 1 auto; 
     border-top: 1px solid $border-color;
+    overflow: auto;
 
     .feature {
         display: none; 

@@ -10,7 +10,7 @@ var project, artboard;
 beforeEach(() => {
     editor.clear()
     project = editor.addProject(new Project({ name: 'Sample Project'}));
-    artboard = project.addArtBoard(new ArtBoard({ name: 'Sample Project'}));
+    artboard = project.add(new ArtBoard({ name: 'Sample Project'}));
 })
 
 afterEach( () => {
@@ -18,7 +18,7 @@ afterEach( () => {
 })
 
 test('Selection - select a layer', () => {
-    var layer = artboard.addLayer(new Layer());
+    var layer = artboard.add(new Layer());
     
     layer.select()
 
@@ -28,7 +28,7 @@ test('Selection - select a layer', () => {
 test('Selection - select many layers', () => {
 
     var layers = [...Array(10)].map(_ => {
-        return artboard.addLayer(new Layer());    
+        return artboard.add(new Layer());    
     }) 
     
     editor.selection.select(...layers);
@@ -44,7 +44,7 @@ test('Selection - change selection mode', () => {
 })
 
 test('Selection - select image resource', () => {
-    var layer = artboard.addLayer(new Layer())
+    var layer = artboard.add(new Layer())
     var backgroundImage = layer.addBackgroundImage(new BackgroundImage())
     var image = backgroundImage.addImageResource(new URLImageResource({ url: 'yellow' }));
     image.select()

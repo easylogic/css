@@ -24,7 +24,7 @@ test('Editor - add project', () => {
 test('Editor - addArtBoard', () => {
     var project = editor.addProject(new Project())
 
-    project.addArtBoard(new ArtBoard())
+    project.add(new ArtBoard())
 
     expect(project.artboards.length).toEqual(1);
 
@@ -48,8 +48,8 @@ test('Editor - config', () => {
 
 test('Editor - clone', () => {
     var project = editor.addProject(new Project());
-    var artboard = project.addArtBoard(new ArtBoard());
-    var layer = artboard.addLayer(new Layer());
+    var artboard = project.add(new ArtBoard());
+    var layer = artboard.add(new Layer());
 
     var cloneLayer = layer.clone(true)
 
@@ -58,12 +58,12 @@ test('Editor - clone', () => {
 
 test('Editor - copy', () => {
     var project = editor.addProject(new Project());
-    var artboard = project.addArtBoard(new ArtBoard());
-    artboard.addLayer(new Layer());
-    artboard.addLayer(new Layer());
-    artboard.addLayer(new Layer());
-    artboard.addLayer(new Layer());
-    artboard.addLayer(new Layer());
+    var artboard = project.add(new ArtBoard());
+    artboard.add(new Layer());
+    artboard.add(new Layer());
+    artboard.add(new Layer());
+    artboard.add(new Layer());
+    artboard.add(new Layer());
 
     var newArtBoard = artboard.copy()
 

@@ -48,7 +48,7 @@ export class Gradient extends ImageResource {
         return json;
     }
 
-    caculateAngle () {
+    calculateAngle () {
         var angle = this.json.angle;
         return isUndefined(DEFINED_ANGLES[angle]) ? angle : (DEFINED_ANGLES[angle] || 0);
     }

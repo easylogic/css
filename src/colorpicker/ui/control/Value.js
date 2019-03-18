@@ -34,7 +34,7 @@ export default class Value extends BaseSlider {
     }
          
     refreshColorUI(e) {
-        var dist = this.getCaculatedDist(e);
+        var dist = this.getCalculatedDist(e);
 
         this.setColorUI(dist/100 * this.maxValue)
 

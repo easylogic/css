@@ -4,13 +4,26 @@ export class ColorStep extends Item {
 
     getDefaultObject() {
         return super.getDefaultObject({ 
+            cut: false,
             percent: 0,
             unit: '%',
             px: 0, 
             em: 0,
             color: 'rgba(0, 0, 0, 0)'
         })
-    }    
+    }   
+    
+    on () {
+        this.json.cut = true; 
+    }
+
+    off () {
+        this.json.cut = false; 
+    }
+
+    toggle () {
+        this.json.cut = !this.json.cut; 
+    }
 
     changeUnit (unit, maxValue) {
         this.json.unit = unit; 
@@ -90,7 +103,7 @@ export class ColorStep extends Item {
      */
     toLength (maxValue) {
         // TODO: apply maxValue
-        return Length.parse(this.json);
+        return Length.parse(this.json); 
     }
 
     /**

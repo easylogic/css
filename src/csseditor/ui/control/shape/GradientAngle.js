@@ -1,4 +1,4 @@
-import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
+import {getXYInCircle, calculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
@@ -60,7 +60,7 @@ export default class GradientAngle extends UIElement {
         var image = editor.selection.backgroundImage;
         if (!image) return 0 
 
-        return image.image.caculateAngle() - 90 
+        return image.image.calculateAngle() - 90 
     }
 
     refreshAngleText (angleText) {
@@ -71,7 +71,7 @@ export default class GradientAngle extends UIElement {
         var { minX, minY, radius,  centerX, centerY } = this.getRectangle()
         var { x , y } = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY)
 
-        var rx = x - centerX, ry = y - centerY, angle = caculateAngle(rx, ry);
+        var rx = x - centerX, ry = y - centerY, angle = calculateAngle(rx, ry);
 
         {
             var { x, y } = this.getCurrentXY(null, angle, radius, centerX, centerY);

@@ -17,12 +17,10 @@ export class ItemPositionCalc {
             this.cachedSelectionItems[it.id] = it; 
         });
 
-        this.rect = new RectItem(editor.selection.rect());
-        if (editor.selection.items[0] instanceof Layer) {
-            this.rect.parentId = editor.selection.items[0].getArtBoard().id
-        }
-        
-        this.newRect = this.rect.clone();
+        editor.selection.initRect()
+
+        this.newRect = editor.selection.currentRect;
+        this.rect = this.newRect.clone();
 
         this.cachedPosition = {}
         keyEach(this.cachedSelectionItems, (id, item) => {
@@ -56,26 +54,26 @@ export class ItemPositionCalc {
         this.setY(item, minY, maxY, yr, y2r);
     }
 
-    caculate (dx, dy) {
+    calculate (dx, dy) {
         var e = editor.config.get('bodyEvent');
 
         var isAlt = e.altKey;
         var direction = this.direction;
 
-        if (Segment.isMove(direction)) {  this.caculateMove(dx, dy, {isAlt}); }
+        if (Segment.isMove(direction)) {  this.calculateMove(dx, dy, {isAlt}); }
         else {
-            if (Segment.isRight(direction)) {  this.caculateRight(dx, dy, {isAlt}); }
-            if (Segment.isBottom(direction)) {  this.caculateBottom(dx, dy, {isAlt}); } 
-            if (Segment.isTop(direction)) { this.caculateTop(dx, dy, {isAlt}); } 
-            if (Segment.isLeft(direction)) { this.caculateLeft(dx, dy, {isAlt}); }
+            if (Segment.isRight(direction)) {  this.calculateRight(dx, dy, {isAlt}); }
+            if (Segment.isBottom(direction)) {  this.calculateBottom(dx, dy, {isAlt}); } 
+            if (Segment.isTop(direction)) { this.calculateTop(dx, dy, {isAlt}); } 
+            if (Segment.isLeft(direction)) { this.calculateLeft(dx, dy, {isAlt}); }
         }
 
-        return this.caculateGuide();
+        return this.calculateGuide();
     }
 
-    caculateGuide () {
+    calculateGuide () {
         // TODO change newRect values 
-        var list = this.guide.caculate(2)
+        var list = this.guide.calculate(2)
 
         return list; 
     }
@@ -112,7 +110,7 @@ export class ItemPositionCalc {
 
         item.y.set(distY + minY) 
         if (item instanceof Layer) {
-            item.y.sub(item.getArtBoard().y)
+            item.y.sub(editor.get(item.parentPosition).screenY)
         }
 
         item.height.set(height )
@@ -126,19 +124,19 @@ export class ItemPositionCalc {
 
         item.x.set(distX + minX) 
         if (item instanceof Layer) {
-            item.x.sub(item.getArtBoard().x)
+            item.x.sub(editor.get(item.parentPosition).screenX)
         }
 
         item.width.set(width )
     }
 
 
-    caculateMove (dx, dy, opt) {
+    calculateMove (dx, dy, opt) {
         this.newRect.x.set(this.rect.x.value + dx);
         this.newRect.y.set(this.rect.y.value + dy);
     }    
 
-    caculateRight (dx, dy, opt) {
+    calculateRight (dx, dy, opt) {
 
         var minX = this.rect.screenX.value;
         var maxX = this.rect.screenX2.value; 
@@ -150,7 +148,7 @@ export class ItemPositionCalc {
         }
     }
 
-    caculateBottom (dx, dy, opt) {    
+    calculateBottom (dx, dy, opt) {    
         var minY = this.rect.screenY.value;
         var maxY = this.rect.screenY2.value; 
         var centerY = this.rect.centerY.value;
@@ -180,7 +178,7 @@ export class ItemPositionCalc {
     }
 
 
-    caculateTop (dx, dy, opt) {   
+    calculateTop (dx, dy, opt) {   
         var minY = this.rect.screenY.value;
         var maxY = this.rect.screenY2.value; 
         var centerY = this.rect.centerY.value; 
@@ -209,7 +207,7 @@ export class ItemPositionCalc {
     }
 
 
-    caculateLeft (dx, dy) {
+    calculateLeft (dx, dy) {
         var minX = this.rect.screenX.value;
         var maxX = this.rect.screenX2.value; 
 

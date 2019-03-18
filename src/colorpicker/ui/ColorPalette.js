@@ -23,7 +23,7 @@ export default class ColorPalette extends UIElement {
         this.setColorUI();
     }
 
-    caculateSV () {
+    calculateSV () {
         var pos = this.drag_pointer_pos || { x : 0, y : 0 };
 
         var width = this.$el.width();
@@ -72,7 +72,7 @@ export default class ColorPalette extends UIElement {
     
         this.drag_pointer_pos = { x , y }
 
-        this.caculateSV()
+        this.calculateSV()
     }    
 
     [EVENT('changeColor')] () {

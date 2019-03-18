@@ -1,4 +1,4 @@
-import {getXYInCircle, caculateAngle} from '../../../../util/functions/math'
+import {getXYInCircle, calculateAngle} from '../../../../util/functions/math'
 import UIElement, { EVENT } from '../../../../util/UIElement';
 import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_TOOL } from '../../../types/event';
 import { POINTERSTART, MOVE } from '../../../../util/Event';
@@ -66,7 +66,7 @@ export default class LayerAngle extends UIElement {
         var { minX, minY, radius,  centerX, centerY } = this.getRectangle()
         var { x , y } = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY)
 
-        var rx = x - centerX, ry = y - centerY, angle = caculateAngle(rx, ry);
+        var rx = x - centerX, ry = y - centerY, angle = calculateAngle(rx, ry);
 
         {
             var { x, y } = this.getCurrentXY(null, angle, radius, centerX, centerY);

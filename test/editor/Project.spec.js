@@ -19,7 +19,7 @@ test('Project - add Project', () => {
 test('Project - add ArtBoard', () => {
     var project = editor.addProject(new Project({ name: 'Sample Project'}));
 
-    var artboard = project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
+    var artboard = project.add(new ArtBoard({ name: 'New ArtBoard'}))
 
     expect(artboard.name).toEqual('New ArtBoard')
 });
@@ -27,11 +27,11 @@ test('Project - add ArtBoard', () => {
 test('Project - get artboards ', () => {
     var project = editor.addProject(new Project({ name: 'Sample Project'}));
 
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
 
     expect(project.artboards.length).toEqual(5)
 })
@@ -39,11 +39,11 @@ test('Project - get artboards ', () => {
 test('Porject - remove all artboard', () => {
     var project = editor.addProject(new Project({ name: 'Sample Project'}));
 
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
-    project.addArtBoard(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
+    project.add(new ArtBoard({ name: 'New ArtBoard'}))
 
     project.clear();
 

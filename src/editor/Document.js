@@ -17,12 +17,15 @@ import { LinearGradient } from "./image-resource/LinearGradient";
 import { RadialGradient } from "./image-resource/RadialGradient";
 import { RepeatingRadialGradient } from "./image-resource/RepeatingRadialGradient";
 import { RepeatingConicGradient } from "./image-resource/RepeatingConicGradient";
+import { Rect } from "./shape/Rect";
+import { Circle } from "./shape/Circle";
+import { Shape } from "./shape/Shape";
 
 
 const ClassList = {
     'project': Project,
     'artboard': ArtBoard,
-    'group': Group,
+    'directory': Directory,
     'layer': Layer,
     'clip-path': ClipPath,
     'image-resource': ImageResource,
@@ -35,6 +38,13 @@ const ClassList = {
     'text-shadow': TextShadow
 }
 
+const LayerClassList = {
+    'rect': Rect,
+    'circle' : Circle,
+    'shape': Shape
+}
+
+
 const ImageResourceClassList = {
     'linear-gradient': LinearGradient,
     'repeating-linear-gradient': RepeatingLinearGradient,
@@ -43,6 +53,20 @@ const ImageResourceClassList = {
     'conic-gradient': ConicGradient,
     'repeating-conic-gradient': RepeatingConicGradient,        
     'url': URLImageResource
+}
+
+const ItemTypeClassList = {
+    'layer': LayerClassList,
+    'image-resource': ImageResourceClassList
+}
+
+var getDefinedClass = (itemType, type) => {
+    const classList = ItemTypeClassList[itemType];
+
+    if (classList) {
+        return classList[item.type]
+    }
+
 }
 
 export class Document {
@@ -59,12 +83,10 @@ export class Document {
         keyEach(json, (id, item) => {
             let BaseClass = ClassList[item.itemType]
 
-            if (item.itemType == 'image-resource') {
-                let ImageBaseClass = ImageResourceClassList[item.type]
+            const childClass = getDefinedClass(item.itemType, item.type);
 
-                if (ImageBaseClass) {
-                    BaseClass = ImageBaseClass;
-                }
+            if (childClass) {
+                BaseClass = childClass;
             }
 
             editor.set(id, new BaseClass(item));

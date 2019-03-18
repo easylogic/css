@@ -52,7 +52,7 @@ export function getDist (x, y, centerX = 0, centerY = 0) {
     )
 }
 
-export function caculateAngle (rx, ry) {
+export function calculateAngle (rx, ry) {
     return radianToDegree(Math.atan2(ry, rx))
 }
 

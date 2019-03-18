@@ -1,6 +1,7 @@
 import { Length } from "./unit/Length";
-import { Item } from "./Item";
 import { CHANGE_SELECTION } from "../csseditor/types/event";
+import { RectItem } from "./RectItem";
+import { Item } from "./Item";
 
 export class Selection {
     constructor(editor) {
@@ -78,22 +79,16 @@ export class Selection {
         }
     }
 
-    updateColorStep( event, attrs = {}, context = null) {
-        var colorstep = this.currentColorStep
-        if (colorstep) { colorstep.reset(attrs); }
-        (context || this.editor).emit(event, colorstep);
-    }
-
-    updateImageResource( event, attrs = {}, context = null) {
-        var imageResource = this.currentImage
-        if (imageResource) { imageResource.reset(attrs); }
-        (context || this.editor).emit(event, imageResource);
-    }
-
     updateLayer(event, attrs = {}, context = null) {
         var layer = this.currentLayer
         if (layer) { layer.reset(attrs); }
         (context || this.editor).emit(event, layer);
+    }
+
+    updateRect (event, attrs = {}, context = null) {
+        var rect = this.currentRect;
+        if (rect) { rect.reset(attrs); }
+        (context || this.editor).emit(event, rect);
     }
 
     updateArtBoard(event, attrs = {}, context = null) {
@@ -113,12 +108,6 @@ export class Selection {
         if (project) { project.reset(attrs); }
         (context || this.editor).emit(event, project);
     }    
-
-    updateBackgroundImage(event, attrs = {}, context = null) {
-        var image = this.currentBackgroundImage
-        if (image) { image.reset(attrs); }
-        (context || this.editor).emit(event, image);
-    }        
 
     check (id) {
         var hasKey = this._idSet.has(id);
@@ -245,6 +234,10 @@ export class Selection {
         }
     }
 
+    initRect () {
+        this.currentRect = this.rect()
+    }
+
     rect () {
         var minX = Number.MAX_SAFE_INTEGER;
         var minY = Number.MAX_SAFE_INTEGER;
@@ -276,7 +269,7 @@ export class Selection {
         width = Length.px(width)
         height = Length.px(height)
 
-        return new Item({ x, y, width, height});
+        return new RectItem({ x, y, width, height});
 
     }
 

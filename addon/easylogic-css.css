@@ -1280,7 +1280,14 @@ html, body {
         background-color: white;
         z-index: 100;
         height: 100%;
-        position: relative; }
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column; }
       .csseditor .layout-main .layout-middle .layout-left {
         -webkit-box-flex: 0;
             -ms-flex: none;
@@ -1931,30 +1938,34 @@ html, body {
         .csseditor .layer-list-view .layer-list .tree-item.collapsed + .tree-children {
           height: 0px;
           overflow: hidden; }
-        .csseditor .layer-list-view .layer-list .tree-item.selected, .csseditor .layer-list-view .layer-list .tree-item:hover {
+        .csseditor .layer-list-view .layer-list .tree-item.selected {
           background-color: #dbf3ff; }
-          .csseditor .layer-list-view .layer-list .tree-item.selected > .item-tools, .csseditor .layer-list-view .layer-list .tree-item:hover > .item-tools {
+          .csseditor .layer-list-view .layer-list .tree-item.selected > .item-tools {
+            display: block; }
+        .csseditor .layer-list-view .layer-list .tree-item:hover {
+          background-color: rgba(219, 243, 255, 0.5); }
+          .csseditor .layer-list-view .layer-list .tree-item:hover > .item-tools {
             display: block; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-1 .item-depth {
-          width: 14px; }
+          width: 18px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-2 .item-depth {
-          width: 28px; }
+          width: 36px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-3 .item-depth {
-          width: 42px; }
+          width: 54px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-4 .item-depth {
-          width: 56px; }
+          width: 72px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-5 .item-depth {
-          width: 70px; }
+          width: 90px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-6 .item-depth {
-          width: 84px; }
+          width: 108px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-7 .item-depth {
-          width: 98px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-8 .item-depth {
-          width: 112px; }
-        .csseditor .layer-list-view .layer-list .tree-item.depth-9 .item-depth {
           width: 126px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-8 .item-depth {
+          width: 144px; }
+        .csseditor .layer-list-view .layer-list .tree-item.depth-9 .item-depth {
+          width: 162px; }
         .csseditor .layer-list-view .layer-list .tree-item.depth-10 .item-depth {
-          width: 140px; }
+          width: 180px; }
         .csseditor .layer-list-view .layer-list .tree-item .item-depth {
           -webkit-box-flex: 0;
               -ms-flex: none;
@@ -1969,6 +1980,8 @@ html, body {
           vertical-align: middle;
           width: 16px;
           height: 16px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
           -webkit-transition: -webkit-transform 0.1s linear;
           transition: -webkit-transform 0.1s linear;
           transition: transform 0.1s linear;
@@ -2508,12 +2521,11 @@ html, body {
         -webkit-transform: translateX(-50%) translateY(-50%);
                 transform: translateX(-50%) translateY(-50%); }
   .csseditor .feature-control {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 65px;
-    bottom: 0px;
-    border-top: 1px solid #cccccc; }
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+    border-top: 1px solid #cccccc;
+    overflow: auto; }
     .csseditor .feature-control .feature {
       display: none;
       position: absolute;
@@ -3583,10 +3595,10 @@ html, body {
         cursor: pointer;
         position: absolute;
         display: inline-block;
-        width: 10px;
-        height: 10px;
-        -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
-                box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
+        width: 8px;
+        height: 8px;
+        -webkit-box-shadow: 0px 0px 0.1px 0px rgba(0, 0, 0, 0.3);
+                box-shadow: 0px 0px 0.1px 0px rgba(0, 0, 0, 0.3);
         /* linear */ }
         .csseditor .page-view .item-resizer button[data-value='move'] {
           top: 0px;
@@ -3603,49 +3615,49 @@ html, body {
           left: 50%;
           -webkit-transform: translateX(-50%) translateY(-100%);
                   transform: translateX(-50%) translateY(-100%);
-          cursor: n-resize; }
+          cursor: ns-resize; }
         .csseditor .page-view .item-resizer button[data-value='to top right'] {
           top: 0px;
           right: 0px;
           -webkit-transform: translateX(100%) translateY(-100%);
                   transform: translateX(100%) translateY(-100%);
-          cursor: ne-resize; }
+          cursor: nesw-resize; }
         .csseditor .page-view .item-resizer button[data-value='to right'] {
           top: 50%;
           right: 0px;
           -webkit-transform: translateX(100%) translateY(-50%);
                   transform: translateX(100%) translateY(-50%);
-          cursor: e-resize; }
+          cursor: ew-resize; }
         .csseditor .page-view .item-resizer button[data-value='to bottom right'] {
           bottom: 0px;
           right: 0px;
           -webkit-transform: translateX(100%) translateY(100%);
                   transform: translateX(100%) translateY(100%);
-          cursor: se-resize; }
+          cursor: nwse-resize; }
         .csseditor .page-view .item-resizer button[data-value='to bottom'] {
           bottom: 0px;
           left: 50%;
           -webkit-transform: translateX(-50%) translateY(100%);
                   transform: translateX(-50%) translateY(100%);
-          cursor: s-resize; }
+          cursor: ns-resize; }
         .csseditor .page-view .item-resizer button[data-value='to bottom left'] {
           left: 0px;
           bottom: 0px;
           -webkit-transform: translateX(-100%) translateY(100%);
                   transform: translateX(-100%) translateY(100%);
-          cursor: sw-resize; }
+          cursor: nesw-resize; }
         .csseditor .page-view .item-resizer button[data-value='to left'] {
           top: 50%;
           left: 0px;
           -webkit-transform: translateX(-100%) translateY(-50%);
                   transform: translateX(-100%) translateY(-50%);
-          cursor: w-resize; }
+          cursor: ew-resize; }
         .csseditor .page-view .item-resizer button[data-value='to top left'] {
           top: 0px;
           left: 0px;
           -webkit-transform: translateX(-100%) translateY(-100%);
                   transform: translateX(-100%) translateY(-100%);
-          cursor: nw-resize; }
+          cursor: nwse-resize; }
     .csseditor .page-view .page-canvas {
       position: relative;
       width: 100%;
@@ -4724,1431 +4736,848 @@ html, body {
         padding: 10px;
         font-size: 13px;
         text-shadow: 0px 3px 4px black; }
-  .csseditor .property-view {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    top: 0px;
-    overflow: auto; }
-    .csseditor .property-view .property {
-      padding: 0px;
-      border-bottom: 1px solid rgba(204, 204, 204, 0.5);
-      padding-bottom: 5px; }
-      .csseditor .property-view .property.show > .property-body {
-        display: block; }
-      .csseditor .property-view .property > .property-title {
-        font-size: 11px;
-        font-weight: 400;
-        padding: 8px 5px !important;
-        height: 24px;
-        color: #333;
-        cursor: pointer;
-        position: relative; }
-        .csseditor .property-view .property > .property-title > .tools {
-          display: inline-block;
-          position: absolute;
-          top: 3px;
-          bottom: 3px;
-          right: 10px; }
-          .csseditor .property-view .property > .property-title > .tools button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            border: 1px solid #ececec;
-            display: inline-block;
-            height: 100%; }
-      .csseditor .property-view .property > .property-body {
-        display: none;
-        padding: 5px 4px; }
-    .csseditor .property-view .tab:not(.horizontal) .tab-body {
-      border: 0px; }
-    .csseditor .property-view .tab:not(.horizontal) .tab-item {
-      text-align: center; }
-    .csseditor .property-view.inline {
-      overflow: hidden; }
-      .csseditor .property-view.inline .property-item {
-        display: inline-block;
-        vertical-align: middle;
-        border: 0px;
-        padding: 2px 4px; }
-        .csseditor .property-view.inline .property-item > .title {
-          background-image: none;
-          border-bottom: 0px; }
-          .csseditor .property-view.inline .property-item > .title > span button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            background-color: transparent;
-            border: 1px solid #cccccc;
-            vertical-align: middle;
-            display: inline-block;
-            height: auto; }
-        .csseditor .property-view.inline .property-item > .items {
-          display: inline-block; }
-        .csseditor .property-view.inline .property-item > * {
-          display: inline-block;
-          vertical-align: middle; }
-          .csseditor .property-view.inline .property-item > * button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            background-color: transparent;
-            border: 1px solid #cccccc;
-            vertical-align: middle;
-            display: inline-block; }
-    .csseditor .property-view.accordian {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-              flex-direction: column; }
-      .csseditor .property-view.accordian .property-item {
-        -webkit-box-flex: 0;
-            -ms-flex: none;
-                flex: none;
-        position: relative; }
-        .csseditor .property-view.accordian .property-item.show {
-          -webkit-box-flex: 1;
-              -ms-flex: 1 1 auto;
-                  flex: 1 1 auto; }
-          .csseditor .property-view.accordian .property-item.show > .items {
-            position: absolute;
-            left: 0px;
-            right: 0px;
-            bottom: 0px;
-            top: 30px;
-            overflow: auto; }
-        .csseditor .property-view.accordian .property-item > .title span {
-          display: inline-block;
-          max-width: 200px;
-          overflow: hidden;
-          white-space: nowrap;
-          vertical-align: middle;
-          text-overflow: ellipsis; }
-        .csseditor .property-view.accordian .property-item.filters > .items {
-          padding: 0px !important; }
-          .csseditor .property-view.accordian .property-item.filters > .items .filter-list {
-            display: block !important; }
-            .csseditor .property-view.accordian .property-item.filters > .items .filter-list .filter-item {
-              display: block !important; }
-              .csseditor .property-view.accordian .property-item.filters > .items .filter-list .filter-item .filter-item-input .input input[type=number] {
-                width: 40px; }
-    .csseditor .property-view .property-item {
-      padding: 0px;
+  .csseditor .property {
+    padding: 0px;
+    border-bottom: 1px solid rgba(204, 204, 204, 0.5);
+    padding-bottom: 5px; }
+    .csseditor .property.show > .property-body {
+      display: block; }
+    .csseditor .property > .property-title {
       font-size: 11px;
-      overflow: hidden; }
-      .csseditor .property-view .property-item > .title {
-        font-size: 11px;
-        font-weight: 400;
-        padding: 8px 5px !important;
-        height: 30px;
-        color: #333;
-        cursor: pointer; }
-        .csseditor .property-view .property-item > .title > span button {
+      font-weight: 400;
+      padding: 8px 5px !important;
+      height: 24px;
+      color: #333;
+      cursor: pointer;
+      position: relative; }
+      .csseditor .property > .property-title > .tools {
+        display: inline-block;
+        position: absolute;
+        top: 3px;
+        bottom: 3px;
+        right: 10px; }
+        .csseditor .property > .property-title > .tools button {
           -webkit-appearance: none;
              -moz-appearance: none;
                   appearance: none;
           border: 1px solid #ececec;
           display: inline-block;
           height: 100%; }
-      .csseditor .property-view .property-item > .items {
-        display: none; }
-        .csseditor .property-view .property-item > .items.no-padding {
-          padding: 0px !important; }
-        .csseditor .property-view .property-item > .items.bar {
-          min-height: 0px;
-          border-bottom: 1px solid rgba(204, 204, 204, 0.5); }
-      .csseditor .property-view .property-item.show .items {
-        display: block; }
-        .csseditor .property-view .property-item.show .items.max-height {
-          max-height: 200px;
-          overflow: auto; }
-      .csseditor .property-view .property-item > .items > div {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        margin-bottom: 5px; }
-        .csseditor .property-view .property-item > .items > div.drag-property-ui {
-          -webkit-box-orient: horizontal;
-          -webkit-box-direction: normal;
-              -ms-flex-direction: row;
-                  flex-direction: row; }
-          .csseditor .property-view .property-item > .items > div.drag-property-ui > .drag-ui {
-            -webkit-box-flex: 0;
-                -ms-flex: none;
-                    flex: none;
-            width: 70px;
-            height: 70px;
-            position: relative; }
-          .csseditor .property-view .property-item > .items > div.drag-property-ui > .property-ui {
-            -webkit-box-flex: 1;
-                -ms-flex: 1 1 auto;
-                    flex: 1 1 auto;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-                -ms-flex-direction: column;
-                    flex-direction: column; }
-        .csseditor .property-view .property-item > .items > div > label {
-          width: 70px;
-          display: inline-block;
-          vertical-align: middle;
-          line-height: 1.6;
-          margin-left: 4px;
-          text-align: right;
-          padding-right: 5px; }
-          .csseditor .property-view .property-item > .items > div > label.left {
-            text-align: left; }
-          .csseditor .property-view .property-item > .items > div > label:first-child {
-            margin-left: 0px; }
-          .csseditor .property-view .property-item > .items > div > label.second {
-            width: 50px; }
-        .csseditor .property-view .property-item > .items > div > div {
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex; }
-          .csseditor .property-view .property-item > .items > div > div.full-size {
-            width: 160px; }
-            .csseditor .property-view .property-item > .items > div > div.full-size select {
+    .csseditor .property > .property-body {
+      display: none;
+      padding: 5px 4px; }
+      .csseditor .property > .property-body .property-item {
+        padding: 0px;
+        font-size: 11px;
+        overflow: hidden; }
+        .csseditor .property > .property-body .property-item.gradient-steps {
+          height: 90px;
+          padding: 0px; }
+          .csseditor .property > .property-body .property-item.gradient-steps > .items {
+            padding: 10px !important; }
+          .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps {
+            position: relative;
+            display: block; }
+            .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue-container {
               width: 100%;
-              -webkit-appearance: none;
-                 -moz-appearance: none;
-                      appearance: none;
-              display: inline-block;
-              background-color: transparent;
-              border: 1px solid #cccccc;
-              border-radius: 0px;
-              padding: 0px 5px;
-              vertical-align: middle; }
-          .csseditor .property-view .property-item > .items > div > div input[type=range] {
-            width: 90px;
-            vertical-align: middle;
-            margin-right: 2px; }
-          .csseditor .property-view .property-item > .items > div > div input[type=number], .csseditor .property-view .property-item > .items > div > div input[type=text] {
-            width: 40px;
-            vertical-align: middle; }
-            .csseditor .property-view .property-item > .items > div > div input[type=number].middle, .csseditor .property-view .property-item > .items > div > div input[type=text].middle {
-              width: 50px; }
-            .csseditor .property-view .property-item > .items > div > div input[type=number].full, .csseditor .property-view .property-item > .items > div > div input[type=text].full {
-              width: 160px;
-              height: 20px; }
-            .csseditor .property-view .property-item > .items > div > div input[type=number]:disabled, .csseditor .property-view .property-item > .items > div > div input[type=text]:disabled {
-              background-color: #cccccc;
-              border: 1px solid #cccccc;
-              cursor: not-allowed; }
-          .csseditor .property-view .property-item > .items > div > div .input {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex; }
-            .csseditor .property-view .property-item > .items > div > div .input input[type=number], .csseditor .property-view .property-item > .items > div > div .input input[type=text] {
-              -webkit-box-flex: 1;
-                  -ms-flex: 1 1 auto;
-                      flex: 1 1 auto; }
-            .csseditor .property-view .property-item > .items > div > div .input.two input[type=number], .csseditor .property-view .property-item > .items > div > div .input.two input[type=text] {
-              width: 40px; }
-            .csseditor .property-view .property-item > .items > div > div .input.two span {
-              display: inline-block;
-              vertical-align: middle;
-              padding: 2px; }
-          .csseditor .property-view .property-item > .items > div > div .input-field.hex input[type=number], .csseditor .property-view .property-item > .items > div > div .input-field.hex input[type=text] {
-            width: 100%; }
-          .csseditor .property-view .property-item > .items > div > div > span {
-            display: inline-block;
-            margin-left: 4px;
-            margin-right: 10px;
-            vertical-align: middle; }
-            .csseditor .property-view .property-item > .items > div > div > span.background-transparent {
-              height: 30px;
-              width: 30px;
+              height: 16px;
+              margin-top: -1px;
+              left: -1px;
+              right: -1px;
+              position: absolute;
+              z-index: 0;
               background-color: transparent;
               background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
               background-size: 10px 10px;
-              background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
-              margin: 0px; }
-              .csseditor .property-view .property-item > .items > div > div > span.background-transparent .color {
-                display: block;
-                height: 100%;
+              background-position: 0 0, 0 5px, 5px -5px, -5px 0px; }
+            .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue {
+              position: relative;
+              padding: 0px;
+              margin: 0px;
+              cursor: pointer; }
+              .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue > .step-list {
+                position: relative;
                 width: 100%;
-                border: 1px solid #cccccc; }
-            .csseditor .property-view .property-item > .items > div > div > span.color-text {
-              display: inline-block;
-              height: 100%;
-              margin-right: 0px;
-              padding: 10px 0px; }
-          .csseditor .property-view .property-item > .items > div > div .input-text span {
-            display: inline-block;
-            width: 36px;
-            text-align: center; }
-          .csseditor .property-view .property-item > .items > div > div .input-text.two span {
-            width: 80px; }
-      .csseditor .property-view .property-item > .items.block > div {
-        display: block;
-        margin-bottom: 2px; }
-        .csseditor .property-view .property-item > .items.block > div > label {
-          display: block;
-          line-height: 1.6;
-          margin-left: 4px;
+                cursor: copy;
+                height: 14px;
+                z-index: 1; }
+                .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue > .step-list.mode-drag {
+                  cursor: pointer; }
+              .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue .drag-bar {
+                border: 0px;
+                background-color: transparent;
+                border: 2px solid white;
+                -webkit-box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.6);
+                        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.6);
+                width: 10px;
+                height: 10px;
+                -webkit-transform: none;
+                        transform: none;
+                border-radius: 50%;
+                display: inline-block;
+                left: 0px;
+                top: 17px;
+                -webkit-transform: translateX(-50%);
+                        transform: translateX(-50%);
+                position: absolute;
+                background-color: rgba(255, 255, 255, 0.8);
+                cursor: pointer;
+                z-index: 0;
+                -webkit-transition: top 0.3s ease-out;
+                transition: top 0.3s ease-out; }
+                .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue .drag-bar .guide-line {
+                  pointer-events: none;
+                  position: absolute;
+                  width: 1px;
+                  height: 0px;
+                  bottom: 8px;
+                  left: 3px;
+                  -webkit-transform: translateX(-1px);
+                          transform: translateX(-1px);
+                  -webkit-transition: all 0.3s ease-out;
+                  transition: all 0.3s ease-out; }
+                .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue .drag-bar.selected {
+                  z-index: 1;
+                  top: 30px; }
+                  .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue .drag-bar.selected .guide-line {
+                    height: 17px; }
+                  .csseditor .property > .property-body .property-item.gradient-steps .gradient-steps .hue .drag-bar.selected .guide-change {
+                    opacity: 1; }
+          .csseditor .property > .property-body .property-item.gradient-steps .gradient-list-layout {
+            position: absolute;
+            top: 50px !important;
+            left: 0px;
+            right: 0px;
+            bottom: 0px; }
+          .csseditor .property > .property-body .property-item.gradient-steps .color-list {
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            top: 0px; }
+            .csseditor .property > .property-body .property-item.gradient-steps .color-list .color-type {
+              position: absolute;
+              left: 0px;
+              right: 0px;
+              top: 0px;
+              height: 40px; }
+              .csseditor .property > .property-body .property-item.gradient-steps .color-list .color-type > div {
+                position: absolute;
+                left: 5px;
+                right: 5px;
+                bottom: 5px;
+                top: 5px; }
+                .csseditor .property > .property-body .property-item.gradient-steps .color-list .color-type > div select {
+                  -webkit-appearance: none;
+                     -moz-appearance: none;
+                          appearance: none;
+                  position: absolute;
+                  left: 0px;
+                  right: 0px;
+                  bottom: 0px;
+                  top: 0px;
+                  padding: 5px;
+                  display: inline-block;
+                  border: 0px;
+                  background-color: white;
+                  width: 100%;
+                  outline: none; }
+            .csseditor .property > .property-body .property-item.gradient-steps .color-list .color-sample-list {
+              position: absolute;
+              left: 0px;
+              right: 0px;
+              top: 45px;
+              bottom: 0px;
+              padding: 5px; }
+              .csseditor .property > .property-body .property-item.gradient-steps .color-list .color-sample-list .color-item {
+                display: inline-block;
+                vertical-align: middle;
+                width: 34px;
+                height: 34px;
+                cursor: pointer;
+                position: relative;
+                margin: 2px; }
+        .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list {
+          min-height: 50px;
+          max-height: 200px;
+          overflow: auto;
           text-align: left;
-          padding-right: 5px; }
-        .csseditor .property-view .property-item > .items.block > div > div {
+          display: inline-block; }
+          .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .gradient-sample-item,
+          .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .gradient-cached-item {
+            display: inline-block;
+            vertical-align: middle;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: relative;
+            margin: 2px; }
+            .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .gradient-sample-item:hover,
+            .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .gradient-cached-item:hover {
+              -webkit-transform: scale(1.2);
+                      transform: scale(1.2); }
+          .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .gradient-cached-item:first-child {
+            margin-left: 0px; }
+          .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .cached-list {
+            margin-top: 10px;
+            display: inline-block;
+            vertical-align: middle; }
+          .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .tools {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: -3px; }
+            .csseditor .property > .property-body .property-item.sample-list .gradient-sample-list .tools button {
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              border: 1px solid #cccccc;
+              background-color: #ffffff;
+              display: inline-block;
+              vertical-align: middle;
+              width: 20px;
+              height: 20px;
+              cursor: pointer;
+              position: relative;
+              margin: 2px;
+              padding: 2px;
+              line-height: 0; }
+        .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info {
+          overflow: auto; }
+          .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item {
+            font-size: 12px;
+            margin: 2px 0px;
+            width: 100%; }
+            .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .step-list {
+              width: 100%; }
+            .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step {
+              display: -webkit-box;
+              display: -ms-flexbox;
+              display: flex;
+              padding: 1px;
+              color: #333; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step.selected .color-view {
+                border: 1px solid black; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step > * {
+                -webkit-box-flex: 1;
+                    -ms-flex: 1 1 auto;
+                        flex: 1 1 auto;
+                display: inline-block;
+                vertical-align: middle; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step input {
+                width: 40px;
+                display: inline-block; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .tools {
+                text-align: right; }
+                .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .tools button {
+                  -webkit-appearance: none;
+                     -moz-appearance: none;
+                          appearance: none;
+                  -webkit-transform: scale(1.2);
+                          transform: scale(1.2);
+                  border: 0px;
+                  background-color: transparent;
+                  padding: 2px 2px;
+                  font-size: 14px;
+                  vertical-align: middle;
+                  line-height: 0;
+                  cursor: pointer;
+                  outline: none; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step input[type=text] {
+                width: 100px; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step input[type=number] {
+                -webkit-appearance: none;
+                   -moz-appearance: none;
+                        appearance: none;
+                border: 1px solid #ececec; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-view {
+                width: 16px;
+                -webkit-box-flex: 0;
+                    -ms-flex: none;
+                        flex: none;
+                height: 16px;
+                margin-top: 2px;
+                margin-right: 2px;
+                position: relative;
+                background-color: transparent;
+                background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
+                background-size: 5px 5px;
+                background-position: 0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0px;
+                border: 1px solid #ececec;
+                vertical-align: middle;
+                border-radius: 3px;
+                overflow: hidden; }
+                .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-view .color-view-item {
+                  position: absolute;
+                  left: 0px;
+                  right: 0px;
+                  bottom: 0px;
+                  top: 0px;
+                  cursor: pointer; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-cut {
+                width: 16px;
+                -webkit-box-flex: 0;
+                    -ms-flex: none;
+                        flex: none;
+                height: 20px;
+                margin-right: 2px;
+                position: relative;
+                vertical-align: middle; }
+                .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-cut .guide-change {
+                  position: absolute;
+                  width: 12px;
+                  height: 12px;
+                  top: 50%;
+                  left: 0px;
+                  -webkit-transform: translateY(-50%);
+                          transform: translateY(-50%);
+                  border: 1px solid #cccccc;
+                  cursor: pointer;
+                  background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
+                  background-image: linear-gradient(to top, black 0%, black 100%);
+                  background-size: 3px 3px;
+                  background-position: 3.5px center;
+                  background-repeat: repeat-y; }
+                  .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-cut .guide-change.cut {
+                    background-position: center 3px;
+                    background-repeat: repeat-x; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit > input[type=number] {
+                display: none;
+                outline: none;
+                width: 50px; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit.percent > .percent {
+                display: inline-block; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit.px > .px {
+                display: inline-block; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit.em > .em {
+                display: inline-block; }
+              .csseditor .property > .property-body .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit select {
+                -webkit-appearance: none;
+                   -moz-appearance: none;
+                        appearance: none;
+                border: 0px;
+                background-color: transparent;
+                display: inline-block;
+                outline: none; }
+        .csseditor .property > .property-body .property-item.gradient-tools {
+          display: block;
+          width: 100%; }
+          .csseditor .property > .property-body .property-item.gradient-tools .menu-buttons {
+            display: inline-block;
+            vertical-align: middle;
+            padding: 4px 0px;
+            font-size: 12px; }
+            .csseditor .property > .property-body .property-item.gradient-tools .menu-buttons button {
+              display: inline-block;
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              width: 100px;
+              height: 100%;
+              border: 1px solid #dedede;
+              vertical-align: middle;
+              font-size: 12px;
+              cursor: pointer;
+              outline: none;
+              position: relative;
+              pointer-events: all; }
+          .csseditor .property > .property-body .property-item.gradient-tools > .title {
+            vertical-align: middle;
+            padding: 10px 0px;
+            font-size: 12px; }
+        .csseditor .property > .property-body .property-item .gradient-type .gradient-item {
+          margin-right: 3px; }
+        .csseditor .property > .property-body .property-item.clip-path-svg .clip-path-container {
+          cursor: pointer;
+          width: 50px;
+          height: 50px;
+          border: 1px solid #cccccc; }
+          .csseditor .property > .property-body .property-item.clip-path-svg .clip-path-container svg {
+            width: 100%; }
+        .csseditor .property > .property-body .property-item.clip-path-svg .image-resource {
+          position: relative;
+          left: auto;
+          bottom: auto;
+          top: auto;
+          width: 100%;
+          margin-top: 10px;
+          max-height: 300px;
+          -ms-flex-wrap: wrap;
+              flex-wrap: wrap;
+          overflow: auto; }
+        .csseditor .property > .property-body .property-item.clip-path-svg .items {
+          position: relative; }
+          .csseditor .property > .property-body .property-item.clip-path-svg .items .svg-item {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+            border: 1px solid #cccccc;
+            cursor: pointer;
+            margin: 2px; }
+            .csseditor .property > .property-body .property-item.clip-path-svg .items .svg-item svg {
+              width: 100%;
+              height: 100%; }
+            .csseditor .property > .property-body .property-item.clip-path-svg .items .svg-item img {
+              max-width: 100%;
+              max-height: 100%; }
+        .csseditor .property > .property-body .property-item.image-list-view .items {
+          height: 200px;
+          overflow: auto;
+          padding: 0px !important;
+          position: relative; }
+          .csseditor .property > .property-body .property-item.image-list-view .items .images {
+            top: 0px;
+            bottom: 0px; }
+        .csseditor .property > .property-body .property-item.clip-path .clip-path-container {
+          cursor: pointer;
+          width: 50px;
+          height: 50px;
+          border: 1px solid #cccccc; }
+          .csseditor .property > .property-body .property-item.clip-path .clip-path-container svg {
+            width: 100%; }
+        .csseditor .property > .property-body .property-item.clip-path-polygon .items label {
+          width: 20px;
+          text-align: center; }
+        .csseditor .property > .property-body .property-item.clip-path-polygon .items > div > div input[type=number] {
+          width: 50px;
+          margin-right: 2px; }
+        .csseditor .property > .property-body .property-item.clip-path-polygon .items > div .tools {
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex;
-          padding-left: 10px; }
-          .csseditor .property-view .property-item > .items.block > div > div input[type=range] {
-            width: 120px;
-            vertical-align: middle;
-            margin-right: 2px; }
-          .csseditor .property-view .property-item > .items.block > div > div input[type=number], .csseditor .property-view .property-item > .items.block > div > div input[type=text] {
-            width: 60px;
-            vertical-align: middle; }
-            .csseditor .property-view .property-item > .items.block > div > div input[type=number].full, .csseditor .property-view .property-item > .items.block > div > div input[type=text].full {
-              width: 160px;
-              height: 20px; }
-            .csseditor .property-view .property-item > .items.block > div > div input[type=number]:disabled, .csseditor .property-view .property-item > .items.block > div > div input[type=text]:disabled {
-              background-color: #cccccc;
-              border: 1px solid #cccccc;
-              cursor: not-allowed; }
-          .csseditor .property-view .property-item > .items.block > div > div .input {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex; }
-            .csseditor .property-view .property-item > .items.block > div > div .input input[type=number], .csseditor .property-view .property-item > .items.block > div > div .input input[type=text] {
-              -webkit-box-flex: 1;
-                  -ms-flex: 1 1 auto;
-                      flex: 1 1 auto; }
-            .csseditor .property-view .property-item > .items.block > div > div .input.two input[type=number], .csseditor .property-view .property-item > .items.block > div > div .input.two input[type=text] {
-              width: 40px; }
-            .csseditor .property-view .property-item > .items.block > div > div .input.two span {
-              display: inline-block;
-              vertical-align: middle;
-              padding: 2px; }
-          .csseditor .property-view .property-item > .items.block > div > div .input-field.hex input[type=number], .csseditor .property-view .property-item > .items.block > div > div .input-field.hex input[type=text] {
-            width: 100%; }
-          .csseditor .property-view .property-item > .items.block > div > div > span {
-            display: inline-block;
-            margin-left: 4px;
-            margin-right: 10px;
-            vertical-align: middle; }
-            .csseditor .property-view .property-item > .items.block > div > div > span.color {
-              display: block;
-              height: 100%;
-              width: 40px;
-              margin-right: 0px;
-              border: 1px solid #cccccc; }
-            .csseditor .property-view .property-item > .items.block > div > div > span.color-text {
-              display: inline-block;
-              height: 100%;
-              margin-right: 0px;
-              padding: 10px 0px; }
-          .csseditor .property-view .property-item > .items.block > div > div .input-text span {
-            display: inline-block;
-            width: 36px;
-            text-align: center; }
-          .csseditor .property-view .property-item > .items.block > div > div .input-text.two span {
-            width: 80px; }
-      .csseditor .property-view .property-item.gradient-steps {
-        height: 90px;
-        padding: 0px; }
-        .csseditor .property-view .property-item.gradient-steps > .items {
-          padding: 10px !important; }
-        .csseditor .property-view .property-item.gradient-steps .gradient-steps {
-          position: relative;
-          display: block; }
-          .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue-container {
-            width: 100%;
-            height: 16px;
-            margin-top: -1px;
-            left: -1px;
-            right: -1px;
-            position: absolute;
-            z-index: 0;
+          margin-left: 10px; }
+          .csseditor .property > .property-body .property-item.clip-path-polygon .items > div .tools button {
+            -webkit-box-flex: 1;
+                -ms-flex: 1 1 auto;
+                    flex: 1 1 auto;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
             background-color: transparent;
-            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
-            background-size: 10px 10px;
-            background-position: 0 0, 0 5px, 5px -5px, -5px 0px; }
-          .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue {
-            position: relative;
-            padding: 0px;
-            margin: 0px;
-            cursor: pointer; }
-            .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue > .step-list {
-              position: relative;
-              width: 100%;
-              cursor: copy;
-              height: 14px;
-              z-index: 1; }
-              .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue > .step-list.mode-drag {
-                cursor: pointer; }
-            .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue .drag-bar {
-              border: 0px;
-              background-color: transparent;
-              border: 2px solid white;
-              -webkit-box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.6);
-                      box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.6);
-              width: 10px;
-              height: 10px;
-              -webkit-transform: none;
-                      transform: none;
-              border-radius: 50%;
-              display: inline-block;
-              left: 0px;
-              top: 17px;
-              -webkit-transform: translateX(-50%);
-                      transform: translateX(-50%);
-              position: absolute;
-              background-color: rgba(255, 255, 255, 0.8);
-              cursor: pointer;
-              z-index: 0;
-              -webkit-transition: top 0.3s ease-out;
-              transition: top 0.3s ease-out; }
-              .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue .drag-bar .guide-line {
-                pointer-events: none;
-                position: absolute;
-                width: 1px;
-                height: 0px;
-                bottom: 8px;
-                left: 3px;
-                -webkit-transform: translateX(-1px);
-                        transform: translateX(-1px);
-                -webkit-transition: all 0.3s ease-out;
-                transition: all 0.3s ease-out; }
-              .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue .drag-bar.selected {
-                z-index: 1;
-                top: 30px; }
-                .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue .drag-bar.selected .guide-line {
-                  height: 17px; }
-                .csseditor .property-view .property-item.gradient-steps .gradient-steps .hue .drag-bar.selected .guide-change {
-                  opacity: 1; }
-        .csseditor .property-view .property-item.gradient-steps .gradient-list-layout {
-          position: absolute;
-          top: 50px !important;
-          left: 0px;
-          right: 0px;
-          bottom: 0px; }
-        .csseditor .property-view .property-item.gradient-steps .color-list {
-          position: absolute;
-          left: 0px;
-          right: 0px;
-          bottom: 0px;
-          top: 0px; }
-          .csseditor .property-view .property-item.gradient-steps .color-list .color-type {
-            position: absolute;
-            left: 0px;
-            right: 0px;
-            top: 0px;
-            height: 40px; }
-            .csseditor .property-view .property-item.gradient-steps .color-list .color-type > div {
-              position: absolute;
-              left: 5px;
-              right: 5px;
-              bottom: 5px;
-              top: 5px; }
-              .csseditor .property-view .property-item.gradient-steps .color-list .color-type > div select {
-                -webkit-appearance: none;
-                   -moz-appearance: none;
-                        appearance: none;
-                position: absolute;
-                left: 0px;
-                right: 0px;
-                bottom: 0px;
-                top: 0px;
-                padding: 5px;
-                display: inline-block;
-                border: 0px;
-                background-color: white;
-                width: 100%;
-                outline: none; }
-          .csseditor .property-view .property-item.gradient-steps .color-list .color-sample-list {
-            position: absolute;
-            left: 0px;
-            right: 0px;
-            top: 45px;
-            bottom: 0px;
-            padding: 5px; }
-            .csseditor .property-view .property-item.gradient-steps .color-list .color-sample-list .color-item {
-              display: inline-block;
-              vertical-align: middle;
-              width: 34px;
-              height: 34px;
-              cursor: pointer;
-              position: relative;
-              margin: 2px; }
-      .csseditor .property-view .property-item.sample-list .gradient-sample-list {
-        min-height: 50px;
-        max-height: 200px;
-        overflow: auto;
-        text-align: left;
-        display: inline-block; }
-        .csseditor .property-view .property-item.sample-list .gradient-sample-list .gradient-sample-item,
-        .csseditor .property-view .property-item.sample-list .gradient-sample-list .gradient-cached-item {
+            border: 1px solid #cccccc; }
+            .csseditor .property > .property-body .property-item.clip-path-polygon .items > div .tools button:not(:first-child) {
+              margin-left: -1px; }
+        .csseditor .property > .property-body .property-item.clip-path-polygon .items .clip-path-item {
           display: inline-block;
           vertical-align: middle;
-          width: 20px;
-          height: 20px;
+          width: 45px;
+          height: 45px;
+          margin: 5px;
+          background-color: red;
           cursor: pointer;
-          position: relative;
-          margin: 2px; }
-          .csseditor .property-view .property-item.sample-list .gradient-sample-list .gradient-sample-item:hover,
-          .csseditor .property-view .property-item.sample-list .gradient-sample-list .gradient-cached-item:hover {
-            -webkit-transform: scale(1.2);
-                    transform: scale(1.2); }
-        .csseditor .property-view .property-item.sample-list .gradient-sample-list .gradient-cached-item:first-child {
-          margin-left: 0px; }
-        .csseditor .property-view .property-item.sample-list .gradient-sample-list .cached-list {
-          margin-top: 10px;
+          background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.5)), to(rgba(128, 128, 128, 0.5)));
+          background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(128, 128, 128, 0.5)); }
+        .csseditor .property > .property-body .property-item .group-align {
+          text-align: center; }
+          .csseditor .property > .property-body .property-item .group-align button {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border: 0px;
+            outline: none;
+            cursor: pointer;
+            -webkit-transform: scale(0.6);
+                    transform: scale(0.6);
+            background-color: white; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="left"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 20px 8px, 16px 8px, 2px 24px;
+              background-position: 6px 6px, 6px 16px, 2px 3px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="right"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 20px 8px, 16px 8px, 2px 24px;
+              background-position: 5px 6px, 9px 16px, 27px 3px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="center"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 20px 8px, 16px 8px, 2px 24px;
+              background-position: 5px 6px, 7px 16px, 14px 3px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="middle"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 8px 20px, 8px 16px, 24px 2px;
+              background-position: 6px 5px, 16px 7px, 3px 14px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="top"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 8px 20px, 8px 16px, 24px 2px;
+              background-position: 6px 8px, 16px 8px, 3px 4px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="bottom"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 8px 20px, 8px 16px, 24px 2px;
+              background-position: 6px 4px, 16px 8px, 3px 26px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="vertical"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
+              background-repeat: no-repeat;
+              background-size: 24px 2px, 18px 10px, 24px 2px;
+              background-position: 3px 6px, 6px 11px, 3px 24px; }
+            .csseditor .property > .property-body .property-item .group-align button[data-value="horizontal"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
+              background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
+              background-repeat: no-repeat;
+              background-size: 2px 24px, 10px 18px, 2px 24px;
+              background-position: 6px 3px, 11px 6px, 24px 3px; }
+        .csseditor .property > .property-body .property-item .group-order {
+          text-align: center; }
+          .csseditor .property > .property-body .property-item .group-order button {
+            margin-right: 10px;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+            border: 0px;
+            outline: none;
+            cursor: pointer;
+            -webkit-transform: scale(0.7);
+                    transform: scale(0.7);
+            background-color: white; }
+            .csseditor .property > .property-body .property-item .group-order button[data-value="forward"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+              background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+              background-repeat: no-repeat;
+              background-size: 18px 18px,20px 20px,16px 16px,18px 18px;
+              background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+            .csseditor .property > .property-body .property-item .group-order button[data-value="backward"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 16px 16px,18px 18px,18px 18px,20px 20px;
+              background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
+            .csseditor .property > .property-body .property-item .group-order button[data-value="front"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
+              background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
+              background-repeat: no-repeat;
+              background-size: 16px 16px,18px 18px,16px 16px,18px 18px,16px 16px,18px 18px;
+              background-position: 6px 6px, 5px 5px, 1px 1px, 0px 0px, 11px 11px, 10px 10px; }
+            .csseditor .property > .property-body .property-item .group-order button[data-value="back"] {
+              background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
+              background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
+              background-repeat: no-repeat;
+              background-size: 12px 12px,14px 14px,12px 12px,14px 14px,18px 18px,20px 20px;
+              background-position: 1px 1px, 0px 0px, 15px 15px, 14px 14px,5px 5px, 4px 4px; }
+        .csseditor .property > .property-body .property-item.fixed-radius {
+          border-bottom: 0px; }
+        .csseditor .property > .property-body .property-item.layer-colorpicker .codemirror-colorpicker.xd {
+          padding-top: 0px; }
+          .csseditor .property > .property-body .property-item.layer-colorpicker .codemirror-colorpicker.xd .color {
+            margin-left: 6px; }
+          .csseditor .property > .property-body .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .color-panel,
+          .csseditor .property > .property-body .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .control {
+            margin-bottom: 0px; }
+          .csseditor .property > .property-body .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .colorsets {
+            display: none; }
+        .csseditor .property > .property-body .property-item.box-shadow .items {
+          padding: 2px; }
+        .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list {
+          display: block; }
+          .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item {
+            position: relative;
+            display: block;
+            margin-top: 2px;
+            padding: 2px 2px;
+            border: 1px solid rgba(204, 204, 204, 0.5); }
+            .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item > div {
+              height: 28px;
+              display: grid;
+              grid-template-columns: 1fr 2fr; }
+              .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item > div .input {
+                display: inline-block; }
+                .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item > div .input input[type=number] {
+                  display: inline-block;
+                  width: 40px; }
+              .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item > div.drag-area {
+                position: absolute;
+                width: 80px;
+                height: 80px;
+                right: 30px;
+                top: 58px;
+                border: 1px solid #ececec;
+                display: block;
+                background-image: -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec)), -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec));
+                background-image: linear-gradient(to right, #ececec, #ececec), linear-gradient(to right, #ececec, #ececec);
+                background-size: 1px 100%, 100% 1px;
+                background-position: center 0px, 0px center;
+                background-repeat: no-repeat, no-repeat; }
+                .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item > div.drag-area .drag-pointer {
+                  position: absolute;
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 100%;
+                  background-color: #00aafb;
+                  -webkit-transform-origin: center center;
+                          transform-origin: center center;
+                  -webkit-transform: translateX(-50%) translateY(-50%);
+                          transform: translateX(-50%) translateY(-50%);
+                  pointer-events: none; }
+            .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item.checked {
+              background-color: #f1f1f1; }
+            .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item .color {
+              width: 20px;
+              height: 20px;
+              border: 1px solid black;
+              cursor: pointer;
+              display: inline-block;
+              vertical-align: middle; }
+            .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item .select {
+              vertical-align: middle; }
+            .csseditor .property > .property-body .property-item.box-shadow .box-shadow-list .box-shadow-item button {
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              background-color: transparent;
+              border: 0px;
+              text-align: center;
+              font-weight: 500; }
+        .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list {
+          display: block; }
+          .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item {
+            position: relative;
+            display: block;
+            margin-top: 2px;
+            padding: 2px 4px;
+            -webkit-box-shadow: inset 0px 0px 0px 1px #cccccc;
+                    box-shadow: inset 0px 0px 0px 1px #cccccc; }
+            .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item > div {
+              height: 28px;
+              display: grid;
+              grid-template-columns: 1fr 2fr;
+              line-height: 2.4; }
+              .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item > div label {
+                text-align: right;
+                padding-right: 10px; }
+              .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input {
+                display: inline-block; }
+                .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input input[type=number] {
+                  display: inline-block;
+                  width: 40px; }
+              .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item > div.drag-area {
+                position: absolute;
+                width: 80px;
+                height: 80px;
+                right: 30px;
+                top: 28px;
+                border: 1px solid #ececec;
+                display: block;
+                background-image: -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec)), -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec));
+                background-image: linear-gradient(to right, #ececec, #ececec), linear-gradient(to right, #ececec, #ececec);
+                background-size: 1px 100%, 100% 1px;
+                background-position: center 0px, 0px center;
+                background-repeat: no-repeat, no-repeat; }
+                .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item > div.drag-area .drag-pointer {
+                  position: absolute;
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 100%;
+                  background-color: #00aafb;
+                  -webkit-transform-origin: center center;
+                          transform-origin: center center;
+                  -webkit-transform: translateX(-50%) translateY(-50%);
+                          transform: translateX(-50%) translateY(-50%);
+                  pointer-events: none; }
+            .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item.checked {
+              background-color: #f1f1f1; }
+            .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item .color {
+              width: 20px;
+              height: 20px;
+              border: 1px solid black;
+              cursor: pointer;
+              display: inline-block;
+              vertical-align: middle; }
+            .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item .select {
+              vertical-align: middle; }
+            .csseditor .property > .property-body .property-item.text-shadow .text-shadow-list .text-shadow-item button {
+              -webkit-appearance: none;
+                 -moz-appearance: none;
+                      appearance: none;
+              background-color: transparent;
+              border: 0px;
+              text-align: center;
+              font-weight: 500; }
+        .csseditor .property > .property-body .property-item.background-info .gradient {
+          display: inline-block;
+          vertical-align: middle;
+          height: 20px;
+          width: 20px; }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="static"] {
+            background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
+            background-image: linear-gradient(to right, #333, #333); }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="linear"] {
+            background-image: -webkit-gradient(linear, left top, right top, from(black), to(gray));
+            background-image: linear-gradient(to right, black, gray); }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="radial"] {
+            background-image: radial-gradient(closest-side, black, #ebf8e1, gray); }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="conic"] {
+            background-image: conic-gradient(black, #ebf8e1); }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="repeating-linear"] {
+            background-image: repeating-linear-gradient(45deg, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="repeating-radial"] {
+            background-image: repeating-radial-gradient(circle, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
+          .csseditor .property > .property-body .property-item.background-info .gradient[data-type="repeating-conic"] {
+            background-image: repeating-conic-gradient(#3f87a6, #ebf8e1 5%, #f69d3c 10%); }
+        .csseditor .property > .property-body .property-item.background-info .gradient + label {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 16px;
+          margin-left: 10px; }
+        .csseditor .property > .property-body .property-item.fill-colorpicker .items {
+          padding: 0px; }
+          .csseditor .property > .property-body .property-item.fill-colorpicker .items .colorpicker-body {
+            width: 100%; }
+            .csseditor .property > .property-body .property-item.fill-colorpicker .items .colorpicker-body .color-tab {
+              border: 0px; }
+            .csseditor .property > .property-body .property-item.fill-colorpicker .items .colorpicker-body .color-panel {
+              margin-left: 12px; }
+            .csseditor .property > .property-body .property-item.fill-colorpicker .items .colorpicker-body .color-tab-body {
+              border: 0px; }
+        .csseditor .property > .property-body .property-item.text-colorpicker .items {
+          padding: 0px; }
+          .csseditor .property > .property-body .property-item.text-colorpicker .items .colorpicker-body {
+            width: 100%; }
+            .csseditor .property > .property-body .property-item.text-colorpicker .items .colorpicker-body .color-tab {
+              border: 0px; }
+            .csseditor .property > .property-body .property-item.text-colorpicker .items .colorpicker-body .color-panel {
+              margin-left: 12px; }
+            .csseditor .property > .property-body .property-item.text-colorpicker .items .colorpicker-body .color-tab-body {
+              border: 0px; }
+        .csseditor .property > .property-body .property-item.colorpicker .items {
+          padding: 0px; }
+          .csseditor .property > .property-body .property-item.colorpicker .items .colorpicker-body {
+            width: 100%; }
+            .csseditor .property > .property-body .property-item.colorpicker .items .colorpicker-body .color-tab {
+              border: 0px; }
+            .csseditor .property > .property-body .property-item.colorpicker .items .colorpicker-body .color-panel {
+              margin-left: 12px; }
+            .csseditor .property > .property-body .property-item.colorpicker .items .colorpicker-body .color-tab-body {
+              border: 0px; }
+        .csseditor .property > .property-body .property-item.layer-code .key-value-view {
+          display: block;
+          -webkit-user-select: text;
+             -moz-user-select: text;
+              -ms-user-select: text;
+                  user-select: text; }
+          .csseditor .property > .property-body .property-item.layer-code .key-value-view .key-value-item {
+            display: block; }
+            .csseditor .property > .property-body .property-item.layer-code .key-value-view .key-value-item.short .key {
+              display: inline-block;
+              vertical-align: middle;
+              width: 100px;
+              padding-left: 2px;
+              padding-right: 0px; }
+            .csseditor .property > .property-body .property-item.layer-code .key-value-view .key-value-item.short .value {
+              display: inline-block;
+              vertical-align: middle;
+              padding-left: 0px; }
+            .csseditor .property > .property-body .property-item.layer-code .key-value-view .key-value-item .key {
+              display: block;
+              font-weight: bold;
+              padding: 2px 5px; }
+            .csseditor .property > .property-body .property-item.layer-code .key-value-view .key-value-item .value {
+              white-space: pre-wrap;
+              margin: 0px;
+              padding: 0px 5px;
+              padding-left: 20px;
+              font-size: 12px;
+              display: block; }
+        .csseditor .property > .property-body .property-item.background-code .key-value-view {
+          display: block;
+          -webkit-user-select: text;
+             -moz-user-select: text;
+              -ms-user-select: text;
+                  user-select: text; }
+          .csseditor .property > .property-body .property-item.background-code .key-value-view .key-value-item {
+            display: block; }
+            .csseditor .property > .property-body .property-item.background-code .key-value-view .key-value-item .key {
+              display: block;
+              font-weight: bold;
+              padding: 2px 5px; }
+            .csseditor .property > .property-body .property-item.background-code .key-value-view .key-value-item .value {
+              white-space: pre-wrap;
+              margin: 0px;
+              padding: 0px 5px;
+              padding-left: 20px;
+              font-size: 12px;
+              display: block; }
+        .csseditor .property > .property-body .property-item.text.has-clip-text .no-clip {
+          pointer-events: none; }
+        .csseditor .property > .property-body .property-item.text .color {
+          width: 20px !important;
+          height: 20px !important;
+          cursor: pointer !important;
+          border: 1px solid #333 !important;
+          display: inline-block !important;
+          vertical-align: middle !important; }
+        .csseditor .property > .property-body .property-item.text .color-text {
+          width: 100px !important;
+          -webkit-appearance: none !important;
+             -moz-appearance: none !important;
+                  appearance: none !important;
+          border: 0px !important;
+          background-color: transparent !important;
+          pointer-events: none;
+          margin-left: 5px; }
+        .csseditor .property > .property-body .property-item.text .content {
+          width: 100%;
+          height: 70px;
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          border: 1px solid #cccccc;
+          font-size: 20px; }
+        .csseditor .property > .property-body .property-item.image-sorting .items > div > label {
+          display: inline-block;
+          line-height: 2;
+          padding: 2px 5px;
+          height: 100%;
+          vertical-align: middle;
+          width: 50px; }
+        .csseditor .property > .property-body .property-item.image-sorting .button-group {
+          display: inline-block;
+          vertical-align: middle;
+          padding: 2px 0px; }
+          .csseditor .property > .property-body .property-item.image-sorting .button-group button {
+            -webkit-box-flex: 1;
+                -ms-flex: 1 1 auto;
+                    flex: 1 1 auto;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            border: 1px solid #cccccc;
+            outline: none;
+            vertical-align: middle;
+            display: inline-block; }
+            .csseditor .property > .property-body .property-item.image-sorting .button-group button:not(:first-child) {
+              margin-left: -1px; }
+            .csseditor .property > .property-body .property-item.image-sorting .button-group button.cut {
+              width: 18px;
+              height: 18px;
+              border: 1px solid #cccccc;
+              cursor: pointer;
+              background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
+              background-image: linear-gradient(to top, black 0%, black 100%);
+              background-size: 4px 4px;
+              background-position: 6px center;
+              background-repeat: repeat-y; }
+              .csseditor .property > .property-body .property-item.image-sorting .button-group button.cut.on {
+                background-position: center 6px;
+                background-repeat: repeat-x; }
+        .csseditor .property > .property-body .property-item.image-sorting .step-align {
           display: inline-block;
           vertical-align: middle; }
-        .csseditor .property-view .property-item.sample-list .gradient-sample-list .tools {
-          display: inline-block;
-          vertical-align: middle;
-          margin-left: -3px; }
-          .csseditor .property-view .property-item.sample-list .gradient-sample-list .tools button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            border: 1px solid #cccccc;
-            background-color: #ffffff;
-            display: inline-block;
-            vertical-align: middle;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            position: relative;
-            margin: 2px;
-            padding: 2px;
-            line-height: 0; }
-      .csseditor .property-view .property-item.gradient-steps-info .gradient-info {
-        overflow: auto; }
-        .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item {
-          font-size: 12px;
-          margin: 2px 0px;
-          width: 100%; }
-          .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .step-list {
-            width: 100%; }
-          .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            padding: 1px;
-            color: #333; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step.selected .color-view {
-              border: 1px solid black; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step > * {
-              -webkit-box-flex: 1;
-                  -ms-flex: 1 1 auto;
-                      flex: 1 1 auto;
-              display: inline-block;
-              vertical-align: middle; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step input {
-              width: 40px;
-              display: inline-block; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .tools {
-              text-align: right; }
-              .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .tools button {
-                -webkit-appearance: none;
-                   -moz-appearance: none;
-                        appearance: none;
-                -webkit-transform: scale(1.2);
-                        transform: scale(1.2);
-                border: 0px;
-                background-color: transparent;
-                padding: 2px 2px;
-                font-size: 14px;
-                vertical-align: middle;
-                line-height: 0;
-                cursor: pointer;
-                outline: none; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step input[type=text] {
-              width: 100px; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step input[type=number] {
-              -webkit-appearance: none;
-                 -moz-appearance: none;
-                      appearance: none;
-              border: 1px solid #ececec; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-view {
-              width: 16px;
-              -webkit-box-flex: 0;
-                  -ms-flex: none;
-                      flex: none;
-              height: 16px;
-              margin-top: 2px;
-              margin-right: 2px;
-              position: relative;
-              background-color: transparent;
-              background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%);
-              background-size: 5px 5px;
-              background-position: 0 0, 0 2.5px, 2.5px -2.5px, -2.5px 0px;
-              border: 1px solid #ececec;
-              vertical-align: middle;
-              border-radius: 3px;
-              overflow: hidden; }
-              .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-view .color-view-item {
-                position: absolute;
-                left: 0px;
-                right: 0px;
-                bottom: 0px;
-                top: 0px;
-                cursor: pointer; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-cut {
-              width: 16px;
-              -webkit-box-flex: 0;
-                  -ms-flex: none;
-                      flex: none;
-              height: 20px;
-              margin-right: 2px;
-              position: relative;
-              vertical-align: middle; }
-              .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-cut .guide-change {
-                position: absolute;
-                width: 12px;
-                height: 12px;
-                top: 50%;
-                left: 0px;
-                -webkit-transform: translateY(-50%);
-                        transform: translateY(-50%);
-                border: 1px solid #cccccc;
-                cursor: pointer;
-                background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
-                background-image: linear-gradient(to top, black 0%, black 100%);
-                background-size: 3px 3px;
-                background-position: 3.5px center;
-                background-repeat: repeat-y; }
-                .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-cut .guide-change.cut {
-                  background-position: center 3px;
-                  background-repeat: repeat-x; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit > input[type=number] {
-              display: none;
-              outline: none;
-              width: 50px; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit.percent > .percent {
-              display: inline-block; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit.px > .px {
-              display: inline-block; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit.em > .em {
-              display: inline-block; }
-            .csseditor .property-view .property-item.gradient-steps-info .gradient-info .form-item .color-step .color-unit select {
-              -webkit-appearance: none;
-                 -moz-appearance: none;
-                      appearance: none;
-              border: 0px;
-              background-color: transparent;
-              display: inline-block;
-              outline: none; }
-      .csseditor .property-view .property-item.gradient-tools {
-        display: block;
-        width: 100%; }
-        .csseditor .property-view .property-item.gradient-tools .menu-buttons {
-          display: inline-block;
-          vertical-align: middle;
-          padding: 4px 0px;
-          font-size: 12px; }
-          .csseditor .property-view .property-item.gradient-tools .menu-buttons button {
-            display: inline-block;
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            width: 100px;
-            height: 100%;
-            border: 1px solid #dedede;
-            vertical-align: middle;
-            font-size: 12px;
-            cursor: pointer;
-            outline: none;
-            position: relative;
-            pointer-events: all; }
-        .csseditor .property-view .property-item.gradient-tools > .title {
-          vertical-align: middle;
-          padding: 10px 0px;
-          font-size: 12px; }
-      .csseditor .property-view .property-item .gradient-type .gradient-item {
-        margin-right: 3px; }
-      .csseditor .property-view .property-item.clip-path-svg .clip-path-container {
-        cursor: pointer;
-        width: 50px;
-        height: 50px;
-        border: 1px solid #cccccc; }
-        .csseditor .property-view .property-item.clip-path-svg .clip-path-container svg {
-          width: 100%; }
-      .csseditor .property-view .property-item.clip-path-svg .image-resource {
-        position: relative;
-        left: auto;
-        bottom: auto;
-        top: auto;
-        width: 100%;
-        margin-top: 10px;
-        max-height: 300px;
-        -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-        overflow: auto; }
-      .csseditor .property-view .property-item.clip-path-svg .items {
-        position: relative; }
-        .csseditor .property-view .property-item.clip-path-svg .items .svg-item {
-          display: inline-block;
-          width: 50px;
-          height: 50px;
-          vertical-align: middle;
-          border: 1px solid #cccccc;
-          cursor: pointer;
-          margin: 2px; }
-          .csseditor .property-view .property-item.clip-path-svg .items .svg-item svg {
-            width: 100%;
-            height: 100%; }
-          .csseditor .property-view .property-item.clip-path-svg .items .svg-item img {
-            max-width: 100%;
-            max-height: 100%; }
-      .csseditor .property-view .property-item.image-list-view .items {
-        height: 200px;
-        overflow: auto;
-        padding: 0px !important;
-        position: relative; }
-        .csseditor .property-view .property-item.image-list-view .items .images {
-          top: 0px;
-          bottom: 0px; }
-      .csseditor .property-view .property-item.clip-path .clip-path-container {
-        cursor: pointer;
-        width: 50px;
-        height: 50px;
-        border: 1px solid #cccccc; }
-        .csseditor .property-view .property-item.clip-path .clip-path-container svg {
-          width: 100%; }
-      .csseditor .property-view .property-item.clip-path-polygon .items label {
-        width: 20px;
-        text-align: center; }
-      .csseditor .property-view .property-item.clip-path-polygon .items > div > div input[type=number] {
-        width: 50px;
-        margin-right: 2px; }
-      .csseditor .property-view .property-item.clip-path-polygon .items > div .tools {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        margin-left: 10px; }
-        .csseditor .property-view .property-item.clip-path-polygon .items > div .tools button {
-          -webkit-box-flex: 1;
-              -ms-flex: 1 1 auto;
-                  flex: 1 1 auto;
-          -webkit-appearance: none;
-             -moz-appearance: none;
-                  appearance: none;
-          background-color: transparent;
-          border: 1px solid #cccccc; }
-          .csseditor .property-view .property-item.clip-path-polygon .items > div .tools button:not(:first-child) {
-            margin-left: -1px; }
-      .csseditor .property-view .property-item.clip-path-polygon .items .clip-path-item {
-        display: inline-block;
-        vertical-align: middle;
-        width: 45px;
-        height: 45px;
-        margin: 5px;
-        background-color: red;
-        cursor: pointer;
-        background-image: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, 0.5)), to(rgba(128, 128, 128, 0.5)));
-        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(128, 128, 128, 0.5)); }
-      .csseditor .property-view .property-item .group-align {
-        text-align: center; }
-        .csseditor .property-view .property-item .group-align button {
-          -webkit-appearance: none;
-             -moz-appearance: none;
-                  appearance: none;
-          width: 30px;
-          height: 30px;
-          display: inline-block;
-          border: 0px;
-          outline: none;
-          cursor: pointer;
-          -webkit-transform: scale(0.6);
-                  transform: scale(0.6);
-          background-color: white; }
-          .csseditor .property-view .property-item .group-align button[data-value="left"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 20px 8px, 16px 8px, 2px 24px;
-            background-position: 6px 6px, 6px 16px, 2px 3px; }
-          .csseditor .property-view .property-item .group-align button[data-value="right"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 20px 8px, 16px 8px, 2px 24px;
-            background-position: 5px 6px, 9px 16px, 27px 3px; }
-          .csseditor .property-view .property-item .group-align button[data-value="center"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 20px 8px, 16px 8px, 2px 24px;
-            background-position: 5px 6px, 7px 16px, 14px 3px; }
-          .csseditor .property-view .property-item .group-align button[data-value="middle"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 8px 20px, 8px 16px, 24px 2px;
-            background-position: 6px 5px, 16px 7px, 3px 14px; }
-          .csseditor .property-view .property-item .group-align button[data-value="top"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 8px 20px, 8px 16px, 24px 2px;
-            background-position: 6px 8px, 16px 8px, 3px 4px; }
-          .csseditor .property-view .property-item .group-align button[data-value="bottom"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, #ccc, #ccc), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 8px 20px, 8px 16px, 24px 2px;
-            background-position: 6px 4px, 16px 8px, 3px 26px; }
-          .csseditor .property-view .property-item .group-align button[data-value="vertical"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
-            background-repeat: no-repeat;
-            background-size: 24px 2px, 18px 10px, 24px 2px;
-            background-position: 3px 6px, 6px 11px, 3px 24px; }
-          .csseditor .property-view .property-item .group-align button[data-value="horizontal"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(#1576e4), to(#1576e4)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(#ccc), to(#ccc));
-            background-image: linear-gradient(to right, #1576e4, #1576e4), linear-gradient(to right, black, black), linear-gradient(to right, #ccc, #ccc);
-            background-repeat: no-repeat;
-            background-size: 2px 24px, 10px 18px, 2px 24px;
-            background-position: 6px 3px, 11px 6px, 24px 3px; }
-      .csseditor .property-view .property-item .group-order {
-        text-align: center; }
-        .csseditor .property-view .property-item .group-order button {
-          margin-right: 10px;
-          -webkit-appearance: none;
-             -moz-appearance: none;
-                  appearance: none;
-          width: 30px;
-          height: 30px;
-          display: inline-block;
-          border: 0px;
-          outline: none;
-          cursor: pointer;
-          -webkit-transform: scale(0.7);
-                  transform: scale(0.7);
-          background-color: white; }
-          .csseditor .property-view .property-item .group-order button[data-value="forward"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
-            background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
-            background-repeat: no-repeat;
-            background-size: 18px 18px,20px 20px,16px 16px,18px 18px;
-            background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
-          .csseditor .property-view .property-item .group-order button[data-value="backward"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 16px 16px,18px 18px,18px 18px,20px 20px;
-            background-position: 1px 3px, 0px 2px, 10px 9px,9px 8px; }
-          .csseditor .property-view .property-item .group-order button[data-value="front"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray));
-            background-image: linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray);
-            background-repeat: no-repeat;
-            background-size: 16px 16px,18px 18px,16px 16px,18px 18px,16px 16px,18px 18px;
-            background-position: 6px 6px, 5px 5px, 1px 1px, 0px 0px, 11px 11px, 10px 10px; }
-          .csseditor .property-view .property-item .group-order button[data-value="back"] {
-            background-image: -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(white), to(white)), -webkit-gradient(linear, left top, right top, from(gray), to(gray)), -webkit-gradient(linear, left top, right top, from(yellow), to(yellow)), -webkit-gradient(linear, left top, right top, from(black), to(black));
-            background-image: linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, white, white), linear-gradient(to right, gray, gray), linear-gradient(to right, yellow, yellow), linear-gradient(to right, black, black);
-            background-repeat: no-repeat;
-            background-size: 12px 12px,14px 14px,12px 12px,14px 14px,18px 18px,20px 20px;
-            background-position: 1px 1px, 0px 0px, 15px 15px, 14px 14px,5px 5px, 4px 4px; }
-      .csseditor .property-view .property-item.fixed-radius {
-        border-bottom: 0px; }
-      .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd {
-        padding-top: 0px; }
-        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd .color {
-          margin-left: 6px; }
-        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .color-panel,
-        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .control {
-          margin-bottom: 0px; }
-        .csseditor .property-view .property-item.layer-colorpicker .codemirror-colorpicker.xd > .colorpicker-body > .colorsets {
-          display: none; }
-      .csseditor .property-view .property-item.box-shadow .items {
-        padding: 2px; }
-      .csseditor .property-view .property-item.box-shadow .box-shadow-list {
-        display: block; }
-        .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item {
-          position: relative;
-          display: block;
-          margin-top: 2px;
-          padding: 2px 2px;
-          border: 1px solid rgba(204, 204, 204, 0.5); }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div {
-            height: 28px;
-            display: grid;
-            grid-template-columns: 1fr 2fr; }
-            .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div .input {
-              display: inline-block; }
-              .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div .input input[type=number] {
-                display: inline-block;
-                width: 40px; }
-            .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div.drag-area {
-              position: absolute;
-              width: 80px;
-              height: 80px;
-              right: 30px;
-              top: 58px;
-              border: 1px solid #ececec;
-              display: block;
-              background-image: -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec)), -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec));
-              background-image: linear-gradient(to right, #ececec, #ececec), linear-gradient(to right, #ececec, #ececec);
-              background-size: 1px 100%, 100% 1px;
-              background-position: center 0px, 0px center;
-              background-repeat: no-repeat, no-repeat; }
-              .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item > div.drag-area .drag-pointer {
-                position: absolute;
-                width: 10px;
-                height: 10px;
-                border-radius: 100%;
-                background-color: #00aafb;
-                -webkit-transform-origin: center center;
-                        transform-origin: center center;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%);
-                pointer-events: none; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item.checked {
-            background-color: #f1f1f1; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item .color {
-            width: 20px;
-            height: 20px;
-            border: 1px solid black;
-            cursor: pointer;
-            display: inline-block;
-            vertical-align: middle; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item .select {
-            vertical-align: middle; }
-          .csseditor .property-view .property-item.box-shadow .box-shadow-list .box-shadow-item button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            background-color: transparent;
-            border: 0px;
-            text-align: center;
-            font-weight: 500; }
-      .csseditor .property-view .property-item.text-shadow .text-shadow-list {
-        display: block; }
-        .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item {
-          position: relative;
-          display: block;
-          margin-top: 2px;
-          padding: 2px 4px;
-          -webkit-box-shadow: inset 0px 0px 0px 1px #cccccc;
-                  box-shadow: inset 0px 0px 0px 1px #cccccc; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div {
-            height: 28px;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            line-height: 2.4; }
-            .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div label {
-              text-align: right;
-              padding-right: 10px; }
-            .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input {
-              display: inline-block; }
-              .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div .input input[type=number] {
-                display: inline-block;
-                width: 40px; }
-            .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div.drag-area {
-              position: absolute;
-              width: 80px;
-              height: 80px;
-              right: 30px;
-              top: 28px;
-              border: 1px solid #ececec;
-              display: block;
-              background-image: -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec)), -webkit-gradient(linear, left top, right top, from(#ececec), to(#ececec));
-              background-image: linear-gradient(to right, #ececec, #ececec), linear-gradient(to right, #ececec, #ececec);
-              background-size: 1px 100%, 100% 1px;
-              background-position: center 0px, 0px center;
-              background-repeat: no-repeat, no-repeat; }
-              .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item > div.drag-area .drag-pointer {
-                position: absolute;
-                width: 10px;
-                height: 10px;
-                border-radius: 100%;
-                background-color: #00aafb;
-                -webkit-transform-origin: center center;
-                        transform-origin: center center;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%);
-                pointer-events: none; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item.checked {
-            background-color: #f1f1f1; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .color {
-            width: 20px;
-            height: 20px;
-            border: 1px solid black;
-            cursor: pointer;
-            display: inline-block;
-            vertical-align: middle; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item .select {
-            vertical-align: middle; }
-          .csseditor .property-view .property-item.text-shadow .text-shadow-list .text-shadow-item button {
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            background-color: transparent;
-            border: 0px;
-            text-align: center;
-            font-weight: 500; }
-      .csseditor .property-view .property-item.background-info .gradient {
-        display: inline-block;
-        vertical-align: middle;
-        height: 20px;
-        width: 20px; }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="static"] {
-          background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
-          background-image: linear-gradient(to right, #333, #333); }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="linear"] {
-          background-image: -webkit-gradient(linear, left top, right top, from(black), to(gray));
-          background-image: linear-gradient(to right, black, gray); }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="radial"] {
-          background-image: radial-gradient(closest-side, black, #ebf8e1, gray); }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="conic"] {
-          background-image: conic-gradient(black, #ebf8e1); }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="repeating-linear"] {
-          background-image: repeating-linear-gradient(45deg, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="repeating-radial"] {
-          background-image: repeating-radial-gradient(circle, #3f87a6, #ebf8e1 15%, #f69d3c 20%); }
-        .csseditor .property-view .property-item.background-info .gradient[data-type="repeating-conic"] {
-          background-image: repeating-conic-gradient(#3f87a6, #ebf8e1 5%, #f69d3c 10%); }
-      .csseditor .property-view .property-item.background-info .gradient + label {
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 16px;
-        margin-left: 10px; }
-      .csseditor .property-view .property-item.fill-colorpicker .items {
-        padding: 0px; }
-        .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body {
-          width: 100%; }
-          .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-tab {
-            border: 0px; }
-          .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-panel {
-            margin-left: 12px; }
-          .csseditor .property-view .property-item.fill-colorpicker .items .colorpicker-body .color-tab-body {
-            border: 0px; }
-      .csseditor .property-view .property-item.text-colorpicker .items {
-        padding: 0px; }
-        .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body {
-          width: 100%; }
-          .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-tab {
-            border: 0px; }
-          .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-panel {
-            margin-left: 12px; }
-          .csseditor .property-view .property-item.text-colorpicker .items .colorpicker-body .color-tab-body {
-            border: 0px; }
-      .csseditor .property-view .property-item.colorpicker .items {
-        padding: 0px; }
-        .csseditor .property-view .property-item.colorpicker .items .colorpicker-body {
-          width: 100%; }
-          .csseditor .property-view .property-item.colorpicker .items .colorpicker-body .color-tab {
-            border: 0px; }
-          .csseditor .property-view .property-item.colorpicker .items .colorpicker-body .color-panel {
-            margin-left: 12px; }
-          .csseditor .property-view .property-item.colorpicker .items .colorpicker-body .color-tab-body {
-            border: 0px; }
-      .csseditor .property-view .property-item.layer-code .key-value-view {
-        display: block;
-        -webkit-user-select: text;
-           -moz-user-select: text;
-            -ms-user-select: text;
-                user-select: text; }
-        .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item {
-          display: block; }
-          .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item.short .key {
-            display: inline-block;
-            vertical-align: middle;
-            width: 100px;
-            padding-left: 2px;
-            padding-right: 0px; }
-          .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item.short .value {
-            display: inline-block;
-            vertical-align: middle;
-            padding-left: 0px; }
-          .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item .key {
-            display: block;
-            font-weight: bold;
-            padding: 2px 5px; }
-          .csseditor .property-view .property-item.layer-code .key-value-view .key-value-item .value {
-            white-space: pre-wrap;
-            margin: 0px;
-            padding: 0px 5px;
-            padding-left: 20px;
-            font-size: 12px;
-            display: block; }
-      .csseditor .property-view .property-item.background-code .key-value-view {
-        display: block;
-        -webkit-user-select: text;
-           -moz-user-select: text;
-            -ms-user-select: text;
-                user-select: text; }
-        .csseditor .property-view .property-item.background-code .key-value-view .key-value-item {
-          display: block; }
-          .csseditor .property-view .property-item.background-code .key-value-view .key-value-item .key {
-            display: block;
-            font-weight: bold;
-            padding: 2px 5px; }
-          .csseditor .property-view .property-item.background-code .key-value-view .key-value-item .value {
-            white-space: pre-wrap;
-            margin: 0px;
-            padding: 0px 5px;
-            padding-left: 20px;
-            font-size: 12px;
-            display: block; }
-      .csseditor .property-view .property-item.text.has-clip-text .no-clip {
-        pointer-events: none; }
-      .csseditor .property-view .property-item.text .color {
-        width: 20px !important;
-        height: 20px !important;
-        cursor: pointer !important;
-        border: 1px solid #333 !important;
-        display: inline-block !important;
-        vertical-align: middle !important; }
-      .csseditor .property-view .property-item.text .color-text {
-        width: 100px !important;
-        -webkit-appearance: none !important;
-           -moz-appearance: none !important;
-                appearance: none !important;
-        border: 0px !important;
-        background-color: transparent !important;
-        pointer-events: none;
-        margin-left: 5px; }
-      .csseditor .property-view .property-item.text .content {
-        width: 100%;
-        height: 70px;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        border: 1px solid #cccccc;
-        font-size: 20px; }
-      .csseditor .property-view .property-item.image-sorting .items > div > label {
-        display: inline-block;
-        line-height: 2;
-        padding: 2px 5px;
-        height: 100%;
-        vertical-align: middle;
-        width: 50px; }
-      .csseditor .property-view .property-item.image-sorting .button-group {
-        display: inline-block;
-        vertical-align: middle;
-        padding: 2px 0px; }
-        .csseditor .property-view .property-item.image-sorting .button-group button {
-          -webkit-box-flex: 1;
-              -ms-flex: 1 1 auto;
-                  flex: 1 1 auto;
-          -webkit-appearance: none;
-             -moz-appearance: none;
-                  appearance: none;
-          border: 1px solid #cccccc;
-          outline: none;
-          vertical-align: middle;
-          display: inline-block; }
-          .csseditor .property-view .property-item.image-sorting .button-group button:not(:first-child) {
-            margin-left: -1px; }
-          .csseditor .property-view .property-item.image-sorting .button-group button.cut {
-            width: 18px;
-            height: 18px;
-            border: 1px solid #cccccc;
-            cursor: pointer;
-            background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
-            background-image: linear-gradient(to top, black 0%, black 100%);
-            background-size: 4px 4px;
-            background-position: 6px center;
-            background-repeat: repeat-y; }
-            .csseditor .property-view .property-item.image-sorting .button-group button.cut.on {
-              background-position: center 6px;
-              background-repeat: repeat-x; }
-      .csseditor .property-view .property-item.image-sorting .step-align {
-        display: inline-block;
-        vertical-align: middle; }
-    .csseditor .property-view .gradient-view {
-      height: 230px;
-      width: 100%; }
-    .csseditor .property-view .sub-feature {
-      position: relative; }
-      .csseditor .property-view .sub-feature .property-item {
-        border: 0px; }
-        .csseditor .property-view .sub-feature .property-item > .title {
-          text-align: left;
-          background-image: none;
-          border: 0px;
-          color: rgba(255, 255, 255, 0.7);
-          height: 20px; }
-        .csseditor .property-view .sub-feature .property-item.background > .items {
-          padding-top: 6px !important; }
-        .csseditor .property-view .sub-feature .property-item > .items {
-          display: block; }
-          .csseditor .property-view .sub-feature .property-item > .items > div {
-            margin-bottom: 2px; }
-            .csseditor .property-view .sub-feature .property-item > .items > div > label {
-              width: 50px; }
-          .csseditor .property-view .sub-feature .property-item > .items .size-list {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            width: 150px; }
-            .csseditor .property-view .sub-feature .property-item > .items .size-list > button {
-              -webkit-box-flex: 1;
-                  -ms-flex: 1;
-                      flex: 1;
-              outline: none;
-              cursor: pointer;
-              height: 20px;
-              position: relative;
-              background-color: #ececec;
-              -webkit-appearance: none;
-                 -moz-appearance: none;
-                      appearance: none;
-              border: 1px solid transparent;
-              margin-right: 1px; }
-              .csseditor .property-view .sub-feature .property-item > .items .size-list > button:after {
-                content: attr(title);
-                font-size: 10px;
-                color: black; }
-              .csseditor .property-view .sub-feature .property-item > .items .size-list > button.selected {
-                border: 1px solid black;
-                background-color: #ffffff; }
-          .csseditor .property-view .sub-feature .property-item > .items .repeat-list {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            width: 180px; }
-            .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button {
-              -webkit-box-flex: 1;
-                  -ms-flex: 1;
-                      flex: 1;
-              outline: none;
-              cursor: pointer;
-              height: 30px;
-              position: relative;
-              -webkit-appearance: none;
-                 -moz-appearance: none;
-                      appearance: none;
-              border: 1px solid transparent;
-              background-color: #ececec;
-              margin-right: 1px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button.selected {
-                border: 1px solid black;
-                background-color: #ffffff; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button span {
-                position: absolute;
-                display: inline-block;
-                width: 4px;
-                height: 4px;
-                background-color: black;
-                pointer-events: none; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="no-repeat"] span {
-                top: 50%;
-                left: 50%;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat"] span:nth-child(1) {
-                top: 5px;
-                left: 5px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat"] span:nth-child(2) {
-                top: 5px;
-                left: 20px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat"] span:nth-child(3) {
-                top: 20px;
-                left: 5px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat"] span:nth-child(4) {
-                top: 20px;
-                left: 20px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat-x"] span:nth-child(1) {
-                top: 15px;
-                left: 5px;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat-x"] span:nth-child(2) {
-                top: 15px;
-                left: 14px;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat-x"] span:nth-child(3) {
-                top: 15px;
-                left: 24px;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat-y"] span:nth-child(1) {
-                top: 4px;
-                left: 15px;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat-y"] span:nth-child(2) {
-                top: 14px;
-                left: 15px;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="repeat-y"] span:nth-child(3) {
-                top: 24px;
-                left: 15px;
-                -webkit-transform: translateX(-50%) translateY(-50%);
-                        transform: translateX(-50%) translateY(-50%); }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="space"] span:nth-child(1) {
-                top: 0px;
-                left: 0px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="space"] span:nth-child(2) {
-                top: 0px;
-                left: 10px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="space"] span:nth-child(3) {
-                top: 0px;
-                left: 20px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="space"] span:nth-child(4) {
-                top: 20px;
-                left: 0px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="space"] span:nth-child(5) {
-                top: 20px;
-                left: 10px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="space"] span:nth-child(6) {
-                top: 20px;
-                left: 20px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(1) {
-                top: 0px;
-                left: 0px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(2) {
-                top: 0px;
-                left: 10px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(3) {
-                top: 0px;
-                left: 20px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(4) {
-                top: 10px;
-                left: 0px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(5) {
-                top: 10px;
-                left: 10px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(6) {
-                top: 10px;
-                left: 20px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(7) {
-                top: 20px;
-                left: 0px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(8) {
-                top: 20px;
-                left: 10px;
-                width: 6px;
-                height: 6px; }
-              .csseditor .property-view .sub-feature .property-item > .items .repeat-list > button[value="round"] span:nth-child(9) {
-                top: 20px;
-                left: 20px;
-                width: 6px;
-                height: 6px; }
-      .csseditor .property-view .sub-feature .radial-tool,
-      .csseditor .property-view .sub-feature .linear-tool {
-        padding: 0px 10px; }
-      .csseditor .property-view .sub-feature .predefined-radial-gradient-angle {
-        position: relative;
-        left: auto;
-        top: auto;
-        right: auto;
-        bottom: auto; }
-      .csseditor .property-view .sub-feature .predefined-angluar-group {
-        position: relative;
-        left: auto;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        height: 150px; }
-      .csseditor .property-view .sub-feature .drag-position {
-        position: relative;
-        left: auto;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        height: 150px;
-        margin-top: -150px; }
-      .csseditor .property-view .sub-feature .drag-angle-rect {
-        position: relative;
-        left: auto;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        height: 150px;
-        margin-top: -150px; }
-      .csseditor .property-view .sub-feature .image-list {
-        background-color: transparent;
-        position: absolute;
-        bottom: auto;
-        top: 0%;
-        height: 24px;
-        width: auto;
-        display: inline-block;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-30px);
-                transform: translateX(-50%) translateY(-30px); }
-        .csseditor .property-view .sub-feature .image-list .images {
-          top: auto;
-          left: auto;
-          right: auto;
-          bottom: auto;
-          overflow: auto;
-          position: relative;
-          height: 100%; }
-          .csseditor .property-view .sub-feature .image-list .images .image-tools {
-            display: inline-block;
-            position: relative;
-            top: auto;
-            left: auto;
-            right: auto;
-            bottom: auto;
-            height: 100%; }
-            .csseditor .property-view .sub-feature .image-list .images .image-tools .menu-buttons {
-              position: relative;
-              border: 0px;
-              display: inline-block;
-              vertical-align: middle;
-              border-right: 1px solid #cccccc;
-              height: 100%;
-              padding-right: 10px;
-              margin-right: 10px; }
-              .csseditor .property-view .sub-feature .image-list .images .image-tools .menu-buttons .gradient-type {
-                padding: 0px; }
-                .csseditor .property-view .sub-feature .image-list .images .image-tools .menu-buttons .gradient-type > div {
-                  display: inline-block; }
-                  .csseditor .property-view .sub-feature .image-list .images .image-tools .menu-buttons .gradient-type > div label {
-                    display: none; }
-                .csseditor .property-view .sub-feature .image-list .images .image-tools .menu-buttons .gradient-type .gradient-item {
-                  border: 0px;
-                  width: 20px;
-                  height: 20px;
-                  border: 1px solid #cccccc; }
-            .csseditor .property-view .sub-feature .image-list .images .image-tools .image-list {
-              position: relative;
-              border: 0px;
-              vertical-align: middle;
-              display: inline-block; }
-              .csseditor .property-view .sub-feature .image-list .images .image-tools .image-list .tree-item {
-                width: 10px;
-                height: 10px;
-                border-radius: 10px;
-                border-color: #fff !important; }
-                .csseditor .property-view .sub-feature .image-list .images .image-tools .image-list .tree-item.selected {
-                  border-width: 2px !important;
-                  border-color: #333 !important; }
-                .csseditor .property-view .sub-feature .image-list .images .image-tools .image-list .tree-item .item-tools {
-                  display: none; }
   .csseditor .filter-list {
     display: -webkit-box !important;
     display: -ms-flexbox !important;

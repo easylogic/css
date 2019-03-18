@@ -34,10 +34,12 @@ export default class LayerListView extends UIElement {
         var isDirectory = item.itemType == 'directory'
         var isLayer = item.itemType == 'layer' 
 
-        var isGroup = isArtBoard || isDirectory
+        var children = item.children; 
+
+        var isGroup = isArtBoard || isDirectory || children.length;
         var hasLock = isDirectory || isLayer
         var isDraggable = isLayer;
-        var hasIcon = isDirectory || isLayer
+        var hasIcon = isArtBoard || isDirectory || isLayer
         var hasVisible = isDirectory || isLayer
 
 
@@ -47,7 +49,9 @@ export default class LayerListView extends UIElement {
         var selected = item.selectedOne ? 'selected' : EMPTY_STRING;    
 
         var iconString = EMPTY_STRING
-        if (isDirectory) {
+        if (isArtBoard) {
+            iconString = `${icon.artboard}`
+        } else if (isDirectory) {
             iconString = `${icon.folder}`
         } else if (isLayer) {
             iconString = `<span class='icon-${item.type}'></span>`
@@ -58,7 +62,7 @@ export default class LayerListView extends UIElement {
             <div class='tree-item depth-${depth} ${selected} ${item.index}' item-id="${item.id}" item-type='${item.itemType}' ${draggable}>
                 <div class="item-depth"></div>            
                 ${isGroup && `<div class='item-icon-group'>${icon.chevron_right}</div>`}
-                ${hasIcon && `<div class='item-icon'>${iconString}</div>`}
+                ${!isGroup && hasIcon && `<div class='item-icon'>${iconString}</div>`}
                 <div class="item-title"> ${item.title}</div> 
                 <div class='item-tools'>          
                     ${hasLock && `<button type="button" class='lock-item ${lock}' title="Visible">${icon.lock}</button>`}
@@ -132,11 +136,11 @@ export default class LayerListView extends UIElement {
         if (currentItem) {
 
             if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
-                var directory = currentItem.addDirectory(new Directory({
+                var directory = currentItem.add(new Directory({
                     name: 'New Directory'
                 }))    
             } else if (currentItem instanceof Layer) {
-                var directory = currentItem.parent().addDirectory(new Directory({
+                var directory = currentItem.parentDirectory().add(new Directory({
                     name: 'New Directory',
                     index: currentItem.index + 1 
                 }))    

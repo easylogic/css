@@ -10,7 +10,7 @@ let project, artboard;
 beforeEach(() => {
     editor.clear()
     project = editor.addProject(new Project())
-    artboard = project.addArtBoard(new ArtBoard({name: 'New ArtBoard'}))
+    artboard = project.add(new ArtBoard({name: 'New ArtBoard'}))
 
 })
 
@@ -19,14 +19,14 @@ afterEach( () => {
 })
 
 test('ArtBoard - add Directory', () => {
-    var directory = artboard.addDirectory(new Directory({ name: 'Sample Group'}));
+    var directory = artboard.add(new Directory({ name: 'Sample Group'}));
 
     expect(directory.name).toEqual('Sample Group');
     expect(directory.itemType).toEqual('directory');
 });
 
 test('ArtBoard - add Layer', () => {
-    var layer = artboard.addLayer(new Layer({ name: 'Sample Layer'}));
+    var layer = artboard.add(new Layer({ name: 'Sample Layer'})); 
 
     expect(layer.name).toEqual('Sample Layer');
     expect(layer.itemType).toEqual('layer');

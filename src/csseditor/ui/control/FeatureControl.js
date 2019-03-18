@@ -1,53 +1,27 @@
 import UIElement, { EVENT } from "../../../util/UIElement";
-import LayerView from "./panel/LayerView";
-import ImageView from "./panel/ImageView";
-import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
+import { html } from "../../../util/functions/func";
 import { editor } from "../../../editor/editor";
-
+import { CHANGE_EDITOR } from "../../types/event";
 
 export default class FeatureControl extends UIElement {
 
     template () {
-        return `
+        return html`
             <div class='feature-control'>     
-                <div class='feature layer-feature' data-type='layer'>
-                    <LayerView />
-                </div>                              
-                <div class='feature image-feature' data-type='image'>
-                    <ImageView />
-                </div>
+            ${editor.inspector.keys.map(key => `<${key} />`)}
             </div>
         `
     }
 
     components () {
-        return { 
-            LayerView,
-            ImageView
-        } 
+        return editor.inspector.components;
     }
 
-    selectFeature () {
-        
-        var selectedFeature = this.$el.$('.feature.selected');        
-        if (selectedFeature) selectedFeature.removeClass('selected');
-
-        var selectType = 'layer'; 
-
-        if (editor.selection.currentImage) {
-            selectType = 'image';
-        } else {
-            selectType = 'layer';
-        }
-
-        this.$el.$(`.feature[data-type=${selectType}]`).addClass('selected')
-
+    refresh() {
+        this.load();
     }
 
-    [EVENT(
-        CHANGE_EDITOR,
-        CHANGE_SELECTION
-    )] () {
-        this.selectFeature();
+    [EVENT(CHANGE_EDITOR)] () {
+        this.refresh();
     }
 }

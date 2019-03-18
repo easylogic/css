@@ -85,7 +85,7 @@ export class Guide {
 
     } 
 
-    caculate (dist = MAX_DIST) {
+    calculate (dist = MAX_DIST) {
 
         var list = this.getLayers(dist);
         
@@ -110,8 +110,7 @@ export class Guide {
                 break;
             // case 1: 
             //     minX = this.rect.screenX.value; 
-            //     maxX = minX + (it.bx - minX) * 2; 
-            //     width = maxX - minX;   
+            //     width = Math.round(it.bx - minX) * 2;   
             //     this.rect.width.set(width);                            
             //     break;                
             case 0: 
@@ -137,11 +136,10 @@ export class Guide {
                 break;
 
             // case 1: 
-            //     minY = this.rect.screenY.value;                 
-            //     height = (it.by - minY) * 2;
-            //     this.rect.y.set(it.by - (it.by - minY));                         
-            //     this.rect.height.set(height);                
-            //     break;                
+            //     minY = this.rect.screenY.value; 
+            //     height = Math.round(it.by - minY) * 2;   
+            //     this.rect.height.set(height);
+            //     break;       
             case 0: 
                 minY = it.by; 
                 maxY = this.rect.screenY2.value;

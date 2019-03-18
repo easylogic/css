@@ -2,7 +2,7 @@ $pointer-color: rgba(#0f72cf, 0.8);
 $direction-border: 2px solid $pointer-color;
 $editor-button-color: #5f80de;
 $editor-line-color: rgba($editor-button-color, 0.3);
-$editor-resizer-width : 10px;
+$editor-resizer-width : 8px;
 $editor-canvas-background-color: rgba(236, 236, 236, 0.3);
 .page-view {
     position: absolute;
@@ -66,7 +66,7 @@ $editor-canvas-background-color: rgba(236, 236, 236, 0.3);
             display: inline-block;
             width: $editor-resizer-width;
             height: $editor-resizer-width;     
-            box-shadow: 1px 1px 1px 0px rgba(#000000, 0.3);
+            box-shadow: 0px 0px 0.1px 0px rgba(#000000, 0.3);
 
             &[data-value='move'] {
                 top: 0px;
@@ -84,56 +84,56 @@ $editor-canvas-background-color: rgba(236, 236, 236, 0.3);
                 top: 0px;
                 left: 50%;
                 transform: translateX(-50%) translateY(-100%);
-                cursor: n-resize;
+                cursor: ns-resize;
             }
 
             &[data-value='to top right'] {
                 top: 0px;
                 right: 0px;
                 transform: translateX(100%) translateY(-100%);
-                cursor: ne-resize;                
+                cursor: nesw-resize;                
             }
 
             &[data-value='to right'] {
                 top: 50%;
                 right: 0px;
                 transform: translateX(100%) translateY(-50%);
-                cursor: e-resize;                
+                cursor: ew-resize;                
             }
 
             &[data-value='to bottom right'] {
                 bottom: 0px;
                 right: 0px;
                 transform: translateX(100%) translateY(100%);                        
-                cursor: se-resize;                
+                cursor: nwse-resize;                
             }
 
             &[data-value='to bottom'] {
                 bottom: 0px;
                 left: 50%;
                 transform: translateX(-50%) translateY(100%);
-                cursor: s-resize;                
+                cursor: ns-resize;                
             }
 
             &[data-value='to bottom left'] {
                 left: 0px;
                 bottom: 0px;
                 transform: translateX(-100%) translateY(100%);
-                cursor: sw-resize;                
+                cursor: nesw-resize;                
             }
 
             &[data-value='to left'] {
                 top: 50%;
                 left: 0px;
                 transform: translateX(-100%) translateY(-50%);
-                cursor: w-resize;                
+                cursor: ew-resize;                
             }
 
             &[data-value='to top left'] {
                 top: 0px;
                 left: 0px;
                 transform: translateX(-100%) translateY(-100%);
-                cursor: nw-resize;                
+                cursor: nwse-resize;                
             }
  
         }

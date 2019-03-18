@@ -1,6 +1,7 @@
 import { Config } from "./Config";
 import { Selection } from "./Selection";
 import { uuidShort } from "../util/functions/math";
+import { Inspector } from "./Inspector";
 
 const items = new Map();
 
@@ -33,6 +34,7 @@ export const editor = new class {
     constructor () {
         this.config = new Config(this); 
         this.selection = new Selection(this)
+        this.inspector = new Inspector(this)
     }
 
     setStore($store) {

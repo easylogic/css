@@ -1,5 +1,5 @@
 import ColorWheel from './ColorWheel';
-import { caculateAngle } from '../../util/functions/math';
+import { calculateAngle } from '../../util/functions/math';
 
 export default class ColorRing extends ColorWheel {
 
@@ -41,7 +41,7 @@ export default class ColorRing extends ColorWheel {
             centerY
         )
 
-        var rx = x - centerX, ry = y - centerY, hue = caculateAngle(rx, ry);
+        var rx = x - centerX, ry = y - centerY, hue = calculateAngle(rx, ry);
 
         {
             var { x, y } = this.getCurrentXY(null, hue, radius - this.half_thinkness, centerX, centerY);

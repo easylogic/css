@@ -50,8 +50,8 @@ export default class BaseSlider extends BaseBox {
         return dist; 
     }
 
-    /** get caculated dist for domain value   */
-    getCaculatedDist (e) {
+    /** get calculated dist for domain value   */
+    getCalculatedDist (e) {
         var current = e ? this.getMousePosition(e) : this.getCurrent(this.getDefaultValue() / this.maxValue);
         var dist = this.getDist(current);
         

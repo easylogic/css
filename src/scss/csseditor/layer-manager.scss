@@ -128,9 +128,16 @@ $tree-item-row-height: 30px;
                     overflow: hidden;
                 }
             }
-            &.selected,
-            &:hover {
+            &.selected {
                 background-color: $item-selected-color;
+
+                > .item-tools {
+                    display: block;
+                }                
+            }
+
+            &:hover {
+                background-color: rgba($item-selected-color, 0.5);
 
                 > .item-tools {
                     display: block;
@@ -139,7 +146,7 @@ $tree-item-row-height: 30px;
 
             @for $i from 1 through 10 {
                 &.depth-#{$i} {
-                    .item-depth { width: 14px * $i; }
+                    .item-depth { width: 18px * $i; }
                 }
             }
                 
@@ -155,6 +162,7 @@ $tree-item-row-height: 30px;
                 vertical-align: middle; 
                 width: $icon-size;
                 height: $icon-size;
+                box-sizing: border-box;
                 transition: transform 0.1s linear;
 
                 svg {

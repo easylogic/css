@@ -1,18 +1,13 @@
 import UIElement, { EVENT } from '../../../util/UIElement';
-import LayerShapeEditor from '../control/shape/LayerShapeEditor';
-import SubFeatureControl from '../control/SubFeatureControl';
 
 import { 
     CHANGE_EDITOR, 
-    CHANGE_LAYER, 
-    CHANGE_IMAGE, 
-    CHANGE_COLORSTEP, 
     CHANGE_ARTBOARD, 
-    CHANGE_BOXSHADOW,
-    CHANGE_TEXTSHADOW,
-    CHANGE_SELECTION
+    CHANGE_SELECTION,
+    CHANGE_RECT,
+    CHANGE_LAYER
 } from '../../types/event';
-import { EMPTY_STRING, SEGMENT_TYPE_RIGHT, SEGMENT_TYPE_LEFT, SEGMENT_TYPE_TOP, SEGMENT_TYPE_BOTTOM, SEGMENT_TYPE_TOP_RIGHT, SEGMENT_TYPE_BOTTOM_RIGHT, SEGMENT_TYPE_BOTTOM_LEFT, SEGMENT_TYPE_TOP_LEFT, SEGMENT_TYPE_MOVE } from '../../../util/css/types';
+import { EMPTY_STRING } from '../../../util/css/types';
 import { LOAD, POINTERSTART, MOVE, END, SELF } from '../../../util/Event';
 import { editor } from '../../../editor/editor';
 import { Length } from '../../../editor/unit/Length';
@@ -23,16 +18,31 @@ import { ItemPositionCalc } from '../../../editor/ItemPositionCalc';
 import { BackgroundImage } from '../../../editor/css-property/BackgroundImage';
 import { StaticGradient } from '../../../editor/image-resource/StaticGradient';
 import { CSS_TO_STRING } from '../../../util/css/make';
+import { Segment } from '../../../editor/util/Segment';
 
 export default class CanvasView extends UIElement {
 
     initialize () {
         super.initialize();
 
-        this.hasScroll = false;
         this.initializeLayerCache();
         this.itemPositionCalc = new ItemPositionCalc();
     }
+
+
+    makeResizer () {
+        return `<div class='item-resizer' ref="$itemResizer">
+            <button type="button" class='segment' data-value="${Segment.MOVE}"></button>
+            <button type="button" class='segment' data-value="${Segment.RIGHT}"></button>
+            <button type="button" class='segment' data-value="${Segment.LEFT}"></button>
+            <button type="button" class='segment' data-value="${Segment.TOP}"></button>
+            <button type="button" class='segment' data-value="${Segment.BOTTOM}"></button>
+            <button type="button" class='segment' data-value="${Segment.TOP_RIGHT}"></button>
+            <button type="button" class='segment' data-value="${Segment.BOTTOM_RIGHT}"></button>
+            <button type="button" class='segment' data-value="${Segment.BOTTOM_LEFT}"></button>
+            <button type="button" class='segment' data-value="${Segment.TOP_LEFT}"></button>
+        </div>`
+    }    
 
     template () {
         return `
@@ -45,28 +55,16 @@ export default class CanvasView extends UIElement {
                             <div class='area layer-area' ref="$layerArea"></div>
                         </div>          
                         <div class="page-selection">
+                            <div class='page-guide-line' ref="$guide"></div>
                             ${this.makeResizer()}
                             <div class="drag-area-view" ref="$dragAreaView"></div>
-                            <div class='page-guide-line' ref="$guide"></div>                            
+
                         </div>
                     </div>
                 </div>
-                <!--
-                <LayerShapeEditor />
-                <MoveGuide />-->
-
-              
-                <!--SubFeatureControl /-->
             </div>
         `
     }     
-
-    components () {
-        return {  
-            SubFeatureControl,
-            LayerShapeEditor
-        }
-    }
 
     initializeLayerCache () {
         this.layerItems = {} 
@@ -92,28 +90,17 @@ export default class CanvasView extends UIElement {
         }
     }
 
-    makeResizer () {
-        return `<div class='item-resizer' ref="$itemResizer">
-            <button type="button" data-value="${SEGMENT_TYPE_MOVE}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_RIGHT}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_LEFT}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_TOP}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_BOTTOM}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_TOP_RIGHT}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_BOTTOM_RIGHT}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_BOTTOM_LEFT}"></button>
-            <button type="button" data-value="${SEGMENT_TYPE_TOP_LEFT}"></button>
-        </div>`
-    }
 
     makeLayer (layer) {
         var selected = editor.selection.check(layer) ? 'selected': EMPTY_STRING
-        return `
+        var children = layer.children;
+        return html`
             <div 
                 class='layer ${selected}' 
                 item-id="${layer.id}" 
                 style="${layer.toBoundString()}" 
                 title="${layer.title}" >
+                ${children.map(it => this.makeLayer(it))}
                 <div class='text-layer' style="pointer-events: none;"></div>
             </div>`
     }
@@ -141,7 +128,7 @@ export default class CanvasView extends UIElement {
             return this.makeArtBoard(artboard)
         });
     }
-
+    
     [LOAD('$layerArea')] () {
         
         var project = editor.selection.currentProject        
@@ -162,6 +149,7 @@ export default class CanvasView extends UIElement {
         this.setBackgroundColor();
         this.load();
         this.setItemResizer();
+        this.removeGuideLine()
     }
 
     cacheSelectedItem ($target) {
@@ -175,8 +163,8 @@ export default class CanvasView extends UIElement {
             this.$item = this.$el.$(`[item-id="${this.item.id}"]`)
         }
 
-        this.x = +this.item.x.clone(); 
-        this.y = +this.item.y.clone(); 
+        this.x = +this.item.screenX.clone(); 
+        this.y = +this.item.screenY.clone(); 
         this.width = +this.item.width.clone(); 
         this.height = +this.item.height.clone();
         this.x2 = this.x + this.width; 
@@ -186,8 +174,8 @@ export default class CanvasView extends UIElement {
     }
 
     selectItem ($target) {
-
-        this.cacheSelectedItem($target);        
+        this.cacheSelectedItem($target);    
+        this.removeGuideLine()    
     }
 
     [POINTERSTART('$artboardArea .artboard-title') + MOVE('moveArtBoard') + END('moveEndArtBoard')] (e) {
@@ -197,7 +185,6 @@ export default class CanvasView extends UIElement {
         this.artboard.select();
         this.refs.$itemResizer.addClass('artboard').removeClass('layer');
         this.selectItem();
-        this.removeGuideLine();
     }
 
     moveEndArtBoard () {
@@ -210,6 +197,7 @@ export default class CanvasView extends UIElement {
         this.$layer = e.$delegateTarget;
         this.selectItem(this.$layer);
         this.refs.$itemResizer.addClass('layer').removeClass('artboard');
+
     }
 
     moveEndLayer () {
@@ -222,6 +210,7 @@ export default class CanvasView extends UIElement {
         this.targetXY = e.xy; 
         this.offsetX = e.offsetX 
         this.offsetY = e.offsetY
+        this.removeGuideLine()
     }
 
 
@@ -272,14 +261,10 @@ export default class CanvasView extends UIElement {
     dragAreaEnd () {
         this.refs.$dragAreaView.css({left: Length.px(-10000)});
         editor.selection.area(this.getDragRect())
-        this.setItemResizer();            
+        this.setItemResizer();           
+ 
         editor.send(CHANGE_SELECTION, null, this);         
     }
-
-
-    caculateSnap () {
-        // this.run(GUIDE_SNAP_CACULATE, 3, this.currentType);
-    }    
 
     moveResize () {
         var pos = editor.config.get('pos');
@@ -287,24 +272,21 @@ export default class CanvasView extends UIElement {
         var dx = pos.x - this.targetXY.x;
         var dy = pos.y - this.targetXY.y; 
 
-        var items = editor.selection.items;
+        var guideList = this.itemPositionCalc.calculate(dx, dy)
+        this.setGuideLine(guideList);
 
-        var guideList = this.itemPositionCalc.caculate(dx, dy)
+        this.matchPosition();
 
-        items.forEach(item => {
+        this.emit(CHANGE_RECT);
+    }
+
+    matchPosition (guideList) {
+        editor.selection.items.forEach(item => {
             this.itemPositionCalc.recover(item);
             this.getCachedLayerElement(item.id).css(item.toBoundCSS());
         })
         
         this.setItemResizer();
-        this.setGuideLine(guideList);
-
-        if (editor.selection.current instanceof ArtBoard) {
-            this.emit(CHANGE_ARTBOARD);
-        } else {
-            this.emit(CHANGE_LAYER)
-        }
-
     }
 
     movePosition() {
@@ -313,26 +295,21 @@ export default class CanvasView extends UIElement {
         var dx = pos.x - this.targetXY.x;
         var dy = pos.y - this.targetXY.y;
 
-        this.itemPositionCalc.caculateMove(dx, dy);
-
-        editor.selection.items.forEach(item => {
-            this.itemPositionCalc.recover(item);
-            this.getCachedLayerElement(item.id).css(item.toBoundCSS())
-        })
-
-        this.setItemResizer();
+        this.itemPositionCalc.calculateMove(dx, dy);
+        
+        this.matchPosition()
     }
 
 
     moveArtBoard () {
        this.movePosition();
        this.refreshLayerPosition(this.item);       
-       editor.send(CHANGE_ARTBOARD, this.item, this);       
+       editor.send(CHANGE_RECT, this.item, this);       
     }
 
     moveLayer () {
         this.movePosition();   
-        editor.send(CHANGE_LAYER, this.item, this);
+        editor.send(CHANGE_RECT, this.item, this);
     }    
     
     refreshLayer () {
@@ -438,11 +415,11 @@ export default class CanvasView extends UIElement {
     setItemResizer () {
 
         if (editor.selection.artboard || editor.selection.layer) {
-            var current = editor.selection.rect();
+            var current = editor.selection.currentRect;
             if (current) {
                 this.refs.$itemResizer.css({
-                    left: current.x,
-                    top: current.y,
+                    left: current.screenX,
+                    top: current.screenY,
                     width: current.width,
                     height: current.height
                 })
@@ -459,19 +436,19 @@ export default class CanvasView extends UIElement {
 
 
     // indivisual layer effect 
-    [EVENT(
-        CHANGE_LAYER,
-        CHANGE_BOXSHADOW,
-        CHANGE_TEXTSHADOW,
-        CHANGE_IMAGE,
-        CHANGE_COLORSTEP
-    )]() { 
+    [EVENT(CHANGE_LAYER)]() { 
         this.refreshLayer(); 
     }
 
-    [EVENT(
-        CHANGE_SELECTION
-    )] () {
+    [EVENT(CHANGE_RECT)] () {
+
+        var guideList = this.itemPositionCalc.calculateGuide()
+        this.setGuideLine(guideList);
+        this.matchPosition()
+
+    }
+
+    [EVENT(CHANGE_SELECTION)] () {
 
         var item = editor.selection.current;
         if (item) {

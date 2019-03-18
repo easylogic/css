@@ -1897,7 +1897,7 @@ function getDist(x, y) {
     return Math.sqrt(Math.pow(Math.abs(centerX - x), 2) + Math.pow(Math.abs(centerY - y), 2));
 }
 
-function caculateAngle(rx, ry) {
+function calculateAngle(rx, ry) {
     return radianToDegree(Math.atan2(ry, rx));
 }
 
@@ -1981,7 +1981,7 @@ var math = Object.freeze({
 	getYInCircle: getYInCircle,
 	getXYInCircle: getXYInCircle,
 	getDist: getDist,
-	caculateAngle: caculateAngle,
+	calculateAngle: calculateAngle,
 	uuid: uuid,
 	uuidShort: uuidShort,
 	cubicBezier: cubicBezier,
@@ -2837,7 +2837,6 @@ function partial(area) {
 }
 
 var _UNIT_STRINGS;
-var _SEGMENT_CHECK;
 var _PROPERTY_LIST;
 
 var EMPTY_STRING = '';
@@ -2864,9 +2863,7 @@ function px(value) {
     return value + UNIT_PX_STRING;
 }
 
-function percent(value) {
-    return value + UNIT_PERCENT_STRING;
-}
+
 
 
 
@@ -2933,9 +2930,7 @@ function unitObject(value, unit) {
     return { unit: unit, value: value };
 }
 
-function valueUnit(value) {
-    return { unit: UNIT_VALUE, value: value };
-}
+
 
 function percentUnit(value) {
     return { unit: UNIT_PERCENT, value: value };
@@ -2970,17 +2965,6 @@ function string2unit(str) {
     return pxUnit(parseParamNumber$1(str));
 }
 
-function value2px(obj, maxValue) {
-    var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
-
-    if (isPxUnit(obj)) {
-        return obj.value;
-    } else if (isPercentUnit(obj)) {
-        return percent2px(obj.value, maxValue);
-    } else if (isEmUnit(obj)) {
-        return em2px(obj.value, maxValue, fontSize);
-    }
-}
 
 
 
@@ -2988,20 +2972,21 @@ function value2px(obj, maxValue) {
 
 
 
-var ITEM_TYPE_PAGE = 'page';
+
+
 var ITEM_TYPE_LAYER = 'layer';
-var ITEM_TYPE_CIRCLE = 'circle';
 
-var ITEM_TYPE_GROUP = 'group';
+
+
 var ITEM_TYPE_IMAGE = 'image'; // background-image
 var ITEM_TYPE_MASK_IMAGE = 'mask-image'; // mask image
 var ITEM_TYPE_BORDER_IMAGE = 'border-image'; // border image
 var ITEM_TYPE_BOX_IMAGE = 'box-image'; // box image
-var ITEM_TYPE_BOXSHADOW = 'boxshadow';
-var ITEM_TYPE_TEXTSHADOW = 'textshadow';
-var ITEM_TYPE_COLORSTEP = 'colorstep';
-var ITEM_TYPE_TIMELINE = 'timeline';
-var ITEM_TYPE_KEYFRAME = 'keyframe';
+
+
+
+
+
 
 var IS_OBJECT = 'object';
 var IS_ATTRIBUTE = 'attribute';
@@ -3018,7 +3003,7 @@ var IMAGE_ITEM_TYPE_CONIC = 'conic';
 var IMAGE_ITEM_TYPE_REPEATING_CONIC = 'repeating-conic';
 var IMAGE_ITEM_TYPE_STATIC = 'static';
 
-var IMAGE_ITEM_TYPE_IMAGE = 'image';
+
 
 var CLIP_PATH_TYPE_NONE = 'none';
 var CLIP_PATH_TYPE_CIRCLE = 'circle';
@@ -3037,26 +3022,13 @@ var POSITION_RIGHT = 'right';
 var POSITION_BOTTOM = 'bottom';
 var POSITION_CENTER = 'center';
 
-var IMAGE_FILE_TYPE_JPG = 'jpg';
-var IMAGE_FILE_TYPE_GIF = 'gif';
-var IMAGE_FILE_TYPE_PNG = 'png';
-var IMAGE_FILE_TYPE_SVG = 'svg';
 
 
 
 
 
-var SEGMENT_TYPE_MOVE = 'move';
-var SEGMENT_TYPE_TOP = 'to top';
-var SEGMENT_TYPE_LEFT = 'to left';
-var SEGMENT_TYPE_RIGHT = 'to right';
-var SEGMENT_TYPE_BOTTOM = 'to bottom';
-var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
-var SEGMENT_TYPE_TOP_LEFT = 'to top left';
-var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
-var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
 
-var SEGMENT_CHECK = (_SEGMENT_CHECK = {}, defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_MOVE, { move: true }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP, { yIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_LEFT, { yIndex: 0, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_TOP_RIGHT, { yIndex: 0, xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_LEFT, { xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_RIGHT, { xIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM, { yIndex: 2 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_LEFT, { yIndex: 2, xIndex: 0 }), defineProperty(_SEGMENT_CHECK, SEGMENT_TYPE_BOTTOM_RIGHT, { yIndex: 2, xIndex: 2 }), _SEGMENT_CHECK);
+
 
 var LAYER_TRANSFORM_PROPERTY = ['translateX', 'translateY', 'rotate', 'skewX', 'skewY', 'scale'];
 
@@ -7281,9 +7253,8 @@ var Event = {
     }
 };
 
-var TOOL_GET = 'tool/get';
 var TOOL_SET = 'tool/set';
-var TOOL_TOGGLE = 'tool/toggle';
+
 
 var TOOL_SAVE_DATA = 'tool/save/data';
 var TOOL_RESTORE_DATA = 'tool/restore/data';
@@ -7525,29 +7496,21 @@ var BaseStore = function () {
 }();
 
 var ITEM_SET = 'item/set';
-var ITEM_GET = 'item/get';
+
 var ITEM_CONVERT_STYLE = 'item/convert/style';
-var ITEM_SET_ALL = 'item/set/all';
-var ITEM_SORT = 'item/sort';
-var ITEM_REMOVE_CHILDREN = 'item/remove/children';
-var ITEM_REMOVE = 'item/remove';
-var ITEM_TOGGLE_VISIBLE = 'item/toggle/visible';
-var ITEM_TOGGLE_LOCK = 'item/toggle/lock';
-var ITEM_REMOVE_ALL = 'item/remove/all';
-var ITEM_FOCUS = 'item/focus';
-var ITEM_LOAD = 'item/load';
-var ITEM_INIT_CHILDREN = 'item/init/children';
+
+
+
+
+
+
+
+
+
+
 
 /* page is equal to artboard */
-var PAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_PAGE,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    index: 0,
-    width: pxUnit(400),
-    height: pxUnit(300)
-};
+
 var FILTER_DEFAULT_OBJECT = {
     'filterBlur': { index: 0, value: 0, unit: UNIT_PX },
     'filterGrayscale': { index: 10, value: 0, unit: UNIT_PERCENT },
@@ -7640,17 +7603,7 @@ var POLYGON_DEFAULT_OBJECT = _extends({}, LAYER_DEFAULT_OBJECT, {
     fixedShape: true
 });
 
-var GROUP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_GROUP,
-    is: IS_OBJECT,
-    name: EMPTY_STRING,
-    index: 0,
-    parentId: EMPTY_STRING,
-    selected: true,
-    visible: true,
-    x: pxUnit(0),
-    y: pxUnit(0)
-};
+
 
 var MASK_IMAGE_DEFAULT_OBJECT = {
     itemType: ITEM_TYPE_MASK_IMAGE,
@@ -7674,87 +7627,6 @@ var BORDER_IMAGE_DEFAULT_OBJECT = _extends({}, MASK_IMAGE_DEFAULT_OBJECT, {
 var BOX_IMAGE_DEFAULT_OBJECT = _extends({}, MASK_IMAGE_DEFAULT_OBJECT, {
     itemType: ITEM_TYPE_BOX_IMAGE
 });
-
-var IMAGE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_IMAGE,
-    is: IS_ATTRIBUTE,
-    type: IMAGE_ITEM_TYPE_STATIC,
-    fileType: EMPTY_STRING, // select file type as imagefile,  png, gif, jpg, svg if type is image 
-    index: 0,
-    parentId: EMPTY_STRING,
-    angle: 90,
-    color: 'red',
-    radialType: 'ellipse',
-    radialPosition: POSITION_CENTER,
-    visible: true,
-    isClipPath: false,
-    pattern: {},
-    backgroundRepeat: null,
-    backgroundSize: null,
-    backgroundSizeWidth: 0,
-    backgroundSizeHeight: 0,
-    backgroundOrigin: null,
-    backgroundPositionX: undefined,
-    backgroundPositionY: undefined,
-    backgroundBlendMode: 'normal',
-    backgroundColor: null,
-    backgroundAttachment: null,
-    backgroundClip: null,
-    backgroundImage: null,
-    backgroundImageDataURI: null
-};
-
-var BOXSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_BOXSHADOW,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    inset: false,
-    blurRadius: pxUnit(0),
-    spreadRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var TEXTSHADOW_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TEXTSHADOW,
-    is: IS_ATTRIBUTE,
-    offsetX: pxUnit(0),
-    offsetY: pxUnit(0),
-    blurRadius: pxUnit(0),
-    color: 'rgb(0, 0, 0)'
-};
-
-var COLORSTEP_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_COLORSTEP,
-    is: IS_ATTRIBUTE,
-    parentId: EMPTY_STRING,
-    percent: 0,
-    color: 'rgba(0, 0, 0, 0)'
-};
-
-var TIMELINE_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_TIMELINE,
-    targetId: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    collapse: {}
-};
-
-var KEYFRAME_DEFAULT_OBJECT = {
-    itemType: ITEM_TYPE_KEYFRAME,
-    targetId: EMPTY_STRING,
-    property: EMPTY_STRING,
-    parentId: EMPTY_STRING,
-    delay: 0,
-    duration: 1000,
-    timing: 'linear',
-    params: [],
-    iteration: 1,
-    startTime: 0,
-    endTime: 0,
-    startValue: 0,
-    endValue: 0,
-    direction: 'alternate'
-};
 
 var DELEGATE_SPLIT = '.';
 
@@ -8924,6 +8796,38 @@ var Length$1 = function () {
     return Length;
 }();
 
+/* event trigger */
+
+var CHANGE_TOOL = 'CHANGE_TOOL';
+
+
+
+var CHANGE_TIMELINE = 'CHANGE_TIMELINE';
+var CHANGE_SELECTION = 'CHANGE_SELECTION';
+var CHANGE_KEYFRAME = 'CHANGE_KEYFRAME';
+var CHANGE_KEYFRAME_SELECTION = 'CHANGE_KEYFRAME_SELECTION';
+
+var CHANGE_EDITOR = 'CHANGE_EDITOR';
+
+var CHANGE_ARTBOARD = 'CHANGE_ARTBOARD';
+
+var CHANGE_LAYER = 'CHANGE_LAYER';
+var CHANGE_RECT = 'CHANGE_RECT';
+var CHANGE_IMAGE = 'CHANGE_IMAGE';
+
+
+
+
+var CHANGE_BOXSHADOW = 'CHANGE_BOXSHADOW';
+var CHANGE_TEXTSHADOW = 'CHANGE_TEXTSHADOW';
+var CHANGE_COLORSTEP = 'CHANGE_COLORSTEP';
+
+var ADD_TIMELINE = 'ADD_TIMELINE';
+
+
+var SELECT_TAB_LAYER = 'SELECT_TAB_LAYER';
+var SELECT_TAB_IMAGE = 'SELECT_TAB_IMAGE';
+
 var Item = function () {
     function Item() {
         var _this = this;
@@ -9278,9 +9182,9 @@ var Item = function () {
 
     }, {
         key: "path",
-        value: function path() {
+        value: function path(parentId) {
             var path = [];
-            var currentId = this.id;
+            var currentId = parentId || this.parentId;
             do {
                 var item = editor$1.get(currentId);
                 if (item) {
@@ -9321,10 +9225,10 @@ var Item = function () {
         key: "toBoundCSS",
         value: function toBoundCSS() {
             return {
-                top: this.json.y,
-                left: this.json.x,
-                width: this.json.width,
-                height: this.json.height
+                top: "" + this.json.y,
+                left: "" + this.json.x,
+                width: "" + this.json.width,
+                height: "" + this.json.height
             };
         }
     }, {
@@ -9336,17 +9240,11 @@ var Item = function () {
         key: "screenX",
         get: function get$$1() {
             return this.json.x;
-        },
-        set: function set$$1(newX) {
-            this.json.x.set(newX);
         }
     }, {
         key: "screenY",
         get: function get$$1() {
             return this.json.y;
-        },
-        set: function set$$1(newY) {
-            this.json.y.set(newY);
         }
     }, {
         key: "screenX2",
@@ -9361,12 +9259,21 @@ var Item = function () {
     }, {
         key: "centerX",
         get: function get$$1() {
-            return Length$1.px(this.screenX.value + Math.floor(this.json.width.value / 2));
+            var half = 0;
+            if (this.json.width.value != 0) {
+                half = Math.floor(this.json.width.value / 2);
+            }
+            return Length$1.px(this.screenX.value + half);
         }
     }, {
         key: "centerY",
         get: function get$$1() {
-            return Length$1.px(this.screenY.value + Math.floor(this.json.height.value / 2));
+            var half = 0;
+            if (this.json.height.value != 0) {
+                half = Math.floor(this.json.height.value / 2);
+            }
+
+            return Length$1.px(this.screenY.value + half);
         }
 
         /**
@@ -9426,38 +9333,29 @@ var Item = function () {
     return Item;
 }();
 
-/* event trigger */
+var RectItem = function (_Item) {
+    inherits(RectItem, _Item);
 
-var CHANGE_TOOL = 'CHANGE_TOOL';
+    function RectItem() {
+        classCallCheck(this, RectItem);
+        return possibleConstructorReturn(this, (RectItem.__proto__ || Object.getPrototypeOf(RectItem)).apply(this, arguments));
+    }
 
+    createClass(RectItem, [{
+        key: "convert",
+        value: function convert(json) {
+            json = get$1(RectItem.prototype.__proto__ || Object.getPrototypeOf(RectItem.prototype), "convert", this).call(this, json);
 
+            json.width = Length$1.parse(json.width);
+            json.height = Length$1.parse(json.height);
+            json.x = Length$1.parse(json.x);
+            json.y = Length$1.parse(json.y);
 
-var CHANGE_TIMELINE = 'CHANGE_TIMELINE';
-var CHANGE_SELECTION = 'CHANGE_SELECTION';
-var CHANGE_KEYFRAME = 'CHANGE_KEYFRAME';
-var CHANGE_KEYFRAME_SELECTION = 'CHANGE_KEYFRAME_SELECTION';
-
-var CHANGE_EDITOR$1 = 'CHANGE_EDITOR';
-
-var CHANGE_ARTBOARD = 'CHANGE_ARTBOARD';
-
-var CHANGE_LAYER = 'CHANGE_LAYER';
-var CHANGE_IMAGE = 'CHANGE_IMAGE';
-
-
-
-
-var CHANGE_BOXSHADOW = 'CHANGE_BOXSHADOW';
-var CHANGE_TEXTSHADOW = 'CHANGE_TEXTSHADOW';
-var CHANGE_COLORSTEP = 'CHANGE_COLORSTEP';
-
-var ADD_TIMELINE = 'ADD_TIMELINE';
-
-
-var SELECT_TAB_LAYER = 'SELECT_TAB_LAYER';
-var SELECT_TAB_IMAGE = 'SELECT_TAB_IMAGE';
-
-var CHANGE_SVG_LIST = 'CHANGE_SVG_LIST';
+            return json;
+        }
+    }]);
+    return RectItem;
+}(Item);
 
 var Selection = function () {
     function Selection(editor) {
@@ -9483,30 +9381,6 @@ var Selection = function () {
          */
 
     }, {
-        key: "updateColorStep",
-        value: function updateColorStep(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-            var colorstep = this.currentColorStep;
-            if (colorstep) {
-                colorstep.reset(attrs);
-            }
-            (context || this.editor).emit(event, colorstep);
-        }
-    }, {
-        key: "updateImageResource",
-        value: function updateImageResource(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-            var imageResource = this.currentImage;
-            if (imageResource) {
-                imageResource.reset(attrs);
-            }
-            (context || this.editor).emit(event, imageResource);
-        }
-    }, {
         key: "updateLayer",
         value: function updateLayer(event) {
             var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -9517,6 +9391,18 @@ var Selection = function () {
                 layer.reset(attrs);
             }
             (context || this.editor).emit(event, layer);
+        }
+    }, {
+        key: "updateRect",
+        value: function updateRect(event) {
+            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+            var rect = this.currentRect;
+            if (rect) {
+                rect.reset(attrs);
+            }
+            (context || this.editor).emit(event, rect);
         }
     }, {
         key: "updateArtBoard",
@@ -9553,18 +9439,6 @@ var Selection = function () {
                 project.reset(attrs);
             }
             (context || this.editor).emit(event, project);
-        }
-    }, {
-        key: "updateBackgroundImage",
-        value: function updateBackgroundImage(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-            var image = this.currentBackgroundImage;
-            if (image) {
-                image.reset(attrs);
-            }
-            (context || this.editor).emit(event, image);
         }
     }, {
         key: "check",
@@ -9727,6 +9601,11 @@ var Selection = function () {
             }
         }
     }, {
+        key: "initRect",
+        value: function initRect() {
+            this.currentRect = this.rect();
+        }
+    }, {
         key: "rect",
         value: function rect() {
             var minX = Number.MAX_SAFE_INTEGER;
@@ -9759,7 +9638,7 @@ var Selection = function () {
             width = Length$1.px(width);
             height = Length$1.px(height);
 
-            return new Item({ x: x, y: y, width: width, height: height });
+            return new RectItem({ x: x, y: y, width: width, height: height });
         }
     }, {
         key: "ids",
@@ -9929,2991 +9808,6 @@ var Selection = function () {
     return Selection;
 }();
 
-var items = new Map();
-
-function traverse(item, results, parentId) {
-    var newItem = item.clone(true);
-    newItem.parentId = parentId;
-    results.push(newItem);
-
-    item.children.forEach(function (child) {
-        traverse(child, results, newItem.id);
-    });
-}
-
-function tree(id) {
-    var item = editor$1.get(id);
-    var newItem = item.clone(true);
-    var results = [newItem];
-
-    item.children.forEach(function (item) {
-        traverse(item, results, newItem.id);
-    });
-
-    return results;
-}
-
-var EDITOR_ID = '';
-var editor$1 = new (function () {
-    function _class() {
-        classCallCheck(this, _class);
-
-        this.config = new Config(this);
-        this.selection = new Selection(this);
-    }
-
-    createClass(_class, [{
-        key: "setStore",
-        value: function setStore($store) {
-            this.$store = $store;
-        }
-    }, {
-        key: "send",
-        value: function send() {
-            this.emit.apply(this, arguments);
-        }
-    }, {
-        key: "emit",
-        value: function emit() {
-            if (this.$store) {
-                var _$store;
-
-                this.$store.source = 'EDITOR_ID';
-                (_$store = this.$store).emit.apply(_$store, arguments);
-            }
-        }
-
-        /**
-         * add Project
-         * 
-         * @param {Project} project 
-         */
-
-    }, {
-        key: "addProject",
-        value: function addProject(project) {
-            return this.add(EDITOR_ID, project);
-        }
-    }, {
-        key: "filter",
-        value: function filter(itemType) {
-            var results = [];
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _ref = _step.value;
-
-                    var _ref2 = slicedToArray(_ref, 2);
-
-                    var id = _ref2[0];
-                    var item = _ref2[1];
-
-                    if (item.itemType === itemType) {
-                        results[results.length] = item;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            return results;
-        }
-
-        /**
-         * get project list 
-         */
-
-    }, {
-        key: "add",
-
-
-        /**
-         * add item 
-         * 
-         * @param {string} parentId 
-         * @param {Item} item 
-         * @return {Item} 
-         */
-        value: function add(parentId, item) {
-            item.parentId = parentId;
-            items.set(item.id, item);
-
-            this.sort(item.itemType);
-
-            return item;
-        }
-
-        /**
-         * remove Item  with all children 
-         * 
-         * @param {string} id 
-         */
-
-    }, {
-        key: "remove",
-        value: function remove(id) {
-            var isDeleteChildren = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-
-            if (isDeleteChildren) this.removeChildren(id);
-
-            items.delete(id);
-        }
-    }, {
-        key: "copy",
-        value: function copy(id) {
-            var _this = this;
-
-            var data = tree(id, uuidShort());
-
-            data.forEach(function (it) {
-                _this.set(it.id, it);
-            });
-
-            if (data.length) {
-                data[0].index = data[0].index + 1;
-                data[0].parent().sort();
-            }
-
-            return data;
-        }
-    }, {
-        key: "clear",
-        value: function clear() {
-            items.clear();
-        }
-    }, {
-        key: "removeChildren",
-
-
-        /**
-         * remove all children 
-         * 
-         * @param {string} parentId 
-         */
-        value: function removeChildren() {
-            var _this2 = this;
-
-            var parentId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EDITOR_ID;
-            var parentObject = arguments[1];
-
-
-            var children = [];
-
-            if (parentId == EDITOR_ID) {
-                children = this.projects;
-            } else {
-                var parent = this.get(parentId);
-                if (parent) {
-                    children = parent.children;
-                } else if (parentObject) {
-                    children = parentObject.children;
-                }
-            }
-
-            if (children.length) {
-                children.forEach(function (child) {
-                    _this2.removeChildren(child.id);
-                    _this2.remove(child.id);
-                });
-            }
-        }
-
-        /**
-         * get item 
-         * 
-         * @param {String} key 
-         */
-
-    }, {
-        key: "get",
-        value: function get(key) {
-            return items.get(key);
-        }
-
-        /**
-         * set Item 
-         * 
-         * @param {string} key 
-         * @param {Item} value 
-         */
-
-    }, {
-        key: "set",
-        value: function set$$1(key, value) {
-            items.set(key, value);
-        }
-
-        /**
-         * check item id 
-         * 
-         * @param {string|Item} key 
-         */
-
-    }, {
-        key: "has",
-        value: function has(key) {
-            return items.has(key);
-        }
-
-        /**
-         * get children by searchObj  
-         * 
-         * @param {object} searchObj 
-         */
-
-    }, {
-        key: "search",
-        value: function search(searchObj) {
-            var keys = Object.keys(searchObj);
-            var results = [];
-
-            var _loop = function _loop(id, item) {
-                isItem = keys.every(function (searchField) {
-                    return searchObj[searchField] === item[searchField];
-                });
-
-                if (isItem) {
-                    results[results.length] = item;
-                }
-            };
-
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var _ref3 = _step2.value;
-
-                    var _ref4 = slicedToArray(_ref3, 2);
-
-                    var id = _ref4[0];
-                    var item = _ref4[1];
-                    var isItem;
-
-                    _loop(id, item);
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-
-            results.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return results;
-        }
-    }, {
-        key: "sort",
-        value: function sort(itemType) {
-
-            var children = [];
-
-            if (itemType === 'project') children = this.projects;
-
-            children.sort(function (a, b) {
-                if (a.index === b.index) return 0;
-                return a.index > b.index ? 1 : -1;
-            });
-
-            children.forEach(function (it, index) {
-                it.index = index * 100;
-            });
-        }
-
-        /**
-         * get children 
-         * 
-         * @param {string} parentId 
-         */
-
-    }, {
-        key: "children",
-        value: function children(parentId) {
-            var results = [];
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var _ref5 = _step3.value;
-
-                    var _ref6 = slicedToArray(_ref5, 2);
-
-                    var id = _ref6[0];
-                    var item = _ref6[1];
-
-
-                    if (item.parentId === parentId) {
-                        results[results.length] = item;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
-            return results;
-        }
-    }, {
-        key: "projects",
-        get: function get() {
-            return this.filter('project');
-        }
-    }, {
-        key: "artboards",
-        get: function get() {
-            return this.filter('artboard');
-        }
-    }, {
-        key: "layers",
-        get: function get() {
-            return this.filter('layer');
-        }
-    }, {
-        key: "groups",
-        get: function get() {
-            return this.filter('group');
-        }
-    }, {
-        key: "all",
-        get: function get() {
-            return items;
-        }
-    }]);
-    return _class;
-}())();
-
-var EMPTY_POS = { x: 0, y: 0 };
-
-var start = function start(opt) {
-    var App = function (_UIElement) {
-        inherits(App, _UIElement);
-
-        function App() {
-            classCallCheck(this, App);
-            return possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
-        }
-
-        createClass(App, [{
-            key: "initialize",
-            value: function initialize() {
-                var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-                this.$store = new BaseStore({
-                    modules: [].concat(toConsumableArray(this.getModuleList()), toConsumableArray(modules))
-                });
-
-                editor$1.setStore(this.$store);
-
-                this.$body = new Dom(this.getContainer());
-                this.$root = new Dom('div', this.getClassName());
-
-                this.$body.append(this.$root);
-
-                this.render(this.$root);
-
-                // 이벤트 연결 
-                this.initializeEvent();
-
-                this.initBodyMoves();
-            }
-        }, {
-            key: "initBodyMoves",
-            value: function initBodyMoves() {
-                this.moves = new Set();
-                this.ends = new Set();
-                this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 10);
-            }
-        }, {
-            key: "loopBodyMoves",
-            value: function loopBodyMoves() {
-                var oldPos = editor$1.config.get('oldPos');
-                var pos = editor$1.config.get('pos');
-                var isRealMoved = oldPos.x != pos.x || oldPos.y != pos.y;
-
-                if (isRealMoved && this.moves.size) {
-                    this.moves.forEach(function (v) {
-                        v.func.call(v.context);
-                    });
-                }
-                requestAnimationFrame(this.funcBodyMoves);
-            }
-        }, {
-            key: "removeBodyMoves",
-            value: function removeBodyMoves() {
-
-                this.ends.forEach(function (v) {
-                    v.func.call(v.context);
-                });
-
-                this.moves.clear();
-                this.ends.clear();
-            }
-        }, {
-            key: EVENT(ADD_BODY_MOUSEMOVE),
-            value: function value(func, context) {
-                this.moves.add({ func: func, context: context });
-            }
-        }, {
-            key: EVENT(ADD_BODY_MOUSEUP),
-            value: function value(func, context) {
-                this.ends.add({ func: func, context: context });
-            }
-        }, {
-            key: "getModuleList",
-            value: function getModuleList() {
-                return opt.modules || [];
-            }
-        }, {
-            key: "getClassName",
-            value: function getClassName() {
-                return opt.className || 'csseditor';
-            }
-        }, {
-            key: "getContainer",
-            value: function getContainer() {
-                return opt.container || document.body;
-            }
-        }, {
-            key: "template",
-            value: function template() {
-                return "<div>" + opt.template + "</div>";
-            }
-        }, {
-            key: "components",
-            value: function components() {
-                return opt.components || {};
-            }
-        }, {
-            key: POINTERMOVE('document'),
-            value: function value(e) {
-                var oldPos = editor$1.config.get('pos') || EMPTY_POS;
-                var newPos = Event.pos(e) || EMPTY_POS;
-
-                this.bodyMoved = !(oldPos.x == newPos.x && oldPos.y == newPos.y);
-                editor$1.config.set('bodyEvent', e);
-                editor$1.config.set('pos', newPos);
-                editor$1.config.set('oldPos', oldPos);
-
-                if (!this.requestId) {
-                    this.requestId = requestAnimationFrame(this.funcBodyMoves);
-                }
-            }
-        }, {
-            key: POINTEREND('document'),
-            value: function value(e) {
-                var newPos = Event.pos(e) || EMPTY_POS;
-                editor$1.config.set('bodyEvent', e);
-                editor$1.config.set('pos', newPos);
-                this.removeBodyMoves();
-                this.requestId = null;
-            }
-        }]);
-        return App;
-    }(UIElement);
-
-    return new App(opt);
-};
-
-
-
-var App = Object.freeze({
-	start: start
-});
-
-var Util = {
-    App: App,
-    Color: Color$1,
-    HueColor: HueColor,
-    ColorNames: ColorNames,
-    ImageFilter: ImageFilter,
-    GL: GL,
-    Canvas: Canvas,
-    ImageLoader: ImageLoader
-};
-
-var BaseModule = function () {
-    function BaseModule($store) {
-        classCallCheck(this, BaseModule);
-
-        this.$store = $store;
-        this.initialize();
-    }
-
-    createClass(BaseModule, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {}
-    }, {
-        key: "initialize",
-        value: function initialize() {
-            var _this = this;
-
-            this.filterProps(ACTION_PREFIX).forEach(function (key) {
-                _this.$store.action(key, _this);
-            });
-
-            this.filterProps(GETTER_PREFIX).forEach(function (key) {
-                _this.$store.getter(key, _this);
-            });
-        }
-    }, {
-        key: "filterProps",
-        value: function filterProps() {
-            var pattern = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '/';
-
-            return Object.getOwnPropertyNames(this.__proto__).filter(function (key) {
-                return key.startsWith(pattern);
-            });
-        }
-    }, {
-        key: "get",
-        value: function get(id) {
-            return this.$store.items[id] || {};
-        }
-    }, {
-        key: "set",
-        value: function set$$1(id, opt) {
-            this.$store.items[id] = opt;
-        }
-    }, {
-        key: "config",
-        value: function config(key, defaultValue) {
-            return isUndefined(this.$store.tool[key]) ? defaultValue : this.$store.tool[key];
-        }
-    }, {
-        key: "initConfig",
-        value: function initConfig(key, value) {
-            this.$store.tool[key] = value;
-        }
-    }]);
-    return BaseModule;
-}();
-
-var ColorSetsList = function (_BaseModule) {
-    inherits(ColorSetsList, _BaseModule);
-
-    function ColorSetsList() {
-        classCallCheck(this, ColorSetsList);
-        return possibleConstructorReturn(this, (ColorSetsList.__proto__ || Object.getPrototypeOf(ColorSetsList)).apply(this, arguments));
-    }
-
-    createClass(ColorSetsList, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(ColorSetsList.prototype.__proto__ || Object.getPrototypeOf(ColorSetsList.prototype), 'initialize', this).call(this);
-
-            // set property
-            this.$store.colorSetsList = [{ name: "Material",
-                edit: true,
-                colors: ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B']
-            }, { name: "Custom", "edit": true, "colors": [] }, { name: "Color Scale", "scale": ['red', 'yellow', 'black'], count: 5 }];
-            this.$store.currentColorSets = {};
-        }
-    }, {
-        key: ACTION('setUserPalette'),
-        value: function value($store, list) {
-            $store.userList = list;
-
-            $store.dispatch('resetUserPalette');
-            $store.dispatch('setCurrentColorSets');
-        }
-    }, {
-        key: ACTION('resetUserPalette'),
-        value: function value($store) {
-            if ($store.userList && $store.userList.length) {
-                $store.userList = $store.userList.map(function (element, index) {
-
-                    if (isFunction(element.colors)) {
-                        var makeCallback = element.colors;
-
-                        element.colors = makeCallback($store);
-                        element._colors = makeCallback;
-                    }
-
-                    return _extends({
-                        name: 'color-' + index,
-                        colors: []
-                    }, element);
-                });
-
-                $store.emit('changeUserList');
-            }
-        }
-    }, {
-        key: ACTION('setCurrentColorSets'),
-        value: function value($store, nameOrIndex) {
-
-            var _list = $store.read('list');
-
-            if (isUndefined$1(nameOrIndex)) {
-                $store.currentColorSets = _list[0];
-            } else if (isNumber(nameOrIndex)) {
-                $store.currentColorSets = _list[nameOrIndex];
-            } else {
-                $store.currentColorSets = _list.filter(function (obj) {
-                    return obj.name == nameOrIndex;
-                })[0];
-            }
-
-            $store.emit('changeCurrentColorSets');
-        }
-    }, {
-        key: GETTER('getCurrentColorSets'),
-        value: function value($store) {
-            return $store.currentColorSets;
-        }
-    }, {
-        key: ACTION('addCurrentColor'),
-        value: function value($store, color) {
-            if (Array.isArray($store.currentColorSets.colors)) {
-                $store.currentColorSets.colors.push(color);
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: ACTION('setCurrentColorAll'),
-        value: function value($store) {
-            var colors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-            $store.currentColorSets.colors = colors;
-            $store.emit('changeCurrentColorSets');
-        }
-    }, {
-        key: ACTION('removeCurrentColor'),
-        value: function value($store, index) {
-            if ($store.currentColorSets.colors[index]) {
-                $store.currentColorSets.colors.splice(index, 1);
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: ACTION('removeCurrentColorToTheRight'),
-        value: function value($store, index) {
-            if ($store.currentColorSets.colors[index]) {
-                $store.currentColorSets.colors.splice(index, Number.MAX_VALUE);
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: ACTION('clearPalette'),
-        value: function value($store) {
-            if ($store.currentColorSets.colors) {
-                $store.currentColorSets.colors = [];
-                $store.emit('changeCurrentColorSets');
-            }
-        }
-    }, {
-        key: GETTER('list'),
-        value: function value($store) {
-            return Array.isArray($store.userList) && $store.userList.length ? $store.userList : $store.colorSetsList;
-        }
-    }, {
-        key: GETTER('getCurrentColors'),
-        value: function value($store) {
-            return $store.read('getColors', $store.currentColorSets);
-        }
-    }, {
-        key: GETTER('getColors'),
-        value: function value($store, element) {
-            if (element.scale) {
-                return Color$1.scale(element.scale, element.count);
-            }
-
-            return element.colors || [];
-        }
-    }, {
-        key: GETTER('getColorSetsList'),
-        value: function value($store) {
-            return $store.read('list').map(function (element) {
-                return {
-                    name: element.name,
-                    edit: element.edit,
-                    colors: $store.read('getColors', element)
-                };
-            });
-        }
-    }]);
-    return ColorSetsList;
-}(BaseModule);
-
-var ColorManager = function (_BaseModule) {
-    inherits(ColorManager, _BaseModule);
-
-    function ColorManager() {
-        classCallCheck(this, ColorManager);
-        return possibleConstructorReturn(this, (ColorManager.__proto__ || Object.getPrototypeOf(ColorManager)).apply(this, arguments));
-    }
-
-    createClass(ColorManager, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(ColorManager.prototype.__proto__ || Object.getPrototypeOf(ColorManager.prototype), 'initialize', this).call(this);
-
-            this.$store.rgb = {};
-            this.$store.hsl = {};
-            this.$store.hsv = {};
-            this.$store.alpha = 1;
-            this.$store.format = 'hex';
-
-            // this.$store.dispatch('changeColor');
-        }
-    }, {
-        key: ACTION('changeFormat'),
-        value: function value($store, format) {
-            $store.format = format;
-
-            $store.emit('changeFormat');
-        }
-    }, {
-        key: ACTION('initColor'),
-        value: function value($store, colorObj, source) {
-            $store.dispatch('changeColor', colorObj, source, true);
-            $store.emit('initColor');
-        }
-    }, {
-        key: ACTION('changeColor'),
-        value: function value($store, colorObj, source, isNotEmit) {
-
-            colorObj = colorObj || '#FF0000';
-
-            if (isString(colorObj)) {
-                colorObj = Color$1.parse(colorObj);
-            }
-
-            colorObj.source = colorObj.source || source;
-
-            $store.alpha = isUndefined$1(colorObj.a) ? $store.alpha : colorObj.a;
-            $store.format = colorObj.type != 'hsv' ? colorObj.type || $store.format : $store.format;
-
-            if ($store.format == 'hex' && $store.alpha < 1) {
-                $store.format = 'rgb';
-            }
-
-            if (colorObj.type == 'hsl') {
-                $store.hsl = _extends({}, $store.hsl, colorObj);
-                $store.rgb = Color$1.HSLtoRGB($store.hsl);
-                $store.hsv = Color$1.HSLtoHSV(colorObj);
-            } else if (colorObj.type == 'hex') {
-                $store.rgb = _extends({}, $store.rgb, colorObj);
-                $store.hsl = Color$1.RGBtoHSL($store.rgb);
-                $store.hsv = Color$1.RGBtoHSV(colorObj);
-            } else if (colorObj.type == 'rgb') {
-                $store.rgb = _extends({}, $store.rgb, colorObj);
-                $store.hsl = Color$1.RGBtoHSL($store.rgb);
-                $store.hsv = Color$1.RGBtoHSV(colorObj);
-            } else if (colorObj.type == 'hsv') {
-                $store.hsv = _extends({}, $store.hsv, colorObj);
-                $store.rgb = Color$1.HSVtoRGB($store.hsv);
-                $store.hsl = Color$1.HSVtoHSL($store.hsv);
-            }
-
-            if (!isNotEmit) {
-                $store.emit('changeColor', colorObj.source);
-            }
-        }
-    }, {
-        key: GETTER('getHueColor'),
-        value: function value($store) {
-            return HueColor.checkHueColor($store.hsv.h / 360);
-        }
-    }, {
-        key: GETTER('toString'),
-        value: function value($store, type) {
-            type = type || $store.format;
-            var colorObj = $store[type] || $store.rgb;
-            return Color$1.format(_extends({}, colorObj, { a: $store.alpha }), type);
-        }
-    }, {
-        key: GETTER('toColor'),
-        value: function value($store, type) {
-            type = (type || $store.format).toLowerCase();
-
-            if (type == 'rgb') {
-                return $store.read('toRGB');
-            } else if (type == 'hsl') {
-                return $store.read('toHSL');
-            } else if (type == 'hex') {
-                return $store.read('toHEX');
-            }
-
-            return $store.read('toString', type);
-        }
-    }, {
-        key: GETTER('toRGB'),
-        value: function value($store) {
-            return $store.read('toString', 'rgb');
-        }
-    }, {
-        key: GETTER('toHSL'),
-        value: function value($store) {
-            return $store.read('toString', 'hsl');
-        }
-    }, {
-        key: GETTER('toHEX'),
-        value: function value($store) {
-            return $store.read('toString', 'hex').toUpperCase();
-        }
-    }]);
-    return ColorManager;
-}(BaseModule);
-
-var BaseColorPicker = function (_UIElement) {
-    inherits(BaseColorPicker, _UIElement);
-
-    function BaseColorPicker() {
-        classCallCheck(this, BaseColorPicker);
-        return possibleConstructorReturn(this, (BaseColorPicker.__proto__ || Object.getPrototypeOf(BaseColorPicker)).apply(this, arguments));
-    }
-
-    createClass(BaseColorPicker, [{
-        key: 'created',
-        value: function created() {
-            this.isColorPickerShow = false;
-            this.isShortCut = false;
-            this.hideDelay = +defaultValue(this.opt.hideDeplay, 2000);
-            this.timerCloseColorPicker;
-            this.autoHide = this.opt.autoHide || true;
-            this.outputFormat = this.opt.outputFormat;
-            this.$checkColorPickerClass = this.checkColorPickerClass.bind(this);
-        }
-    }, {
-        key: 'initialize',
-        value: function initialize() {
-            var _this2 = this;
-
-            var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            this.$body = null;
-            this.$root = null;
-
-            this.$store = new BaseStore({
-                modules: [ColorManager, ColorSetsList].concat(toConsumableArray(modules))
-            });
-
-            this.callbackChange = function () {
-                _this2.callbackChangeValue();
-            };
-
-            this.colorpickerShowCallback = function () {};
-            this.colorpickerHideCallback = function () {};
-
-            this.$body = new Dom(this.getContainer());
-            this.$root = new Dom('div', 'codemirror-colorpicker');
-
-            //  append colorpicker to container (ex : body)
-            if (this.opt.position == 'inline') {
-                this.$body.append(this.$root);
-            }
-
-            if (this.opt.type) {
-                // to change css style
-                this.$root.addClass(this.opt.type);
-            }
-
-            if (this.opt.hideInformation) {
-                this.$root.addClass('hide-information');
-            }
-
-            if (this.opt.hideColorsets) {
-                this.$root.addClass('hide-colorsets');
-            }
-
-            if (this.opt.width) {
-                this.$root.css('width', this.opt.width);
-            }
-
-            this.$arrow = new Dom('div', 'arrow');
-
-            this.$root.append(this.$arrow);
-
-            this.dispatch('setUserPalette', this.opt.colorSets);
-
-            this.render(this.$root);
-
-            this.initColorWithoutChangeEvent(this.opt.color);
-
-            // 이벤트 연결 
-            this.initializeEvent();
-        }
-    }, {
-        key: 'initColorWithoutChangeEvent',
-        value: function initColorWithoutChangeEvent(color$$1) {
-            this.dispatch('initColor', color$$1);
-        }
-
-        /** 
-         * public method 
-         * 
-         */
-
-        /**
-         * 
-         * show colorpicker with position  
-         * 
-         * @param {{left, top, hideDelay, isShortCut}} opt 
-         * @param {String|Object} color  
-         * @param {Function} showCallback  it is called when colorpicker is shown
-         * @param {Function} hideCallback  it is called once when colorpicker is hidden
-         */
-
-    }, {
-        key: 'show',
-        value: function show(opt, color$$1, showCallback, hideCallback) {
-
-            // 매번 이벤트를 지우고 다시 생성할 필요가 없어서 초기화 코드는 지움. 
-            // this.destroy();
-            // this.initializeEvent();
-            // define colorpicker callback
-            this.colorpickerShowCallback = showCallback;
-            this.colorpickerHideCallback = hideCallback;
-            this.$root.css(this.getInitalizePosition()).show();
-
-            this.definePosition(opt);
-
-            this.isColorPickerShow = true;
-            this.isShortCut = opt.isShortCut || false;
-            this.outputFormat = opt.outputFormat;
-
-            // define hide delay
-            this.hideDelay = +defaultValue(opt.hideDelay, 2000);
-            if (this.hideDelay > 0) {
-                this.setHideDelay(this.hideDelay);
-            }
-
-            this.$root.appendTo(this.$body);
-
-            this.initColorWithoutChangeEvent(color$$1);
-        }
-
-        /**
-         * 
-         * initialize color for colorpicker
-         * 
-         * @param {String|Object} newColor 
-         * @param {String} format  hex, rgb, hsl
-         */
-
-    }, {
-        key: 'initColor',
-        value: function initColor(newColor, format) {
-            this.dispatch('changeColor', newColor, format);
-        }
-
-        /**
-         * hide colorpicker 
-         * 
-         */
-
-    }, {
-        key: 'hide',
-        value: function hide() {
-            if (this.isColorPickerShow) {
-                // this.destroy();
-                this.$root.hide();
-                this.$root.remove(); // not empty 
-                this.isColorPickerShow = false;
-
-                this.callbackHideValue();
-            }
-        }
-
-        /**
-         * set to colors in current sets that you see 
-         * @param {Array} colors 
-         */
-
-    }, {
-        key: 'setColorsInPalette',
-        value: function setColorsInPalette() {
-            var colors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            this.dispatch('setCurrentColorAll', colors);
-        }
-
-        /**
-         * refresh all color palette 
-         * 
-         * @param {*} list 
-         */
-
-    }, {
-        key: 'setUserPalette',
-        value: function setUserPalette() {
-            var list = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            this.dispatch('setUserPalette', list);
-        }
-
-        /**
-         * private method 
-         */
-
-    }, {
-        key: 'getOption',
-        value: function getOption(key) {
-            return this.opt[key];
-        }
-    }, {
-        key: 'setOption',
-        value: function setOption(key, value$$1) {
-            this.opt[key] = value$$1;
-        }
-    }, {
-        key: 'getContainer',
-        value: function getContainer() {
-            return this.opt.container || document.body;
-        }
-    }, {
-        key: 'getColor',
-        value: function getColor(type) {
-            return this.read('toColor', type);
-        }
-    }, {
-        key: 'definePositionForArrow',
-        value: function definePositionForArrow(opt, elementScreenLeft, elementScreenTop) {
-            // console.log(arguments)
-        }
-    }, {
-        key: 'definePosition',
-        value: function definePosition(opt) {
-
-            var width = this.$root.width();
-            var height = this.$root.height();
-
-            // set left position for color picker
-            var elementScreenLeft = opt.left - this.$body.scrollLeft();
-            if (width + elementScreenLeft > window.innerWidth) {
-                elementScreenLeft -= width + elementScreenLeft - window.innerWidth;
-            }
-            if (elementScreenLeft < 0) {
-                elementScreenLeft = 0;
-            }
-
-            // set top position for color picker
-            var elementScreenTop = opt.top - this.$body.scrollTop();
-            if (height + elementScreenTop > window.innerHeight) {
-                elementScreenTop -= height + elementScreenTop - window.innerHeight;
-            }
-            if (elementScreenTop < 0) {
-                elementScreenTop = 0;
-            }
-
-            // set position
-            this.$root.css({
-                left: px(elementScreenLeft),
-                top: px(elementScreenTop)
-            });
-
-            // this.definePositionForArrow(opt, elementScreenLeft, elementScreenTop);
-        }
-    }, {
-        key: 'getInitalizePosition',
-        value: function getInitalizePosition() {
-            if (this.opt.position == 'inline') {
-                return {
-                    position: 'relative',
-                    left: 'auto',
-                    top: 'auto',
-                    display: 'inline-block'
-                };
-            } else {
-                var position = this.opt.position == 'absolute' ? 'absolute' : 'fixed';
-                return {
-                    position: position, // color picker has fixed position
-                    left: '-10000px',
-                    top: '-10000px'
-                };
-            }
-        }
-    }, {
-        key: 'setHideDelay',
-        value: function setHideDelay(delayTime) {
-            var _this3 = this;
-
-            delayTime = delayTime || 0;
-
-            var hideCallback = this.hide.bind(this);
-
-            this.$root.off('mouseenter');
-            this.$root.off('mouseleave');
-
-            this.$root.on('mouseenter', function () {
-                clearTimeout(_this3.timerCloseColorPicker);
-            });
-
-            this.$root.on('mouseleave', function () {
-                clearTimeout(_this3.timerCloseColorPicker);
-                _this3.timerCloseColorPicker = setTimeout(hideCallback, delayTime);
-            });
-
-            clearTimeout(this.timerCloseColorPicker);
-            // this.timerCloseColorPicker = setTimeout(hideCallback, delayTime);
-        }
-    }, {
-        key: 'callbackChangeValue',
-        value: function callbackChangeValue(color$$1) {
-            color$$1 = color$$1 || this.getCurrentColor();
-
-            if (isFunction(this.opt.onChange)) {
-                this.opt.onChange.call(this, color$$1);
-            }
-
-            if (isFunction(this.colorpickerShowCallback)) {
-                this.colorpickerShowCallback(color$$1);
-            }
-        }
-    }, {
-        key: 'callbackHideValue',
-        value: function callbackHideValue(color$$1) {
-            color$$1 = color$$1 || this.getCurrentColor();
-            if (isFunction(this.opt.onHide)) {
-                this.opt.onHide.call(this, color$$1);
-            }
-
-            if (isFunction(this.colorpickerHideCallback)) {
-                this.colorpickerHideCallback(color$$1);
-            }
-        }
-    }, {
-        key: 'getCurrentColor',
-        value: function getCurrentColor() {
-            return this.read('toColor', this.outputFormat);
-        }
-    }, {
-        key: 'checkColorPickerClass',
-        value: function checkColorPickerClass(el) {
-            var $el = new Dom(el);
-            var hasColorView = $el.closest('codemirror-colorview');
-            var hasColorPicker = $el.closest('codemirror-colorpicker');
-            var hasCodeMirror = $el.closest('CodeMirror');
-            var IsInHtml = el.nodeName == 'HTML';
-
-            return !!(hasColorPicker || hasColorView || hasCodeMirror);
-        }
-    }, {
-        key: 'checkInHtml',
-        value: function checkInHtml(el) {
-            var IsInHtml = el.nodeName == 'HTML';
-
-            return IsInHtml;
-        }
-    }, {
-        key: 'initializeStoreEvent',
-        value: function initializeStoreEvent() {
-            get$1(BaseColorPicker.prototype.__proto__ || Object.getPrototypeOf(BaseColorPicker.prototype), 'initializeStoreEvent', this).call(this);
-
-            this.$store.on('changeColor', this.callbackChange, this);
-            this.$store.on('changeFormat', this.callbackChange, this);
-        }
-    }, {
-        key: 'destroy',
-        value: function destroy() {
-            get$1(BaseColorPicker.prototype.__proto__ || Object.getPrototypeOf(BaseColorPicker.prototype), 'destroy', this).call(this);
-
-            this.$store.off('changeColor', this.callbackChange);
-            this.$store.off('changeFormat', this.callbackChange);
-
-            this.callbackChange = undefined;
-
-            // remove color picker callback
-            this.colorpickerShowCallback = undefined;
-            this.colorpickerHideCallback = undefined;
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: MOUSEUP('document'),
-        value: function value$$1(e) {
-
-            // when color picker clicked in outside
-            if (this.checkInHtml(e.target)) {
-                //this.setHideDelay(hideDelay);
-            } else if (this.checkColorPickerClass(e.target) == false) {
-                this.hide();
-            }
-        }
-    }]);
-    return BaseColorPicker;
-}(UIElement);
-
-var BaseBox = function (_UIElement) {
-    inherits(BaseBox, _UIElement);
-
-    function BaseBox() {
-        classCallCheck(this, BaseBox);
-        return possibleConstructorReturn(this, (BaseBox.__proto__ || Object.getPrototypeOf(BaseBox)).apply(this, arguments));
-    }
-
-    createClass(BaseBox, [{
-        key: 'refresh',
-        value: function refresh() {}
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {}
-
-        /** push change event  */
-
-    }, {
-        key: 'changeColor',
-        value: function changeColor(opt) {
-            this.dispatch('changeColor', opt || {});
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: POINTEREND('document'),
-        value: function value(e) {
-            this.onDragEnd(e);
-        }
-    }, {
-        key: POINTERMOVE('document'),
-        value: function value(e) {
-            this.onDragMove(e);
-        }
-    }, {
-        key: POINTERSTART('$bar'),
-        value: function value(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: POINTERSTART('$container'),
-        value: function value(e) {
-            this.isDown = true;
-            this.onDragStart(e);
-        }
-    }, {
-        key: 'onDragStart',
-        value: function onDragStart(e) {
-            this.isDown = true;
-            this.refreshColorUI(e);
-        }
-    }, {
-        key: 'onDragMove',
-        value: function onDragMove(e) {
-            if (this.isDown) {
-                this.refreshColorUI(e);
-            }
-        }
-
-        /* called when mouse is ended move  */
-
-    }, {
-        key: 'onDragEnd',
-        value: function onDragEnd(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return BaseBox;
-}(UIElement);
-
-var BaseSlider = function (_BaseBox) {
-    inherits(BaseSlider, _BaseBox);
-
-    function BaseSlider() {
-        classCallCheck(this, BaseSlider);
-        return possibleConstructorReturn(this, (BaseSlider.__proto__ || Object.getPrototypeOf(BaseSlider)).apply(this, arguments));
-    }
-
-    createClass(BaseSlider, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(BaseSlider.prototype.__proto__ || Object.getPrototypeOf(BaseSlider.prototype), 'initialize', this).call(this);
-            this.minValue = 0; // min domain value 
-            this.maxValue = 1; // max domain value 
-        }
-
-        /* slider container's min and max position */
-
-    }, {
-        key: 'getMinMaxPosition',
-        value: function getMinMaxPosition() {
-            var min = this.getMinPosition();
-            var width = this.getMaxDist();
-            var max = min + width;
-
-            return { min: min, max: max, width: width };
-        }
-
-        /** get current position on page  */
-
-    }, {
-        key: 'getCurrent',
-        value: function getCurrent(value$$1) {
-            return min + this.getMaxDist() * value$$1;
-        }
-
-        /** get min position on slider container  */
-
-    }, {
-        key: 'getMinPosition',
-        value: function getMinPosition() {
-            return this.refs.$container.offset().left;
-        }
-    }, {
-        key: 'getMaxDist',
-        value: function getMaxDist() {
-            return this.refs.$container.width();
-        }
-
-        /** get dist for position value */
-
-    }, {
-        key: 'getDist',
-        value: function getDist(current) {
-            var _getMinMaxPosition = this.getMinMaxPosition(),
-                min = _getMinMaxPosition.min,
-                max = _getMinMaxPosition.max;
-
-            var dist;
-            if (current < min) {
-                dist = 0;
-            } else if (current > max) {
-                dist = 100;
-            } else {
-                dist = (current - min) / (max - min) * 100;
-            }
-
-            return dist;
-        }
-
-        /** get caculated dist for domain value   */
-
-    }, {
-        key: 'getCaculatedDist',
-        value: function getCaculatedDist(e) {
-            var current = e ? this.getMousePosition(e) : this.getCurrent(this.getDefaultValue() / this.maxValue);
-            var dist = this.getDist(current);
-
-            return dist;
-        }
-
-        /** get default value used in slider container */
-
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return 0;
-        }
-
-        /** set mosue position */
-
-    }, {
-        key: 'setMousePosition',
-        value: function setMousePosition(x) {
-            this.refs.$bar.css({ left: px(x) });
-        }
-
-        /** set mouse position in page */
-
-    }, {
-        key: 'getMousePosition',
-        value: function getMousePosition(e) {
-            return Event.pos(e).pageX;
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.setColorUI();
-        }
-
-        /** set drag bar position  */
-
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI(v) {
-
-            v = v || this.getDefaultValue();
-
-            if (v <= this.minValue) {
-                this.refs.$bar.addClass('first').removeClass('last');
-            } else if (v >= this.maxValue) {
-                this.refs.$bar.addClass('last').removeClass('first');
-            } else {
-                this.refs.$bar.removeClass('last').removeClass('first');
-            }
-
-            this.setMousePosition(this.getMaxDist() * ((v || 0) / this.maxValue));
-        }
-    }]);
-    return BaseSlider;
-}(BaseBox);
-
-var Value = function (_BaseSlider) {
-    inherits(Value, _BaseSlider);
-
-    function Value() {
-        classCallCheck(this, Value);
-        return possibleConstructorReturn(this, (Value.__proto__ || Object.getPrototypeOf(Value)).apply(this, arguments));
-    }
-
-    createClass(Value, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(Value.prototype.__proto__ || Object.getPrototypeOf(Value.prototype), 'initialize', this).call(this);
-
-            this.minValue = 0;
-            this.maxValue = 1;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="value">\n                <div ref="$container" class="value-container">\n                    <div ref="$bar" class="drag-bar"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'setBackgroundColor',
-        value: function setBackgroundColor() {
-            this.refs.$container.css("background-color", this.read('toRGB'));
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            get$1(Value.prototype.__proto__ || Object.getPrototypeOf(Value.prototype), 'refresh', this).call(this);
-            this.setBackgroundColor();
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.hsv.v;
-        }
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {
-            var dist = this.getCaculatedDist(e);
-
-            this.setColorUI(dist / 100 * this.maxValue);
-
-            this.changeColor({
-                type: 'hsv',
-                v: dist / 100 * this.maxValue
-            });
-        }
-    }]);
-    return Value;
-}(BaseSlider);
-
-var Opacity = function (_BaseSlider) {
-    inherits(Opacity, _BaseSlider);
-
-    function Opacity() {
-        classCallCheck(this, Opacity);
-        return possibleConstructorReturn(this, (Opacity.__proto__ || Object.getPrototypeOf(Opacity)).apply(this, arguments));
-    }
-
-    createClass(Opacity, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(Opacity.prototype.__proto__ || Object.getPrototypeOf(Opacity.prototype), 'initialize', this).call(this);
-
-            this.minValue = 0;
-            this.maxValue = 1;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="opacity">\n            <div ref="$container" class="opacity-container">\n                <div ref="$colorbar" class="color-bar"></div>\n                <div ref="$bar" class="drag-bar2"></div>\n            </div>\n        </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            get$1(Opacity.prototype.__proto__ || Object.getPrototypeOf(Opacity.prototype), 'refresh', this).call(this);
-            this.setOpacityColorBar();
-        }
-    }, {
-        key: 'setOpacityColorBar',
-        value: function setOpacityColorBar() {
-            var rgb = _extends({}, this.$store.rgb);
-
-            rgb.a = 0;
-            var start = Color$1.format(rgb, 'rgb');
-
-            rgb.a = 1;
-            var end = Color$1.format(rgb, 'rgb');
-
-            this.refs.$colorbar.css('background', 'linear-gradient(to right, ' + start + ', ' + end + ')');
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.alpha;
-        }
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {
-            var dist = this.getCaculatedDist(e);
-
-            this.setColorUI(dist / 100 * this.maxValue);
-
-            this.changeColor({
-                a: Math.floor(dist) / 100 * this.maxValue
-            });
-        }
-    }]);
-    return Opacity;
-}(BaseSlider);
-
-var ColorView = function (_UIElement) {
-    inherits(ColorView, _UIElement);
-
-    function ColorView() {
-        classCallCheck(this, ColorView);
-        return possibleConstructorReturn(this, (ColorView.__proto__ || Object.getPrototypeOf(ColorView)).apply(this, arguments));
-    }
-
-    createClass(ColorView, [{
-        key: 'template',
-        value: function template() {
-            return '<div class="color"></div>';
-        }
-    }, {
-        key: 'setBackgroundColor',
-        value: function setBackgroundColor() {
-            this.refs.$el.css("background-color", this.read('toRGB'));
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.setBackgroundColor();
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return ColorView;
-}(UIElement);
-
-var ColorWheel = function (_UIElement) {
-    inherits(ColorWheel, _UIElement);
-
-    function ColorWheel() {
-        classCallCheck(this, ColorWheel);
-        return possibleConstructorReturn(this, (ColorWheel.__proto__ || Object.getPrototypeOf(ColorWheel)).apply(this, arguments));
-    }
-
-    createClass(ColorWheel, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(ColorWheel.prototype.__proto__ || Object.getPrototypeOf(ColorWheel.prototype), 'initialize', this).call(this);
-            this.width = 214;
-            this.height = 214;
-            this.thinkness = 0;
-            this.half_thinkness = 0;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="wheel">\n            <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>\n            <div class="wheel-canvas" ref="$valuewheel" ></div>\n            <div class="drag-pointer" ref="$drag_pointer"></div>\n        </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh(isEvent) {
-            this.setColorUI(isEvent);
-        }
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI(isEvent) {
-            this.renderCanvas();
-            this.renderValue();
-            this.setHueColor(null, isEvent);
-        }
-    }, {
-        key: 'renderValue',
-        value: function renderValue() {
-            var value = 1 - this.$store.hsv.v;
-            this.refs.$valuewheel.css('background-color', 'rgba(0, 0, 0, ' + value + ')');
-        }
-    }, {
-        key: 'renderWheel',
-        value: function renderWheel(width, height) {
-
-            if (this.width && !width) width = this.width;
-            if (this.height && !height) height = this.height;
-
-            var $canvas = new Dom('canvas');
-            var context = $canvas.el.getContext('2d');
-            $canvas.el.width = width;
-            $canvas.el.height = height;
-            $canvas.px('width', width);
-            $canvas.px('height', height);
-
-            var img = context.getImageData(0, 0, width, height);
-            var pixels = img.data;
-            var half_width = Math.floor(width / 2);
-            var half_height = Math.floor(height / 2);
-
-            var radius = width > height ? half_height : half_width;
-            var cx = half_width;
-            var cy = half_height;
-
-            for (var y = 0; y < height; y++) {
-                for (var x = 0; x < width; x++) {
-                    var rx = x - cx + 1,
-                        ry = y - cy + 1,
-                        d = rx * rx + ry * ry,
-                        hue = caculateAngle(rx, ry);
-
-                    var rgb = Color$1.HSVtoRGB(hue, // 0~360 hue 
-                    Math.min(Math.sqrt(d) / radius, 1), // 0..1 Saturation 
-                    1 //  0..1 Value
-                    );
-
-                    var index = (y * width + x) * 4;
-                    pixels[index] = rgb.r;
-                    pixels[index + 1] = rgb.g;
-                    pixels[index + 2] = rgb.b;
-                    pixels[index + 3] = 255;
-                }
-            }
-
-            context.putImageData(img, 0, 0);
-
-            if (this.thinkness > 0) {
-                context.globalCompositeOperation = "destination-out"; // destination-out 은 그리는 영역이 지워진다. 
-                context.fillStyle = 'black';
-                context.beginPath();
-                context.arc(cx, cy, radius - this.thinkness, 0, Math.PI * 2);
-                context.closePath();
-                context.fill();
-            }
-
-            return $canvas;
-        }
-    }, {
-        key: 'renderCanvas',
-        value: function renderCanvas() {
-
-            // only once rendering 
-            if (this.$store.createdWheelCanvas) return;
-
-            var $canvas = this.refs.$colorwheel;
-            // console.log($canvas);
-            var context = $canvas.el.getContext('2d');
-
-            var _$canvas$size = $canvas.size(),
-                _$canvas$size2 = slicedToArray(_$canvas$size, 2),
-                width = _$canvas$size2[0],
-                height = _$canvas$size2[1];
-
-            if (this.width && !width) width = this.width;
-            if (this.height && !height) height = this.height;
-
-            $canvas.el.width = width;
-            $canvas.el.height = height;
-            $canvas.px('width', width);
-            $canvas.px('height', height);
-
-            var $wheelCanvas = this.renderWheel(width, height);
-
-            context.drawImage($wheelCanvas.el, 0, 0);
-
-            this.$store.createdWheelCanvas = true;
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.hsv.h;
-        }
-    }, {
-        key: 'getDefaultSaturation',
-        value: function getDefaultSaturation() {
-            return this.$store.hsv.s;
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
-            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.$el.width();
-            var height = this.$el.height();
-            var radius = this.refs.$colorwheel.width() / 2;
-
-            var minX = this.$el.offsetLeft();
-            var centerX = minX + width / 2;
-
-            var minY = this.$el.offsetTop();
-            var centerY = minY + height / 2;
-
-            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
-        }
-    }, {
-        key: 'setHueColor',
-        value: function setHueColor(e, isEvent) {
-
-            if (!this.state.get('$el.width')) return;
-
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), this.getDefaultSaturation() * radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                d = rx * rx + ry * ry,
-                hue = caculateAngle(rx, ry);
-
-            if (d > radius * radius) {
-                var _getCurrentXY2 = this.getCurrentXY(null, hue, radius, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
-            }
-
-            // saturation 을 
-            var saturation = Math.min(Math.sqrt(d) / radius, 1);
-
-            // set drag pointer position 
-            this.refs.$drag_pointer.px('left', x - minX);
-            this.refs.$drag_pointer.px('top', y - minY);
-
-            if (!isEvent) {
-                this.changeColor({
-                    type: 'hsv',
-                    h: hue,
-                    s: saturation
-                });
-            }
-        }
-    }, {
-        key: 'changeColor',
-        value: function changeColor(opt) {
-            this.dispatch('changeColor', opt || {});
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh(true);
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh(true);
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: POINTEREND('document'),
-        value: function value(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: POINTERMOVE('document'),
-        value: function value(e) {
-            if (this.isDown) {
-                this.setHueColor(e);
-            }
-        }
-    }, {
-        key: POINTERSTART('$drag_pointer'),
-        value: function value(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: POINTERSTART(),
-        value: function value(e) {
-            this.isDown = true;
-            this.setHueColor(e);
-        }
-    }]);
-    return ColorWheel;
-}(UIElement);
-
-var ColorInformation = function (_UIElement) {
-    inherits(ColorInformation, _UIElement);
-
-    function ColorInformation() {
-        classCallCheck(this, ColorInformation);
-        return possibleConstructorReturn(this, (ColorInformation.__proto__ || Object.getPrototypeOf(ColorInformation)).apply(this, arguments));
-    }
-
-    createClass(ColorInformation, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="information hex">\n            <div ref="$informationChange" class="information-change">\n                <button ref="$formatChangeButton" type="button" class="format-change-button arrow-button"></button>\n            </div>\n            <div class="information-item hex">\n                <div class="input-field hex">\n                    <input ref="$hexCode" class="input" type="text" />\n                    <div class="title">HEX</div>\n                </div>\n            </div>\n            <div class="information-item rgb">\n                <div class="input-field rgb-r">\n                    <input ref="$rgb_r" class="input" type="number" step="1" min="0" max="255" />\n                    <div class="title">R</div>\n                </div>\n                <div class="input-field rgb-g">\n                    <input ref="$rgb_g" class="input" type="number" step="1" min="0" max="255" />\n                    <div class="title">G</div>\n                </div>\n                <div class="input-field rgb-b">\n                    <input ref="$rgb_b" class="input" type="number" step="1" min="0" max="255" />\n                    <div class="title">B</div>\n                </div>          \n                <div class="input-field rgb-a">\n                    <input ref="$rgb_a" class="input" type="number" step="0.01" min="0" max="1" />\n                    <div class="title">A</div>\n                </div>                                                            \n            </div>\n            <div class="information-item hsl">\n                <div class="input-field hsl-h">\n                    <input ref="$hsl_h" class="input" type="number" step="1" min="0" max="360" />\n                    <div class="title">H</div>\n                </div>\n                <div class="input-field hsl-s">\n                    <input ref="$hsl_s" class="input" type="number" step="1" min="0" max="100" />\n                    <div class="postfix">%</div>\n                    <div class="title">S</div>\n                </div>\n                <div class="input-field hsl-l">\n                    <input ref="$hsl_l" class="input" type="number" step="1" min="0" max="100" />\n                    <div class="postfix">%</div>                        \n                    <div class="title">L</div>\n                </div>\n                <div class="input-field hsl-a">\n                    <input ref="$hsl_a" class="input" type="number" step="0.01" min="0" max="1" />\n                    <div class="title">A</div>\n                </div>\n            </div>\n        </div>\n        ';
-        }
-    }, {
-        key: 'setCurrentFormat',
-        value: function setCurrentFormat(format) {
-            this.format = format;
-
-            this.initFormat();
-        }
-    }, {
-        key: 'initFormat',
-        value: function initFormat() {
-            var current_format = this.format || 'hex';
-
-            this.$el.removeClass('hex');
-            this.$el.removeClass('rgb');
-            this.$el.removeClass('hsl');
-            this.$el.addClass(current_format);
-        }
-    }, {
-        key: 'nextFormat',
-        value: function nextFormat() {
-            var current_format = this.format || 'hex';
-
-            var next_format = 'hex';
-            if (current_format == 'hex') {
-                next_format = 'rgb';
-            } else if (current_format == 'rgb') {
-                next_format = 'hsl';
-            } else if (current_format == 'hsl') {
-                if (this.$store.alpha == 1) {
-                    next_format = 'hex';
-                } else {
-                    next_format = 'rgb';
-                }
-            }
-
-            this.$el.removeClass(current_format);
-            this.$el.addClass(next_format);
-            this.format = next_format;
-
-            this.dispatch('changeFormat', this.format);
-        }
-    }, {
-        key: 'getFormat',
-        value: function getFormat() {
-            return this.format || 'hex';
-        }
-    }, {
-        key: 'checkNumberKey',
-        value: function checkNumberKey(e) {
-            return Event.checkNumberKey(e);
-        }
-    }, {
-        key: 'checkNotNumberKey',
-        value: function checkNotNumberKey(e) {
-            return !Event.checkNumberKey(e);
-        }
-    }, {
-        key: 'changeRgbColor',
-        value: function changeRgbColor() {
-            this.dispatch('changeColor', {
-                type: 'rgb',
-                r: this.refs.$rgb_r.int(),
-                g: this.refs.$rgb_g.int(),
-                b: this.refs.$rgb_b.int(),
-                a: this.refs.$rgb_a.float()
-            });
-        }
-    }, {
-        key: 'changeHslColor',
-        value: function changeHslColor() {
-            this.dispatch('changeColor', {
-                type: 'hsl',
-                h: this.refs.$hsl_h.int(),
-                s: this.refs.$hsl_s.int(),
-                l: this.refs.$hsl_l.int(),
-                a: this.refs.$hsl_a.float()
-            });
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: INPUT('$rgb_r'),
-        value: function value(e) {
-            this.changeRgbColor();
-        }
-    }, {
-        key: INPUT('$rgb_g'),
-        value: function value(e) {
-            this.changeRgbColor();
-        }
-    }, {
-        key: INPUT('$rgb_b'),
-        value: function value(e) {
-            this.changeRgbColor();
-        }
-    }, {
-        key: INPUT('$rgb_a'),
-        value: function value(e) {
-            this.changeRgbColor();
-        }
-    }, {
-        key: INPUT('$hsl_h'),
-        value: function value(e) {
-            this.changeHslColor();
-        }
-    }, {
-        key: INPUT('$hsl_s'),
-        value: function value(e) {
-            this.changeHslColor();
-        }
-    }, {
-        key: INPUT('$hsl_l'),
-        value: function value(e) {
-            this.changeHslColor();
-        }
-    }, {
-        key: INPUT('$hsl_a'),
-        value: function value(e) {
-            this.changeHslColor();
-        }
-    }, {
-        key: KEYDOWN('$hexCode'),
-        value: function value(e) {
-            if (e.which < 65 || e.which > 70) {
-                return this.checkNumberKey(e);
-            }
-        }
-    }, {
-        key: KEYUP('$hexCode'),
-        value: function value(e) {
-            var code = this.refs.$hexCode.val();
-
-            if (code.charAt(0) == '#' && code.length == 7) {
-                this.dispatch('changeColor', code);
-            }
-        }
-    }, {
-        key: CLICK('$formatChangeButton'),
-        value: function value(e) {
-            this.nextFormat();
-        }
-    }, {
-        key: 'setRGBInput',
-        value: function setRGBInput() {
-            this.refs.$rgb_r.val(this.$store.rgb.r);
-            this.refs.$rgb_g.val(this.$store.rgb.g);
-            this.refs.$rgb_b.val(this.$store.rgb.b);
-            this.refs.$rgb_a.val(this.$store.alpha);
-        }
-    }, {
-        key: 'setHSLInput',
-        value: function setHSLInput() {
-            this.refs.$hsl_h.val(this.$store.hsl.h);
-            this.refs.$hsl_s.val(this.$store.hsl.s);
-            this.refs.$hsl_l.val(this.$store.hsl.l);
-            this.refs.$hsl_a.val(this.$store.alpha);
-        }
-    }, {
-        key: 'setHexInput',
-        value: function setHexInput() {
-            this.refs.$hexCode.val(this.read('toHEX'));
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.setCurrentFormat(this.$store.format);
-            this.setRGBInput();
-            this.setHSLInput();
-            this.setHexInput();
-        }
-    }]);
-    return ColorInformation;
-}(UIElement);
-
-var _templateObject$1 = taggedTemplateLiteral(['\n            <div>\n                ', '\n            </div>\n        '], ['\n            <div>\n                ', '\n            </div>\n        ']);
-var _templateObject2 = taggedTemplateLiteral(['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>'], ['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>']);
-
-var DATA_COLORSETS_INDEX = 'data-colorsets-index';
-
-var ColorSetsChooser = function (_UIElement) {
-    inherits(ColorSetsChooser, _UIElement);
-
-    function ColorSetsChooser() {
-        classCallCheck(this, ColorSetsChooser);
-        return possibleConstructorReturn(this, (ColorSetsChooser.__proto__ || Object.getPrototypeOf(ColorSetsChooser)).apply(this, arguments));
-    }
-
-    createClass(ColorSetsChooser, [{
-        key: 'template',
-        value: function template() {
-            return '<div class="color-chooser">\n            <div class="color-chooser-container">\n                <div class="colorsets-item colorsets-item-header">\n                    <h1 class="title">Color Palettes</h1>\n                    <span ref="$toggleButton" class="items">&times;</span>\n                </div>\n                <div ref="$colorsetsList" class="colorsets-list"></div>\n            </div>\n        </div>';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT('changeCurrentColorSets'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('toggleColorChooser'),
-        value: function value() {
-            this.toggle();
-        }
-
-        // loadable 
-
-    }, {
-        key: LOAD('$colorsetsList'),
-        value: function value() {
-            // colorsets 
-            var colorSets = this.read('getColorSetsList');
-
-            return html(_templateObject$1, colorSets.map(function (element, index) {
-                return html(_templateObject2, index, element.name, element.colors.filter(function (color, i) {
-                    return i < 5;
-                }).map(function (color) {
-                    color = color || 'rgba(255, 255, 255, 1)';
-                    return '<div class="color-item" title="' + color + '">\n                                                <div class="color-view" style="background-color: ' + color + '"></div>\n                                            </div>';
-                }));
-            }));
-        }
-    }, {
-        key: 'show',
-        value: function show() {
-            this.$el.addClass('open');
-        }
-    }, {
-        key: 'hide',
-        value: function hide() {
-            this.$el.removeClass('open');
-        }
-    }, {
-        key: 'toggle',
-        value: function toggle() {
-            this.$el.toggleClass('open');
-        }
-    }, {
-        key: CLICK('$toggleButton'),
-        value: function value(e) {
-            this.toggle();
-        }
-    }, {
-        key: CLICK('$colorsetsList .colorsets-item'),
-        value: function value(e, $dt) {
-            if ($dt) {
-
-                var index = parseInt($dt.attr(DATA_COLORSETS_INDEX));
-
-                this.dispatch('setCurrentColorSets', index);
-
-                this.hide();
-            }
-        }
-    }, {
-        key: 'destroy',
-        value: function destroy() {
-            get$1(ColorSetsChooser.prototype.__proto__ || Object.getPrototypeOf(ColorSetsChooser.prototype), 'destroy', this).call(this);
-
-            this.hide();
-        }
-    }]);
-    return ColorSetsChooser;
-}(UIElement);
-
-var _templateObject$2 = taggedTemplateLiteral(['<div class="current-color-sets">\n            ', '   \n            ', '         \n            </div>'], ['<div class="current-color-sets">\n            ', '   \n            ', '         \n            </div>']);
-
-var CurrentColorSets = function (_UIElement) {
-    inherits(CurrentColorSets, _UIElement);
-
-    function CurrentColorSets() {
-        classCallCheck(this, CurrentColorSets);
-        return possibleConstructorReturn(this, (CurrentColorSets.__proto__ || Object.getPrototypeOf(CurrentColorSets)).apply(this, arguments));
-    }
-
-    createClass(CurrentColorSets, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="colorsets">\n                <div class="menu" title="Open Color Palettes">\n                    <button ref="$colorSetsChooseButton" type="button" class="color-sets-choose-btn arrow-button"></button>\n                </div>\n                <div ref="$colorSetsColorList" class="color-list"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: LOAD('$colorSetsColorList'),
-        value: function value$$1() {
-            var currentColorSets = this.read('getCurrentColorSets');
-            var colors = this.read('getCurrentColors');
-
-            return html(_templateObject$2, colors.map(function (color$$1, i) {
-                return '<div class="color-item" title="' + color$$1 + '" data-index="' + i + '" data-color="' + color$$1 + '">\n                    <div class="empty"></div>\n                    <div class="color-view" style="background-color: ' + color$$1 + '"></div>\n                </div>';
-            }), currentColorSets.edit ? '<div class="add-color-item">+</div>' : EMPTY_STRING);
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: 'addColor',
-        value: function addColor(color$$1) {
-            this.dispatch('addCurrentColor', color$$1);
-            this.refresh();
-        }
-    }, {
-        key: EVENT('changeCurrentColorSets'),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: CLICK('$colorSetsChooseButton'),
-        value: function value$$1(e) {
-            this.emit('toggleColorChooser');
-        }
-    }, {
-        key: CONTEXTMENU('$colorSetsColorList'),
-        value: function value$$1(e) {
-            e.preventDefault();
-            var currentColorSets = this.read('getCurrentColorSets');
-
-            if (!currentColorSets.edit) {
-                return;
-            }
-
-            var $target = new Dom(e.target);
-
-            var $item = $target.closest('color-item');
-
-            if ($item) {
-                var index = parseInt($item.attr('data-index'));
-
-                this.emit('showContextMenu', e, index);
-            } else {
-                this.emit('showContextMenu', e);
-            }
-        }
-    }, {
-        key: CLICK('$colorSetsColorList .add-color-item'),
-        value: function value$$1(e) {
-            this.addColor(this.read('toColor'));
-        }
-    }, {
-        key: CLICK('$colorSetsColorList .color-item'),
-        value: function value$$1(e, $dt) {
-            this.dispatch('changeColor', $dt.attr('data-color'));
-        }
-    }]);
-    return CurrentColorSets;
-}(UIElement);
-
-var CurrentColorSetsContextMenu = function (_UIElement) {
-    inherits(CurrentColorSetsContextMenu, _UIElement);
-
-    function CurrentColorSetsContextMenu() {
-        classCallCheck(this, CurrentColorSetsContextMenu);
-        return possibleConstructorReturn(this, (CurrentColorSetsContextMenu.__proto__ || Object.getPrototypeOf(CurrentColorSetsContextMenu)).apply(this, arguments));
-    }
-
-    createClass(CurrentColorSetsContextMenu, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <ul class="colorsets-contextmenu">\n                <li class="menu-item small-hide" data-type="remove-color">Remove color</li>\n                <li class="menu-item small-hide" data-type="remove-all-to-the-right">Remove all to the right</li>\n                <li class="menu-item" data-type="clear-palette">Clear palette</li>\n            </ul>\n        ';
-        }
-    }, {
-        key: 'show',
-        value: function show(e, index) {
-            var $event = Event.pos(e);
-
-            this.$el.px('top', $event.clientY - 10);
-            this.$el.px('left', $event.clientX);
-            this.$el.addClass('show');
-            this.selectedColorIndex = index;
-
-            if (isUndefined$1(this.selectedColorIndex)) {
-                this.$el.addClass('small');
-            } else {
-                this.$el.removeClass('small');
-            }
-        }
-    }, {
-        key: 'hide',
-        value: function hide() {
-            this.$el.removeClass('show');
-        }
-    }, {
-        key: 'runCommand',
-        value: function runCommand(command) {
-            switch (command) {
-                case 'remove-color':
-                    this.dispatch('removeCurrentColor', this.selectedColorIndex);
-                    break;
-                case 'remove-all-to-the-right':
-                    this.dispatch('removeCurrentColorToTheRight', this.selectedColorIndex);
-                    break;
-                case 'clear-palette':
-                    this.dispatch('clearPalette');
-                    break;
-            }
-        }
-    }, {
-        key: EVENT('showContextMenu'),
-        value: function value(e, index) {
-            this.show(e, index);
-        }
-    }, {
-        key: CLICK('$el .menu-item'),
-        value: function value(e, $dt) {
-            e.preventDefault();
-
-            this.runCommand($dt.attr('data-type'));
-            this.hide();
-        }
-    }]);
-    return CurrentColorSetsContextMenu;
-}(UIElement);
-
-var MacOSColorPicker = function (_BaseColorPicker) {
-    inherits(MacOSColorPicker, _BaseColorPicker);
-
-    function MacOSColorPicker() {
-        classCallCheck(this, MacOSColorPicker);
-        return possibleConstructorReturn(this, (MacOSColorPicker.__proto__ || Object.getPrototypeOf(MacOSColorPicker)).apply(this, arguments));
-    }
-
-    createClass(MacOSColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <ColorWheel />\n                <div class="control">\n                    <Value />\n                    <Opacity />\n                    <div class="empty"></div>\n                    <ColorView />\n                </div>\n                <Information />\n                <CurrentColorSets />\n                <ColorSetsChooser >\n                <ContextMenu />\n            </div> \n        ';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Value: Value, Opacity: Opacity, ColorView: ColorView,
-                ColorWheel: ColorWheel,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return MacOSColorPicker;
-}(BaseColorPicker);
-
-var Hue = function (_BaseSlider) {
-    inherits(Hue, _BaseSlider);
-
-    function Hue() {
-        classCallCheck(this, Hue);
-        return possibleConstructorReturn(this, (Hue.__proto__ || Object.getPrototypeOf(Hue)).apply(this, arguments));
-    }
-
-    createClass(Hue, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(Hue.prototype.__proto__ || Object.getPrototypeOf(Hue.prototype), 'initialize', this).call(this);
-            this.minValue = 0;
-            this.maxValue = 360;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="hue">\n                <div ref="$container" class="hue-container">\n                    <div ref="$bar" class="drag-bar"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.hsv.h;
-        }
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {
-
-            var dist = this.getCaculatedDist(e);
-
-            this.setColorUI(dist / 100 * this.maxValue);
-
-            this.changeColor({
-                h: dist / 100 * this.maxValue,
-                type: 'hsv'
-            });
-        }
-    }]);
-    return Hue;
-}(BaseSlider);
-
-var ColorPalette = function (_UIElement) {
-    inherits(ColorPalette, _UIElement);
-
-    function ColorPalette() {
-        classCallCheck(this, ColorPalette);
-        return possibleConstructorReturn(this, (ColorPalette.__proto__ || Object.getPrototypeOf(ColorPalette)).apply(this, arguments));
-    }
-
-    createClass(ColorPalette, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="color-panel">\n            <div ref="$saturation" class="saturation">\n                <div ref="$value" class="value">\n                    <div ref="$drag_pointer" class="drag-pointer"></div>\n                </div>\n            </div>        \n        </div>        \n        ';
-        }
-    }, {
-        key: 'setBackgroundColor',
-        value: function setBackgroundColor(color) {
-            this.$el.css("background-color", color);
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.setColorUI();
-        }
-    }, {
-        key: 'caculateSV',
-        value: function caculateSV() {
-            var pos = this.drag_pointer_pos || { x: 0, y: 0 };
-
-            var width = this.$el.width();
-            var height = this.$el.height();
-
-            var s = pos.x / width;
-            var v = (height - pos.y) / height;
-
-            this.dispatch('changeColor', {
-                type: 'hsv',
-                s: s,
-                v: v
-            });
-        }
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI() {
-            var x = this.state.get('$el.width') * this.$store.hsv.s,
-                y = this.state.get('$el.height') * (1 - this.$store.hsv.v);
-
-            this.refs.$drag_pointer.px('left', x);
-            this.refs.$drag_pointer.px('top', y);
-
-            this.drag_pointer_pos = { x: x, y: y };
-
-            this.setBackgroundColor(this.read('getHueColor'));
-        }
-    }, {
-        key: 'setMainColor',
-        value: function setMainColor(e) {
-            // e.preventDefault();
-            var pos = this.state.get('$el.offset');
-            var w = this.state.get('$el.contentWidth');
-            var h = this.state.get('$el.contentHeight');
-
-            var x = Event.pos(e).pageX - pos.left;
-            var y = Event.pos(e).pageY - pos.top;
-
-            if (x < 0) x = 0;else if (x > w) x = w;
-
-            if (y < 0) y = 0;else if (y > h) y = h;
-
-            this.refs.$drag_pointer.px('left', x);
-            this.refs.$drag_pointer.px('top', y);
-
-            this.drag_pointer_pos = { x: x, y: y };
-
-            this.caculateSV();
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: POINTEREND('document'),
-        value: function value(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: POINTERMOVE('document'),
-        value: function value(e) {
-            if (this.isDown) {
-                this.setMainColor(e);
-            }
-        }
-    }, {
-        key: POINTERSTART(),
-        value: function value(e) {
-            this.isDown = true;
-            this.setMainColor(e);
-        }
-    }, {
-        key: POINTEREND(),
-        value: function value(e) {
-            this.isDown = false;
-        }
-    }]);
-    return ColorPalette;
-}(UIElement);
-
-var ChromeDevToolColorPicker = function (_BaseColorPicker) {
-    inherits(ChromeDevToolColorPicker, _BaseColorPicker);
-
-    function ChromeDevToolColorPicker() {
-        classCallCheck(this, ChromeDevToolColorPicker);
-        return possibleConstructorReturn(this, (ChromeDevToolColorPicker.__proto__ || Object.getPrototypeOf(ChromeDevToolColorPicker)).apply(this, arguments));
-    }
-
-    createClass(ChromeDevToolColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '<div class=\'colorpicker-body\'>\n            <Palette />\n            <div class="control">\n                <Hue />\n                <Opacity />\n                <div class="empty"></div>\n                <ColorView />\n            </div>\n            <Information />\n            <CurrentColorSets />\n            <ColorSetsChooser />\n            <ContextMenu />\n        </div>';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Hue: Hue, Opacity: Opacity, ColorView: ColorView,
-                Palette: ColorPalette,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return ChromeDevToolColorPicker;
-}(BaseColorPicker);
-
-var MiniColorPicker = function (_BaseColorPicker) {
-    inherits(MiniColorPicker, _BaseColorPicker);
-
-    function MiniColorPicker() {
-        classCallCheck(this, MiniColorPicker);
-        return possibleConstructorReturn(this, (MiniColorPicker.__proto__ || Object.getPrototypeOf(MiniColorPicker)).apply(this, arguments));
-    }
-
-    createClass(MiniColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <Palette />\n                <div class="control">\n                    <Hue />\n                    <Opacity />\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Hue: Hue, Opacity: Opacity, Palette: ColorPalette
-            };
-        }
-    }]);
-    return MiniColorPicker;
-}(BaseColorPicker);
-
-var VerticalSlider = function (_BaseSlider) {
-    inherits(VerticalSlider, _BaseSlider);
-
-    function VerticalSlider() {
-        classCallCheck(this, VerticalSlider);
-        return possibleConstructorReturn(this, (VerticalSlider.__proto__ || Object.getPrototypeOf(VerticalSlider)).apply(this, arguments));
-    }
-
-    createClass(VerticalSlider, [{
-        key: 'getMaxDist',
-
-
-        /** get max height for vertical slider */
-        value: function getMaxDist() {
-            return this.refs.$container.height();
-        }
-
-        /** set mouse pointer for vertical slider */
-
-    }, {
-        key: 'setMousePosition',
-        value: function setMousePosition(y) {
-            this.refs.$bar.px('top', y);
-        }
-
-        /** get mouse position by pageY for vertical slider */
-
-    }, {
-        key: 'getMousePosition',
-        value: function getMousePosition(e) {
-            return Event.pos(e).pageY;
-        }
-
-        /** get min position for vertial slider */
-
-    }, {
-        key: 'getMinPosition',
-        value: function getMinPosition() {
-            return this.refs.$container.offset().top;
-        }
-
-        /** get caculated dist for domain value   */
-
-    }, {
-        key: 'getCaculatedDist',
-        value: function getCaculatedDist(e) {
-            var current = e ? this.getMousePosition(e) : this.getCurrent(this.getDefaultValue() / this.maxValue);
-            var dist = 100 - this.getDist(current);
-
-            return dist;
-        }
-
-        /** set drag bar position  */
-
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI(v) {
-
-            v = v || this.getDefaultValue();
-
-            if (v <= this.minValue) {
-                this.refs.$bar.addClass('first').removeClass('last');
-            } else if (v >= this.maxValue) {
-                this.refs.$bar.addClass('last').removeClass('first');
-            } else {
-                this.refs.$bar.removeClass('last').removeClass('first');
-            }
-
-            var per = 1 - (v || 0) / this.maxValue;
-
-            this.setMousePosition(this.getMaxDist() * per);
-        }
-    }]);
-    return VerticalSlider;
-}(BaseSlider);
-
-var VerticalHue = function (_VerticalSlider) {
-    inherits(VerticalHue, _VerticalSlider);
-
-    function VerticalHue() {
-        classCallCheck(this, VerticalHue);
-        return possibleConstructorReturn(this, (VerticalHue.__proto__ || Object.getPrototypeOf(VerticalHue)).apply(this, arguments));
-    }
-
-    createClass(VerticalHue, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(VerticalHue.prototype.__proto__ || Object.getPrototypeOf(VerticalHue.prototype), 'initialize', this).call(this);
-            this.minValue = 0;
-            this.maxValue = 360;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="hue">\n                <div ref="$container" class="hue-container">\n                    <div ref="$bar" class="drag-bar"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.hsv.h;
-        }
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {
-
-            var dist = this.getCaculatedDist(e);
-
-            this.setColorUI(dist / 100 * this.maxValue);
-
-            this.changeColor({
-                h: dist / 100 * this.maxValue,
-                type: 'hsv'
-            });
-        }
-    }]);
-    return VerticalHue;
-}(VerticalSlider);
-
-var VerticalOpacity = function (_VerticalSlider) {
-    inherits(VerticalOpacity, _VerticalSlider);
-
-    function VerticalOpacity() {
-        classCallCheck(this, VerticalOpacity);
-        return possibleConstructorReturn(this, (VerticalOpacity.__proto__ || Object.getPrototypeOf(VerticalOpacity)).apply(this, arguments));
-    }
-
-    createClass(VerticalOpacity, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="opacity">\n            <div ref="$container" class="opacity-container">\n                <div ref="$colorbar" class="color-bar"></div>\n                <div ref="$bar" class="drag-bar2"></div>\n            </div>\n        </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            get$1(VerticalOpacity.prototype.__proto__ || Object.getPrototypeOf(VerticalOpacity.prototype), 'refresh', this).call(this);
-            this.setOpacityColorBar();
-        }
-    }, {
-        key: 'setOpacityColorBar',
-        value: function setOpacityColorBar() {
-            var rgb = _extends({}, this.$store.rgb);
-
-            rgb.a = 0;
-            var start = Color$1.format(rgb, 'rgb');
-
-            rgb.a = 1;
-            var end = Color$1.format(rgb, 'rgb');
-
-            this.refs.$colorbar.css('background', 'linear-gradient(to top, ' + start + ', ' + end + ')');
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.alpha;
-        }
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {
-            var dist = this.getCaculatedDist(e);
-
-            this.setColorUI(dist / 100 * this.maxValue);
-
-            this.changeColor({
-                a: Math.floor(dist) / 100 * this.maxValue
-            });
-        }
-    }]);
-    return VerticalOpacity;
-}(VerticalSlider);
-
-var MiniColorPicker$2 = function (_BaseColorPicker) {
-    inherits(MiniColorPicker, _BaseColorPicker);
-
-    function MiniColorPicker() {
-        classCallCheck(this, MiniColorPicker);
-        return possibleConstructorReturn(this, (MiniColorPicker.__proto__ || Object.getPrototypeOf(MiniColorPicker)).apply(this, arguments));
-    }
-
-    createClass(MiniColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <Palette /><div class="control"><Hue /><Opacity /></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Hue: VerticalHue,
-                Opacity: VerticalOpacity,
-                Palette: ColorPalette
-            };
-        }
-    }]);
-    return MiniColorPicker;
-}(BaseColorPicker);
-
-var ColorRing = function (_ColorWheel) {
-    inherits(ColorRing, _ColorWheel);
-
-    function ColorRing() {
-        classCallCheck(this, ColorRing);
-        return possibleConstructorReturn(this, (ColorRing.__proto__ || Object.getPrototypeOf(ColorRing)).apply(this, arguments));
-    }
-
-    createClass(ColorRing, [{
-        key: 'initialize',
-        value: function initialize() {
-            get$1(ColorRing.prototype.__proto__ || Object.getPrototypeOf(ColorRing.prototype), 'initialize', this).call(this);
-
-            this.width = 214;
-            this.height = 214;
-            this.thinkness = 16;
-            this.half_thinkness = this.thinkness / 2;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '<div class="wheel" data-type="ring">\n            <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>\n            <div class="drag-pointer" ref="$drag_pointer"></div>\n        </div>';
-        }
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI(isEvent) {
-            this.renderCanvas();
-            this.setHueColor(null, isEvent);
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            return this.$store.hsv.h;
-        }
-    }, {
-        key: 'setHueColor',
-        value: function setHueColor(e, isEvent) {
-
-            if (!this.state.get('$el.width')) return;
-
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                hue = caculateAngle(rx, ry);
-
-            {
-                var _getCurrentXY2 = this.getCurrentXY(null, hue, radius - this.half_thinkness, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
-            }
-
-            // set drag pointer position 
-            this.refs.$drag_pointer.px('left', x - minX);
-            this.refs.$drag_pointer.px('top', y - minY);
-
-            if (!isEvent) {
-                this.changeColor({
-                    type: 'hsv',
-                    h: hue
-                });
-            }
-        }
-    }]);
-    return ColorRing;
-}(ColorWheel);
-
-var RingColorPicker = function (_BaseColorPicker) {
-    inherits(RingColorPicker, _BaseColorPicker);
-
-    function RingColorPicker() {
-        classCallCheck(this, RingColorPicker);
-        return possibleConstructorReturn(this, (RingColorPicker.__proto__ || Object.getPrototypeOf(RingColorPicker)).apply(this, arguments));
-    }
-
-    createClass(RingColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <ColorRing />\n                <Palette />\n                <div class="control">\n                    <Value />\n                    <Opacity />\n                    <div class="empty"></div>\n                    <ColorView />\n                </div>\n                <Information />\n                <CurrentColorSets />\n                <ColorSetsChooser />\n                <ContextMenu />\n            </div>\n        ';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Value: Value,
-                Opacity: Opacity,
-                ColorView: ColorView,
-                ColorRing: ColorRing,
-                Palette: ColorPalette,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return RingColorPicker;
-}(BaseColorPicker);
-
-var XDColorPicker = function (_BaseColorPicker) {
-    inherits(XDColorPicker, _BaseColorPicker);
-
-    function XDColorPicker() {
-        classCallCheck(this, XDColorPicker);
-        return possibleConstructorReturn(this, (XDColorPicker.__proto__ || Object.getPrototypeOf(XDColorPicker)).apply(this, arguments));
-    }
-
-    createClass(XDColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <palette />\n                <div class="control">\n                    <Hue />\n                    <Opacity />\n                </div>\n                <information />\n                <currentColorSets />\n                <colorSetsChooser />\n                <contextMenu />\n            </div>\n        ';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Hue: VerticalHue,
-                Opacity: VerticalOpacity,
-                Palette: ColorPalette,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return XDColorPicker;
-}(BaseColorPicker);
-
-var RingTabColorPicker = function (_BaseColorPicker) {
-    inherits(RingTabColorPicker, _BaseColorPicker);
-
-    function RingTabColorPicker() {
-        classCallCheck(this, RingTabColorPicker);
-        return possibleConstructorReturn(this, (RingTabColorPicker.__proto__ || Object.getPrototypeOf(RingTabColorPicker)).apply(this, arguments));
-    }
-
-    createClass(RingTabColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing />\n                            <Palette />\n                            <div class="control">\n                                <Value />\n                                <Opacity />\n                                <div class="empty"></div>\n                                <ColorView />\n                            </div>\n                            <Information />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets />\n                            <ContextMenu />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser />\n                        </div>                        \n                    </div>\n            </div>\n        ';
-        }
-    }, {
-        key: CLICK('$tabHeader .color-tab-item'),
-        value: function value(e, $dt) {
-            if (!$dt.hasClass('active')) {
-                var selectedItem = this.refs.$tabHeader.$('.active');
-                if (selectedItem) selectedItem.removeClass('active');
-                $dt.addClass('active');
-
-                var selectedItem = this.refs.$tabBody.$('.active');
-                if (selectedItem) selectedItem.removeClass('active');
-                var activeItem = this.refs.$tabBody.$('[item-id=\'' + $dt.attr('item-id') + '\']');
-                if (activeItem) activeItem.addClass('active');
-            }
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Value: Value,
-                Opacity: Opacity,
-                ColorView: ColorView,
-                ColorRing: ColorRing,
-                Palette: ColorPalette,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return RingTabColorPicker;
-}(BaseColorPicker);
-
-var XDTabColorPicker = function (_BaseColorPicker) {
-    inherits(XDTabColorPicker, _BaseColorPicker);
-
-    function XDTabColorPicker() {
-        classCallCheck(this, XDTabColorPicker);
-        return possibleConstructorReturn(this, (XDTabColorPicker.__proto__ || Object.getPrototypeOf(XDTabColorPicker)).apply(this, arguments));
-    }
-
-    createClass(XDTabColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette />\n                            <div class="control">\n                                <Hue />\n                                <Opacity />\n                            </div>\n                            <information />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets />\n                            <ContextMenu />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser />\n                        </div>                        \n                    </div>\n\n            </div>\n        ';
-        }
-    }, {
-        key: CLICK('$tabHeader .color-tab-item'),
-        value: function value(e, $dt) {
-            if (!$dt.hasClass('active')) {
-                var selectedItem = this.refs.$tabHeader.$('.active');
-                if (selectedItem) selectedItem.removeClass('active');
-                $dt.addClass('active');
-
-                var selectedItem = this.refs.$tabBody.$('.active');
-                if (selectedItem) selectedItem.removeClass('active');
-                var activeItem = this.refs.$tabBody.$('[item-id=\'' + $dt.attr('item-id') + '\']');
-                if (activeItem) activeItem.addClass('active');
-            }
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Hue: VerticalHue,
-                Opacity: VerticalOpacity,
-                Palette: ColorPalette,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return XDTabColorPicker;
-}(BaseColorPicker);
-
-var ColorPicker = {
-    create: function create(opts) {
-        switch (opts.type) {
-            case 'macos':
-                return new MacOSColorPicker(opts);
-            case 'xd':
-                return new XDColorPicker(opts);
-            case 'xd-tab':
-                return new XDTabColorPicker(opts);
-            case 'ring':
-                return new RingColorPicker(opts);
-            case 'ring-tab':
-                return new RingTabColorPicker(opts);
-            case 'mini':
-                return new MiniColorPicker(opts);
-            case 'mini-vertical':
-                return new MiniColorPicker$2(opts);
-            case 'sketch':
-            case 'palette':
-            default:
-                return new ChromeDevToolColorPicker(opts);
-        }
-    },
-
-    ColorPicker: ChromeDevToolColorPicker,
-    ChromeDevToolColorPicker: ChromeDevToolColorPicker,
-    MacOSColorPicker: MacOSColorPicker,
-    RingColorPicker: RingColorPicker,
-    MiniColorPicker: MiniColorPicker,
-    MiniVerticalColorPicker: MiniColorPicker$2,
-    XDColorPicker: XDColorPicker
-};
-
 var BasePropertyItem = function (_UIElement) {
     inherits(BasePropertyItem, _UIElement);
 
@@ -12958,7 +9852,7 @@ var Size = function (_BasePropertyItem) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>" + UNIT_PX + "</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -13040,7 +9934,7 @@ var Position$2 = function (_BasePropertyItem) {
             return "\n            <div class='property-item position show'>\n                <div class='title' ref=\"$title\">Position</div>\n                <div class='items'>            \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <input type='number' ref=\"$x\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                        <label>Y</label>\n                        <div>\n                            <input type='number' ref=\"$y\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>               \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_LAYER, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -13089,7 +9983,7 @@ var Radius = function (_BasePropertyItem) {
             return "\n            <div class='property-item radius show'>\n                <div class='items'>         \n                    <div>\n                        <label >Top Left</label>\n                        <div>\n                            <input type='range' ref=\"$topLeftRadiusRange\" min=\"0\" max=\"500\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Top Right</label>\n                        <div>\n                            <input type='range' ref=\"$topRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topRightRadius\"> <span>px</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Btm Left</label>\n                        <div>\n                            <input type='range' ref=\"$bottomLeftRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomLeftRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Btm Right</label>\n                        <div>\n                            <input type='range' ref=\"$bottomRightRadiusRange\" min=\"0\" max=\"500\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomRightRadius\"> <span>px</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -13222,7 +10116,7 @@ var Clip = function (_UIElement) {
             return "\n            <div class='property-item show'>\n                <div class='items'>            \n                    <div>\n                        <label>Clip</label>\n                        <div>\n                            <input type='checkbox' ref=\"$check\">\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR),
         value: function value() {
             this.refresh();
         }
@@ -13259,7 +10153,7 @@ var Name = function (_BasePropertyItem) {
             return "\n            <div class='property-item name show'>\n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div><input type='text' ref=\"$name\" class='full'></div>\n                    </div>\n                    <div>\n                        <label>ID</label>\n                        <div><input type='text' ref=\"$id\" class='full'></div>\n                    </div>                                        \n                    <div>\n                        <label>Class</label>\n                        <div><input type='text' ref=\"$class\" class='full'></div>\n                    </div>                    \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value$$1() {
             this.refresh();
         }
@@ -13312,6 +10206,306 @@ var Name = function (_BasePropertyItem) {
     return Name;
 }(BasePropertyItem);
 
+var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
+
+var stepTimingFunction = function stepTimingFunction() {
+    var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+    var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+
+    return function (progress) {
+        var stepDist = 1 / step;
+
+        if (position == 'start') {
+            return stepDist * Math.ceil(progress / stepDist);
+        } else if (position == 'end') {
+            return stepDist * Math.floor(progress / stepDist);
+        }
+    };
+};
+
+var Timing = {
+    'ease-out-elastic': function easeOutElastic(progress, duration, start, end) {
+        return Math.pow(2, -10 * progress) * Math.sin((progress - .1) * 5 * Math.PI) + 1;
+    },
+    'cubic-bezier': function cubicBezier$$1(x1, y1, x2, y2) {
+        return cubicBezier(x1, y1, x2, y2);
+    },
+    'step': function step() {
+        var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+        var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
+
+        return stepTimingFunction(step, position);
+    },
+    'step-start': function stepStart(progress) {
+        return stepTimingFunction(1, 'start')(progress);
+    },
+    'step-end': function stepEnd(progress) {
+        return stepTimingFunction(1, 'end')(progress);
+    }
+};
+
+// setup bezier functions
+bezierList.forEach(function (arr) {
+    Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
+});
+
+var _DEFINED_POSITIONS;
+
+
+
+var LAYER_NAME = function LAYER_NAME(item) {
+    var index = item.index,
+        name = item.name;
+
+    if (index == Number.MAX_SAFE_INTEGER) index = 0;
+    return 1 + index / 100 + ". " + (name || 'Layer');
+};
+
+
+
+
+function IS_LAYER(item) {
+    return item.itemType == ITEM_TYPE_LAYER;
+}
+
+
+
+function IS_IMAGE(item) {
+    switch (item.itemType) {
+        case ITEM_TYPE_IMAGE:
+        case ITEM_TYPE_BORDER_IMAGE:
+        case ITEM_TYPE_MASK_IMAGE:
+        case ITEM_TYPE_BOX_IMAGE:
+            return true;
+        default:
+            return false;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function CSS_FILTERING(style) {
+    var newStyle = style;
+
+    if (newStyle['background-blend-mode'] == 'normal') {
+        delete newStyle['background-blend-mode'];
+    }
+
+    if (newStyle['mix-blend-mode'] == 'normal') {
+        delete newStyle['mix-blend-mode'];
+    }
+
+    if (newStyle['background-size'] == 'auto') {
+        delete newStyle['background-size'];
+    }
+
+    if (newStyle['background-position'] == 'center center') {
+        delete newStyle['background-position'];
+    }
+
+    if (parseParamNumber$1(newStyle.opacity) == 1) {
+        delete newStyle.opacity;
+    }
+
+    if (parseParamNumber$1(newStyle.left) == 0) {
+        delete newStyle.left;
+    }
+
+    if (parseParamNumber$1(newStyle.top) == 0) {
+        delete newStyle.top;
+    }
+
+    if (newStyle.transform == 'none') {
+        delete newStyle.transform;
+    }
+
+    if (newStyle['transform-style'] == 'float') {
+        delete newStyle['transform-style'];
+    }
+
+    if (newStyle['clip-path'] == 'none') {
+        delete newStyle['clip-path'];
+    }
+
+    return newStyle;
+}
+
+
+
+var ordering = {
+    'position': 1,
+    'left': 2,
+    'top': 2,
+    'right': 2,
+    'bottom': 2,
+    'width': 3,
+    'height': 3,
+
+    'font-size': 4,
+    'font-family': 4,
+
+    'opacity': 10,
+    'border-radius': 10,
+
+    'box-shadow': 15,
+    'text-shadow': 15,
+    'filter': 15,
+
+    'background-clip': 50,
+    '-webkit-background-clip': 50,
+
+    'background-repeat': 100,
+    'background-blend-mode': 100,
+    'background-image': 100,
+    'background-size': 100,
+    'background-position': 100,
+
+    'transform': 1000
+
+};
+
+var CSS_SORTING_FUNCTION = function CSS_SORTING_FUNCTION(a, b) {
+    var aN = ordering[a] || Number.MAX_SAFE_INTEGER;
+    var bN = ordering[b] || Number.MAX_SAFE_INTEGER;
+
+    if (aN == bN) return 0;
+
+    return aN < bN ? -1 : 1;
+};
+
+function CSS_SORTING(style) {
+
+    style = CSS_FILTERING(style);
+
+    var keys = Object.keys(style);
+
+    keys.sort(CSS_SORTING_FUNCTION);
+
+    var newStyle = {};
+    keys.forEach(function (key) {
+        newStyle[key] = style[key];
+    });
+
+    return newStyle;
+}
+
+function CSS_TO_STRING(style) {
+    var newStyle = CSS_SORTING(style);
+
+    return Object.keys(newStyle).filter(function (key) {
+        return !!newStyle[key];
+    }).map(function (key) {
+        return key + ": " + newStyle[key];
+    }).join(';');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITIONS, 'center', true), defineProperty(_DEFINED_POSITIONS, 'top', true), defineProperty(_DEFINED_POSITIONS, 'left', true), defineProperty(_DEFINED_POSITIONS, 'right', true), defineProperty(_DEFINED_POSITIONS, 'bottom', true), _DEFINED_POSITIONS);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function PATTERN_GET(item, patternName) {
+    var pattern = item.pattern || {};
+
+    return pattern[patternName] || {};
+}
+
+
+
+
+
+
+
+
+
+
+
+function PROPERTY_GET_DEFAULT_VALUE(property) {
+    return PROPERTY_DEFAULT_VALUE[property] || { defaultValue: 0, step: 1, min: -1000, max: 1000 };
+}
+
+
+
+function GET_PROPERTY_LIST(item) {
+
+    if (IS_LAYER(item)) {
+        return PROPERTY_LIST[item.itemType] || [];
+    } else if (IS_IMAGE(item)) {
+        return PROPERTY_LIST[item.itemType + "_" + item.type] || [];
+    }
+}
+
 var Property = function (_Item) {
     inherits(Property, _Item);
 
@@ -13324,6 +10518,16 @@ var Property = function (_Item) {
         key: "isAttribute",
         value: function isAttribute() {
             return true;
+        }
+    }, {
+        key: "toCSS",
+        value: function toCSS() {
+            return {};
+        }
+    }, {
+        key: "toString",
+        value: function toString() {
+            return CSS_TO_STRING(this.toCSS());
         }
     }]);
     return Property;
@@ -13410,12 +10614,28 @@ var ColorStep = function (_Item) {
         key: "getDefaultObject",
         value: function getDefaultObject() {
             return get$1(ColorStep.prototype.__proto__ || Object.getPrototypeOf(ColorStep.prototype), "getDefaultObject", this).call(this, {
+                cut: false,
                 percent: 0,
                 unit: '%',
                 px: 0,
                 em: 0,
                 color: 'rgba(0, 0, 0, 0)'
             });
+        }
+    }, {
+        key: "on",
+        value: function on() {
+            this.json.cut = true;
+        }
+    }, {
+        key: "off",
+        value: function off() {
+            this.json.cut = false;
+        }
+    }, {
+        key: "toggle",
+        value: function toggle() {
+            this.json.cut = !this.json.cut;
         }
     }, {
         key: "changeUnit",
@@ -13603,8 +10823,8 @@ var Gradient = function (_ImageResource) {
             return json;
         }
     }, {
-        key: "caculateAngle",
-        value: function caculateAngle() {
+        key: "calculateAngle",
+        value: function calculateAngle() {
             var angle = this.json.angle;
             return isUndefined$1(DEFINED_ANGLES[angle]) ? angle : DEFINED_ANGLES[angle] || 0;
         }
@@ -14046,7 +11266,7 @@ var GradientSteps = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_COLORSTEP, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -14270,863 +11490,6 @@ var GradientSteps = function (_UIElement) {
     return GradientSteps;
 }(UIElement);
 
-var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
-
-var stepTimingFunction = function stepTimingFunction() {
-    var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-    var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
-
-    return function (progress) {
-        var stepDist = 1 / step;
-
-        if (position == 'start') {
-            return stepDist * Math.ceil(progress / stepDist);
-        } else if (position == 'end') {
-            return stepDist * Math.floor(progress / stepDist);
-        }
-    };
-};
-
-var Timing = {
-    'ease-out-elastic': function easeOutElastic(progress, duration, start, end) {
-        return Math.pow(2, -10 * progress) * Math.sin((progress - .1) * 5 * Math.PI) + 1;
-    },
-    'cubic-bezier': function cubicBezier$$1(x1, y1, x2, y2) {
-        return cubicBezier(x1, y1, x2, y2);
-    },
-    'step': function step() {
-        var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-        var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'end';
-
-        return stepTimingFunction(step, position);
-    },
-    'step-start': function stepStart(progress) {
-        return stepTimingFunction(1, 'start')(progress);
-    },
-    'step-end': function stepEnd(progress) {
-        return stepTimingFunction(1, 'end')(progress);
-    }
-};
-
-// setup bezier functions
-bezierList.forEach(function (arr) {
-    Timing[arr[4]] = cubicBezier(arr[0], arr[1], arr[2], arr[3]);
-});
-
-var _DEFINED_POSITIONS;
-
-var DEFAULT_FUNCTION = function DEFAULT_FUNCTION(item) {
-    return item;
-};
-
-var LAYER_NAME = function LAYER_NAME(item) {
-    var index = item.index,
-        name = item.name;
-
-    if (index == Number.MAX_SAFE_INTEGER) index = 0;
-    return 1 + index / 100 + ". " + (name || 'Layer');
-};
-
-
-
-function IS_PAGE(item) {
-    return item.itemType == ITEM_TYPE_PAGE;
-}
-function IS_LAYER(item) {
-    return item.itemType == ITEM_TYPE_LAYER;
-}
-
-
-
-function IS_IMAGE(item) {
-    switch (item.itemType) {
-        case ITEM_TYPE_IMAGE:
-        case ITEM_TYPE_BORDER_IMAGE:
-        case ITEM_TYPE_MASK_IMAGE:
-        case ITEM_TYPE_BOX_IMAGE:
-            return true;
-        default:
-            return false;
-    }
-}
-function IS_BOXSHADOW(item) {
-    return item.itemType == ITEM_TYPE_BOXSHADOW;
-}
-function IS_TEXTSHADOW(item) {
-    return item.itemType == ITEM_TYPE_TEXTSHADOW;
-}
-
-
-
-
-
-
-
-
-
-
-
-function MAKE_BORDER_RADIUS(layer) {
-    var css = {};
-    if (layer.fixedRadius) {
-        css['border-radius'] = stringUnit(layer.borderRadius);
-    } else {
-        if (layer.borderTopLeftRadius) css['border-top-left-radius'] = stringUnit(layer.borderTopLeftRadius);
-        if (layer.borderTopRightRadius) css['border-top-right-radius'] = stringUnit(layer.borderTopRightRadius);
-        if (layer.borderBottomLeftRadius) css['border-bottom-left-radius'] = stringUnit(layer.borderBottomLeftRadius);
-        if (layer.borderBottomRightRadius) css['border-bottom-right-radius'] = stringUnit(layer.borderBottomRightRadius);
-    }
-
-    return css;
-}
-
-function MAKE_BORDER_COLOR(layer) {
-    var css = {};
-
-    if (layer.borderColor) {
-        css['border-color'] = layer.borderColor;
-    } else {
-        if (layer.borderTopColor) css['border-top-color'] = layer.borderTopColor;
-        if (layer.borderRightColor) css['border-right-color'] = layer.borderRightColor;
-        if (layer.borderBottomColor) css['border-bottom-color'] = layer.borderBottomColor;
-        if (layer.borderLeftColor) css['border-left-color'] = layer.borderLeftColor;
-    }
-
-    return css;
-}
-
-function MAKE_BORDER_STYLE(layer) {
-    var css = {};
-
-    if (layer.borderStyle) css['border-style'] = layer.borderStyle;
-    if (layer.borderTopStyle) css['border-top-style'] = layer.borderTopStyle;
-    if (layer.borderRightStyle) css['border-right-style'] = layer.borderRightStyle;
-    if (layer.borderBottomStyle) css['border-bottom-style'] = layer.borderBottomStyle;
-    if (layer.borderLeftStyle) css['border-left-style'] = layer.borderLeftStyle;
-
-    return css;
-}
-
-function MAKE_BORDER_WIDTH(layer) {
-    var css = {};
-
-    if (layer.fixedBorderWidth) {
-        css['border-width'] = stringUnit(layer.borderWidth);
-        css['border-style'] = 'solid';
-    } else {
-
-        if (layer.borderTopWidth) {
-            css['border-top-width'] = stringUnit(layer.borderTopWidth);
-            css['border-top-style'] = 'solid';
-        }
-
-        if (layer.borderRightWidth) {
-            css['border-right-width'] = stringUnit(layer.borderRightWidth);
-            css['border-right-style'] = 'solid';
-        }
-
-        if (layer.borderLeftWidth) {
-            css['border-left-width'] = stringUnit(layer.borderLeftWidth);
-            css['border-left-style'] = 'solid';
-        }
-
-        if (layer.borderBottomWidth) {
-            css['border-bottom-width'] = stringUnit(layer.borderBottomWidth);
-            css['border-bottom-style'] = 'solid';
-        }
-    }
-
-    return css;
-}
-
-function MAKE_TRANSFORM(layer) {
-
-    var results = [];
-
-    if (layer.perspective) {
-        results.push("perspective(" + layer.perspective + "px)");
-    }
-
-    if (layer.rotate) {
-        results.push("rotate(" + layer.rotate + "deg)");
-    }
-
-    if (layer.skewX) {
-        results.push("skewX(" + layer.skewX + "deg)");
-    }
-
-    if (layer.skewY) {
-        results.push("skewY(" + layer.skewY + "deg)");
-    }
-
-    if (layer.scale) {
-        results.push("scale(" + layer.scale + ")");
-    }
-
-    if (layer.translateX) {
-        results.push("translateX(" + layer.translateX + "px)");
-    }
-
-    if (layer.translateY) {
-        results.push("translateY(" + layer.translateY + "px)");
-    }
-
-    if (layer.translateZ) {
-        results.push("translateZ(" + layer.translateZ + "px)");
-    }
-
-    if (layer.rotateX) {
-        results.push("rotateX(" + layer.rotateX + "deg)");
-    }
-
-    if (layer.rotateY) {
-        results.push("rotateY(" + layer.rotateY + "deg)");
-    }
-
-    if (layer.rotateZ) {
-        results.push("rotateZ(" + layer.rotateZ + "deg)");
-    }
-
-    if (layer.scaleX) {
-        results.push("scaleX(" + layer.scaleX + ")");
-    }
-
-    if (layer.scaleY) {
-        results.push("scaleY(" + layer.scaleY + ")");
-    }
-
-    if (layer.scaleZ) {
-        results.push("scaleZ(" + layer.scaleZ + ")");
-    }
-
-    return {
-        transform: results.length ? results.join(WHITE_STRING$1) : 'none'
-    };
-}
-
-function BOUND_TO_CSS(layer) {
-    var css = {};
-
-    if (!layer) return css;
-
-    css.left = stringUnit(layer.x);
-    css.top = stringUnit(layer.y);
-    css.width = stringUnit(layer.width);
-    css.height = stringUnit(layer.height);
-    css['z-index'] = layer.index;
-
-    return css;
-}
-
-
-
-function CSS_FILTERING(style) {
-    var newStyle = style;
-
-    if (newStyle['background-blend-mode'] == 'normal') {
-        delete newStyle['background-blend-mode'];
-    }
-
-    if (newStyle['mix-blend-mode'] == 'normal') {
-        delete newStyle['mix-blend-mode'];
-    }
-
-    if (newStyle['background-size'] == 'auto') {
-        delete newStyle['background-size'];
-    }
-
-    if (newStyle['background-position'] == 'center center') {
-        delete newStyle['background-position'];
-    }
-
-    if (parseParamNumber$1(newStyle.opacity) == 1) {
-        delete newStyle.opacity;
-    }
-
-    if (parseParamNumber$1(newStyle.left) == 0) {
-        delete newStyle.left;
-    }
-
-    if (parseParamNumber$1(newStyle.top) == 0) {
-        delete newStyle.top;
-    }
-
-    if (newStyle.transform == 'none') {
-        delete newStyle.transform;
-    }
-
-    if (newStyle['transform-style'] == 'float') {
-        delete newStyle['transform-style'];
-    }
-
-    if (newStyle['clip-path'] == 'none') {
-        delete newStyle['clip-path'];
-    }
-
-    return newStyle;
-}
-
-function CSS_GENERATE(css) {
-    var results = {};
-
-    keyEach(css, function (key, value$$1) {
-        if (!results[key]) {
-            results[key] = [];
-        }
-
-        results[key].push(value$$1);
-    });
-
-    keyEach(results, function (key, value$$1) {
-        if (isArray(value$$1)) {
-            results[key] = value$$1.join(', ');
-        }
-    });
-
-    return CSS_FILTERING(results);
-}
-
-var ordering = {
-    'position': 1,
-    'left': 2,
-    'top': 2,
-    'right': 2,
-    'bottom': 2,
-    'width': 3,
-    'height': 3,
-
-    'font-size': 4,
-    'font-family': 4,
-
-    'opacity': 10,
-    'border-radius': 10,
-
-    'box-shadow': 15,
-    'text-shadow': 15,
-    'filter': 15,
-
-    'background-clip': 50,
-    '-webkit-background-clip': 50,
-
-    'background-repeat': 100,
-    'background-blend-mode': 100,
-    'background-image': 100,
-    'background-size': 100,
-    'background-position': 100,
-
-    'transform': 1000
-
-};
-
-var CSS_SORTING_FUNCTION = function CSS_SORTING_FUNCTION(a, b) {
-    var aN = ordering[a] || Number.MAX_SAFE_INTEGER;
-    var bN = ordering[b] || Number.MAX_SAFE_INTEGER;
-
-    if (aN == bN) return 0;
-
-    return aN < bN ? -1 : 1;
-};
-
-function CSS_SORTING(style) {
-
-    style = CSS_FILTERING(style);
-
-    var keys = Object.keys(style);
-
-    keys.sort(CSS_SORTING_FUNCTION);
-
-    var newStyle = {};
-    keys.forEach(function (key) {
-        newStyle[key] = style[key];
-    });
-
-    return newStyle;
-}
-
-function CSS_TO_STRING(style) {
-    var newStyle = CSS_SORTING(style);
-
-    return Object.keys(newStyle).filter(function (key) {
-        return !!newStyle[key];
-    }).map(function (key) {
-        return key + ": " + newStyle[key];
-    }).join(';');
-}
-
-function IMAGE_TO_IMAGE() {
-    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    var url = image.backgroundImage;
-
-    if (!isExport && url) {
-        return "url(" + url + ")";
-    } else if (isExport) {
-        return "url(" + image.backgroundImageDataURI + ")";
-    }
-
-    return null;
-}
-
-function IMAGE_TO_BACKGROUND_SIZE_STRING(image) {
-
-    if (image.backgroundSize == 'contain' || image.backgroundSize == 'cover') {
-        return image.backgroundSize;
-    } else if (image.backgroundSizeWidth && image.backgroundSizeHeight) {
-        return [stringUnit(image.backgroundSizeWidth), stringUnit(image.backgroundSizeHeight)].join(WHITE_STRING$1);
-    } else if (image.backgroundSizeWidth) {
-        return stringUnit(image.backgroundSizeWidth);
-    }
-
-    return 'auto';
-}
-
-function IMAGE_TO_BACKGROUND_POSITION_STRING(image) {
-
-    var x = defaultValue(image.backgroundPositionX, valueUnit('center'));
-    var y = defaultValue(image.backgroundPositionY, valueUnit('center'));
-
-    if (x === 0) x = percentUnit(0);
-    if (y === 0) y = percentUnit(0);
-
-    return stringUnit(x) + " " + stringUnit(y);
-}
-
-
-
-function IMAGE_TO_BACKGROUND_REPEAT_STRING(image) {
-    if (image.backgroundRepeat) {
-        return image.backgroundRepeat;
-    }
-}
-
-function IMAGE_TO_BACKGROUND_BLEND_MODE_STRING(image) {
-    if (image.backgroundBlendMode) {
-        return image.backgroundBlendMode || 'normal';
-    }
-}
-
-function IMAGE_TO_ITEM_STRING() {
-    var colorsteps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-    if (!colorsteps) return EMPTY_STRING;
-
-    var colors = [].concat(toConsumableArray(colorsteps));
-    if (!colors.length) return EMPTY_STRING;
-
-    var newColors = [];
-    colors.forEach(function (c, index) {
-        if (c.cut && index > 0) {
-            newColors.push({
-                color: c.color,
-                unit: colors[index - 1].unit,
-                percent: colors[index - 1].percent,
-                px: colors[index - 1].px,
-                em: colors[index - 1].em
-            });
-        }
-
-        newColors.push(c);
-    });
-
-    colors = newColors.map(function (f) {
-
-        var value$$1 = stringUnit(percentUnit(f.percent));
-        return f.color + " " + value$$1;
-    }).join(',');
-
-    return colors;
-}
-
-function IMAGE_TO_CONIC_ITEM_STRING() {
-    var colorsteps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : undefined;
-
-
-    if (!colorsteps) return EMPTY_STRING;
-
-    var colors = [].concat(toConsumableArray(colorsteps)).map(function (it, index) {
-        it.index = index;
-        return it;
-    });
-    if (!colors.length) return EMPTY_STRING;
-
-    colors.sort(function (a, b) {
-        if (a.percent == b.percent) {
-            if (a.index > b.index) return 1;
-            if (a.index < b.index) return 0;
-            return 0;
-        }
-        return a.percent > b.percent ? 1 : -1;
-    });
-
-    var newColors = [];
-    colors.forEach(function (c, index) {
-        if (c.cut && index > 0) {
-            newColors.push(_extends({}, c, { percent: colors[index - 1].percent }));
-        }
-
-        newColors.push(c);
-    });
-
-    colors = newColors.map(function (f) {
-        var deg$$1 = Math.floor(f.percent * 3.6);
-        return f.color + " " + deg$$1 + "deg";
-    }).join(',');
-
-    return colors;
-}
-
-function IMAGE_TO_LINEAR() {
-    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    var colors = IMAGE_TO_ITEM_STRING(image.colorsteps);
-
-    if (colors == EMPTY_STRING) return EMPTY_STRING;
-
-    var opt = EMPTY_STRING;
-    var angle = image.angle;
-    var gradientType = image.type;
-
-    opt = angle;
-
-    if (isNumber(opt)) {
-        opt = DEFINED_DIRECTIONS$1["" + opt] || opt;
-    }
-
-    if (isNumber(opt)) {
-        opt = opt > 360 ? opt % 360 : opt;
-
-        opt = opt + "deg";
-    }
-
-    return gradientType + "-gradient(" + opt + ", " + colors + ")";
-}
-
-var DEFINED_DIRECTIONS$1 = {
-    '0': 'to top',
-    '45': 'to top right',
-    '90': 'to right',
-    '135': 'to bottom right',
-    '180': 'to bottom',
-    '225': 'to bottom left',
-    '270': 'to left',
-    '315': 'to top left'
-};
-
-var DEFINED_ANGLES$1 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var DEFINED_POSITIONS = (_DEFINED_POSITIONS = {}, defineProperty(_DEFINED_POSITIONS, 'center', true), defineProperty(_DEFINED_POSITIONS, 'top', true), defineProperty(_DEFINED_POSITIONS, 'left', true), defineProperty(_DEFINED_POSITIONS, 'right', true), defineProperty(_DEFINED_POSITIONS, 'bottom', true), _DEFINED_POSITIONS);
-
-function IMAGE_TO_RADIAL() {
-    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    var colors = IMAGE_TO_ITEM_STRING(image.colorsteps);
-
-    if (colors == EMPTY_STRING) return EMPTY_STRING;
-    var opt = EMPTY_STRING;
-    var radialType = image.radialType;
-    var radialPosition = image.radialPosition || ['center', 'center'];
-    var gradientType = image.type;
-
-    radialPosition = DEFINED_POSITIONS[radialPosition] ? radialPosition : radialPosition.join(WHITE_STRING$1);
-
-    opt = radialPosition ? radialType + " at " + radialPosition : radialType;
-
-    return gradientType + "-gradient(" + opt + ", " + colors + ")";
-}
-
-function IMAGE_TO_CONIC() {
-    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    var colors = IMAGE_TO_CONIC_ITEM_STRING(image.colorsteps);
-
-    if (colors == EMPTY_STRING) return EMPTY_STRING;
-    var opt = [];
-    var conicAngle = image.angle;
-    var conicPosition = image.radialPosition || ['center', 'center'];
-    var gradientType = image.type;
-
-    conicPosition = DEFINED_POSITIONS[conicPosition] ? conicPosition : conicPosition.join(WHITE_STRING$1);
-
-    if (isNotUndefined(conicAngle)) {
-        conicAngle = get(DEFINED_ANGLES$1, conicAngle, function (it) {
-            return +it;
-        });
-        opt.push("from " + conicAngle + "deg");
-    }
-
-    if (conicPosition) {
-        opt.push("at " + conicPosition);
-    }
-
-    var optString = opt.length ? opt.join(WHITE_STRING$1) + ',' : EMPTY_STRING;
-
-    return gradientType + "-gradient(" + optString + " " + colors + ")";
-}
-
-function IMAGE_TO_STATIC() {
-    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    return IMAGE_TO_LINEAR({
-        type: 'linear',
-        angle: 0,
-        colorsteps: [{ color: image.color, percent: 0 }, { color: image.color, percent: 100 }]
-    });
-}
-
-function IMAGE_TO_IMAGE_STRING(image) {
-    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    var type = image.type;
-
-    if (type == 'linear' || type == 'repeating-linear') {
-        return IMAGE_TO_LINEAR(image, isExport);
-    } else if (type == 'radial' || type == 'repeating-radial') {
-        return IMAGE_TO_RADIAL(image, isExport);
-    } else if (type == 'conic' || type == 'repeating-conic') {
-        return IMAGE_TO_CONIC(image, isExport);
-    } else if (type == 'image') {
-        return IMAGE_TO_IMAGE(image, isExport);
-    } else if (type == 'static') {
-        return IMAGE_TO_STATIC(image, isExport);
-    }
-}
-
-function IMAGE_TO_CSS() {
-    var image = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var isExport = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-
-    var results = {};
-
-    var backgroundImage = IMAGE_TO_IMAGE_STRING(image, isExport);
-    var backgroundPosition = IMAGE_TO_BACKGROUND_POSITION_STRING(image, isExport);
-    var backgroundSize = IMAGE_TO_BACKGROUND_SIZE_STRING(image, isExport);
-    var backgroundRepeat = IMAGE_TO_BACKGROUND_REPEAT_STRING(image, isExport);
-    var backgroundBlendMode = IMAGE_TO_BACKGROUND_BLEND_MODE_STRING(image, isExport);
-
-    if (backgroundImage) {
-        results['background-image'] = backgroundImage; // size, position, origin, attachment and etc 
-    }
-
-    if (backgroundSize) {
-        results['background-size'] = backgroundSize;
-    }
-
-    if (backgroundPosition) {
-        results['background-position'] = backgroundPosition;
-    }
-
-    if (backgroundRepeat) {
-        results['background-repeat'] = backgroundRepeat;
-    }
-
-    if (backgroundBlendMode) {
-        results['background-blend-mode'] = backgroundBlendMode;
-    }
-
-    return results;
-}
-
-
-
-var LINEAR_GRADIENT_LIST = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_REPEATING_LINEAR];
-var IMAGE_GRADIENT_LIST = [IMAGE_ITEM_TYPE_IMAGE];
-var STATIC_GRADIENT_LIST = [IMAGE_ITEM_TYPE_STATIC];
-
-function IMAGE_TYPE_IS_LINEAR(type) {
-    return LINEAR_GRADIENT_LIST.includes(type);
-}
-
-
-
-
-
-function IMAGE_TYPE_IS_IMAGE(type) {
-    return IMAGE_GRADIENT_LIST.includes(type);
-}
-
-function IMAGE_TYPE_IS_STATIC(type) {
-    return STATIC_GRADIENT_LIST.includes(type);
-}
-
-
-
-
-
-
-
-
-
-function PATTERN_MAKE(item) {
-    var patterns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var patternOption = item.pattern || {};
-    var patternList = Object.keys(patternOption);
-
-    if (!patternList.length) {
-        return null;
-    }
-
-    var results = [];
-    patternList.filter(function (name) {
-        return patterns[name];
-    }).forEach(function (patternName) {
-
-        if (patternOption[patternName].enable) {
-            results.push.apply(results, toConsumableArray(patterns[patternName].make(item, patternOption[patternName])));
-        }
-    });
-
-    results.push(item);
-
-    return results;
-}
-
-function PATTERN_GET(item, patternName) {
-    var pattern = item.pattern || {};
-
-    return pattern[patternName] || {};
-}
-
-function generateImagePattern(images) {
-    var patterns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var results = [];
-
-    images.forEach(function (item) {
-        var patternedItems = PATTERN_MAKE(item, patterns);
-        if (patternedItems) {
-            results.push.apply(results, toConsumableArray(patternedItems));
-        } else {
-            results.push(item);
-        }
-    });
-
-    return results;
-}
-
-
-
-function LAYER_MAKE_FONT(layer) {
-    var results = {};
-
-    if (layer.color) {
-        results['color'] = layer.color;
-    }
-
-    if (layer.fontSize) {
-        results['font-size'] = stringUnit(layer.fontSize);
-    }
-
-    if (layer.fontFamily) {
-        results['font-family'] = layer.fontFamily;
-    }
-
-    if (layer.fontWeight) {
-        results['font-weight'] = layer.fontWeight;
-    }
-
-    if (isNotUndefined(layer.lineHeight)) {
-        results['line-height'] = stringUnit(layer.lineHeight);
-    }
-
-    results['word-wrap'] = layer.wordWrap || 'break-word';
-    results['word-break'] = layer.wordBreak || 'break-word';
-
-    if (layer.clipText) {
-        results['color'] = 'transparent';
-        results['background-clip'] = 'text';
-        results['-webkit-background-clip'] = 'text';
-    }
-
-    return results;
-}
-
-function LAYER_CACHE_TO_IMAGE_CSS(images) {
-    var results = {};
-
-    images.forEach(function (item) {
-        var image = _extends({}, item.image, { colorsteps: item.colorsteps });
-        var css = IMAGE_TO_CSS(image);
-
-        keyEach(css, function (key, value$$1) {
-            if (!results[key]) {
-                results[key] = [];
-            }
-
-            results[key].push(value$$1);
-        });
-    });
-
-    return combineKeyArray(results);
-}
-
-function LAYER_TO_STRING_CLIPPATH(layer) {
-
-    if (layer.clipPathType != CLIP_PATH_TYPE_SVG) return EMPTY_STRING;
-    if (!layer.clipPathSvg) return EMPTY_STRING;
-
-    var transform = EMPTY_STRING;
-
-    if (layer.fitClipPathSize) {
-        var widthScale = unitValue(layer.width) / layer.clipPathSvgWidth;
-        var heightScale = unitValue(layer.height) / layer.clipPathSvgHeight;
-
-        transform = "scale(" + widthScale + " " + heightScale + ")";
-    }
-
-    var $div = new Dom('div');
-    var paths = $div.html(layer.clipPathSvg).$('svg').html();
-    var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"clippath-" + layer.id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
-
-    return svg;
-}
-
-function PROPERTY_GET_DEFAULT_VALUE(property) {
-    return PROPERTY_DEFAULT_VALUE[property] || { defaultValue: 0, step: 1, min: -1000, max: 1000 };
-}
-
-function TIMING_GET_VALUE(targetItem, keyframe, currentTime) {
-
-    // var Scale.makeSetupFunction(start, end);
-
-    var propertyInfo = PROPERTY_GET_DEFAULT_VALUE(keyframe.property);
-    var progress = (currentTime - keyframe.startTime) / (keyframe.endTime - keyframe.startTime);
-    var realProgress = Timing[keyframe.timing](progress);
-
-    if (propertyInfo.type == 'color') {
-        var start = parse(keyframe.startValue);
-        var end = parse(keyframe.endValue);
-        var value$$1 = interpolateRGBObject(start, end, realProgress);
-
-        value$$1 = format(value$$1, end.type);
-    } else {
-        var value$$1 = keyframe.startValue + (keyframe.endValue - keyframe.startValue) * realProgress;
-    }
-
-    return value$$1;
-}
-
-function GET_PROPERTY_LIST(item) {
-
-    if (IS_LAYER(item)) {
-        return PROPERTY_LIST[item.itemType] || [];
-    } else if (IS_IMAGE(item)) {
-        return PROPERTY_LIST[item.itemType + "_" + item.type] || [];
-    }
-}
-
 var ColorSteps = function (_BasePropertyItem) {
     inherits(ColorSteps, _BasePropertyItem);
 
@@ -15151,7 +11514,7 @@ var ColorSteps = function (_BasePropertyItem) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value() {
             this.refresh();
         }
@@ -15168,7 +11531,7 @@ var ColorSteps = function (_BasePropertyItem) {
     return ColorSteps;
 }(BasePropertyItem);
 
-var _templateObject$3 = taggedTemplateLiteral(["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"], ["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"]);
+var _templateObject$1 = taggedTemplateLiteral(["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"], ["<div class='step-list' ref=\"$stepList\">\n                    ", "\n                </div>"]);
 
 var GradientInfo = function (_UIElement) {
     inherits(GradientInfo, _UIElement);
@@ -15199,7 +11562,7 @@ var GradientInfo = function (_UIElement) {
 
             var colorsteps = image.colorsteps;
 
-            return html(_templateObject$3, colorsteps.map(function (step) {
+            return html(_templateObject$1, colorsteps.map(function (step) {
                 var cut = step.cut ? 'cut' : EMPTY_STRING;
                 var unitValue$$1 = step.getUnitValue(_this2.getMaxValue());
                 return "\n                            <div class='color-step " + (step.selected ? 'selected' : EMPTY_STRING) + "' colorstep-id=\"" + step.id + "\" >\n                                <div class=\"color-cut\">\n                                    <div class=\"guide-change " + cut + "\" colorstep-id=\"" + step.id + "\"></div>\n                                </div>                                \n                                <div class=\"color-view\">\n                                    <div class=\"color-view-item\" style=\"background-color: " + step.color + "\" colorstep-id=\"" + step.id + "\" ></div>\n                                </div>                            \n                                <div class=\"color-code\">\n                                    <input type=\"text\" class=\"code\" value='" + step.color + "' colorstep-id=\"" + step.id + "\"  />\n                                </div>\n                                <div class=\"color-unit " + step.getUnit() + "\">\n                                    <input type=\"number\" class=\"percent\" min=\"0\" max=\"100\" step=\"0.1\"  value=\"" + unitValue$$1.percent + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"px\" min=\"0\" max=\"1000\" step=\"1\"  value=\"" + unitValue$$1.px + "\" colorstep-id=\"" + step.id + "\"  />\n                                    <input type=\"number\" class=\"em\" min=\"0\" max=\"500\" step=\"0.1\"  value=\"" + unitValue$$1.em + "\" colorstep-id=\"" + step.id + "\"  />\n                                    " + _this2.getUnitSelect(step) + "\n                                </div>                       \n                                <div class=\"tools\">\n                                    <button type=\"button\" class='remove-step' colorstep-id=\"" + step.id + "\" >&times;</button>\n                                </div>\n                            </div>\n                        ";
@@ -15211,7 +11574,7 @@ var GradientInfo = function (_UIElement) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_COLORSTEP, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -15363,7 +11726,7 @@ var ColorStepsInfo = function (_UIElement) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15406,7 +11769,7 @@ var ColorPickerPanel = function (_UIElement) {
             this.$el.toggle(this.isShow());
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -15437,7 +11800,7 @@ var Transform = function (_BasePropertyItem) {
             return "\n            <div class='property-item transform show'>\n                <div class='items block'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"0\" max=\"360\">\n                            <input type='number' ref=\"$rotate\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Scale</label>\n                        <div>\n                            <input type='range' ref=\"$scaleRange\" min=\"0.5\" max=\"10.0\" step=\"0.1\">                        \n                            <input type='number' ref=\"$scale\" min=\"0.5\" max=\"10.0\" step=\"0.1\">\n                        </div>\n                    </div>                      \n                    <div>\n                        <label>SkewX</label>\n                        <div>\n                            <input type='range' ref=\"$skewXRange\" min=\"-360\" max=\"360\" step=\"0.1\">    \n                            <input type='number' ref=\"$skewX\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>SkewY</label>\n                        <div>\n                            <input type='range' ref=\"$skewYRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' ref=\"$skewY\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>     \n   \n                    <div>\n                        <label>translateX</label>\n                        <div>\n                            <input type='range' ref=\"$translateXRange\" min=\"-2000\" max=\"2000\" step=\"1\">                        \n                            <input type='number' ref=\"$translateX\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>                        \n                        <label>translateY</label>\n                        <div>\n                            <input type='range' ref=\"$translateYRange\" min=\"-2000\" max=\"2000\" step=\"1\">\n                            <input type='number' ref=\"$translateY\" min=\"-2000\" max=\"2000\" step=\"1\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                                   \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -15555,7 +11918,7 @@ var Transform3d = function (_BasePropertyItem) {
             return "\n            <div class='property-item transform show'>\n                <div class='items block'>            \n                    <div>\n                        <label> 3D </label>\n                        <div><label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label></div>\n                    </div>                    \n                    <div>\n                        <label>Perspective</label>\n                        <div>\n                            <input type='range' data-type=\"perspective\" ref=\"$perspectiveRange\" min=\"0\" max=\"3000\">\n                            <input type='number' data-type=\"perspective\" ref=\"$perspective\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                \n                    <div>\n                        <label>Rotate X</label>\n                        <div>\n                            <input type='range' data-type=\"rotateX\" ref=\"$rotateXRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateX\" ref=\"$rotateX\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Rotate Y</label>\n                        <div>\n                            <input type='range' data-type=\"rotateY\" ref=\"$rotateYRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateY\" ref=\"$rotateY\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                    \n                    <div>\n                        <label>Rotate Z</label>\n                        <div>\n                            <input type='range' data-type=\"rotateZ\" ref=\"$rotateZRange\" min=\"-360\" max=\"360\">\n                            <input type='number' data-type=\"rotateZ\" ref=\"$rotateZ\"> <span>" + UNIT_DEG + "</span>\n                        </div>\n                    </div>                                         \n                    <div>\n                        <label>Scale X</label>\n                        <div>\n                            <input type='range' data-type=\"scaleX\" ref=\"$scaleXRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleX\" ref=\"$scaleX\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Y</label>\n                        <div>\n                            <input type='range' data-type=\"scaleY\" ref=\"$scaleYRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleY\" ref=\"$scaleY\"> \n                        </div>\n                    </div>                                        \n                    <div>\n                        <label>Scale Z</label>\n                        <div>\n                            <input type='range' data-type=\"scaleZ\" ref=\"$scaleZRange\" min=\"0.5\" max=\"10\" step=\"0.1\">\n                            <input type='number' data-type=\"scaleZ\" ref=\"$scaleZ\"> \n                        </div>\n                    </div>    \n                    <div>\n                        <label>Translate X</label>\n                        <div>\n                            <input type='range'  data-type=\"translateX\" ref=\"$translateXRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number'  data-type=\"translateX\" ref=\"$translateX\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Y</label>\n                        <div>\n                            <input type='range'  data-type=\"translateY\" ref=\"$translateYRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateY\" ref=\"$translateY\" min=\"-2000\" max=\"2000\"> <span>" + UNIT_PX + "</span> \n                        </div>\n                    </div>\n                    <div>\n                        <label>Translate Z</label>\n                        <div>\n                            <input type='range' data-type=\"translateZ\" ref=\"$translateZRange\" min=\"-2000\" max=\"2000\">\n                            <input type='number' data-type=\"translateZ\" ref=\"$translateZ\" min=\"-2000\" max=\"2000\">  <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>                                        \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -15897,7 +12260,7 @@ var BackgroundSize = function (_UIElement) {
             editor$1.selection.updateBackgroundImage(CHANGE_IMAGE, { repeat: repeat });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -15945,7 +12308,7 @@ var PageSize = function (_UIElement) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label>   Width</label>\n                        <div>\n                            <input type='number' ref=\"$width\"> <span>" + UNIT_PX + "</span>\n                            <button type=\"button\" ref=\"$rect\">rect</button>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Height</label>\n                        <div>\n                            <input type='number' ref=\"$height\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>             \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_ARTBOARD),
+        key: EVENT(CHANGE_EDITOR, CHANGE_ARTBOARD),
         value: function value$$1() {
             this.refresh();
         }
@@ -16006,7 +12369,7 @@ var PageName = function (_UIElement) {
             return "\n            <div class='property-item name show'>\n                <div class='items'>            \n                    <div>\n                        <label>Name</label>\n                        <div>\n                            <input type='text' ref=\"$name\" style=\"width: 100px;\"> \n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_ARTBOARD, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_ARTBOARD, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -16052,47 +12415,43 @@ var PageExport = function (_UIElement) {
 }(UIElement);
 
 var SELECTION_CHECK = 'selection/check';
-var SELECTION_IS_EMPTY = 'selection/is/empty';
-var SELECTION_IS_NOT_EMPTY = 'selection/is/not/empty';
-var SELECTION_HAS_ONE = 'selection/has/one';
-var SELECTION_HAS_MANY = 'selection/has/many';
-var SELECTION_TYPE = 'selection/type';
-var SELECTION_CURRENT = 'selection/current';
-var SELECTION_UNIT_VALUES = 'selection/unit/values';
+
+
+
+
+
+
+
 var SELECTION_CURRENT_IMAGE = 'selection/current/image';
 var SELECTION_CURRENT_IMAGE_ID = 'selection/current/image/id';
-var SELECTION_CURRENT_BOXSHADOW = 'selection/current/boxshadow';
-var SELECTION_CURRENT_BOXSHADOW_ID = 'selection/current/boxshadow/id';
-var SELECTION_CURRENT_TEXTSHADOW = 'selection/current/textshadow';
-var SELECTION_CURRENT_TEXTSHADOW_ID = 'selection/current/textshadow/id';
+
+
+
+
 var SELECTION_CURRENT_LAYER = 'selection/current/layer';
 var SELECTION_CURRENT_LAYER_ID = 'selection/current/layer/id';
 var SELECTION_CURRENT_PAGE = 'selection/current/page';
 var SELECTION_CURRENT_PAGE_ID = 'selection/current/page/id';
-var SELECTION_MODE = 'selection/mode';
-var SELECTION_IS = 'selection/is';
-var SELECTION_IS_ITEM = 'selection/is/item';
+
+
+
 var SELECTION_IS_LAYER = 'selection/is/layer';
-var SELECTION_IS_IMAGE = 'selection/is/image';
-var SELECTION_IS_PAGE = 'selection/is/page';
-var SELECTION_IS_BOXSHADOW = 'selection/is/boxshadow';
-var SELECTION_IS_TEXTSHADOW = 'selection/is/textshadow';
 
 
-var SELECTION_IS_ONE = 'selection/is/one';
-var SELECTION_IS_GROUP = 'selection/is/group';
-var SELECTION_IS_AREA = 'selection/is/area';
-var SELECTION_LAYERS = 'selection/layers';
+
+
+
+
+
+
+
+
 var SELECTION_ONE = 'selection/one';
-var SELECTION_CHANGE = 'selection/change';
-var SELECTION_AREA = 'selection/area';
-var SELECTION_RECT = 'selection/rect';
 
 var FILTER_GET = 'filter/get';
 var FILTER_LIST = 'filter/list';
-var FILTER_TO_CSS = 'filter/toCSS';
 
-var _templateObject$4 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
+var _templateObject$2 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
 
 var DROPSHADOW_FILTER_KEYS = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
 
@@ -16123,7 +12482,7 @@ var FilterList$1 = function (_BasePropertyItem) {
 
                 return "\n                <div class='filter'>\n                    <span class=\"area\"></span>                \n                    <span class=\"checkbox\">\n                        <input type=\"checkbox\" " + (dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING) + " data-key=\"" + key + "\" />\n                    </span>\n                    <span class='title' draggable=\"true\">" + viewObject.title + "</span>\n                    <span class='range'><input type=\"range\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\" ref=\"" + key + "Range\" data-key=\"" + key + "\"/></span>\n                    <span class='input-value'><input type=\"number\" min=\"" + viewObject.min + "\" max=\"" + viewObject.max + "\" step=\"" + viewObject.step + "\" value=\"" + value$$1 + "\"  ref=\"" + key + "Number\" data-key=\"" + key + "\"/></span>\n                    <span class='unit'>" + unitString(viewObject.unit) + "</span>\n                </div>\n            ";
             } else if (viewObject.type == 'multi') {
-                return html(_templateObject$4, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS.map(function (subkey) {
+                return html(_templateObject$2, dataObject.checked ? "checked=\"checked\"" : EMPTY_STRING, key, viewObject.title, DROPSHADOW_FILTER_KEYS.map(function (subkey) {
 
                     var it = _this2.read(FILTER_GET, subkey);
                     var value$$1 = isUndefined$1(dataObject[subkey]) ? it.defaultValue : unitValue(dataObject[subkey]);
@@ -16158,7 +12517,7 @@ var FilterList$1 = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -16250,57 +12609,38 @@ var IMAGE_GET_BLOB = 'image/get/blob';
 
 var IMAGE_TO_STRING = 'image/toString';
 
-
-
-
-var IMAGE_TO_LINEAR_RIGHT = 'image/toLinearRight';
-
-var ITEM_KEYS = 'item/keys';
-
-var ITEM_KEYS_GENERATE = 'item/keys/generate';
 var ITEM_INITIALIZE = 'item/initialize';
-var ITEM_CREATE_OBJECT = 'item/create/object';
-var ITEM_CREATE_PAGE = 'item/create/page';
-var ITEM_CREATE_LAYER = 'item/create/layer';
-var ITEM_CREATE_TIMELINE = 'item/create/timeline';
-var ITEM_CREATE_KEYFRAME = 'item/create/keyframe';
-var ITEM_CREATE_IMAGE = 'item/create/image';
-var ITEM_CREATE_MASK_IMAGE = 'item/create/mask-image';
-var ITEM_CREATE_BORDER_IMAGE = 'item/create/border-image';
-var ITEM_CREATE_BOX_IMAGE = 'item/create/box-image';
-var ITEM_CREATE_BOXSHADOW = 'item/create/boxshadow';
-var ITEM_CREATE_TEXTSHADOW = 'item/create/textshadow';
-var ITEM_CREATE_CIRCLE = 'item/create/circle';
-var ITEM_CREATE_POLYGON = 'item/create/polygon';
-var ITEM_CREATE_GROUP = 'item/create/group';
-var ITEM_CREATE_COLORSTEP = 'item/create/colorstep';
-var ITEM_CREATE = 'item/create';
-var ITEM_COPY = 'item/copy';
-var ITEM_ADD = 'item/add';
-var ITEM_CREATE_IMAGE_WITH_COLORSTEP = 'item/create/image/with/colorstep';
-var ITEM_PREPEND_IMAGE = 'item/prepend/image';
-var ITEM_PREPEND_IMAGE_FILE$1 = 'item/prepend/image/file';
-var ITEM_SET_IMAGE_FILE = 'item/set/image/file';
-var ITEM_PREPEND_IMAGE_URL$1 = 'item/prepend/image/url';
 
-var ITEM_ADD_TIMELINE = 'item/add/timeline';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var ITEM_SET_IMAGE_FILE = 'item/set/image/file';
+
+
+
 var ITEM_ADD_KEYFRAME = 'item/add/keyframe';
-var ITEM_ADD_LAYER = 'item/add/layer';
-var ITEM_ADD_CIRCLE = 'item/add/circle';
-var ITEM_ADD_RECT = 'item/add/rect';
-var ITEM_ADD_SHAPE = 'item/add/shape';
-var ITEM_ADD_IMAGE = 'item/add/image';
-var ITEM_ADD_IMAGE_FILE = 'item/add/image/file';
-var ITEM_ADD_IMAGE_URL = 'item/add/image/url';
-var ITEM_ADD_PAGE = 'item/add/page';
-var ITEM_ADD_BOXSHADOW = 'item/add/boxshadow';
-var ITEM_ADD_TEXTSHADOW = 'item/add/textshadow';
 
 var SVG_LIST = 'svg/list';
-var SVG_LIST_LOAD = 'svg/list/load';
-var SVG_GET_CLIPPATH = 'svg/get/clipPath';
+
+
 var SVG_GET_BLOB = 'svg/get/blob';
-var SVG_GET = 'svg/get';
 
 var ImageResource$1 = function (_BasePropertyItem) {
     inherits(ImageResource, _BasePropertyItem);
@@ -16333,7 +12673,7 @@ var ImageResource$1 = function (_BasePropertyItem) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value() {
             this.$el.toggle(this.isShow());
         }
@@ -16387,7 +12727,7 @@ var ImageResource$1 = function (_BasePropertyItem) {
     return ImageResource;
 }(BasePropertyItem);
 
-var _templateObject$5 = taggedTemplateLiteral(["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "]);
+var _templateObject$3 = taggedTemplateLiteral(["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path show'>\n                <div class='items'>            \n                    <div>\n                        <label>View editor</label>\n                        <div >\n                            <label><input type=\"checkbox\" ref=\"$showClipPathEditor\" /> show clip path editor</label>\n                        </div>\n                    </div>                       \n                    <div>\n                        <label>Type</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                       \n                </div>\n            </div>\n        "]);
 
 var CLIP_PATH_TYPES = [CLIP_PATH_TYPE_NONE, CLIP_PATH_TYPE_CIRCLE, CLIP_PATH_TYPE_ELLIPSE, CLIP_PATH_TYPE_INSET, CLIP_PATH_TYPE_POLYGON, CLIP_PATH_TYPE_SVG];
 
@@ -16402,12 +12742,12 @@ var ClipPath = function (_BasePropertyItem) {
     createClass(ClipPath, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$5, CLIP_PATH_TYPES.map(function (type) {
+            return html(_templateObject$3, CLIP_PATH_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }));
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -16457,7 +12797,7 @@ var PageShowGrid = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value() {
             this.refresh();
         }
@@ -17396,8 +13736,6 @@ var BackgroundImage = function (_Property) {
         value: function convert(json) {
             json.x = Length$1.parse(json.x);
             json.y = Length$1.parse(json.y);
-            json.width = Length$1.parse(json.width);
-            json.height = Length$1.parse(json.height);
 
             if (json.width) json.width = Length$1.parse(json.width);
             if (json.height) json.height = Length$1.parse(json.height);
@@ -17590,6 +13928,191 @@ var TextShadow = function (_Property) {
     return TextShadow;
 }(Property);
 
+var Display = function (_Property) {
+    inherits(Display, _Property);
+
+    function Display() {
+        classCallCheck(this, Display);
+        return possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));
+    }
+
+    createClass(Display, [{
+        key: 'getDefaultObject',
+        value: function getDefaultObject() {
+            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return get$1(Display.prototype.__proto__ || Object.getPrototypeOf(Display.prototype), 'getDefaultObject', this).call(this, _extends({
+                itemType: 'display' }, obj));
+        }
+    }, {
+        key: 'toCSS',
+        value: function toCSS() {
+            return {
+                'display': this.json.display
+            };
+        }
+    }]);
+    return Display;
+}(Property);
+
+var InlineDisplay = function (_Display) {
+    inherits(InlineDisplay, _Display);
+
+    function InlineDisplay() {
+        classCallCheck(this, InlineDisplay);
+        return possibleConstructorReturn(this, (InlineDisplay.__proto__ || Object.getPrototypeOf(InlineDisplay)).apply(this, arguments));
+    }
+
+    createClass(InlineDisplay, [{
+        key: 'getDefaultObject',
+        value: function getDefaultObject() {
+            return get$1(InlineDisplay.prototype.__proto__ || Object.getPrototypeOf(InlineDisplay.prototype), 'getDefaultObject', this).call(this, {
+                type: 'inline',
+                display: 'inline'
+            });
+        }
+    }]);
+    return InlineDisplay;
+}(Display);
+
+var InlineBlockDisplay = function (_Display2) {
+    inherits(InlineBlockDisplay, _Display2);
+
+    function InlineBlockDisplay() {
+        classCallCheck(this, InlineBlockDisplay);
+        return possibleConstructorReturn(this, (InlineBlockDisplay.__proto__ || Object.getPrototypeOf(InlineBlockDisplay)).apply(this, arguments));
+    }
+
+    createClass(InlineBlockDisplay, [{
+        key: 'getDefaultObject',
+        value: function getDefaultObject() {
+            return get$1(InlineBlockDisplay.prototype.__proto__ || Object.getPrototypeOf(InlineBlockDisplay.prototype), 'getDefaultObject', this).call(this, {
+                type: 'inline-block',
+                display: 'inline-block'
+            });
+        }
+    }]);
+    return InlineBlockDisplay;
+}(Display);
+
+var BlockDisplay = function (_Display3) {
+    inherits(BlockDisplay, _Display3);
+
+    function BlockDisplay() {
+        classCallCheck(this, BlockDisplay);
+        return possibleConstructorReturn(this, (BlockDisplay.__proto__ || Object.getPrototypeOf(BlockDisplay)).apply(this, arguments));
+    }
+
+    createClass(BlockDisplay, [{
+        key: 'getDefaultObject',
+        value: function getDefaultObject() {
+            return get$1(BlockDisplay.prototype.__proto__ || Object.getPrototypeOf(BlockDisplay.prototype), 'getDefaultObject', this).call(this, {
+                type: 'block',
+                display: 'block'
+            });
+        }
+    }]);
+    return BlockDisplay;
+}(Display);
+
+var FlexDisplay = function (_Display4) {
+    inherits(FlexDisplay, _Display4);
+
+    function FlexDisplay() {
+        classCallCheck(this, FlexDisplay);
+        return possibleConstructorReturn(this, (FlexDisplay.__proto__ || Object.getPrototypeOf(FlexDisplay)).apply(this, arguments));
+    }
+
+    createClass(FlexDisplay, [{
+        key: 'getDefaultObject',
+        value: function getDefaultObject() {
+            return get$1(FlexDisplay.prototype.__proto__ || Object.getPrototypeOf(FlexDisplay.prototype), 'getDefaultObject', this).call(this, {
+                type: 'flex',
+                display: 'flex',
+
+                // refer to https://developer.mozilla.org/docs/Web/CSS/flex-direction            
+                direction: 'row',
+
+                // refer to https://developer.mozilla.org/docs/Web/CSS/align-items
+                alignItems: 'normal',
+
+                // refer to https://developer.mozilla.org/docs/Web/CSS/align-content
+                alignCentent: 'normal',
+
+                // refer to https://developer.mozilla.org/docs/Web/CSS/flex-wrap
+                wrap: 'nowrap',
+
+                justifyContent: 'flex-start'
+            });
+        }
+    }, {
+        key: 'toCSS',
+        value: function toCSS() {
+            var json = this.json;
+            var css = {
+                display: 'flex'
+            };
+
+            if (json.direction != 'row') {
+                css['flex-direction'] = json.direction;
+            }
+
+            if (json.alignItems != 'normal') {
+                css['align-items'] = json.alignItems;
+            }
+
+            if (json.alignContent != 'normal') {
+                css['align-content'] = json.alignContent;
+            }
+
+            if (json.wrap != 'nowrap') {
+                css['flex-wrap'] = json.wrap;
+            }
+
+            if (json.justifyContent != 'flex-start') {
+                css['justify-content'] = json.justifyContent;
+            }
+
+            return css;
+        }
+    }]);
+    return FlexDisplay;
+}(Display);
+
+var GridDisplay = function (_Display5) {
+    inherits(GridDisplay, _Display5);
+
+    function GridDisplay() {
+        classCallCheck(this, GridDisplay);
+        return possibleConstructorReturn(this, (GridDisplay.__proto__ || Object.getPrototypeOf(GridDisplay)).apply(this, arguments));
+    }
+
+    createClass(GridDisplay, [{
+        key: 'getDefaultObject',
+        value: function getDefaultObject() {
+            return get$1(GridDisplay.prototype.__proto__ || Object.getPrototypeOf(GridDisplay.prototype), 'getDefaultObject', this).call(this, {
+                type: 'grid',
+                display: 'grid'
+            });
+        }
+    }]);
+    return GridDisplay;
+}(Display);
+
+var DisplayClassName = {
+    'inline': InlineDisplay,
+    'inline-block': InlineBlockDisplay,
+    'block': BlockDisplay,
+    'flex': FlexDisplay,
+    'grid': GridDisplay
+};
+
+Display.parse = function (obj) {
+    var DisplayClass = DisplayClassName[obj.type];
+
+    return new DisplayClass(obj);
+};
+
 var BLEND_LIST = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
 
 var Layer = function (_Item) {
@@ -17606,18 +14129,19 @@ var Layer = function (_Item) {
             return 'Layer';
         }
     }, {
-        key: "dist",
-        value: function dist() {
-            var json = this.json;
-            return Math.sqrt(Math.pow(json.width.value, 2) + Math.pow(json.width.value, 2)) / Math.sqrt(2);
+        key: "isLayoutItem",
+        value: function isLayoutItem() {
+            var parent = this.parent();
+
+            return parent.itemType == 'layer';
         }
     }, {
         key: "add",
-        value: function add(groupOrLayer) {
-            if (groupOrLayer.itemType == 'group' || groupOrLayer.itemType == 'layer') {
-                return get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "add", this).call(this, groupOrLayer);
+        value: function add(layer) {
+            if (layer.itemType == 'layer') {
+                return get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "add", this).call(this, layer);
             } else {
-                throw new Error('잘못된 객체입니다.');
+                throw new Error('layer 객체입니다.');
             }
         }
     }, {
@@ -17661,6 +14185,7 @@ var Layer = function (_Item) {
             json.height = Length$1.parse(json.height);
 
             if (json.clippath) json.clippath = ClipPath$2.parse(json.clippath);
+            if (json.display) json.display = Display.parse(json.display);
 
             json.filters = json.filters.map(function (f) {
                 return Filter.parse(f);
@@ -17699,14 +14224,53 @@ var Layer = function (_Item) {
                 backgroundImages: [],
                 boxShadows: [],
                 textShadows: [],
-                clippath: new NoneClipPath()
+                clippath: new NoneClipPath(),
+                display: new BlockDisplay()
             }, obj));
+        }
+    }, {
+        key: "checkField",
+        value: function checkField(key, value) {
+            if (key === 'parentId') {
+                this.json.parentPosition = this.getParentPosition(value).id;
+            }
+            return true;
         }
     }, {
         key: "getArtBoard",
         value: function getArtBoard() {
             return this.path().filter(function (it) {
                 return it.itemType == 'artboard';
+            })[0];
+        }
+    }, {
+        key: "getParentPosition",
+        value: function getParentPosition(parentId) {
+            var path = this.path(parentId);
+
+            return path.filter(function (it) {
+                if (it.itemType == 'layer') {
+                    if (it.display.type == 'block') return true;else if (it.display.type == 'inline-block') return true;
+                } else if (it.itemType == 'artboard') {
+                    return true;
+                }
+
+                return false;
+            })[0];
+        }
+    }, {
+        key: "parentDirectory",
+        value: function parentDirectory() {
+            var path = this.path();
+
+            return path.filter(function (it) {
+                if (it.itemType == 'directory') {
+                    return true;
+                } else if (it.itemType == 'artboard') {
+                    return true;
+                }
+
+                return false;
             })[0];
         }
     }, {
@@ -17723,6 +14287,11 @@ var Layer = function (_Item) {
         key: "toClipPathCSS",
         value: function toClipPathCSS() {
             return this.json.clippath.toCSS();
+        }
+    }, {
+        key: "toDisplayCSS",
+        value: function toDisplayCSS() {
+            return this.json.display.toCSS();
         }
     }, {
         key: "toPropertyCSS",
@@ -17950,23 +14519,12 @@ var Layer = function (_Item) {
     }, {
         key: "toDefaultCSS",
         value: function toDefaultCSS(isBound) {
-            var css = {};
+            var css = _extends({}, this.toBoundCSS(isBound));
             var json = this.json;
 
-            css.width = json.width;
-            css.height = json.height;
             css['box-sizing'] = json.boxSizing || 'border-box';
             css['visibility'] = json.visible ? 'visible' : 'hidden';
             css.position = json.position;
-
-            if (json.x) {
-                css.left = isBound ? this.screenX : json.x;
-            }
-
-            if (json.y) {
-                css.top = isBound ? this.screenY : json.y;
-            }
-
             if (json.backgroundColor) {
                 css['background-color'] = json.backgroundColor;
             }
@@ -17989,14 +14547,19 @@ var Layer = function (_Item) {
     }, {
         key: "toBoundCSS",
         value: function toBoundCSS() {
+            var isBound = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
             var json = this.json;
-            var left = json.x.clone();
-            var top = json.y.clone();
 
-            left.add(this.getArtBoard().x);
-            top.add(this.getArtBoard().y);
+            // isBound 가 true 이고  상위 
+            var isBoundRect = isBound && this.parent().itemType != 'layer';
 
-            return { left: this.screenX, top: this.screenY, width: json.width, height: json.height };
+            return {
+                left: isBoundRect === false ? json.x : this.screenX,
+                top: isBoundRect === false ? json.y : this.screenY,
+                width: json.width,
+                height: json.height
+            };
         }
     }, {
         key: "toCSS",
@@ -18004,7 +14567,7 @@ var Layer = function (_Item) {
             var isBound = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
 
-            var results = _extends({}, this.toDefaultCSS(isBound), this.toBorderWidthCSS(), this.toBorderRadiusCSS(), this.toBorderColorCSS(), this.toBorderStyleCSS(), this.toTransformCSS(), this.toClipPathCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toFontCSS(), this.toBoxShadowCSS(), this.toTextShadowCSS(), this.toBackgroundImageCSS());
+            var results = _extends({}, this.toDefaultCSS(isBound), this.toBorderWidthCSS(), this.toBorderRadiusCSS(), this.toBorderColorCSS(), this.toBorderStyleCSS(), this.toTransformCSS(), this.toDisplayCSS(), this.toClipPathCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toFontCSS(), this.toBoxShadowCSS(), this.toTextShadowCSS(), this.toBackgroundImageCSS());
 
             return CSS_FILTERING(cleanObject(results));
         }
@@ -18046,24 +14609,18 @@ var Layer = function (_Item) {
     }, {
         key: "screenX",
         get: function get$$1() {
-            return Length$1.px(this.getArtBoard().x.value + this.json.x.value);
-        },
-        set: function set$$1(newX) {
-            this.json.x.set(Length$1.px(newX.value - this.getArtBoard().x.value));
+            return Length$1.px(editor$1.get(this.json.parentPosition).screenX.value + this.json.x.value);
         }
     }, {
         key: "screenY",
         get: function get$$1() {
-            return Length$1.px(this.getArtBoard().y.value + this.json.y.value);
-        },
-        set: function set$$1(newY) {
-            this.json.y.set(Length$1.px(newY.value - this.getArtBoard().y.value));
+            return Length$1.px(editor$1.get(this.json.parentPosition).screenY.value + this.json.y.value);
         }
     }]);
     return Layer;
 }(Item);
 
-var _templateObject$6 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+var _templateObject$4 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
 
 var BackgroundBlend = function (_BasePropertyItem) {
     inherits(BackgroundBlend, _BasePropertyItem);
@@ -18076,7 +14633,7 @@ var BackgroundBlend = function (_BasePropertyItem) {
     createClass(BackgroundBlend, [{
         key: 'template',
         value: function template() {
-            return html(_templateObject$6, BLEND_LIST.map(function (blend) {
+            return html(_templateObject$4, BLEND_LIST.map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }));
         }
@@ -18111,7 +14668,7 @@ var BackgroundBlend = function (_BasePropertyItem) {
     return BackgroundBlend;
 }(BasePropertyItem);
 
-var _templateObject$7 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
+var _templateObject$5 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
 
 var LayerBlend = function (_BasePropertyItem) {
     inherits(LayerBlend, _BasePropertyItem);
@@ -18124,7 +14681,7 @@ var LayerBlend = function (_BasePropertyItem) {
     createClass(LayerBlend, [{
         key: 'template',
         value: function template() {
-            return html(_templateObject$7, BLEND_LIST.map(function (blend) {
+            return html(_templateObject$5, BLEND_LIST.map(function (blend) {
                 return '<option value="' + blend + '">' + blend + '</option>';
             }));
         }
@@ -18173,7 +14730,7 @@ var Rotate = function (_BasePropertyItem) {
             return "\n            <div class='property-item rotate show'>\n                <div class='items'>            \n                    <div>\n                        <label>Rotate</label>\n                        <div>\n                            <input type='range' ref=\"$rotateRange\" min=\"-360\" max=\"360\" step=\"0.1\">\n                            <input type='number' class='middle' ref=\"$rotate\" min=\"-360\" max=\"360\" step=\"0.1\"> <span>\xB0</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18229,7 +14786,7 @@ var RadiusFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-radius'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$radiusLabel\">*</button> Radius</label>\n                        <div>\n                            <input type='range' ref=\"$radiusRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$radius\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18305,7 +14862,7 @@ var RadiusFixed = function (_BasePropertyItem) {
     return RadiusFixed;
 }(BasePropertyItem);
 
-var Opacity$3 = function (_BasePropertyItem) {
+var Opacity = function (_BasePropertyItem) {
     inherits(Opacity, _BasePropertyItem);
 
     function Opacity() {
@@ -18319,7 +14876,7 @@ var Opacity$3 = function (_BasePropertyItem) {
             return "\n            <div class='property-item opacity show'>\n                <div class='items'>            \n                    <div>\n                        <label>Opacity</label>\n                        <div>\n                            <input type='range' ref=\"$opacityRange\" min=\"0\" max=\"1\" step=\"0.01\">\n                            <input type='number' class='middle' ref=\"$opacity\" min=\"0\" max=\"1\" step=\"0.01\">\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -18362,7 +14919,7 @@ var Opacity$3 = function (_BasePropertyItem) {
     return Opacity;
 }(BasePropertyItem);
 
-var _templateObject$8 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side show'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side show'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
+var _templateObject$6 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-side show'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-side show'>\n                <div class='items'>            \n                    <div>\n                        <label>Side</label>\n                        <div class='full-size'>\n                            <select ref=\"$clipSideType\">\n                                ", "\n                            </select>\n                        </div>\n                    </div>                                                    \n                </div>\n            </div>\n        "]);
 
 var CLIP_PATH_SIDE_TYPES = [CLIP_PATH_SIDE_TYPE_NONE, CLIP_PATH_SIDE_TYPE_CLOSEST, CLIP_PATH_SIDE_TYPE_FARTHEST];
 
@@ -18377,12 +14934,12 @@ var ClipPathSide = function (_BasePropertyItem) {
     createClass(ClipPathSide, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$8, CLIP_PATH_SIDE_TYPES.map(function (type) {
+            return html(_templateObject$6, CLIP_PATH_SIDE_TYPES.map(function (type) {
                 return "<option value=\"" + type + "\">" + type + "</option>";
             }));
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -18435,7 +14992,7 @@ var ClipPathSide = function (_BasePropertyItem) {
     return ClipPathSide;
 }(BasePropertyItem);
 
-var _templateObject$9 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>\uC0D8\uD50C \uB9AC\uC2A4\uD2B8 \uAD6C\uD604\uD574\uC8FC\uC138\uC694.</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>\uC0D8\uD50C \uB9AC\uC2A4\uD2B8 \uAD6C\uD604\uD574\uC8FC\uC138\uC694.</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "]);
+var _templateObject$7 = taggedTemplateLiteral(["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>\uC0D8\uD50C \uB9AC\uC2A4\uD2B8 \uAD6C\uD604\uD574\uC8FC\uC138\uC694.</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "], ["\n            <div class='property-item clip-path-polygon'>\n                <div class=\"items\">\n                    <div>\n                        Click panel with alt if you want to add point\n                    </div>\n                    <div>\n                        Click drag item with alt if you want to delete point\n                    </div>                    \n                </div>\n                <div class='items' ref='$sampleList'>\uC0D8\uD50C \uB9AC\uC2A4\uD2B8 \uAD6C\uD604\uD574\uC8FC\uC138\uC694.</div> \n                <div class='items' ref='$polygonList'></div>\n            </div>\n        "]);
 
 var ClipPathPolygon = function (_BasePropertyItem) {
     inherits(ClipPathPolygon, _BasePropertyItem);
@@ -18448,7 +15005,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
     createClass(ClipPathPolygon, [{
         key: "template",
         value: function template() {
-            return html(_templateObject$9);
+            return html(_templateObject$7);
         }
     }, {
         key: LOAD('$polygonList'),
@@ -18476,7 +15033,7 @@ var ClipPathPolygon = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -18646,7 +15203,7 @@ var BoxShadow$1 = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR),
         value: function value$$1() {
             if (this.isPropertyShow()) {
                 this.refresh();
@@ -18823,7 +15380,7 @@ var TextShadow$1 = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_LAYER, CHANGE_SELECTION, CHANGE_EDITOR),
         value: function value$$1() {
             if (this.isPropertyShow()) {
                 this.refresh();
@@ -18928,6 +15485,2450 @@ var TextShadow$1 = function (_BasePropertyItem) {
     return TextShadow;
 }(BasePropertyItem);
 
+var BaseModule = function () {
+    function BaseModule($store) {
+        classCallCheck(this, BaseModule);
+
+        this.$store = $store;
+        this.initialize();
+    }
+
+    createClass(BaseModule, [{
+        key: "afterDispatch",
+        value: function afterDispatch() {}
+    }, {
+        key: "initialize",
+        value: function initialize() {
+            var _this = this;
+
+            this.filterProps(ACTION_PREFIX).forEach(function (key) {
+                _this.$store.action(key, _this);
+            });
+
+            this.filterProps(GETTER_PREFIX).forEach(function (key) {
+                _this.$store.getter(key, _this);
+            });
+        }
+    }, {
+        key: "filterProps",
+        value: function filterProps() {
+            var pattern = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '/';
+
+            return Object.getOwnPropertyNames(this.__proto__).filter(function (key) {
+                return key.startsWith(pattern);
+            });
+        }
+    }, {
+        key: "get",
+        value: function get(id) {
+            return this.$store.items[id] || {};
+        }
+    }, {
+        key: "set",
+        value: function set$$1(id, opt) {
+            this.$store.items[id] = opt;
+        }
+    }, {
+        key: "config",
+        value: function config(key, defaultValue) {
+            return isUndefined(this.$store.tool[key]) ? defaultValue : this.$store.tool[key];
+        }
+    }, {
+        key: "initConfig",
+        value: function initConfig(key, value) {
+            this.$store.tool[key] = value;
+        }
+    }]);
+    return BaseModule;
+}();
+
+var ColorSetsList = function (_BaseModule) {
+    inherits(ColorSetsList, _BaseModule);
+
+    function ColorSetsList() {
+        classCallCheck(this, ColorSetsList);
+        return possibleConstructorReturn(this, (ColorSetsList.__proto__ || Object.getPrototypeOf(ColorSetsList)).apply(this, arguments));
+    }
+
+    createClass(ColorSetsList, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(ColorSetsList.prototype.__proto__ || Object.getPrototypeOf(ColorSetsList.prototype), 'initialize', this).call(this);
+
+            // set property
+            this.$store.colorSetsList = [{ name: "Material",
+                edit: true,
+                colors: ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B']
+            }, { name: "Custom", "edit": true, "colors": [] }, { name: "Color Scale", "scale": ['red', 'yellow', 'black'], count: 5 }];
+            this.$store.currentColorSets = {};
+        }
+    }, {
+        key: ACTION('setUserPalette'),
+        value: function value($store, list) {
+            $store.userList = list;
+
+            $store.dispatch('resetUserPalette');
+            $store.dispatch('setCurrentColorSets');
+        }
+    }, {
+        key: ACTION('resetUserPalette'),
+        value: function value($store) {
+            if ($store.userList && $store.userList.length) {
+                $store.userList = $store.userList.map(function (element, index) {
+
+                    if (isFunction(element.colors)) {
+                        var makeCallback = element.colors;
+
+                        element.colors = makeCallback($store);
+                        element._colors = makeCallback;
+                    }
+
+                    return _extends({
+                        name: 'color-' + index,
+                        colors: []
+                    }, element);
+                });
+
+                $store.emit('changeUserList');
+            }
+        }
+    }, {
+        key: ACTION('setCurrentColorSets'),
+        value: function value($store, nameOrIndex) {
+
+            var _list = $store.read('list');
+
+            if (isUndefined$1(nameOrIndex)) {
+                $store.currentColorSets = _list[0];
+            } else if (isNumber(nameOrIndex)) {
+                $store.currentColorSets = _list[nameOrIndex];
+            } else {
+                $store.currentColorSets = _list.filter(function (obj) {
+                    return obj.name == nameOrIndex;
+                })[0];
+            }
+
+            $store.emit('changeCurrentColorSets');
+        }
+    }, {
+        key: GETTER('getCurrentColorSets'),
+        value: function value($store) {
+            return $store.currentColorSets;
+        }
+    }, {
+        key: ACTION('addCurrentColor'),
+        value: function value($store, color) {
+            if (Array.isArray($store.currentColorSets.colors)) {
+                $store.currentColorSets.colors.push(color);
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: ACTION('setCurrentColorAll'),
+        value: function value($store) {
+            var colors = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+            $store.currentColorSets.colors = colors;
+            $store.emit('changeCurrentColorSets');
+        }
+    }, {
+        key: ACTION('removeCurrentColor'),
+        value: function value($store, index) {
+            if ($store.currentColorSets.colors[index]) {
+                $store.currentColorSets.colors.splice(index, 1);
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: ACTION('removeCurrentColorToTheRight'),
+        value: function value($store, index) {
+            if ($store.currentColorSets.colors[index]) {
+                $store.currentColorSets.colors.splice(index, Number.MAX_VALUE);
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: ACTION('clearPalette'),
+        value: function value($store) {
+            if ($store.currentColorSets.colors) {
+                $store.currentColorSets.colors = [];
+                $store.emit('changeCurrentColorSets');
+            }
+        }
+    }, {
+        key: GETTER('list'),
+        value: function value($store) {
+            return Array.isArray($store.userList) && $store.userList.length ? $store.userList : $store.colorSetsList;
+        }
+    }, {
+        key: GETTER('getCurrentColors'),
+        value: function value($store) {
+            return $store.read('getColors', $store.currentColorSets);
+        }
+    }, {
+        key: GETTER('getColors'),
+        value: function value($store, element) {
+            if (element.scale) {
+                return Color$1.scale(element.scale, element.count);
+            }
+
+            return element.colors || [];
+        }
+    }, {
+        key: GETTER('getColorSetsList'),
+        value: function value($store) {
+            return $store.read('list').map(function (element) {
+                return {
+                    name: element.name,
+                    edit: element.edit,
+                    colors: $store.read('getColors', element)
+                };
+            });
+        }
+    }]);
+    return ColorSetsList;
+}(BaseModule);
+
+var ColorManager = function (_BaseModule) {
+    inherits(ColorManager, _BaseModule);
+
+    function ColorManager() {
+        classCallCheck(this, ColorManager);
+        return possibleConstructorReturn(this, (ColorManager.__proto__ || Object.getPrototypeOf(ColorManager)).apply(this, arguments));
+    }
+
+    createClass(ColorManager, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(ColorManager.prototype.__proto__ || Object.getPrototypeOf(ColorManager.prototype), 'initialize', this).call(this);
+
+            this.$store.rgb = {};
+            this.$store.hsl = {};
+            this.$store.hsv = {};
+            this.$store.alpha = 1;
+            this.$store.format = 'hex';
+
+            // this.$store.dispatch('changeColor');
+        }
+    }, {
+        key: ACTION('changeFormat'),
+        value: function value($store, format) {
+            $store.format = format;
+
+            $store.emit('changeFormat');
+        }
+    }, {
+        key: ACTION('initColor'),
+        value: function value($store, colorObj, source) {
+            $store.dispatch('changeColor', colorObj, source, true);
+            $store.emit('initColor');
+        }
+    }, {
+        key: ACTION('changeColor'),
+        value: function value($store, colorObj, source, isNotEmit) {
+
+            colorObj = colorObj || '#FF0000';
+
+            if (isString(colorObj)) {
+                colorObj = Color$1.parse(colorObj);
+            }
+
+            colorObj.source = colorObj.source || source;
+
+            $store.alpha = isUndefined$1(colorObj.a) ? $store.alpha : colorObj.a;
+            $store.format = colorObj.type != 'hsv' ? colorObj.type || $store.format : $store.format;
+
+            if ($store.format == 'hex' && $store.alpha < 1) {
+                $store.format = 'rgb';
+            }
+
+            if (colorObj.type == 'hsl') {
+                $store.hsl = _extends({}, $store.hsl, colorObj);
+                $store.rgb = Color$1.HSLtoRGB($store.hsl);
+                $store.hsv = Color$1.HSLtoHSV(colorObj);
+            } else if (colorObj.type == 'hex') {
+                $store.rgb = _extends({}, $store.rgb, colorObj);
+                $store.hsl = Color$1.RGBtoHSL($store.rgb);
+                $store.hsv = Color$1.RGBtoHSV(colorObj);
+            } else if (colorObj.type == 'rgb') {
+                $store.rgb = _extends({}, $store.rgb, colorObj);
+                $store.hsl = Color$1.RGBtoHSL($store.rgb);
+                $store.hsv = Color$1.RGBtoHSV(colorObj);
+            } else if (colorObj.type == 'hsv') {
+                $store.hsv = _extends({}, $store.hsv, colorObj);
+                $store.rgb = Color$1.HSVtoRGB($store.hsv);
+                $store.hsl = Color$1.HSVtoHSL($store.hsv);
+            }
+
+            if (!isNotEmit) {
+                $store.emit('changeColor', colorObj.source);
+            }
+        }
+    }, {
+        key: GETTER('getHueColor'),
+        value: function value($store) {
+            return HueColor.checkHueColor($store.hsv.h / 360);
+        }
+    }, {
+        key: GETTER('toString'),
+        value: function value($store, type) {
+            type = type || $store.format;
+            var colorObj = $store[type] || $store.rgb;
+            return Color$1.format(_extends({}, colorObj, { a: $store.alpha }), type);
+        }
+    }, {
+        key: GETTER('toColor'),
+        value: function value($store, type) {
+            type = (type || $store.format).toLowerCase();
+
+            if (type == 'rgb') {
+                return $store.read('toRGB');
+            } else if (type == 'hsl') {
+                return $store.read('toHSL');
+            } else if (type == 'hex') {
+                return $store.read('toHEX');
+            }
+
+            return $store.read('toString', type);
+        }
+    }, {
+        key: GETTER('toRGB'),
+        value: function value($store) {
+            return $store.read('toString', 'rgb');
+        }
+    }, {
+        key: GETTER('toHSL'),
+        value: function value($store) {
+            return $store.read('toString', 'hsl');
+        }
+    }, {
+        key: GETTER('toHEX'),
+        value: function value($store) {
+            return $store.read('toString', 'hex').toUpperCase();
+        }
+    }]);
+    return ColorManager;
+}(BaseModule);
+
+var BaseColorPicker = function (_UIElement) {
+    inherits(BaseColorPicker, _UIElement);
+
+    function BaseColorPicker() {
+        classCallCheck(this, BaseColorPicker);
+        return possibleConstructorReturn(this, (BaseColorPicker.__proto__ || Object.getPrototypeOf(BaseColorPicker)).apply(this, arguments));
+    }
+
+    createClass(BaseColorPicker, [{
+        key: 'created',
+        value: function created() {
+            this.isColorPickerShow = false;
+            this.isShortCut = false;
+            this.hideDelay = +defaultValue(this.opt.hideDeplay, 2000);
+            this.timerCloseColorPicker;
+            this.autoHide = this.opt.autoHide || true;
+            this.outputFormat = this.opt.outputFormat;
+            this.$checkColorPickerClass = this.checkColorPickerClass.bind(this);
+        }
+    }, {
+        key: 'initialize',
+        value: function initialize() {
+            var _this2 = this;
+
+            var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+            this.$body = null;
+            this.$root = null;
+
+            this.$store = new BaseStore({
+                modules: [ColorManager, ColorSetsList].concat(toConsumableArray(modules))
+            });
+
+            this.callbackChange = function () {
+                _this2.callbackChangeValue();
+            };
+
+            this.colorpickerShowCallback = function () {};
+            this.colorpickerHideCallback = function () {};
+
+            this.$body = new Dom(this.getContainer());
+            this.$root = new Dom('div', 'codemirror-colorpicker');
+
+            //  append colorpicker to container (ex : body)
+            if (this.opt.position == 'inline') {
+                this.$body.append(this.$root);
+            }
+
+            if (this.opt.type) {
+                // to change css style
+                this.$root.addClass(this.opt.type);
+            }
+
+            if (this.opt.hideInformation) {
+                this.$root.addClass('hide-information');
+            }
+
+            if (this.opt.hideColorsets) {
+                this.$root.addClass('hide-colorsets');
+            }
+
+            if (this.opt.width) {
+                this.$root.css('width', this.opt.width);
+            }
+
+            this.$arrow = new Dom('div', 'arrow');
+
+            this.$root.append(this.$arrow);
+
+            this.dispatch('setUserPalette', this.opt.colorSets);
+
+            this.render(this.$root);
+
+            this.initColorWithoutChangeEvent(this.opt.color);
+
+            // 이벤트 연결 
+            this.initializeEvent();
+        }
+    }, {
+        key: 'initColorWithoutChangeEvent',
+        value: function initColorWithoutChangeEvent(color$$1) {
+            this.dispatch('initColor', color$$1);
+        }
+
+        /** 
+         * public method 
+         * 
+         */
+
+        /**
+         * 
+         * show colorpicker with position  
+         * 
+         * @param {{left, top, hideDelay, isShortCut}} opt 
+         * @param {String|Object} color  
+         * @param {Function} showCallback  it is called when colorpicker is shown
+         * @param {Function} hideCallback  it is called once when colorpicker is hidden
+         */
+
+    }, {
+        key: 'show',
+        value: function show(opt, color$$1, showCallback, hideCallback) {
+
+            // 매번 이벤트를 지우고 다시 생성할 필요가 없어서 초기화 코드는 지움. 
+            // this.destroy();
+            // this.initializeEvent();
+            // define colorpicker callback
+            this.colorpickerShowCallback = showCallback;
+            this.colorpickerHideCallback = hideCallback;
+            this.$root.css(this.getInitalizePosition()).show();
+
+            this.definePosition(opt);
+
+            this.isColorPickerShow = true;
+            this.isShortCut = opt.isShortCut || false;
+            this.outputFormat = opt.outputFormat;
+
+            // define hide delay
+            this.hideDelay = +defaultValue(opt.hideDelay, 2000);
+            if (this.hideDelay > 0) {
+                this.setHideDelay(this.hideDelay);
+            }
+
+            this.$root.appendTo(this.$body);
+
+            this.initColorWithoutChangeEvent(color$$1);
+        }
+
+        /**
+         * 
+         * initialize color for colorpicker
+         * 
+         * @param {String|Object} newColor 
+         * @param {String} format  hex, rgb, hsl
+         */
+
+    }, {
+        key: 'initColor',
+        value: function initColor(newColor, format) {
+            this.dispatch('changeColor', newColor, format);
+        }
+
+        /**
+         * hide colorpicker 
+         * 
+         */
+
+    }, {
+        key: 'hide',
+        value: function hide() {
+            if (this.isColorPickerShow) {
+                // this.destroy();
+                this.$root.hide();
+                this.$root.remove(); // not empty 
+                this.isColorPickerShow = false;
+
+                this.callbackHideValue();
+            }
+        }
+
+        /**
+         * set to colors in current sets that you see 
+         * @param {Array} colors 
+         */
+
+    }, {
+        key: 'setColorsInPalette',
+        value: function setColorsInPalette() {
+            var colors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+            this.dispatch('setCurrentColorAll', colors);
+        }
+
+        /**
+         * refresh all color palette 
+         * 
+         * @param {*} list 
+         */
+
+    }, {
+        key: 'setUserPalette',
+        value: function setUserPalette() {
+            var list = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+            this.dispatch('setUserPalette', list);
+        }
+
+        /**
+         * private method 
+         */
+
+    }, {
+        key: 'getOption',
+        value: function getOption(key) {
+            return this.opt[key];
+        }
+    }, {
+        key: 'setOption',
+        value: function setOption(key, value$$1) {
+            this.opt[key] = value$$1;
+        }
+    }, {
+        key: 'getContainer',
+        value: function getContainer() {
+            return this.opt.container || document.body;
+        }
+    }, {
+        key: 'getColor',
+        value: function getColor(type) {
+            return this.read('toColor', type);
+        }
+    }, {
+        key: 'definePositionForArrow',
+        value: function definePositionForArrow(opt, elementScreenLeft, elementScreenTop) {
+            // console.log(arguments)
+        }
+    }, {
+        key: 'definePosition',
+        value: function definePosition(opt) {
+
+            var width = this.$root.width();
+            var height = this.$root.height();
+
+            // set left position for color picker
+            var elementScreenLeft = opt.left - this.$body.scrollLeft();
+            if (width + elementScreenLeft > window.innerWidth) {
+                elementScreenLeft -= width + elementScreenLeft - window.innerWidth;
+            }
+            if (elementScreenLeft < 0) {
+                elementScreenLeft = 0;
+            }
+
+            // set top position for color picker
+            var elementScreenTop = opt.top - this.$body.scrollTop();
+            if (height + elementScreenTop > window.innerHeight) {
+                elementScreenTop -= height + elementScreenTop - window.innerHeight;
+            }
+            if (elementScreenTop < 0) {
+                elementScreenTop = 0;
+            }
+
+            // set position
+            this.$root.css({
+                left: px(elementScreenLeft),
+                top: px(elementScreenTop)
+            });
+
+            // this.definePositionForArrow(opt, elementScreenLeft, elementScreenTop);
+        }
+    }, {
+        key: 'getInitalizePosition',
+        value: function getInitalizePosition() {
+            if (this.opt.position == 'inline') {
+                return {
+                    position: 'relative',
+                    left: 'auto',
+                    top: 'auto',
+                    display: 'inline-block'
+                };
+            } else {
+                var position = this.opt.position == 'absolute' ? 'absolute' : 'fixed';
+                return {
+                    position: position, // color picker has fixed position
+                    left: '-10000px',
+                    top: '-10000px'
+                };
+            }
+        }
+    }, {
+        key: 'setHideDelay',
+        value: function setHideDelay(delayTime) {
+            var _this3 = this;
+
+            delayTime = delayTime || 0;
+
+            var hideCallback = this.hide.bind(this);
+
+            this.$root.off('mouseenter');
+            this.$root.off('mouseleave');
+
+            this.$root.on('mouseenter', function () {
+                clearTimeout(_this3.timerCloseColorPicker);
+            });
+
+            this.$root.on('mouseleave', function () {
+                clearTimeout(_this3.timerCloseColorPicker);
+                _this3.timerCloseColorPicker = setTimeout(hideCallback, delayTime);
+            });
+
+            clearTimeout(this.timerCloseColorPicker);
+            // this.timerCloseColorPicker = setTimeout(hideCallback, delayTime);
+        }
+    }, {
+        key: 'callbackChangeValue',
+        value: function callbackChangeValue(color$$1) {
+            color$$1 = color$$1 || this.getCurrentColor();
+
+            if (isFunction(this.opt.onChange)) {
+                this.opt.onChange.call(this, color$$1);
+            }
+
+            if (isFunction(this.colorpickerShowCallback)) {
+                this.colorpickerShowCallback(color$$1);
+            }
+        }
+    }, {
+        key: 'callbackHideValue',
+        value: function callbackHideValue(color$$1) {
+            color$$1 = color$$1 || this.getCurrentColor();
+            if (isFunction(this.opt.onHide)) {
+                this.opt.onHide.call(this, color$$1);
+            }
+
+            if (isFunction(this.colorpickerHideCallback)) {
+                this.colorpickerHideCallback(color$$1);
+            }
+        }
+    }, {
+        key: 'getCurrentColor',
+        value: function getCurrentColor() {
+            return this.read('toColor', this.outputFormat);
+        }
+    }, {
+        key: 'checkColorPickerClass',
+        value: function checkColorPickerClass(el) {
+            var $el = new Dom(el);
+            var hasColorView = $el.closest('codemirror-colorview');
+            var hasColorPicker = $el.closest('codemirror-colorpicker');
+            var hasCodeMirror = $el.closest('CodeMirror');
+            var IsInHtml = el.nodeName == 'HTML';
+
+            return !!(hasColorPicker || hasColorView || hasCodeMirror);
+        }
+    }, {
+        key: 'checkInHtml',
+        value: function checkInHtml(el) {
+            var IsInHtml = el.nodeName == 'HTML';
+
+            return IsInHtml;
+        }
+    }, {
+        key: 'initializeStoreEvent',
+        value: function initializeStoreEvent() {
+            get$1(BaseColorPicker.prototype.__proto__ || Object.getPrototypeOf(BaseColorPicker.prototype), 'initializeStoreEvent', this).call(this);
+
+            this.$store.on('changeColor', this.callbackChange, this);
+            this.$store.on('changeFormat', this.callbackChange, this);
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            get$1(BaseColorPicker.prototype.__proto__ || Object.getPrototypeOf(BaseColorPicker.prototype), 'destroy', this).call(this);
+
+            this.$store.off('changeColor', this.callbackChange);
+            this.$store.off('changeFormat', this.callbackChange);
+
+            this.callbackChange = undefined;
+
+            // remove color picker callback
+            this.colorpickerShowCallback = undefined;
+            this.colorpickerHideCallback = undefined;
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: MOUSEUP('document'),
+        value: function value$$1(e) {
+
+            // when color picker clicked in outside
+            if (this.checkInHtml(e.target)) {
+                //this.setHideDelay(hideDelay);
+            } else if (this.checkColorPickerClass(e.target) == false) {
+                this.hide();
+            }
+        }
+    }]);
+    return BaseColorPicker;
+}(UIElement);
+
+var BaseBox = function (_UIElement) {
+    inherits(BaseBox, _UIElement);
+
+    function BaseBox() {
+        classCallCheck(this, BaseBox);
+        return possibleConstructorReturn(this, (BaseBox.__proto__ || Object.getPrototypeOf(BaseBox)).apply(this, arguments));
+    }
+
+    createClass(BaseBox, [{
+        key: 'refresh',
+        value: function refresh() {}
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(e) {}
+
+        /** push change event  */
+
+    }, {
+        key: 'changeColor',
+        value: function changeColor(opt) {
+            this.dispatch('changeColor', opt || {});
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document'),
+        value: function value(e) {
+            this.onDragEnd(e);
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value(e) {
+            this.onDragMove(e);
+        }
+    }, {
+        key: POINTERSTART('$bar'),
+        value: function value(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: POINTERSTART('$container'),
+        value: function value(e) {
+            this.isDown = true;
+            this.onDragStart(e);
+        }
+    }, {
+        key: 'onDragStart',
+        value: function onDragStart(e) {
+            this.isDown = true;
+            this.refreshColorUI(e);
+        }
+    }, {
+        key: 'onDragMove',
+        value: function onDragMove(e) {
+            if (this.isDown) {
+                this.refreshColorUI(e);
+            }
+        }
+
+        /* called when mouse is ended move  */
+
+    }, {
+        key: 'onDragEnd',
+        value: function onDragEnd(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: EVENT('changeColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT('initColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return BaseBox;
+}(UIElement);
+
+var BaseSlider = function (_BaseBox) {
+    inherits(BaseSlider, _BaseBox);
+
+    function BaseSlider() {
+        classCallCheck(this, BaseSlider);
+        return possibleConstructorReturn(this, (BaseSlider.__proto__ || Object.getPrototypeOf(BaseSlider)).apply(this, arguments));
+    }
+
+    createClass(BaseSlider, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(BaseSlider.prototype.__proto__ || Object.getPrototypeOf(BaseSlider.prototype), 'initialize', this).call(this);
+            this.minValue = 0; // min domain value 
+            this.maxValue = 1; // max domain value 
+        }
+
+        /* slider container's min and max position */
+
+    }, {
+        key: 'getMinMaxPosition',
+        value: function getMinMaxPosition() {
+            var min = this.getMinPosition();
+            var width = this.getMaxDist();
+            var max = min + width;
+
+            return { min: min, max: max, width: width };
+        }
+
+        /** get current position on page  */
+
+    }, {
+        key: 'getCurrent',
+        value: function getCurrent(value$$1) {
+            return min + this.getMaxDist() * value$$1;
+        }
+
+        /** get min position on slider container  */
+
+    }, {
+        key: 'getMinPosition',
+        value: function getMinPosition() {
+            return this.refs.$container.offset().left;
+        }
+    }, {
+        key: 'getMaxDist',
+        value: function getMaxDist() {
+            return this.refs.$container.width();
+        }
+
+        /** get dist for position value */
+
+    }, {
+        key: 'getDist',
+        value: function getDist(current) {
+            var _getMinMaxPosition = this.getMinMaxPosition(),
+                min = _getMinMaxPosition.min,
+                max = _getMinMaxPosition.max;
+
+            var dist;
+            if (current < min) {
+                dist = 0;
+            } else if (current > max) {
+                dist = 100;
+            } else {
+                dist = (current - min) / (max - min) * 100;
+            }
+
+            return dist;
+        }
+
+        /** get calculated dist for domain value   */
+
+    }, {
+        key: 'getCalculatedDist',
+        value: function getCalculatedDist(e) {
+            var current = e ? this.getMousePosition(e) : this.getCurrent(this.getDefaultValue() / this.maxValue);
+            var dist = this.getDist(current);
+
+            return dist;
+        }
+
+        /** get default value used in slider container */
+
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return 0;
+        }
+
+        /** set mosue position */
+
+    }, {
+        key: 'setMousePosition',
+        value: function setMousePosition(x) {
+            this.refs.$bar.css({ left: px(x) });
+        }
+
+        /** set mouse position in page */
+
+    }, {
+        key: 'getMousePosition',
+        value: function getMousePosition(e) {
+            return Event.pos(e).pageX;
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.setColorUI();
+        }
+
+        /** set drag bar position  */
+
+    }, {
+        key: 'setColorUI',
+        value: function setColorUI(v) {
+
+            v = v || this.getDefaultValue();
+
+            if (v <= this.minValue) {
+                this.refs.$bar.addClass('first').removeClass('last');
+            } else if (v >= this.maxValue) {
+                this.refs.$bar.addClass('last').removeClass('first');
+            } else {
+                this.refs.$bar.removeClass('last').removeClass('first');
+            }
+
+            this.setMousePosition(this.getMaxDist() * ((v || 0) / this.maxValue));
+        }
+    }]);
+    return BaseSlider;
+}(BaseBox);
+
+var Value = function (_BaseSlider) {
+    inherits(Value, _BaseSlider);
+
+    function Value() {
+        classCallCheck(this, Value);
+        return possibleConstructorReturn(this, (Value.__proto__ || Object.getPrototypeOf(Value)).apply(this, arguments));
+    }
+
+    createClass(Value, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(Value.prototype.__proto__ || Object.getPrototypeOf(Value.prototype), 'initialize', this).call(this);
+
+            this.minValue = 0;
+            this.maxValue = 1;
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="value">\n                <div ref="$container" class="value-container">\n                    <div ref="$bar" class="drag-bar"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'setBackgroundColor',
+        value: function setBackgroundColor() {
+            this.refs.$container.css("background-color", this.read('toRGB'));
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            get$1(Value.prototype.__proto__ || Object.getPrototypeOf(Value.prototype), 'refresh', this).call(this);
+            this.setBackgroundColor();
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.hsv.v;
+        }
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(e) {
+            var dist = this.getCalculatedDist(e);
+
+            this.setColorUI(dist / 100 * this.maxValue);
+
+            this.changeColor({
+                type: 'hsv',
+                v: dist / 100 * this.maxValue
+            });
+        }
+    }]);
+    return Value;
+}(BaseSlider);
+
+var Opacity$2 = function (_BaseSlider) {
+    inherits(Opacity, _BaseSlider);
+
+    function Opacity() {
+        classCallCheck(this, Opacity);
+        return possibleConstructorReturn(this, (Opacity.__proto__ || Object.getPrototypeOf(Opacity)).apply(this, arguments));
+    }
+
+    createClass(Opacity, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(Opacity.prototype.__proto__ || Object.getPrototypeOf(Opacity.prototype), 'initialize', this).call(this);
+
+            this.minValue = 0;
+            this.maxValue = 1;
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="opacity">\n            <div ref="$container" class="opacity-container">\n                <div ref="$colorbar" class="color-bar"></div>\n                <div ref="$bar" class="drag-bar2"></div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            get$1(Opacity.prototype.__proto__ || Object.getPrototypeOf(Opacity.prototype), 'refresh', this).call(this);
+            this.setOpacityColorBar();
+        }
+    }, {
+        key: 'setOpacityColorBar',
+        value: function setOpacityColorBar() {
+            var rgb = _extends({}, this.$store.rgb);
+
+            rgb.a = 0;
+            var start = Color$1.format(rgb, 'rgb');
+
+            rgb.a = 1;
+            var end = Color$1.format(rgb, 'rgb');
+
+            this.refs.$colorbar.css('background', 'linear-gradient(to right, ' + start + ', ' + end + ')');
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.alpha;
+        }
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(e) {
+            var dist = this.getCalculatedDist(e);
+
+            this.setColorUI(dist / 100 * this.maxValue);
+
+            this.changeColor({
+                a: Math.floor(dist) / 100 * this.maxValue
+            });
+        }
+    }]);
+    return Opacity;
+}(BaseSlider);
+
+var ColorView = function (_UIElement) {
+    inherits(ColorView, _UIElement);
+
+    function ColorView() {
+        classCallCheck(this, ColorView);
+        return possibleConstructorReturn(this, (ColorView.__proto__ || Object.getPrototypeOf(ColorView)).apply(this, arguments));
+    }
+
+    createClass(ColorView, [{
+        key: 'template',
+        value: function template() {
+            return '<div class="color"></div>';
+        }
+    }, {
+        key: 'setBackgroundColor',
+        value: function setBackgroundColor() {
+            this.refs.$el.css("background-color", this.read('toRGB'));
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.setBackgroundColor();
+        }
+    }, {
+        key: EVENT('changeColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT('initColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return ColorView;
+}(UIElement);
+
+var ColorWheel = function (_UIElement) {
+    inherits(ColorWheel, _UIElement);
+
+    function ColorWheel() {
+        classCallCheck(this, ColorWheel);
+        return possibleConstructorReturn(this, (ColorWheel.__proto__ || Object.getPrototypeOf(ColorWheel)).apply(this, arguments));
+    }
+
+    createClass(ColorWheel, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(ColorWheel.prototype.__proto__ || Object.getPrototypeOf(ColorWheel.prototype), 'initialize', this).call(this);
+            this.width = 214;
+            this.height = 214;
+            this.thinkness = 0;
+            this.half_thinkness = 0;
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="wheel">\n            <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>\n            <div class="wheel-canvas" ref="$valuewheel" ></div>\n            <div class="drag-pointer" ref="$drag_pointer"></div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh(isEvent) {
+            this.setColorUI(isEvent);
+        }
+    }, {
+        key: 'setColorUI',
+        value: function setColorUI(isEvent) {
+            this.renderCanvas();
+            this.renderValue();
+            this.setHueColor(null, isEvent);
+        }
+    }, {
+        key: 'renderValue',
+        value: function renderValue() {
+            var value = 1 - this.$store.hsv.v;
+            this.refs.$valuewheel.css('background-color', 'rgba(0, 0, 0, ' + value + ')');
+        }
+    }, {
+        key: 'renderWheel',
+        value: function renderWheel(width, height) {
+
+            if (this.width && !width) width = this.width;
+            if (this.height && !height) height = this.height;
+
+            var $canvas = new Dom('canvas');
+            var context = $canvas.el.getContext('2d');
+            $canvas.el.width = width;
+            $canvas.el.height = height;
+            $canvas.px('width', width);
+            $canvas.px('height', height);
+
+            var img = context.getImageData(0, 0, width, height);
+            var pixels = img.data;
+            var half_width = Math.floor(width / 2);
+            var half_height = Math.floor(height / 2);
+
+            var radius = width > height ? half_height : half_width;
+            var cx = half_width;
+            var cy = half_height;
+
+            for (var y = 0; y < height; y++) {
+                for (var x = 0; x < width; x++) {
+                    var rx = x - cx + 1,
+                        ry = y - cy + 1,
+                        d = rx * rx + ry * ry,
+                        hue = calculateAngle(rx, ry);
+
+                    var rgb = Color$1.HSVtoRGB(hue, // 0~360 hue 
+                    Math.min(Math.sqrt(d) / radius, 1), // 0..1 Saturation 
+                    1 //  0..1 Value
+                    );
+
+                    var index = (y * width + x) * 4;
+                    pixels[index] = rgb.r;
+                    pixels[index + 1] = rgb.g;
+                    pixels[index + 2] = rgb.b;
+                    pixels[index + 3] = 255;
+                }
+            }
+
+            context.putImageData(img, 0, 0);
+
+            if (this.thinkness > 0) {
+                context.globalCompositeOperation = "destination-out"; // destination-out 은 그리는 영역이 지워진다. 
+                context.fillStyle = 'black';
+                context.beginPath();
+                context.arc(cx, cy, radius - this.thinkness, 0, Math.PI * 2);
+                context.closePath();
+                context.fill();
+            }
+
+            return $canvas;
+        }
+    }, {
+        key: 'renderCanvas',
+        value: function renderCanvas() {
+
+            // only once rendering 
+            if (this.$store.createdWheelCanvas) return;
+
+            var $canvas = this.refs.$colorwheel;
+            // console.log($canvas);
+            var context = $canvas.el.getContext('2d');
+
+            var _$canvas$size = $canvas.size(),
+                _$canvas$size2 = slicedToArray(_$canvas$size, 2),
+                width = _$canvas$size2[0],
+                height = _$canvas$size2[1];
+
+            if (this.width && !width) width = this.width;
+            if (this.height && !height) height = this.height;
+
+            $canvas.el.width = width;
+            $canvas.el.height = height;
+            $canvas.px('width', width);
+            $canvas.px('height', height);
+
+            var $wheelCanvas = this.renderWheel(width, height);
+
+            context.drawImage($wheelCanvas.el, 0, 0);
+
+            this.$store.createdWheelCanvas = true;
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.hsv.h;
+        }
+    }, {
+        key: 'getDefaultSaturation',
+        value: function getDefaultSaturation() {
+            return this.$store.hsv.s;
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(e, angle, radius, centerX, centerY) {
+            return e ? e.xy : getXYInCircle(angle, radius, centerX, centerY);
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.$el.width();
+            var height = this.$el.height();
+            var radius = this.refs.$colorwheel.width() / 2;
+
+            var minX = this.$el.offsetLeft();
+            var centerX = minX + width / 2;
+
+            var minY = this.$el.offsetTop();
+            var centerY = minY + height / 2;
+
+            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
+        }
+    }, {
+        key: 'setHueColor',
+        value: function setHueColor(e, isEvent) {
+
+            if (!this.state.get('$el.width')) return;
+
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                radius = _getRectangle.radius,
+                centerX = _getRectangle.centerX,
+                centerY = _getRectangle.centerY;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), this.getDefaultSaturation() * radius, centerX, centerY),
+                x = _getCurrentXY.x,
+                y = _getCurrentXY.y;
+
+            var rx = x - centerX,
+                ry = y - centerY,
+                d = rx * rx + ry * ry,
+                hue = calculateAngle(rx, ry);
+
+            if (d > radius * radius) {
+                var _getCurrentXY2 = this.getCurrentXY(null, hue, radius, centerX, centerY),
+                    x = _getCurrentXY2.x,
+                    y = _getCurrentXY2.y;
+            }
+
+            // saturation 을 
+            var saturation = Math.min(Math.sqrt(d) / radius, 1);
+
+            // set drag pointer position 
+            this.refs.$drag_pointer.px('left', x - minX);
+            this.refs.$drag_pointer.px('top', y - minY);
+
+            if (!isEvent) {
+                this.changeColor({
+                    type: 'hsv',
+                    h: hue,
+                    s: saturation
+                });
+            }
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor(opt) {
+            this.dispatch('changeColor', opt || {});
+        }
+    }, {
+        key: EVENT('changeColor'),
+        value: function value() {
+            this.refresh(true);
+        }
+    }, {
+        key: EVENT('initColor'),
+        value: function value() {
+            this.refresh(true);
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: POINTEREND('document'),
+        value: function value(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value(e) {
+            if (this.isDown) {
+                this.setHueColor(e);
+            }
+        }
+    }, {
+        key: POINTERSTART('$drag_pointer'),
+        value: function value(e) {
+            e.preventDefault();
+            this.isDown = true;
+        }
+    }, {
+        key: POINTERSTART(),
+        value: function value(e) {
+            this.isDown = true;
+            this.setHueColor(e);
+        }
+    }]);
+    return ColorWheel;
+}(UIElement);
+
+var ColorInformation = function (_UIElement) {
+    inherits(ColorInformation, _UIElement);
+
+    function ColorInformation() {
+        classCallCheck(this, ColorInformation);
+        return possibleConstructorReturn(this, (ColorInformation.__proto__ || Object.getPrototypeOf(ColorInformation)).apply(this, arguments));
+    }
+
+    createClass(ColorInformation, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="information hex">\n            <div ref="$informationChange" class="information-change">\n                <button ref="$formatChangeButton" type="button" class="format-change-button arrow-button"></button>\n            </div>\n            <div class="information-item hex">\n                <div class="input-field hex">\n                    <input ref="$hexCode" class="input" type="text" />\n                    <div class="title">HEX</div>\n                </div>\n            </div>\n            <div class="information-item rgb">\n                <div class="input-field rgb-r">\n                    <input ref="$rgb_r" class="input" type="number" step="1" min="0" max="255" />\n                    <div class="title">R</div>\n                </div>\n                <div class="input-field rgb-g">\n                    <input ref="$rgb_g" class="input" type="number" step="1" min="0" max="255" />\n                    <div class="title">G</div>\n                </div>\n                <div class="input-field rgb-b">\n                    <input ref="$rgb_b" class="input" type="number" step="1" min="0" max="255" />\n                    <div class="title">B</div>\n                </div>          \n                <div class="input-field rgb-a">\n                    <input ref="$rgb_a" class="input" type="number" step="0.01" min="0" max="1" />\n                    <div class="title">A</div>\n                </div>                                                            \n            </div>\n            <div class="information-item hsl">\n                <div class="input-field hsl-h">\n                    <input ref="$hsl_h" class="input" type="number" step="1" min="0" max="360" />\n                    <div class="title">H</div>\n                </div>\n                <div class="input-field hsl-s">\n                    <input ref="$hsl_s" class="input" type="number" step="1" min="0" max="100" />\n                    <div class="postfix">%</div>\n                    <div class="title">S</div>\n                </div>\n                <div class="input-field hsl-l">\n                    <input ref="$hsl_l" class="input" type="number" step="1" min="0" max="100" />\n                    <div class="postfix">%</div>                        \n                    <div class="title">L</div>\n                </div>\n                <div class="input-field hsl-a">\n                    <input ref="$hsl_a" class="input" type="number" step="0.01" min="0" max="1" />\n                    <div class="title">A</div>\n                </div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'setCurrentFormat',
+        value: function setCurrentFormat(format) {
+            this.format = format;
+
+            this.initFormat();
+        }
+    }, {
+        key: 'initFormat',
+        value: function initFormat() {
+            var current_format = this.format || 'hex';
+
+            this.$el.removeClass('hex');
+            this.$el.removeClass('rgb');
+            this.$el.removeClass('hsl');
+            this.$el.addClass(current_format);
+        }
+    }, {
+        key: 'nextFormat',
+        value: function nextFormat() {
+            var current_format = this.format || 'hex';
+
+            var next_format = 'hex';
+            if (current_format == 'hex') {
+                next_format = 'rgb';
+            } else if (current_format == 'rgb') {
+                next_format = 'hsl';
+            } else if (current_format == 'hsl') {
+                if (this.$store.alpha == 1) {
+                    next_format = 'hex';
+                } else {
+                    next_format = 'rgb';
+                }
+            }
+
+            this.$el.removeClass(current_format);
+            this.$el.addClass(next_format);
+            this.format = next_format;
+
+            this.dispatch('changeFormat', this.format);
+        }
+    }, {
+        key: 'getFormat',
+        value: function getFormat() {
+            return this.format || 'hex';
+        }
+    }, {
+        key: 'checkNumberKey',
+        value: function checkNumberKey(e) {
+            return Event.checkNumberKey(e);
+        }
+    }, {
+        key: 'checkNotNumberKey',
+        value: function checkNotNumberKey(e) {
+            return !Event.checkNumberKey(e);
+        }
+    }, {
+        key: 'changeRgbColor',
+        value: function changeRgbColor() {
+            this.dispatch('changeColor', {
+                type: 'rgb',
+                r: this.refs.$rgb_r.int(),
+                g: this.refs.$rgb_g.int(),
+                b: this.refs.$rgb_b.int(),
+                a: this.refs.$rgb_a.float()
+            });
+        }
+    }, {
+        key: 'changeHslColor',
+        value: function changeHslColor() {
+            this.dispatch('changeColor', {
+                type: 'hsl',
+                h: this.refs.$hsl_h.int(),
+                s: this.refs.$hsl_s.int(),
+                l: this.refs.$hsl_l.int(),
+                a: this.refs.$hsl_a.float()
+            });
+        }
+    }, {
+        key: EVENT('changeColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT('initColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: INPUT('$rgb_r'),
+        value: function value(e) {
+            this.changeRgbColor();
+        }
+    }, {
+        key: INPUT('$rgb_g'),
+        value: function value(e) {
+            this.changeRgbColor();
+        }
+    }, {
+        key: INPUT('$rgb_b'),
+        value: function value(e) {
+            this.changeRgbColor();
+        }
+    }, {
+        key: INPUT('$rgb_a'),
+        value: function value(e) {
+            this.changeRgbColor();
+        }
+    }, {
+        key: INPUT('$hsl_h'),
+        value: function value(e) {
+            this.changeHslColor();
+        }
+    }, {
+        key: INPUT('$hsl_s'),
+        value: function value(e) {
+            this.changeHslColor();
+        }
+    }, {
+        key: INPUT('$hsl_l'),
+        value: function value(e) {
+            this.changeHslColor();
+        }
+    }, {
+        key: INPUT('$hsl_a'),
+        value: function value(e) {
+            this.changeHslColor();
+        }
+    }, {
+        key: KEYDOWN('$hexCode'),
+        value: function value(e) {
+            if (e.which < 65 || e.which > 70) {
+                return this.checkNumberKey(e);
+            }
+        }
+    }, {
+        key: KEYUP('$hexCode'),
+        value: function value(e) {
+            var code = this.refs.$hexCode.val();
+
+            if (code.charAt(0) == '#' && code.length == 7) {
+                this.dispatch('changeColor', code);
+            }
+        }
+    }, {
+        key: CLICK('$formatChangeButton'),
+        value: function value(e) {
+            this.nextFormat();
+        }
+    }, {
+        key: 'setRGBInput',
+        value: function setRGBInput() {
+            this.refs.$rgb_r.val(this.$store.rgb.r);
+            this.refs.$rgb_g.val(this.$store.rgb.g);
+            this.refs.$rgb_b.val(this.$store.rgb.b);
+            this.refs.$rgb_a.val(this.$store.alpha);
+        }
+    }, {
+        key: 'setHSLInput',
+        value: function setHSLInput() {
+            this.refs.$hsl_h.val(this.$store.hsl.h);
+            this.refs.$hsl_s.val(this.$store.hsl.s);
+            this.refs.$hsl_l.val(this.$store.hsl.l);
+            this.refs.$hsl_a.val(this.$store.alpha);
+        }
+    }, {
+        key: 'setHexInput',
+        value: function setHexInput() {
+            this.refs.$hexCode.val(this.read('toHEX'));
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.setCurrentFormat(this.$store.format);
+            this.setRGBInput();
+            this.setHSLInput();
+            this.setHexInput();
+        }
+    }]);
+    return ColorInformation;
+}(UIElement);
+
+var _templateObject$8 = taggedTemplateLiteral(['\n            <div>\n                ', '\n            </div>\n        '], ['\n            <div>\n                ', '\n            </div>\n        ']);
+var _templateObject2 = taggedTemplateLiteral(['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>'], ['\n                        <div class="colorsets-item" data-colorsets-index="', '" >\n                            <h1 class="title">', '</h1>\n                            <div class="items">\n                                <div>\n                                    ', '\n                                </div>\n                            </div>\n                        </div>']);
+
+var DATA_COLORSETS_INDEX = 'data-colorsets-index';
+
+var ColorSetsChooser = function (_UIElement) {
+    inherits(ColorSetsChooser, _UIElement);
+
+    function ColorSetsChooser() {
+        classCallCheck(this, ColorSetsChooser);
+        return possibleConstructorReturn(this, (ColorSetsChooser.__proto__ || Object.getPrototypeOf(ColorSetsChooser)).apply(this, arguments));
+    }
+
+    createClass(ColorSetsChooser, [{
+        key: 'template',
+        value: function template() {
+            return '<div class="color-chooser">\n            <div class="color-chooser-container">\n                <div class="colorsets-item colorsets-item-header">\n                    <h1 class="title">Color Palettes</h1>\n                    <span ref="$toggleButton" class="items">&times;</span>\n                </div>\n                <div ref="$colorsetsList" class="colorsets-list"></div>\n            </div>\n        </div>';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT('changeCurrentColorSets'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT('toggleColorChooser'),
+        value: function value() {
+            this.toggle();
+        }
+
+        // loadable 
+
+    }, {
+        key: LOAD('$colorsetsList'),
+        value: function value() {
+            // colorsets 
+            var colorSets = this.read('getColorSetsList');
+
+            return html(_templateObject$8, colorSets.map(function (element, index) {
+                return html(_templateObject2, index, element.name, element.colors.filter(function (color, i) {
+                    return i < 5;
+                }).map(function (color) {
+                    color = color || 'rgba(255, 255, 255, 1)';
+                    return '<div class="color-item" title="' + color + '">\n                                                <div class="color-view" style="background-color: ' + color + '"></div>\n                                            </div>';
+                }));
+            }));
+        }
+    }, {
+        key: 'show',
+        value: function show() {
+            this.$el.addClass('open');
+        }
+    }, {
+        key: 'hide',
+        value: function hide() {
+            this.$el.removeClass('open');
+        }
+    }, {
+        key: 'toggle',
+        value: function toggle() {
+            this.$el.toggleClass('open');
+        }
+    }, {
+        key: CLICK('$toggleButton'),
+        value: function value(e) {
+            this.toggle();
+        }
+    }, {
+        key: CLICK('$colorsetsList .colorsets-item'),
+        value: function value(e, $dt) {
+            if ($dt) {
+
+                var index = parseInt($dt.attr(DATA_COLORSETS_INDEX));
+
+                this.dispatch('setCurrentColorSets', index);
+
+                this.hide();
+            }
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            get$1(ColorSetsChooser.prototype.__proto__ || Object.getPrototypeOf(ColorSetsChooser.prototype), 'destroy', this).call(this);
+
+            this.hide();
+        }
+    }]);
+    return ColorSetsChooser;
+}(UIElement);
+
+var _templateObject$9 = taggedTemplateLiteral(['<div class="current-color-sets">\n            ', '   \n            ', '         \n            </div>'], ['<div class="current-color-sets">\n            ', '   \n            ', '         \n            </div>']);
+
+var CurrentColorSets = function (_UIElement) {
+    inherits(CurrentColorSets, _UIElement);
+
+    function CurrentColorSets() {
+        classCallCheck(this, CurrentColorSets);
+        return possibleConstructorReturn(this, (CurrentColorSets.__proto__ || Object.getPrototypeOf(CurrentColorSets)).apply(this, arguments));
+    }
+
+    createClass(CurrentColorSets, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="colorsets">\n                <div class="menu" title="Open Color Palettes">\n                    <button ref="$colorSetsChooseButton" type="button" class="color-sets-choose-btn arrow-button"></button>\n                </div>\n                <div ref="$colorSetsColorList" class="color-list"></div>\n            </div>\n        ';
+        }
+    }, {
+        key: LOAD('$colorSetsColorList'),
+        value: function value$$1() {
+            var currentColorSets = this.read('getCurrentColorSets');
+            var colors = this.read('getCurrentColors');
+
+            return html(_templateObject$9, colors.map(function (color$$1, i) {
+                return '<div class="color-item" title="' + color$$1 + '" data-index="' + i + '" data-color="' + color$$1 + '">\n                    <div class="empty"></div>\n                    <div class="color-view" style="background-color: ' + color$$1 + '"></div>\n                </div>';
+            }), currentColorSets.edit ? '<div class="add-color-item">+</div>' : EMPTY_STRING);
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: 'addColor',
+        value: function addColor(color$$1) {
+            this.dispatch('addCurrentColor', color$$1);
+            this.refresh();
+        }
+    }, {
+        key: EVENT('changeCurrentColorSets'),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: CLICK('$colorSetsChooseButton'),
+        value: function value$$1(e) {
+            this.emit('toggleColorChooser');
+        }
+    }, {
+        key: CONTEXTMENU('$colorSetsColorList'),
+        value: function value$$1(e) {
+            e.preventDefault();
+            var currentColorSets = this.read('getCurrentColorSets');
+
+            if (!currentColorSets.edit) {
+                return;
+            }
+
+            var $target = new Dom(e.target);
+
+            var $item = $target.closest('color-item');
+
+            if ($item) {
+                var index = parseInt($item.attr('data-index'));
+
+                this.emit('showContextMenu', e, index);
+            } else {
+                this.emit('showContextMenu', e);
+            }
+        }
+    }, {
+        key: CLICK('$colorSetsColorList .add-color-item'),
+        value: function value$$1(e) {
+            this.addColor(this.read('toColor'));
+        }
+    }, {
+        key: CLICK('$colorSetsColorList .color-item'),
+        value: function value$$1(e, $dt) {
+            this.dispatch('changeColor', $dt.attr('data-color'));
+        }
+    }]);
+    return CurrentColorSets;
+}(UIElement);
+
+var CurrentColorSetsContextMenu = function (_UIElement) {
+    inherits(CurrentColorSetsContextMenu, _UIElement);
+
+    function CurrentColorSetsContextMenu() {
+        classCallCheck(this, CurrentColorSetsContextMenu);
+        return possibleConstructorReturn(this, (CurrentColorSetsContextMenu.__proto__ || Object.getPrototypeOf(CurrentColorSetsContextMenu)).apply(this, arguments));
+    }
+
+    createClass(CurrentColorSetsContextMenu, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <ul class="colorsets-contextmenu">\n                <li class="menu-item small-hide" data-type="remove-color">Remove color</li>\n                <li class="menu-item small-hide" data-type="remove-all-to-the-right">Remove all to the right</li>\n                <li class="menu-item" data-type="clear-palette">Clear palette</li>\n            </ul>\n        ';
+        }
+    }, {
+        key: 'show',
+        value: function show(e, index) {
+            var $event = Event.pos(e);
+
+            this.$el.px('top', $event.clientY - 10);
+            this.$el.px('left', $event.clientX);
+            this.$el.addClass('show');
+            this.selectedColorIndex = index;
+
+            if (isUndefined$1(this.selectedColorIndex)) {
+                this.$el.addClass('small');
+            } else {
+                this.$el.removeClass('small');
+            }
+        }
+    }, {
+        key: 'hide',
+        value: function hide() {
+            this.$el.removeClass('show');
+        }
+    }, {
+        key: 'runCommand',
+        value: function runCommand(command) {
+            switch (command) {
+                case 'remove-color':
+                    this.dispatch('removeCurrentColor', this.selectedColorIndex);
+                    break;
+                case 'remove-all-to-the-right':
+                    this.dispatch('removeCurrentColorToTheRight', this.selectedColorIndex);
+                    break;
+                case 'clear-palette':
+                    this.dispatch('clearPalette');
+                    break;
+            }
+        }
+    }, {
+        key: EVENT('showContextMenu'),
+        value: function value(e, index) {
+            this.show(e, index);
+        }
+    }, {
+        key: CLICK('$el .menu-item'),
+        value: function value(e, $dt) {
+            e.preventDefault();
+
+            this.runCommand($dt.attr('data-type'));
+            this.hide();
+        }
+    }]);
+    return CurrentColorSetsContextMenu;
+}(UIElement);
+
+var MacOSColorPicker = function (_BaseColorPicker) {
+    inherits(MacOSColorPicker, _BaseColorPicker);
+
+    function MacOSColorPicker() {
+        classCallCheck(this, MacOSColorPicker);
+        return possibleConstructorReturn(this, (MacOSColorPicker.__proto__ || Object.getPrototypeOf(MacOSColorPicker)).apply(this, arguments));
+    }
+
+    createClass(MacOSColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <ColorWheel />\n                <div class="control">\n                    <Value />\n                    <Opacity />\n                    <div class="empty"></div>\n                    <ColorView />\n                </div>\n                <Information />\n                <CurrentColorSets />\n                <ColorSetsChooser >\n                <ContextMenu />\n            </div> \n        ';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Value: Value, Opacity: Opacity$2, ColorView: ColorView,
+                ColorWheel: ColorWheel,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return MacOSColorPicker;
+}(BaseColorPicker);
+
+var Hue = function (_BaseSlider) {
+    inherits(Hue, _BaseSlider);
+
+    function Hue() {
+        classCallCheck(this, Hue);
+        return possibleConstructorReturn(this, (Hue.__proto__ || Object.getPrototypeOf(Hue)).apply(this, arguments));
+    }
+
+    createClass(Hue, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(Hue.prototype.__proto__ || Object.getPrototypeOf(Hue.prototype), 'initialize', this).call(this);
+            this.minValue = 0;
+            this.maxValue = 360;
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="hue">\n                <div ref="$container" class="hue-container">\n                    <div ref="$bar" class="drag-bar"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.hsv.h;
+        }
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(e) {
+
+            var dist = this.getCalculatedDist(e);
+
+            this.setColorUI(dist / 100 * this.maxValue);
+
+            this.changeColor({
+                h: dist / 100 * this.maxValue,
+                type: 'hsv'
+            });
+        }
+    }]);
+    return Hue;
+}(BaseSlider);
+
+var ColorPalette = function (_UIElement) {
+    inherits(ColorPalette, _UIElement);
+
+    function ColorPalette() {
+        classCallCheck(this, ColorPalette);
+        return possibleConstructorReturn(this, (ColorPalette.__proto__ || Object.getPrototypeOf(ColorPalette)).apply(this, arguments));
+    }
+
+    createClass(ColorPalette, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="color-panel">\n            <div ref="$saturation" class="saturation">\n                <div ref="$value" class="value">\n                    <div ref="$drag_pointer" class="drag-pointer"></div>\n                </div>\n            </div>        \n        </div>        \n        ';
+        }
+    }, {
+        key: 'setBackgroundColor',
+        value: function setBackgroundColor(color) {
+            this.$el.css("background-color", color);
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.setColorUI();
+        }
+    }, {
+        key: 'calculateSV',
+        value: function calculateSV() {
+            var pos = this.drag_pointer_pos || { x: 0, y: 0 };
+
+            var width = this.$el.width();
+            var height = this.$el.height();
+
+            var s = pos.x / width;
+            var v = (height - pos.y) / height;
+
+            this.dispatch('changeColor', {
+                type: 'hsv',
+                s: s,
+                v: v
+            });
+        }
+    }, {
+        key: 'setColorUI',
+        value: function setColorUI() {
+            var x = this.state.get('$el.width') * this.$store.hsv.s,
+                y = this.state.get('$el.height') * (1 - this.$store.hsv.v);
+
+            this.refs.$drag_pointer.px('left', x);
+            this.refs.$drag_pointer.px('top', y);
+
+            this.drag_pointer_pos = { x: x, y: y };
+
+            this.setBackgroundColor(this.read('getHueColor'));
+        }
+    }, {
+        key: 'setMainColor',
+        value: function setMainColor(e) {
+            // e.preventDefault();
+            var pos = this.state.get('$el.offset');
+            var w = this.state.get('$el.contentWidth');
+            var h = this.state.get('$el.contentHeight');
+
+            var x = Event.pos(e).pageX - pos.left;
+            var y = Event.pos(e).pageY - pos.top;
+
+            if (x < 0) x = 0;else if (x > w) x = w;
+
+            if (y < 0) y = 0;else if (y > h) y = h;
+
+            this.refs.$drag_pointer.px('left', x);
+            this.refs.$drag_pointer.px('top', y);
+
+            this.drag_pointer_pos = { x: x, y: y };
+
+            this.calculateSV();
+        }
+    }, {
+        key: EVENT('changeColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT('initColor'),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: POINTEREND('document'),
+        value: function value(e) {
+            this.isDown = false;
+        }
+    }, {
+        key: POINTERMOVE('document'),
+        value: function value(e) {
+            if (this.isDown) {
+                this.setMainColor(e);
+            }
+        }
+    }, {
+        key: POINTERSTART(),
+        value: function value(e) {
+            this.isDown = true;
+            this.setMainColor(e);
+        }
+    }, {
+        key: POINTEREND(),
+        value: function value(e) {
+            this.isDown = false;
+        }
+    }]);
+    return ColorPalette;
+}(UIElement);
+
+var ChromeDevToolColorPicker = function (_BaseColorPicker) {
+    inherits(ChromeDevToolColorPicker, _BaseColorPicker);
+
+    function ChromeDevToolColorPicker() {
+        classCallCheck(this, ChromeDevToolColorPicker);
+        return possibleConstructorReturn(this, (ChromeDevToolColorPicker.__proto__ || Object.getPrototypeOf(ChromeDevToolColorPicker)).apply(this, arguments));
+    }
+
+    createClass(ChromeDevToolColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '<div class=\'colorpicker-body\'>\n            <Palette />\n            <div class="control">\n                <Hue />\n                <Opacity />\n                <div class="empty"></div>\n                <ColorView />\n            </div>\n            <Information />\n            <CurrentColorSets />\n            <ColorSetsChooser />\n            <ContextMenu />\n        </div>';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Hue: Hue, Opacity: Opacity$2, ColorView: ColorView,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return ChromeDevToolColorPicker;
+}(BaseColorPicker);
+
+var MiniColorPicker = function (_BaseColorPicker) {
+    inherits(MiniColorPicker, _BaseColorPicker);
+
+    function MiniColorPicker() {
+        classCallCheck(this, MiniColorPicker);
+        return possibleConstructorReturn(this, (MiniColorPicker.__proto__ || Object.getPrototypeOf(MiniColorPicker)).apply(this, arguments));
+    }
+
+    createClass(MiniColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <Palette />\n                <div class="control">\n                    <Hue />\n                    <Opacity />\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Hue: Hue, Opacity: Opacity$2, Palette: ColorPalette
+            };
+        }
+    }]);
+    return MiniColorPicker;
+}(BaseColorPicker);
+
+var VerticalSlider = function (_BaseSlider) {
+    inherits(VerticalSlider, _BaseSlider);
+
+    function VerticalSlider() {
+        classCallCheck(this, VerticalSlider);
+        return possibleConstructorReturn(this, (VerticalSlider.__proto__ || Object.getPrototypeOf(VerticalSlider)).apply(this, arguments));
+    }
+
+    createClass(VerticalSlider, [{
+        key: 'getMaxDist',
+
+
+        /** get max height for vertical slider */
+        value: function getMaxDist() {
+            return this.refs.$container.height();
+        }
+
+        /** set mouse pointer for vertical slider */
+
+    }, {
+        key: 'setMousePosition',
+        value: function setMousePosition(y) {
+            this.refs.$bar.px('top', y);
+        }
+
+        /** get mouse position by pageY for vertical slider */
+
+    }, {
+        key: 'getMousePosition',
+        value: function getMousePosition(e) {
+            return Event.pos(e).pageY;
+        }
+
+        /** get min position for vertial slider */
+
+    }, {
+        key: 'getMinPosition',
+        value: function getMinPosition() {
+            return this.refs.$container.offset().top;
+        }
+
+        /** get calculated dist for domain value   */
+
+    }, {
+        key: 'getCalculatedDist',
+        value: function getCalculatedDist(e) {
+            var current = e ? this.getMousePosition(e) : this.getCurrent(this.getDefaultValue() / this.maxValue);
+            var dist = 100 - this.getDist(current);
+
+            return dist;
+        }
+
+        /** set drag bar position  */
+
+    }, {
+        key: 'setColorUI',
+        value: function setColorUI(v) {
+
+            v = v || this.getDefaultValue();
+
+            if (v <= this.minValue) {
+                this.refs.$bar.addClass('first').removeClass('last');
+            } else if (v >= this.maxValue) {
+                this.refs.$bar.addClass('last').removeClass('first');
+            } else {
+                this.refs.$bar.removeClass('last').removeClass('first');
+            }
+
+            var per = 1 - (v || 0) / this.maxValue;
+
+            this.setMousePosition(this.getMaxDist() * per);
+        }
+    }]);
+    return VerticalSlider;
+}(BaseSlider);
+
+var VerticalHue = function (_VerticalSlider) {
+    inherits(VerticalHue, _VerticalSlider);
+
+    function VerticalHue() {
+        classCallCheck(this, VerticalHue);
+        return possibleConstructorReturn(this, (VerticalHue.__proto__ || Object.getPrototypeOf(VerticalHue)).apply(this, arguments));
+    }
+
+    createClass(VerticalHue, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(VerticalHue.prototype.__proto__ || Object.getPrototypeOf(VerticalHue.prototype), 'initialize', this).call(this);
+            this.minValue = 0;
+            this.maxValue = 360;
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="hue">\n                <div ref="$container" class="hue-container">\n                    <div ref="$bar" class="drag-bar"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.hsv.h;
+        }
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(e) {
+
+            var dist = this.getCalculatedDist(e);
+
+            this.setColorUI(dist / 100 * this.maxValue);
+
+            this.changeColor({
+                h: dist / 100 * this.maxValue,
+                type: 'hsv'
+            });
+        }
+    }]);
+    return VerticalHue;
+}(VerticalSlider);
+
+var VerticalOpacity = function (_VerticalSlider) {
+    inherits(VerticalOpacity, _VerticalSlider);
+
+    function VerticalOpacity() {
+        classCallCheck(this, VerticalOpacity);
+        return possibleConstructorReturn(this, (VerticalOpacity.__proto__ || Object.getPrototypeOf(VerticalOpacity)).apply(this, arguments));
+    }
+
+    createClass(VerticalOpacity, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="opacity">\n            <div ref="$container" class="opacity-container">\n                <div ref="$colorbar" class="color-bar"></div>\n                <div ref="$bar" class="drag-bar2"></div>\n            </div>\n        </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            get$1(VerticalOpacity.prototype.__proto__ || Object.getPrototypeOf(VerticalOpacity.prototype), 'refresh', this).call(this);
+            this.setOpacityColorBar();
+        }
+    }, {
+        key: 'setOpacityColorBar',
+        value: function setOpacityColorBar() {
+            var rgb = _extends({}, this.$store.rgb);
+
+            rgb.a = 0;
+            var start = Color$1.format(rgb, 'rgb');
+
+            rgb.a = 1;
+            var end = Color$1.format(rgb, 'rgb');
+
+            this.refs.$colorbar.css('background', 'linear-gradient(to top, ' + start + ', ' + end + ')');
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.alpha;
+        }
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(e) {
+            var dist = this.getCalculatedDist(e);
+
+            this.setColorUI(dist / 100 * this.maxValue);
+
+            this.changeColor({
+                a: Math.floor(dist) / 100 * this.maxValue
+            });
+        }
+    }]);
+    return VerticalOpacity;
+}(VerticalSlider);
+
+var MiniColorPicker$2 = function (_BaseColorPicker) {
+    inherits(MiniColorPicker, _BaseColorPicker);
+
+    function MiniColorPicker() {
+        classCallCheck(this, MiniColorPicker);
+        return possibleConstructorReturn(this, (MiniColorPicker.__proto__ || Object.getPrototypeOf(MiniColorPicker)).apply(this, arguments));
+    }
+
+    createClass(MiniColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <Palette /><div class="control"><Hue /><Opacity /></div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Hue: VerticalHue,
+                Opacity: VerticalOpacity,
+                Palette: ColorPalette
+            };
+        }
+    }]);
+    return MiniColorPicker;
+}(BaseColorPicker);
+
+var ColorRing = function (_ColorWheel) {
+    inherits(ColorRing, _ColorWheel);
+
+    function ColorRing() {
+        classCallCheck(this, ColorRing);
+        return possibleConstructorReturn(this, (ColorRing.__proto__ || Object.getPrototypeOf(ColorRing)).apply(this, arguments));
+    }
+
+    createClass(ColorRing, [{
+        key: 'initialize',
+        value: function initialize() {
+            get$1(ColorRing.prototype.__proto__ || Object.getPrototypeOf(ColorRing.prototype), 'initialize', this).call(this);
+
+            this.width = 214;
+            this.height = 214;
+            this.thinkness = 16;
+            this.half_thinkness = this.thinkness / 2;
+        }
+    }, {
+        key: 'template',
+        value: function template() {
+            return '<div class="wheel" data-type="ring">\n            <canvas class="wheel-canvas" ref="$colorwheel" ></canvas>\n            <div class="drag-pointer" ref="$drag_pointer"></div>\n        </div>';
+        }
+    }, {
+        key: 'setColorUI',
+        value: function setColorUI(isEvent) {
+            this.renderCanvas();
+            this.setHueColor(null, isEvent);
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            return this.$store.hsv.h;
+        }
+    }, {
+        key: 'setHueColor',
+        value: function setHueColor(e, isEvent) {
+
+            if (!this.state.get('$el.width')) return;
+
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                radius = _getRectangle.radius,
+                centerX = _getRectangle.centerX,
+                centerY = _getRectangle.centerY;
+
+            var _getCurrentXY = this.getCurrentXY(e, this.getDefaultValue(), radius, centerX, centerY),
+                x = _getCurrentXY.x,
+                y = _getCurrentXY.y;
+
+            var rx = x - centerX,
+                ry = y - centerY,
+                hue = calculateAngle(rx, ry);
+
+            {
+                var _getCurrentXY2 = this.getCurrentXY(null, hue, radius - this.half_thinkness, centerX, centerY),
+                    x = _getCurrentXY2.x,
+                    y = _getCurrentXY2.y;
+            }
+
+            // set drag pointer position 
+            this.refs.$drag_pointer.px('left', x - minX);
+            this.refs.$drag_pointer.px('top', y - minY);
+
+            if (!isEvent) {
+                this.changeColor({
+                    type: 'hsv',
+                    h: hue
+                });
+            }
+        }
+    }]);
+    return ColorRing;
+}(ColorWheel);
+
+var RingColorPicker = function (_BaseColorPicker) {
+    inherits(RingColorPicker, _BaseColorPicker);
+
+    function RingColorPicker() {
+        classCallCheck(this, RingColorPicker);
+        return possibleConstructorReturn(this, (RingColorPicker.__proto__ || Object.getPrototypeOf(RingColorPicker)).apply(this, arguments));
+    }
+
+    createClass(RingColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <ColorRing />\n                <Palette />\n                <div class="control">\n                    <Value />\n                    <Opacity />\n                    <div class="empty"></div>\n                    <ColorView />\n                </div>\n                <Information />\n                <CurrentColorSets />\n                <ColorSetsChooser />\n                <ContextMenu />\n            </div>\n        ';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Value: Value,
+                Opacity: Opacity$2,
+                ColorView: ColorView,
+                ColorRing: ColorRing,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return RingColorPicker;
+}(BaseColorPicker);
+
+var XDColorPicker = function (_BaseColorPicker) {
+    inherits(XDColorPicker, _BaseColorPicker);
+
+    function XDColorPicker() {
+        classCallCheck(this, XDColorPicker);
+        return possibleConstructorReturn(this, (XDColorPicker.__proto__ || Object.getPrototypeOf(XDColorPicker)).apply(this, arguments));
+    }
+
+    createClass(XDColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <palette />\n                <div class="control">\n                    <Hue />\n                    <Opacity />\n                </div>\n                <information />\n                <currentColorSets />\n                <colorSetsChooser />\n                <contextMenu />\n            </div>\n        ';
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Hue: VerticalHue,
+                Opacity: VerticalOpacity,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return XDColorPicker;
+}(BaseColorPicker);
+
+var RingTabColorPicker = function (_BaseColorPicker) {
+    inherits(RingTabColorPicker, _BaseColorPicker);
+
+    function RingTabColorPicker() {
+        classCallCheck(this, RingTabColorPicker);
+        return possibleConstructorReturn(this, (RingTabColorPicker.__proto__ || Object.getPrototypeOf(RingTabColorPicker)).apply(this, arguments));
+    }
+
+    createClass(RingTabColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <ColorRing />\n                            <Palette />\n                            <div class="control">\n                                <Value />\n                                <Opacity />\n                                <div class="empty"></div>\n                                <ColorView />\n                            </div>\n                            <Information />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets />\n                            <ContextMenu />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser />\n                        </div>                        \n                    </div>\n            </div>\n        ';
+        }
+    }, {
+        key: CLICK('$tabHeader .color-tab-item'),
+        value: function value(e, $dt) {
+            if (!$dt.hasClass('active')) {
+                var selectedItem = this.refs.$tabHeader.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                $dt.addClass('active');
+
+                var selectedItem = this.refs.$tabBody.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                var activeItem = this.refs.$tabBody.$('[item-id=\'' + $dt.attr('item-id') + '\']');
+                if (activeItem) activeItem.addClass('active');
+            }
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Value: Value,
+                Opacity: Opacity$2,
+                ColorView: ColorView,
+                ColorRing: ColorRing,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return RingTabColorPicker;
+}(BaseColorPicker);
+
+var XDTabColorPicker = function (_BaseColorPicker) {
+    inherits(XDTabColorPicker, _BaseColorPicker);
+
+    function XDTabColorPicker() {
+        classCallCheck(this, XDTabColorPicker);
+        return possibleConstructorReturn(this, (XDTabColorPicker.__proto__ || Object.getPrototypeOf(XDTabColorPicker)).apply(this, arguments));
+    }
+
+    createClass(XDTabColorPicker, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'colorpicker-body\'>\n                <div class=\'color-tab xd\' ref="$tab">\n                    <div class=\'color-tab-header\' ref="$tabHeader">\n                        <div class=\'color-tab-item active\' item-id="color"><span >' + this.opt.tabTitle + '</span> Color</div>\n                        <div class=\'color-tab-item\' item-id="swatch">Swatch</div>\n                        <div class=\'color-tab-item\' item-id="colorset">Color Set</div>\n                    </div>\n                    <div class=\'color-tab-body\' ref="$tabBody">\n                        <div class=\'color-tab-content active\'  item-id="color">\n                            <palette />\n                            <div class="control">\n                                <Hue />\n                                <Opacity />\n                            </div>\n                            <information />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="swatch">\n                            <CurrentColorSets />\n                            <ContextMenu />\n                        </div>\n                        <div class=\'color-tab-content\' item-id="colorset">\n                            <ColorSetsChooser />\n                        </div>                        \n                    </div>\n\n            </div>\n        ';
+        }
+    }, {
+        key: CLICK('$tabHeader .color-tab-item'),
+        value: function value(e, $dt) {
+            if (!$dt.hasClass('active')) {
+                var selectedItem = this.refs.$tabHeader.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                $dt.addClass('active');
+
+                var selectedItem = this.refs.$tabBody.$('.active');
+                if (selectedItem) selectedItem.removeClass('active');
+                var activeItem = this.refs.$tabBody.$('[item-id=\'' + $dt.attr('item-id') + '\']');
+                if (activeItem) activeItem.addClass('active');
+            }
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return {
+                Hue: VerticalHue,
+                Opacity: VerticalOpacity,
+                Palette: ColorPalette,
+                Information: ColorInformation,
+                CurrentColorSets: CurrentColorSets,
+                ColorSetsChooser: ColorSetsChooser,
+                ContextMenu: CurrentColorSetsContextMenu
+            };
+        }
+    }]);
+    return XDTabColorPicker;
+}(BaseColorPicker);
+
+var ColorPicker = {
+    create: function create(opts) {
+        switch (opts.type) {
+            case 'macos':
+                return new MacOSColorPicker(opts);
+            case 'xd':
+                return new XDColorPicker(opts);
+            case 'xd-tab':
+                return new XDTabColorPicker(opts);
+            case 'ring':
+                return new RingColorPicker(opts);
+            case 'ring-tab':
+                return new RingTabColorPicker(opts);
+            case 'mini':
+                return new MiniColorPicker(opts);
+            case 'mini-vertical':
+                return new MiniColorPicker$2(opts);
+            case 'sketch':
+            case 'palette':
+            default:
+                return new ChromeDevToolColorPicker(opts);
+        }
+    },
+
+    ColorPicker: ChromeDevToolColorPicker,
+    ChromeDevToolColorPicker: ChromeDevToolColorPicker,
+    MacOSColorPicker: MacOSColorPicker,
+    RingColorPicker: RingColorPicker,
+    MiniColorPicker: MiniColorPicker,
+    MiniVerticalColorPicker: MiniColorPicker$2,
+    XDColorPicker: XDColorPicker
+};
+
 var FillColorPicker = function (_UIElement) {
     inherits(FillColorPicker, _UIElement);
 
@@ -18998,7 +17999,7 @@ var FillColorPicker = function (_UIElement) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19052,7 +18053,7 @@ var Text = function (_BasePropertyItem) {
             return "\n            <div class='property-item text show'>\n                <div class='items'>\n                    <div class=\"not-clip\">\n                        <label>Text Color</label>\n                        <div>\n                            <span class='color' ref='$color'></span> \n                            <input type=\"text\" class='color-text' ref='$colorText'/>\n                        </div>\n                    </div>\n                    <div class=\"not-clip\">\n                        <label>Clip Area</label>\n                        <div class='size-list full-size'>\n                            <select ref=\"$clip\">\n                                <option value=\"content-box\">content-box</option>\n                                <option value=\"border-box\">border-box</option>\n                                <option value=\"padding-box\">padding-box</option>\n                                <option value=\"text\">text</option>\n                            </select>\n                        </div>\n                    </div>    \n                    <div class=\"not-clip\">\n                        <label></label>\n                        <div class='size-list'>\n                            <label><input type=\"checkbox\" ref=\"$clipText\" /> only text </label>\n                        </div>\n                    </div>    \n\n                    <div>\n                        <textarea class='content' ref=\"$content\"></textarea>\n                    </div>\n                </div>            \n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -19149,7 +18150,7 @@ var LayerCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_EDITOR$1, CHANGE_SELECTION, SELECT_TAB_LAYER),
+        key: EVENT(CHANGE_LAYER, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_EDITOR, CHANGE_SELECTION, SELECT_TAB_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -19202,7 +18203,7 @@ var BackgroundCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP, CHANGE_EDITOR$1, CHANGE_SELECTION, SELECT_TAB_IMAGE),
+        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION, SELECT_TAB_IMAGE),
         value: function value$$1() {
             this.refresh();
         }
@@ -19271,7 +18272,7 @@ var Font = function (_BasePropertyItem) {
             }
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -19412,7 +18413,7 @@ var TextFillColorPicker = function (_UIElement) {
         // }
 
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19509,7 +18510,7 @@ var InfoFillColorPicker = function (_UIElement) {
             this.colorPicker.initColorWithoutChangeEvent(color);
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19601,7 +18602,7 @@ var BorderFillColorPicker = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19661,8 +18662,6 @@ var LayerBorderColorPickerPanel = function (_UIElement) {
 }(UIElement);
 
 var BACKDROP_GET = 'backdrop/get';
-
-var BACKDROP_TO_CSS = 'backdrop/toCSS';
 
 var _templateObject$11 = taggedTemplateLiteral(["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "], ["\n            <div class='filter'>\n                <span class=\"area\"></span>\n                <span class=\"checkbox\">\n                    <input type=\"checkbox\" ", " data-key=\"", "\" />\n                </span>\n                <span class='title long' draggable=\"true\">", "</span>\n            </div>\n            <div class='items'>\n                ", "\n            </div>\n            "]);
 
@@ -19733,7 +18732,7 @@ var BackdropList = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER),
         value: function value$$1() {
             this.refresh();
         }
@@ -19820,7 +18819,7 @@ var Page3D = function (_UIElement) {
             return "\n            <div class='property-item size show'>\n                <div class='items'>\n                    <div>\n                        <label> 3D </label>\n                        <div>\n                            <label><input type='checkbox' ref=\"$preserve\"> preserve-3d </label>\n                        </div>\n                    </div>    \n                    <div>\n                        <label> Perspective </label>\n                        <div>\n                            <input type=\"range\" ref=\"$perspectiveRange\" min=\"-2000\" max=\"2000\" /> \n                            <input type=\"number\" ref=\"$perspective\" /> <span class='unit'>%</span>\n                        </div>                        \n                    </div>                                 \n                    <div>\n                        <label>Origin  X </label>\n                        <div>\n                            <input type=\"range\" ref=\"$xRange\" min=\"-100\" max=\"100\" />                         \n                            <input type=\"number\" ref=\"$x\" /> <span class='unit'>%</span>\n                        </div>\n                    </div>                                            \n                    <div>\n                        <label>Origin Y </label>\n                        <div>\n                            <input type=\"range\" ref=\"$yRange\" min=\"-100\" max=\"100\" />                                                 \n                            <input type=\"number\" ref=\"$y\" /> <span class='unit'>%</span>\n                        </div>\n                    </div>                                                                \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_ARTBOARD),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_ARTBOARD),
         value: function value() {
             this.refresh();
         }
@@ -19921,17 +18920,9 @@ var Page3D = function (_UIElement) {
     return Page3D;
 }(UIElement);
 
-var COLORSTEP_COLOR_SOURCE = 'colorstep/colorSource';
-var COLORSTEP_CURRENT = 'colorstep/current';
-var COLORSTEP_ADD = 'colorstep/add';
-var COLORSTEP_REMOVE = 'colorstep/remove';
-var COLORSTEP_SORT = 'colorstep/sort';
-var COLORSTEP_SORT_LIST = 'colorstep/sort/list';
-var COLORSTEP_LIST = 'colorstep/list';
-var COLORSTEP_CURRENT_INDEX = 'colorstep/currentIndex';
 var COLORSTEP_CUT_OFF = 'colorstep/cut/off';
 var COLORSTEP_CUT_ON = 'colorstep/cut/on';
-var COLORSTEP_UNIT_VALUE = 'colorstep/unit/value';
+
 var COLORSTEP_ORDERING_EQUALS = 'colorstep/ordering/equals';
 var COLORSTEP_ORDERING_EQUALS_LEFT = 'colorstep/ordering/equals/left';
 var COLORSTEP_ORDERING_EQUALS_RIGHT = 'colorstep/ordering/equals/right';
@@ -19953,7 +18944,7 @@ var ImageSorting = function (_BasePropertyItem) {
         // indivisual layer effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20082,7 +19073,7 @@ var RotatePattern = function (_BasePropertyItem) {
             }));
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20170,7 +19161,7 @@ var BorderFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-border'>\n                <div class='items'>            \n                    <div>\n                        <label > <button type=\"button\" ref=\"$borderLabel\">*</button> Width</label>\n                        <div>\n                            <input type='range' ref=\"$borderWidthRange\" min=\"0\" max=\"360\">\n                            <input type='number' class='middle' ref=\"$borderWidth\" min=\"0\" max=\"360\"> <span>px</span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20297,7 +19288,7 @@ var BorderWidth = function (_BasePropertyItem) {
             return "\n            <div class='property-item border show'>\n                <div class='items'>         \n                    <div>\n                        <label >Top</label>\n                        <div>\n                            <input type='range' ref=\"$topWidthRange\" min=\"0\" max=\"500\" value=\"0\">                        \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$topWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Right</label>\n                        <div>\n                            <input type='range' ref=\"$rightWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$rightWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>          \n                    <div>\n                        <label>Bottom</label>\n                        <div>\n                            <input type='range' ref=\"$bottomWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$bottomWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                    <div>\n                        <label>Left</label>\n                        <div>\n                            <input type='range' ref=\"$leftWidthRange\" min=\"0\" max=\"500\" value=\"0\">                                                \n                            <input type='number' class='middle' min=\"0\" max=\"500\" ref=\"$leftWidth\" value=\"0\"> <span>" + UNIT_PX + "</span>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -20482,7 +19473,7 @@ var PredefinedBackgroundPosition = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20613,7 +19604,7 @@ var BackgroundResizer = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -20705,7 +19696,7 @@ var BackgroundPosition = function (_UIElement) {
             return +layer.width * 2;
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -20749,7 +19740,7 @@ var BorderColorFixed = function (_BasePropertyItem) {
             return "\n            <div class='property-item fixed-border-color show'>\n                <div class='items'>            \n                    <div>\n                        <label >Color</label>\n                        <div style='cursor:pointer;' ref=\"$colorview\" title=\"Click me!!\">\n                            <span class='background-transparent'>\n                                <span class='color' ref='$color'></span>\n                            </span>\n                            <span class='color-text' ref=\"$colortext\"></span>\n                        </div>\n                    </div>                                                                           \n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -20802,7 +19793,7 @@ var items$1 = _extends({}, patterns, {
     TextShadow: TextShadow$1,
     BoxShadow: BoxShadow$1,
     // ClipPathSVG,
-    Opacity: Opacity$3,
+    Opacity: Opacity,
     BorderFixed: BorderFixed,
     RadiusFixed: RadiusFixed,
     Rotate: Rotate,
@@ -20827,97 +19818,6 @@ var items$1 = _extends({}, patterns, {
     Radius: Radius,
     Clip: Clip
 });
-
-var BaseTab = function (_UIElement) {
-    inherits(BaseTab, _UIElement);
-
-    function BaseTab() {
-        classCallCheck(this, BaseTab);
-        return possibleConstructorReturn(this, (BaseTab.__proto__ || Object.getPrototypeOf(BaseTab)).apply(this, arguments));
-    }
-
-    createClass(BaseTab, [{
-        key: "template",
-        value: function template() {
-            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"1\">1</div>\n                <div class=\"tab-item\" data-id=\"2\">2</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"1\"></div>\n                <div class=\"tab-content\" data-id=\"2\"></div>\n            </div>\n        </div>\n        ";
-        }
-    }, {
-        key: "isNotSelectedTab",
-        value: function isNotSelectedTab(e) {
-            return !e.$delegateTarget.hasClass('selected');
-        }
-    }, {
-        key: CLICK('$header .tab-item') + IF('isNotSelectedTab'),
-        value: function value$$1(e, $dt) {
-            this.selectTab($dt.attr('data-id'));
-        }
-    }, {
-        key: "selectTab",
-        value: function selectTab(id) {
-
-            this.selectedTabId = id;
-
-            this.refs.$header.children().forEach(function ($dom) {
-                $dom.toggleClass('selected', $dom.attr('data-id') == id);
-            });
-
-            this.refs.$body.children().forEach(function ($dom) {
-                $dom.toggleClass('selected', $dom.attr('data-id') == id);
-            });
-
-            this.onTabShow();
-        }
-    }, {
-        key: "onTabShow",
-        value: function onTabShow() {}
-    }, {
-        key: "setScrollTabTitle",
-        value: function setScrollTabTitle($scrollPanel) {
-            var offset = $scrollPanel.offset();
-            var $tabElementTitle = $scrollPanel.$(".tab-element-title");
-
-            if (!$tabElementTitle) {
-                $scrollPanel.append(new Dom('div', 'tab-element-title'));
-                $tabElementTitle = $scrollPanel.$(".tab-element-title");
-            }
-
-            var elementsInViewport = $scrollPanel.children().map(function ($dom) {
-                var rect = $dom.rect();
-                if (offset.top <= rect.bottom) {
-                    return { $dom: $dom, isElementInViewport: true };
-                }
-                return { $dom: $dom, isElementInViewport: false };
-            });
-
-            var title = EMPTY_STRING;
-            if (elementsInViewport.length) {
-
-                var viewElement = elementsInViewport.filter(function (it) {
-                    return it.isElementInViewport;
-                });
-
-                if (viewElement.length) {
-                    var $dom = viewElement[0].$dom;
-                    var $title = $dom.$(".title");
-
-                    if ($title && offset.top > $title.rect().bottom) {
-                        title = $title.text();
-                    }
-                }
-            }
-
-            if (title) {
-                if ($tabElementTitle.css('display') == 'none') {
-                    $tabElementTitle.show();
-                }
-                $tabElementTitle.px('top', $scrollPanel.scrollTop()).text(title);
-            } else {
-                $tabElementTitle.hide();
-            }
-        }
-    }]);
-    return BaseTab;
-}(UIElement);
 
 var BaseProperty = function (_UIElement) {
     inherits(BaseProperty, _UIElement);
@@ -20999,903 +19899,714 @@ var BaseProperty = function (_UIElement) {
     return BaseProperty;
 }(UIElement);
 
-var PageProperty = function (_BaseProperty) {
-    inherits(PageProperty, _BaseProperty);
+var BoundProperty = function (_BaseProperty) {
+    inherits(BoundProperty, _BaseProperty);
 
-    function PageProperty() {
-        classCallCheck(this, PageProperty);
-        return possibleConstructorReturn(this, (PageProperty.__proto__ || Object.getPrototypeOf(PageProperty)).apply(this, arguments));
+    function BoundProperty() {
+        classCallCheck(this, BoundProperty);
+        return possibleConstructorReturn(this, (BoundProperty.__proto__ || Object.getPrototypeOf(BoundProperty)).apply(this, arguments));
     }
 
-    createClass(PageProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Page';
-        }
-    }, {
+    createClass(BoundProperty, [{
         key: "getBody",
         value: function getBody() {
-            return "\n            <PageName />\n            <PageSize />\n            <clip />\n            <Page3D />\n        ";
-        }
-    }]);
-    return PageProperty;
-}(BaseProperty);
-
-var LayerProperty = function (_BaseProperty) {
-    inherits(LayerProperty, _BaseProperty);
-
-    function LayerProperty() {
-        classCallCheck(this, LayerProperty);
-        return possibleConstructorReturn(this, (LayerProperty.__proto__ || Object.getPrototypeOf(LayerProperty)).apply(this, arguments));
-    }
-
-    createClass(LayerProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Property';
+            return "\n            <div class='property-item'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<Name /><size /><Rotate /><opacity /><LayerBlend />";
-        }
-    }]);
-    return LayerProperty;
-}(BaseProperty);
-
-var LayerFontProperty = function (_BaseProperty) {
-    inherits(LayerFontProperty, _BaseProperty);
-
-    function LayerFontProperty() {
-        classCallCheck(this, LayerFontProperty);
-        return possibleConstructorReturn(this, (LayerFontProperty.__proto__ || Object.getPrototypeOf(LayerFontProperty)).apply(this, arguments));
-    }
-
-    createClass(LayerFontProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Font';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<Font />";
-        }
-    }]);
-    return LayerFontProperty;
-}(BaseProperty);
-
-var LayerTextProperty = function (_BaseProperty) {
-    inherits(LayerTextProperty, _BaseProperty);
-
-    function LayerTextProperty() {
-        classCallCheck(this, LayerTextProperty);
-        return possibleConstructorReturn(this, (LayerTextProperty.__proto__ || Object.getPrototypeOf(LayerTextProperty)).apply(this, arguments));
-    }
-
-    createClass(LayerTextProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Text';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<Text />";
-        }
-    }]);
-    return LayerTextProperty;
-}(BaseProperty);
-
-var TextShadowProperty = function (_BaseProperty) {
-    inherits(TextShadowProperty, _BaseProperty);
-
-    function TextShadowProperty() {
-        classCallCheck(this, TextShadowProperty);
-        return possibleConstructorReturn(this, (TextShadowProperty.__proto__ || Object.getPrototypeOf(TextShadowProperty)).apply(this, arguments));
-    }
-
-    createClass(TextShadowProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Text Shadow';
-        }
-    }, {
-        key: "getTools",
-        value: function getTools() {
-            return "<button type=\"button\" ref=\"$add\">+</button>";
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<TextShadow ref=\"$textShadow\" />";
-        }
-    }, {
-        key: CLICK('$add'),
-        value: function value(e) {
-            var layer = editor.selection.layer;
-            if (layer) {
-                var textShadow = layer.addTextShadow(new TextShadow());
-                editor.send(CHANGE_EDITOR$1, textShadow);
-            }
-        }
-    }]);
-    return TextShadowProperty;
-}(BaseProperty);
-
-var BoxShadowProperty = function (_BaseProperty) {
-    inherits(BoxShadowProperty, _BaseProperty);
-
-    function BoxShadowProperty() {
-        classCallCheck(this, BoxShadowProperty);
-        return possibleConstructorReturn(this, (BoxShadowProperty.__proto__ || Object.getPrototypeOf(BoxShadowProperty)).apply(this, arguments));
-    }
-
-    createClass(BoxShadowProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Box Shadow';
-        }
-    }, {
-        key: "getTools",
-        value: function getTools() {
-            return "<button type=\"button\" ref=\"$add\">+</button>";
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<BoxShadow />";
-        }
-    }, {
-        key: CLICK('$add'),
-        value: function value(e) {
-            var layer = editor.selection.layer;
-            if (layer) {
-                var boxShadow = layer.addBoxShadow(new BoxShadow());
-                editor.send(CHANGE_EDITOR$1, boxShadow);
-            }
-        }
-    }]);
-    return BoxShadowProperty;
-}(BaseProperty);
-
-var FilterProperty = function (_BaseProperty) {
-    inherits(FilterProperty, _BaseProperty);
-
-    function FilterProperty() {
-        classCallCheck(this, FilterProperty);
-        return possibleConstructorReturn(this, (FilterProperty.__proto__ || Object.getPrototypeOf(FilterProperty)).apply(this, arguments));
-    }
-
-    createClass(FilterProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Filter';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<!-- FilterList /-->";
-        }
-    }]);
-    return FilterProperty;
-}(BaseProperty);
-
-var BackdropProperty = function (_BaseProperty) {
-    inherits(BackdropProperty, _BaseProperty);
-
-    function BackdropProperty() {
-        classCallCheck(this, BackdropProperty);
-        return possibleConstructorReturn(this, (BackdropProperty.__proto__ || Object.getPrototypeOf(BackdropProperty)).apply(this, arguments));
-    }
-
-    createClass(BackdropProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Backdrop Filter';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<BackdropList />";
-        }
-    }]);
-    return BackdropProperty;
-}(BaseProperty);
-
-var ClipPathProperty = function (_BaseProperty) {
-    inherits(ClipPathProperty, _BaseProperty);
-
-    function ClipPathProperty() {
-        classCallCheck(this, ClipPathProperty);
-        return possibleConstructorReturn(this, (ClipPathProperty.__proto__ || Object.getPrototypeOf(ClipPathProperty)).apply(this, arguments));
-    }
-
-    createClass(ClipPathProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Clip Path';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "\n            <ClipPath />\n            <ClipPathSide />\n            <ClipPathPolygon />\n            <!-- ClipPathSVG /-->\n        ";
-        }
-    }]);
-    return ClipPathProperty;
-}(BaseProperty);
-
-var Transform2DProperty = function (_BaseProperty) {
-    inherits(Transform2DProperty, _BaseProperty);
-
-    function Transform2DProperty() {
-        classCallCheck(this, Transform2DProperty);
-        return possibleConstructorReturn(this, (Transform2DProperty.__proto__ || Object.getPrototypeOf(Transform2DProperty)).apply(this, arguments));
-    }
-
-    createClass(Transform2DProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Transform 2D';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<transform />";
-        }
-    }]);
-    return Transform2DProperty;
-}(BaseProperty);
-
-var Transform3DProperty = function (_BaseProperty) {
-    inherits(Transform3DProperty, _BaseProperty);
-
-    function Transform3DProperty() {
-        classCallCheck(this, Transform3DProperty);
-        return possibleConstructorReturn(this, (Transform3DProperty.__proto__ || Object.getPrototypeOf(Transform3DProperty)).apply(this, arguments));
-    }
-
-    createClass(Transform3DProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Transform 3D';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<transform3d />";
-        }
-    }]);
-    return Transform3DProperty;
-}(BaseProperty);
-
-var LayerCodeProperty = function (_BaseProperty) {
-    inherits(LayerCodeProperty, _BaseProperty);
-
-    function LayerCodeProperty() {
-        classCallCheck(this, LayerCodeProperty);
-        return possibleConstructorReturn(this, (LayerCodeProperty.__proto__ || Object.getPrototypeOf(LayerCodeProperty)).apply(this, arguments));
-    }
-
-    createClass(LayerCodeProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'CSS Code';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<LayerCode />";
-        }
-    }]);
-    return LayerCodeProperty;
-}(BaseProperty);
-
-var ImageSortingProperty = function (_BaseProperty) {
-    inherits(ImageSortingProperty, _BaseProperty);
-
-    function ImageSortingProperty() {
-        classCallCheck(this, ImageSortingProperty);
-        return possibleConstructorReturn(this, (ImageSortingProperty.__proto__ || Object.getPrototypeOf(ImageSortingProperty)).apply(this, arguments));
-    }
-
-    createClass(ImageSortingProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Image sorting';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<ImageSorting />";
-        }
-    }, {
-        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_RECT, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
-            var isShow = this.isShow();
-
-            this.toggle(isShow);
+            this.refresh();
         }
     }, {
-        key: "isShow",
-        value: function isShow() {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                var gradient = image.image;
-                if (gradient.isStatic() || gradient.isImage()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    }]);
-    return ImageSortingProperty;
-}(BaseProperty);
-
-var ColorStepProperty = function (_BaseProperty) {
-    inherits(ColorStepProperty, _BaseProperty);
-
-    function ColorStepProperty() {
-        classCallCheck(this, ColorStepProperty);
-        return possibleConstructorReturn(this, (ColorStepProperty.__proto__ || Object.getPrototypeOf(ColorStepProperty)).apply(this, arguments));
-    }
-
-    createClass(ColorStepProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Color steps';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<ColorStepsInfo />";
-        }
-    }, {
-        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR$1),
-        value: function value() {
-            var isShow = this.isShow();
-
-            this.toggle(isShow);
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                var gradient = image.image;
-                if (gradient.isStatic() || gradient.isImage()) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    }]);
-    return ColorStepProperty;
-}(BaseProperty);
-
-var BackgroundCodeProperty = function (_BaseProperty) {
-    inherits(BackgroundCodeProperty, _BaseProperty);
-
-    function BackgroundCodeProperty() {
-        classCallCheck(this, BackgroundCodeProperty);
-        return possibleConstructorReturn(this, (BackgroundCodeProperty.__proto__ || Object.getPrototypeOf(BackgroundCodeProperty)).apply(this, arguments));
-    }
-
-    createClass(BackgroundCodeProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'CSS Code';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<BackgroundCode />";
-        }
-    }]);
-    return BackgroundCodeProperty;
-}(BaseProperty);
-
-var _templateObject$13 = taggedTemplateLiteral(["\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "], ["\n            <BackgroundBlend />        \n            <div class='sub-feature'>\n                <BackgroundSize />\n            </div>\n        "]);
-
-var BackgroundProperty = function (_BaseProperty) {
-    inherits(BackgroundProperty, _BaseProperty);
-
-    function BackgroundProperty() {
-        classCallCheck(this, BackgroundProperty);
-        return possibleConstructorReturn(this, (BackgroundProperty.__proto__ || Object.getPrototypeOf(BackgroundProperty)).apply(this, arguments));
-    }
-
-    createClass(BackgroundProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Background Image';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return html(_templateObject$13);
-        }
-    }]);
-    return BackgroundProperty;
-}(BaseProperty);
-
-var RotatePatternProperty = function (_BaseProperty) {
-    inherits(RotatePatternProperty, _BaseProperty);
-
-    function RotatePatternProperty() {
-        classCallCheck(this, RotatePatternProperty);
-        return possibleConstructorReturn(this, (RotatePatternProperty.__proto__ || Object.getPrototypeOf(RotatePatternProperty)).apply(this, arguments));
-    }
-
-    createClass(RotatePatternProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Rotate pattern';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<RotatePattern />";
-        }
-    }]);
-    return RotatePatternProperty;
-}(BaseProperty);
-
-var LayerBorderProperty = function (_BaseProperty) {
-    inherits(LayerBorderProperty, _BaseProperty);
-
-    function LayerBorderProperty() {
-        classCallCheck(this, LayerBorderProperty);
-        return possibleConstructorReturn(this, (LayerBorderProperty.__proto__ || Object.getPrototypeOf(LayerBorderProperty)).apply(this, arguments));
-    }
-
-    createClass(LayerBorderProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Border';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "\n            <BorderFixed />\n            <BorderWidth />\n            <BorderColorFixed />\n        ";
-        }
-    }]);
-    return LayerBorderProperty;
-}(BaseProperty);
-
-var LayerAngle = function (_UIElement) {
-    inherits(LayerAngle, _UIElement);
-
-    function LayerAngle() {
-        classCallCheck(this, LayerAngle);
-        return possibleConstructorReturn(this, (LayerAngle.__proto__ || Object.getPrototypeOf(LayerAngle)).apply(this, arguments));
-    }
-
-    createClass(LayerAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
+        key: "refresh",
         value: function refresh() {
+            var item = editor$1.selection.currentRect;
+            if (!item) return;
 
-            if (this.isShow()) {
-                this.$el.show();
-                this.refreshUI();
-            } else {
-                this.$el.hide();
+            this.refs.$width.val(item.width.value);
+            this.refs.$height.val(item.height.value);
+            this.refs.$x.val(item.x.value);
+            this.refs.$y.val(item.y.value);
+        }
+    }, {
+        key: CLICK('$rect'),
+        value: function value(e) {
+            var widthValue = this.refs.$width.int();
+            editor$1.selection.updateRect(CHANGE_RECT, {
+                width: Length$1.px(widthValue),
+                height: Length$1.px(widthValue)
+            });
+        }
+    }, {
+        key: INPUT('$width'),
+        value: function value() {
+            editor$1.selection.updateRect(CHANGE_RECT, {
+                width: Length$1.px(this.refs.$width.int())
+            }, this);
+        }
+    }, {
+        key: INPUT('$height'),
+        value: function value() {
+            editor$1.selection.updateRect(CHANGE_RECT, {
+                height: Length$1.px(this.refs.$height.int())
+            }, this);
+        }
+    }, {
+        key: INPUT('$x'),
+        value: function value() {
+            editor$1.selection.updateRect(CHANGE_RECT, {
+                x: Length$1.px(this.refs.$x.int())
+            }, this);
+        }
+    }, {
+        key: INPUT('$y'),
+        value: function value() {
+            editor$1.selection.updateRect(CHANGE_RECT, {
+                y: Length$1.px(this.refs.$y.int())
+            }, this);
+        }
+    }]);
+    return BoundProperty;
+}(BaseProperty);
+
+// import ArtboardProperty from "./ArtboardProperty";
+// import LayerProperty from "./LayerProperty";
+// import LayerFontProperty from "./LayerFontProperty";
+// import LayerTextProperty from "./LayerTextProperty";
+// import TextShadowProperty from "./TextShadowProperty";
+// import BoxShadowProperty from "./BoxShadowProperty";
+// import FilterProperty from "./FilterProperty";
+// import BackdropProperty from "./BackdropProperty";
+// import ClipPathProperty from "./ClipPathProperty";
+// import Transform2DProperty from "./Transform2DProperty";
+// import Transform3DProperty from "./Transform3DProperty";
+// import LayerCodeProperty from "./LayerCodeProperty";
+// import ImageSortingProperty from "./ImageSortingProperty";
+// import ColorStepProperty from "./ColorStepProperty";
+// import BackgroundCodeProperty from "./BackgroundCodeProperty";
+// import BackgroundProperty from "./BackgroundProperty";
+// import LayerBorderProperty from "./LayerBorderProperty";
+// import Transform2DControlProperty from "./Transform2DControlProperty";
+// import BackgroundPositionProperty from "./BackgroundPositionProperty";
+// import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
+var property = {
+    BoundProperty: BoundProperty
+    // BackgroundPositionProperty,
+    // Transform2DControlProperty,
+    // LayerBorderRadiusProperty,
+    // LayerBorderProperty,
+    // BackgroundProperty,
+    // BackgroundCodeProperty,
+    // ColorStepProperty,
+    // ImageSortingProperty,
+    // LayerCodeProperty,
+    // Transform2DProperty,
+    // Transform3DProperty,
+    // ClipPathProperty,
+    // FilterProperty,
+    // BackdropProperty,
+    // BoxShadowProperty,
+    // ArtboardProperty,
+    // LayerProperty,
+    // LayerFontProperty,
+    // LayerTextProperty,
+    // TextShadowProperty
+};
+
+var Inspector = function () {
+    function Inspector(editor) {
+        classCallCheck(this, Inspector);
+
+        this.editor = editor;
+
+        this.components = {};
+
+        this.initialize();
+    }
+
+    createClass(Inspector, [{
+        key: "initialize",
+        value: function initialize() {
+            this.components = {};
+
+            this.set(property);
+        }
+    }, {
+        key: "initializeKeys",
+        value: function initializeKeys() {
+            this.keys = Object.keys(this.components);
+        }
+    }, {
+        key: "set",
+        value: function set$$1(key, PropertyClass) {
+            var _this = this;
+
+            if (isString(key)) {
+                this.components[key] = PropertyClass;
+            } else if (isObject(key)) {
+                keyEach(key, function (key, PropertyClass) {
+                    _this.components[key] = PropertyClass;
+                });
+            }
+
+            this.initializeKeys();
+            this.editor.send(CHANGE_EDITOR);
+        }
+    }, {
+        key: "remove",
+        value: function remove(key) {
+            delete this.components[key];
+
+            this.initializeKeys();
+            this.editor.send(CHANGE_EDITOR);
+        }
+    }]);
+    return Inspector;
+}();
+
+var items = new Map();
+
+function traverse(item, results, parentId) {
+    var newItem = item.clone(true);
+    newItem.parentId = parentId;
+    results.push(newItem);
+
+    item.children.forEach(function (child) {
+        traverse(child, results, newItem.id);
+    });
+}
+
+function tree(id) {
+    var item = editor$1.get(id);
+    var newItem = item.clone(true);
+    var results = [newItem];
+
+    item.children.forEach(function (item) {
+        traverse(item, results, newItem.id);
+    });
+
+    return results;
+}
+
+var EDITOR_ID = '';
+var editor$1 = new (function () {
+    function _class() {
+        classCallCheck(this, _class);
+
+        this.config = new Config(this);
+        this.selection = new Selection(this);
+        this.inspector = new Inspector(this);
+    }
+
+    createClass(_class, [{
+        key: "setStore",
+        value: function setStore($store) {
+            this.$store = $store;
+        }
+    }, {
+        key: "send",
+        value: function send() {
+            this.emit.apply(this, arguments);
+        }
+    }, {
+        key: "emit",
+        value: function emit() {
+            if (this.$store) {
+                var _$store;
+
+                this.$store.source = 'EDITOR_ID';
+                (_$store = this.$store).emit.apply(_$store, arguments);
             }
         }
+
+        /**
+         * add Project
+         * 
+         * @param {Project} project 
+         */
+
     }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!editor$1.selection.layer) return false;
-            return editor$1.config.get('guide.angle');
+        key: "addProject",
+        value: function addProject(project) {
+            return this.add(EDITOR_ID, project);
         }
     }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
-            return isUpdate ? editor$1.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY);
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.refs.$dragAngle.width();
-            var height = this.refs.$dragAngle.height();
-            var radius = Math.floor(width / 2 * 0.7);
+        key: "filter",
+        value: function filter(itemType) {
+            var results = [];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
 
-            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
-                left = _refs$$dragAngle$offs.left,
-                top = _refs$$dragAngle$offs.top;
+            try {
+                for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var _ref = _step.value;
 
-            var minX = left;
-            var minY = top;
-            var centerX = minX + width / 2;
-            var centerY = minY + height / 2;
+                    var _ref2 = slicedToArray(_ref, 2);
 
-            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            var layer = editor$1.selection.layer;
-            if (!layer) return -90;
-            if (isUndefined$1(layer.rotate)) return -90;
+                    var id = _ref2[0];
+                    var item = _ref2[1];
 
-            return layer.rotate - 90;
-        }
-    }, {
-        key: 'refreshAngleText',
-        value: function refreshAngleText(angleText) {
-            this.refs.$angleText.text(angleText + ' °');
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(isUpdate) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                angle = caculateAngle(rx, ry);
-
-            {
-                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
+                    if (item.itemType === itemType) {
+                        results[results.length] = item;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
             }
 
-            // set drag pointer position 
-            this.refs.$dragPointer.px('left', x - minX);
-            this.refs.$dragPointer.px('top', y - minY);
+            return results;
+        }
 
-            var lastAngle = Math.round(angle + 90) % 360;
+        /**
+         * get project list 
+         */
 
-            this.refreshAngleText(lastAngle);
+    }, {
+        key: "add",
 
-            if (isUpdate) {
-                this.setAngle(lastAngle);
-            }
+
+        /**
+         * add item 
+         * 
+         * @param {string} parentId 
+         * @param {Item} item 
+         * @return {Item} 
+         */
+        value: function add(parentId, item) {
+            item.parentId = parentId;
+            items.set(item.id, item);
+
+            this.sort(item.itemType);
+
+            return item;
+        }
+
+        /**
+         * remove Item  with all children 
+         * 
+         * @param {string} id 
+         */
+
+    }, {
+        key: "remove",
+        value: function remove(id) {
+            var isDeleteChildren = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+
+            if (isDeleteChildren) this.removeChildren(id);
+
+            items.delete(id);
         }
     }, {
-        key: 'setAngle',
-        value: function setAngle(rotate) {
+        key: "copy",
+        value: function copy(id) {
+            var _this = this;
+
+            var data = tree(id, uuidShort());
+
+            data.forEach(function (it) {
+                _this.set(it.id, it);
+            });
+
+            if (data.length) {
+                data[0].index = data[0].index + 1;
+                data[0].parent().sort();
+            }
+
+            return data;
+        }
+    }, {
+        key: "clear",
+        value: function clear() {
+            items.clear();
+        }
+    }, {
+        key: "removeChildren",
+
+
+        /**
+         * remove all children 
+         * 
+         * @param {string} parentId 
+         */
+        value: function removeChildren() {
             var _this2 = this;
 
-            editor$1.selection.items.forEach(function (item) {
-                item.rotate = (_this2.cachedRotate[id] + (rotate - _this2.cachedRotate[id])) % 360;
-                _this2.commit(CHANGE_LAYER);
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_TOOL),
-        value: function value() {
-            this.$el.toggle(this.isShow());
-        }
+            var parentId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EDITOR_ID;
+            var parentObject = arguments[1];
 
-        // Event Bindings 
 
-    }, {
-        key: 'move',
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: POINTERSTART('$dragAngle') + MOVE(),
-        value: function value(e) {
-            var _this3 = this;
+            var children = [];
 
-            this.cachedRotate = {};
-            editor$1.selection.items.forEach(function (item) {
-                _this3.cachedRotate[item.id] = item.rotate || 0;
-            });
-            this.refreshUI(e);
-        }
-    }]);
-    return LayerAngle;
-}(UIElement);
+            if (parentId == EDITOR_ID) {
+                children = this.projects;
+            } else {
+                var parent = this.get(parentId);
+                if (parent) {
+                    children = parent.children;
+                } else if (parentObject) {
+                    children = parentObject.children;
+                }
+            }
 
-var DEFINED_ANGLES$2 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var PredefinedLayerAngle = function (_UIElement) {
-    inherits(PredefinedLayerAngle, _UIElement);
-
-    function PredefinedLayerAngle() {
-        classCallCheck(this, PredefinedLayerAngle);
-        return possibleConstructorReturn(this, (PredefinedLayerAngle.__proto__ || Object.getPrototypeOf(PredefinedLayerAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedLayerAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!editor$1.selection.layer) return false;
-
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: CLICK('$el button') + SELF,
-        value: function value(e) {
-            var layer = editor$1.selection.layer;
-            if (layer) {
-                layer.rotate = DEFINED_ANGLES$2[e.$delegateTarget.attr('data-value')];
-                editor$1.send(CHANGE_LAYER, layer);
+            if (children.length) {
+                children.forEach(function (child) {
+                    _this2.removeChildren(child.id);
+                    _this2.remove(child.id);
+                });
             }
         }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_TOOL),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedLayerAngle;
-}(UIElement);
 
-var Transform2DControlProperty = function (_BaseProperty) {
-    inherits(Transform2DControlProperty, _BaseProperty);
+        /**
+         * get item 
+         * 
+         * @param {String} key 
+         */
 
-    function Transform2DControlProperty() {
-        classCallCheck(this, Transform2DControlProperty);
-        return possibleConstructorReturn(this, (Transform2DControlProperty.__proto__ || Object.getPrototypeOf(Transform2DControlProperty)).apply(this, arguments));
-    }
+    }, {
+        key: "get",
+        value: function get(key) {
+            return items.get(key);
+        }
 
-    createClass(Transform2DControlProperty, [{
-        key: "getBody",
-        value: function getBody() {
-            return "\n            <div class=\"property-item\" style=\"position:relative;height:140px;\">\n                <PredefinedLayerAngle></PredefinedLayerAngle>\n                <LayerAngle></LayerAngle>   \n            </div>\n        ";
-        }
+        /**
+         * set Item 
+         * 
+         * @param {string} key 
+         * @param {Item} value 
+         */
+
     }, {
-        key: "isHideHeader",
-        value: function isHideHeader() {
-            return true;
+        key: "set",
+        value: function set$$1(key, value) {
+            items.set(key, value);
         }
+
+        /**
+         * check item id 
+         * 
+         * @param {string|Item} key 
+         */
+
     }, {
-        key: "components",
-        value: function components() {
-            return {
-                LayerAngle: LayerAngle,
-                PredefinedLayerAngle: PredefinedLayerAngle
+        key: "has",
+        value: function has(key) {
+            return items.has(key);
+        }
+
+        /**
+         * get children by searchObj  
+         * 
+         * @param {object} searchObj 
+         */
+
+    }, {
+        key: "search",
+        value: function search(searchObj) {
+            var keys = Object.keys(searchObj);
+            var results = [];
+
+            var _loop = function _loop(id, item) {
+                isItem = keys.every(function (searchField) {
+                    return searchObj[searchField] === item[searchField];
+                });
+
+                if (isItem) {
+                    results[results.length] = item;
+                }
             };
-        }
-    }]);
-    return Transform2DControlProperty;
-}(BaseProperty);
 
-var BackgroundPositionProperty = function (_BaseProperty) {
-    inherits(BackgroundPositionProperty, _BaseProperty);
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
-    function BackgroundPositionProperty() {
-        classCallCheck(this, BackgroundPositionProperty);
-        return possibleConstructorReturn(this, (BackgroundPositionProperty.__proto__ || Object.getPrototypeOf(BackgroundPositionProperty)).apply(this, arguments));
-    }
+            try {
+                for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var _ref3 = _step2.value;
 
-    createClass(BackgroundPositionProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Background Position';
-        }
-    }, {
-        key: "getBody",
-        value: function getBody() {
-            return "\n            <BackgroundPosition></BackgroundPosition>\n        ";
-        }
-    }]);
-    return BackgroundPositionProperty;
-}(BaseProperty);
+                    var _ref4 = slicedToArray(_ref3, 2);
 
-var LayerBorderRadiusProperty = function (_BaseProperty) {
-    inherits(LayerBorderRadiusProperty, _BaseProperty);
+                    var id = _ref4[0];
+                    var item = _ref4[1];
+                    var isItem;
 
-    function LayerBorderRadiusProperty() {
-        classCallCheck(this, LayerBorderRadiusProperty);
-        return possibleConstructorReturn(this, (LayerBorderRadiusProperty.__proto__ || Object.getPrototypeOf(LayerBorderRadiusProperty)).apply(this, arguments));
-    }
+                    _loop(id, item);
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
 
-    createClass(LayerBorderRadiusProperty, [{
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Border Radius';
+            results.sort(function (a, b) {
+                return a.index > b.index ? 1 : -1;
+            });
+
+            return results;
         }
     }, {
-        key: "getBody",
-        value: function getBody() {
-            return "<RadiusFixed /><radius />";
+        key: "sort",
+        value: function sort(itemType) {
+
+            var children = [];
+
+            if (itemType === 'project') children = this.projects;
+
+            children.sort(function (a, b) {
+                if (a.index === b.index) return 0;
+                return a.index > b.index ? 1 : -1;
+            });
+
+            children.forEach(function (it, index) {
+                it.index = index * 100;
+            });
+        }
+
+        /**
+         * get children 
+         * 
+         * @param {string} parentId 
+         */
+
+    }, {
+        key: "children",
+        value: function children(parentId) {
+            var results = [];
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var _ref5 = _step3.value;
+
+                    var _ref6 = slicedToArray(_ref5, 2);
+
+                    var id = _ref6[0];
+                    var item = _ref6[1];
+
+
+                    if (item.parentId === parentId) {
+                        results[results.length] = item;
+                    }
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+
+            return results;
+        }
+    }, {
+        key: "projects",
+        get: function get() {
+            return this.filter('project');
+        }
+    }, {
+        key: "artboards",
+        get: function get() {
+            return this.filter('artboard');
+        }
+    }, {
+        key: "layers",
+        get: function get() {
+            return this.filter('layer');
+        }
+    }, {
+        key: "groups",
+        get: function get() {
+            return this.filter('group');
+        }
+    }, {
+        key: "all",
+        get: function get() {
+            return items;
         }
     }]);
-    return LayerBorderRadiusProperty;
-}(BaseProperty);
+    return _class;
+}())();
 
-var property = {
-    BackgroundPositionProperty: BackgroundPositionProperty,
-    Transform2DControlProperty: Transform2DControlProperty,
-    LayerBorderRadiusProperty: LayerBorderRadiusProperty,
-    LayerBorderProperty: LayerBorderProperty,
-    RotatePatternProperty: RotatePatternProperty,
-    BackgroundProperty: BackgroundProperty,
-    BackgroundCodeProperty: BackgroundCodeProperty,
-    ColorStepProperty: ColorStepProperty,
-    ImageSortingProperty: ImageSortingProperty,
-    LayerCodeProperty: LayerCodeProperty,
-    Transform2DProperty: Transform2DProperty,
-    Transform3DProperty: Transform3DProperty,
-    ClipPathProperty: ClipPathProperty,
-    FilterProperty: FilterProperty,
-    BackdropProperty: BackdropProperty,
-    BoxShadowProperty: BoxShadowProperty,
-    PageProperty: PageProperty,
-    LayerProperty: LayerProperty,
-    LayerFontProperty: LayerFontProperty,
-    LayerTextProperty: LayerTextProperty,
-    TextShadowProperty: TextShadowProperty
+var EMPTY_POS = { x: 0, y: 0 };
+
+var start = function start(opt) {
+    var App = function (_UIElement) {
+        inherits(App, _UIElement);
+
+        function App() {
+            classCallCheck(this, App);
+            return possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+        }
+
+        createClass(App, [{
+            key: "initialize",
+            value: function initialize() {
+                var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+                this.$store = new BaseStore({
+                    modules: [].concat(toConsumableArray(this.getModuleList()), toConsumableArray(modules))
+                });
+
+                editor$1.setStore(this.$store);
+
+                this.$body = new Dom(this.getContainer());
+                this.$root = new Dom('div', this.getClassName());
+
+                this.$body.append(this.$root);
+
+                this.render(this.$root);
+
+                // 이벤트 연결 
+                this.initializeEvent();
+
+                this.initBodyMoves();
+            }
+        }, {
+            key: "initBodyMoves",
+            value: function initBodyMoves() {
+                this.moves = new Set();
+                this.ends = new Set();
+                this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 10);
+            }
+        }, {
+            key: "loopBodyMoves",
+            value: function loopBodyMoves() {
+                var oldPos = editor$1.config.get('oldPos');
+                var pos = editor$1.config.get('pos');
+                var isRealMoved = oldPos.x != pos.x || oldPos.y != pos.y;
+
+                if (isRealMoved && this.moves.size) {
+                    this.moves.forEach(function (v) {
+                        v.func.call(v.context);
+                    });
+                }
+                requestAnimationFrame(this.funcBodyMoves);
+            }
+        }, {
+            key: "removeBodyMoves",
+            value: function removeBodyMoves() {
+
+                this.ends.forEach(function (v) {
+                    v.func.call(v.context);
+                });
+
+                this.moves.clear();
+                this.ends.clear();
+            }
+        }, {
+            key: EVENT(ADD_BODY_MOUSEMOVE),
+            value: function value(func, context) {
+                this.moves.add({ func: func, context: context });
+            }
+        }, {
+            key: EVENT(ADD_BODY_MOUSEUP),
+            value: function value(func, context) {
+                this.ends.add({ func: func, context: context });
+            }
+        }, {
+            key: "getModuleList",
+            value: function getModuleList() {
+                return opt.modules || [];
+            }
+        }, {
+            key: "getClassName",
+            value: function getClassName() {
+                return opt.className || 'csseditor';
+            }
+        }, {
+            key: "getContainer",
+            value: function getContainer() {
+                return opt.container || document.body;
+            }
+        }, {
+            key: "template",
+            value: function template() {
+                return "<div>" + opt.template + "</div>";
+            }
+        }, {
+            key: "components",
+            value: function components() {
+                return opt.components || {};
+            }
+        }, {
+            key: POINTERMOVE('document'),
+            value: function value(e) {
+                var oldPos = editor$1.config.get('pos') || EMPTY_POS;
+                var newPos = Event.pos(e) || EMPTY_POS;
+
+                this.bodyMoved = !(oldPos.x == newPos.x && oldPos.y == newPos.y);
+                editor$1.config.set('bodyEvent', e);
+                editor$1.config.set('pos', newPos);
+                editor$1.config.set('oldPos', oldPos);
+
+                if (!this.requestId) {
+                    this.requestId = requestAnimationFrame(this.funcBodyMoves);
+                }
+            }
+        }, {
+            key: POINTEREND('document'),
+            value: function value(e) {
+                var newPos = Event.pos(e) || EMPTY_POS;
+                editor$1.config.set('bodyEvent', e);
+                editor$1.config.set('pos', newPos);
+                this.removeBodyMoves();
+                this.requestId = null;
+            }
+        }]);
+        return App;
+    }(UIElement);
+
+    return new App(opt);
 };
 
-var LayerTabView = function (_BaseTab) {
-    inherits(LayerTabView, _BaseTab);
 
-    function LayerTabView() {
-        classCallCheck(this, LayerTabView);
-        return possibleConstructorReturn(this, (LayerTabView.__proto__ || Object.getPrototypeOf(LayerTabView)).apply(this, arguments));
-    }
 
-    createClass(LayerTabView, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item small-font" data-id="clip-path">Clip Path</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty />\n                </div>\n                <div class="tab-content selected flex" data-id="property">\n                    <!-- <div class=\'fixed\'><LayerInfoColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <LayerProperty />\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <!-- <div class=\'fixed\'><LayerBorderColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerBorderScroll">\n                        <LayerBorderProperty />\n                        <LayerBorderRadiusProperty />\n                    </div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <!-- <div class=\'fixed\'><LayerTextColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty />\n                        <LayerTextProperty />\n                        <TextShadowProperty />\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <!--<div class=\'fixed\'><FillColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty />\n                        <FilterProperty />\n                        <BackdropProperty />\n                        <EmptyArea height="100px" />      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="clip-path">\n                    <ClipPathProperty />\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty />\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty />\n                </div>\n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty/>\n                </div>\n            </div>\n        </div>';
-        }
-    }, {
-        key: SCROLL('$layerInfoScroll'),
-        value: function value(e) {
-            this.setScrollTabTitle(this.refs.$layerInfoScroll);
-        }
-    }, {
-        key: SCROLL('$layerBorderScroll'),
-        value: function value(e) {
-            this.setScrollTabTitle(this.refs.$layerBorderScroll);
-        }
-    }, {
-        key: SCROLL('$layerTextScroll'),
-        value: function value(e) {
-            this.setScrollTabTitle(this.refs.$layerTextScroll);
-        }
-    }, {
-        key: SCROLL('$layerFillScroll'),
-        value: function value(e) {
-            this.setScrollTabTitle(this.refs.$layerFillScroll);
-        }
-    }, {
-        key: 'onTabShow',
-        value: function onTabShow() {
-            editor$1.config.set('tool.tabs.layer.selectedId', this.selectedTabId);
-            this.emit(SELECT_TAB_LAYER, this.selectedTabId);
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return _extends({}, property, items$1);
-        }
-    }]);
-    return LayerTabView;
-}(BaseTab);
+var App = Object.freeze({
+	start: start
+});
 
-var LayerView = function (_UIElement) {
-    inherits(LayerView, _UIElement);
+var Util = {
+    App: App,
+    Color: Color$1,
+    HueColor: HueColor,
+    ColorNames: ColorNames,
+    ImageFilter: ImageFilter,
+    GL: GL,
+    Canvas: Canvas,
+    ImageLoader: ImageLoader
+};
 
-    function LayerView() {
-        classCallCheck(this, LayerView);
-        return possibleConstructorReturn(this, (LayerView.__proto__ || Object.getPrototypeOf(LayerView)).apply(this, arguments));
-    }
-
-    createClass(LayerView, [{
-        key: "template",
-        value: function template() {
-            return "<div class='property-view'><LayerTabView /></div>";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return { LayerTabView: LayerTabView };
-        }
-    }]);
-    return LayerView;
-}(UIElement);
-
-var ImageTabView = function (_BaseTab) {
-    inherits(ImageTabView, _BaseTab);
-
-    function ImageTabView() {
-        classCallCheck(this, ImageTabView);
-        return possibleConstructorReturn(this, (ImageTabView.__proto__ || Object.getPrototypeOf(ImageTabView)).apply(this, arguments));
-    }
-
-    createClass(ImageTabView, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected small-font" data-id="gradient">Background</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><!-- ColorPickerPanel /--></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <!-- <RotatePatternProperty /> -->\n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR$1, CHANGE_IMAGE),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: 'onTabShow',
-        value: function onTabShow() {
-            this.load();
-            editor.config.set('tool.tabs.image.selectedId', this.selectedTabId);
-            this.emit(SELECT_TAB_IMAGE, this.selectedTabId);
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return _extends({}, property, items$1);
-        }
-    }]);
-    return ImageTabView;
-}(BaseTab);
-
-var ImageView = function (_UIElement) {
-    inherits(ImageView, _UIElement);
-
-    function ImageView() {
-        classCallCheck(this, ImageView);
-        return possibleConstructorReturn(this, (ImageView.__proto__ || Object.getPrototypeOf(ImageView)).apply(this, arguments));
-    }
-
-    createClass(ImageView, [{
-        key: "template",
-        value: function template() {
-            return "<div class='property-view'><ImageTabView /></div>";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return {
-                ImageTabView: ImageTabView
-            };
-        }
-    }]);
-    return ImageView;
-}(UIElement);
+var _templateObject$13 = taggedTemplateLiteral(["\n            <div class='feature-control'>     \n            ", "\n            </div>\n        "], ["\n            <div class='feature-control'>     \n            ", "\n            </div>\n        "]);
 
 var FeatureControl = function (_UIElement) {
     inherits(FeatureControl, _UIElement);
@@ -21908,54 +20619,32 @@ var FeatureControl = function (_UIElement) {
     createClass(FeatureControl, [{
         key: "template",
         value: function template() {
-            return "\n            <div class='feature-control'>     \n                <div class='feature layer-feature' data-type='layer'>\n                    <LayerView />\n                </div>                              \n                <div class='feature image-feature' data-type='image'>\n                    <ImageView />\n                </div>\n            </div>\n        ";
+            return html(_templateObject$13, editor$1.inspector.keys.map(function (key) {
+                return "<" + key + " />";
+            }));
         }
     }, {
         key: "components",
         value: function components() {
-            return {
-                LayerView: LayerView,
-                ImageView: ImageView
-            };
+            return editor$1.inspector.components;
         }
     }, {
-        key: "selectFeature",
-        value: function selectFeature() {
-
-            var selectedFeature = this.$el.$('.feature.selected');
-            if (selectedFeature) selectedFeature.removeClass('selected');
-
-            var selectType = 'layer';
-
-            if (editor$1.selection.currentImage) {
-                selectType = 'image';
-            } else {
-                selectType = 'layer';
-            }
-
-            this.$el.$(".feature[data-type=" + selectType + "]").addClass('selected');
+        key: "refresh",
+        value: function refresh() {
+            this.load();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR),
         value: function value() {
-            this.selectFeature();
+            this.refresh();
         }
     }]);
     return FeatureControl;
 }(UIElement);
 
-var ITEM_MOVE_TO = 'item/move/to';
-var ITEM_MOVE_NEXT = 'item/move/next';
 var ITEM_MOVE_LAST = 'item/move/last';
-var ITEM_MOVE_FIRST = 'item/move/first';
+
 var ITEM_MOVE_IN = 'item/move/in';
-var ITEM_MOVE_IN_LAYER = 'item/move/in/layer';
-var ITEM_MOVE_PREV = 'item/move/prev';
-var ITEM_ADD_INDEX = 'item/add/index';
-var ITEM_NEXT_INDEX = 'item/next/index';
-var ITEM_PREV_INDEX = 'item/prev/index';
-var ITEM_MOVE_X = 'item/move/x';
-var ITEM_MOVE_Y = 'item/move/y';
 
 var ImageListView = function (_UIElement) {
     inherits(ImageListView, _UIElement);
@@ -21997,7 +20686,7 @@ var ImageListView = function (_UIElement) {
         // individual effect
 
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1(newValue) {
             this.refresh();
         }
@@ -22147,7 +20836,7 @@ var GradientAngle = function (_UIElement) {
             var image = editor$1.selection.backgroundImage;
             if (!image) return 0;
 
-            return image.image.caculateAngle() - 90;
+            return image.image.calculateAngle() - 90;
         }
     }, {
         key: 'refreshAngleText',
@@ -22170,7 +20859,7 @@ var GradientAngle = function (_UIElement) {
 
             var rx = x - centerX,
                 ry = y - centerY,
-                angle = caculateAngle(rx, ry);
+                angle = calculateAngle(rx, ry);
 
             {
                 var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
@@ -22201,7 +20890,7 @@ var GradientAngle = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -22383,7 +21072,7 @@ var GradientPosition = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -22460,7 +21149,7 @@ var PredefinedLinearGradientAngle = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -22512,7 +21201,7 @@ var PredefinedRadialGradientPosition = function (_UIElement) {
             return editor$1.config.get('guide.angle') && (isRadial || isConic);
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_TOOL),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL),
         value: function value() {
             this.refresh();
         }
@@ -22542,7 +21231,7 @@ var PredefinedRadialGradientAngle = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -22647,7 +21336,7 @@ var PredefinedPerspectiveOriginPosition = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -22814,7 +21503,7 @@ var PerspectiveOriginPosition = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -22840,6 +21529,207 @@ var PerspectiveOriginPosition = function (_UIElement) {
         }
     }]);
     return PerspectiveOriginPosition;
+}(UIElement);
+
+var LayerAngle = function (_UIElement) {
+    inherits(LayerAngle, _UIElement);
+
+    function LayerAngle() {
+        classCallCheck(this, LayerAngle);
+        return possibleConstructorReturn(this, (LayerAngle.__proto__ || Object.getPrototypeOf(LayerAngle)).apply(this, arguments));
+    }
+
+    createClass(LayerAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+
+            if (this.isShow()) {
+                this.$el.show();
+                this.refreshUI();
+            } else {
+                this.$el.hide();
+            }
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!editor$1.selection.layer) return false;
+            return editor$1.config.get('guide.angle');
+        }
+    }, {
+        key: 'getCurrentXY',
+        value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
+            return isUpdate ? editor$1.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY);
+        }
+    }, {
+        key: 'getRectangle',
+        value: function getRectangle() {
+            var width = this.refs.$dragAngle.width();
+            var height = this.refs.$dragAngle.height();
+            var radius = Math.floor(width / 2 * 0.7);
+
+            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
+                left = _refs$$dragAngle$offs.left,
+                top = _refs$$dragAngle$offs.top;
+
+            var minX = left;
+            var minY = top;
+            var centerX = minX + width / 2;
+            var centerY = minY + height / 2;
+
+            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
+        }
+    }, {
+        key: 'getDefaultValue',
+        value: function getDefaultValue() {
+            var layer = editor$1.selection.layer;
+            if (!layer) return -90;
+            if (isUndefined$1(layer.rotate)) return -90;
+
+            return layer.rotate - 90;
+        }
+    }, {
+        key: 'refreshAngleText',
+        value: function refreshAngleText(angleText) {
+            this.refs.$angleText.text(angleText + ' °');
+        }
+    }, {
+        key: 'refreshUI',
+        value: function refreshUI(isUpdate) {
+            var _getRectangle = this.getRectangle(),
+                minX = _getRectangle.minX,
+                minY = _getRectangle.minY,
+                radius = _getRectangle.radius,
+                centerX = _getRectangle.centerX,
+                centerY = _getRectangle.centerY;
+
+            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
+                x = _getCurrentXY.x,
+                y = _getCurrentXY.y;
+
+            var rx = x - centerX,
+                ry = y - centerY,
+                angle = calculateAngle(rx, ry);
+
+            {
+                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
+                    x = _getCurrentXY2.x,
+                    y = _getCurrentXY2.y;
+            }
+
+            // set drag pointer position 
+            this.refs.$dragPointer.px('left', x - minX);
+            this.refs.$dragPointer.px('top', y - minY);
+
+            var lastAngle = Math.round(angle + 90) % 360;
+
+            this.refreshAngleText(lastAngle);
+
+            if (isUpdate) {
+                this.setAngle(lastAngle);
+            }
+        }
+    }, {
+        key: 'setAngle',
+        value: function setAngle(rotate) {
+            var _this2 = this;
+
+            editor$1.selection.items.forEach(function (item) {
+                item.rotate = (_this2.cachedRotate[id] + (rotate - _this2.cachedRotate[id])) % 360;
+                _this2.commit(CHANGE_LAYER);
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT(CHANGE_TOOL),
+        value: function value() {
+            this.$el.toggle(this.isShow());
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'move',
+        value: function move() {
+            this.refreshUI(true);
+        }
+    }, {
+        key: POINTERSTART('$dragAngle') + MOVE(),
+        value: function value(e) {
+            var _this3 = this;
+
+            this.cachedRotate = {};
+            editor$1.selection.items.forEach(function (item) {
+                _this3.cachedRotate[item.id] = item.rotate || 0;
+            });
+            this.refreshUI(e);
+        }
+    }]);
+    return LayerAngle;
+}(UIElement);
+
+var DEFINED_ANGLES$2 = {
+    'to top': 0,
+    'to top right': 45,
+    'to right': 90,
+    'to bottom right': 135,
+    'to bottom': 180,
+    'to bottom left': 225,
+    'to left': 270,
+    'to top left': 315
+
+};
+
+var PredefinedLayerAngle = function (_UIElement) {
+    inherits(PredefinedLayerAngle, _UIElement);
+
+    function PredefinedLayerAngle() {
+        classCallCheck(this, PredefinedLayerAngle);
+        return possibleConstructorReturn(this, (PredefinedLayerAngle.__proto__ || Object.getPrototypeOf(PredefinedLayerAngle)).apply(this, arguments));
+    }
+
+    createClass(PredefinedLayerAngle, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+            if (!editor$1.selection.layer) return false;
+
+            return editor$1.config.get('guide.angle');
+        }
+    }, {
+        key: CLICK('$el button') + SELF,
+        value: function value(e) {
+            var layer = editor$1.selection.layer;
+            if (layer) {
+                layer.rotate = DEFINED_ANGLES$2[e.$delegateTarget.attr('data-value')];
+                editor$1.send(CHANGE_LAYER, layer);
+            }
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL),
+        value: function value() {
+            this.refresh();
+        }
+    }]);
+    return PredefinedLayerAngle;
 }(UIElement);
 
 var SubFeatureControl = function (_UIElement) {
@@ -22933,7 +21823,7 @@ var SubFeatureControl = function (_UIElement) {
             return editor$1.config.get('guide.angle');
         }
     }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -24265,22 +23155,7 @@ var TimelineObjectList = function (_UIElement) {
     return TimelineObjectList;
 }(UIElement);
 
-var ITEM_LIST = 'item/list';
-var ITEM_LIST_PAGE = 'item/list/page';
-var ITEM_LIST_CHILDREN = 'item/list/children';
-var ITEM_MAP_PAGE = 'item/map/page';
-var ITEM_MAP_TYPE_CHILDREN = 'item/map/type/children';
-var ITEM_MAP_LAYER_CHILDREN = 'item/map/layer/children';
-var ITEM_MAP_TIMELINE_CHILDREN = 'item/map/timeline/children';
 var ITEM_MAP_KEYFRAME_CHILDREN = 'item/map/keyframe/children';
-var ITEM_MAP_IMAGE_CHILDREN = 'item/map/image/children';
-var ITEM_MAP_COLORSTEP_CHILDREN = 'item/map/colorstep/children';
-var ITEM_MAP_BOXSHADOW_CHILDREN = 'item/map/boxshadow/children';
-var ITEM_MAP_TEXTSHADOW_CHILDREN = 'item/map/textshadow/children';
-var ITEM_EACH_CHILDREN = 'item/each/children';
-var ITEM_EACH_TYPE_CHILDREN = 'item/each/type/children';
-var ITEM_PATH = 'item/path';
-var ITEM_DOM = 'item/dom';
 
 var _templateObject$15 = taggedTemplateLiteral(["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"], ["\n            <div class='keyframe-property row' data-property='", "' data-timeline-id=\"", "\">\n            ", "\n            </div>"]);
 var _templateObject2$2 = taggedTemplateLiteral(["", ""], ["", ""]);
@@ -24422,7 +23297,7 @@ var KeyframeObjectList = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value$$1() {
             this.refresh();
         }
@@ -24749,7 +23624,7 @@ var KeyframeTimeView = function (_UIElement) {
             this.refreshCanvas();
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE),
+        key: EVENT(CHANGE_EDITOR, RESIZE_WINDOW, RESIZE_TIMELINE, SCROLL_LEFT_TIMELINE, MOVE_TIMELINE),
         value: function value() {
             this.resizeCanvas();
             this.refresh();
@@ -25181,7 +24056,7 @@ var VerticalColorStep = function (_UIElement) {
             this.refs.$verticalColorstep.px('width', editor$1.config.get('step.width'));
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -25195,792 +24070,6 @@ var VerticalColorStep = function (_UIElement) {
         }
     }]);
     return VerticalColorStep;
-}(UIElement);
-
-var CircleEditor = function (_UIElement) {
-    inherits(CircleEditor, _UIElement);
-
-    function CircleEditor() {
-        classCallCheck(this, CircleEditor);
-        return possibleConstructorReturn(this, (CircleEditor.__proto__ || Object.getPrototypeOf(CircleEditor)).apply(this, arguments));
-    }
-
-    createClass(CircleEditor, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='layer-shape-circle-editor'>\n                <div class=\"drag-item center\" data-type=\"center\" ref=\"$center\"></div>\n                <div class=\"drag-item radius\" data-type=\"radius\" ref=\"$radius\"></div>\n            </div>\n        ";
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.cachedRectangle = false;
-
-                var layer = editor$1.selection.currentLayer;
-                if (layer) {
-                    this.refs.$radius.toggle(layer.clippath.isSideType('none'));
-                }
-                this.refreshPointer();
-            }
-        }
-    }, {
-        key: "refreshPointer",
-        value: function refreshPointer() {
-            var layer = editor$1.selection.layer;
-            if (layer) {
-                var clippath = layer.clippath;
-                if (!clippath.isCircle()) return;
-
-                var _getRectangle = this.getRectangle(),
-                    width = _getRectangle.width,
-                    height = _getRectangle.height;
-
-                this.refs.$center.px('left', clippath.centerX.toPx(width));
-                this.refs.$center.px('top', clippath.centerY.toPx(height));
-
-                this.refs.$radius.px('left', clippath.radiusX.toPx(width));
-                this.refs.$radius.px('top', clippath.radiusY.toPx(height));
-            }
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            var item = editor$1.selection.layer;
-            if (!item) return false;
-
-            return item.clippath.isCircle() && !!item.showClipPathEditor;
-        }
-    }, {
-        key: "getRectangle",
-        value: function getRectangle() {
-
-            if (!this.cachedRectangle) {
-                var width = this.$el.width();
-                var height = this.$el.height();
-                var minX = this.$el.offsetLeft();
-                var minY = this.$el.offsetTop();
-
-                var maxX = minX + width;
-                var maxY = minY + height;
-                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-            }
-
-            return this.cachedRectangle;
-        }
-    }, {
-        key: "refreshUI",
-        value: function refreshUI(isUpdate) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _config = this.config('pos'),
-                x = _config.x,
-                y = _config.y;
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.refs['$' + this.currentType].px('left', left);
-            this.refs['$' + this.currentType].px('top', top);
-
-            if (isUpdate) {
-
-                this[this.currentType + "pos"] = [left, top];
-
-                this.updateClipPath();
-            }
-        }
-    }, {
-        key: "updateClipPath",
-        value: function updateClipPath() {
-            var _getRectangle3 = this.getRectangle(),
-                width = _getRectangle3.width,
-                height = _getRectangle3.height;
-
-            var radius = this.radiuspos || [width, height];
-            var center = this.centerpos || [width / 2, height / 2];
-
-            var item = this.layer;
-            item.clippath = new CircleClipPath({
-                centerX: Length$1.px(center[0]).toPercent(width),
-                centerY: Length$1.px(center[1]).toPercent(height),
-                radiusX: Length$1.px(radius[0]).toPercent(width),
-                radiusY: Length$1.px(raidus[1]).toPercent(height)
-            });
-
-            editor$1.send(CHANGE_LAYER, item);
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
-        value: function value() {
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: "move",
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: "end",
-        value: function end() {
-            this.currentType = null;
-            this.layer = null;
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item') + MOVE() + END(),
-        value: function value(e) {
-            e.preventDefault();
-            this.currentType = e.$delegateTarget.attr('data-type');
-            this.layer = editor$1.selection.layer;
-        }
-    }]);
-    return CircleEditor;
-}(UIElement);
-
-var EllipseEditor = function (_UIElement) {
-    inherits(EllipseEditor, _UIElement);
-
-    function EllipseEditor() {
-        classCallCheck(this, EllipseEditor);
-        return possibleConstructorReturn(this, (EllipseEditor.__proto__ || Object.getPrototypeOf(EllipseEditor)).apply(this, arguments));
-    }
-
-    createClass(EllipseEditor, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='layer-shape-ellipse-editor'>\n                <div class=\"drag-item center\" data-type=\"center\" ref=\"$center\"></div>\n                <div class=\"drag-item radius\" data-type=\"radius\" ref=\"$radius\"></div>\n            </div>\n        ";
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.cachedRectangle = false;
-
-                var layer = editor$1.selection.layer;
-                if (layer) {
-                    this.refs.$radius.toggle(layer.clippath.isSideType('none'));
-                }
-
-                this.refreshPointer();
-            }
-        }
-    }, {
-        key: "refreshPointer",
-        value: function refreshPointer() {
-            var layer = editor$1.selection.layer;
-            if (layer && layer.clipapth.isEllipse()) {
-                var clippath = layer.clippath;
-
-                var _getRectangle = this.getRectangle(),
-                    width = _getRectangle.width,
-                    height = _getRectangle.height;
-
-                this.refs.$center.px('left', clippath.centerX.toPx(width));
-                this.refs.$center.px('top', clippath.centerY.toPx(height));
-
-                this.refs.$radius.px('left', clippath.radiusX.toPx(width));
-                this.refs.$radius.px('top', clippath.radiusY.toPx(height));
-            }
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            var item = editor$1.selection.layer;
-            if (!item) return false;
-
-            return item.clippath.isEllipse() && !!item.showClipPathEditor;
-        }
-    }, {
-        key: "getRectangle",
-        value: function getRectangle() {
-
-            if (!this.cachedRectangle) {
-                var width = this.$el.width();
-                var height = this.$el.height();
-                var minX = this.$el.offsetLeft();
-                var minY = this.$el.offsetTop();
-
-                var maxX = minX + width;
-                var maxY = minY + height;
-                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-            }
-
-            return this.cachedRectangle;
-        }
-    }, {
-        key: "refreshUI",
-        value: function refreshUI(isUpdate) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _config = this.config('pos'),
-                x = _config.x,
-                y = _config.y;
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.refs['$' + this.currentType].px('left', left);
-            this.refs['$' + this.currentType].px('top', top);
-
-            if (isUpdate) {
-
-                this[this.currentType + "pos"] = [left, top];
-
-                this.updateClipPath();
-            }
-        }
-    }, {
-        key: "updateClipPath",
-        value: function updateClipPath() {
-            var _getRectangle3 = this.getRectangle(),
-                width = _getRectangle3.width,
-                height = _getRectangle3.height;
-
-            var radius = this.radiuspos || [width, height];
-            var center = this.centerpos || [width / 2, height / 2];
-
-            var item = this.layer;
-            item.clippath = new EllipseClipPath(defineProperty({
-                centerX: Length$1.px(center[0]).toPercent(width),
-                centerY: Length$1.px(center[1]).toPercent(height),
-                radiusX: Length$1.px(radius[0]).toPercent(width)
-            }, "radiusX", Length$1.px(radius[1]).toPercent(height)));
-
-            editor$1.send(CHANGE_LAYER, item);
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
-        value: function value() {
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: "move",
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: "end",
-        value: function end() {
-            this.currentType = null;
-            this.layer = null;
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item') + MOVE() + END(),
-        value: function value(e) {
-            e.preventDefault();
-            this.currentType = e.$delegateTarget.attr('data-type');
-            this.layer = editor$1.selection.layer;
-        }
-    }]);
-    return EllipseEditor;
-}(UIElement);
-
-var InsetEditor = function (_UIElement) {
-    inherits(InsetEditor, _UIElement);
-
-    function InsetEditor() {
-        classCallCheck(this, InsetEditor);
-        return possibleConstructorReturn(this, (InsetEditor.__proto__ || Object.getPrototypeOf(InsetEditor)).apply(this, arguments));
-    }
-
-    createClass(InsetEditor, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='layer-shape-inset-editor'>\n                <div class=\"drag-item top\" data-type=\"top\" ref=\"$top\"></div>\n                <div class=\"drag-item left\" data-type=\"left\" ref=\"$left\"></div>\n                <div class=\"drag-item right\" data-type=\"right\" ref=\"$right\"></div>\n                <div class=\"drag-item bottom\" data-type=\"bottom\" ref=\"$bottom\"></div>\n            </div>\n        ";
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.cachedRectangle = false;
-
-                this.refreshPointer();
-            }
-        }
-    }, {
-        key: "refreshPointer",
-        value: function refreshPointer() {
-            var layer = editor$1.selection.layer;
-
-            if (layer) {
-                var clippath = layer.clippath;
-                if (!clippath) return;
-                if (!clippath.isInset()) return;
-
-                var _getRectangle = this.getRectangle(),
-                    width = _getRectangle.width,
-                    height = _getRectangle.height;
-
-                var top = clippath.top;
-                var left = clippath.left;
-                var right = clippath.right;
-                var bottom = clippath.bottom;
-
-                var topValue = top.toPx(height);
-                var leftValue = left.toPx(width);
-                var rightValue = Length.percent(100 - right).toPx(width);
-                var bottomValue = Length.percent(100 - bottom).toPx(height);
-
-                var centerX = leftValue + (rightValue - leftValue) / 2;
-                var centerY = topValue + (bottomValue - topValue) / 2;
-
-                this.refs.$top.px('top', topValue);
-                this.refs.$top.px('left', centerX);
-
-                this.refs.$left.px('top', centerY);
-                this.refs.$left.px('left', leftValue);
-
-                this.refs.$right.px('top', centerY);
-                this.refs.$right.px('left', rightValue);
-
-                this.refs.$bottom.px('left', centerX);
-                this.refs.$bottom.px('top', bottomValue);
-            }
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            var item = editor$1.selection.layer;
-            if (!item) return false;
-            var clippath = item.clippath;
-            if (!clippath) return false;
-
-            return clippath.isInset() && !!item.showClipPathEditor;
-        }
-    }, {
-        key: "getRectangle",
-        value: function getRectangle() {
-
-            if (!this.cachedRectangle) {
-                var width = this.$el.width();
-                var height = this.$el.height();
-                var minX = this.$el.offsetLeft();
-                var minY = this.$el.offsetTop();
-
-                var maxX = minX + width;
-                var maxY = minY + height;
-                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-            }
-
-            return this.cachedRectangle;
-        }
-    }, {
-        key: "refreshUI",
-        value: function refreshUI(isUpdate) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _config = this.config('pos'),
-                x = _config.x,
-                y = _config.y;
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            if (this.currentType == 'top' || this.currentType == 'bottom') {
-                var top = y - minY;
-                this.refs['$' + this.currentType].px('top', top);
-            } else {
-                var left = x - minX;
-                this.refs['$' + this.currentType].px('left', left);
-            }
-
-            if (isUpdate) {
-
-                if (this.currentType == 'top' || this.currentType == 'bottom') {
-                    this[this.currentType + "pos"] = top;
-                } else {
-                    this[this.currentType + "pos"] = left;
-                }
-
-                this.updateClipPath();
-            }
-        }
-    }, {
-        key: "updateClipPath",
-        value: function updateClipPath() {
-            var _getRectangle3 = this.getRectangle(),
-                width = _getRectangle3.width,
-                height = _getRectangle3.height;
-
-            // TODO:  value must be with a unit. 
-
-
-            var item = this.layer;
-            item.clippath = new InsetClipPath({
-                top: Length.px(defaultValue(this.toppos, 0)).toPercent(height),
-                left: Length.px(defaultValue(this.leftpos, 0)).toPercent(width),
-                right: Length.px(width - defaultValue(this.rightpos, width)).toPercent(width),
-                bottom: Length.px(height - defaultValue(this.bottompos, height)).toPercent(height)
-            });
-
-            this.emit(CHANGE_LAYER, item);
-
-            this.refreshPointer();
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
-        value: function value() {
-            this.cachedRectangle = null;
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: "move",
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: "end",
-        value: function end() {
-            this.layer = null;
-            this.currentType = null;
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item') + MOVE() + END(),
-        value: function value(e) {
-            e.preventDefault();
-            this.currentType = e.$delegateTarget.attr('data-type');
-            this.layer = editor$1.selection.layer;
-            this.cachedRectangle = null;
-        }
-    }]);
-    return InsetEditor;
-}(UIElement);
-
-var PolygonEditor = function (_UIElement) {
-    inherits(PolygonEditor, _UIElement);
-
-    function PolygonEditor() {
-        classCallCheck(this, PolygonEditor);
-        return possibleConstructorReturn(this, (PolygonEditor.__proto__ || Object.getPrototypeOf(PolygonEditor)).apply(this, arguments));
-    }
-
-    createClass(PolygonEditor, [{
-        key: "template",
-        value: function template() {
-            return "<div class='layer-shape-polygon-editor' title=\"Click panel with alt if you want to add point\"></div>";
-        }
-    }, {
-        key: LOAD(),
-        value: function value$$1() {
-            var layer = editor$1.selection.layer;
-            if (!layer) return EMPTY_STRING;
-            var points = layer.clippath.points;
-            if (!points.length) return EMPTY_STRING;
-
-            var startIndex = 0;
-            var lastIndex = points.length - 1;
-
-            return points.map(function (p, index) {
-
-                var start = index == startIndex ? 'start' : EMPTY_STRING;
-                var end = index == lastIndex ? 'end' : EMPTY_STRING;
-
-                return "<div class=\"drag-item " + start + " " + end + "\" data-point-index=\"" + index + "\" style='left: " + p.x + ";top: " + p.y + "'></div>";
-            });
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.cachedRectangle = false;
-                this.load();
-            }
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            var layer = editor$1.selection.currentLayer;
-            if (!layer) return false;
-
-            var clippath = layer.clippath;
-            if (!clippath) return false;
-
-            return clippath.isPolygon() && !!layer.showClipPathEditor;
-        }
-    }, {
-        key: "getRectangle",
-        value: function getRectangle() {
-
-            if (!this.cachedRectangle) {
-                var width = this.$el.width();
-                var height = this.$el.height();
-                var minX = this.$el.offsetLeft();
-                var minY = this.$el.offsetTop();
-
-                var maxX = minX + width;
-                var maxY = minY + height;
-                this.cachedRectangle = { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-            }
-
-            return this.cachedRectangle;
-        }
-    }, {
-        key: "refreshUI",
-        value: function refreshUI(isUpdate) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY,
-                width = _getRectangle.width,
-                height = _getRectangle.height;
-
-            var _config = this.config('pos'),
-                x = _config.x,
-                y = _config.y;
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.$dragItem.px('left', left);
-            this.$dragItem.px('top', top);
-
-            if (isUpdate) {
-
-                this.$dragPoint = {
-                    x: Length$1.px(left).toPercent(width),
-                    y: Length$1.px(top).toPercent(right)
-                };
-
-                this.updateClipPath();
-            }
-        }
-    }, {
-        key: "updateClipPath",
-        value: function updateClipPath() {
-            var layer = editor$1.selection.currentLayer;
-            if (!layer) return;
-
-            var clippath = layer.clippath;
-            if (!clippath) return;
-            if (!clippath.isPolygon()) return;
-
-            var polygonIndex = +this.$dragItem.attr('data-point-index');
-            var points = clippath.points;
-            points[polygonIndex] = this.$dragPoint;
-
-            this.emit(CHANGE_LAYER);
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION, CHANGE_LAYER),
-        value: function value$$1() {
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: "move",
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: POINTERSTART('$el .drag-item') + MOVE(),
-        value: function value$$1(e) {
-            e.preventDefault();
-            this.$dragItem = e.$delegateTarget;
-        }
-    }, {
-        key: "addPoint",
-        value: function addPoint(e) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _e$xy = e.xy,
-                x = _e$xy.x,
-                y = _e$xy.y;
-
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            var point = {
-                x: Length$1.px(left).toPercent(width),
-                y: Length$1.px(top).toPercent(height)
-            };
-
-            var layer = editor$1.selection.layer;
-            if (layer) {
-                var clippath = layer.clippath;
-                clippath.points.push(point);
-
-                this.emit(CHANGE_LAYER, layer);
-                this.refresh();
-            }
-        }
-    }, {
-        key: "deletePoint",
-        value: function deletePoint(e) {
-            var index = +e.$delegateTarget.attr('data-point-index');
-            var layer = editor$1.selection.layer;
-            if (!layer) return;
-
-            var clippath = layer.clippath;
-            if (!clippath) return;
-            if (!clippath.isPolygon()) return;
-
-            clippath.points.splice(index, 1);
-            this.emit(CHANGE_LAYER);
-            this.refresh();
-        }
-    }, {
-        key: "isNotDragItem",
-        value: function isNotDragItem(e) {
-            return new Dom(e.target).hasClass('drag-item') == false;
-        }
-    }, {
-        key: CLICK() + ALT,
-        value: function value$$1(e) {
-            e.preventDefault();
-
-            this.addPoint(e);
-        }
-    }, {
-        key: CLICK('$el .drag-item') + ALT + CAPTURE,
-        value: function value$$1(e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            this.deletePoint(e);
-        }
-    }]);
-    return PolygonEditor;
-}(UIElement);
-
-var shapeEditor = {
-    PolygonEditor: PolygonEditor,
-    InsetEditor: InsetEditor,
-    EllipseEditor: EllipseEditor,
-    CircleEditor: CircleEditor
-
-};
-
-var LayerShapeEditor = function (_UIElement) {
-    inherits(LayerShapeEditor, _UIElement);
-
-    function LayerShapeEditor() {
-        classCallCheck(this, LayerShapeEditor);
-        return possibleConstructorReturn(this, (LayerShapeEditor.__proto__ || Object.getPrototypeOf(LayerShapeEditor)).apply(this, arguments));
-    }
-
-    createClass(LayerShapeEditor, [{
-        key: 'components',
-        value: function components() {
-            return shapeEditor;
-        }
-    }, {
-        key: 'template',
-        value: function template() {
-            return '<div class="layer-shape-editor">\n            <CircleEditor></CircleEditor>\n            <EllipseEditor></EllipseEditor>\n            <InsetEditor></InsetEditor>\n            <PolygonEditor></PolygonEditor>\n            <PathEditor></PathEditor>\n        </div>';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var isShow = this.isShow();
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.setPosition();
-            }
-        }
-    }, {
-        key: 'setRectangle',
-        value: function setRectangle(item) {
-
-            var toolSize = editor$1.config.get('tool.size');
-            var boardOffset = this.boardOffset || toolSize['board.offset'];
-            var pageOffset = this.pageOffset || toolSize['page.offset'];
-            var canvasScrollLeft = this.canvasScrollLeft || toolSize['board.scrollLeft'];
-            var canvasScrollTop = this.canvasScrollTop || toolSize['board.scrollTop'];
-
-            var width = item.width;
-            var height = item.height;
-            var left = Length.px(+item.x + pageOffset.left - boardOffset.left + canvasScrollLeft);
-            var top = Length.px(+item.y + pageOffset.top - boardOffset.top + canvasScrollTop);
-
-            return { width: width, height: height, left: left, top: top };
-        }
-    }, {
-        key: 'setPosition',
-        value: function setPosition() {
-            var item = editor$1.selection.layer;
-
-            if (!item) return;
-            if (!item.showClipPathEditor) return;
-
-            this.$el.css(this.setRectangle(item));
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            return editor$1.selection.layer;
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR$1, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return LayerShapeEditor;
 }(UIElement);
 
 var ArtBoard = function (_Item) {
@@ -26005,7 +24094,8 @@ var ArtBoard = function (_Item) {
                 x: Length$1.px(100),
                 y: Length$1.px(100),
                 perspectiveOriginPositionX: Length$1.percent(0),
-                perspectiveOriginPositionY: Length$1.percent(0)
+                perspectiveOriginPositionY: Length$1.percent(0),
+                display: new BlockDisplay()
             }, obj));
         }
     }, {
@@ -26025,17 +24115,9 @@ var ArtBoard = function (_Item) {
             json.perspectiveOriginPositionX = Length$1.parse(json.perspectiveOriginPositionX);
             json.perspectiveOriginPositionY = Length$1.parse(json.perspectiveOriginPositionY);
 
+            if (json.display) json.display = Display.parse(json.display);
+
             return json;
-        }
-    }, {
-        key: "addDirectory",
-        value: function addDirectory(directory) {
-            return this.addItem('directory', directory);
-        }
-    }, {
-        key: "addLayer",
-        value: function addLayer(layer) {
-            return this.addItem('layer', layer);
         }
     }, {
         key: "getDefaultTitle",
@@ -26044,10 +24126,11 @@ var ArtBoard = function (_Item) {
         }
     }, {
         key: "traverse",
-        value: function traverse(item, results) {
+        value: function traverse(item, results, hasLayoutItem) {
             var _this2 = this;
 
             if (item.isAttribute()) return;
+            if (!hasLayoutItem && item.isLayoutItem()) return;
             results.push(item);
 
             item.children.forEach(function (child) {
@@ -26056,13 +24139,13 @@ var ArtBoard = function (_Item) {
         }
     }, {
         key: "tree",
-        value: function tree() {
+        value: function tree(hasLayoutItem) {
             var _this3 = this;
 
             var results = [];
 
             this.children.forEach(function (item) {
-                _this3.traverse(item, results);
+                _this3.traverse(item, results, hasLayoutItem);
             });
 
             return results;
@@ -26079,24 +24162,32 @@ var ArtBoard = function (_Item) {
             var css = {
                 overflow: json.overflow || EMPTY_STRING,
                 'transform-style': json.preserve ? 'preserve-3d' : 'flat',
-                left: json.x,
-                top: json.y,
-                width: json.width,
-                height: json.height,
                 position: 'absolute',
-                display: 'inline-block',
                 'background-color': json.backgroundColor
             };
 
+            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toLayoutCSS(), this.toPerspectiveCSS()));
+        }
+    }, {
+        key: "toLayoutCSS",
+        value: function toLayoutCSS() {
+            return this.json.display.toCSS();
+        }
+    }, {
+        key: "toPerspectiveCSS",
+        value: function toPerspectiveCSS() {
+            var css = {};
+            var json = this.json;
+
             if (json.perspective) {
-                css.perspective = "" + json.perspective;
+                css.perspective = json.perspective;
             }
 
             if (json.perspectiveOriginPositionX.isPercent() && json.perspectiveOriginPositionY.isPercent()) {
                 css['perspective-origin'] = json.perspectiveOriginPositionX + " " + json.perspectiveOriginPositionY;
             }
 
-            return CSS_SORTING(css);
+            return css;
         }
     }, {
         key: "insertLast",
@@ -26130,7 +24221,7 @@ var ArtBoard = function (_Item) {
     }, {
         key: "allLayers",
         get: function get() {
-            return this.tree().filter(function (it) {
+            return this.tree(true).filter(function (it) {
                 return it.itemType == 'layer';
             });
         }
@@ -26148,38 +24239,25 @@ var ArtBoard = function (_Item) {
     return ArtBoard;
 }(Item);
 
-var RectItem = function (_Item) {
-    inherits(RectItem, _Item);
-
-    function RectItem() {
-        classCallCheck(this, RectItem);
-        return possibleConstructorReturn(this, (RectItem.__proto__ || Object.getPrototypeOf(RectItem)).apply(this, arguments));
-    }
-
-    createClass(RectItem, [{
-        key: "convert",
-        value: function convert(json) {
-            json = get$1(RectItem.prototype.__proto__ || Object.getPrototypeOf(RectItem.prototype), "convert", this).call(this, json);
-
-            json.width = Length$1.parse(json.width);
-            json.height = Length$1.parse(json.height);
-            json.x = Length$1.parse(json.x);
-            json.y = Length$1.parse(json.y);
-
-            return json;
-        }
-    }]);
-    return RectItem;
-}(Item);
-
 var _right;
 var _left;
 var _top;
 var _bottom;
 
+
+var SEGMENT_TYPE_MOVE = 'move';
+var SEGMENT_TYPE_TOP = 'to top';
+var SEGMENT_TYPE_LEFT = 'to left';
+var SEGMENT_TYPE_RIGHT = 'to right';
+var SEGMENT_TYPE_BOTTOM = 'to bottom';
+var SEGMENT_TYPE_TOP_RIGHT = 'to top right';
+var SEGMENT_TYPE_TOP_LEFT = 'to top left';
+var SEGMENT_TYPE_BOTTOM_RIGHT = 'to bottom right';
+var SEGMENT_TYPE_BOTTOM_LEFT = 'to bottom left';
+
 var move = defineProperty({}, SEGMENT_TYPE_MOVE, true);
 
-var right$1 = (_right = {}, defineProperty(_right, SEGMENT_TYPE_RIGHT, true), defineProperty(_right, SEGMENT_TYPE_TOP_RIGHT, true), defineProperty(_right, SEGMENT_TYPE_BOTTOM_RIGHT, true), _right);
+var right = (_right = {}, defineProperty(_right, SEGMENT_TYPE_RIGHT, true), defineProperty(_right, SEGMENT_TYPE_TOP_RIGHT, true), defineProperty(_right, SEGMENT_TYPE_BOTTOM_RIGHT, true), _right);
 var left = (_left = {}, defineProperty(_left, SEGMENT_TYPE_LEFT, true), defineProperty(_left, SEGMENT_TYPE_TOP_LEFT, true), defineProperty(_left, SEGMENT_TYPE_BOTTOM_LEFT, true), _left);
 var top = (_top = {}, defineProperty(_top, SEGMENT_TYPE_TOP, true), defineProperty(_top, SEGMENT_TYPE_TOP_RIGHT, true), defineProperty(_top, SEGMENT_TYPE_TOP_LEFT, true), _top);
 
@@ -26191,33 +24269,43 @@ var Segment = function () {
     }
 
     createClass(Segment, null, [{
-        key: "isMove",
+        key: 'isMove',
         value: function isMove(direction) {
             return move[direction];
         }
     }, {
-        key: "isTop",
+        key: 'isTop',
         value: function isTop(direction) {
             return top[direction];
         }
     }, {
-        key: "isRight",
+        key: 'isRight',
         value: function isRight(direction) {
-            return right$1[direction];
+            return right[direction];
         }
     }, {
-        key: "isBottom",
+        key: 'isBottom',
         value: function isBottom(direction) {
             return bottom[direction];
         }
     }, {
-        key: "isLeft",
+        key: 'isLeft',
         value: function isLeft(direction) {
             return left[direction];
         }
     }]);
     return Segment;
 }();
+
+Segment.MOVE = SEGMENT_TYPE_MOVE;
+Segment.RIGHT = SEGMENT_TYPE_RIGHT;
+Segment.TOP_RIGHT = SEGMENT_TYPE_TOP_RIGHT;
+Segment.BOTTOM_RIGHT = SEGMENT_TYPE_BOTTOM_RIGHT;
+Segment.LEFT = SEGMENT_TYPE_LEFT;
+Segment.TOP_LEFT = SEGMENT_TYPE_TOP_LEFT;
+Segment.BOTTOM_LEFT = SEGMENT_TYPE_BOTTOM_LEFT;
+Segment.TOP = SEGMENT_TYPE_TOP;
+Segment.BOTTOM = SEGMENT_TYPE_BOTTOM;
 
 var MAX_DIST = 1;
 
@@ -26322,8 +24410,8 @@ var Guide = function () {
             return points;
         }
     }, {
-        key: "caculate",
-        value: function caculate() {
+        key: "calculate",
+        value: function calculate() {
             var _this3 = this;
 
             var dist = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MAX_DIST;
@@ -26357,8 +24445,7 @@ var Guide = function () {
                         break;
                     // case 1: 
                     //     minX = this.rect.screenX.value; 
-                    //     maxX = minX + (it.bx - minX) * 2; 
-                    //     width = maxX - minX;   
+                    //     width = Math.round(it.bx - minX) * 2;   
                     //     this.rect.width.set(width);                            
                     //     break;                
                     case 0:
@@ -26382,11 +24469,10 @@ var Guide = function () {
                         break;
 
                     // case 1: 
-                    //     minY = this.rect.screenY.value;                 
-                    //     height = (it.by - minY) * 2;
-                    //     this.rect.y.set(it.by - (it.by - minY));                         
-                    //     this.rect.height.set(height);                
-                    //     break;                
+                    //     minY = this.rect.screenY.value; 
+                    //     height = Math.round(it.by - minY) * 2;   
+                    //     this.rect.height.set(height);
+                    //     break;       
                     case 0:
                         minY = it.by;
                         maxY = this.rect.screenY2.value;
@@ -26434,12 +24520,10 @@ var ItemPositionCalc = function () {
                 _this.cachedSelectionItems[it.id] = it;
             });
 
-            this.rect = new RectItem(editor$1.selection.rect());
-            if (editor$1.selection.items[0] instanceof Layer) {
-                this.rect.parentId = editor$1.selection.items[0].getArtBoard().id;
-            }
+            editor$1.selection.initRect();
 
-            this.newRect = this.rect.clone();
+            this.newRect = editor$1.selection.currentRect;
+            this.rect = this.newRect.clone();
 
             this.cachedPosition = {};
             keyEach(this.cachedSelectionItems, function (id, item) {
@@ -26479,37 +24563,37 @@ var ItemPositionCalc = function () {
             this.setY(item, minY, maxY, yr, y2r);
         }
     }, {
-        key: "caculate",
-        value: function caculate(dx, dy) {
+        key: "calculate",
+        value: function calculate(dx, dy) {
             var e = editor$1.config.get('bodyEvent');
 
             var isAlt = e.altKey;
             var direction = this.direction;
 
             if (Segment.isMove(direction)) {
-                this.caculateMove(dx, dy, { isAlt: isAlt });
+                this.calculateMove(dx, dy, { isAlt: isAlt });
             } else {
                 if (Segment.isRight(direction)) {
-                    this.caculateRight(dx, dy, { isAlt: isAlt });
+                    this.calculateRight(dx, dy, { isAlt: isAlt });
                 }
                 if (Segment.isBottom(direction)) {
-                    this.caculateBottom(dx, dy, { isAlt: isAlt });
+                    this.calculateBottom(dx, dy, { isAlt: isAlt });
                 }
                 if (Segment.isTop(direction)) {
-                    this.caculateTop(dx, dy, { isAlt: isAlt });
+                    this.calculateTop(dx, dy, { isAlt: isAlt });
                 }
                 if (Segment.isLeft(direction)) {
-                    this.caculateLeft(dx, dy, { isAlt: isAlt });
+                    this.calculateLeft(dx, dy, { isAlt: isAlt });
                 }
             }
 
-            return this.caculateGuide();
+            return this.calculateGuide();
         }
     }, {
-        key: "caculateGuide",
-        value: function caculateGuide() {
+        key: "calculateGuide",
+        value: function calculateGuide() {
             // TODO change newRect values 
-            var list = this.guide.caculate(2);
+            var list = this.guide.calculate(2);
 
             return list;
         }
@@ -26546,7 +24630,7 @@ var ItemPositionCalc = function () {
 
             item.y.set(distY + minY);
             if (item instanceof Layer) {
-                item.y.sub(item.getArtBoard().y);
+                item.y.sub(editor$1.get(item.parentPosition).screenY);
             }
 
             item.height.set(height);
@@ -26560,20 +24644,20 @@ var ItemPositionCalc = function () {
 
             item.x.set(distX + minX);
             if (item instanceof Layer) {
-                item.x.sub(item.getArtBoard().x);
+                item.x.sub(editor$1.get(item.parentPosition).screenX);
             }
 
             item.width.set(width);
         }
     }, {
-        key: "caculateMove",
-        value: function caculateMove(dx, dy, opt) {
+        key: "calculateMove",
+        value: function calculateMove(dx, dy, opt) {
             this.newRect.x.set(this.rect.x.value + dx);
             this.newRect.y.set(this.rect.y.value + dy);
         }
     }, {
-        key: "caculateRight",
-        value: function caculateRight(dx, dy, opt) {
+        key: "calculateRight",
+        value: function calculateRight(dx, dy, opt) {
 
             var minX = this.rect.screenX.value;
             var maxX = this.rect.screenX2.value;
@@ -26585,8 +24669,8 @@ var ItemPositionCalc = function () {
             }
         }
     }, {
-        key: "caculateBottom",
-        value: function caculateBottom(dx, dy, opt) {
+        key: "calculateBottom",
+        value: function calculateBottom(dx, dy, opt) {
             var minY = this.rect.screenY.value;
             var maxY = this.rect.screenY2.value;
             var centerY = this.rect.centerY.value;
@@ -26613,8 +24697,8 @@ var ItemPositionCalc = function () {
             this.newRect.height.set(dist);
         }
     }, {
-        key: "caculateTop",
-        value: function caculateTop(dx, dy, opt) {
+        key: "calculateTop",
+        value: function calculateTop(dx, dy, opt) {
             var minY = this.rect.screenY.value;
             var maxY = this.rect.screenY2.value;
             var centerY = this.rect.centerY.value;
@@ -26641,8 +24725,8 @@ var ItemPositionCalc = function () {
             this.newRect.height.set(dist);
         }
     }, {
-        key: "caculateLeft",
-        value: function caculateLeft(dx, dy) {
+        key: "calculateLeft",
+        value: function calculateLeft(dx, dy) {
             var minX = this.rect.screenX.value;
             var maxX = this.rect.screenX2.value;
 
@@ -26689,7 +24773,8 @@ var StaticGradient = function (_Gradient) {
     return StaticGradient;
 }(Gradient);
 
-var _templateObject$16 = taggedTemplateLiteral(['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">', '</div>\n            </div>\n        '], ['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">', '</div>\n            </div>\n        ']);
+var _templateObject$16 = taggedTemplateLiteral(['\n            <div \n                class=\'layer ', '\' \n                item-id="', '" \n                style="', '" \n                title="', '" >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>'], ['\n            <div \n                class=\'layer ', '\' \n                item-id="', '" \n                style="', '" \n                title="', '" >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>']);
+var _templateObject2$3 = taggedTemplateLiteral(['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">', '</div>\n            </div>\n        '], ['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">', '</div>\n            </div>\n        ']);
 
 var CanvasView = function (_UIElement) {
     inherits(CanvasView, _UIElement);
@@ -26704,22 +24789,18 @@ var CanvasView = function (_UIElement) {
         value: function initialize() {
             get$1(CanvasView.prototype.__proto__ || Object.getPrototypeOf(CanvasView.prototype), 'initialize', this).call(this);
 
-            this.hasScroll = false;
             this.initializeLayerCache();
             this.itemPositionCalc = new ItemPositionCalc();
         }
     }, {
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-scroll-panel" style="position:relative" ref="$panel">\n                        <div class="page-canvas" ref="$canvas">\n                            <div class=\'area drag-area\' ref="$dragArea"></div>\n                            <div class=\'area artboard-area\' ref="$artboardArea"></div>\n                            <div class=\'area layer-area\' ref="$layerArea"></div>\n                        </div>          \n                        <div class="page-selection">\n                            ' + this.makeResizer() + '\n                            <div class="drag-area-view" ref="$dragAreaView"></div>\n                            <div class=\'page-guide-line\' ref="$guide"></div>                            \n                        </div>\n                    </div>\n                </div>\n                <!--\n                <LayerShapeEditor />\n                <MoveGuide />-->\n\n              \n                <!--SubFeatureControl /-->\n            </div>\n        ';
+        key: 'makeResizer',
+        value: function makeResizer() {
+            return '<div class=\'item-resizer\' ref="$itemResizer">\n            <button type="button" class=\'segment\' data-value="' + Segment.MOVE + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.RIGHT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.LEFT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.TOP + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.BOTTOM + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.TOP_RIGHT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.BOTTOM_RIGHT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.BOTTOM_LEFT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.TOP_LEFT + '"></button>\n        </div>';
         }
     }, {
-        key: 'components',
-        value: function components() {
-            return {
-                SubFeatureControl: SubFeatureControl,
-                LayerShapeEditor: LayerShapeEditor
-            };
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-scroll-panel" style="position:relative" ref="$panel">\n                        <div class="page-canvas" ref="$canvas">\n                            <div class=\'area drag-area\' ref="$dragArea"></div>\n                            <div class=\'area artboard-area\' ref="$artboardArea"></div>\n                            <div class=\'area layer-area\' ref="$layerArea"></div>\n                        </div>          \n                        <div class="page-selection">\n                            <div class=\'page-guide-line\' ref="$guide"></div>\n                            ' + this.makeResizer() + '\n                            <div class="drag-area-view" ref="$dragAreaView"></div>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'initializeLayerCache',
@@ -26751,25 +24832,25 @@ var CanvasView = function (_UIElement) {
             }
         }
     }, {
-        key: 'makeResizer',
-        value: function makeResizer() {
-            return '<div class=\'item-resizer\' ref="$itemResizer">\n            <button type="button" data-value="' + SEGMENT_TYPE_MOVE + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_RIGHT + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_LEFT + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_TOP + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_TOP_RIGHT + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_RIGHT + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_BOTTOM_LEFT + '"></button>\n            <button type="button" data-value="' + SEGMENT_TYPE_TOP_LEFT + '"></button>\n        </div>';
-        }
-    }, {
         key: 'makeLayer',
         value: function makeLayer(layer) {
+            var _this3 = this;
+
             var selected = editor$1.selection.check(layer) ? 'selected' : EMPTY_STRING;
-            return '\n            <div \n                class=\'layer ' + selected + '\' \n                item-id="' + layer.id + '" \n                style="' + layer.toBoundString() + '" \n                title="' + layer.title + '" >\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>';
+            var children = layer.children;
+            return html(_templateObject$16, selected, layer.id, layer.toBoundString(), layer.title, children.map(function (it) {
+                return _this3.makeLayer(it);
+            }));
         }
     }, {
         key: 'makeArtBoard',
         value: function makeArtBoard(artboard) {
-            return html(_templateObject$16, artboard.id, artboard.title, artboard.toString(), artboard.title);
+            return html(_templateObject2$3, artboard.id, artboard.title, artboard.toString(), artboard.title);
         }
     }, {
         key: LOAD('$artboardArea'),
         value: function value$$1() {
-            var _this3 = this;
+            var _this4 = this;
 
             var project = editor$1.selection.currentProject;
             if (!project) return EMPTY_STRING;
@@ -26777,13 +24858,13 @@ var CanvasView = function (_UIElement) {
             var list = project.artboards;
 
             return list.map(function (artboard) {
-                return _this3.makeArtBoard(artboard);
+                return _this4.makeArtBoard(artboard);
             });
         }
     }, {
         key: LOAD('$layerArea'),
         value: function value$$1() {
-            var _this4 = this;
+            var _this5 = this;
 
             var project = editor$1.selection.currentProject;
             if (!project) return EMPTY_STRING;
@@ -26794,7 +24875,7 @@ var CanvasView = function (_UIElement) {
 
             return list.map(function (artboard) {
                 return artboard.allLayers.map(function (layer) {
-                    return _this4.makeLayer(layer);
+                    return _this5.makeLayer(layer);
                 });
             });
         }
@@ -26804,6 +24885,7 @@ var CanvasView = function (_UIElement) {
             this.setBackgroundColor();
             this.load();
             this.setItemResizer();
+            this.removeGuideLine();
         }
     }, {
         key: 'cacheSelectedItem',
@@ -26818,8 +24900,8 @@ var CanvasView = function (_UIElement) {
                 this.$item = this.$el.$('[item-id="' + this.item.id + '"]');
             }
 
-            this.x = +this.item.x.clone();
-            this.y = +this.item.y.clone();
+            this.x = +this.item.screenX.clone();
+            this.y = +this.item.screenY.clone();
             this.width = +this.item.width.clone();
             this.height = +this.item.height.clone();
             this.x2 = this.x + this.width;
@@ -26830,8 +24912,8 @@ var CanvasView = function (_UIElement) {
     }, {
         key: 'selectItem',
         value: function selectItem($target) {
-
             this.cacheSelectedItem($target);
+            this.removeGuideLine();
         }
     }, {
         key: POINTERSTART('$artboardArea .artboard-title') + MOVE('moveArtBoard') + END('moveEndArtBoard'),
@@ -26842,7 +24924,6 @@ var CanvasView = function (_UIElement) {
             this.artboard.select();
             this.refs.$itemResizer.addClass('artboard').removeClass('layer');
             this.selectItem();
-            this.removeGuideLine();
         }
     }, {
         key: 'moveEndArtBoard',
@@ -26870,6 +24951,7 @@ var CanvasView = function (_UIElement) {
             this.targetXY = e.xy;
             this.offsetX = e.offsetX;
             this.offsetY = e.offsetY;
+            this.removeGuideLine();
         }
     }, {
         key: POINTERSTART('$itemResizer button') + SELF + MOVE('moveResize'),
@@ -26925,52 +25007,28 @@ var CanvasView = function (_UIElement) {
             this.refs.$dragAreaView.css({ left: Length$1.px(-10000) });
             editor$1.selection.area(this.getDragRect());
             this.setItemResizer();
+
             editor$1.send(CHANGE_SELECTION, null, this);
-        }
-    }, {
-        key: 'caculateSnap',
-        value: function caculateSnap() {
-            // this.run(GUIDE_SNAP_CACULATE, 3, this.currentType);
         }
     }, {
         key: 'moveResize',
         value: function moveResize() {
-            var _this5 = this;
-
             var pos = editor$1.config.get('pos');
 
             var dx = pos.x - this.targetXY.x;
             var dy = pos.y - this.targetXY.y;
 
-            var items = editor$1.selection.items;
-
-            var guideList = this.itemPositionCalc.caculate(dx, dy);
-
-            items.forEach(function (item) {
-                _this5.itemPositionCalc.recover(item);
-                _this5.getCachedLayerElement(item.id).css(item.toBoundCSS());
-            });
-
-            this.setItemResizer();
+            var guideList = this.itemPositionCalc.calculate(dx, dy);
             this.setGuideLine(guideList);
 
-            if (editor$1.selection.current instanceof ArtBoard) {
-                this.emit(CHANGE_ARTBOARD);
-            } else {
-                this.emit(CHANGE_LAYER);
-            }
+            this.matchPosition();
+
+            this.emit(CHANGE_RECT);
         }
     }, {
-        key: 'movePosition',
-        value: function movePosition() {
+        key: 'matchPosition',
+        value: function matchPosition(guideList) {
             var _this6 = this;
-
-            var pos = editor$1.config.get('pos');
-
-            var dx = pos.x - this.targetXY.x;
-            var dy = pos.y - this.targetXY.y;
-
-            this.itemPositionCalc.caculateMove(dx, dy);
 
             editor$1.selection.items.forEach(function (item) {
                 _this6.itemPositionCalc.recover(item);
@@ -26980,17 +25038,29 @@ var CanvasView = function (_UIElement) {
             this.setItemResizer();
         }
     }, {
+        key: 'movePosition',
+        value: function movePosition() {
+            var pos = editor$1.config.get('pos');
+
+            var dx = pos.x - this.targetXY.x;
+            var dy = pos.y - this.targetXY.y;
+
+            this.itemPositionCalc.calculateMove(dx, dy);
+
+            this.matchPosition();
+        }
+    }, {
         key: 'moveArtBoard',
         value: function moveArtBoard() {
             this.movePosition();
             this.refreshLayerPosition(this.item);
-            editor$1.send(CHANGE_ARTBOARD, this.item, this);
+            editor$1.send(CHANGE_RECT, this.item, this);
         }
     }, {
         key: 'moveLayer',
         value: function moveLayer() {
             this.movePosition();
-            editor$1.send(CHANGE_LAYER, this.item, this);
+            editor$1.send(CHANGE_RECT, this.item, this);
         }
     }, {
         key: 'refreshLayer',
@@ -27097,11 +25167,11 @@ var CanvasView = function (_UIElement) {
         value: function setItemResizer() {
 
             if (editor$1.selection.artboard || editor$1.selection.layer) {
-                var current = editor$1.selection.rect();
+                var current = editor$1.selection.currentRect;
                 if (current) {
                     this.refs.$itemResizer.css({
-                        left: current.x,
-                        top: current.y,
+                        left: current.screenX,
+                        top: current.screenY,
                         width: current.width,
                         height: current.height
                     });
@@ -27119,9 +25189,17 @@ var CanvasView = function (_UIElement) {
         // indivisual layer effect 
 
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_BOXSHADOW, CHANGE_TEXTSHADOW, CHANGE_IMAGE, CHANGE_COLORSTEP),
+        key: EVENT(CHANGE_LAYER),
         value: function value$$1() {
             this.refreshLayer();
+        }
+    }, {
+        key: EVENT(CHANGE_RECT),
+        value: function value$$1() {
+
+            var guideList = this.itemPositionCalc.calculateGuide();
+            this.setGuideLine(guideList);
+            this.matchPosition();
         }
     }, {
         key: EVENT(CHANGE_SELECTION),
@@ -27143,7 +25221,7 @@ var CanvasView = function (_UIElement) {
         // all effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value$$1() {
             this.refresh();
         }
@@ -27230,7 +25308,10 @@ var publish = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"2
 
 var folder = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z\"/></svg>";
 
+var artboard = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z\"/></svg>";
+
 var icon = {
+    artboard: artboard,
     folder: folder,
     publish: publish,
     add_note: add_note,
@@ -27325,29 +25406,26 @@ var Undo = function (_MenuItem) {
     return Undo;
 }(MenuItem);
 
-var STORAGE_GET = 'storage/get';
-var STORAGE_SET = 'storage/set';
 var STORAGE_PAGES = 'storage/pages';
 var STORAGE_LAYERS = 'storage/layers';
 var STORAGE_IMAGES = 'storage/images';
-var STORAGE_UNSHIFT_LAYER = 'storage/unshift/layer';
 
-var STORAGE_REMOVE_LAYER = 'storage/remove/layer';
+
+
 var STORAGE_REMOVE_PAGE = 'storage/remove/page';
-var STORAGE_UNSHIFT_PAGE = 'storage/unshift/page';
+
 var STORAGE_ADD_PAGE = 'storage/add/page';
-var STORAGE_ADD_LAYER = 'storage/add/layer';
+
 var STORAGE_ADD_IMAGE = 'storage/add/image';
-var STORAGE_DELETE_PAGE = 'storage/delete/page';
-var STORAGE_DELETE_IMAGE = 'storage/delete/image';
+
+
 var STORAGE_SAVE = 'storage/save';
-var STORAGE_SAVE_LAYER = 'storage/save/layer';
-var STORAGE_SAVE_PAGE = 'storage/save/page';
-var STORAGE_SAVE_IMAGE = 'storage/save/image';
+
+
+
 var STORAGE_LOAD_LAYER = 'storage/load/layer';
-var STORAGE_LOAD_PAGE = 'storage/load/page';
+
 var STORAGE_LOAD_IMAGE = 'storage/load/image';
-var STORAGE_LOAD = 'storage/load';
 
 var Save = function (_MenuItem) {
     inherits(Save, _MenuItem);
@@ -27410,7 +25488,7 @@ var ShowGrid = function (_MenuItem) {
             this.refresh();
         }
     }, {
-        key: EVENT(CHANGE_TOOL, CHANGE_EDITOR$1, CHANGE_SELECTION),
+        key: EVENT(CHANGE_TOOL, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -27540,14 +25618,13 @@ var Project = function (_Item) {
     }
 
     createClass(Project, [{
-        key: 'addArtBoard',
-        value: function addArtBoard(artboard) {
-            return this.addItem('artboard', artboard);
-        }
-    }, {
         key: 'add',
-        value: function add(artboard) {
-            return this.addArtBoard(artboard);
+        value: function add(item) {
+            if (item.itemType == 'artboard') {
+                return get$1(Project.prototype.__proto__ || Object.getPrototypeOf(Project.prototype), 'add', this).call(this, item);
+            } else {
+                throw new Error('It is able to only artboard in project ');
+            }
         }
     }, {
         key: 'traverse',
@@ -27620,8 +25697,6 @@ var Project = function (_Item) {
     return Project;
 }(Item);
 
-var a = 0;
-
 var AddRect = function (_MenuItem) {
     inherits(AddRect, _MenuItem);
 
@@ -27656,30 +25731,16 @@ var AddRect = function (_MenuItem) {
 
             var artboard = project.artboard || editor$1.selection.currentArtBoard;
             if (!artboard) {
-                artboard = project.addArtBoard(new ArtBoard({ name: 'New ArtBoard' }));
+                artboard = project.add(new ArtBoard({ name: 'New ArtBoard' }));
                 artboard.select();
             }
 
-            var directory = editor$1.selection.currentDirectory;
-            var layer;
-            if (directory) {
-                layer = directory.addLayer(new Rect({
-                    name: a++ + '222'
-                }));
-            } else {
-                var selectedLayer = editor$1.selection.currentLayer;
-                if (selectedLayer) {
-                    layer = selectedLayer.parent().addLayer(new Rect({
-                        index: selectedLayer.index + 1,
-                        name: a++ + '222'
-                    }));
-                } else {
-                    layer = artboard.addLayer(new Rect());
-                }
-            }
+            var current = editor$1.selection.current;
 
+            var layer = current.add(new Rect());
             layer.select();
-            this.emit(CHANGE_EDITOR$1);
+
+            this.emit(CHANGE_EDITOR);
         }
     }]);
     return AddRect;
@@ -27701,7 +25762,11 @@ var Circle = function (_Layer) {
     }, {
         key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(Circle.prototype.__proto__ || Object.getPrototypeOf(Circle.prototype), "getDefaultObject", this).call(this, { type: 'circle' });
+            return get$1(Circle.prototype.__proto__ || Object.getPrototypeOf(Circle.prototype), "getDefaultObject", this).call(this, {
+                type: 'circle',
+                width: Length$1.px(100),
+                height: Length$1.px(100)
+            });
         }
 
         /**
@@ -27754,86 +25819,22 @@ var AddCircle = function (_MenuItem) {
 
             var artboard = project.artboard || editor$1.selection.currentArtBoard;
             if (!artboard) {
-                artboard = project.addArtBoard(new ArtBoard({ name: 'New ArtBoard' }));
+                artboard = project.add(new ArtBoard({ name: 'New ArtBoard' }));
                 artboard.select();
             }
 
-            var directory = editor$1.selection.currentDirectory;
-            var layer;
-            if (directory) {
-                layer = directory.addLayer(new Circle({ name: 'New Circle' }));
-            } else {
-                var selectedLayer = editor$1.selection.currentLayer;
-                if (selectedLayer) {
-                    layer = selectedLayer.parent().addLayer(new Circle({
-                        index: selectedLayer.index + 1,
-                        name: 'New Circle'
-                    }));
-                } else {
-                    layer = artboard.addLayer(new Circle({ name: 'New Circle' }));
-                }
-            }
+            var current = editor$1.selection.current;
 
+            var layer = current.add(new Circle());
             layer.select();
-            this.emit(CHANGE_EDITOR$1);
+
+            this.emit(CHANGE_EDITOR);
         }
     }]);
     return AddCircle;
 }(MenuItem);
 
-var ShowClipPath = function (_MenuItem) {
-    inherits(ShowClipPath, _MenuItem);
-
-    function ShowClipPath() {
-        classCallCheck(this, ShowClipPath);
-        return possibleConstructorReturn(this, (ShowClipPath.__proto__ || Object.getPrototypeOf(ShowClipPath)).apply(this, arguments));
-    }
-
-    createClass(ShowClipPath, [{
-        key: "getIcon",
-        value: function getIcon() {
-            return 'show-clip-path';
-        }
-    }, {
-        key: "getTitle",
-        value: function getTitle() {
-            return 'Show ClipPath';
-        }
-    }, {
-        key: "clickButton",
-        value: function clickButton() {
-            var _this2 = this;
-
-            editor$1.selection.layers.forEach(function (item) {
-                item.showClipPathEditor = !item.showClipPathEditor;
-                _this2.emit(CHANGE_LAYER);
-                _this2.refresh();
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR$1, CHANGE_SELECTION),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var _this3 = this;
-
-            var layers = editor$1.selection.layers;
-
-            this.$el.css('display', layers.length ? 'inline-block' : 'none');
-
-            layers.forEach(function (item) {
-                _this3.$el.attr('checked', item.showClipPathEditor ? 'checked' : EMPTY_STRING);
-            });
-        }
-    }]);
-    return ShowClipPath;
-}(MenuItem);
-
 var menuItems = {
-    ShowClipPath: ShowClipPath,
     AddRect: AddRect,
     AddCircle: AddCircle,
     ExportJSFiddle: ExportJSFiddle,
@@ -27866,6 +25867,97 @@ var ToolMenu = function (_UIElement) {
         }
     }]);
     return ToolMenu;
+}(UIElement);
+
+var BaseTab = function (_UIElement) {
+    inherits(BaseTab, _UIElement);
+
+    function BaseTab() {
+        classCallCheck(this, BaseTab);
+        return possibleConstructorReturn(this, (BaseTab.__proto__ || Object.getPrototypeOf(BaseTab)).apply(this, arguments));
+    }
+
+    createClass(BaseTab, [{
+        key: "template",
+        value: function template() {
+            return "\n        <div class=\"tab\">\n            <div class=\"tab-header\" ref=\"$header\">\n                <div class=\"tab-item selected\" data-id=\"1\">1</div>\n                <div class=\"tab-item\" data-id=\"2\">2</div>\n            </div>\n            <div class=\"tab-body\" ref=\"$body\">\n                <div class=\"tab-content selected\" data-id=\"1\"></div>\n                <div class=\"tab-content\" data-id=\"2\"></div>\n            </div>\n        </div>\n        ";
+        }
+    }, {
+        key: "isNotSelectedTab",
+        value: function isNotSelectedTab(e) {
+            return !e.$delegateTarget.hasClass('selected');
+        }
+    }, {
+        key: CLICK('$header .tab-item') + IF('isNotSelectedTab'),
+        value: function value$$1(e, $dt) {
+            this.selectTab($dt.attr('data-id'));
+        }
+    }, {
+        key: "selectTab",
+        value: function selectTab(id) {
+
+            this.selectedTabId = id;
+
+            this.refs.$header.children().forEach(function ($dom) {
+                $dom.toggleClass('selected', $dom.attr('data-id') == id);
+            });
+
+            this.refs.$body.children().forEach(function ($dom) {
+                $dom.toggleClass('selected', $dom.attr('data-id') == id);
+            });
+
+            this.onTabShow();
+        }
+    }, {
+        key: "onTabShow",
+        value: function onTabShow() {}
+    }, {
+        key: "setScrollTabTitle",
+        value: function setScrollTabTitle($scrollPanel) {
+            var offset = $scrollPanel.offset();
+            var $tabElementTitle = $scrollPanel.$(".tab-element-title");
+
+            if (!$tabElementTitle) {
+                $scrollPanel.append(new Dom('div', 'tab-element-title'));
+                $tabElementTitle = $scrollPanel.$(".tab-element-title");
+            }
+
+            var elementsInViewport = $scrollPanel.children().map(function ($dom) {
+                var rect = $dom.rect();
+                if (offset.top <= rect.bottom) {
+                    return { $dom: $dom, isElementInViewport: true };
+                }
+                return { $dom: $dom, isElementInViewport: false };
+            });
+
+            var title = EMPTY_STRING;
+            if (elementsInViewport.length) {
+
+                var viewElement = elementsInViewport.filter(function (it) {
+                    return it.isElementInViewport;
+                });
+
+                if (viewElement.length) {
+                    var $dom = viewElement[0].$dom;
+                    var $title = $dom.$(".title");
+
+                    if ($title && offset.top > $title.rect().bottom) {
+                        title = $title.text();
+                    }
+                }
+            }
+
+            if (title) {
+                if ($tabElementTitle.css('display') == 'none') {
+                    $tabElementTitle.show();
+                }
+                $tabElementTitle.px('top', $scrollPanel.scrollTop()).text(title);
+            } else {
+                $tabElementTitle.hide();
+            }
+        }
+    }]);
+    return BaseTab;
 }(UIElement);
 
 var RepeatingLinearGradient = function (_LinearGradient) {
@@ -28119,7 +26211,6 @@ var BasicGradient = function (_UIElement) {
     return BasicGradient;
 }(UIElement);
 
-var COLLECT_ONE = 'collect/one';
 var COLLECT_IMAGE_ONE = 'collect/image/one';
 
 
@@ -28238,24 +26329,8 @@ var GradientSampleList = function (_UIElement) {
 }(UIElement);
 
 var LAYER_LIST_SAMPLE = 'layer/list/sample';
-var LAYER_TO_STRING = 'layer/toString';
+
 var LAYER_CACHE_TO_STRING = 'layer/cache/toString';
-var LAYER_TOEXPORT = 'layer/toExport';
-var LAYER_MAKE_CLIPPATH = 'layer/make/clip-path';
-var LAYER_MAKE_FILTER = 'layer/make/filter';
-var LAYER_MAKE_BACKDROP = 'layer/make/backdrop';
-var LAYER_TO_IMAGE_CSS = 'layer/TO_IMAGE_CSS';
-var LAYER_IMAGE_TO_IMAGE_CSS = 'layer/image/TO_IMAGE_CSS';
-var LAYER_MAKE_MAP = 'layer/make/map';
-var LAYER_MAKE_MAP_IMAGE = 'layer/make/map/image';
-var LAYER_MAKE_BOXSHADOW = 'layer/make/box-shadow';
-var LAYER_MAKE_IMAGE = 'layer/make/image';
-var LAYER_MAKE_TEXTSHADOW = 'layer/make/text-shadow';
-
-
-
-var LAYER_TO_CSS = 'layer/toCSS';
-var LAYER_CACHE_TO_CSS = 'layer/cache/toCSS';
 
 var LayerSampleList = function (_UIElement) {
     inherits(LayerSampleList, _UIElement);
@@ -28485,7 +26560,7 @@ var ProjectListView = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value$$1() {
             this.refresh();
         }
@@ -28499,7 +26574,7 @@ var ProjectListView = function (_UIElement) {
         value: function value$$1(e) {
             var project = editor$1.addProject(new Project({ name: 'New Project' }));
             project.select();
-            editor$1.send(CHANGE_EDITOR$1);
+            editor$1.send(CHANGE_EDITOR);
         }
     }]);
     return ProjectListView;
@@ -28519,20 +26594,10 @@ var Directory = function (_Item) {
             return 'Directory';
         }
     }, {
-        key: 'addDirectory',
-        value: function addDirectory(directory) {
-            return this.addItem('directory', directory);
-        }
-    }, {
-        key: 'addLayer',
-        value: function addLayer(layer) {
-            return this.addItem('layer', layer);
-        }
-    }, {
         key: 'add',
-        value: function add(groupOrLayer) {
-            if (groupOrLayer.itemType == 'group' || groupOrLayer.itemType == 'layer') {
-                return get$1(Directory.prototype.__proto__ || Object.getPrototypeOf(Directory.prototype), 'add', this).call(this, groupOrLayer);
+        value: function add(item) {
+            if (item.itemType == 'directory' || item.itemType == 'layer') {
+                return get$1(Directory.prototype.__proto__ || Object.getPrototypeOf(Directory.prototype), 'add', this).call(this, item);
             } else {
                 throw new Error('잘못된 객체입니다.');
             }
@@ -28569,7 +26634,7 @@ var Directory = function (_Item) {
 }(Item);
 
 var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\"> ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\"> ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "]);
-var _templateObject2$3 = taggedTemplateLiteral(["<div class='tree-children'>\n                ", "\n            </div>"], ["<div class='tree-children'>\n                ", "\n            </div>"]);
+var _templateObject2$4 = taggedTemplateLiteral(["<div class='tree-children'>\n                ", "\n            </div>"], ["<div class='tree-children'>\n                ", "\n            </div>"]);
 
 var LayerListView = function (_UIElement) {
     inherits(LayerListView, _UIElement);
@@ -28593,10 +26658,12 @@ var LayerListView = function (_UIElement) {
             var isDirectory = item.itemType == 'directory';
             var isLayer = item.itemType == 'layer';
 
-            var isGroup = isArtBoard || isDirectory;
+            var children = item.children;
+
+            var isGroup = isArtBoard || isDirectory || children.length;
             var hasLock = isDirectory || isLayer;
             var isDraggable = isLayer;
-            var hasIcon = isDirectory || isLayer;
+            var hasIcon = isArtBoard || isDirectory || isLayer;
             var hasVisible = isDirectory || isLayer;
 
             var draggable = isDraggable ? 'draggable="true"' : EMPTY_STRING;
@@ -28605,13 +26672,15 @@ var LayerListView = function (_UIElement) {
             var selected = item.selectedOne ? 'selected' : EMPTY_STRING;
 
             var iconString = EMPTY_STRING;
-            if (isDirectory) {
+            if (isArtBoard) {
+                iconString = "" + icon.artboard;
+            } else if (isDirectory) {
                 iconString = "" + icon.folder;
             } else if (isLayer) {
                 iconString = "<span class='icon-" + item.type + "'></span>";
             }
 
-            return html(_templateObject$18, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", hasIcon && "<div class='item-icon'>" + iconString + "</div>", item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$3, item.children.map(function (child) {
+            return html(_templateObject$18, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
                 return _this2.makeItem(child, depth + 1);
             })));
         }
@@ -28655,7 +26724,7 @@ var LayerListView = function (_UIElement) {
         // all effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value$$1() {
             this.refresh();
         }
@@ -28676,7 +26745,7 @@ var LayerListView = function (_UIElement) {
                     name: 'New ArtBoard'
                 }));
                 artboard.select();
-                editor$1.send(CHANGE_EDITOR$1);
+                editor$1.send(CHANGE_EDITOR);
             }
         }
     }, {
@@ -28686,11 +26755,11 @@ var LayerListView = function (_UIElement) {
             if (currentItem) {
 
                 if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
-                    var directory = currentItem.addDirectory(new Directory({
+                    var directory = currentItem.add(new Directory({
                         name: 'New Directory'
                     }));
                 } else if (currentItem instanceof Layer) {
-                    var directory = currentItem.parent().addDirectory(new Directory({
+                    var directory = currentItem.parentDirectory().add(new Directory({
                         name: 'New Directory',
                         index: currentItem.index + 1
                     }));
@@ -28730,7 +26799,7 @@ var LayerListView = function (_UIElement) {
 
             item.copy();
 
-            editor$1.emit(CHANGE_EDITOR$1);
+            editor$1.emit(CHANGE_EDITOR);
         }
     }, {
         key: CLICK('$layerList .delete-item'),
@@ -28739,7 +26808,7 @@ var LayerListView = function (_UIElement) {
                 item = _getItem2.item;
 
             item.remove();
-            editor$1.emit(CHANGE_EDITOR$1, null, this);
+            editor$1.emit(CHANGE_EDITOR, null, this);
         }
     }, {
         key: CLICK('$layerList .visible-item'),
@@ -28818,7 +26887,7 @@ var LayerListView = function (_UIElement) {
                 target.insertLast(source);
                 source.select();
 
-                editor$1.send(CHANGE_EDITOR$1);
+                editor$1.send(CHANGE_EDITOR);
             }
 
             this.$el.removeClass('dragging');
@@ -28827,26 +26896,12 @@ var LayerListView = function (_UIElement) {
     return LayerListView;
 }(UIElement);
 
-var ITEM_RECOVER = 'item/recover';
-var ITEM_RECOVER_IMAGE = 'item/recover/image';
-var ITEM_RECOVER_COLORSTEP = 'item/recover/colorstep';
-var ITEM_RECOVER_BOXSHADOW = 'item/recover/boxshadow';
-var ITEM_RECOVER_TEXTSHADOW = 'item/recover/textshadow';
-var ITEM_RECOVER_LAYER = 'item/recover/layer';
-var ITEM_RECOVER_PAGE = 'item/recover/page';
 var ITEM_ADD_CACHE = 'item/addCache';
-var ITEM_ADD_COPY = 'item/addCopy';
-var ITEM_COPY_IN = 'item/copy/in';
-var ITEM_COPY_IN_LAYER = 'item/copy/in/layer';
 
-var PAGE_TO_STRING = 'page/toString';
-var PAGE_TO_CSS = 'page/toCSS';
-var PAGE_COLORVIEW_TO_CSS = 'page/colorview/toCSS';
-var PAGE_CACHE_TO_CSS = 'page/cache/toCSS';
 var PAGE_CACHE_TO_STRING = 'page/cache/toString';
 
 var _templateObject$19 = taggedTemplateLiteral(["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"], ["\n            <div class='page-sample-item'  data-sample-id=\"", "\">\n                <div class=\"page-view\" style=\"", "; ", "\">\n                ", "\n                </div>\n\n                <div class='item-tools'>\n                    <button type=\"button\" class='add-item'  data-index=\"", "\" title=\"Addd\">&times;</button>\n                </div>           \n            </div>"]);
-var _templateObject2$4 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
+var _templateObject2$5 = taggedTemplateLiteral(["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "], ["\n                <div class='page-cached-item' data-sample-id=\"", "\">\n                    <div class=\"page-view\" style=\"", "; ", "\">\n                    ", "\n                    </div>\n                    <div class='item-tools'>\n                        <button type=\"button\" class='add-item'  data-sample-id=\"", "\" title=\"Add\">&times;</button>                \n                        <button type=\"button\" class='delete-item'  data-sample-id=\"", "\" title=\"Delete\">&times;</button>\n                    </div>          \n                </div>\n            "]);
 
 var PageSampleList = function (_UIElement) {
     inherits(PageSampleList, _UIElement);
@@ -28900,7 +26955,7 @@ var PageSampleList = function (_UIElement) {
 
                 var transform = "left: 50%; top: 50%; transform: translateX(-50%) translateY(-50%) scale(" + minRate + ")";
 
-                return html(_templateObject2$4, page.id, data.css, transform, page.layers.map(function (layer) {
+                return html(_templateObject2$5, page.id, data.css, transform, page.layers.map(function (layer) {
                     var data = _this2.read(LAYER_CACHE_TO_STRING, layer);
                     return "<div class=\"layer-view\" style=\"" + data.css + "\"></div>";
                 }), page.id, page.id);
@@ -29057,6 +27112,139 @@ var SelectLayerView = function (_BaseTab) {
     return SelectLayerView;
 }(BaseTab);
 
+var LayerTabView = function (_BaseTab) {
+    inherits(LayerTabView, _BaseTab);
+
+    function LayerTabView() {
+        classCallCheck(this, LayerTabView);
+        return possibleConstructorReturn(this, (LayerTabView.__proto__ || Object.getPrototypeOf(LayerTabView)).apply(this, arguments));
+    }
+
+    createClass(LayerTabView, [{
+        key: 'template',
+        value: function template() {
+            return '\n        <div class="tab horizontal">\n            <div class="tab-header no-border" ref="$header">\n                <div class="tab-item" data-id="page">Page</div>\n                <div class="tab-item selected" data-id="property">Property</div>\n                <div class="tab-item" data-id="border">Border</div>       \n                <div class="tab-item" data-id="fill">Fill</div>       \n                <div class="tab-item" data-id="text">Text</div>\n                <div class="tab-item small-font" data-id="clip-path">Clip Path</div>\n                <div class="tab-item small-font" data-id="transform">Transform</div>\n                <div class="tab-item" data-id="transform3d">3D</div>\n                <div class="tab-item" data-id="css">CSS</div>\n            </div>\n            <div class="tab-body" ref="$body">\n                <div class="tab-content" data-id="page">\n                    <PageProperty />\n                </div>\n                <div class="tab-content selected flex" data-id="property">\n                    <!-- <div class=\'fixed\'><LayerInfoColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerInfoScroll">\n                        <LayerProperty />\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="border">\n                    <!-- <div class=\'fixed\'><LayerBorderColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerBorderScroll">\n                        <LayerBorderProperty />\n                        <LayerBorderRadiusProperty />\n                    </div>\n                </div>                \n                <div class="tab-content flex" data-id="text">\n                    <!-- <div class=\'fixed\'><LayerTextColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerTextScroll">\n                        <LayerFontProperty />\n                        <LayerTextProperty />\n                        <TextShadowProperty />\n                    </div>\n                </div>\n                <div class="tab-content flex" data-id="fill">\n                    <!--<div class=\'fixed\'><FillColorPickerPanel /></div> -->\n                    <div class=\'scroll\' ref="$layerFillScroll">\n                        <BoxShadowProperty />\n                        <FilterProperty />\n                        <BackdropProperty />\n                        <EmptyArea height="100px" />      \n                    </div>\n                </div>                \n                <div class="tab-content" data-id="clip-path">\n                    <ClipPathProperty />\n                </div>\n                <div class="tab-content" data-id="transform">\n                    <Transform2DProperty />\n                </div>\n                <div class="tab-content" data-id="transform3d">\n                    <Transform3DProperty />\n                </div>\n                <div class="tab-content" data-id="css">\n                    <LayerCodeProperty/>\n                </div>\n            </div>\n        </div>';
+        }
+    }, {
+        key: SCROLL('$layerInfoScroll'),
+        value: function value(e) {
+            this.setScrollTabTitle(this.refs.$layerInfoScroll);
+        }
+    }, {
+        key: SCROLL('$layerBorderScroll'),
+        value: function value(e) {
+            this.setScrollTabTitle(this.refs.$layerBorderScroll);
+        }
+    }, {
+        key: SCROLL('$layerTextScroll'),
+        value: function value(e) {
+            this.setScrollTabTitle(this.refs.$layerTextScroll);
+        }
+    }, {
+        key: SCROLL('$layerFillScroll'),
+        value: function value(e) {
+            this.setScrollTabTitle(this.refs.$layerFillScroll);
+        }
+    }, {
+        key: 'onTabShow',
+        value: function onTabShow() {
+            editor$1.config.set('tool.tabs.layer.selectedId', this.selectedTabId);
+            this.emit(SELECT_TAB_LAYER, this.selectedTabId);
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return _extends({}, property, items$1);
+        }
+    }]);
+    return LayerTabView;
+}(BaseTab);
+
+var LayerView = function (_UIElement) {
+    inherits(LayerView, _UIElement);
+
+    function LayerView() {
+        classCallCheck(this, LayerView);
+        return possibleConstructorReturn(this, (LayerView.__proto__ || Object.getPrototypeOf(LayerView)).apply(this, arguments));
+    }
+
+    createClass(LayerView, [{
+        key: "template",
+        value: function template() {
+            return "<div class='property-view'><LayerTabView /></div>";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return { LayerTabView: LayerTabView };
+        }
+    }]);
+    return LayerView;
+}(UIElement);
+
+var ImageTabView = function (_BaseTab) {
+    inherits(ImageTabView, _BaseTab);
+
+    function ImageTabView() {
+        classCallCheck(this, ImageTabView);
+        return possibleConstructorReturn(this, (ImageTabView.__proto__ || Object.getPrototypeOf(ImageTabView)).apply(this, arguments));
+    }
+
+    createClass(ImageTabView, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class="tab horizontal">\n                <div class="tab-header no-border" ref="$header">\n                    <div class="tab-item selected small-font" data-id="gradient">Background</div>\n                    <div class="tab-item small-font" data-id="background">Background</div>\n                    <div class="tab-item" data-id="pattern">Pattern</div>\n                    <div class="tab-item" data-id="css">CSS</div>\n                </div>\n                <div class="tab-body" ref="$body">\n                    <div class="tab-content flex selected" data-id="gradient">\n                        <div class=\'fixed\'><!-- ColorPickerPanel /--></div>\n                        <div class=\'scroll\'><ImageSortingProperty /><ColorStepProperty /></div>    \n                    </div>\n                    <div class="tab-content flex" data-id="background">\n                        <BackgroundProperty></BackgroundProperty>\n                    </div>\n                    <div class="tab-content flex" data-id="pattern">\n                        <!-- <RotatePatternProperty /> -->\n                    </div>                    \n                    <div class="tab-content" data-id="css"><BackgroundCodeProperty /></div>\n                </div>\n            </div> \n        ';
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.load();
+        }
+    }, {
+        key: EVENT(CHANGE_SELECTION, CHANGE_EDITOR, CHANGE_IMAGE),
+        value: function value() {
+            this.refresh();
+        }
+    }, {
+        key: 'onTabShow',
+        value: function onTabShow() {
+            this.load();
+            editor.config.set('tool.tabs.image.selectedId', this.selectedTabId);
+            this.emit(SELECT_TAB_IMAGE, this.selectedTabId);
+        }
+    }, {
+        key: 'components',
+        value: function components() {
+            return _extends({}, property, items$1);
+        }
+    }]);
+    return ImageTabView;
+}(BaseTab);
+
+var ImageView = function (_UIElement) {
+    inherits(ImageView, _UIElement);
+
+    function ImageView() {
+        classCallCheck(this, ImageView);
+        return possibleConstructorReturn(this, (ImageView.__proto__ || Object.getPrototypeOf(ImageView)).apply(this, arguments));
+    }
+
+    createClass(ImageView, [{
+        key: "template",
+        value: function template() {
+            return "<div class='property-view'><ImageTabView /></div>";
+        }
+    }, {
+        key: "components",
+        value: function components() {
+            return {
+                ImageTabView: ImageTabView
+            };
+        }
+    }]);
+    return ImageView;
+}(UIElement);
+
 var ORDERING_TYPE = 'ordering/type';
 var ORDERING_INDEX = 'ordering/index';
 
@@ -29125,7 +27313,7 @@ var CSSEditor$1 = function (_UIElement) {
 
             setTimeout(function () {
                 _this2.emit(RESIZE_WINDOW);
-                _this2.emit(CHANGE_EDITOR$1);
+                _this2.emit(CHANGE_EDITOR);
             }, 100);
         }
     }, {
@@ -29153,7 +27341,7 @@ var CSSEditor$1 = function (_UIElement) {
             };
         }
     }, {
-        key: EVENT(CHANGE_EDITOR$1),
+        key: EVENT(CHANGE_EDITOR),
         value: function value() {
             /*
             this.read(SELECTION_CURRENT_LAYER, (layer) => {
@@ -29233,4596 +27421,6 @@ var CSSEditor$1 = function (_UIElement) {
     return CSSEditor;
 }(UIElement);
 
-var INIT_COLOR_SOURCE = ITEM_TYPE_COLORSTEP;
-
-var ColorStepManager = function (_BaseModule) {
-    inherits(ColorStepManager, _BaseModule);
-
-    function ColorStepManager() {
-        classCallCheck(this, ColorStepManager);
-        return possibleConstructorReturn(this, (ColorStepManager.__proto__ || Object.getPrototypeOf(ColorStepManager)).apply(this, arguments));
-    }
-
-    createClass(ColorStepManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ColorStepManager.prototype.__proto__ || Object.getPrototypeOf(ColorStepManager.prototype), "initialize", this).call(this);
-
-            this.$store.step = {
-                width: 400
-            };
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: GETTER(COLORSTEP_COLOR_SOURCE),
-        value: function value$$1($store) {
-            return INIT_COLOR_SOURCE;
-        }
-    }, {
-        key: GETTER(COLORSTEP_CURRENT),
-        value: function value$$1($store, index) {
-            if (!isUndefined$1(index)) {
-                return $store.read(COLORSTEP_LIST)[index] || $store.read(ITEM_CREATE_COLORSTEP);
-            } else {
-                return $store.read(COLORSTEP_LIST).filter(function (item) {
-                    return !!item.selected;
-                })[0];
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_ADD),
-        value: function value$$1($store, item, percent$$1) {
-
-            var parentId = item.id;
-            var list = $store.read(ITEM_MAP_COLORSTEP_CHILDREN, parentId);
-
-            if (!list.length) {
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, color: 'rgba(216,216,216, 0)', percent: percent$$1, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, color: 'rgba(216,216,216, 1)', percent: 100, index: 100 });
-
-                $store.run(ITEM_INIT_CHILDREN, parentId);
-                return;
-            }
-
-            var colorsteps = list;
-
-            if (percent$$1 < colorsteps[0].percent) {
-
-                colorsteps[0].index = 1;
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, index: 0, color: colorsteps[0].color, percent: percent$$1 });
-                $store.run(ITEM_SET, colorsteps[0]);
-                $store.run(ITEM_INIT_CHILDREN, parentId);
-
-                return;
-            }
-
-            var lastIndex = colorsteps.length - 1;
-            if (colorsteps[lastIndex].percent < percent$$1) {
-                var color$$1 = colorsteps[lastIndex].color;
-                var index = colorsteps[lastIndex].index + 1;
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, index: index, color: color$$1, percent: percent$$1 });
-                $store.run(ITEM_INIT_CHILDREN, parentId);
-                return;
-            }
-
-            for (var i = 0, len = colorsteps.length - 1; i < len; i++) {
-                var step = colorsteps[i];
-                var nextStep = colorsteps[i + 1];
-
-                if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
-                    var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
-
-                    $store.read(ITEM_CREATE_COLORSTEP, { parentId: parentId, index: step.index + 1, color: color$$1, percent: percent$$1 });
-                    $store.run(ITEM_INIT_CHILDREN, parentId);
-                    return;
-                }
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_REMOVE),
-        value: function value$$1($store, id) {
-            $store.run(ITEM_REMOVE, id);
-        }
-    }, {
-        key: ACTION(COLORSTEP_SORT),
-        value: function value$$1($store, id, sortedList) {
-            var _this2 = this;
-
-            sortedList.forEach(function (stepId, index) {
-                var item = _this2.get(stepId);
-                item.index = index * 100;
-
-                $store.run(ITEM_SET, item);
-            });
-
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: GETTER(COLORSTEP_SORT_LIST),
-        value: function value$$1($store, parentId) {
-            var colorsteps = $store.read(ITEM_MAP_COLORSTEP_CHILDREN, parentId);
-
-            colorsteps.sort(function (a, b) {
-                if (a.index == b.index) return 0;
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return colorsteps;
-        }
-
-        // 이미지 리스트 얻어오기 
-
-    }, {
-        key: GETTER(COLORSTEP_LIST),
-        value: function value$$1($store) {
-            var image = $store.read(SELECTION_CURRENT_IMAGE);
-
-            if (image) {
-                return $store.read(COLORSTEP_SORT_LIST, image.id);
-            }
-
-            return [];
-        }
-    }, {
-        key: GETTER(COLORSTEP_CURRENT_INDEX),
-        value: function value$$1($store, index) {
-            if (isUndefined$1(index)) {
-                return $store.read(COLORSTEP_LIST).map(function (step, index) {
-                    return { step: step, index: index };
-                }).filter(function (item) {
-                    return !!item.step.selected;
-                })[0].index;
-            } else {
-                return index;
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_CUT_OFF),
-        value: function value$$1($store, id) {
-            var list = [];
-            if (isUndefined$1(id)) {
-                list = $store.read(COLORSTEP_LIST);
-            } else {
-                list = [this.get(id)];
-            }
-            list.forEach(function (item) {
-                item.cut = false;
-                $store.run(ITEM_SET, item);
-            });
-        }
-    }, {
-        key: ACTION(COLORSTEP_CUT_ON),
-        value: function value$$1($store, id) {
-            var list = [];
-            if (isUndefined$1(id)) {
-                list = $store.read(COLORSTEP_LIST);
-            } else {
-                list = [this.get(id)];
-            }
-            list.forEach(function (item) {
-                item.cut = true;
-                $store.run(ITEM_SET, item);
-            });
-        }
-    }, {
-        key: "getMaxValue",
-        value: function getMaxValue() {
-            return this.$store.step.width;
-        }
-    }, {
-        key: "getUnitValue",
-        value: function getUnitValue(step, maxValue) {
-
-            if (isPX(step.unit)) {
-                if (isUndefined$1(step.px)) {
-                    step.px = percent2px(step.percent, maxValue);
-                }
-
-                return {
-                    px: step.px,
-                    percent: px2percent(step.px, maxValue),
-                    em: px2em(step.px, maxValue)
-                };
-            } else if (isEM(step.unit)) {
-                if (isUndefined$1(step.em)) {
-                    step.em = percent2em(step.percent, maxValue);
-                }
-                return {
-                    em: step.em,
-                    percent: em2percent(step.em, maxValue),
-                    px: em2px(step.em, maxValue)
-                };
-            }
-
-            return {
-                percent: step.percent,
-                px: percent2px(step.percent, maxValue),
-                em: percent2em(step.percent, maxValue)
-            };
-        }
-    }, {
-        key: GETTER(COLORSTEP_UNIT_VALUE),
-        value: function value$$1($store, step, maxValue) {
-            return this.getUnitValue(step, +defaultValue(maxValue, this.getMaxValue()));
-        }
-    }, {
-        key: ACTION(COLORSTEP_ORDERING_EQUALS),
-        value: function value$$1($store) {
-            var _this3 = this;
-
-            var firstIndex = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-            var lastIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Number.MAX_SAFE_INTEGER;
-
-
-            var list = $store.read(COLORSTEP_LIST).map(function (step) {
-                return _extends({}, step, $store.read(COLORSTEP_UNIT_VALUE, step, _this3.getMaxValue()));
-            });
-
-            if (lastIndex > list.length - 1) {
-                lastIndex = list.length - 1;
-            }
-
-            var count = lastIndex - firstIndex;
-            var dist = (list[lastIndex].px - list[firstIndex].px) / count;
-
-            var firstValue = list[firstIndex].px;
-            for (var i = firstIndex, start = 0; i <= lastIndex; i++, start++) {
-                var step = list[i];
-                step.px = firstValue + start * dist;
-                step.percent = px2percent(step.px, this.getMaxValue());
-                step.em = px2em(step.px, this.getMaxValue());
-                $store.run(ITEM_SET, step);
-            }
-        }
-    }, {
-        key: ACTION(COLORSTEP_ORDERING_EQUALS_LEFT),
-        value: function value$$1($store) {
-            $store.run(COLORSTEP_ORDERING_EQUALS, 0, $store.read(COLORSTEP_CURRENT_INDEX));
-        }
-    }, {
-        key: ACTION(COLORSTEP_ORDERING_EQUALS_RIGHT),
-        value: function value$$1($store) {
-            $store.run(COLORSTEP_ORDERING_EQUALS, $store.read(COLORSTEP_CURRENT_INDEX));
-        }
-    }]);
-    return ColorStepManager;
-}(BaseModule);
-
-var IMAGE_LIST$1 = [IMAGE_FILE_TYPE_JPG, IMAGE_FILE_TYPE_PNG, IMAGE_FILE_TYPE_GIF, IMAGE_FILE_TYPE_SVG];
-
-var ImageManager = function (_BaseModule) {
-    inherits(ImageManager, _BaseModule);
-
-    function ImageManager() {
-        classCallCheck(this, ImageManager);
-        return possibleConstructorReturn(this, (ImageManager.__proto__ || Object.getPrototypeOf(ImageManager)).apply(this, arguments));
-    }
-
-    createClass(ImageManager, [{
-        key: GETTER(IMAGE_GET_FILE),
-        value: function value$$1($store, files, callback) {
-            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
-
-            (files || []).forEach(function (file) {
-                var fileType = file.name.split('.').pop();
-                if (IMAGE_LIST$1.includes(fileType)) {
-
-                    if (isFunction(callback)) {
-                        new ImageLoader(file).getImage(function (image) {
-
-                            ImageToRGB(file, { maxWidth: 100 }, function (results) {
-                                callback({
-                                    datauri: image.src, // export 용 
-                                    colors: palette(results, colorCount),
-                                    url: URL.createObjectURL(file), // 화면 제어용 
-                                    fileType: fileType
-                                });
-                            });
-                        });
-                    }
-                }
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_GET_URL),
-        value: function value$$1($store, urls, callback) {
-            var colorCount = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 16;
-
-            (urls || []).forEach(function (url) {
-                var fileType = url.split('.').pop();
-                if (IMAGE_LIST$1.includes(fileType)) {
-
-                    if (isFunction(callback)) {
-                        ImageToRGB(url, { maxWidth: 100 }, function (results) {
-                            callback({
-                                colors: palette(results, colorCount),
-                                url: url,
-                                fileType: fileType
-                            });
-                        });
-                    }
-                }
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_GET_BLOB),
-        value: function value$$1($store, blobs, callback) {
-            (blobs || []).forEach(function (file) {
-                if (isFunction(callback)) {
-                    new ImageLoader(file, {
-                        forceDataURI: true
-                    }).getImage(function (image) {
-                        var url = file;
-                        var svg = EMPY;
-                        var svgContent = image.src.split('data:image/svg+xml;charset=utf-8;base64,');
-
-                        if (svgContent.length > 1) {
-                            svg = atob(svgContent[1]);
-                        }
-
-                        if (url instanceof Blob) {
-                            url = URL.createObjectURL(file);
-                        }
-
-                        callback({
-                            datauri: image.src, // export 용 
-                            url: url // 화면 제어용 
-                        });
-                    });
-                }
-            });
-        }
-    }, {
-        key: GETTER(IMAGE_TO_STRING),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-            var newItem = _extends({}, image);
-            newItem.colorsteps = newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id);
-            var obj = IMAGE_TO_CSS(newItem);
-
-            return keyMap(obj, function (key, value$$1) {
-                return key + ': ' + value$$1 + ';';
-            }).join(WHITE_STRING$1);
-        }
-    }, {
-        key: GETTER(IMAGE_TO_LINEAR_RIGHT),
-        value: function value$$1($store, image) {
-            var colorsteps = image.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, image.id);
-            return IMAGE_TO_LINEAR(_extends({}, image, { type: 'linear', angle: 'to right', colorsteps: colorsteps }));
-        }
-    }]);
-    return ImageManager;
-}(BaseModule);
-
-var layerList = [
-    // sample
-];
-
-var CLIPPATH_SAMPLE_LIST = 'clip-path/sample/list';
-var CLIPPATH_SAMPLE_GET = 'clip-path/sample/get';
-var CLIPPATH_MAKE_CIRCLE = 'clip-path/make/circle';
-var CLIPPATH_MAKE_ELLIPSE = 'clip-path/make/ellipse';
-var CLIPPATH_MAKE_INSET = 'clip-path/make/inset';
-var CLIPPATH_MAKE_POLYGON = 'clip-path/make/polygon';
-var CLIPPATH_MAKE_SVG = 'clip-path/make/svg';
-var CLIPPATH_TO_CSS = 'clip-path/toCSS';
-
-var DEFINED_ANGLES$4 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var rotate$1 = function () {
-    function rotate() {
-        classCallCheck(this, rotate);
-    }
-
-    createClass(rotate, [{
-        key: "make",
-        value: function make(item) {
-            var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            // return always array 
-
-            var results = [];
-
-            if (IMAGE_TYPE_IS_LINEAR(item.type)) {
-                results.push.apply(results, toConsumableArray(this.makeClone(item, opt)));
-            }
-
-            return results;
-        }
-    }, {
-        key: "makeClone",
-        value: function makeClone(image, opt) {
-            var _this = this;
-
-            var results = [];
-            opt = opt || { clone: 1, blend: 'normal' };
-
-            var count = opt.clone || 1;
-            var blend = opt.blend || 'normal';
-            var randomPosition = opt.randomPosition || false;
-            var randomSize = opt.randomSize || false;
-
-            if (count < 2) return results;
-
-            var degree = 360 / count;
-
-            return repeat(count - 1).map(function (_, index) {
-                var newItem = _extends({}, image);
-                newItem.angle = _this.caculateAngle(newItem, (index + 1) * degree);
-
-                if (randomPosition) {
-                    newItem.backgroundPositionX = _this.getBackgroundPositionX(index);
-                    newItem.backgroundPositionY = _this.getBackgroundPositionY(index);
-                }
-
-                if (randomSize) {
-                    newItem.backgroundSizeWidth = _this.getBackgroundSizeWidth(index);
-                    newItem.backgroundSizeHeight = _this.getBackgroundSizeHeight(index);
-                }
-
-                newItem.backgroundBlendMode = blend;
-
-                return newItem;
-            });
-        }
-    }, {
-        key: "getBackgroundSizeWidth",
-        value: function getBackgroundSizeWidth(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "getBackgroundSizeHeight",
-        value: function getBackgroundSizeHeight(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "getBackgroundPositionX",
-        value: function getBackgroundPositionX(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "getBackgroundPositionY",
-        value: function getBackgroundPositionY(index) {
-            var value$$1 = Math.random() * 100;
-            return percentUnit(value$$1);
-        }
-    }, {
-        key: "caculateAngle",
-        value: function caculateAngle(image) {
-            var plusAngle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            var angle = isNotUndefined(DEFINED_ANGLES$4[image.angle]) ? DEFINED_ANGLES$4[image.angle] : image.angle;
-
-            angle = angle || 0;
-
-            return (angle + plusAngle) % 360;
-        }
-    }]);
-    return rotate;
-}();
-
-var patterns$1 = {
-    rotate: new rotate$1()
-};
-
-var LayerManager = function (_BaseModule) {
-    inherits(LayerManager, _BaseModule);
-
-    function LayerManager() {
-        classCallCheck(this, LayerManager);
-        return possibleConstructorReturn(this, (LayerManager.__proto__ || Object.getPrototypeOf(LayerManager)).apply(this, arguments));
-    }
-
-    createClass(LayerManager, [{
-        key: GETTER(LAYER_LIST_SAMPLE),
-        value: function value$$1($store) {
-            var results = [];
-
-            results = layerList.map(function (it) {
-                return _extends({}, it);
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER(LAYER_TO_STRING),
-        value: function value$$1($store, layer) {
-            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-            var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-
-
-            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, image) || {};
-
-            if (image) {
-                delete obj['background-color'];
-                delete obj['mix-blend-mode'];
-                delete obj['filter'];
-            }
-
-            return CSS_TO_STRING(obj);
-        }
-    }, {
-        key: GETTER(LAYER_CACHE_TO_STRING),
-        value: function value$$1($store, layer) {
-            var obj = $store.read(LAYER_CACHE_TO_CSS, layer) || {};
-            obj.position = 'absolute';
-            return {
-                css: CSS_TO_STRING(obj),
-                obj: obj
-            };
-        }
-    }, {
-        key: GETTER(LAYER_TOEXPORT),
-        value: function value$$1($store, layer) {
-            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-
-            var obj = $store.read(LAYER_TO_CSS, layer, withStyle, null, true) || {};
-            obj.position = obj.position || 'absolute';
-
-            return CSS_TO_STRING(obj);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_CLIPPATH),
-        value: function value$$1($store, layer) {
-            return $store.read(CLIPPATH_TO_CSS, layer);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_FILTER),
-        value: function value$$1($store, layer) {
-            return $store.read(FILTER_TO_CSS, layer);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BACKDROP),
-        value: function value$$1($store, layer) {
-            return $store.read(BACKDROP_TO_CSS, layer);
-        }
-    }, {
-        key: GETTER(LAYER_TO_IMAGE_CSS),
-        value: function value$$1($store, layer) {
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var results = {};
-            $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id, function (item) {
-                var newItem = _extends({}, item);
-                newItem.colorsteps = newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id);
-
-                var css = IMAGE_TO_CSS(newItem, isExport);
-
-                keyEach(css, function (key, value$$1) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(value$$1);
-                });
-            });
-
-            return combineKeyArray(results);
-        }
-    }, {
-        key: GETTER(LAYER_IMAGE_TO_IMAGE_CSS),
-        value: function value$$1($store, image) {
-            var images = generateImagePattern([image], patterns$1);
-            return CSS_GENERATE(this.generateImageCSS($store, images));
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_MAP),
-        value: function value$$1($store, layer, itemType, isExport) {
-            var results = {};
-            $store.read("item/map/" + itemType + "/children", layer.id, function (item) {
-                var css = $store.read(itemType + "/toCSS", item, isExport);
-
-                keyEach(css, function (key, value$$1) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(value$$1);
-                });
-            });
-
-            keyEach(results, function (key, value$$1) {
-                if (isArray(results[key])) {
-                    results[key] = value$$1.join(', ');
-                }
-            });
-
-            return results;
-        }
-    }, {
-        key: "generateImageCSS",
-        value: function generateImageCSS($store, images, isExport) {
-            var results = {};
-
-            images.forEach(function (item) {
-                var newItem = _extends({}, item);
-                newItem.colorsteps = newItem.colorsteps || $store.read(ITEM_MAP_COLORSTEP_CHILDREN, newItem.id);
-                var css = IMAGE_TO_CSS(newItem, isExport);
-
-                keyEach(css, function (key, value$$1) {
-                    if (!results[key]) {
-                        results[key] = [];
-                    }
-
-                    results[key].push(value$$1);
-                });
-            });
-
-            keyEach(results, function (key, value$$1) {
-                if (isArray(value$$1)) {
-                    results[key] = value$$1.join(', ');
-                }
-            });
-
-            return results;
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_MAP_IMAGE),
-        value: function value$$1($store, layer, isExport) {
-            var list = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id).filter(function (it) {
-                return it.visible;
-            });
-            var images = generateImagePattern(list, patterns$1);
-
-            return this.generateImageCSS($store, images, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_BOXSHADOW),
-        value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_BOXSHADOW, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_IMAGE),
-        value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP_IMAGE, layer, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_MAKE_TEXTSHADOW),
-        value: function value$$1($store, layer, isExport) {
-            return $store.read(LAYER_MAKE_MAP, layer, ITEM_TYPE_TEXTSHADOW, isExport);
-        }
-    }, {
-        key: GETTER(LAYER_TO_CSS),
-        value: function value$$1($store) {
-            var layer = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var withStyle = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-            var image = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-            var isExport = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-
-            var css = {};
-
-            if (withStyle) {
-                css = _extends({}, css, BOUND_TO_CSS(layer));
-            }
-
-            css['box-sizing'] = layer.boxSizing || 'border-box';
-            css['visibility'] = layer.visible ? 'visible' : 'hidden';
-
-            if (layer.backgroundColor) {
-                css['background-color'] = layer.backgroundColor;
-            }
-
-            if (layer.mixBlendMode) {
-                css['mix-blend-mode'] = layer.mixBlendMode || "";
-            }
-
-            if (layer.backgroundClip && !layer.clipText) {
-                css['background-clip'] = layer.backgroundClip || "";
-                css['-webkit-background-clip'] = layer.backgroundClip || "";
-            }
-
-            if (layer.opacity) {
-                css['opacity'] = layer.opacity;
-            }
-
-            var imageCSS = image ? $store.read(LAYER_IMAGE_TO_IMAGE_CSS, image) : $store.read(LAYER_MAKE_IMAGE, layer, isExport);
-
-            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), LAYER_MAKE_FONT(layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), imageCSS);
-
-            return cleanObject(results);
-        }
-    }, {
-        key: GETTER(LAYER_CACHE_TO_CSS),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-            var layer = _extends({}, $store.read(ITEM_CONVERT_STYLE, item.layer), { images: item.images });
-            var css = {};
-
-            css = _extends({}, BOUND_TO_CSS(layer));
-
-            css['box-sizing'] = layer.boxSizing || 'border-box';
-            css['visibility'] = layer.visible ? 'visible' : 'hidden';
-
-            if (layer.backgroundColor) {
-                css['background-color'] = layer.backgroundColor;
-            }
-
-            if (layer.mixBlendMode) {
-                css['mix-blend-mode'] = layer.mixBlendMode;
-            }
-
-            if (layer.backgroundClip && !layer.clipText) {
-                css['background-clip'] = layer.backgroundClip || "";
-                css['-webkit-background-clip'] = layer.backgroundClip || "";
-            }
-
-            if (layer.opacity) {
-                css['opacity'] = layer.opacity;
-            }
-
-            var results = _extends({}, css, MAKE_BORDER_WIDTH(layer), MAKE_BORDER_RADIUS(layer), MAKE_BORDER_COLOR(layer), MAKE_BORDER_STYLE(layer), MAKE_TRANSFORM(layer), $store.read(LAYER_MAKE_CLIPPATH, layer), $store.read(LAYER_MAKE_FILTER, layer), $store.read(LAYER_MAKE_BACKDROP, layer), LAYER_MAKE_FONT(layer), $store.read(LAYER_MAKE_BOXSHADOW, layer), $store.read(LAYER_MAKE_TEXTSHADOW, layer), LAYER_CACHE_TO_IMAGE_CSS(layer.images));
-
-            return cleanObject(results);
-        }
-    }]);
-    return LayerManager;
-}(BaseModule);
-
-var ToolManager = function (_BaseModule) {
-    inherits(ToolManager, _BaseModule);
-
-    function ToolManager() {
-        classCallCheck(this, ToolManager);
-        return possibleConstructorReturn(this, (ToolManager.__proto__ || Object.getPrototypeOf(ToolManager)).apply(this, arguments));
-    }
-
-    createClass(ToolManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ToolManager.prototype.__proto__ || Object.getPrototypeOf(ToolManager.prototype), "initialize", this).call(this);
-
-            this.$store.tool = {
-                color: EMPTY_STRING,
-                colorSource: EMPTY_STRING,
-                'show.grid': false,
-                'snap.grid': false,
-                'guide.only': false,
-                'guide.angle': true,
-                'guide.position': true,
-                'timeline.time.format': 'default', // default: 1s, time:  00:00:00.000s
-                'timeline.1ms.width.original': 0.3,
-                'timeline.1ms.width': 0.3,
-                'timeline.scroll.left': 0,
-                'timeline.keyframe.width': 0,
-                'timeline.keyframe.rect': {},
-                'timeline.cursor.time': 0,
-                'timeline.keyframe.selectedId': EMPTY_STRING,
-                'timeline.keyframe.selectedType': EMPTY_STRING
-            };
-
-            this.$store.toolStack = [];
-        }
-    }, {
-        key: GETTER(TOOL_GET),
-        value: function value$$1($store, key, defaultValue$$1) {
-            return isUndefined$1($store.tool[key]) ? defaultValue$$1 : $store.tool[key];
-        }
-    }, {
-        key: ACTION(TOOL_SET),
-        value: function value$$1($store, key, _value) {
-            $store.tool[key] = _value;
-
-            $store.emit(CHANGE_TOOL, key, _value);
-        }
-    }, {
-        key: ACTION(TOOL_TOGGLE),
-        value: function value$$1($store, key, isForce) {
-            if (isFunction(isForce)) {
-                $store.tool[key] = !$store.tool[key];
-            } else {
-                $store.tool[key] = isForce;
-            }
-
-            $store.emit(CHANGE_TOOL);
-        }
-    }, {
-        key: ACTION(TOOL_SAVE_DATA),
-        value: function value$$1($store) {
-            $store.toolStack.push({
-                items: clone($store.items),
-                itemKeys: clone($store.itemKeys)
-            });
-        }
-    }, {
-        key: ACTION(TOOL_RESTORE_DATA),
-        value: function value$$1($store) {
-            var obj = $store.toolStack.pop();
-
-            $store.items = obj.items;
-            $store.itemKeys = obj.itemKeys;
-
-            $store.emit(CHANGE_EDITOR);
-        }
-    }]);
-    return ToolManager;
-}(BaseModule);
-
-var sample1 = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: 'red', percent: 0, index: 0 }, { color: 'blue', percent: 10, index: 100 }, { color: 'yellow', percent: 40, index: 200 }, { color: 'green', percent: 60, index: 300 }, { color: 'magenta', percent: 80, index: 400 }, { color: 'black', percent: 100, index: 500 }]
-};
-
-var gradegray = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#bdc3c7', percent: 0, index: 0 }, { color: '#2c3e50', percent: 100, index: 100 }]
-};
-
-var piggypink = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#ee9ca7', percent: 0, index: 0 }, { color: '#ffdde1', percent: 100, index: 100 }]
-};
-
-var coolblues = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#2193b0', percent: 0, index: 0 }, { color: '#6dd5ed', percent: 100, index: 100 }]
-};
-
-var megatron = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#C6FFDD', percent: 0, index: 0 }, { color: '#FBD786', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
-};
-
-var jshine = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#12c2e9', percent: 0, index: 0 }, { color: '#c471ed', percent: 50, index: 100 }, { color: '#f7797d', percent: 100, index: 200 }]
-};
-
-var darkocean = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#373B44', percent: 0, index: 0 }, { color: '#4286f4', percent: 100, index: 100 }]
-};
-
-var yoda = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#FF0099', percent: 0, index: 0 }, { color: '#493240', percent: 100, index: 100 }]
-};
-
-var liberty = {
-    image: {
-        type: 'linear',
-        angle: 90
-    },
-    colorsteps: [{ color: '#200122', percent: 0, index: 0 }, { color: '#6f0000', percent: 100, index: 100 }]
-};
-
-var silence = {
-    image: {
-        type: 'linear',
-        angle: 340
-    },
-    colorsteps: [{ color: '#b721ff', percent: 0, index: 0 }, { color: '#21d4fd', percent: 100, index: 100 }]
-};
-
-var circle = {
-    image: {
-        type: 'radial',
-        radialPosition: 'center',
-        radialType: 'circle'
-    },
-    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'black', percent: 50, index: 100 }]
-};
-
-var circle2 = {
-    image: {
-        type: 'repeating-radial',
-        radialPosition: 'top',
-        radialType: 'circle'
-    },
-    colorsteps: [{ color: 'white', percent: 0, index: 0 }, { color: 'rgb(255,82,2)', percent: 9, index: 100 }]
-};
-
-var deepblue = {
-    image: {
-        type: 'linear',
-        angle: 'to right'
-    },
-    colorsteps: [{ color: '#6a11cb', percent: 0, index: 0 }, { color: '#2575fc', percent: 100, index: 100 }]
-};
-
-var gradientList = [deepblue, sample1, gradegray, piggypink, coolblues, megatron, jshine, darkocean, yoda, liberty, silence, circle, circle2];
-
-var material = ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E'];
-
-var types = [{ id: 'material', title: 'Material Colors' }];
-
-var list = {
-    material: material
-};
-
-var ColorList = {
-    list: list,
-    types: types
-};
-
-var GradientManager = function (_BaseModule) {
-    inherits(GradientManager, _BaseModule);
-
-    function GradientManager() {
-        classCallCheck(this, GradientManager);
-        return possibleConstructorReturn(this, (GradientManager.__proto__ || Object.getPrototypeOf(GradientManager)).apply(this, arguments));
-    }
-
-    createClass(GradientManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: "getStaticList",
-        value: function getStaticList() {
-            return ColorList.list['material'].map(function (color) {
-                return {
-                    image: {
-                        type: 'static',
-                        color: color
-                    }
-                };
-            });
-        }
-    }, {
-        key: GETTER('gradient/list/sample'),
-        value: function value($store) {
-            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'all';
-
-
-            var results = [];
-
-            if (type == 'all') {
-                results.push.apply(results, toConsumableArray(gradientList.map(function (it) {
-                    return _extends({}, it);
-                })));
-            }
-
-            results.push.apply(results, toConsumableArray(this.getStaticList()));
-
-            return results;
-        }
-    }, {
-        key: ACTION('gradient/image/select'),
-        value: function value($store, obj) {
-            var image = this.getFirstImage($store);
-
-            if (image) {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
-                $store.run(ITEM_MOVE_IN, image.id, newImageId);
-                $store.run(ITEM_REMOVE_CHILDREN, image.id);
-                $store.run(ITEM_REMOVE, image.id);
-            } else {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, $store.read(SELECTION_CURRENT_LAYER_ID));
-                var newImage = this.get(newImageId);
-                $store.run(ITEM_SET, newImage);
-            }
-        }
-    }, {
-        key: "getFirstImage",
-        value: function getFirstImage($store) {
-            var image = $store.read(SELECTION_CURRENT_IMAGE);
-
-            if (!image) {
-                var layer = $store.read(SELECTION_CURRENT_LAYER);
-
-                if (!layer) {
-                    return;
-                }
-
-                var images = $store.read(ITEM_MAP_IMAGE_CHILDREN, layer.id);
-
-                if (images.length) {
-                    image = images[0];
-                }
-            }
-
-            return image;
-        }
-    }, {
-        key: ACTION('gradient/image/add'),
-        value: function value($store, obj) {
-            var image = this.getFirstImage($store);
-            var layerId = $store.read(SELECTION_CURRENT_LAYER_ID);
-            if (image) {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
-                $store.run(ITEM_MOVE_IN, image.id, newImageId);
-            } else {
-                var newImageId = $store.read(ITEM_RECOVER_IMAGE, obj, layerId);
-                var newImage = this.get(newImageId);
-                $store.run(ITEM_SET, newImage);
-            }
-        }
-    }, {
-        key: ACTION('gradient/select'),
-        value: function value($store, type, index) {
-            var obj = $store.read('gradient/list/sample', type)[index];
-
-            if (obj) {
-                $store.run('gradient/image/select', obj);
-            }
-        }
-    }, {
-        key: ACTION('gradient/add'),
-        value: function value($store, type, index) {
-            var obj = $store.read('gradient/list/sample', type)[index];
-
-            if (obj) {
-                $store.run('gradient/image/add', obj);
-            }
-        }
-    }]);
-    return GradientManager;
-}(BaseModule);
-
-var _updateUnitField;
-
-var INDEX_DIST = 100;
-var NONE_INDEX = -99999;
-
-var itemField = {
-    'mix-blend-mode': 'mixBlendMode',
-    'background-blend-mode': 'backgroundBlendMode',
-    'background-color': 'backgroundColor',
-    'x': 'x',
-    'y': 'y',
-    'width': 'width',
-    'height': 'height',
-    'rotate': 'rotate',
-    'border-radius': 'borderRadius',
-    'border-top-left-radius': 'borderTopLeftRadius',
-    'border-top-right-radius': 'borderTopRightRadius',
-    'border-bottom-left-radius': 'borderBottomLeftRadius',
-    'border-bottom-right-radius': 'borderBottomRightRadius',
-    'skewX': 'skewX',
-    'skewY': 'skewY',
-    'scale': 'scale',
-    'translateX': 'translateX',
-    'translateY': 'translateY',
-    'translateZ': 'translateZ',
-    'rotate3dX': 'rotate3dX',
-    'rotate3dY': 'rotate3dY',
-    'rotate3dZ': 'rotate3dZ',
-    'rotate3dA': 'rotate3dA',
-    'scale3dX': 'scale3dX',
-    'scale3dY': 'scale3dY',
-    'scale3dZ': 'scale3dZ',
-    'translate3dX': 'translate3dX',
-    'translate3dY': 'translate3dY',
-    'translate3dZ': 'translate3dZ'
-};
-
-var updateUnitField = (_updateUnitField = {
-    borderRadius: true,
-    borderTopLeftRadius: true,
-    borderBottomLeftRadius: true,
-    borderTopRightRadius: true,
-    borderBottomRightRadius: true,
-    backgroundSizeWidth: true,
-    backgroundSizeHeight: true,
-    x: true,
-    y: true,
-    width: true,
-    height: true,
-    backgroundPositionX: true,
-    backgroundPositionY: true
-}, defineProperty(_updateUnitField, "backgroundSizeHeight", true), defineProperty(_updateUnitField, "backgroundSizeWidth", true), _updateUnitField);
-
-var convertStyle = function convertStyle(item) {
-    var style = item.style || {};
-
-    keyEach(style, function (key, value$$1) {
-        item[itemField[key]] = value$$1;
-    });
-
-    delete item.style;
-
-    keyEach(item, function (key, value$$1) {
-        if (updateUnitField[key]) {
-            item[key] = string2unit(value$$1);
-        } else if (key == 'index' && value$$1 == Number.MAX_SAFE_INTEGER) {
-            item[key] = 0;
-        }
-    });
-
-    return item;
-};
-
-var ItemManager = function (_BaseModule) {
-    inherits(ItemManager, _BaseModule);
-
-    function ItemManager() {
-        classCallCheck(this, ItemManager);
-        return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
-    }
-
-    createClass(ItemManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: GETTER(ITEM_CONVERT_STYLE),
-        value: function value$$1($store, item) {
-            return convertStyle(item);
-        }
-    }, {
-        key: GETTER(ITEM_GET),
-        value: function value$$1($store, id) {
-            return $store.items[id] || {};
-        }
-    }, {
-        key: ACTION(ITEM_TOGGLE_VISIBLE),
-        value: function value$$1($store, id) {
-            var item = this.get(id);
-
-            var visible = !item.visible;
-
-            $store.run(ITEM_SET, { id: item.id, visible: visible });
-        }
-    }, {
-        key: ACTION(ITEM_TOGGLE_LOCK),
-        value: function value$$1($store, id) {
-            var item = this.get(id);
-
-            var lock = !item.lock;
-
-            $store.run(ITEM_SET, { id: item.id, lock: lock });
-        }
-    }, {
-        key: ACTION(ITEM_SET_ALL),
-        value: function value$$1($store, parentId, items) {
-            var isRemove = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-
-            if (isRemove) {
-                $store.run(ITEM_REMOVE_ALL, parentId);
-            }
-            $store.items = _extends({}, $store.items, items);
-        }
-    }, {
-        key: ACTION(ITEM_FOCUS),
-        value: function value$$1($store, objOrId) {
-            var $el = $store.read(ITEM_DOM, objOrId.id || objOrId);
-
-            if ($el) {
-                $el.focus();
-            }
-        }
-    }, {
-        key: ACTION(ITEM_REMOVE),
-        value: function value$$1($store, id) {
-            if (id) {
-
-                var item = this.get(id);
-                var itemType = item.itemType;
-
-                if (item.parentId) {
-                    var list = $store.read(ITEM_LIST_CHILDREN, item.parentId, itemType);
-                } else {
-                    var list = $store.read(ITEM_LIST_PAGE);
-                }
-
-                var nextSelectedId = EMPTY_STRING;
-                for (var i = 0, len = list.length; i < len; i++) {
-                    var nodeId = list[i];
-                    if ($store.items[id].index > item.index) {
-                        nextSelectedId = nodeId;
-                        break;
-                    }
-                }
-
-                if (nextSelectedId) {
-                    $store.run(SELECTION_ONE, nextSelectedId);
-                } else {
-                    if (item.index > 0) {
-                        for (var i = 0, len = list.length; i < len; i++) {
-                            var nodeId = list[i];
-                            if ($store.items[nodeId].index == item.index - INDEX_DIST) {
-                                nextSelectedId = nodeId;
-                                break;
-                            }
-                        }
-
-                        if (nextSelectedId) {
-                            $store.run(SELECTION_ONE, nextSelectedId);
-                        }
-                    } else {
-                        $store.run(SELECTION_ONE, item.parentId);
-                    }
-                }
-
-                $store.items[id].index = NONE_INDEX;
-                $store.run(ITEM_SORT, id);
-
-                if ($store.items[id].backgroundImage) {
-                    URL.revokeObjectURL($store.items[id].backgroundImage);
-                }
-                $store.run(ITEM_INITIALIZE, id);
-            }
-        }
-    }, {
-        key: ACTION(ITEM_REMOVE_ALL),
-        value: function value$$1($store, parentId) {
-            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
-
-                $store.run(ITEM_REMOVE_ALL, item.id);
-
-                $store.run(ITEM_INITIALIZE, item.id);
-            });
-        }
-    }, {
-        key: ACTION(ITEM_REMOVE_CHILDREN),
-        value: function value$$1($store, parentId) {
-            $store.read(ITEM_EACH_CHILDREN, parentId, function (item) {
-                $store.run(ITEM_REMOVE, item.id);
-            });
-        }
-    }, {
-        key: ACTION(ITEM_SET),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-            var id = obj.id;
-            var oldObj = this.get(id);
-            $store.items[id] = _extends({}, oldObj, obj);
-
-            if (!oldObj) {
-                $store.run(ITEM_INIT_CHILDREN, $store.items[id].parentId);
-            }
-
-            if (isSelected) $store.run(SELECTION_ONE, id);
-        }
-
-        // initialize items 
-
-    }, {
-        key: ACTION(ITEM_LOAD),
-        value: function value$$1($store) {
-            $store.read(ITEM_KEYS).forEach(function (id) {
-                $store.items[id] = convertStyle($store.items[id]);
-            });
-        }
-    }, {
-        key: ACTION(ITEM_INIT_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var parent = $store.items[parentId];
-            if (parent) {
-                parent.children = undefined;
-            }
-        }
-    }, {
-        key: ACTION(ITEM_SORT),
-        value: function value$$1($store, id, sort) {
-            var _$store$mapGetters = $store.mapGetters(ITEM_GET, ITEM_LIST_CHILDREN, ITEM_LIST_PAGE),
-                _$store$mapGetters2 = slicedToArray(_$store$mapGetters, 3),
-                get$$1 = _$store$mapGetters2[0],
-                list_children = _$store$mapGetters2[1],
-                list_page = _$store$mapGetters2[2];
-
-            var item = get$$1(id);
-            var itemType = item.itemType;
-
-            if (item.parentId) {
-                var list = list_children(item.parentId, itemType);
-
-                $store.run(ITEM_INIT_CHILDREN, item.parentId);
-            } else {
-                var list = list_page();
-            }
-
-            // 필요 없는 index 를 가진 객체는 지운다. 
-            list = list.filter(function (id) {
-                return $store.items[id].index != NONE_INDEX;
-            });
-
-            var sortCallback = sort || function (a, b) {
-                return $store.items[a].index > $store.items[b].index ? 1 : -1;
-            };
-
-            list.sort(sortCallback);
-
-            list.forEach(function (id, index) {
-                $store.items[id].index = index * INDEX_DIST;
-            });
-        }
-    }]);
-    return ItemManager;
-}(BaseModule);
-
-var SAVE_ID = 'css-imageeditor';
-var CACHED_PAGE_SAVE_ID = 'css-imageeditor-cached-pages';
-var CACHED_LAYER_SAVE_ID = 'css-imageeditor-cached-layers';
-var CACHED_IMAGE_SAVE_ID = 'css-imageeditor-cached-images';
-
-var StorageManager = function (_BaseModule) {
-    inherits(StorageManager, _BaseModule);
-
-    function StorageManager() {
-        classCallCheck(this, StorageManager);
-        return possibleConstructorReturn(this, (StorageManager.__proto__ || Object.getPrototypeOf(StorageManager)).apply(this, arguments));
-    }
-
-    createClass(StorageManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(StorageManager.prototype.__proto__ || Object.getPrototypeOf(StorageManager.prototype), "initialize", this).call(this);
-
-            this.$store.cachedPages = [];
-            this.$store.cachedLayers = [];
-            this.$store.cachedImages = [];
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit('changeStorage');
-        }
-    }, {
-        key: GETTER(STORAGE_GET),
-        value: function value($store, key) {
-            return JSON.parse(localStorage.getItem(SAVE_ID + "-" + key));
-        }
-    }, {
-        key: ACTION(STORAGE_SET),
-        value: function value($store, key, _value) {
-            localStorage.setItem(SAVE_ID + "-" + key, JSON.stringify(_value));
-        }
-    }, {
-        key: GETTER(STORAGE_PAGES),
-        value: function value($store) {
-            var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-            if (isNotUndefined(id)) {
-                var results = $store.cachedPages.filter(function (item) {
-                    return item.id == id;
-                });
-
-                if (!results.length) {
-                    return {};
-                }
-
-                return results[0];
-            }
-            return $store.cachedPages;
-        }
-    }, {
-        key: GETTER(STORAGE_LAYERS),
-        value: function value($store) {
-            var id = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-            if (isNotUndefined(id)) {
-                var results = $store.cachedLayers.filter(function (item) {
-                    return item.id == id;
-                });
-
-                if (!results.length) {
-                    return {};
-                }
-
-                return results[0];
-            }
-            return $store.cachedLayers;
-        }
-    }, {
-        key: GETTER(STORAGE_IMAGES),
-        value: function value($store) {
-            var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-            if (isNotUndefined(index)) {
-                return $store.cachedImages[index];
-            }
-            return $store.cachedImages;
-        }
-    }, {
-        key: ACTION(STORAGE_UNSHIFT_LAYER),
-        value: function value($store, layer) {
-            var item = _extends({}, layer);
-            item.id = uuid();
-            $store.cachedLayers.unshift(item);
-
-            $store.run(STORAGE_SAVE_LAYER);
-        }
-    }, {
-        key: ACTION(STORAGE_ADD_LAYER),
-        value: function value($store, layer) {
-            var item = _extends({}, layer);
-            item.id = uuid();
-            $store.cachedLayers.push(item);
-
-            $store.run(STORAGE_SAVE_LAYER);
-        }
-    }, {
-        key: ACTION(STORAGE_REMOVE_LAYER),
-        value: function value($store, id) {
-
-            $store.cachedLayers = $store.cachedLayers.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_LAYER);
-        }
-    }, {
-        key: ACTION(STORAGE_REMOVE_PAGE),
-        value: function value($store, id) {
-
-            $store.cachedLayers = $store.cachedPages.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_UNSHIFT_PAGE),
-        value: function value($store, page) {
-            var item = _extends({}, page);
-            item.id = uuid();
-            $store.cachedPages.unshift(item);
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_ADD_PAGE),
-        value: function value($store, page) {
-            var item = _extends({}, page);
-            item.id = uuid();
-            $store.cachedPages.push(item);
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_DELETE_PAGE),
-        value: function value($store, id) {
-
-            $store.cachedPages = $store.cachedPages.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_PAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_DELETE_IMAGE),
-        value: function value($store, id) {
-
-            $store.cachedImages = $store.cachedImages.filter(function (item) {
-                return item.id != id;
-            });
-
-            $store.run(STORAGE_SAVE_IMAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_ADD_IMAGE),
-        value: function value($store, image) {
-            var item = _extends({}, image);
-            item.id = uuid();
-            $store.cachedImages.push(item);
-
-            $store.run(STORAGE_SAVE_IMAGE);
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE),
-        value: function value($store) {
-            localStorage.setItem(SAVE_ID, JSON.stringify({
-                items: $store.items,
-                selection: $store.selection
-            }));
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE_LAYER),
-        value: function value($store) {
-            localStorage.setItem(CACHED_LAYER_SAVE_ID, JSON.stringify($store.cachedLayers));
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE_PAGE),
-        value: function value($store) {
-            localStorage.setItem(CACHED_PAGE_SAVE_ID, JSON.stringify($store.cachedPages));
-        }
-    }, {
-        key: ACTION(STORAGE_SAVE_IMAGE),
-        value: function value($store) {
-            localStorage.setItem(CACHED_IMAGE_SAVE_ID, JSON.stringify($store.cachedImages));
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD_LAYER),
-        value: function value($store) {
-            $store.cachedLayers = JSON.parse(localStorage.getItem(CACHED_LAYER_SAVE_ID) || "[]");
-
-            $store.cachedLayers = $store.cachedLayers.map(function (item) {
-                if (!item.id) item.id = uuid();
-                return item;
-            });
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD_PAGE),
-        value: function value($store) {
-            $store.cachedPages = JSON.parse(localStorage.getItem(CACHED_PAGE_SAVE_ID) || "[]");
-
-            $store.cachedPages = $store.cachedPages.map(function (item) {
-                if (!item.id) item.id = uuid();
-                return item;
-            });
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD_IMAGE),
-        value: function value($store) {
-            $store.cachedImages = JSON.parse(localStorage.getItem(CACHED_IMAGE_SAVE_ID) || "[]");
-
-            $store.cachedLayers = $store.cachedLayers.map(function (item) {
-                if (!item.id) item.id = uuid();
-                return item;
-            });
-        }
-    }, {
-        key: ACTION(STORAGE_LOAD),
-        value: function value($store, callback) {
-            var obj = JSON.parse(localStorage.getItem(SAVE_ID) || "{}");
-
-            if (obj.items) $store.items = obj.items;
-            if (obj.selection) $store.selection = obj.selection;
-
-            if (obj.selectedId) {
-                if (!$store.selection.ids.length) {
-                    $store.selection.ids = [obj.selectedId];
-                }
-            }
-
-            $store.run(ITEM_KEYS_GENERATE);
-
-            if ($store.selection.ids && $store.selection.ids.length) {
-                $store.run(SELECTION_ONE, $store.selection.ids[0]);
-            }
-
-            if (isFunction(callback)) {
-                callback(!!obj.items);
-            }
-        }
-    }]);
-    return StorageManager;
-}(BaseModule);
-
-var EXTERNAL_PASTE = 'external/paste';
-
-var ExternalResourceManager = function (_BaseModule) {
-    inherits(ExternalResourceManager, _BaseModule);
-
-    function ExternalResourceManager() {
-        classCallCheck(this, ExternalResourceManager);
-        return possibleConstructorReturn(this, (ExternalResourceManager.__proto__ || Object.getPrototypeOf(ExternalResourceManager)).apply(this, arguments));
-    }
-
-    createClass(ExternalResourceManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: ACTION(EXTERNAL_PASTE),
-        value: function value($store, dataTransfer, layerId) {
-            var items = [].concat(toConsumableArray(dataTransfer.items));
-            var types = [].concat(toConsumableArray(dataTransfer.types)).filter(function (type) {
-                return type == 'text/uri-list';
-            });
-
-            var dataList = types.map(function (type) {
-                return dataTransfer.getData(type);
-            });
-
-            if (dataList.length) {
-                $store.read(IMAGE_GET_URL, dataList, function (url) {
-
-                    $store.run(ITEM_PREPEND_IMAGE_URL, url, true, layerId);
-                });
-            }
-
-            var files = [].concat(toConsumableArray(dataTransfer.files));
-            if (files.length) {
-
-                $store.read(IMAGE_GET_FILE, files, function (img) {
-                    $store.dispatch(ITEM_PREPEND_IMAGE_FILE, img, true, layerId);
-                });
-            }
-        }
-    }]);
-    return ExternalResourceManager;
-}(BaseModule);
-
-var sample1$1 = "\n<svg xmlns='http://www.w3.org/2000/svg'>\n    <rect width=\"30px\" height=\"30px\" fill=\"black\" />\n</svg>\n";
-
-var cloud = "<svg version=\"1.1\" id=\"Capa_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 60 60\" style=\"enable-background:new 0 0 60 60;\" xml:space=\"preserve\">\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M50.003,27\n\tc-0.115-8.699-7.193-16-15.919-16c-5.559,0-10.779,3.005-13.661,7.336C19.157,17.493,17.636,17,16,17c-4.418,0-8,3.582-8,8\n\tc0,0.153,0.014,0.302,0.023,0.454C8.013,25.636,8,25.82,8,26c-3.988,1.912-7,6.457-7,11.155C1,43.67,6.33,49,12.845,49h24.507\n\tc0.138,0,0.272-0.016,0.408-0.021C37.897,48.984,38.031,49,38.169,49h9.803C54.037,49,59,44.037,59,37.972\n\tC59,32.601,55.106,27.961,50.003,27z\"/>\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M50.003,27\n\tc0,0-2.535-0.375-5.003,0\"/>\n<path style=\"fill:#7FABDA;stroke:#7383BF;stroke-width:2;stroke-linecap:round;stroke-miterlimit:10;\" d=\"M8,25c0-4.418,3.582-8,8-8\n\ts8,3.582,8,8\"/>\n</svg>\n";
-
-var SVGList = [sample1$1, cloud];
-
-var SVGManager = function (_BaseModule) {
-    inherits(SVGManager, _BaseModule);
-
-    function SVGManager() {
-        classCallCheck(this, SVGManager);
-        return possibleConstructorReturn(this, (SVGManager.__proto__ || Object.getPrototypeOf(SVGManager)).apply(this, arguments));
-    }
-
-    createClass(SVGManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(SVGManager.prototype.__proto__ || Object.getPrototypeOf(SVGManager.prototype), "initialize", this).call(this);
-
-            this.$store.svgList = [];
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_SVG_LIST);
-        }
-    }, {
-        key: GETTER(SVG_LIST),
-        value: function value$$1($store) {
-            return [].concat(toConsumableArray($store.svgList));
-        }
-    }, {
-        key: ACTION(SVG_LIST_LOAD),
-        value: function value$$1($store) {
-            var loadList = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-            $store.svgList = [].concat(toConsumableArray(loadList));
-        }
-    }, {
-        key: GETTER(SVG_GET_CLIPPATH),
-        value: function value$$1($store, svg, id, callback) {
-            var transform = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : "";
-
-
-            var $div = new Dom('div');
-            var paths = $div.html(svg).$('svg').html();
-
-            var svg = "<svg height=\"0\" width=\"0\"><defs><clipPath id=\"" + id + "\" " + (transform ? "transform=\"" + transform + "\"" : "") + " >" + paths + "</clipPath></defs></svg>";
-
-            callback && callback(svg, id);
-        }
-    }, {
-        key: GETTER(SVG_GET_BLOB),
-        value: function value$$1($store, index, key) {
-            if (SVGList[index]) {
-                var svg = "" + SVGList[index];
-
-                return new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-            } else {
-                var list = $store.svgList.filter(function (item) {
-                    return item.key == key;
-                });
-
-                if (list.length) {
-                    return new Blob([list[0].svg], { type: "image/svg+xml;charset=utf-8" });
-                }
-            }
-
-            return EMPTY_STRING;
-        }
-    }, {
-        key: GETTER(SVG_GET),
-        value: function value$$1($store, index, key) {
-            if (SVGList[index]) {
-                return SVGList[index];
-            } else {
-                var list = $store.svgList.filter(function (item) {
-                    return item.key == key;
-                });
-
-                if (list.length) {
-                    return list[0].svg;
-                }
-            }
-
-            return EMPTY_STRING;
-        }
-    }]);
-    return SVGManager;
-}(BaseModule);
-
-var PageManager = function (_BaseModule) {
-    inherits(PageManager, _BaseModule);
-
-    function PageManager() {
-        classCallCheck(this, PageManager);
-        return possibleConstructorReturn(this, (PageManager.__proto__ || Object.getPrototypeOf(PageManager)).apply(this, arguments));
-    }
-
-    createClass(PageManager, [{
-        key: GETTER(PAGE_TO_STRING),
-        value: function value$$1($store, id) {
-
-            var page = this.get(id);
-            var obj = $store.read(PAGE_TO_CSS, page) || {};
-
-            keyMap(obj, function (key, value$$1) {
-                return key + ": " + value$$1 + ";";
-            }).join(WHITE_STRING$1);
-        }
-    }, {
-        key: GETTER(PAGE_TO_CSS),
-        value: function value$$1($store) {
-            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-            var css = {
-                overflow: sample.clip ? 'hidden' : EMPTY_STRING,
-                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-                width: stringUnit(sample.width),
-                height: stringUnit(sample.height)
-            };
-
-            if (sample.perspective) {
-                css.perspective = stringUnit(sample.perspective);
-            }
-
-            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
-                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
-            }
-
-            return CSS_SORTING(css);
-        }
-    }, {
-        key: GETTER(PAGE_COLORVIEW_TO_CSS),
-        value: function value$$1($store) {
-            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
-            var css = {
-                'transform-style': sample.preserve ? 'preserve-3d' : 'flat'
-            };
-
-            if (sample.perspective) {
-                css.perspective = stringUnit(sample.perspective);
-            }
-
-            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
-                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
-            }
-
-            return CSS_SORTING(css);
-        }
-    }, {
-        key: GETTER(PAGE_CACHE_TO_CSS),
-        value: function value$$1($store) {
-            var page = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var sample = $store.read(ITEM_CONVERT_STYLE, page || {});
-
-            var css = {
-                overflow: sample.clip ? 'hidden' : EMPTY_STRING,
-                'transform-style': sample.preserve ? 'preserve-3d' : 'flat',
-                width: stringUnit(sample.width),
-                height: stringUnit(sample.height)
-            };
-
-            if (sample.perspective) {
-                css.perspective = stringUnit(sample.perspective);
-            }
-
-            if (isPercentUnit(sample.perspectiveOriginPositionX) && isPercentUnit(sample.perspectiveOriginPositionY)) {
-                css['perspective-origin'] = stringUnit(sample.perspectiveOriginPositionX) + " " + stringUnit(sample.perspectiveOriginPositionY);
-            }
-
-            return CSS_SORTING(css);
-        }
-    }, {
-        key: GETTER(PAGE_CACHE_TO_STRING),
-        value: function value$$1($store, page) {
-            var obj = $store.read(PAGE_CACHE_TO_CSS, page) || {};
-
-            return {
-                css: CSS_TO_STRING(obj),
-                obj: obj
-            };
-        }
-    }]);
-    return PageManager;
-}(BaseModule);
-
-var SELECT_MODE_ONE = "SELECT_MODE_ONE";
-var SELECT_MODE_AREA = "SELECT_MODE_AREA";
-var SELECT_MODE_GROUP = "SELECT_MODE_GROUP";
-
-var SelectionManager = function (_BaseModule) {
-    inherits(SelectionManager, _BaseModule);
-
-    function SelectionManager() {
-        classCallCheck(this, SelectionManager);
-        return possibleConstructorReturn(this, (SelectionManager.__proto__ || Object.getPrototypeOf(SelectionManager)).apply(this, arguments));
-    }
-
-    createClass(SelectionManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(SelectionManager.prototype.__proto__ || Object.getPrototypeOf(SelectionManager.prototype), "initialize", this).call(this);
-
-            editor$1.selection.initialize();
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_SELECTION);
-        }
-    }, {
-        key: "checkInArea",
-        value: function checkInArea(area, item) {
-
-            if (area.width === 0) {
-                return false;
-            }
-            if (area.height === 0) {
-                return false;
-            }
-            if (area.x2 < item.x) {
-                return false;
-            }
-            if (area.y2 < item.y) {
-                return false;
-            }
-            if (area.x > item.x2) {
-                return false;
-            }
-            if (area.y > item.y2) {
-                return false;
-            }
-
-            return true;
-        }
-    }, {
-        key: GETTER(SELECTION_CHECK),
-        value: function value$$1($store, id) {
-            return $store.selection.ids.includes(id);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_EMPTY),
-        value: function value$$1($store) {
-            return $store.selection.ids.length === 0;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_NOT_EMPTY),
-        value: function value$$1($store) {
-            return $store.selection.ids.length > 0;
-        }
-    }, {
-        key: GETTER(SELECTION_HAS_ONE),
-        value: function value$$1($store) {
-            return $store.selection.ids.length === 1;
-        }
-    }, {
-        key: GETTER(SELECTION_HAS_MANY),
-        value: function value$$1($store) {
-            return $store.selection.ids.length > 1;
-        }
-    }, {
-        key: GETTER(SELECTION_TYPE),
-        value: function value$$1($store) {
-            return $store.selection.type;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT),
-        value: function value$$1($store) {
-            return $store.selection.ids.filter(function (id) {
-                return !!$store.items[id];
-            }).map(function (id) {
-                return $store.items[id];
-            });
-        }
-    }, {
-        key: GETTER(SELECTION_UNIT_VALUES),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_CURRENT).map(function (item) {
-                return {
-                    id: item.id,
-                    x: unitValue(item.x),
-                    y: unitValue(item.y),
-                    width: unitValue(item.width),
-                    height: unitValue(item.height),
-                    x2: unitValue(item.x) + unitValue(item.width),
-                    y2: unitValue(item.y) + unitValue(item.height),
-                    centerX: unitValue(item.x) + unitValue(item.width) / 2,
-                    centerY: unitValue(item.y) + unitValue(item.height) / 2
-                };
-            });
-        }
-    }, {
-        key: "getCurrentItem",
-        value: function getCurrentItem($store, itemType, callback) {
-            var items = null;
-
-            if ($store.selection.itemType == itemType) {
-                var items = $store.read(SELECTION_CURRENT);
-            }
-
-            if (isArray(items) && items.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(items[0]);
-                    return items[0];
-                } else {
-                    if (isFunction(callback)) callback(items);
-                    return items;
-                }
-            }
-
-            return items;
-        }
-    }, {
-        key: "getCurrentItemId",
-        value: function getCurrentItemId($store, itemType, callback) {
-            var items = null;
-
-            if ($store.selection.itemType == itemType) {
-                var items = $store.read(SELECTION_CURRENT);
-            }
-
-            if (isArray(items) && items.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(items[0].id);
-                    return items[0].id;
-                } else {
-                    if (isFunction(callback)) callback(items.map(function (it) {
-                        return it.id;
-                    }));
-                    return items.map(function (it) {
-                        return it.id;
-                    });
-                }
-            }
-
-            return items;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_IMAGE),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_IMAGE, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_IMAGE_ID),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_IMAGE, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_BOXSHADOW),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_BOXSHADOW, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_BOXSHADOW_ID),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_BOXSHADOW, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_TEXTSHADOW),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItem($store, ITEM_TYPE_TEXTSHADOW, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_TEXTSHADOW_ID),
-        value: function value$$1($store, callback) {
-            return this.getCurrentItemId($store, ITEM_TYPE_TEXTSHADOW, callback);
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_LAYER),
-        value: function value$$1($store, callback) {
-            var _this2 = this;
-
-            var layers = ($store.selection.layers || []).map(function (id) {
-                return _this2.get(id);
-            });
-
-            if (isArray(layers) && layers.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(layers[0]);
-                    return layers[0];
-                } else {
-                    if (isFunction(callback)) callback(layers);
-                    return layers;
-                }
-            }
-
-            return layers;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_LAYER_ID),
-        value: function value$$1($store, callback) {
-            var layers = $store.selection.layers || [];
-
-            if (isArray(layers) && layers.length) {
-                if ($store.read(SELECTION_IS_ONE)) {
-                    if (isFunction(callback)) callback(layers[0]);
-                    return layers[0];
-                } else {
-                    if (isFunction(callback)) callback(layers);
-                    return layers;
-                }
-            }
-
-            return layers;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_PAGE),
-        value: function value$$1($store, callback) {
-            var page = this.get($store.selection.pageId);
-
-            if (!page) {
-                var _$store$read = $store.read(ITEM_LIST_PAGE),
-                    _$store$read2 = slicedToArray(_$store$read, 1),
-                    page = _$store$read2[0];
-            }
-
-            if (page) {
-                if (isFunction(callback)) callback(page);
-                return page;
-            }
-
-            return null;
-        }
-    }, {
-        key: GETTER(SELECTION_CURRENT_PAGE_ID),
-        value: function value$$1($store, callback) {
-
-            var pageId = $store.selection.pageId;
-
-            if (!pageId) {
-                var pages = $store.read(ITEM_LIST_PAGE);
-                pageId = (pages[0] || {}).pageId;
-            }
-
-            if (pageId) {
-                if (isFunction(callback)) callback(pageId);
-                return pageId;
-            }
-
-            return null;
-        }
-    }, {
-        key: GETTER(SELECTION_MODE),
-        value: function value$$1($store) {
-            return $store.selection;
-        }
-    }, {
-        key: GETTER(SELECTION_IS),
-        value: function value$$1($store, type) {
-            return $store.selection.type == type;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_ITEM),
-        value: function value$$1($store, type) {
-            return $store.selection.itemType == type;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_LAYER),
-        value: function value$$1($store, type) {
-            return IS_LAYER($store.selection);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_IMAGE),
-        value: function value$$1($store, type) {
-
-            var isImage = IS_IMAGE($store.selection);
-            var isTypeCheck = true;
-
-            if (type) {
-                if ($store.selection.ids.length) {
-                    var item = this.get($store.selection.ids[0]);
-
-                    isTypeCheck = item.type == type;
-                }
-            }
-
-            return isImage && isTypeCheck;
-        }
-    }, {
-        key: GETTER(SELECTION_IS_PAGE),
-        value: function value$$1($store, type) {
-            return IS_PAGE($store.selection);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_BOXSHADOW),
-        value: function value$$1($store, type) {
-            return IS_BOXSHADOW($store.selection);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_TEXTSHADOW),
-        value: function value$$1($store, type) {
-            return IS_TEXTSHADOW($store.selection);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_ONE),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_IS, SELECT_MODE_ONE);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_GROUP),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_IS, SELECT_MODE_GROUP);
-        }
-    }, {
-        key: GETTER(SELECTION_IS_AREA),
-        value: function value$$1($store) {
-            return $store.read(SELECTION_IS, SELECT_MODE_AREA);
-        }
-    }, {
-        key: GETTER(SELECTION_LAYERS),
-        value: function value$$1($store) {
-
-            return $store.read(ITEM_MAP_LAYER_CHILDREN, $store.selection.pageId).map(function (item) {
-                var x = item.x,
-                    y = item.y,
-                    width = item.width,
-                    height = item.height,
-                    lock = item.lock,
-                    visible = item.visible,
-                    id = item.id;
-
-
-                x = unitValue(x);
-                y = unitValue(y);
-                width = unitValue(width);
-                height = unitValue(height);
-                var x2 = x + width;
-                var y2 = y + height;
-
-                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id, lock: lock, visible: visible };
-            });
-        }
-    }, {
-        key: ACTION(SELECTION_ONE),
-        value: function value$$1($store) {
-            var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-
-            $store.selection = {
-                type: SELECT_MODE_ONE,
-                ids: [selectedId],
-                itemType: $store.items[selectedId].itemType
-            };
-
-            var path = $store.read(ITEM_PATH, selectedId);
-            $store.selection.pageId = path[path.length - 1];
-
-            var layers = [];
-
-            if (IS_LAYER($store.selection)) {
-                layers = [selectedId];
-            } else if (IS_IMAGE($store.selection) || IS_BOXSHADOW($store.selection) || IS_TEXTSHADOW($store.selection)) {
-                layers = [this.get(selectedId).parentId];
-            }
-
-            $store.selection.layers = layers;
-        }
-    }, {
-        key: ACTION(SELECTION_CHANGE),
-        value: function value$$1($store, itemType) {
-            if (IS_PAGE({ itemType: itemType })) {
-                $store.read(SELECTION_CURRENT_PAGE_ID, function (id) {
-                    if (id) {
-                        $store.run(SELECTION_ONE, id);
-                    }
-                });
-            }
-        }
-    }, {
-        key: ACTION(SELECTION_AREA),
-        value: function value$$1($store, _ref) {
-            var _this3 = this;
-
-            var x = _ref.x,
-                y = _ref.y,
-                width = _ref.width,
-                height = _ref.height;
-
-            var x2 = x + width;
-            var y2 = y + height;
-
-            var area = { x: x, y: y, width: width, height: height, x2: x2, y2: y2 };
-
-            var layers = $store.read(SELECTION_LAYERS);
-
-            var selectItems = [];
-            layers.forEach(function (it) {
-
-                if (!it.lock && _this3.checkInArea(area, it)) {
-                    selectItems.push(it.id);
-                }
-            });
-
-            if (selectItems.length) {
-                $store.selection = {
-                    type: selectItems.length == 1 ? SELECT_MODE_ONE : SELECT_MODE_GROUP,
-                    ids: selectItems,
-                    itemType: ITEM_TYPE_LAYER
-                };
-                var path = $store.read(ITEM_PATH, $store.selection.ids[0]);
-                $store.selection.pageId = path[path.length - 1];
-
-                var layers = [];
-
-                if (IS_LAYER($store.selection)) {
-                    layers = [].concat(selectItems);
-                } else if (IS_IMAGE($store.selection) || IS_BOXSHADOW($store.selection) || IS_TEXTSHADOW($store.selection)) {
-                    layers = selectItems.map(function (id) {
-                        return _this3.get(id).parentId;
-                    });
-                }
-
-                $store.selection.layers = layers;
-            } else {
-                $store.run(SELECTION_CHANGE, ITEM_TYPE_PAGE);
-            }
-        }
-    }, {
-        key: GETTER(SELECTION_RECT),
-        value: function value$$1($store) {
-            var minX = Number.MAX_SAFE_INTEGER;
-            var minY = Number.MAX_SAFE_INTEGER;
-            var maxX = Number.MIN_SAFE_INTEGER;
-            var maxY = Number.MIN_SAFE_INTEGER;
-
-            var items = $store.selection.ids.map(function (id) {
-                var _$store$items$id = $store.items[id],
-                    x = _$store$items$id.x,
-                    y = _$store$items$id.y,
-                    width = _$store$items$id.width,
-                    height = _$store$items$id.height;
-
-
-                x = unitValue(x);
-                y = unitValue(y);
-                width = unitValue(width);
-                height = unitValue(height);
-                var x2 = x + width;
-                var y2 = y + height;
-
-                if (minX > x) minX = x;
-                if (minY > y) minY = y;
-                if (maxX < x2) maxX = x2;
-                if (maxY < y2) maxY = y2;
-
-                return { x: x, y: y, width: width, height: height, x2: x2, y2: y2, id: id };
-            });
-
-            var x = minX;
-            var y = minY;
-            var x2 = maxX;
-            var y2 = maxY;
-
-            var width = x2 - x;
-            var height = y2 - y;
-            var centerX = x + width / 2;
-            var centerY = y + height / 2;
-
-            x = pxUnit(x);
-            y = pxUnit(y);
-            width = pxUnit(width);
-            height = pxUnit(height);
-            centerX = pxUnit(centerX);
-            centerY = pxUnit(centerY);
-
-            if (items.length == 1) {
-                return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY, id: items[0].id };
-            }
-
-            return { x: x, y: y, width: width, height: height, centerX: centerX, centerY: centerY };
-        }
-    }]);
-    return SelectionManager;
-}(BaseModule);
-
-var OrderingManager = function (_BaseModule) {
-    inherits(OrderingManager, _BaseModule);
-
-    function OrderingManager() {
-        classCallCheck(this, OrderingManager);
-        return possibleConstructorReturn(this, (OrderingManager.__proto__ || Object.getPrototypeOf(OrderingManager)).apply(this, arguments));
-    }
-
-    createClass(OrderingManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            console.log('afterDispatch');
-            this.$store.emit(CHANGE_EDITOR$1);
-            console.log('afterDispatch', 'after', CHANGE_EDITOR$1);
-        }
-    }, {
-        key: "horizontal",
-        value: function horizontal($store) {
-            var items = $store.read(SELECTION_UNIT_VALUES);
-
-            var x = Number.MAX_SAFE_INTEGER;
-            var xItem = null;
-
-            var x2 = Number.MIN_SAFE_INTEGER;
-            var x2Item = null;
-
-            items.forEach(function (item) {
-
-                if (x > item.x) {
-                    x = item.x;
-                    xItem = item;
-                } else if (x2 < item.x2) {
-                    x2 = item.x2;
-                    x2Item = item;
-                }
-            });
-
-            var count = items.length - 2;
-            var tempIds = [xItem.id, x2Item.id];
-
-            if (count > 0) {
-                var restItems = items.filter(function (it) {
-                    return !tempIds.includes(it.id);
-                });
-
-                restItems.sort(function (a, b) {
-                    if (a.centerX == b.centerX) return 0;
-                    return a.centerX > b.centerX ? 1 : -1;
-                });
-
-                var startX = xItem.centerX;
-                var endX = x2Item.centerX;
-                var unitWidth = (endX - startX) / (count + 1);
-
-                restItems.forEach(function (item, index) {
-                    item.centerX = startX + (index + 1) * unitWidth;
-                    item.x = item.centerX - item.width / 2;
-
-                    $store.run(ITEM_SET, { id: item.id, x: pxUnit(item.x) });
-                });
-            }
-        }
-    }, {
-        key: "vertical",
-        value: function vertical($store) {
-            var items = $store.read(SELECTION_UNIT_VALUES);
-
-            var y = Number.MAX_SAFE_INTEGER;
-            var yItem = null;
-
-            var y2 = Number.MIN_SAFE_INTEGER;
-            var y2Item = null;
-
-            items.forEach(function (item) {
-
-                if (y > item.y) {
-                    y = item.y;
-                    yItem = item;
-                } else if (y2 < item.y2) {
-                    y2 = item.y2;
-                    y2Item = item;
-                }
-            });
-
-            var count = items.length - 2;
-            var tempIds = [yItem.id, y2Item.id];
-
-            if (count > 0) {
-                var restItems = items.filter(function (it) {
-                    return !tempIds.includes(it.id);
-                });
-
-                restItems.sort(function (a, b) {
-                    if (a.centerY == b.centerY) return 0;
-                    return a.centerY > b.centerY ? 1 : -1;
-                });
-
-                var startY = yItem.centerY;
-                var endY = y2Item.centerY;
-                var unitHeight = (endY - startY) / (count + 1);
-
-                restItems.forEach(function (item, index) {
-                    item.centerY = startY + (index + 1) * unitHeight;
-                    item.y = item.centerY - item.height / 2;
-
-                    $store.run(ITEM_SET, { id: item.id, y: pxUnit(item.y) });
-                });
-            }
-        }
-    }, {
-        key: "left",
-        value: function left($store) {
-            var items = $store.read(SELECTION_CURRENT);
-            var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x);
-            })));
-
-            items.forEach(function (item) {
-                $store.run(ITEM_SET, { id: item.id, x: pxUnit(x) });
-            });
-        }
-    }, {
-        key: "center",
-        value: function center($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var x = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x);
-            })));
-
-            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x) + unitValue(item.width);
-            })));
-
-            var centerX = x + Math.floor((x2 - x) / 2);
-
-            items.forEach(function (item) {
-                var newX = pxUnit(Math.floor(centerX - unitValue(item.width) / 2));
-                $store.run(ITEM_SET, { id: item.id, x: newX });
-            });
-        }
-    }, {
-        key: "right",
-        value: function right($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var x2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.x) + unitValue(item.width);
-            })));
-
-            items.forEach(function (item) {
-                var newX = pxUnit(x2 - unitValue(item.width));
-                $store.run(ITEM_SET, { id: item.id, x: newX });
-            });
-        }
-    }, {
-        key: "top",
-        value: function top($store) {
-            var items = $store.read(SELECTION_CURRENT);
-            var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y);
-            })));
-
-            items.forEach(function (item) {
-                $store.run(ITEM_SET, { id: item.id, y: pxUnit(y) });
-            });
-        }
-    }, {
-        key: "middle",
-        value: function middle($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var y = Math.min.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y);
-            })));
-
-            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y) + unitValue(item.height);
-            })));
-
-            var centerY = y + (y2 - y) / 2;
-
-            items.forEach(function (item) {
-                var newY = pxUnit(Math.floor(centerY - unitValue(item.height) / 2));
-                $store.run(ITEM_SET, { id: item.id, y: newY });
-            });
-        }
-    }, {
-        key: "bottom",
-        value: function bottom($store) {
-            var items = $store.read(SELECTION_CURRENT);
-
-            var y2 = Math.max.apply(Math, toConsumableArray(items.map(function (item) {
-                return unitValue(item.y) + unitValue(item.height);
-            })));
-
-            items.forEach(function (item) {
-                var newY = pxUnit(y2 - unitValue(item.height));
-                $store.run(ITEM_SET, { id: item.id, y: newY });
-            });
-        }
-    }, {
-        key: ACTION(ORDERING_TYPE),
-        value: function value$$1($store, type) {
-            if (this[type]) {
-                console.log('type', type);
-                this[type].call(this, $store);
-            }
-        }
-    }, {
-        key: "forward",
-        value: function forward($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_NEXT, id);
-            });
-        }
-    }, {
-        key: "backward",
-        value: function backward($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_PREV, id);
-            });
-        }
-    }, {
-        key: "front",
-        value: function front($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_LAST, id);
-            });
-        }
-    }, {
-        key: "back",
-        value: function back($store) {
-            $store.read(SELECTION_CURRENT_LAYER_ID, function (id) {
-                $store.run(ITEM_MOVE_FIRST, id);
-            });
-        }
-    }, {
-        key: ACTION(ORDERING_INDEX),
-        value: function value$$1($store, type) {
-            if (this[type]) {
-                this[type].call(this, $store);
-            }
-        }
-    }]);
-    return OrderingManager;
-}(BaseModule);
-
-var MatrixManager = function (_BaseModule) {
-    inherits(MatrixManager, _BaseModule);
-
-    function MatrixManager() {
-        classCallCheck(this, MatrixManager);
-        return possibleConstructorReturn(this, (MatrixManager.__proto__ || Object.getPrototypeOf(MatrixManager)).apply(this, arguments));
-    }
-
-    createClass(MatrixManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_LAYER);
-        }
-    }, {
-        key: ACTION('matrix/move'),
-        value: function value$$1($store, newValue) {
-            var item = this.get(newValue.id);
-
-            Object.keys(newValue).filter(function (key) {
-                return key != 'id';
-            }).forEach(function (key) {
-                item[key] = pxUnit(unitValue(item[key]) + newValue[key]);
-            });
-
-            $store.run(ITEM_SET, item);
-        }
-    }]);
-    return MatrixManager;
-}(BaseModule);
-
-var TextShadowManager = function (_BaseModule) {
-    inherits(TextShadowManager, _BaseModule);
-
-    function TextShadowManager() {
-        classCallCheck(this, TextShadowManager);
-        return possibleConstructorReturn(this, (TextShadowManager.__proto__ || Object.getPrototypeOf(TextShadowManager)).apply(this, arguments));
-    }
-
-    createClass(TextShadowManager, [{
-        key: GETTER('textshadow/toCSS'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var isExport = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-
-            var results = {};
-            var textshadow = $store.read('textshadow/toTextShadowString', item, isExport);
-
-            if (textshadow) {
-                results['text-shadow'] = textshadow;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('textshadow/cache/toCSS'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-
-            var results = {};
-            var textshadow = $store.read('textshadow/toTextShadowString', item, isExport);
-
-            if (textshadow) {
-                results['text-shadow'] = textshadow;
-            }
-
-            return results;
-        }
-    }, {
-        key: GETTER('textshadow/toString'),
-        value: function value$$1($store) {
-            var image = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-
-            var obj = $store.read('textshadow/toCSS', image);
-
-            keyMap(obj, function (key, value$$1) {
-                return key + ": " + value$$1 + ";";
-            }).join(WHITE_STRING$1);
-        }
-    }, {
-        key: GETTER('textshadow/toTextShadowString'),
-        value: function value$$1($store) {
-            var item = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-
-            if (!item) return EMPTY_STRING;
-
-            var results = [];
-
-            results.push(stringUnit(item.offsetX), stringUnit(item.offsetY), stringUnit(item.blurRadius), item.color);
-
-            return results.join(WHITE_STRING$1);
-        }
-    }]);
-    return TextShadowManager;
-}(BaseModule);
-
-var filterInfo = {
-    'filterBlur': { func: 'blur', title: 'Blur', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PX, defaultValue: 0 },
-    'filterGrayscale': { func: 'grayscale', title: 'Grayscale', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'filterHueRotate': { func: 'hue-rotate', title: 'Hue', type: 'range', min: 0, max: 360, step: 1, unit: 'deg', defaultValue: 0 },
-    'filterInvert': { func: 'invert', title: 'Invert', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 },
-    'filterBrightness': { func: 'brightness', title: 'Brightness', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterContrast': { func: 'contrast', title: 'Contrast', type: 'range', min: 0, max: 200, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterDropshadow': { func: 'drop-shadow', type: 'multi', title: 'Drop Shadow' },
-    'filterDropshadowOffsetX': { title: 'Offset X', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'filterDropshadowOffsetY': { title: 'Offset Y', type: 'range', min: -100, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'filterDropshadowBlurRadius': { title: 'Blur Radius', type: 'range', min: 0, max: 100, step: 1, defaultValue: 0, unit: UNIT_PX },
-    'filterDropshadowColor': { title: 'Color', type: 'color', defaultValue: 'black', unit: UNIT_COLOR },
-    'filterOpacity': { func: 'opacity', title: 'Opacity', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterSaturate': { func: 'saturate', title: 'Saturate', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 100 },
-    'filterSepia': { func: 'sepia', title: 'Sepia', type: 'range', min: 0, max: 100, step: 1, unit: UNIT_PERCENT, defaultValue: 0 }
-};
-
-var DROP_SHADOW_LIST = ['filterDropshadowOffsetX', 'filterDropshadowOffsetY', 'filterDropshadowBlurRadius', 'filterDropshadowColor'];
-
-var FilterManager = function (_BaseModule) {
-    inherits(FilterManager, _BaseModule);
-
-    function FilterManager() {
-        classCallCheck(this, FilterManager);
-        return possibleConstructorReturn(this, (FilterManager.__proto__ || Object.getPrototypeOf(FilterManager)).apply(this, arguments));
-    }
-
-    createClass(FilterManager, [{
-        key: GETTER(FILTER_GET),
-        value: function value$$1($store, id) {
-            return filterInfo[id];
-        }
-    }, {
-        key: GETTER(FILTER_LIST),
-        value: function value$$1($store, layerId) {
-            var layer = this.get(layerId);
-            var realFilters = {};
-
-            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
-                return layer[key];
-            }).forEach(function (key) {
-                realFilters[key] = layer[key];
-            });
-
-            realFilters = _extends({}, FILTER_DEFAULT_OBJECT, realFilters);
-
-            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
-                return _extends({ key: key }, realFilters[key]);
-            });
-
-            filterList.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return filterList.map(function (it) {
-                return it.key;
-            });
-        }
-    }, {
-        key: GETTER(FILTER_TO_CSS),
-        value: function value$$1($store, layer) {
-            var realFilters = {};
-
-            FILTER_DEFAULT_OBJECT_KEYS.filter(function (key) {
-                return layer[key];
-            }).forEach(function (key) {
-                realFilters[key] = layer[key];
-            });
-
-            realFilters = _extends({}, FILTER_DEFAULT_OBJECT, realFilters);
-
-            var filterList = FILTER_DEFAULT_OBJECT_KEYS.map(function (key) {
-                return _extends({ key: key }, realFilters[key]);
-            });
-
-            filterList.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            var filterString = filterList.filter(function (it) {
-                return it.checked;
-            }).map(function (it) {
-                var viewObject = filterInfo[it.key];
-                if (it.key == 'filterDropshadow') {
-
-                    var values = DROP_SHADOW_LIST.map(function (key) {
-                        return stringUnit(layer[key] || FILTER_DEFAULT_OBJECT[key]);
-                    }).join(WHITE_STRING$1);
-
-                    return viewObject.func + "(" + values + ")";
-                } else {
-                    var values = stringUnit(it);
-                    return viewObject.func + "(" + values + ")";
-                }
-            }).join(WHITE_STRING$1);
-
-            return {
-                filter: filterString
-            };
-        }
-    }]);
-    return FilterManager;
-}(BaseModule);
-
-var en_US = {
-
-    app: {
-        title: 'EASYLOGIC',
-        counting: '{index}'
-    },
-    label: {
-        pattern: {
-            cloneCount: 'Clone'
-        }
-    }
-};
-
-var ko_KR = {
-    app: {
-        title: '이지로직',
-        counting: '{index}'
-    },
-    label: {
-        pattern: {
-            cloneCount: '복제'
-        }
-    }
-};
-
-var langs = {
-    en_US: flatKeyValue(en_US),
-    ko_KR: flatKeyValue(ko_KR)
-};
-
-var LANG_EN = 'en_US';
-
-var FALLBACK_LANG = LANG_EN;
-
-var i18n = {
-    get: function get$$1(key) {
-        var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var lang = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : FALLBACK_LANG;
-
-        var str = langs[lang][key] || langs[FALLBACK_LANG][key] || undefined;
-
-        keyEach(params, function (key, value) {
-            str = str.replace(new RegExp('{' + key + '}', 'ig'), value);
-        });
-
-        return str;
-    }
-};
-
-var I18nManager = function (_BaseModule) {
-    inherits(I18nManager, _BaseModule);
-
-    function I18nManager() {
-        classCallCheck(this, I18nManager);
-        return possibleConstructorReturn(this, (I18nManager.__proto__ || Object.getPrototypeOf(I18nManager)).apply(this, arguments));
-    }
-
-    createClass(I18nManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(I18nManager.prototype.__proto__ || Object.getPrototypeOf(I18nManager.prototype), "initialize", this).call(this);
-
-            this.$store.lang = LANG_EN;
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: ACTION('i18n/change/language'),
-        value: function value($store) {
-            var lang = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : LANG_EN;
-
-            $store.lang = lang;
-        }
-    }, {
-        key: GETTER('i18n/get'),
-        value: function value($store, key) {
-            var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-            var lang = arguments[3];
-
-            return i18n.get(key, params, lang || $store.lang);
-        }
-    }]);
-    return I18nManager;
-}(BaseModule);
-
-var triangle = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }]
-};
-
-var trapezoid = {
-    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(0) }]
-};
-
-var parallelogram = {
-    clipPathPolygonPoints: [{ x: percentUnit(20), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(0) }]
-};
-
-var rhombus = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(50) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(50) }]
-};
-
-var pentagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(38) }, { x: percentUnit(18), y: percentUnit(100) }, { x: percentUnit(82), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(38) }]
-};
-
-var hexagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(25) }, { x: percentUnit(0), y: percentUnit(75) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(75) }, { x: percentUnit(100), y: percentUnit(25) }]
-};
-
-var heptagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(10), y: percentUnit(20) }, { x: percentUnit(0), y: percentUnit(60) }, { x: percentUnit(25), y: percentUnit(100) }, { x: percentUnit(75), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(60) }, { x: percentUnit(90), y: percentUnit(20) }]
-};
-
-var octagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(30), y: percentUnit(0) }, { x: percentUnit(0), y: percentUnit(30) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(30), y: percentUnit(100) }, { x: percentUnit(70), y: percentUnit(100) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(30) }, { x: percentUnit(70), y: percentUnit(0) }]
-};
-
-var nonagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(17), y: percentUnit(12) }, { x: percentUnit(0), y: percentUnit(43) }, { x: percentUnit(6), y: percentUnit(78) }, { x: percentUnit(32), y: percentUnit(100) }, { x: percentUnit(68), y: percentUnit(100) }, { x: percentUnit(94), y: percentUnit(78) }, { x: percentUnit(100), y: percentUnit(43) }, { x: percentUnit(83), y: percentUnit(12) }]
-};
-
-var decagon = {
-    clipPathPolygonPoints: [{ x: percentUnit(50), y: percentUnit(0) }, { x: percentUnit(20), y: percentUnit(10) }, { x: percentUnit(0), y: percentUnit(35) }, { x: percentUnit(0), y: percentUnit(70) }, { x: percentUnit(20), y: percentUnit(90) }, { x: percentUnit(50), y: percentUnit(100) }, { x: percentUnit(80), y: percentUnit(90) }, { x: percentUnit(100), y: percentUnit(70) }, { x: percentUnit(100), y: percentUnit(35) }, { x: percentUnit(80), y: percentUnit(10) }]
-};
-
-var clipPathList = [triangle, trapezoid, parallelogram, rhombus, pentagon, hexagon, heptagon, octagon, nonagon, decagon];
-
-var SQRT_2 = Math.sqrt(2);
-
-var ClipPathManager = function (_BaseModule) {
-    inherits(ClipPathManager, _BaseModule);
-
-    function ClipPathManager() {
-        classCallCheck(this, ClipPathManager);
-        return possibleConstructorReturn(this, (ClipPathManager.__proto__ || Object.getPrototypeOf(ClipPathManager)).apply(this, arguments));
-    }
-
-    createClass(ClipPathManager, [{
-        key: GETTER(CLIPPATH_SAMPLE_LIST),
-        value: function value$$1($store) {
-            return clipPathList;
-        }
-    }, {
-        key: GETTER(CLIPPATH_SAMPLE_GET),
-        value: function value$$1($store, index) {
-            return clipPathList[index];
-        }
-    }, {
-        key: "caculateClosestFromCenter",
-        value: function caculateClosestFromCenter(centerX, centerY, width, height) {
-            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
-
-            return Math.min.apply(Math, toConsumableArray(list.map(function (it) {
-                var x = Math.pow(Math.abs(centerX - it[0]), 2);
-                var y = Math.pow(Math.abs(centerY - it[1]), 2);
-                return Math.sqrt(x + y) / SQRT_2;
-            })));
-        }
-    }, {
-        key: "caculateFarthestFromCenter",
-        value: function caculateFarthestFromCenter(centerX, centerY, width, height) {
-            var list = [[centerX, 0], [centerX, height], [0, centerY], [width, centerY]];
-
-            return Math.max.apply(Math, toConsumableArray(list.map(function (it) {
-                var x = Math.pow(Math.abs(centerX - it[0]), 2);
-                var y = Math.pow(Math.abs(centerY - it[1]), 2);
-                return Math.sqrt(x + y) / SQRT_2;
-            })));
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_CIRCLE),
-        value: function value$$1($store, layer) {
-
-            var width = unitValue(layer.width);
-            var height = unitValue(layer.height);
-
-            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
-
-            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
-            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
-            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
-            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
-            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
-
-            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
-            var placeCenterY = stringUnit(clipPathCenterY); // centerY
-
-            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
-                var radiusSize = Math.sqrt(Math.pow(Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width)), 2) + Math.pow(Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height)), 2));
-                var radiusString = percent(Math.floor(radiusSize / dist * 100));
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
-            }
-            return "circle(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_ELLIPSE),
-        value: function value$$1($store, layer) {
-            var width = unitValue(layer.width);
-            var height = unitValue(layer.height);
-
-            var clipPathCenterX = defaultValue(layer.clipPathCenterX, percentUnit(50));
-            var clipPathCenterY = defaultValue(layer.clipPathCenterY, percentUnit(50));
-            var clipPathRadiusX = defaultValue(layer.clipPathRadiusX, percentUnit(100));
-            var clipPathRadiusY = defaultValue(layer.clipPathRadiusY, percentUnit(100));
-            var clipPathSideType = defaultValue(layer.clipPathSideType, CLIP_PATH_SIDE_TYPE_NONE);
-
-            var placeCenterX = stringUnit(clipPathCenterX); // centerX 
-            var placeCenterY = stringUnit(clipPathCenterY); // centerY
-
-            var dist = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / Math.sqrt(2);
-
-            if (clipPathSideType == CLIP_PATH_SIDE_TYPE_NONE) {
-                var radiusSizeX = Math.abs(value2px(clipPathRadiusX, width) - value2px(clipPathCenterX, width));
-
-                var radiusPercentX = stringUnit(percentUnit(Math.floor(radiusSizeX / dist * 100)));
-
-                var radiusSizeY = Math.abs(value2px(clipPathRadiusY, height) - value2px(clipPathCenterY, height));
-                var radiusPercentY = stringUnit(percentUnit(Math.floor(radiusSizeY / dist * 100)));
-
-                var radiusString = radiusPercentX + " " + radiusPercentY;
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_CLOSEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_CLOSEST;
-            } else if (clipPathSideType == CLIP_PATH_SIDE_TYPE_FARTHEST) {
-                var radiusString = CLIP_PATH_SIDE_TYPE_FARTHEST;
-            }
-
-            return "ellipse(" + radiusString + " at " + placeCenterX + " " + placeCenterY + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_INSET),
-        value: function value$$1($store, layer) {
-
-            var clipPathInsetTop = defaultValue(layer.clipPathInsetTop, percentUnit(0));
-            var clipPathInsetLeft = defaultValue(layer.clipPathInsetLeft, percentUnit(0));
-            var clipPathInsetRight = defaultValue(layer.clipPathInsetRight, percentUnit(0));
-            var clipPathInsetBottom = defaultValue(layer.clipPathInsetBottom, percentUnit(0));
-
-            var top = stringUnit(clipPathInsetTop);
-            var left = stringUnit(clipPathInsetLeft);
-            var right = stringUnit(clipPathInsetRight);
-            var bottom = stringUnit(clipPathInsetBottom);
-
-            var insetString = top + " " + right + " " + bottom + " " + left;
-
-            return "inset(" + insetString + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_POLYGON),
-        value: function value$$1($store, layer) {
-
-            var clipPathPolygonFillRule = layer.clipPathPolygonFillRule || EMPTY_STRING;
-
-            var fillRule = EMPTY_STRING;
-            if (clipPathPolygonFillRule != EMPTY_STRING) {
-                fillRule = clipPathPolygonFillRule + ',';
-            }
-
-            var clipPathPolygonPoints = defaultValue(layer.clipPathPolygonPoints, []);
-
-            var polygonString = clipPathPolygonPoints.map(function (it) {
-                return stringUnit(it.x) + " " + stringUnit(it.y);
-            }).join(', ');
-
-            return "polygon(" + fillRule + " " + polygonString + ")";
-        }
-    }, {
-        key: GETTER(CLIPPATH_MAKE_SVG),
-        value: function value$$1($store, layer) {
-            if (layer.clipPathSvg) {
-                return "url(#clippath-" + layer.id + ")";
-            }
-        }
-    }, {
-        key: GETTER(CLIPPATH_TO_CSS),
-        value: function value$$1($store, layer) {
-            var clipPath = null;
-            if (layer.clipPathType == CLIP_PATH_TYPE_NONE) {
-                clipPath = CLIP_PATH_TYPE_NONE;
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_CIRCLE) {
-                clipPath = $store.read(CLIPPATH_MAKE_CIRCLE, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_ELLIPSE) {
-                clipPath = $store.read(CLIPPATH_MAKE_ELLIPSE, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_INSET) {
-                clipPath = $store.read(CLIPPATH_MAKE_INSET, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_POLYGON) {
-                clipPath = $store.read(CLIPPATH_MAKE_POLYGON, layer);
-            } else if (layer.clipPathType == CLIP_PATH_TYPE_SVG) {
-                clipPath = $store.read(CLIPPATH_MAKE_SVG, layer);
-            }
-
-            return {
-                'clip-path': clipPath
-            };
-        }
-    }]);
-    return ClipPathManager;
-}(BaseModule);
-
-var _itemCreateActions;
-
-var gradientTypeList = [IMAGE_ITEM_TYPE_LINEAR, IMAGE_ITEM_TYPE_RADIAL, IMAGE_ITEM_TYPE_CONIC];
-var repeatingGradientTypeList = [IMAGE_ITEM_TYPE_REPEATING_LINEAR, IMAGE_ITEM_TYPE_REPEATING_RADIAL, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-var conicList = [IMAGE_ITEM_TYPE_CONIC, IMAGE_ITEM_TYPE_REPEATING_CONIC];
-
-var itemCreateActions = (_itemCreateActions = {}, defineProperty(_itemCreateActions, ITEM_TYPE_PAGE, ITEM_CREATE_PAGE), defineProperty(_itemCreateActions, ITEM_TYPE_LAYER, ITEM_CREATE_LAYER), defineProperty(_itemCreateActions, ITEM_TYPE_CIRCLE, ITEM_CREATE_CIRCLE), defineProperty(_itemCreateActions, ITEM_TYPE_IMAGE, ITEM_CREATE_IMAGE), defineProperty(_itemCreateActions, ITEM_TYPE_TIMELINE, ITEM_CREATE_TIMELINE), defineProperty(_itemCreateActions, ITEM_TYPE_KEYFRAME, ITEM_CREATE_KEYFRAME), defineProperty(_itemCreateActions, ITEM_TYPE_BOXSHADOW, ITEM_CREATE_BOXSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_TEXTSHADOW, ITEM_CREATE_TEXTSHADOW), defineProperty(_itemCreateActions, ITEM_TYPE_COLORSTEP, ITEM_CREATE_COLORSTEP), _itemCreateActions);
-
-var ItemCreateManager = function (_BaseModule) {
-    inherits(ItemCreateManager, _BaseModule);
-
-    function ItemCreateManager() {
-        classCallCheck(this, ItemCreateManager);
-        return possibleConstructorReturn(this, (ItemCreateManager.__proto__ || Object.getPrototypeOf(ItemCreateManager)).apply(this, arguments));
-    }
-
-    createClass(ItemCreateManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ItemCreateManager.prototype.__proto__ || Object.getPrototypeOf(ItemCreateManager.prototype), "initialize", this).call(this);
-
-            this.$store.items = {};
-            this.$store.itemKeys = [];
-        }
-    }, {
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: GETTER(ITEM_KEYS),
-        value: function value$$1($store) {
-            return $store.itemKeys;
-        }
-    }, {
-        key: ACTION(ITEM_KEYS_GENERATE),
-        value: function value$$1($store) {
-            $store.itemKeys = Object.keys($store.items);
-        }
-    }, {
-        key: ACTION(ITEM_INITIALIZE),
-        value: function value$$1($store, id) {
-            var item = $store.items[id];
-
-            if (item) {
-                $store.run(ITEM_INIT_CHILDREN, item.parentId);
-            }
-
-            delete $store.items[id];
-
-            $store.run(ITEM_KEYS_GENERATE);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_OBJECT),
-        value: function value$$1($store, obj) {
-            var defaultObj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            var newObj = _extends({}, defaultObj, obj);
-            newObj.id = Date.now() + '-' + uuid();
-
-            $store.items[newObj.id] = newObj;
-
-            $store.run(ITEM_KEYS_GENERATE);
-
-            return newObj.id;
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_PAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, PAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_LAYER),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, LAYER_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_TIMELINE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, TIMELINE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_KEYFRAME),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, KEYFRAME_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_CIRCLE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, CIRCLE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_POLYGON),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, POLYGON_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_GROUP),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, GROUP_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_BOXSHADOW),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, BOXSHADOW_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_TEXTSHADOW),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, TEXTSHADOW_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_IMAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_MASK_IMAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, MASK_IMAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_BORDER_IMAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, BORDER_IMAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_BOX_IMAGE),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, BOX_IMAGE_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_IMAGE_WITH_COLORSTEP),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-
-            var imageId = $store.read(ITEM_CREATE_OBJECT, obj, IMAGE_DEFAULT_OBJECT);
-            var color_0 = 'rgba(216,216,216, 0)';
-            var color_1 = 'rgba(216,216,216, 1)';
-            if (IMAGE_TYPE_IS_STATIC(obj.type)) {} else if (IMAGE_TYPE_IS_IMAGE(obj.type)) {} else if (gradientTypeList.includes(obj.type)) {
-
-                if (conicList.includes(obj.type)) {
-                    $store.items[imageId].angle = 0;
-                }
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 100, index: 100 });
-            } else if (repeatingGradientTypeList.includes(obj.type)) {
-                if (conicList.includes(obj.type)) {
-                    $store.items[imageId].angle = 0;
-                }
-
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_0, percent: 0, index: 0 });
-                $store.read(ITEM_CREATE_COLORSTEP, { parentId: imageId, color: color_1, percent: 10, index: 100 });
-            }
-
-            return imageId;
-        }
-    }, {
-        key: GETTER(ITEM_CREATE_COLORSTEP),
-        value: function value$$1($store) {
-            var obj = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            return $store.read(ITEM_CREATE_OBJECT, obj, COLORSTEP_DEFAULT_OBJECT);
-        }
-    }, {
-        key: GETTER(ITEM_CREATE),
-        value: function value$$1($store, itemType) {
-            var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            return $store.read(itemCreateActions[itemType], obj);
-        }
-    }, {
-        key: GETTER(ITEM_COPY),
-        value: function value$$1($store, id) {
-            var copyObject = _extends({}, this.get(id));
-
-            return $store.read(ITEM_CREATE, copyObject.itemType, copyObject);
-        }
-    }, {
-        key: ACTION(ITEM_ADD),
-        value: function value$$1($store, itemType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            var id = $store.read(ITEM_CREATE, itemType);
-            var item = this.get(id);
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, item.id);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_BOXSHADOW),
-        value: function value$$1($store) {
-            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-            var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD, ITEM_TYPE_BOXSHADOW, isSelected, parentId);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_TEXTSHADOW),
-        value: function value$$1($store) {
-            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-            var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD, ITEM_TYPE_TEXTSHADOW, isSelected, parentId);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_CIRCLE),
-        value: function value$$1($store, isSelected) {
-            var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD, ITEM_TYPE_CIRCLE, isSelected, parentId);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_RECT),
-        value: function value$$1($store, isSelected) {
-            var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD, ITEM_TYPE_LAYER, isSelected, parentId);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_LAYER),
-        value: function value$$1($store, itemType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            var rect = $store.read(SELECTION_RECT);
-
-            var id = $store.read(ITEM_CREATE, itemType);
-            var item = this.get(id);
-            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
-            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
-
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, item.id);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_TIMELINE),
-        value: function value$$1($store, targetId) {
-            var parentId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : EMPTY_STRING;
-            var callback = arguments[3];
-
-            var id = $store.read(ITEM_CREATE_TIMELINE, {
-                targetId: targetId,
-                parentId: parentId,
-                index: Number.MAX_SAFE_INTEGER
-            });
-
-            $store.run(ITEM_SORT, id);
-
-            if (isFunction(callback)) {
-                callback(id);
-            }
-        }
-    }, {
-        key: ACTION(ITEM_ADD_KEYFRAME),
-        value: function value$$1($store) {
-            var parentId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-            var opt = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-            var callback = arguments[3];
-
-
-            var timeline = this.get(parentId);
-            var targetId = timeline.targetId;
-            var id = $store.read(ITEM_CREATE_KEYFRAME, _extends({
-                parentId: parentId,
-                targetId: targetId
-            }, opt, {
-                index: Number.MAX_SAFE_INTEGER
-            }));
-
-            $store.run(ITEM_SORT, id, function (aId, bId) {
-                return $store.items[aId].startTime > $store.items[bId].startTime ? 1 : -1;
-            });
-
-            if (isFunction(callback)) {
-                callback(id);
-            }
-        }
-    }, {
-        key: ACTION(ITEM_ADD_SHAPE),
-        value: function value$$1($store, shapeObject) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            var rect = $store.read(SELECTION_RECT);
-
-            var id = $store.read(ITEM_CREATE, ITEM_TYPE_LAYER, shapeObject);
-            var item = this.get(id);
-            item.x = pxUnit(unitValue(rect.centerX) - unitValue(item.width) / 2);
-            item.y = pxUnit(unitValue(rect.centerY) - unitValue(item.height) / 2);
-
-            item.parentId = parentId;
-
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, item.id);
-        }
-    }, {
-        key: ACTION(ITEM_PREPEND_IMAGE),
-        value: function value$$1($store, imageType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD_IMAGE, imageType, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_IMAGE),
-        value: function value$$1($store, imageType) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read(ITEM_CREATE_IMAGE_WITH_COLORSTEP, { type: imageType });
-            var item = this.get(id);
-            item.type = imageType;
-            item.parentId = parentId;
-            item.index = index;
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_PREPEND_IMAGE_FILE$1),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD_IMAGE_FILE, img, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_IMAGE_FILE),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
-            var item = this.get(id);
-            item.parentId = parentId;
-            item.index = index;
-            item.fileType = img.fileType;
-            item.backgroundImage = img.url;
-            item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_SET_IMAGE_FILE),
-        value: function value$$1($store, id, img) {
-            var item = this.get(id);
-            item.fileType = img.fileType || 'svg';
-            if (img.clipPathSvg) item.clipPathSvg = img.clipPathSvg;
-            if (img.clipPathSvgId) item.clipPathSvgId = img.clipPathSvgId;
-            item.backgroundImage = img.url;
-            item.backgroundImageDataURI = img.datauri;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run(ITEM_SET, item);
-        }
-    }, {
-        key: ACTION(ITEM_PREPEND_IMAGE_URL$1),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-
-            $store.run(ITEM_ADD_IMAGE_URL, img, isSelected, parentId, -1);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_IMAGE_URL),
-        value: function value$$1($store, img) {
-            var isSelected = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-            var parentId = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : EMPTY_STRING;
-            var index = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Number.MAX_SAFE_INTEGER;
-
-            var id = $store.read(ITEM_CREATE_IMAGE, { type: IMAGE_ITEM_TYPE_IMAGE });
-            var item = this.get(id);
-            item.parentId = parentId;
-            item.index = index;
-            item.fileType = img.fileType;
-            item.backgroundImage = img.url;
-            item.backgroundSizeWidth = percentUnit(100);
-
-            $store.run(ITEM_SET, item, isSelected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_ADD_PAGE),
-        value: function value$$1($store) {
-            var isSelected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-            var pageId = $store.read(ITEM_CREATE_PAGE);
-            var layerId = $store.read(ITEM_CREATE_LAYER);
-            var imageId = $store.read(ITEM_CREATE_IMAGE);
-
-            // 페이지 생성 
-            var page = this.get(pageId);
-            page.index = Number.MAX_SAFE_INTEGER;
-            $store.run(ITEM_SET, page);
-            $store.run(ITEM_SORT, page.id);
-
-            // 레이어 생성 
-            var layer = this.get(layerId);
-            layer.parentId = pageId;
-            layer.width = _extends({}, page.width);
-            layer.height = _extends({}, page.height);
-            $store.run(ITEM_SET, layer);
-
-            // 이미지 생성 
-            var image = this.get(imageId);
-            image.parentId = layerId;
-            $store.run(ITEM_SET, image, isSelected);
-
-            $store.dispatch(SELECTION_ONE, pageId);
-            $store.emit(RESIZE_WINDOW);
-        }
-    }]);
-    return ItemCreateManager;
-}(BaseModule);
-
-var INDEX_DIST$1 = 100;
-var COPY_INDEX_DIST = 1;
-
-var ItemMoveManager = function (_BaseModule) {
-    inherits(ItemMoveManager, _BaseModule);
-
-    function ItemMoveManager() {
-        classCallCheck(this, ItemMoveManager);
-        return possibleConstructorReturn(this, (ItemMoveManager.__proto__ || Object.getPrototypeOf(ItemMoveManager)).apply(this, arguments));
-    }
-
-    createClass(ItemMoveManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_TO),
-        value: function value$$1($store, sourceId, newItemId) {
-
-            var currentItem = this.get(sourceId);
-
-            var newItem = this.get(newItemId);
-            newItem.index = currentItem.index + COPY_INDEX_DIST;
-
-            $store.run(ITEM_SET, newItem, true);
-            $store.run(ITEM_SORT, newItemId);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_NEXT),
-        value: function value$$1($store, id) {
-            var item = this.get(id);
-            item.index = $store.read(ITEM_NEXT_INDEX, id);
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_LAST),
-        value: function value$$1($store, id) {
-            var item = this.get(id);
-            item.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_FIRST),
-        value: function value$$1($store, id) {
-            var item = this.get(id);
-            item.index = -1 * COPY_INDEX_DIST;
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_IN),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = this.get(destId);
-            var sourceItem = this.get(sourceId);
-            sourceItem.parentId = destItem.parentId;
-            sourceItem.index = destItem.index - COPY_INDEX_DIST;
-
-            $store.run(ITEM_SET, sourceItem, true);
-            $store.run(ITEM_SORT, sourceId);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_IN_LAYER),
-        value: function value$$1($store, destId, sourceId) {
-            var destItem = this.get(destId); /* layer */
-            var sourceItem = this.get(sourceId);
-
-            sourceItem.parentId = destItem.id;
-            sourceItem.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, sourceItem, true);
-            $store.run(ITEM_SORT, sourceId);
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_PREV),
-        value: function value$$1($store, id) {
-            var item = this.get(id);
-            item.index = $store.read(ITEM_PREV_INDEX, id);
-
-            $store.run(ITEM_SET, item, item.selected);
-            $store.run(ITEM_SORT, id);
-        }
-    }, {
-        key: GETTER(ITEM_ADD_INDEX),
-        value: function value$$1($store, id) {
-            var dist = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : INDEX_DIST$1;
-
-            return $store.items[id].index + dist;
-        }
-    }, {
-        key: GETTER(ITEM_NEXT_INDEX),
-        value: function value$$1($store, id) {
-            return $store.read(ITEM_ADD_INDEX, id, INDEX_DIST$1 + COPY_INDEX_DIST);
-        }
-    }, {
-        key: GETTER(ITEM_PREV_INDEX),
-        value: function value$$1($store, id) {
-            return $store.read(ITEM_ADD_INDEX, id, -1 * (INDEX_DIST$1 + COPY_INDEX_DIST));
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_Y),
-        value: function value$$1($store, distY) {
-            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
-                if (!isArray(layers)) {
-                    layers = [layers];
-                }
-
-                layers.forEach(function (it) {
-                    it.y = pxUnit(unitValue(it.y) + distY);
-
-                    $store.run(ITEM_SET, it);
-                });
-            });
-        }
-    }, {
-        key: ACTION(ITEM_MOVE_X),
-        value: function value$$1($store, distX) {
-            $store.read(SELECTION_CURRENT_LAYER, function (layers) {
-                if (!isArray(layers)) {
-                    layers = [layers];
-                }
-
-                layers.forEach(function (it) {
-                    it.x = pxUnit(unitValue(it.x) + distX);
-
-                    $store.run(ITEM_SET, it);
-                });
-            });
-        }
-    }]);
-    return ItemMoveManager;
-}(BaseModule);
-
-var COPY_INDEX_DIST$1 = 1;
-
-var ItemRecoverManager = function (_BaseModule) {
-    inherits(ItemRecoverManager, _BaseModule);
-
-    function ItemRecoverManager() {
-        classCallCheck(this, ItemRecoverManager);
-        return possibleConstructorReturn(this, (ItemRecoverManager.__proto__ || Object.getPrototypeOf(ItemRecoverManager)).apply(this, arguments));
-    }
-
-    createClass(ItemRecoverManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_EDITOR$1);
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER),
-        value: function value($store, item, parentId) {
-
-            if (item.page) {
-                return $store.read(ITEM_RECOVER_PAGE, item, parentId);
-            } else if (item.layer) {
-                return $store.read(ITEM_RECOVER_LAYER, item, parentId);
-            } else if (item.image) {
-                return $store.read(ITEM_RECOVER_IMAGE, item, parentId);
-            } else if (item.boxshadow) {
-                return $store.read(ITEM_RECOVER_BOXSHADOW, item, parentId);
-            } else if (item.textshadow) {
-                return $store.read(ITEM_RECOVER_TEXTSHADOW, item, parentId);
-            }
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_IMAGE),
-        value: function value($store, image, parentId) {
-            var newImageId = $store.read(ITEM_CREATE_IMAGE, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, image.image)));
-            var colorsteps = image.colorsteps || [];
-
-            colorsteps.forEach(function (step) {
-                $store.read(ITEM_RECOVER_COLORSTEP, step, newImageId);
-            });
-
-            return newImageId;
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_COLORSTEP),
-        value: function value($store, colorstep, parentId) {
-            return $store.read(ITEM_CREATE_COLORSTEP, _extends({ parentId: parentId }, colorstep));
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_BOXSHADOW),
-        value: function value($store, boxshadow, parentId) {
-            return $store.read(ITEM_CREATE_BOXSHADOW, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, boxshadow.boxshadow)));
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_TEXTSHADOW),
-        value: function value($store, textshadow, parentId) {
-            return $store.read(ITEM_CREATE_TEXTSHADOW, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, textshadow.textshadow)));
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_LAYER),
-        value: function value($store, layer, parentId) {
-            var newLayerId = $store.read(ITEM_CREATE_LAYER, _extends({ parentId: parentId }, $store.read(ITEM_CONVERT_STYLE, layer.layer)));
-
-            var images = layer.images || [];
-            images.forEach(function (image) {
-                $store.read(ITEM_RECOVER_IMAGE, image, newLayerId);
-            });
-
-            var boxshadows = layer.boxshadows || [];
-            boxshadows.forEach(function (boxshadow) {
-                $store.read(ITEM_RECOVER_BOXSHADOW, boxshadow, newLayerId);
-            });
-
-            var textshadows = layer.textshadows || [];
-            textshadows.forEach(function (textshadow) {
-                $store.read(ITEM_RECOVER_TEXTSHADOW, textshadow, newLayerId);
-            });
-
-            return newLayerId;
-        }
-    }, {
-        key: GETTER(ITEM_RECOVER_PAGE),
-        value: function value($store, page) {
-            var newPageId = $store.read(ITEM_CREATE_PAGE, $store.read(ITEM_CONVERT_STYLE, page.page));
-            page.layers.forEach(function (layer) {
-                $store.read(ITEM_RECOVER_LAYER, layer, newPageId);
-            });
-
-            return newPageId;
-        }
-    }, {
-        key: ACTION(ITEM_ADD_CACHE),
-        value: function value($store, item, sourceId) {
-            var currentItem = this.get(sourceId);
-            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, item, currentItem.parentId));
-        }
-    }, {
-        key: ACTION(ITEM_ADD_COPY),
-        value: function value($store, sourceId) {
-            var currentItem = this.get(sourceId);
-            $store.run(ITEM_MOVE_TO, sourceId, $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), currentItem.parentId));
-        }
-    }, {
-        key: ACTION(ITEM_COPY_IN),
-        value: function value($store, destId, sourceId) {
-            var destItem = this.get(destId);
-            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
-
-            var newImageItem = this.get(newImageId);
-            newImageItem.index = destItem.index - COPY_INDEX_DIST$1;
-
-            $store.run(ITEM_SET, newImageItem, true);
-            $store.run(ITEM_SORT, newImageId);
-        }
-    }, {
-        key: ACTION(ITEM_COPY_IN_LAYER),
-        value: function value($store, destId, sourceId) {
-            var destItem = this.get(destId); /* layer */
-            var newImageId = $store.read(ITEM_RECOVER, $store.read(COLLECT_ONE, sourceId), destItem.parentId);
-
-            var newImageItem = this.get(newImageId);
-            newImageItem.index = Number.MAX_SAFE_INTEGER;
-
-            $store.run(ITEM_SET, newImageItem, true);
-            $store.run(ITEM_SORT, newImageId);
-        }
-    }]);
-    return ItemRecoverManager;
-}(BaseModule);
-
-var ItemSearchManager = function (_BaseModule) {
-    inherits(ItemSearchManager, _BaseModule);
-
-    function ItemSearchManager() {
-        classCallCheck(this, ItemSearchManager);
-        return possibleConstructorReturn(this, (ItemSearchManager.__proto__ || Object.getPrototypeOf(ItemSearchManager)).apply(this, arguments));
-    }
-
-    createClass(ItemSearchManager, [{
-        key: "initialize",
-        value: function initialize() {
-            var _this2 = this;
-
-            get$1(ItemSearchManager.prototype.__proto__ || Object.getPrototypeOf(ItemSearchManager.prototype), "initialize", this).call(this);
-
-            this.sort_function = function (aId, bId) {
-                var aIndex = _this2.$store.items[aId].index;
-                var bIndex = _this2.$store.items[bId].index;
-                if (aIndex == bIndex) return 0;
-                return aIndex > bIndex ? 1 : -1;
-            };
-        }
-    }, {
-        key: GETTER(ITEM_LIST),
-        value: function value$$1($store, filterCallback) {
-            var list = $store.itemKeys.filter(filterCallback);
-
-            list.sort(this.sort_function);
-
-            return list;
-        }
-    }, {
-        key: GETTER(ITEM_LIST_PAGE),
-        value: function value$$1($store) {
-            return $store.read(ITEM_LIST, this.checkOnlyItemTypeCallback($store, ITEM_TYPE_PAGE));
-        }
-    }, {
-        key: GETTER(ITEM_MAP_PAGE),
-        value: function value$$1($store, callback) {
-            return $store.read(ITEM_LIST_PAGE).map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: "checkItemTypeCallback",
-        value: function checkItemTypeCallback($store, parentId) {
-            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-
-            return function (id) {
-                return $store.items[id].parentId == parentId && $store.items[id].itemType == itemType;
-            };
-        }
-    }, {
-        key: "checkOnlyItemTypeCallback",
-        value: function checkOnlyItemTypeCallback($store, itemType) {
-            return function (id) {
-                return $store.items[id].itemType == itemType;
-            };
-        }
-    }, {
-        key: "checkParentItemCallback",
-        value: function checkParentItemCallback($store, parentId) {
-            return function (id) {
-                return $store.items[id].parentId == parentId;
-            };
-        }
-    }, {
-        key: GETTER(ITEM_LIST_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var itemType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
-
-            if (isUndefined$1(itemType)) {
-                return $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
-            } else {
-                return $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
-            }
-        }
-    }, {
-        key: "getChildrenMapForType",
-        value: function getChildrenMapForType($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
-
-            var parent = this.get(parentId);
-
-            parent.children = parent.children || {};
-
-            if (!parent.children[itemType]) {
-                parent.children[itemType] = $store.read(ITEM_LIST, this.checkItemTypeCallback($store, parentId, itemType));
-            }
-
-            return parent.children[itemType].map(function (id, index) {
-                return callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_MAP_TYPE_CHILDREN),
-        value: function value$$1($store, parentId, itemType) {
-            var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, itemType, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_LAYER_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_LAYER, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_TIMELINE_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TIMELINE, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_KEYFRAME_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_KEYFRAME, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_IMAGE_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_IMAGE, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_COLORSTEP_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_COLORSTEP, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_BOXSHADOW_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_BOXSHADOW, callback);
-        }
-    }, {
-        key: GETTER(ITEM_MAP_TEXTSHADOW_CHILDREN),
-        value: function value$$1($store, parentId) {
-            var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_FUNCTION;
-
-            return this.getChildrenMapForType($store, parentId, ITEM_TYPE_TEXTSHADOW, callback);
-        }
-    }, {
-        key: GETTER(ITEM_EACH_CHILDREN),
-        value: function value$$1($store, parentId, callback) {
-            var parent = this.get(parentId);
-
-            var children = parent.children;
-
-            if (!children) {
-                children = $store.read(ITEM_LIST, this.checkParentItemCallback($store, parentId));
-            }
-
-            if (children.colorstep) {
-                return children.colorstep.forEach(function (id, index) {
-                    callback($store.items[id], index);
-                });
-            } else {
-                return children.forEach(function (id, index) {
-                    callback($store.items[id], index);
-                });
-            }
-        }
-    }, {
-        key: GETTER(ITEM_EACH_TYPE_CHILDREN),
-        value: function value$$1($store, parentId, itemType, callback) {
-            return $store.read(ITEM_LIST_CHILDREN, parentId, itemType).forEach(function (id, index) {
-                callback($store.items[id], index);
-            });
-        }
-    }, {
-        key: GETTER(ITEM_PATH),
-        value: function value$$1($store, id) {
-            var results = [id];
-            var targetId = id;
-
-            do {
-                var item = this.get(targetId);
-
-                if (item.parentId == EMPTY_STRING) {
-                    results.push(item.id);
-                    break;
-                } else {
-                    results.push(item.id);
-                    targetId = item.parentId;
-                }
-            } while (targetId);
-
-            return results;
-        }
-    }, {
-        key: GETTER(ITEM_DOM),
-        value: function value$$1($store, id) {
-            var element = document.querySelector('[item-layer-id="' + id + '"]');
-
-            if (element) {
-                return new Dom(element);
-            }
-        }
-    }]);
-    return ItemSearchManager;
-}(BaseModule);
-
-var ExportManager = function (_BaseModule) {
-    inherits(ExportManager, _BaseModule);
-
-    function ExportManager() {
-        classCallCheck(this, ExportManager);
-        return possibleConstructorReturn(this, (ExportManager.__proto__ || Object.getPrototypeOf(ExportManager)).apply(this, arguments));
-    }
-
-    createClass(ExportManager, [{
-        key: "makePageCSS",
-        value: function makePageCSS($store, page) {
-
-            var css = _extends({ position: 'relative' }, $store.read(PAGE_TO_CSS, page));
-
-            return CSS_TO_STRING(css);
-        }
-    }, {
-        key: "getClassName",
-        value: function getClassName(className) {
-            return (className || EMPTY_STRING).split(WHITE_STRING$1).map(function (it) {
-                return '.' + it;
-            }).join(EMPTY_STRING);
-        }
-    }, {
-        key: "getPageStyle",
-        value: function getPageStyle($store, page) {
-            var pageStyle = this.makePageCSS($store, page).split(';').map(function (it) {
-                return "\t" + it + ';';
-            }).join('\n');
-
-            return pageStyle;
-        }
-    }, {
-        key: "getPageHtml",
-        value: function getPageHtml($store, page) {
-            var html = "<div id=\"page-1\">\n" + $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
-
-                var idString = item.idString || 'layer-' + (index + 1);
-                var className = item.className;
-
-                var selector = [];
-
-                if (className) {
-                    selector.push("class=\"" + className + "\"");
-                }
-
-                if (!selector.length && item.idString) {
-                    selector.push("id=\"" + idString + "\"");
-                } else {
-                    selector.push("id=\"layer-" + (index + 1) + "\"");
-                }
-
-                var clipPath = LAYER_TO_STRING_CLIPPATH(item);
-
-                if (clipPath) {
-                    clipPath = "\t\t\n" + clipPath;
-                }
-
-                var content = item.content || EMPTY_STRING;
-
-                return "\t<div " + selector.join(WHITE_STRING$1) + ">" + content + clipPath + "</div>";
-            }).join('\n') + "\n</div>";
-
-            return html;
-        }
-    }, {
-        key: "getLayerStyle",
-        value: function getLayerStyle($store, page) {
-            var _this2 = this;
-
-            var layerStyle = $store.read(ITEM_MAP_LAYER_CHILDREN, page.id, function (item, index) {
-
-                var idString = item.idString || 'layer-' + (index + 1);
-                var className = item.className;
-
-                var selector = [];
-
-                if (className) {
-                    selector = _this2.getClassName(className);
-                } else {
-                    selector = "#" + idString;
-                }
-
-                var css = $store.read(LAYER_TOEXPORT, item, true).split(';').map(function (it) {
-                    return '\t' + it + ';';
-                }).join('\n');
-
-                return selector + " {\n" + css + "\n}";
-            }).join('\n');
-
-            return layerStyle;
-        }
-    }, {
-        key: GETTER(EXPORT_GENERATE_CODE),
-        value: function value$$1($store) {
-            var page = $store.read(SELECTION_CURRENT_PAGE);
-
-            if (!page) {
-                return EMPTY_STRING;
-            }
-
-            var pageStyle = this.getPageStyle($store, page);
-
-            var html = this.getPageHtml($store, page);
-
-            var layerStyle = this.getLayerStyle($store, page);
-
-            var styleText = "\n#page-1 { \n" + pageStyle + "\n}\n" + layerStyle + "\n\n";
-            var style = "<style type=\"text/css\">" + styleText + "</style>\n";
-            return {
-                html: html,
-                fullhtml: style + html,
-                css: styleText
-            };
-        }
-    }, {
-        key: GETTER(EXPORT_CODEPEN_CODE),
-        value: function value$$1($store, obj) {
-            var title = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'CSS Gradient Editor';
-            var description = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'EasyLogic Studio';
-            var link = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : ' - https://css.easylogic.studio';
-
-            return JSON.stringify(_extends({
-                title: title,
-                description: description + link,
-                tags: ["css", "gradient", "editor", "easylogic", "studio"]
-            }, obj)).replace(/"/g, "&​quot;").replace(/'/g, "&apos;");
-        }
-    }]);
-    return ExportManager;
-}(BaseModule);
-
-var PatternManager = function (_BaseModule) {
-    inherits(PatternManager, _BaseModule);
-
-    function PatternManager() {
-        classCallCheck(this, PatternManager);
-        return possibleConstructorReturn(this, (PatternManager.__proto__ || Object.getPrototypeOf(PatternManager)).apply(this, arguments));
-    }
-
-    createClass(PatternManager, [{
-        key: ACTION(PATTERN_SET),
-        value: function value($store, item, patternName, patternOption) {
-            var pattern = item.pattern || {};
-
-            pattern[patternName] = patternOption || {};
-
-            $store.run(ITEM_SET, { id: item.id, pattern: pattern });
-        }
-    }]);
-    return PatternManager;
-}(BaseModule);
-
-var octagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, octagon);
-
-var rect = {
-    type: SHAPE_TYPE_RECT
-};
-
-var circle$1 = {
-    type: SHAPE_TYPE_CIRCLE,
-    fixedRadius: true,
-    borderRadius: percentUnit(100)
-};
-
-var decagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, decagon);
-
-var heptagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, heptagon);
-
-var hexagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, hexagon);
-
-var nonagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, nonagon);
-
-var parallelogram$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, parallelogram);
-
-var pentagon$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, pentagon);
-
-var rhombus$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, rhombus);
-
-var trapezoid$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, trapezoid);
-
-var triangle$1 = _extends({
-    type: SHAPE_TYPE_POLYGON,
-    clipPathType: CLIP_PATH_TYPE_POLYGON
-}, triangle);
-
-var shapes = {
-    rect: rect,
-    circle: circle$1,
-    triangle: triangle$1,
-    rhombus: rhombus$1,
-    hexagon: hexagon$1,
-    trapezoid: trapezoid$1,
-    pentagon: pentagon$1,
-    parallelogram: parallelogram$1,
-    octagon: octagon$1,
-    decagon: decagon$1,
-    heptagon: heptagon$1,
-    nonagon: nonagon$1
-};
-
-var shapeKeys = Object.keys(shapes);
-
-var ShapeManager = function (_BaseModule) {
-    inherits(ShapeManager, _BaseModule);
-
-    function ShapeManager() {
-        classCallCheck(this, ShapeManager);
-        return possibleConstructorReturn(this, (ShapeManager.__proto__ || Object.getPrototypeOf(ShapeManager)).apply(this, arguments));
-    }
-
-    createClass(ShapeManager, [{
-        key: GETTER(SHAPE_LIST),
-        value: function value($store) {
-            return shapeKeys;
-        }
-    }, {
-        key: GETTER(SHAPE_GET),
-        value: function value($store, key) {
-            return shapes[key];
-        }
-    }, {
-        key: GETTER(SHAPE_TO_CSS_TEXT),
-        value: function value($store, key) {
-            var item = _extends({}, LAYER_DEFAULT_OBJECT, shapes[key]);
-
-            var cssText = $store.read(LAYER_TO_STRING, item, true);
-
-            return cssText;
-        }
-    }]);
-    return ShapeManager;
-}(BaseModule);
-
-var HOTKEY_EXISTS = 'hotkey/exists';
-var HOTKEY_RUN = 'hotkey/run';
-
-var HOTKEY_EXECUTE = 'hotkey/execute';
-var HOTKEY_EXCLUDE = 'hotkey/exclude';
-
-var KEY_SPLIT = '+';
-var KEY_CTRL = 'ctrl';
-var KEY_SHIFT$1 = 'shift';
-var KEY_ALT$1 = 'alt';
-var KEY_META$1 = 'meta';
-
-var hotKeys = [{ key: 'alt+ArrowUp', command: 'item/move/y', args: [-5] }, { key: 'shift+alt+ArrowUp', command: 'item/move/y', args: [-10] }, { key: 'ArrowUp', command: 'item/move/y', args: [-1] }, { key: 'alt+ArrowDown', command: 'item/move/y', args: [5] }, { key: 'ArrowDown', command: 'item/move/y', args: [1] }, { key: 'alt+ArrowRight', command: 'item/move/x', args: [5] }, { key: 'ArrowRight', command: 'item/move/x', args: [1] }, { key: 'alt+ArrowLeft', command: 'item/move/x', args: [-5] }, { key: 'ArrowLeft', command: 'item/move/x', args: [-1] }, { key: 'shift+a', command: function command($store) {
-        // console.log($store, args); 
-    }, args: [1, 2, 3] }];
-
-var getKeyType = function getKeyType(it) {
-    if (it.toLowerCase() === KEY_CTRL) return KEY_CTRL;
-    if (it.toLowerCase() === KEY_ALT$1) return KEY_ALT$1;
-    if (it.toLowerCase() === KEY_SHIFT$1) return KEY_SHIFT$1;
-    if (it.toLowerCase() === 'meta') return KEY_META$1;
-
-    return it;
-};
-
-hotKeys = hotKeys.map(function (it) {
-    var obj = {};
-
-    it.key.split(KEY_SPLIT).forEach(function (key) {
-        var type = getKeyType(key);
-        switch (type) {
-            case KEY_CTRL:
-            case KEY_ALT$1:
-            case KEY_SHIFT$1:
-            case KEY_META$1:
-                obj[type] = true;
-                break;
-            default:
-                obj[EMPTY_STRING] = type;
-        }
-    });
-
-    var arr = [];
-
-    if (obj[KEY_CTRL]) {
-        arr.push(KEY_CTRL);
-    }
-    if (obj[KEY_ALT$1]) {
-        arr.push(KEY_ALT$1);
-    }
-    if (obj[KEY_SHIFT$1]) {
-        arr.push(KEY_SHIFT$1);
-    }
-    if (obj[KEY_META$1]) {
-        arr.push(KEY_META$1);
-    }
-    if (obj[EMPTY_STRING]) {
-        arr.push(obj[EMPTY_STRING]);
-    }
-
-    it.key = arr.join(KEY_SPLIT);
-
-    return it;
-});
-
-var HotkeyManager = function (_BaseModule) {
-    inherits(HotkeyManager, _BaseModule);
-
-    function HotkeyManager() {
-        classCallCheck(this, HotkeyManager);
-        return possibleConstructorReturn(this, (HotkeyManager.__proto__ || Object.getPrototypeOf(HotkeyManager)).apply(this, arguments));
-    }
-
-    createClass(HotkeyManager, [{
-        key: "makeKeydownString",
-        value: function makeKeydownString(e) {
-            var keyStrings = [];
-
-            var arr = [];
-
-            if (e.ctrlKey) {
-                arr.push(KEY_CTRL);
-            }
-            if (e.altKey) {
-                arr.push(KEY_ALT$1);
-            }
-            if (e.shiftKey) {
-                arr.push(KEY_SHIFT$1);
-            }
-            if (e.metaKey) {
-                arr.push(KEY_META$1);
-            }
-            arr.push(e.keyCode); // key code number check 
-
-            keyStrings.push(arr.join(KEY_SPLIT));
-
-            arr[arr.length - 1] = e.key; // key string check 
-
-            keyStrings.push(arr.join(KEY_SPLIT));
-
-            return keyStrings;
-        }
-    }, {
-        key: "checkKey",
-        value: function checkKey(key, e) {
-            return this.makeKeydownString(e).includes(key);
-        }
-    }, {
-        key: GETTER(HOTKEY_EXISTS),
-        value: function value$$1($store, e) {
-            var _this2 = this;
-
-            return hotKeys.filter(function (command) {
-                return _this2.checkKey(command.key, e);
-            });
-        }
-    }, {
-        key: ACTION(HOTKEY_RUN),
-        value: function value$$1($store, hotkey) {
-
-            if (hotkey) {
-                if (isFunction(hotkey.command)) {
-                    var _hotkey$command;
-
-                    (_hotkey$command = hotkey.command).call.apply(_hotkey$command, [null, $store].concat(toConsumableArray(hotkey.args)));
-                } else {
-                    $store.dispatch.apply($store, [hotkey.command].concat(toConsumableArray(hotkey.args)));
-                }
-            }
-        }
-    }, {
-        key: GETTER(HOTKEY_EXCLUDE),
-        value: function value$$1($store, e) {
-
-            switch (e.target.nodeName) {
-                case 'INPUT':
-                case 'SELECT':
-                case 'TEXTAREA':
-                    return true;
-                default:
-                    break;
-            }
-
-            return false;
-        }
-    }, {
-        key: ACTION(HOTKEY_EXECUTE),
-        value: function value$$1($store, e) {
-            if ($store.read(HOTKEY_EXCLUDE, e)) {
-                return;
-            }
-
-            var keys = $store.read(HOTKEY_EXISTS, e);
-
-            if (keys.length) {
-                e.preventDefault();
-                keys.forEach(function (it) {
-                    $store.run(HOTKEY_RUN, it);
-                });
-            }
-        }
-    }]);
-    return HotkeyManager;
-}(BaseModule);
-
-var TimelineManager = function (_BaseModule) {
-    inherits(TimelineManager, _BaseModule);
-
-    function TimelineManager() {
-        classCallCheck(this, TimelineManager);
-        return possibleConstructorReturn(this, (TimelineManager.__proto__ || Object.getPrototypeOf(TimelineManager)).apply(this, arguments));
-    }
-
-    createClass(TimelineManager, [{
-        key: "afterDispatch",
-        value: function afterDispatch() {
-            this.$store.emit(CHANGE_TIMELINE);
-        }
-    }, {
-        key: GETTER(TIMELINE_LIST),
-        value: function value($store) {
-
-            var pageId = $store.read(SELECTION_CURRENT_PAGE_ID);
-
-            if (!pageId) return [];
-
-            return $store.read(ITEM_MAP_TIMELINE_CHILDREN, pageId);
-        }
-    }, {
-        key: ACTION(TIMELINE_PUSH),
-        value: function value($store, targetId) {
-            $store.read(SELECTION_CURRENT_PAGE_ID, function (pageId) {
-                $store.run(ITEM_ADD_TIMELINE, targetId, pageId, function (timelineId) {
-                    $store.emit(ADD_TIMELINE, timelineId);
-                });
-            });
-        }
-    }, {
-        key: GETTER(TIMELINE_NOT_EXISTS),
-        value: function value($store, targetId) {
-            return !$store.read(TIMELINE_LIST).filter(function (it) {
-                return it.targetId == targetId;
-            }).length;
-        }
-    }, {
-        key: GETTER(TIMELINE_NOT_EXISTS_KEYFRAME),
-        value: function value($store, timelineId, property, startTime) {
-            var list = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timelineId).filter(function (it) {
-                return it.property == property;
-            });
-
-            return !list.some(function (it) {
-                return it.startTime <= startTime && startTime <= it.endTime;
-            });
-        }
-    }, {
-        key: GETTER(TIMELINE_MIN_TIME_IN_KEYFRAMES),
-        value: function value($store, keyframeId) {
-            var keyframe = $store.read(ITEM_GET, keyframeId);
-
-            var list = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, keyframe.parentId).filter(function (it) {
-                return it.property == keyframe.property && it.id != keyframeId;
-            });
-
-            var minValue = Math.max.apply(Math, [0].concat(toConsumableArray(list.filter(function (it) {
-                return it.endTime <= keyframe.startTime;
-            }).map(function (it) {
-                return it.endTime;
-            }))));
-
-            return minValue;
-        }
-    }, {
-        key: GETTER(TIMELINE_MAX_TIME_IN_KEYFRAMES),
-        value: function value($store, keyframeId) {
-            var keyframe = $store.read(ITEM_GET, keyframeId);
-
-            var list = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, keyframe.parentId).filter(function (it) {
-                return it.property == keyframe.property && it.id != keyframeId;
-            });
-
-            var maxValue = Math.min.apply(Math, [Number.MAX_SAFE_INTEGER].concat(toConsumableArray(list.filter(function (it) {
-                return it.startTime >= keyframe.endTime;
-            }).map(function (it) {
-                return it.startTime;
-            }))));
-
-            return maxValue;
-        }
-    }, {
-        key: ACTION(TIMELINE_SEEK),
-        value: function value($store, currentTime) {
-            var _this2 = this;
-
-            var list = $store.read(TIMELINE_LIST);
-
-            list.map(function (timeline, index) {
-
-                var keyframeList = $store.read(ITEM_MAP_KEYFRAME_CHILDREN, timeline.id);
-
-                var propertyList = {};
-                keyframeList.forEach(function (keyframe) {
-                    if (!propertyList[keyframe.property]) {
-                        propertyList[keyframe.property] = [];
-                    }
-
-                    propertyList[keyframe.property].push(keyframe);
-                });
-
-                var currentKeyframes = [];
-
-                keyEach(propertyList, function (property, keyframes) {
-
-                    var one = null;
-
-                    for (var i = 0, len = keyframes.length; i < len; i++) {
-                        var k = keyframes[i];
-                        if (k.startTime <= currentTime && currentTime <= k.endTime) {
-                            one = k;
-                            break;
-                        } else if (k.startTime > currentTime) {
-
-                            if (i > 0) {
-                                var temp = keyframes[i - 1];
-                                one = {
-                                    property: property,
-                                    timing: 'linear', // 값의 변화가 없기에
-                                    startTime: temp.endTime,
-                                    endTime: k.startTime,
-                                    startValue: temp.endValue,
-                                    endValue: temp.endValue
-                                };
-                                break;
-                            }
-                        }
-                    }
-
-                    if (one) {
-                        currentKeyframes.push(one);
-                    }
-                });
-
-                if (currentKeyframes.length) {
-                    var targetItem = _this2.get(timeline.targetId);
-                    var obj = { id: timeline.targetId };
-
-                    currentKeyframes.forEach(function (keyframe) {
-
-                        var value = TIMING_GET_VALUE(targetItem, keyframe, currentTime);
-
-                        obj[keyframe.property] = value;
-                    });
-
-                    $store.run(ITEM_SET, obj);
-                    $store.emit(CHANGE_LAYER);
-                }
-            });
-        }
-    }]);
-    return TimelineManager;
-}(BaseModule);
-
-// import GuideManager from "./GuideManager";
-var modules = [TimelineManager];
-
 var CSSEditor = {
     createCSSEditor: function createCSSEditor() {
         var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { type: 'white' };
@@ -33830,7 +27428,6 @@ var CSSEditor = {
         switch (opts.type) {
             default:
                 return start({
-                    modules: modules,
                     components: { CSSEditor: CSSEditor$1 },
                     template: '<CSSEditor />'
                 });
