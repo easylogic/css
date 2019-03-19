@@ -149,7 +149,8 @@ const short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
 
 const HTML_TAG = {
     'image': true,
-    'input': true
+    'input': true,
+    'br': true
 }
 
 

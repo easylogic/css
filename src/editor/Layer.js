@@ -24,10 +24,14 @@ export class Layer extends Item {
         return 'Layer' 
     }
 
+    /**
+     * 상대좌표 인지 체크 
+     */
     isLayoutItem () {
+
         var parent = this.parent()
 
-        return parent.itemType == 'layer'
+        return parent.hasLayout();      // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다. 
     }
 
     add (layer) {
@@ -108,6 +112,7 @@ export class Layer extends Item {
             textShadows: [], 
             clippath: new NoneClipPath(),
             display: new BlockDisplay(),
+            offset: { left: 0, top: 0, width: 400, height: 300 },       // real dom offset cache 
             ...obj
         })
     }
@@ -130,6 +135,7 @@ export class Layer extends Item {
             if (it.itemType == 'layer') {
                 if (it.display.type == 'block') return true; 
                 else if (it.display.type == 'inline-block') return true; 
+                else if (it.display.type == 'inline') return true; 
             } else if (it.itemType == 'artboard') { 
                 return true;             
             }
@@ -152,12 +158,75 @@ export class Layer extends Item {
         })[0]
     }
 
+    hasLayout () {
+        var displayType = this.json.display.type
+
+        switch(displayType) {
+        case 'flex': 
+        case 'grid':
+            return true; 
+        default: 
+            return false; 
+        }
+    }
+
     get screenX () { 
+
+        if (this.isLayoutItem()) {
+            return Length.px(this.parent().screenX.value + this.json.offset.left);    
+        }
+
         return Length.px(editor.get(this.json.parentPosition).screenX.value + this.json.x.value);
     }
 
+    get screenX2 () {
+        return Length.px(this.screenX.value + this.screenWidth.value);
+    }    
+
     get screenY () { 
+
+        if (this.isLayoutItem()) {
+            return Length.px(this.parent().screenY.value + this.json.offset.top);    
+        }
+
         return Length.px(editor.get(this.json.parentPosition).screenY.value + this.json.y.value);
+    }
+
+    get screenY2 () {
+        return Length.px(this.screenY.value + this.screenHeight.value);
+    }
+
+    get screenWidth () {
+
+        if (this.isLayoutItem()) {
+            return Length.px(this.json.offset.width)
+        }
+
+        return this.json.width; 
+    }
+
+    get screenHeight () {
+
+        if (this.isLayoutItem()) {
+            return Length.px(this.json.offset.height)
+        }
+
+        return this.json.height; 
+    }    
+
+    /**
+     * 화면상의 순수 위치 (left, top, width, height)
+     * 
+     * 상위 Layer 가 flex, grid 를 가지면 하위는 dom 기준으로 자동으로 연산 ..  
+     * 
+     */
+    get screen () {
+        return {
+            left: this.screenX,
+            top: this.screenY,
+            width: this.screenWidth,
+            height: this.screenHeight
+        }
     }
 
     toString () { return CSS_TO_STRING(this.toCSS()); }
@@ -378,7 +447,6 @@ export class Layer extends Item {
 
         css['box-sizing'] = json.boxSizing || 'border-box';        
         css['visibility'] = json.visible ? 'visible' : 'hidden';        
-        css.position = json.position;
         if (json.backgroundColor) {
             css['background-color'] = json.backgroundColor
         }         
@@ -401,11 +469,23 @@ export class Layer extends Item {
 
     toBoundCSS(isBound = true) {
         var json = this.json;
+        var parent = this.parent()
+
+        if (parent.display.type == 'flex') {
+            return {
+                flex: `${json.flexGrow || 1} ${json.flexShrink || 1} ${json.flexBasis ||'auto'}` 
+            }
+        } else if (parent.display.type == 'grid') {
+            return {
+                // 
+            }
+        }
 
         // isBound 가 true 이고  상위 
-        var isBoundRect = isBound && this.parent().itemType != 'layer'
+        var isBoundRect = isBound && parent.itemType != 'layer'
 
-        return { 
+        return {
+            position: json.position,
             left: isBoundRect === false ? json.x : this.screenX, 
             top: isBoundRect === false ? json.y : this.screenY, 
             width: json.width, 

@@ -49,28 +49,28 @@ export const start = (opt) => {
 
             if (isRealMoved && this.moves.size) {
                 this.moves.forEach(v => {
-                    v.func.call(v.context);
+                    v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
                 })
             }
             requestAnimationFrame(this.funcBodyMoves)
         }
 
         removeBodyMoves () {
-
+            var pos = editor.config.get('pos');
             this.ends.forEach(v => {
-                v.func.call(v.context);
+                v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
             })            
 
             this.moves.clear()
             this.ends.clear()
         }
 
-        [EVENT(ADD_BODY_MOUSEMOVE)] (func, context) {
-            this.moves.add({func, context})
+        [EVENT(ADD_BODY_MOUSEMOVE)] (func, context, xy) {
+            this.moves.add({func, context, xy})
         }
 
-        [EVENT(ADD_BODY_MOUSEUP)] (func, context) {
-            this.ends.add({func, context})
+        [EVENT(ADD_BODY_MOUSEUP)] (func, context, xy) {
+            this.ends.add({func, context, xy})
         }
 
         getModuleList () {

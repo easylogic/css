@@ -56,3 +56,15 @@ Segment.TOP_LEFT = SEGMENT_TYPE_TOP_LEFT
 Segment.BOTTOM_LEFT = SEGMENT_TYPE_BOTTOM_LEFT
 Segment.TOP = SEGMENT_TYPE_TOP
 Segment.BOTTOM = SEGMENT_TYPE_BOTTOM
+
+Segment.LIST = [
+    Segment.MOVE,
+    Segment.RIGHT,
+    Segment.TOP_RIGHT,
+    Segment.BOTTOM_RIGHT,
+    Segment.LEFT,
+    Segment.TOP_LEFT,
+    Segment.BOTTOM_LEFT,
+    Segment.TOP,
+    Segment.BOTTOM
+]

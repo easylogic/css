@@ -181,6 +181,15 @@ $tree-item-row-height: 30px;
                     box-sizing: border-box;
                     border: 1px solid $border-color; 
                 }
+
+                .icon-circle {
+                    height: 100%;
+                    display:inline-block;
+                    width: 100%;
+                    box-sizing: border-box;
+                    border: 1px solid $border-color; 
+                    border-radius: 100%;
+                }                
             }
 
             .item-title {
@@ -189,6 +198,36 @@ $tree-item-row-height: 30px;
                 font-size: 11px; 
                 box-sizing: border-box;
                 padding: 0px 5px;
+
+                &[data-label="flex"],
+                &[data-label="grid"]{
+                    &:after {
+                        content: attr(data-label);
+                        font-size: 10px;
+                        border-radius: 3px;
+                        display:inline-block;
+                        vertical-align: middle;
+
+                        color: #ececec;
+                        margin-left: 2px;
+                        padding: 2px 4px;  
+                        line-height: 1;
+                        text-transform: uppercase;
+                    }
+                }
+
+                &[data-label="flex"]{
+                    &:after {
+                        background-color: $display-flex-color;
+                    }
+                }
+
+
+                &[data-label="grid"]{
+                    &:after {
+                        background-color: $display-grid-color;
+                    }
+                }                
             }
 
 

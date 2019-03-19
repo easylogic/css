@@ -9,6 +9,12 @@ export class Guide {
 
     constructor () { }
 
+    clear () {
+        this.rect = null; 
+        this.direction = null; 
+        this.cachedItems = null; 
+    }
+
     initialize (rect, cachedItems, direction) {
         this.direction = direction;
         this.rect = rect

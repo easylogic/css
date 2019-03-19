@@ -1998,6 +1998,14 @@ html, body {
             -webkit-box-sizing: border-box;
                     box-sizing: border-box;
             border: 1px solid #cccccc; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-icon .icon-circle, .csseditor .layer-list-view .layer-list .tree-item .item-icon-group .icon-circle {
+            height: 100%;
+            display: inline-block;
+            width: 100%;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            border: 1px solid #cccccc;
+            border-radius: 100%; }
         .csseditor .layer-list-view .layer-list .tree-item .item-title {
           -webkit-box-flex: 1;
               -ms-flex: 1 1 auto;
@@ -2007,6 +2015,21 @@ html, body {
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
           padding: 0px 5px; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-title[data-label="flex"]:after, .csseditor .layer-list-view .layer-list .tree-item .item-title[data-label="grid"]:after {
+            content: attr(data-label);
+            font-size: 10px;
+            border-radius: 3px;
+            display: inline-block;
+            vertical-align: middle;
+            color: #ececec;
+            margin-left: 2px;
+            padding: 2px 4px;
+            line-height: 1;
+            text-transform: uppercase; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-title[data-label="flex"]:after {
+            background-color: #01a270; }
+          .csseditor .layer-list-view .layer-list .tree-item .item-title[data-label="grid"]:after {
+            background-color: red; }
         .csseditor .layer-list-view .layer-list .tree-item .item-tools {
           -webkit-box-flex: 0;
               -ms-flex: none;
@@ -2540,44 +2563,6 @@ html, body {
       height: 310px; }
     .csseditor .feature-control .image-feature .color-steps-tab {
       top: 620px; }
-  .csseditor .sub-feature-control {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    z-index: 100;
-    pointer-events: none; }
-    .csseditor .sub-feature-control > .feature {
-      height: 100%;
-      text-align: center;
-      white-space: nowrap; }
-      .csseditor .sub-feature-control > .feature > .property-view {
-        position: relative;
-        height: 130px;
-        width: 130px;
-        background-color: rgba(0, 0, 0, 0.2);
-        display: inline-block;
-        vertical-align: middle;
-        overflow: hidden;
-        pointer-events: all; }
-        .csseditor .sub-feature-control > .feature > .property-view.hide {
-          display: none; }
-        .csseditor .sub-feature-control > .feature > .property-view > .property-item {
-          border: 0px; }
-          .csseditor .sub-feature-control > .feature > .property-view > .property-item > .title {
-            text-align: left;
-            background-image: none;
-            border: 0px;
-            color: rgba(255, 255, 255, 0.7);
-            height: 20px; }
-          .csseditor .sub-feature-control > .feature > .property-view > .property-item.background > .items {
-            padding-top: 6px !important; }
-          .csseditor .sub-feature-control > .feature > .property-view > .property-item > .items {
-            display: block; }
-            .csseditor .sub-feature-control > .feature > .property-view > .property-item > .items > div {
-              margin-bottom: 2px; }
-              .csseditor .sub-feature-control > .feature > .property-view > .property-item > .items > div > label {
-                width: 50px; }
 
 @-webkit-keyframes bounce-up-down {
   0% {
@@ -3581,8 +3566,18 @@ html, body {
       height: 0px;
       -webkit-box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1);
               box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1); }
-      .csseditor .page-view .item-resizer.artboard button[data-value='move'] {
+      .csseditor .page-view .item-resizer[data-mode='artboard'] button[data-value='move'] {
         display: none; }
+      .csseditor .page-view .item-resizer[data-mode='layer'][data-rect="true"] {
+        background-color: rgba(0, 0, 0, 0.1); }
+        .csseditor .page-view .item-resizer[data-mode='layer'][data-rect="true"] button {
+          display: none; }
+      .csseditor .page-view .item-resizer[data-layout='flex'] button {
+        background-color: #01a270;
+        border-color: #01a270; }
+      .csseditor .page-view .item-resizer[data-layout='grid'] button {
+        background-color: red;
+        border-color: red; }
       .csseditor .page-view .item-resizer button {
         pointer-events: all;
         padding: 0px;
@@ -3671,6 +3666,12 @@ html, body {
       .csseditor .page-view .page-canvas .artboard-area {
         pointer-events: none; }
         .csseditor .page-view .page-canvas .artboard-area .artboard-title {
+          cursor: pointer;
+          position: absolute;
+          bottom: 100%;
+          left: 0px;
+          right: 0px;
+          display: inline-block;
           pointer-events: all; }
         .csseditor .page-view .page-canvas .artboard-area .artboard {
           -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25);
@@ -3679,6 +3680,11 @@ html, body {
         pointer-events: none; }
         .csseditor .page-view .page-canvas .layer-area .layer {
           pointer-events: all; }
+          .csseditor .page-view .page-canvas .layer-area .layer.selected[data-layout-item='true'] {
+            -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+                    box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25); }
+          .csseditor .page-view .page-canvas .layer-area .layer[data-has-layout="true"] .text-layer {
+            display: none; }
     .csseditor .page-view .page-selection {
       position: absolute;
       left: 0px;
@@ -5578,6 +5584,32 @@ html, body {
         .csseditor .property > .property-body .property-item.image-sorting .step-align {
           display: inline-block;
           vertical-align: middle; }
+        .csseditor .property > .property-body .property-item.display-manager .display-list {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          height: 30px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="inline"] .display[display-type="inline"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="inline-block"] .display[display-type="inline-block"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="block"] .display[display-type="block"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="flex"] .display[display-type="flex"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="grid"] .display[display-type="grid"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list .display {
+            display: block;
+            -webkit-box-flex: 1;
+                -ms-flex: 1 1 auto;
+                    flex: 1 1 auto;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            padding: 5px;
+            text-align: center; }
   .csseditor .filter-list {
     display: -webkit-box !important;
     display: -ms-flexbox !important;

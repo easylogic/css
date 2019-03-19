@@ -1,7 +1,6 @@
 import FeatureControl from '../ui/control/FeatureControl';
 
 import LayerToolbar from '../ui/view/LayerToolbar';
-import SubFeatureControl from '../ui/control/SubFeatureControl';
 import ExportWindow from '../ui/window/ExportWindow';
 import Timeline from '../ui/control/Timeline';
 import DropView from '../ui/control/DropView';
@@ -72,7 +71,6 @@ export default class CSSEditor extends UIElement {
             ExportWindow,
             CanvasView,
             FeatureControl, 
-            SubFeatureControl, 
             TimelineSplitter,
             Timeline
         }

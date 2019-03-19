@@ -1,0 +1,26 @@
+
+&.display-manager {
+    .display-list {
+        display: flex; 
+        height: 30px;
+        box-sizing: border-box;
+
+        @each $display-type in inline, inline-block, block, flex, grid {
+            &[selected-type="#{$display-type}"] {
+                .display[display-type="#{$display-type}"] {
+                    background-color: #ececec;
+                }
+            }    
+        }
+
+
+        .display {
+            display: block; 
+            flex: 1 1 auto;
+            box-sizing: border-box;
+            padding: 5px;
+            text-align: center;
+        }
+    }
+
+}

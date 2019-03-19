@@ -8,7 +8,7 @@ import {
     CHANGE_LAYER
 } from '../../types/event';
 import { EMPTY_STRING } from '../../../util/css/types';
-import { LOAD, POINTERSTART, MOVE, END, SELF } from '../../../util/Event';
+import { LOAD, POINTERSTART, MOVE, END, SELF, PREVENT, STOP } from '../../../util/Event';
 import { editor } from '../../../editor/editor';
 import { Length } from '../../../editor/unit/Length';
 import { html, isNotUndefined } from '../../../util/functions/func';
@@ -20,6 +20,76 @@ import { StaticGradient } from '../../../editor/image-resource/StaticGradient';
 import { CSS_TO_STRING } from '../../../util/css/make';
 import { Segment } from '../../../editor/util/Segment';
 
+
+function createGuideLine (list) {
+    var layer = new Layer();
+
+    const lineWidth = Length.px(1.5); 
+
+    list.forEach(it => {
+
+        var target = it.B; 
+
+        if (isNotUndefined(it.ax)) {
+
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#e600ff' }));
+            background.repeat = 'no-repeat' 
+            background.width = lineWidth
+            background.height = it.A.height;
+            background.x = Length.px(it.bx-1)
+            background.y = it.A.screenY;       
+            
+            if (target instanceof Layer) {
+                var background = layer.addBackgroundImage(new BackgroundImage());
+                background.addGradient(new StaticGradient({ color: '#e600ff' }));
+                background.repeat = 'no-repeat' 
+                background.width = lineWidth
+                background.height = target.height;
+                background.x = Length.px(it.bx-1)
+                background.y = target.screenY;                           
+            }
+
+            var minY = Length.min(target.screenY, it.A.screenY);
+            var maxY = Length.max(target.screenY2, it.A.screenY2);
+
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#4877ff' }));
+            background.repeat = 'no-repeat' 
+            background.width = lineWidth
+            background.height = Length.px(maxY.value - minY.value); 
+            background.x = Length.px(it.bx-1)
+            background.y = minY
+
+        } else {
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#e600ff' }));
+            background.repeat = 'no-repeat' 
+            background.width = it.A.width
+            background.height = lineWidth
+            background.x = it.A.screenX;
+            background.y = Length.px(it.by)             
+
+            var minX = Length.min(target.screenX, it.A.screenX);
+            var maxX = Length.max(target.screenX2, it.A.screenX2);
+
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#4877ff' }));
+            background.repeat = 'no-repeat' 
+            background.width = Length.px(maxX.value - minX.value); 
+            background.height = lineWidth
+            background.x = minX;
+            background.y = Length.px(it.by)
+        }
+
+    })
+    
+    layer.remove()
+
+    return layer.toBackgroundImageCSS(); 
+}
+
+
 export default class CanvasView extends UIElement {
 
     initialize () {
@@ -27,20 +97,15 @@ export default class CanvasView extends UIElement {
 
         this.initializeLayerCache();
         this.itemPositionCalc = new ItemPositionCalc();
+        this.selectMode = 'layer'
     }
 
 
     makeResizer () {
-        return `<div class='item-resizer' ref="$itemResizer">
-            <button type="button" class='segment' data-value="${Segment.MOVE}"></button>
-            <button type="button" class='segment' data-value="${Segment.RIGHT}"></button>
-            <button type="button" class='segment' data-value="${Segment.LEFT}"></button>
-            <button type="button" class='segment' data-value="${Segment.TOP}"></button>
-            <button type="button" class='segment' data-value="${Segment.BOTTOM}"></button>
-            <button type="button" class='segment' data-value="${Segment.TOP_RIGHT}"></button>
-            <button type="button" class='segment' data-value="${Segment.BOTTOM_RIGHT}"></button>
-            <button type="button" class='segment' data-value="${Segment.BOTTOM_LEFT}"></button>
-            <button type="button" class='segment' data-value="${Segment.TOP_LEFT}"></button>
+        return html`<div class='item-resizer' ref="$itemResizer">
+                ${Segment.LIST.map(seg => {
+                    return `<button type="button" class='segment' data-value="${seg}"></button>`
+                })}
         </div>`
     }    
 
@@ -92,14 +157,18 @@ export default class CanvasView extends UIElement {
 
 
     makeLayer (layer) {
-        var selected = editor.selection.check(layer) ? 'selected': EMPTY_STRING
         var children = layer.children;
+        var isLayoutItem = layer.isLayoutItem() ? 'true' : 'false'
+        var hasLayout = layer.hasLayout()
         return html`
             <div 
-                class='layer ${selected}' 
+                class='layer' 
                 item-id="${layer.id}" 
                 style="${layer.toBoundString()}" 
-                title="${layer.title}" >
+                title="${layer.title}" 
+                data-layout-item="${isLayoutItem}"
+                data-has-layout="${hasLayout}"
+                >
                 ${children.map(it => this.makeLayer(it))}
                 <div class='text-layer' style="pointer-events: none;"></div>
             </div>`
@@ -112,7 +181,7 @@ export default class CanvasView extends UIElement {
                 item-id="${artboard.id}" 
                 title="${artboard.title}" 
                 style='${artboard.toString()};'>
-                    <div class='artboard-title' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">${artboard.title}</div>
+                    <div class='artboard-title' artboard-id="${artboard.id}">${artboard.title}</div>
             </div>
         `
     }
@@ -139,7 +208,7 @@ export default class CanvasView extends UIElement {
         var list = project.artboards;
 
         return list.map( (artboard ) => {
-            return artboard.allLayers.map(layer => {
+            return artboard.allLayers.filter(layer => !layer.isLayoutItem()).map(layer => {
                 return this.makeLayer(layer)
             })
         });
@@ -148,85 +217,74 @@ export default class CanvasView extends UIElement {
     refresh () {
         this.setBackgroundColor();
         this.load();
+
+        this.refreshAllLayers()
+        editor.selection.initRect()
         this.setItemResizer();
         this.removeGuideLine()
     }
 
-    cacheSelectedItem ($target) {
+    cacheSelectedItem () {
 
-        if ($target) {
-            this.item = editor.get($target.attr('item-id'));
-            this.$item = $target
-            this.item.select();                    
+        if (this.item && this.item.isLayoutItem()) {
+            this.itemPositionCalc.clear()
         } else {
-            this.item = editor.selection.current;
-            this.$item = this.$el.$(`[item-id="${this.item.id}"]`)
+            this.itemPositionCalc.initialize(this.direction);
         }
 
-        this.x = +this.item.screenX.clone(); 
-        this.y = +this.item.screenY.clone(); 
-        this.width = +this.item.width.clone(); 
-        this.height = +this.item.height.clone();
-        this.x2 = this.x + this.width; 
-        this.y2 = this.y + this.height; 
-
-        this.itemPositionCalc.initialize(this.direction);
     }
 
-    selectItem ($target) {
-        this.cacheSelectedItem($target);    
+    selectItem () {
+        this.cacheSelectedItem();    
         this.removeGuideLine()    
     }
 
     [POINTERSTART('$artboardArea .artboard-title') + MOVE('moveArtBoard') + END('moveEndArtBoard')] (e) {
-        this.targetXY = e.xy; 
-        this.$artboard = e.$delegateTarget.closest('artboard');  
-        this.artboard = editor.get(this.$artboard.attr('item-id'))
-        this.artboard.select();
-        this.refs.$itemResizer.addClass('artboard').removeClass('layer');
+        this.selectMode = 'artboard'
+
+        this.item = editor.get(e.$delegateTarget.attr('artboard-id'))
+        this.item.select();
         this.selectItem();
     }
 
     moveEndArtBoard () {
-        this.artboard.select();
+        this.item.select();
         this.setItemResizer();
     }
 
-    [POINTERSTART('$layerArea .layer') + MOVE('moveLayer') + END('moveEndLayer')] (e) {
-        this.targetXY = e.xy; 
-        this.$layer = e.$delegateTarget;
-        this.selectItem(this.$layer);
-        this.refs.$itemResizer.addClass('layer').removeClass('artboard');
+    [POINTERSTART('$layerArea .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer')] (e) {
+        
+        this.selectMode = 'layer'
+        this.direction = Segment.MOVE;
+        this.item = editor.get(e.$delegateTarget.attr('item-id'))
+        this.item.select()
+        this.selectItem();
+
+        this.isLayoutItem = this.item.isLayoutItem()
 
     }
 
     moveEndLayer () {
-        this.item.select()
+        this.item.select()        
         this.setItemResizer();
     }
 
 
-    [POINTERSTART('$dragArea') + MOVE('dragArea') + END('dragAreaEnd')] (e) {
-        this.targetXY = e.xy; 
+    [POINTERSTART('$dragArea') + PREVENT + STOP + MOVE('dragArea') + END('dragAreaEnd')] (e) {
+        this.selectMode = 'drag'
         this.offsetX = e.offsetX 
         this.offsetY = e.offsetY
         this.removeGuideLine()
     }
 
 
-    [POINTERSTART('$itemResizer button') + SELF + MOVE('moveResize')] (e) {
-        this.targetXY = e.xy; 
+    [POINTERSTART('$itemResizer button') + SELF + MOVE('moveResize') + END('moveResizeEnd')] (e) {
         this.$target = e.$delegateTarget;
         this.direction = this.$target.attr('data-value');
         this.cacheSelectedItem();
     }         
 
-    getDragRect () {
-        var pos = editor.config.get('pos');
-
-        var dx = pos.x - this.targetXY.x;
-        var dy = pos.y - this.targetXY.y; 
-
+    getDragRect (dx, dy) {
         var x = dx > -1 ? this.offsetX : this.offsetX + dx;
         var y = dy > -1 ? this.offsetY : this.offsetY + dy; 
 
@@ -243,8 +301,8 @@ export default class CanvasView extends UIElement {
         return rect; 
     }
 
-    getDragCSS () {
-        var rect  = this.getDragRect();
+    getDragCSS (dx, dy) {
+        var rect  = this.getDragRect(dx, dy);
 
         return {
             left: rect.x,
@@ -254,24 +312,19 @@ export default class CanvasView extends UIElement {
         }
     }
 
-    dragArea () {
-        this.refs.$dragAreaView.css(this.getDragCSS());
+    dragArea (dx, dy) {
+        this.refs.$dragAreaView.css(this.getDragCSS(dx, dy));
     }
 
-    dragAreaEnd () {
+    dragAreaEnd (dx, dy) {
         this.refs.$dragAreaView.css({left: Length.px(-10000)});
-        editor.selection.area(this.getDragRect())
+        editor.selection.area(this.getDragRect(dx, dy))
+        this.itemPositionCalc.initialize(this.direction);
         this.setItemResizer();           
- 
         editor.send(CHANGE_SELECTION, null, this);         
     }
 
-    moveResize () {
-        var pos = editor.config.get('pos');
-
-        var dx = pos.x - this.targetXY.x;
-        var dy = pos.y - this.targetXY.y; 
-
+    moveResize (dx, dy) {
         var guideList = this.itemPositionCalc.calculate(dx, dy)
         this.setGuideLine(guideList);
 
@@ -280,7 +333,14 @@ export default class CanvasView extends UIElement {
         this.emit(CHANGE_RECT);
     }
 
-    matchPosition (guideList) {
+    moveResizeEnd () {
+
+        editor.selection.items.forEach(item => {
+            this.refreshLayerOffset(item)
+        })
+    }
+
+    matchPosition () {
         editor.selection.items.forEach(item => {
             this.itemPositionCalc.recover(item);
             this.getCachedLayerElement(item.id).css(item.toBoundCSS());
@@ -289,43 +349,82 @@ export default class CanvasView extends UIElement {
         this.setItemResizer();
     }
 
-    movePosition() {
-        var pos = editor.config.get('pos');
-
-        var dx = pos.x - this.targetXY.x;
-        var dy = pos.y - this.targetXY.y;
-
+    movePosition(dx, dy) {
         this.itemPositionCalc.calculateMove(dx, dy);
         
         this.matchPosition()
     }
 
 
-    moveArtBoard () {
-       this.movePosition();
+    moveArtBoard (dx, dy) {
+       this.movePosition(dx, dy);
        this.refreshLayerPosition(this.item);       
        editor.send(CHANGE_RECT, this.item, this);       
     }
 
-    moveLayer () {
-        this.movePosition();   
-        editor.send(CHANGE_RECT, this.item, this);
+    moveLayer (dx, dy) {
+
+        if (!this.isLayoutItem) {
+            this.movePosition(dx, dy);   
+
+            editor.send(CHANGE_RECT, this.item, this);
+        }
+
     }    
+
+    refreshLayerOffset (item) {
+        var $el = this.getCachedLayerElement(item.id); 
+
+        item.offset = $el.offsetRect()
+
+        item.children.forEach(child => {
+            this.refreshLayerOffset(child);
+        })        
+    }
+
+    refreshLayerOne (item) {
+        var $el = this.getCachedLayerElement(item.id); 
+
+        var content = item.content || EMPTY_STRING;
+        $el.$('.text-layer').html(content)            
+        $el.cssText(item.toBoundString())
+        $el.attr('data-layout-item', item.isLayoutItem() ? 'true' : 'false')
+        $el.attr('data-has-layout', item.hasLayout() ? 'true' : 'false')
+
+        item.offset = $el.offsetRect()
+
+        item.children.forEach(child => {
+            this.refreshLayerOne(child);
+        })
+
+        this.refreshLayerOffset(item)
+    }
     
     refreshLayer () {
         editor.selection.layers.forEach(item => {
-            var $el = this.getCachedLayerElement(item.id); 
-
-            var content = item.content || EMPTY_STRING;
-            $el.$('.text-layer').html(content)            
-            $el.cssText(item.toBoundString())
+            this.refreshLayerOne(item);
         })
 
     } 
+
+    refreshAllLayers () {
+        var project = editor.selection.currentProject;
+        if (project) {
+            project.artboards.forEach(artboard => {
+                artboard.allLayers.forEach(layer => {
+                    this.refreshLayerOne(layer);
+                })
+            })
+        }
+
+    }
  
     setBackgroundColor() {
 
-        var canvasCSS = { width: Length.px( 2000 ), height: Length.px( 2000 )}
+        var canvasCSS = { 
+            width: Length.px( editor.config.get('canvas.width') ), 
+            height: Length.px( editor.config.get('canvas.height') )
+        }
 
         this.refs.$panel.css(canvasCSS)
     }
@@ -335,94 +434,40 @@ export default class CanvasView extends UIElement {
     }
 
     setGuideLine (list) {
-        if (!list.length) {
-            this.removeGuideLine()
-            return
-        }
-
-        var layer = new Layer();
-
-        const lineWidth = Length.px(1.5); 
-
-        list.forEach(it => {
-
-            var target = it.B; 
-
-            if (isNotUndefined(it.ax)) {
-
-                var background = layer.addBackgroundImage(new BackgroundImage());
-                background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                background.repeat = 'no-repeat' 
-                background.width = lineWidth
-                background.height = it.A.height;
-                background.x = Length.px(it.bx-1)
-                background.y = it.A.screenY;       
-                
-                if (target instanceof Layer) {
-                    var background = layer.addBackgroundImage(new BackgroundImage());
-                    background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                    background.repeat = 'no-repeat' 
-                    background.width = lineWidth
-                    background.height = target.height;
-                    background.x = Length.px(it.bx-1)
-                    background.y = target.screenY;                           
-                }
-
-                var minY = Length.min(target.screenY, it.A.screenY);
-                var maxY = Length.max(target.screenY2, it.A.screenY2);
-
-                var background = layer.addBackgroundImage(new BackgroundImage());
-                background.addGradient(new StaticGradient({ color: '#4877ff' }));
-                background.repeat = 'no-repeat' 
-                background.width = lineWidth
-                background.height = Length.px(maxY.value - minY.value); 
-                background.x = Length.px(it.bx-1)
-                background.y = minY
-
-            } else {
-                var background = layer.addBackgroundImage(new BackgroundImage());
-                background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                background.repeat = 'no-repeat' 
-                background.width = it.A.width
-                background.height = lineWidth
-                background.x = it.A.screenX;
-                background.y = Length.px(it.by)             
-
-                var minX = Length.min(target.screenX, it.A.screenX);
-                var maxX = Length.max(target.screenX2, it.A.screenX2);
-
-                var background = layer.addBackgroundImage(new BackgroundImage());
-                background.addGradient(new StaticGradient({ color: '#4877ff' }));
-                background.repeat = 'no-repeat' 
-                background.width = Length.px(maxX.value - minX.value); 
-                background.height = lineWidth
-                background.x = minX;
-                background.y = Length.px(it.by)
-                
-                
-            }
-
-        })
-        
-        
-        layer.remove()
-
-        var css = layer.toBackgroundImageCSS(); 
-
-        this.refs.$guide.cssText(CSS_TO_STRING(css));
+        this.refs.$guide.cssText(CSS_TO_STRING(createGuideLine(list)));
     }
 
     setItemResizer () {
+        var current = editor.selection.current;
+        if (current) {
+            if (current.isLayoutItem()) {
+                this.refs.$itemResizer.attr('data-rect', 'true')
+            } else {
+                this.refs.$itemResizer.attr('data-rect', 'false')
+            }
+            this.refs.$itemResizer.attr('data-mode', current.itemType)            
+            this.refs.$itemResizer.attr('data-layout', current.display.type)
+        } 
+        
+        if (current && current.isLayoutItem()) {
+            this.refs.$itemResizer.css(current.screen)
+            return; 
+        }
 
         if (editor.selection.artboard || editor.selection.layer) {
-            var current = editor.selection.currentRect;
-            if (current) {
+
+            var current = editor.selection.current; 
+            var currentRect = editor.selection.currentRect;
+
+            if (currentRect && !current.isLayoutItem()) {
                 this.refs.$itemResizer.css({
-                    left: current.screenX,
-                    top: current.screenY,
-                    width: current.width,
-                    height: current.height
+                    left: currentRect.screenX,
+                    top: currentRect.screenY,
+                    width: currentRect.width,
+                    height: currentRect.height
                 })
+            } else {
+                this.refs.$itemResizer.css({ left: '-10000px'})    
             }
         } else {
             this.refs.$itemResizer.css({ left: '-10000px'})
@@ -438,6 +483,7 @@ export default class CanvasView extends UIElement {
     // indivisual layer effect 
     [EVENT(CHANGE_LAYER)]() { 
         this.refreshLayer(); 
+        this.setItemResizer();
     }
 
     [EVENT(CHANGE_RECT)] () {
@@ -452,13 +498,15 @@ export default class CanvasView extends UIElement {
 
         var item = editor.selection.current;
         if (item) {
-            var $item = this.refs.$canvas.$(`[item-id="${item.id}"]`)
+            var $item = this.getCachedLayerElement(item.id)
             if (!$item) {
                 this.refresh();
             } else {
-    
+                this.item = item; 
+                this.selectItem()
+                editor.selection.initRect()
             }
-    
+
             this.setItemResizer();
         } else {
             console.log('empty', item)

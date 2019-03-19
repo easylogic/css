@@ -461,15 +461,15 @@ export default class EventMachine {
   /* magic check method */ 
 
   /* after check method */ 
-  bodyMouseMove (methodName) {
+  bodyMouseMove (methodName, e) {
     if (this[methodName]) {
-      this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this)
+      this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this, e.xy)
     }
   }
 
-  bodyMouseUp (methodName) {
+  bodyMouseUp (methodName, e) {
     if (this[methodName]) {
-      this.emit(ADD_BODY_MOUSEUP, this[methodName], this)
+      this.emit(ADD_BODY_MOUSEUP, this[methodName], this, e.xy)
     }    
   }  
   /* after check method */ 

@@ -306,6 +306,15 @@ export default class Dom {
     rect () {
         return this.el.getBoundingClientRect()
     }
+
+    offsetRect () {
+        return {
+            top: this.el.offsetTop,
+            left: this.el.offsetLeft,
+            width: this.el.offsetWidth,
+            height: this.el.offsetHeight
+        }
+    }
     
     offset () {
         var rect = this.rect();

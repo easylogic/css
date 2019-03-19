@@ -146,6 +146,11 @@ export class Item {
      * @param {object} obj 
      */
     reset (obj) {
+
+        if (obj instanceof Item) {
+            obj = obj.toJSON()
+        }
+
         this.json = this.convert({...this.json, ...obj})
     }
     

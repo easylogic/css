@@ -2,6 +2,16 @@ import { Item } from "./Item";
 import { Length } from "./unit/Length";
 
 export class RectItem extends Item {
+
+    getDefaultObject(obj = {}) {
+        return super.getDefaultObject({
+            x: Length.px(0),
+            y: Length.px(0),
+            width: Length.px(0),
+            height: Length.px(0),
+        })
+    }
+
     convert (json) {
         json = super.convert(json);
 

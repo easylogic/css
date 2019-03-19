@@ -10,6 +10,15 @@ export class ItemPositionCalc {
         this.guide = new Guide() 
     }
 
+    clear () {
+        this.direction = null; 
+        this.cachedSelectionItems = {}
+        this.cachedPosition = {}
+        this.newRect = null;
+        this.rect = null; 
+        this.guide.clear()
+    }
+
     initialize (direction) {
         this.direction = direction;
         this.cachedSelectionItems = {}

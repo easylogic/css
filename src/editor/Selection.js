@@ -10,6 +10,7 @@ export class Selection {
         this._mode = ''; 
         this._ids = []
         this._idSet = new Set()
+        this.currentRect = new RectItem();
     }
 
     initialize () {
@@ -216,18 +217,11 @@ export class Selection {
 
     area (rect) {
         var selectItems = this.editor.layers.filter(layer => {
-            return !layer.lock && layer.checkInArea(rect)
+            return !layer.isLayoutItem() && !layer.lock && layer.checkInArea(rect)
         }).map(it => it.id);
 
-
         if (selectItems) {
-            // FIXME: diff 를 매끄럽게 할 수 있는 방법이 필요하다. 
-            var isChanged = JSON.stringify(this._ids) !== JSON.stringify(selectItems);
-            if (isChanged && selectItems.length) {
-                this.select(...selectItems);
-            } else {
-
-            }
+            this.select(...selectItems);            
         } else {
             var project = this.currentProject;
             project && project.select();                
@@ -235,7 +229,13 @@ export class Selection {
     }
 
     initRect () {
-        this.currentRect = this.rect()
+        var rect = this.rect();
+        this.currentRect.reset({
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height
+        })
     }
 
     rect () {
@@ -245,16 +245,24 @@ export class Selection {
         var maxY = Number.MIN_SAFE_INTEGER;
 
         this.items.forEach(item => {
+
             var x = item.screenX.value; 
             var y = item.screenY.value; 
             var x2 = item.screenX2.value;
             var y2 = item.screenY2.value;
-
+       
             if (minX > x) minX = x; 
             if (minY > y) minY = y; 
             if (maxX < x2) maxX = x2;  
             if (maxY < y2) maxY = y2; 
         })
+
+        if (this.isEmpty()) {
+            minX = 0
+            minY = 0
+            maxX = 0
+            maxY = 0
+        }
 
         var x = minX
         var y = minY

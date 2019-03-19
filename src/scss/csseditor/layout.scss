@@ -17,6 +17,8 @@ $timeline-size: 300px;
 $show-timeline-animation: all 0.15s linear; 
 $gradient-box-size: 0px;
 $layer-toolbar-height: 0px;
+$display-flex-color: #01a270;
+$display-grid-color: red;
 
 
 
@@ -141,7 +143,6 @@ $layer-toolbar-height: 0px;
 @import './images.scss';
 @import './guide/angluar-group.scss';
 @import './feature-manager.scss';
-@import './sub-feature-manager.scss';
 @import './timeline-manager.scss';
 @import './gradient-types.scss';
 @import './layers-menu.scss'; 

@@ -28,12 +28,13 @@ export default class ImageListView extends UIElement {
     }       
 
     [LOAD()] () {
-        var layer = editor.selection.layer; 
-        if (!layer) return ''; 
+        // var layer = editor.selection.layer; 
+        // if (!layer) return ''; 
 
-        return layer.backgroundImages.map(item => {
-            return this.makeItemNodeImage(item)
-        })
+        // return layer.backgroundImages.map(item => {
+        //     return this.makeItemNodeImage(item)
+        // })
+        return '';
     }
 
     refresh () {

@@ -1,6 +1,6 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP, PREVENT } from "../../../../util/Event";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER } from "../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_RECT } from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { html, isUndefined } from "../../../../util/functions/func";
 import { editor } from "../../../../editor/editor";
@@ -57,13 +57,19 @@ export default class LayerListView extends UIElement {
             iconString = `<span class='icon-${item.type}'></span>`
         }
 
+        var label = ''
+        var display = item.display.type;
+        if (display == 'flex' || display == 'grid') {
+            label = display;
+        }
+
 
         return html`
             <div class='tree-item depth-${depth} ${selected} ${item.index}' item-id="${item.id}" item-type='${item.itemType}' ${draggable}>
                 <div class="item-depth"></div>            
                 ${isGroup && `<div class='item-icon-group'>${icon.chevron_right}</div>`}
                 ${!isGroup && hasIcon && `<div class='item-icon'>${iconString}</div>`}
-                <div class="item-title"> ${item.title}</div> 
+                <div class="item-title" data-label='${label}'> ${item.title}</div> 
                 <div class='item-tools'>          
                     ${hasLock && `<button type="button" class='lock-item ${lock}' title="Visible">${icon.lock}</button>`}
                     ${hasVisible && `<button type="button" class='visible-item ${visible}' title="Visible">${icon.visible}</button>`}
@@ -94,7 +100,6 @@ export default class LayerListView extends UIElement {
     }
 
     refresh () {
-        console.log('load');
         this.load()
     }
 
@@ -112,6 +117,24 @@ export default class LayerListView extends UIElement {
     [EVENT(
         CHANGE_EDITOR
     )] () { this.refresh(); }
+
+    refreshLayer() {
+        editor.selection.items.forEach(item => {
+            var $item = this.refs.$layerList.$(`[item-id="${item.id}"]`);
+            if ($item) {
+                var label = '';
+                var display = item.display.type;
+                if (display == 'flex' || display == 'grid') {
+                    label = display
+                }
+                $item.$('.item-title').attr('data-label', label);
+            }
+        })
+    }
+
+    [EVENT(CHANGE_LAYER, CHANGE_RECT)] () {
+        this.refreshLayer();
+    }
 
     [EVENT(CHANGE_SELECTION)] () {
         var current = editor.selection.current;

@@ -47,13 +47,35 @@ $editor-canvas-background-color: rgba(236, 236, 236, 0.3);
         height: 0px;
         box-shadow: 0 0 1px 0 rgba(#000000, 0.1);
 
-        &.artboard {
+        &[data-mode='artboard'] {
             button {
                 &[data-value='move'] {
                     display: none;
                 }   
             }
         }
+
+        &[data-mode='layer'][data-rect="true"] {
+            background-color: rgba(0, 0, 0, 0.1);
+            button {
+                display: none; 
+            }
+        }        
+
+        &[data-layout='flex'] {
+            button {
+                background-color: $display-flex-color;
+                border-color: $display-flex-color;
+            }
+        }
+
+        &[data-layout='grid'] {
+            button {
+                background-color: $display-grid-color;
+                border-color: $display-grid-color;
+            }
+        }        
+
         button {
             pointer-events: all;
             padding: 0px;
@@ -156,6 +178,12 @@ $editor-canvas-background-color: rgba(236, 236, 236, 0.3);
             pointer-events: none;
 
             .artboard-title {
+                cursor:pointer;
+                position:absolute;
+                bottom:100%;
+                left:0px;
+                right:0px;
+                display:inline-block;
                 pointer-events: all;
             }
 
@@ -168,6 +196,16 @@ $editor-canvas-background-color: rgba(236, 236, 236, 0.3);
 
             .layer {
                 pointer-events: all;
+
+                &.selected[data-layout-item='true'] {
+                    box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+                }
+
+                &[data-has-layout="true"] {
+                    .text-layer {
+                        display: none;
+                    }
+                }
             }
         }
     }

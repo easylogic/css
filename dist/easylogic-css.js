@@ -3226,7 +3226,8 @@ var short_tag_regexp = /\<(\w*)([^\>]*)\/\>/gim;
 
 var HTML_TAG = {
     'image': true,
-    'input': true
+    'input': true,
+    'br': true
 };
 
 var html = function html(strings) {
@@ -6618,6 +6619,16 @@ var Dom = function () {
             return this.el.getBoundingClientRect();
         }
     }, {
+        key: "offsetRect",
+        value: function offsetRect() {
+            return {
+                top: this.el.offsetTop,
+                left: this.el.offsetLeft,
+                width: this.el.offsetWidth,
+                height: this.el.offsetHeight
+            };
+        }
+    }, {
         key: "offset",
         value: function offset() {
             var rect = this.rect();
@@ -8222,16 +8233,16 @@ var EventMachine = function () {
 
   }, {
     key: 'bodyMouseMove',
-    value: function bodyMouseMove(methodName) {
+    value: function bodyMouseMove(methodName, e) {
       if (this[methodName]) {
-        this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this);
+        this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this, e.xy);
       }
     }
   }, {
     key: 'bodyMouseUp',
-    value: function bodyMouseUp(methodName) {
+    value: function bodyMouseUp(methodName, e) {
       if (this[methodName]) {
-        this.emit(ADD_BODY_MOUSEUP, this[methodName], this);
+        this.emit(ADD_BODY_MOUSEUP, this[methodName], this, e.xy);
       }
     }
     /* after check method */
@@ -8458,15 +8469,23 @@ var Config = function () {
         classCallCheck(this, Config);
 
         this.editor = editor;
+
+        this.initialize();
     }
 
     createClass(Config, [{
-        key: "get",
+        key: 'initialize',
+        value: function initialize() {
+            this.set('canvas.width', 10000);
+            this.set('canvas.height', 10000);
+        }
+    }, {
+        key: 'get',
         value: function get(key) {
             return config[key];
         }
     }, {
-        key: "set",
+        key: 'set',
         value: function set$$1(key, value) {
             config[key] = value;
         }
@@ -8482,15 +8501,15 @@ var _stringToPercent = {
     'bottom': 100
 };
 
-var Position$1 = function Position() {
+var Position = function Position() {
     classCallCheck(this, Position);
 };
 
-Position$1.CENTER = 'center';
-Position$1.TOP = 'top';
-Position$1.RIGHT = 'right';
-Position$1.LEFT = 'left';
-Position$1.BOTTOM = 'bottom';
+Position.CENTER = 'center';
+Position.TOP = 'top';
+Position.RIGHT = 'right';
+Position.LEFT = 'left';
+Position.BOTTOM = 'bottom';
 
 var CSS_UNIT_REG = /([\d.]+)(px|pt|em|deg|vh|vw|%)/ig;
 
@@ -9012,6 +9031,11 @@ var Item = function () {
     }, {
         key: "reset",
         value: function reset(obj) {
+
+            if (obj instanceof Item) {
+                obj = obj.toJSON();
+            }
+
             this.json = this.convert(_extends({}, this.json, obj));
         }
 
@@ -9342,6 +9366,16 @@ var RectItem = function (_Item) {
     }
 
     createClass(RectItem, [{
+        key: "getDefaultObject",
+        value: function getDefaultObject() {
+            return get$1(RectItem.prototype.__proto__ || Object.getPrototypeOf(RectItem.prototype), "getDefaultObject", this).call(this, {
+                x: Length$1.px(0),
+                y: Length$1.px(0),
+                width: Length$1.px(0),
+                height: Length$1.px(0)
+            });
+        }
+    }, {
         key: "convert",
         value: function convert(json) {
             json = get$1(RectItem.prototype.__proto__ || Object.getPrototypeOf(RectItem.prototype), "convert", this).call(this, json);
@@ -9366,6 +9400,7 @@ var Selection = function () {
         this._mode = '';
         this._ids = [];
         this._idSet = new Set();
+        this.currentRect = new RectItem();
     }
 
     createClass(Selection, [{
@@ -9584,17 +9619,13 @@ var Selection = function () {
         key: "area",
         value: function area(rect) {
             var selectItems = this.editor.layers.filter(function (layer) {
-                return !layer.lock && layer.checkInArea(rect);
+                return !layer.isLayoutItem() && !layer.lock && layer.checkInArea(rect);
             }).map(function (it) {
                 return it.id;
             });
 
             if (selectItems) {
-                // FIXME: diff 를 매끄럽게 할 수 있는 방법이 필요하다. 
-                var isChanged = JSON.stringify(this._ids) !== JSON.stringify(selectItems);
-                if (isChanged && selectItems.length) {
-                    this.select.apply(this, toConsumableArray(selectItems));
-                } else {}
+                this.select.apply(this, toConsumableArray(selectItems));
             } else {
                 var project = this.currentProject;
                 project && project.select();
@@ -9603,7 +9634,13 @@ var Selection = function () {
     }, {
         key: "initRect",
         value: function initRect() {
-            this.currentRect = this.rect();
+            var rect = this.rect();
+            this.currentRect.reset({
+                x: rect.x,
+                y: rect.y,
+                width: rect.width,
+                height: rect.height
+            });
         }
     }, {
         key: "rect",
@@ -9614,6 +9651,7 @@ var Selection = function () {
             var maxY = Number.MIN_SAFE_INTEGER;
 
             this.items.forEach(function (item) {
+
                 var x = item.screenX.value;
                 var y = item.screenY.value;
                 var x2 = item.screenX2.value;
@@ -9624,6 +9662,13 @@ var Selection = function () {
                 if (maxX < x2) maxX = x2;
                 if (maxY < y2) maxY = y2;
             });
+
+            if (this.isEmpty()) {
+                minX = 0;
+                minY = 0;
+                maxX = 0;
+                maxY = 0;
+            }
 
             var x = minX;
             var y = minY;
@@ -9920,7 +9965,7 @@ var Size = function (_BasePropertyItem) {
     return Size;
 }(BasePropertyItem);
 
-var Position$2 = function (_BasePropertyItem) {
+var Position$1 = function (_BasePropertyItem) {
     inherits(Position, _BasePropertyItem);
 
     function Position() {
@@ -13727,8 +13772,8 @@ var BackgroundImage = function (_Property) {
                 repeat: 'repeat',
                 width: Length$1.percent(100),
                 height: Length$1.percent(100),
-                x: Position$1.CENTER,
-                y: Position$1.CENTER
+                x: Position.CENTER,
+                y: Position.CENTER
             });
         }
     }, {
@@ -13937,15 +13982,15 @@ var Display = function (_Property) {
     }
 
     createClass(Display, [{
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
             var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-            return get$1(Display.prototype.__proto__ || Object.getPrototypeOf(Display.prototype), 'getDefaultObject', this).call(this, _extends({
+            return get$1(Display.prototype.__proto__ || Object.getPrototypeOf(Display.prototype), "getDefaultObject", this).call(this, _extends({
                 itemType: 'display' }, obj));
         }
     }, {
-        key: 'toCSS',
+        key: "toCSS",
         value: function toCSS() {
             return {
                 'display': this.json.display
@@ -13964,9 +14009,9 @@ var InlineDisplay = function (_Display) {
     }
 
     createClass(InlineDisplay, [{
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(InlineDisplay.prototype.__proto__ || Object.getPrototypeOf(InlineDisplay.prototype), 'getDefaultObject', this).call(this, {
+            return get$1(InlineDisplay.prototype.__proto__ || Object.getPrototypeOf(InlineDisplay.prototype), "getDefaultObject", this).call(this, {
                 type: 'inline',
                 display: 'inline'
             });
@@ -13984,9 +14029,9 @@ var InlineBlockDisplay = function (_Display2) {
     }
 
     createClass(InlineBlockDisplay, [{
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(InlineBlockDisplay.prototype.__proto__ || Object.getPrototypeOf(InlineBlockDisplay.prototype), 'getDefaultObject', this).call(this, {
+            return get$1(InlineBlockDisplay.prototype.__proto__ || Object.getPrototypeOf(InlineBlockDisplay.prototype), "getDefaultObject", this).call(this, {
                 type: 'inline-block',
                 display: 'inline-block'
             });
@@ -14004,9 +14049,9 @@ var BlockDisplay = function (_Display3) {
     }
 
     createClass(BlockDisplay, [{
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(BlockDisplay.prototype.__proto__ || Object.getPrototypeOf(BlockDisplay.prototype), 'getDefaultObject', this).call(this, {
+            return get$1(BlockDisplay.prototype.__proto__ || Object.getPrototypeOf(BlockDisplay.prototype), "getDefaultObject", this).call(this, {
                 type: 'block',
                 display: 'block'
             });
@@ -14024,9 +14069,9 @@ var FlexDisplay = function (_Display4) {
     }
 
     createClass(FlexDisplay, [{
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(FlexDisplay.prototype.__proto__ || Object.getPrototypeOf(FlexDisplay.prototype), 'getDefaultObject', this).call(this, {
+            return get$1(FlexDisplay.prototype.__proto__ || Object.getPrototypeOf(FlexDisplay.prototype), "getDefaultObject", this).call(this, {
                 type: 'flex',
                 display: 'flex',
 
@@ -14046,7 +14091,7 @@ var FlexDisplay = function (_Display4) {
             });
         }
     }, {
-        key: 'toCSS',
+        key: "toCSS",
         value: function toCSS() {
             var json = this.json;
             var css = {
@@ -14088,12 +14133,54 @@ var GridDisplay = function (_Display5) {
     }
 
     createClass(GridDisplay, [{
-        key: 'getDefaultObject',
+        key: "getDefaultObject",
         value: function getDefaultObject() {
-            return get$1(GridDisplay.prototype.__proto__ || Object.getPrototypeOf(GridDisplay.prototype), 'getDefaultObject', this).call(this, {
+            return get$1(GridDisplay.prototype.__proto__ || Object.getPrototypeOf(GridDisplay.prototype), "getDefaultObject", this).call(this, {
                 type: 'grid',
-                display: 'grid'
+                display: 'grid',
+                gap: Length$1.px(0),
+                rowGap: Length$1.px(0),
+                columnGap: Length$1.px(0),
+                columns: [],
+                rows: [],
+                areas: []
             });
+        }
+    }, {
+        key: "toCSS",
+        value: function toCSS() {
+            var json = this.json;
+            var css = {
+                display: 'grid'
+            };
+
+            if (json.gap.value > 0) {
+                css['grid-gap'] = json.gap;
+            }
+
+            if (json.rowGap.value > 0) {
+                css['grid-row-gap'] = json.rowGap;
+            }
+
+            if (json.columnGap.value > 0) {
+                css['grid-column-gap'] = json.columnGap;
+            }
+
+            if (json.columns.length) {
+                css['grid-template-columns'] = json.columns.join(WHITE_STRING$1);
+            }
+
+            if (json.rows.length) {
+                css['grid-template-rows'] = json.rows.join(WHITE_STRING$1);
+            }
+
+            if (json.areas.length) {
+                css['grid-template-areas'] = json.areas.map(function (it) {
+                    return "\"" + it.join(WHITE_STRING$1) + "\"";
+                }).join(WHITE_STRING$1);
+            }
+
+            return css;
         }
     }]);
     return GridDisplay;
@@ -14128,12 +14215,18 @@ var Layer = function (_Item) {
         value: function getDefaultTitle() {
             return 'Layer';
         }
+
+        /**
+         * 상대좌표 인지 체크 
+         */
+
     }, {
         key: "isLayoutItem",
         value: function isLayoutItem() {
+
             var parent = this.parent();
 
-            return parent.itemType == 'layer';
+            return parent.hasLayout(); // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다. 
         }
     }, {
         key: "add",
@@ -14225,8 +14318,8 @@ var Layer = function (_Item) {
                 boxShadows: [],
                 textShadows: [],
                 clippath: new NoneClipPath(),
-                display: new BlockDisplay()
-            }, obj));
+                display: new BlockDisplay(),
+                offset: { left: 0, top: 0, width: 400, height: 300 } }, obj));
         }
     }, {
         key: "checkField",
@@ -14250,7 +14343,7 @@ var Layer = function (_Item) {
 
             return path.filter(function (it) {
                 if (it.itemType == 'layer') {
-                    if (it.display.type == 'block') return true;else if (it.display.type == 'inline-block') return true;
+                    if (it.display.type == 'block') return true;else if (it.display.type == 'inline-block') return true;else if (it.display.type == 'inline') return true;
                 } else if (it.itemType == 'artboard') {
                     return true;
                 }
@@ -14272,6 +14365,19 @@ var Layer = function (_Item) {
 
                 return false;
             })[0];
+        }
+    }, {
+        key: "hasLayout",
+        value: function hasLayout() {
+            var displayType = this.json.display.type;
+
+            switch (displayType) {
+                case 'flex':
+                case 'grid':
+                    return true;
+                default:
+                    return false;
+            }
         }
     }, {
         key: "toString",
@@ -14524,7 +14630,6 @@ var Layer = function (_Item) {
 
             css['box-sizing'] = json.boxSizing || 'border-box';
             css['visibility'] = json.visible ? 'visible' : 'hidden';
-            css.position = json.position;
             if (json.backgroundColor) {
                 css['background-color'] = json.backgroundColor;
             }
@@ -14550,11 +14655,23 @@ var Layer = function (_Item) {
             var isBound = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
             var json = this.json;
+            var parent = this.parent();
+
+            if (parent.display.type == 'flex') {
+                return {
+                    flex: (json.flexGrow || 1) + " " + (json.flexShrink || 1) + " " + (json.flexBasis || 'auto')
+                };
+            } else if (parent.display.type == 'grid') {
+                return {
+                    // 
+                };
+            }
 
             // isBound 가 true 이고  상위 
-            var isBoundRect = isBound && this.parent().itemType != 'layer';
+            var isBoundRect = isBound && parent.itemType != 'layer';
 
             return {
+                position: json.position,
                 left: isBoundRect === false ? json.x : this.screenX,
                 top: isBoundRect === false ? json.y : this.screenY,
                 width: json.width,
@@ -14609,12 +14726,70 @@ var Layer = function (_Item) {
     }, {
         key: "screenX",
         get: function get$$1() {
+
+            if (this.isLayoutItem()) {
+                return Length$1.px(this.parent().screenX.value + this.json.offset.left);
+            }
+
             return Length$1.px(editor$1.get(this.json.parentPosition).screenX.value + this.json.x.value);
+        }
+    }, {
+        key: "screenX2",
+        get: function get$$1() {
+            return Length$1.px(this.screenX.value + this.screenWidth.value);
         }
     }, {
         key: "screenY",
         get: function get$$1() {
+
+            if (this.isLayoutItem()) {
+                return Length$1.px(this.parent().screenY.value + this.json.offset.top);
+            }
+
             return Length$1.px(editor$1.get(this.json.parentPosition).screenY.value + this.json.y.value);
+        }
+    }, {
+        key: "screenY2",
+        get: function get$$1() {
+            return Length$1.px(this.screenY.value + this.screenHeight.value);
+        }
+    }, {
+        key: "screenWidth",
+        get: function get$$1() {
+
+            if (this.isLayoutItem()) {
+                return Length$1.px(this.json.offset.width);
+            }
+
+            return this.json.width;
+        }
+    }, {
+        key: "screenHeight",
+        get: function get$$1() {
+
+            if (this.isLayoutItem()) {
+                return Length$1.px(this.json.offset.height);
+            }
+
+            return this.json.height;
+        }
+
+        /**
+         * 화면상의 순수 위치 (left, top, width, height)
+         * 
+         * 상위 Layer 가 flex, grid 를 가지면 하위는 dom 기준으로 자동으로 연산 ..  
+         * 
+         */
+
+    }, {
+        key: "screen",
+        get: function get$$1() {
+            return {
+                left: this.screenX,
+                top: this.screenY,
+                width: this.screenWidth,
+                height: this.screenHeight
+            };
         }
     }]);
     return Layer;
@@ -19399,36 +19574,36 @@ var BorderWidth = function (_BasePropertyItem) {
 
 var defined_position = {
     'to right': {
-        x: Position$1.RIGHT,
-        y: Position$1.CENTER
+        x: Position.RIGHT,
+        y: Position.CENTER
     },
     'to left': {
-        x: Position$1.LEFT,
-        y: Position$1.CENTER
+        x: Position.LEFT,
+        y: Position.CENTER
     },
     'to top': {
-        x: Position$1.CENTER,
-        y: Position$1.TOP
+        x: Position.CENTER,
+        y: Position.TOP
     },
     'to bottom': {
-        x: Position$1.CENTER,
-        y: Position$1.BOTTOM
+        x: Position.CENTER,
+        y: Position.BOTTOM
     },
     'to top right': {
-        x: Position$1.RIGHT,
-        y: Position$1.TOP
+        x: Position.RIGHT,
+        y: Position.TOP
     },
     'to bottom right': {
-        x: Position$1.RIGHT,
-        y: Position$1.BOTTOM
+        x: Position.RIGHT,
+        y: Position.BOTTOM
     },
     'to bottom left': {
-        x: Position$1.LEFT,
-        y: Position$1.BOTTOM
+        x: Position.LEFT,
+        y: Position.BOTTOM
     },
     'to top left': {
-        x: Position$1.LEFT,
-        y: Position$1.TOP
+        x: Position.LEFT,
+        y: Position.TOP
     }
 };
 
@@ -19459,8 +19634,8 @@ var PredefinedBackgroundPosition = function (_UIElement) {
         key: 'getPosition',
         value: function getPosition(type) {
             return defined_position[type] || {
-                x: Position$1.CENTER,
-                y: Position$1.CENTER
+                x: Position.CENTER,
+                y: Position.CENTER
             };
         }
     }, {
@@ -19814,7 +19989,7 @@ var items$1 = _extends({}, patterns, {
     ColorSteps: ColorSteps,
     Name: Name,
     Size: Size,
-    Position: Position$2,
+    Position: Position$1,
     Radius: Radius,
     Clip: Clip
 });
@@ -19899,6 +20074,197 @@ var BaseProperty = function (_UIElement) {
     return BaseProperty;
 }(UIElement);
 
+var ArtBoard = function (_Item) {
+    inherits(ArtBoard, _Item);
+
+    function ArtBoard() {
+        classCallCheck(this, ArtBoard);
+        return possibleConstructorReturn(this, (ArtBoard.__proto__ || Object.getPrototypeOf(ArtBoard)).apply(this, arguments));
+    }
+
+    createClass(ArtBoard, [{
+        key: "getDefaultObject",
+        value: function getDefaultObject() {
+            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return get$1(ArtBoard.prototype.__proto__ || Object.getPrototypeOf(ArtBoard.prototype), "getDefaultObject", this).call(this, _extends({
+                itemType: 'artboard',
+                width: Length$1.px(300),
+                height: Length$1.px(400),
+                backgroundColor: 'white',
+                name: 'New ArtBoard',
+                x: Length$1.px(100),
+                y: Length$1.px(100),
+                perspectiveOriginPositionX: Length$1.percent(0),
+                perspectiveOriginPositionY: Length$1.percent(0),
+                display: new BlockDisplay()
+            }, obj));
+        }
+    }, {
+        key: "getArtBoard",
+        value: function getArtBoard() {
+            return this;
+        }
+    }, {
+        key: "convert",
+        value: function convert(json) {
+            json = get$1(ArtBoard.prototype.__proto__ || Object.getPrototypeOf(ArtBoard.prototype), "convert", this).call(this, json);
+
+            json.width = Length$1.parse(json.width);
+            json.height = Length$1.parse(json.height);
+            json.x = Length$1.parse(json.x);
+            json.y = Length$1.parse(json.y);
+            json.perspectiveOriginPositionX = Length$1.parse(json.perspectiveOriginPositionX);
+            json.perspectiveOriginPositionY = Length$1.parse(json.perspectiveOriginPositionY);
+
+            if (json.display) json.display = Display.parse(json.display);
+
+            return json;
+        }
+    }, {
+        key: "hasLayout",
+        value: function hasLayout() {
+            var displayType = this.json.display.type;
+
+            switch (displayType) {
+                case 'flex':
+                case 'grid':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }, {
+        key: "getDefaultTitle",
+        value: function getDefaultTitle() {
+            return 'ArtBoard';
+        }
+    }, {
+        key: "isLayoutItem",
+        value: function isLayoutItem() {
+            return false;
+        }
+    }, {
+        key: "traverse",
+        value: function traverse(item, results, hasLayoutItem) {
+            var _this2 = this;
+
+            if (item.isAttribute()) return;
+            if (!hasLayoutItem && item.isLayoutItem()) return;
+            if (item.parent().itemType == 'layer') return;
+            results.push(item);
+
+            item.children.forEach(function (child) {
+                _this2.traverse(child, results);
+            });
+        }
+    }, {
+        key: "tree",
+        value: function tree(hasLayoutItem) {
+            var _this3 = this;
+
+            var results = [];
+
+            this.children.forEach(function (item) {
+                _this3.traverse(item, results, hasLayoutItem);
+            });
+
+            return results;
+        }
+    }, {
+        key: "toString",
+        value: function toString() {
+            return CSS_TO_STRING(this.toCSS());
+        }
+    }, {
+        key: "toCSS",
+        value: function toCSS() {
+            var json = this.json;
+            var css = {
+                overflow: json.overflow || EMPTY_STRING,
+                'transform-style': json.preserve ? 'preserve-3d' : 'flat',
+                position: 'absolute',
+                'background-color': json.backgroundColor
+            };
+
+            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toLayoutCSS(), this.toPerspectiveCSS()));
+        }
+    }, {
+        key: "toLayoutCSS",
+        value: function toLayoutCSS() {
+            return this.json.display.toCSS();
+        }
+    }, {
+        key: "toPerspectiveCSS",
+        value: function toPerspectiveCSS() {
+            var css = {};
+            var json = this.json;
+
+            if (json.perspective) {
+                css.perspective = json.perspective;
+            }
+
+            if (json.perspectiveOriginPositionX.isPercent() && json.perspectiveOriginPositionY.isPercent()) {
+                css['perspective-origin'] = json.perspectiveOriginPositionX + " " + json.perspectiveOriginPositionY;
+            }
+
+            return css;
+        }
+    }, {
+        key: "insertLast",
+        value: function insertLast(source) {
+
+            var sourceParent = source.parent();
+
+            source.parentId = this.id;
+            source.index = Number.MAX_SAFE_INTEGER;
+
+            sourceParent.sort();
+            this.sort();
+        }
+    }, {
+        key: "directories",
+        get: function get() {
+            return this.search({ itemType: 'directory' });
+        }
+    }, {
+        key: "layers",
+        get: function get() {
+            return this.search({ itemType: 'layer' });
+        }
+    }, {
+        key: "allDirectories",
+        get: function get() {
+            return this.tree().filter(function (it) {
+                return it.itemType == 'directory';
+            });
+        }
+
+        /**
+         * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
+         */
+
+    }, {
+        key: "allLayers",
+        get: function get() {
+            return this.tree().filter(function (it) {
+                return it.itemType == 'layer';
+            });
+        }
+    }, {
+        key: "texts",
+        get: function get() {
+            return this.search({ itemType: 'layer', type: 'text' });
+        }
+    }, {
+        key: "images",
+        get: function get() {
+            return this.search({ itemType: 'layer', type: 'image' });
+        }
+    }]);
+    return ArtBoard;
+}(Item);
+
 var BoundProperty = function (_BaseProperty) {
     inherits(BoundProperty, _BaseProperty);
 
@@ -19910,10 +20276,10 @@ var BoundProperty = function (_BaseProperty) {
     createClass(BoundProperty, [{
         key: "getBody",
         value: function getBody() {
-            return "\n            <div class='property-item'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item display-manager'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class='items display-list' ref='$displayList' selected-type='inline'>\n                    <div class='display' display-type='inline'>INLINE</div>\n                    <div class='display' display-type='inline-block'>INLINE <br /> BLOCK</div>\n                    <div class='display' display-type='block'>BLOCK</div>\n                    <div class='display' display-type='flex'>FLEX</div>\n                    <div class='display' display-type='grid'>GRID</div>\n                </div>\n            </div>\n        ";
         }
     }, {
-        key: EVENT(CHANGE_RECT, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value() {
             this.refresh();
         }
@@ -19927,15 +20293,37 @@ var BoundProperty = function (_BaseProperty) {
             this.refs.$height.val(item.height.value);
             this.refs.$x.val(item.x.value);
             this.refs.$y.val(item.y.value);
+
+            if (item.display) {
+                this.refs.$displayList.attr('selected-type', item.display.type);
+            }
+        }
+    }, {
+        key: CLICK('$displayList .display'),
+        value: function value(e) {
+            var display = e.$delegateTarget.attr('display-type');
+            var current = editor$1.selection.current;
+
+            if (current) {
+                this.refs.$displayList.attr('selected-type', display);
+                if (current instanceof ArtBoard) {
+                    current.display = Display.parse({ type: display });
+                    this.emit(CHANGE_ARTBOARD);
+                } else if (current instanceof Layer) {
+                    current.display = Display.parse({ type: display });
+                    this.emit(CHANGE_LAYER);
+                }
+            }
         }
     }, {
         key: CLICK('$rect'),
         value: function value(e) {
             var widthValue = this.refs.$width.int();
+            this.refs.$height.val(widthValue);
             editor$1.selection.updateRect(CHANGE_RECT, {
                 width: Length$1.px(widthValue),
                 height: Length$1.px(widthValue)
-            });
+            }, this);
         }
     }, {
         key: INPUT('$width'),
@@ -20507,7 +20895,7 @@ var start = function start(opt) {
 
                 if (isRealMoved && this.moves.size) {
                     this.moves.forEach(function (v) {
-                        v.func.call(v.context);
+                        v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
                     });
                 }
                 requestAnimationFrame(this.funcBodyMoves);
@@ -20515,9 +20903,9 @@ var start = function start(opt) {
         }, {
             key: "removeBodyMoves",
             value: function removeBodyMoves() {
-
+                var pos = editor$1.config.get('pos');
                 this.ends.forEach(function (v) {
-                    v.func.call(v.context);
+                    v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
                 });
 
                 this.moves.clear();
@@ -20525,13 +20913,13 @@ var start = function start(opt) {
             }
         }, {
             key: EVENT(ADD_BODY_MOUSEMOVE),
-            value: function value(func, context) {
-                this.moves.add({ func: func, context: context });
+            value: function value(func, context, xy) {
+                this.moves.add({ func: func, context: context, xy: xy });
             }
         }, {
             key: EVENT(ADD_BODY_MOUSEUP),
-            value: function value(func, context) {
-                this.ends.add({ func: func, context: context });
+            value: function value(func, context, xy) {
+                this.ends.add({ func: func, context: context, xy: xy });
             }
         }, {
             key: "getModuleList",
@@ -20668,14 +21056,13 @@ var ImageListView = function (_UIElement) {
     }, {
         key: LOAD(),
         value: function value$$1() {
-            var _this2 = this;
+            // var layer = editor.selection.layer; 
+            // if (!layer) return ''; 
 
-            var layer = editor$1.selection.layer;
-            if (!layer) return '';
-
-            return layer.backgroundImages.map(function (item) {
-                return _this2.makeItemNodeImage(item);
-            });
+            // return layer.backgroundImages.map(item => {
+            //     return this.makeItemNodeImage(item)
+            // })
+            return '';
         }
     }, {
         key: 'refresh',
@@ -20768,1067 +21155,6 @@ var LayerToolbar = function (_UIElement) {
         }
     }]);
     return LayerToolbar;
-}(UIElement);
-
-var GradientAngle = function (_UIElement) {
-    inherits(GradientAngle, _UIElement);
-
-    function GradientAngle() {
-        classCallCheck(this, GradientAngle);
-        return possibleConstructorReturn(this, (GradientAngle.__proto__ || Object.getPrototypeOf(GradientAngle)).apply(this, arguments));
-    }
-
-    createClass(GradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            if (this.isShow()) {
-                this.$el.show();
-
-                this.refreshUI();
-            } else {
-                this.$el.hide();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var image = editor$1.selection.backgroundImage;
-
-            if (!image) return false;
-            if (!image.image.hasAngle()) {
-                return false;
-            }
-
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
-            return isUpdate ? editor$1.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY);
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.refs.$dragAngle.width();
-            var height = this.refs.$dragAngle.height();
-            var radius = Math.floor(width / 2 * 0.7);
-
-            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
-                left = _refs$$dragAngle$offs.left,
-                top = _refs$$dragAngle$offs.top;
-
-            var minX = left;
-            var minY = top;
-            var centerX = minX + width / 2;
-            var centerY = minY + height / 2;
-
-            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            var image = editor$1.selection.backgroundImage;
-            if (!image) return 0;
-
-            return image.image.calculateAngle() - 90;
-        }
-    }, {
-        key: 'refreshAngleText',
-        value: function refreshAngleText(angleText) {
-            this.refs.$angleText.text(angleText + ' °');
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(isUpdate) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                angle = calculateAngle(rx, ry);
-
-            {
-                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
-            }
-
-            // set drag pointer position 
-            this.refs.$dragPointer.px('left', x - minX);
-            this.refs.$dragPointer.px('top', y - minY);
-
-            var lastAngle = Math.round(angle + 90) % 360;
-
-            this.refreshAngleText(lastAngle);
-
-            if (isUpdate) {
-
-                this.setAngle(lastAngle);
-            }
-        }
-    }, {
-        key: 'setAngle',
-        value: function setAngle(angle) {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                image.image.angle = angle;
-                editor$1.send(CHANGE_IMAGE, image.image);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_TOOL),
-        value: function value() {
-            this.$el.toggle(this.isShow());
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'move',
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: POINTERSTART('$dragAngle') + MOVE(),
-        value: function value(e) {}
-    }]);
-    return GradientAngle;
-}(UIElement);
-
-var _DEFINE_POSITIONS;
-
-var DEFINE_POSITIONS = (_DEFINE_POSITIONS = {}, defineProperty(_DEFINE_POSITIONS, Position$1.CENTER, [Position$1.CENTER, Position$1.CENTER]), defineProperty(_DEFINE_POSITIONS, Position$1.RIGHT, [Position$1.RIGHT, Position$1.CENTER]), defineProperty(_DEFINE_POSITIONS, Position$1.TOP, [Position$1.CENTER, Position$1.TOP]), defineProperty(_DEFINE_POSITIONS, Position$1.LEFT, [Position$1.LEFT, Position$1.CENTER]), defineProperty(_DEFINE_POSITIONS, Position$1.BOTTOM, [Position$1.CENTER, Position$1.BOTTOM]), _DEFINE_POSITIONS);
-
-var GradientPosition = function (_UIElement) {
-    inherits(GradientPosition, _UIElement);
-
-    function GradientPosition() {
-        classCallCheck(this, GradientPosition);
-        return possibleConstructorReturn(this, (GradientPosition.__proto__ || Object.getPrototypeOf(GradientPosition)).apply(this, arguments));
-    }
-
-    createClass(GradientPosition, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="drag-position">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.refreshUI();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var image = editor$1.selection.backgroundImage;
-            if (!image) return false;
-
-            var isRadial = image.image.isRadial();
-            var isConic = image.image.isConic();
-
-            if (isRadial == false && isConic == false) {
-                // radial , conic 만 보여주기 
-                return false;
-            }
-
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(isUpdate, position) {
-
-            if (isUpdate) {
-                var xy = editor$1.config.get('pos');
-
-                return [xy.x, xy.y];
-            }
-
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY,
-                width = _getRectangle.width,
-                height = _getRectangle.height;
-
-            var p = position;
-            if (isString(p) && DEFINE_POSITIONS[p]) {
-                p = DEFINE_POSITIONS[p];
-            } else if (isString(p)) {
-                p = p.split(WHITE_STRING$1);
-            }
-
-            p = p.map(function (item, index) {
-                if (item == 'center') {
-                    if (index == 0) {
-                        return minX + width / 2;
-                    } else if (index == 1) {
-                        return minY + height / 2;
-                    }
-                } else if (item === 'left') {
-                    return minX;
-                } else if (item === 'right') {
-                    return maxX;
-                } else if (item === 'top') {
-                    return minY;
-                } else if (item === 'bottom') {
-                    return maxY;
-                } else {
-                    if (index == 0) {
-                        return minX * width * (+item / 100);
-                    } else if (index == 1) {
-                        return minY * height * (+item / 100);
-                    }
-                }
-            });
-
-            return p;
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.$el.width();
-            var height = this.$el.height();
-            var minX = this.$el.offsetLeft();
-            var minY = this.$el.offsetTop();
-
-            var maxX = minX + width;
-            var maxY = minY + height;
-
-            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-
-            var image = editor$1.selection.backgroundImage;
-            if (!image) return EMPTY_STRING;
-
-            return image.image.radialPosition || EMPTY_STRING;
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(isUpdate) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue()),
-                _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
-                x = _getCurrentXY2[0],
-                y = _getCurrentXY2[1];
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.refs.$dragPointer.px('left', left);
-            this.refs.$dragPointer.px('top', top);
-
-            if (isUpdate) {
-
-                this.setRadialPosition([Length.percent(Math.floor(left / width * 100)), Length.percent(Math.floor(top / height * 100))]);
-            }
-        }
-    }, {
-        key: 'setRadialPosition',
-        value: function setRadialPosition(radialPosition) {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                image.image.radialPosition = radialPosition;
-                editor$1.send(CHANGE_IMAGE, image.image);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('changeTool'),
-        value: function value$$1() {
-            this.$el.toggle(this.isShow());
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'move',
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: POINTERSTART('$dragPointer') + MOVE(),
-        value: function value$$1(e) {
-            e.preventDefault();
-        }
-    }, {
-        key: POINTERSTART() + MOVE(),
-        value: function value$$1(e) {}
-    }, {
-        key: DOUBLECLICK('$dragPointer'),
-        value: function value$$1(e) {
-            e.preventDefault();
-            this.setRadialPosition(Position$1.CENTER);
-            this.refreshUI();
-        }
-    }]);
-    return GradientPosition;
-}(UIElement);
-
-var PredefinedLinearGradientAngle = function (_UIElement) {
-    inherits(PredefinedLinearGradientAngle, _UIElement);
-
-    function PredefinedLinearGradientAngle() {
-        classCallCheck(this, PredefinedLinearGradientAngle);
-        return possibleConstructorReturn(this, (PredefinedLinearGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedLinearGradientAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedLinearGradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var image = editor$1.selection.backgroundImage;
-            if (!image) {
-                return false;
-            }
-
-            var isLinear = image.image.isLinear();
-            var isConic = image.image.isConic();
-
-            return editor$1.config.get('guide.angle') && (isLinear || isConic);
-        }
-    }, {
-        key: CLICK('$el button') + SELF,
-        value: function value(e) {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                image.image.angle = e.$delegateTarget.attr('data-value');
-                editor$1.send(CHANGE_IMAGE, image);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('changeTool'),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedLinearGradientAngle;
-}(UIElement);
-
-var PredefinedRadialGradientPosition = function (_UIElement) {
-    inherits(PredefinedRadialGradientPosition, _UIElement);
-
-    function PredefinedRadialGradientPosition() {
-        classCallCheck(this, PredefinedRadialGradientPosition);
-        return possibleConstructorReturn(this, (PredefinedRadialGradientPosition.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientPosition)).apply(this, arguments));
-    }
-
-    createClass(PredefinedRadialGradientPosition, [{
-        key: 'template',
-        value: function template() {
-            return ' \n            <div class="predefined-angluar-group radial-position">\n                <button type="button" data-value="top"></button>                          \n                <button type="button" data-value="left"></button>                                                  \n                <button type="button" data-value="bottom"></button>                            \n                <button type="button" data-value="right"></button>                                        \n            </div>\n        ';
-        }
-    }, {
-        key: CLICK('$el button'),
-        value: function value(e) {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                image.radialPosition = e.$delegateTarget.attr('data-value');
-                editor$1.send(CHANGE_IMAGE, image);
-            }
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var image = editor$1.selection.backgroundImage;
-            if (!image) return false;
-
-            var isRadial = image.image.isRadial();
-            var isConic = image.image.isConic();
-
-            return editor$1.config.get('guide.angle') && (isRadial || isConic);
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedRadialGradientPosition;
-}(UIElement);
-
-var PredefinedRadialGradientAngle = function (_UIElement) {
-    inherits(PredefinedRadialGradientAngle, _UIElement);
-
-    function PredefinedRadialGradientAngle() {
-        classCallCheck(this, PredefinedRadialGradientAngle);
-        return possibleConstructorReturn(this, (PredefinedRadialGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedRadialGradientAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-radial-gradient-angle">\n                <button ref="$center" type="button" data-value="center" title="center"><span class=\'circle\'></span></button>            \n                <select class="radial-type-list" ref="$select">\n                    <option value="ellipse">ellipse</option>                \n                    <option value="closest-side">closest-side</option> \n                    <option value="closest-corner">closest-corner</option>\n                    <option value="farthest-side">farthest-side</option>\n                    <option value="farthest-corner">farthest-corner</option>                    \n                    <option value="circle">circle</option>\n                    <option value="circle closest-side">circle closest-side</option> \n                    <option value="circle closest-corner">circle closest-corner</option>\n                    <option value="circle farthest-side">circle farthest-side</option>\n                    <option value="circle farthest-corner">circle farthest-corner</option>                                        \n                </select>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                this.refs.$select.val(image.image.radialType);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: CHANGE('$select'),
-        value: function value(e) {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                image.image.radialType = this.refs.$select.val();
-                editor$1.send(CHANGE_IMAGE, image);
-            }
-        }
-    }, {
-        key: CLICK('$center'),
-        value: function value(e) {
-            var image = editor$1.selection.backgroundImage;
-            if (image) {
-                image.image.radialPosition = Position.CENTER;
-                editor$1.send(CHANGE_IMAGE, image);
-            }
-        }
-    }]);
-    return PredefinedRadialGradientAngle;
-}(UIElement);
-
-var defined_position$1 = {
-    'to right': {
-        perspectiveOriginPositionX: Position$1.RIGHT,
-        perspectiveOriginPositionY: Position$1.CENTER
-    },
-    'to left': {
-        perspectiveOriginPositionX: Position$1.LEFT,
-        perspectiveOriginPositionY: Position$1.CENTER
-    },
-    'to top': {
-        perspectiveOriginPositionX: Position$1.CENTER,
-        perspectiveOriginPositionY: Position$1.TOP
-    },
-    'to bottom': {
-        perspectiveOriginPositionX: Position$1.CENTER,
-        perspectiveOriginPositionY: Position$1.BOTTOM
-    },
-    'to top right': {
-        perspectiveOriginPositionX: Position$1.RIGHT,
-        perspectiveOriginPositionY: Position$1.TOP
-    },
-    'to bottom right': {
-        perspectiveOriginPositionX: Position$1.RIGHT,
-        perspectiveOriginPositionY: Position$1.BOTTOM
-    },
-    'to bottom left': {
-        perspectiveOriginPositionX: Position$1.LEFT,
-        perspectiveOriginPositionY: Position$1.BOTTOM
-    },
-    'to top left': {
-        perspectiveOriginPositionX: Position$1.LEFT,
-        perspectiveOriginPositionY: Position$1.TOP
-    }
-};
-
-var PredefinedPerspectiveOriginPosition = function (_UIElement) {
-    inherits(PredefinedPerspectiveOriginPosition, _UIElement);
-
-    function PredefinedPerspectiveOriginPosition() {
-        classCallCheck(this, PredefinedPerspectiveOriginPosition);
-        return possibleConstructorReturn(this, (PredefinedPerspectiveOriginPosition.__proto__ || Object.getPrototypeOf(PredefinedPerspectiveOriginPosition)).apply(this, arguments));
-    }
-
-    createClass(PredefinedPerspectiveOriginPosition, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-perspective-origin-position">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var artboard = editor$1.selection.artboard;
-            if (!artboard) return false;
-
-            return !!artboard.preserve;
-        }
-    }, {
-        key: 'getPosition',
-        value: function getPosition(type) {
-            return defined_position$1[type] || {
-                perspectiveOriginPositionX: Length$1.percent(0),
-                perspectiveOriginPositionY: Length$1.percent(0)
-            };
-        }
-    }, {
-        key: CLICK('$el button') + SELF,
-        value: function value(e) {
-            var artboard = editor$1.selection.artboard;
-            if (artboard) {
-                artboard.reset(this.getPosition(e.$delegateTarget.attr('data-value')));
-                editor$1.send(CHANGE_ARTBOARD, artboard);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedPerspectiveOriginPosition;
-}(UIElement);
-
-var _DEFINE_POSITIONS$1;
-
-var DEFINE_POSITIONS$1 = (_DEFINE_POSITIONS$1 = {}, defineProperty(_DEFINE_POSITIONS$1, POSITION_CENTER, [POSITION_CENTER, POSITION_CENTER]), defineProperty(_DEFINE_POSITIONS$1, POSITION_RIGHT, [POSITION_RIGHT, POSITION_CENTER]), defineProperty(_DEFINE_POSITIONS$1, POSITION_TOP, [POSITION_CENTER, POSITION_TOP]), defineProperty(_DEFINE_POSITIONS$1, POSITION_LEFT, [POSITION_LEFT, POSITION_CENTER]), defineProperty(_DEFINE_POSITIONS$1, POSITION_BOTTOM, [POSITION_CENTER, POSITION_BOTTOM]), _DEFINE_POSITIONS$1);
-
-var PerspectiveOriginPosition = function (_UIElement) {
-    inherits(PerspectiveOriginPosition, _UIElement);
-
-    function PerspectiveOriginPosition() {
-        classCallCheck(this, PerspectiveOriginPosition);
-        return possibleConstructorReturn(this, (PerspectiveOriginPosition.__proto__ || Object.getPrototypeOf(PerspectiveOriginPosition)).apply(this, arguments));
-    }
-
-    createClass(PerspectiveOriginPosition, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="perspective-drag-position">\n                <div ref="$dragPointer" class="drag-pointer"></div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            var isShow = this.isShow();
-
-            this.$el.toggle(isShow);
-
-            if (isShow) {
-                this.refreshUI();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            var artboard = editor$1.selection.artboard;
-            if (!artboard) return false;
-
-            return !!artboard.preserve;
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(isUpdate, position) {
-
-            if (isUpdate) {
-                var xy = this.config('pos');
-
-                return [xy.x, xy.y];
-            }
-
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                maxX = _getRectangle.maxX,
-                maxY = _getRectangle.maxY,
-                width = _getRectangle.width,
-                height = _getRectangle.height;
-
-            var p = position;
-            if (isString(p) && DEFINE_POSITIONS$1[p]) {
-                p = DEFINE_POSITIONS$1[p];
-            } else if (isString(p)) {
-                p = p.split(WHITE_STRING$1);
-            } else {
-                p = [p.perspectiveOriginPositionX.value, p.perspectiveOriginPositionY.value];
-            }
-
-            p = p.map(function (item, index) {
-                if (item == 'center') {
-                    if (index == 0) {
-                        return minX + width / 2;
-                    } else if (index == 1) {
-                        return minY + height / 2;
-                    }
-                } else if (item === 'left') {
-                    return minX;
-                } else if (item === 'right') {
-                    return maxX;
-                } else if (item === 'top') {
-                    return minY;
-                } else if (item === 'bottom') {
-                    return maxY;
-                } else {
-                    if (index == 0) {
-                        return minX + width * (+item / 100);
-                    } else if (index == 1) {
-                        return minY + height * (+item / 100);
-                    }
-                }
-            });
-
-            return p;
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.$el.width();
-            var height = this.$el.height();
-            var minX = this.$el.offsetLeft();
-            var minY = this.$el.offsetTop();
-
-            var maxX = minX + width;
-            var maxY = minY + height;
-
-            return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-
-            var artboard = editor$1.selection.artboard;
-            if (!artboard) return EMPTY_STRING;
-
-            return {
-                perspectiveOriginPositionX: item.perspectiveOriginPositionX,
-                perspectiveOriginPositionY: item.perspectiveOriginPositionY
-            } || EMPTY_STRING;
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(isUpdate) {
-            var _getRectangle2 = this.getRectangle(),
-                minX = _getRectangle2.minX,
-                minY = _getRectangle2.minY,
-                maxX = _getRectangle2.maxX,
-                maxY = _getRectangle2.maxY,
-                width = _getRectangle2.width,
-                height = _getRectangle2.height;
-
-            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue()),
-                _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
-                x = _getCurrentXY2[0],
-                y = _getCurrentXY2[1];
-
-            x = Math.max(Math.min(maxX, x), minX);
-            y = Math.max(Math.min(maxY, y), minY);
-
-            var left = x - minX;
-            var top = y - minY;
-
-            this.refs.$dragPointer.px('left', left);
-            this.refs.$dragPointer.px('top', top);
-
-            if (isUpdate) {
-
-                this.setPerspectiveOriginPosition(Length$1.percent(Math.floor(left / width * 100)), Length$1.percent(Math.floor(top / height * 100)));
-            }
-        }
-    }, {
-        key: 'setPerspectiveOriginPosition',
-        value: function setPerspectiveOriginPosition(perspectiveOriginPositionX, perspectiveOriginPositionY) {
-            var artboard = editor$1.selection.artboard;
-            if (artboard) {
-                artboard.reset({
-                    perspectiveOriginPositionX: perspectiveOriginPositionX,
-                    perspectiveOriginPositionY: perspectiveOriginPositionY
-                });
-
-                editor$1.send(CHANGE_ARTBOARD, artboard);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value$$1() {
-            this.refresh();
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'move',
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: POINTERSTART('$dragPointer') + MOVE(),
-        value: function value$$1(e) {
-            e.preventDefault();
-        }
-    }, {
-        key: DOUBLECLICK('$dragPointer'),
-        value: function value$$1(e) {
-            e.preventDefault();
-            this.setPerspectiveOriginPosition(Position$1.CENTER, Position$1.CENTER);
-            this.refreshUI();
-        }
-    }]);
-    return PerspectiveOriginPosition;
-}(UIElement);
-
-var LayerAngle = function (_UIElement) {
-    inherits(LayerAngle, _UIElement);
-
-    function LayerAngle() {
-        classCallCheck(this, LayerAngle);
-        return possibleConstructorReturn(this, (LayerAngle.__proto__ || Object.getPrototypeOf(LayerAngle)).apply(this, arguments));
-    }
-
-    createClass(LayerAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'drag-angle-rect\'>\n                <div class="drag-angle" ref="$dragAngle">\n                    <div ref="$angleText" class="angle-text"></div>\n                    <div ref="$dragPointer" class="drag-pointer"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-
-            if (this.isShow()) {
-                this.$el.show();
-                this.refreshUI();
-            } else {
-                this.$el.hide();
-            }
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!editor$1.selection.layer) return false;
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: 'getCurrentXY',
-        value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
-            return isUpdate ? editor$1.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY);
-        }
-    }, {
-        key: 'getRectangle',
-        value: function getRectangle() {
-            var width = this.refs.$dragAngle.width();
-            var height = this.refs.$dragAngle.height();
-            var radius = Math.floor(width / 2 * 0.7);
-
-            var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
-                left = _refs$$dragAngle$offs.left,
-                top = _refs$$dragAngle$offs.top;
-
-            var minX = left;
-            var minY = top;
-            var centerX = minX + width / 2;
-            var centerY = minY + height / 2;
-
-            return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
-        }
-    }, {
-        key: 'getDefaultValue',
-        value: function getDefaultValue() {
-            var layer = editor$1.selection.layer;
-            if (!layer) return -90;
-            if (isUndefined$1(layer.rotate)) return -90;
-
-            return layer.rotate - 90;
-        }
-    }, {
-        key: 'refreshAngleText',
-        value: function refreshAngleText(angleText) {
-            this.refs.$angleText.text(angleText + ' °');
-        }
-    }, {
-        key: 'refreshUI',
-        value: function refreshUI(isUpdate) {
-            var _getRectangle = this.getRectangle(),
-                minX = _getRectangle.minX,
-                minY = _getRectangle.minY,
-                radius = _getRectangle.radius,
-                centerX = _getRectangle.centerX,
-                centerY = _getRectangle.centerY;
-
-            var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
-                x = _getCurrentXY.x,
-                y = _getCurrentXY.y;
-
-            var rx = x - centerX,
-                ry = y - centerY,
-                angle = calculateAngle(rx, ry);
-
-            {
-                var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
-                    x = _getCurrentXY2.x,
-                    y = _getCurrentXY2.y;
-            }
-
-            // set drag pointer position 
-            this.refs.$dragPointer.px('left', x - minX);
-            this.refs.$dragPointer.px('top', y - minY);
-
-            var lastAngle = Math.round(angle + 90) % 360;
-
-            this.refreshAngleText(lastAngle);
-
-            if (isUpdate) {
-                this.setAngle(lastAngle);
-            }
-        }
-    }, {
-        key: 'setAngle',
-        value: function setAngle(rotate) {
-            var _this2 = this;
-
-            editor$1.selection.items.forEach(function (item) {
-                item.rotate = (_this2.cachedRotate[id] + (rotate - _this2.cachedRotate[id])) % 360;
-                _this2.commit(CHANGE_LAYER);
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT(CHANGE_TOOL),
-        value: function value() {
-            this.$el.toggle(this.isShow());
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'move',
-        value: function move() {
-            this.refreshUI(true);
-        }
-    }, {
-        key: POINTERSTART('$dragAngle') + MOVE(),
-        value: function value(e) {
-            var _this3 = this;
-
-            this.cachedRotate = {};
-            editor$1.selection.items.forEach(function (item) {
-                _this3.cachedRotate[item.id] = item.rotate || 0;
-            });
-            this.refreshUI(e);
-        }
-    }]);
-    return LayerAngle;
-}(UIElement);
-
-var DEFINED_ANGLES$2 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
-};
-
-var PredefinedLayerAngle = function (_UIElement) {
-    inherits(PredefinedLayerAngle, _UIElement);
-
-    function PredefinedLayerAngle() {
-        classCallCheck(this, PredefinedLayerAngle);
-        return possibleConstructorReturn(this, (PredefinedLayerAngle.__proto__ || Object.getPrototypeOf(PredefinedLayerAngle)).apply(this, arguments));
-    }
-
-    createClass(PredefinedLayerAngle, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class="predefined-angluar-group">\n                <button type="button" data-value="to right"></button>                          \n                <button type="button" data-value="to left"></button>                                                  \n                <button type="button" data-value="to top"></button>                            \n                <button type="button" data-value="to bottom"></button>                                        \n                <button type="button" data-value="to top right"></button>                                \n                <button type="button" data-value="to bottom right"></button>                                    \n                <button type="button" data-value="to bottom left"></button>\n                <button type="button" data-value="to top left"></button>\n            </div>\n        ';
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-            if (!editor$1.selection.layer) return false;
-
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: CLICK('$el button') + SELF,
-        value: function value(e) {
-            var layer = editor$1.selection.layer;
-            if (layer) {
-                layer.rotate = DEFINED_ANGLES$2[e.$delegateTarget.attr('data-value')];
-                editor$1.send(CHANGE_LAYER, layer);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return PredefinedLayerAngle;
-}(UIElement);
-
-var SubFeatureControl = function (_UIElement) {
-    inherits(SubFeatureControl, _UIElement);
-
-    function SubFeatureControl() {
-        classCallCheck(this, SubFeatureControl);
-        return possibleConstructorReturn(this, (SubFeatureControl.__proto__ || Object.getPrototypeOf(SubFeatureControl)).apply(this, arguments));
-    }
-
-    createClass(SubFeatureControl, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='sub-feature-control'>         \n                <div class='feature'>\n                    <div class=\"property-view\" ref=\"$perspective\">\n                        <PredefinedPerspectiveOriginPosition />\n                        <PerspectiveOriginPosition />\n                    </div>\n                    <div class=\"property-view\" ref=\"$backgroundSize\">\n                        <PredefinedBackgroundPosition />\n                        <BackgroundResizer />\n                    </div>\n                    <div class=\"property-view linear\" ref=\"$linear\">\n                        <PredefinedLinearGradientAngle />\n                        <GradientAngle />\n                    </div>\n                    <div class=\"property-view radial\" ref=\"$radial\">\n                        <PredefinedRadialGradientAngle />\n                        <PredefinedRadialGradientPosition />\n                        <GradientPosition />\n                    </div>\n                    <div class=\"property-view layer\" ref=\"$layer\">\n                        <PredefinedLayerAngle />\n                        <LayerAngle />\n                    </div>                    \n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: "components",
-        value: function components() {
-            return _extends({
-                PredefinedLayerAngle: PredefinedLayerAngle,
-                LayerAngle: LayerAngle,
-                PerspectiveOriginPosition: PerspectiveOriginPosition,
-                PredefinedPerspectiveOriginPosition: PredefinedPerspectiveOriginPosition,
-                PredefinedRadialGradientAngle: PredefinedRadialGradientAngle,
-                GradientAngle: GradientAngle,
-                GradientPosition: GradientPosition,
-                PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
-                PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
-                BackgroundResizer: BackgroundResizer,
-                PredefinedBackgroundPosition: PredefinedBackgroundPosition
-            }, items$1);
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-            this.refs.$perspective.toggleClass('hide', this.isNotPage());
-            this.refs.$backgroundSize.toggleClass('hide', this.isNotImage());
-            this.refs.$linear.toggleClass('hide', !this.isLinearShow());
-            this.refs.$radial.toggleClass('hide', !this.isRadialShow());
-            this.refs.$layer.toggleClass('hide', this.isNotLayer());
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            return true;
-        }
-    }, {
-        key: "isNotImage",
-        value: function isNotImage() {
-            return !editor$1.selection.backgroundImage;
-        }
-    }, {
-        key: "isNotLayer",
-        value: function isNotLayer() {
-            return !editor$1.selection.layer;
-        }
-    }, {
-        key: "isNotPage",
-        value: function isNotPage() {
-            return !editor$1.selection.artboard;
-        }
-    }, {
-        key: "isLinearShow",
-        value: function isLinearShow() {
-            var backgroundImage = editor$1.selection.backgroundImage;
-            if (!backgroundImage) return false;
-
-            var image = backgroundImage.image;
-            if (!image) return false;
-
-            if (image.isLinear() == false && image.isConic() == false) {
-                return false;
-            }
-
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: "isRadialShow",
-        value: function isRadialShow() {
-            var backgroundImage = editor$1.selection.backgroundImage;
-            if (!backgroundImage) return false;
-
-            var image = backgroundImage.image;
-            if (!image) return false;
-
-            if (image.isRadial() == false && image.isConic() == false) {
-                return false;
-            }
-
-            return editor$1.config.get('guide.angle');
-        }
-    }, {
-        key: EVENT(CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return SubFeatureControl;
 }(UIElement);
 
 var colorpicker_class = 'codemirror-colorview';
@@ -24072,173 +23398,6 @@ var VerticalColorStep = function (_UIElement) {
     return VerticalColorStep;
 }(UIElement);
 
-var ArtBoard = function (_Item) {
-    inherits(ArtBoard, _Item);
-
-    function ArtBoard() {
-        classCallCheck(this, ArtBoard);
-        return possibleConstructorReturn(this, (ArtBoard.__proto__ || Object.getPrototypeOf(ArtBoard)).apply(this, arguments));
-    }
-
-    createClass(ArtBoard, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            return get$1(ArtBoard.prototype.__proto__ || Object.getPrototypeOf(ArtBoard.prototype), "getDefaultObject", this).call(this, _extends({
-                itemType: 'artboard',
-                width: Length$1.px(300),
-                height: Length$1.px(400),
-                backgroundColor: 'white',
-                name: 'New ArtBoard',
-                x: Length$1.px(100),
-                y: Length$1.px(100),
-                perspectiveOriginPositionX: Length$1.percent(0),
-                perspectiveOriginPositionY: Length$1.percent(0),
-                display: new BlockDisplay()
-            }, obj));
-        }
-    }, {
-        key: "getArtBoard",
-        value: function getArtBoard() {
-            return this;
-        }
-    }, {
-        key: "convert",
-        value: function convert(json) {
-            json = get$1(ArtBoard.prototype.__proto__ || Object.getPrototypeOf(ArtBoard.prototype), "convert", this).call(this, json);
-
-            json.width = Length$1.parse(json.width);
-            json.height = Length$1.parse(json.height);
-            json.x = Length$1.parse(json.x);
-            json.y = Length$1.parse(json.y);
-            json.perspectiveOriginPositionX = Length$1.parse(json.perspectiveOriginPositionX);
-            json.perspectiveOriginPositionY = Length$1.parse(json.perspectiveOriginPositionY);
-
-            if (json.display) json.display = Display.parse(json.display);
-
-            return json;
-        }
-    }, {
-        key: "getDefaultTitle",
-        value: function getDefaultTitle() {
-            return 'ArtBoard';
-        }
-    }, {
-        key: "traverse",
-        value: function traverse(item, results, hasLayoutItem) {
-            var _this2 = this;
-
-            if (item.isAttribute()) return;
-            if (!hasLayoutItem && item.isLayoutItem()) return;
-            results.push(item);
-
-            item.children.forEach(function (child) {
-                _this2.traverse(child, results);
-            });
-        }
-    }, {
-        key: "tree",
-        value: function tree(hasLayoutItem) {
-            var _this3 = this;
-
-            var results = [];
-
-            this.children.forEach(function (item) {
-                _this3.traverse(item, results, hasLayoutItem);
-            });
-
-            return results;
-        }
-    }, {
-        key: "toString",
-        value: function toString() {
-            return CSS_TO_STRING(this.toCSS());
-        }
-    }, {
-        key: "toCSS",
-        value: function toCSS() {
-            var json = this.json;
-            var css = {
-                overflow: json.overflow || EMPTY_STRING,
-                'transform-style': json.preserve ? 'preserve-3d' : 'flat',
-                position: 'absolute',
-                'background-color': json.backgroundColor
-            };
-
-            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toLayoutCSS(), this.toPerspectiveCSS()));
-        }
-    }, {
-        key: "toLayoutCSS",
-        value: function toLayoutCSS() {
-            return this.json.display.toCSS();
-        }
-    }, {
-        key: "toPerspectiveCSS",
-        value: function toPerspectiveCSS() {
-            var css = {};
-            var json = this.json;
-
-            if (json.perspective) {
-                css.perspective = json.perspective;
-            }
-
-            if (json.perspectiveOriginPositionX.isPercent() && json.perspectiveOriginPositionY.isPercent()) {
-                css['perspective-origin'] = json.perspectiveOriginPositionX + " " + json.perspectiveOriginPositionY;
-            }
-
-            return css;
-        }
-    }, {
-        key: "insertLast",
-        value: function insertLast(source) {
-
-            var sourceParent = source.parent();
-
-            source.parentId = this.id;
-            source.index = Number.MAX_SAFE_INTEGER;
-
-            sourceParent.sort();
-            this.sort();
-        }
-    }, {
-        key: "directories",
-        get: function get() {
-            return this.search({ itemType: 'directory' });
-        }
-    }, {
-        key: "layers",
-        get: function get() {
-            return this.search({ itemType: 'layer' });
-        }
-    }, {
-        key: "allDirectories",
-        get: function get() {
-            return this.tree().filter(function (it) {
-                return it.itemType == 'directory';
-            });
-        }
-    }, {
-        key: "allLayers",
-        get: function get() {
-            return this.tree(true).filter(function (it) {
-                return it.itemType == 'layer';
-            });
-        }
-    }, {
-        key: "texts",
-        get: function get() {
-            return this.search({ itemType: 'layer', type: 'text' });
-        }
-    }, {
-        key: "images",
-        get: function get() {
-            return this.search({ itemType: 'layer', type: 'image' });
-        }
-    }]);
-    return ArtBoard;
-}(Item);
-
 var _right;
 var _left;
 var _top;
@@ -24307,6 +23466,8 @@ Segment.BOTTOM_LEFT = SEGMENT_TYPE_BOTTOM_LEFT;
 Segment.TOP = SEGMENT_TYPE_TOP;
 Segment.BOTTOM = SEGMENT_TYPE_BOTTOM;
 
+Segment.LIST = [Segment.MOVE, Segment.RIGHT, Segment.TOP_RIGHT, Segment.BOTTOM_RIGHT, Segment.LEFT, Segment.TOP_LEFT, Segment.BOTTOM_LEFT, Segment.TOP, Segment.BOTTOM];
+
 var MAX_DIST = 1;
 
 var Guide = function () {
@@ -24315,6 +23476,13 @@ var Guide = function () {
     }
 
     createClass(Guide, [{
+        key: "clear",
+        value: function clear() {
+            this.rect = null;
+            this.direction = null;
+            this.cachedItems = null;
+        }
+    }, {
         key: "initialize",
         value: function initialize(rect, cachedItems, direction) {
             var _this = this;
@@ -24508,6 +23676,16 @@ var ItemPositionCalc = function () {
     }
 
     createClass(ItemPositionCalc, [{
+        key: "clear",
+        value: function clear() {
+            this.direction = null;
+            this.cachedSelectionItems = {};
+            this.cachedPosition = {};
+            this.newRect = null;
+            this.rect = null;
+            this.guide.clear();
+        }
+    }, {
         key: "initialize",
         value: function initialize(direction) {
             var _this = this;
@@ -24773,8 +23951,75 @@ var StaticGradient = function (_Gradient) {
     return StaticGradient;
 }(Gradient);
 
-var _templateObject$16 = taggedTemplateLiteral(['\n            <div \n                class=\'layer ', '\' \n                item-id="', '" \n                style="', '" \n                title="', '" >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>'], ['\n            <div \n                class=\'layer ', '\' \n                item-id="', '" \n                style="', '" \n                title="', '" >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>']);
-var _templateObject2$3 = taggedTemplateLiteral(['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">', '</div>\n            </div>\n        '], ['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' style="cursor:pointer;position:absolute;bottom:100%;left:0px;right:0px;display:inline-block;">', '</div>\n            </div>\n        ']);
+var _templateObject$16 = taggedTemplateLiteral(['<div class=\'item-resizer\' ref="$itemResizer">\n                ', '\n        </div>'], ['<div class=\'item-resizer\' ref="$itemResizer">\n                ', '\n        </div>']);
+var _templateObject2$3 = taggedTemplateLiteral(['\n            <div \n                class=\'layer\' \n                item-id="', '" \n                style="', '" \n                title="', '" \n                data-layout-item="', '"\n                data-has-layout="', '"\n                >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>'], ['\n            <div \n                class=\'layer\' \n                item-id="', '" \n                style="', '" \n                title="', '" \n                data-layout-item="', '"\n                data-has-layout="', '"\n                >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>']);
+var _templateObject3$1 = taggedTemplateLiteral(['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' artboard-id="', '">', '</div>\n            </div>\n        '], ['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' artboard-id="', '">', '</div>\n            </div>\n        ']);
+
+function createGuideLine(list) {
+    var layer = new Layer();
+
+    var lineWidth = Length$1.px(1.5);
+
+    list.forEach(function (it) {
+
+        var target = it.B;
+
+        if (isNotUndefined(it.ax)) {
+
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#e600ff' }));
+            background.repeat = 'no-repeat';
+            background.width = lineWidth;
+            background.height = it.A.height;
+            background.x = Length$1.px(it.bx - 1);
+            background.y = it.A.screenY;
+
+            if (target instanceof Layer) {
+                var background = layer.addBackgroundImage(new BackgroundImage());
+                background.addGradient(new StaticGradient({ color: '#e600ff' }));
+                background.repeat = 'no-repeat';
+                background.width = lineWidth;
+                background.height = target.height;
+                background.x = Length$1.px(it.bx - 1);
+                background.y = target.screenY;
+            }
+
+            var minY = Length$1.min(target.screenY, it.A.screenY);
+            var maxY = Length$1.max(target.screenY2, it.A.screenY2);
+
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#4877ff' }));
+            background.repeat = 'no-repeat';
+            background.width = lineWidth;
+            background.height = Length$1.px(maxY.value - minY.value);
+            background.x = Length$1.px(it.bx - 1);
+            background.y = minY;
+        } else {
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#e600ff' }));
+            background.repeat = 'no-repeat';
+            background.width = it.A.width;
+            background.height = lineWidth;
+            background.x = it.A.screenX;
+            background.y = Length$1.px(it.by);
+
+            var minX = Length$1.min(target.screenX, it.A.screenX);
+            var maxX = Length$1.max(target.screenX2, it.A.screenX2);
+
+            var background = layer.addBackgroundImage(new BackgroundImage());
+            background.addGradient(new StaticGradient({ color: '#4877ff' }));
+            background.repeat = 'no-repeat';
+            background.width = Length$1.px(maxX.value - minX.value);
+            background.height = lineWidth;
+            background.x = minX;
+            background.y = Length$1.px(it.by);
+        }
+    });
+
+    layer.remove();
+
+    return layer.toBackgroundImageCSS();
+}
 
 var CanvasView = function (_UIElement) {
     inherits(CanvasView, _UIElement);
@@ -24791,11 +24036,14 @@ var CanvasView = function (_UIElement) {
 
             this.initializeLayerCache();
             this.itemPositionCalc = new ItemPositionCalc();
+            this.selectMode = 'layer';
         }
     }, {
         key: 'makeResizer',
         value: function makeResizer() {
-            return '<div class=\'item-resizer\' ref="$itemResizer">\n            <button type="button" class=\'segment\' data-value="' + Segment.MOVE + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.RIGHT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.LEFT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.TOP + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.BOTTOM + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.TOP_RIGHT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.BOTTOM_RIGHT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.BOTTOM_LEFT + '"></button>\n            <button type="button" class=\'segment\' data-value="' + Segment.TOP_LEFT + '"></button>\n        </div>';
+            return html(_templateObject$16, Segment.LIST.map(function (seg) {
+                return '<button type="button" class=\'segment\' data-value="' + seg + '"></button>';
+            }));
         }
     }, {
         key: 'template',
@@ -24836,16 +24084,17 @@ var CanvasView = function (_UIElement) {
         value: function makeLayer(layer) {
             var _this3 = this;
 
-            var selected = editor$1.selection.check(layer) ? 'selected' : EMPTY_STRING;
             var children = layer.children;
-            return html(_templateObject$16, selected, layer.id, layer.toBoundString(), layer.title, children.map(function (it) {
+            var isLayoutItem = layer.isLayoutItem() ? 'true' : 'false';
+            var hasLayout = layer.hasLayout();
+            return html(_templateObject2$3, layer.id, layer.toBoundString(), layer.title, isLayoutItem, hasLayout, children.map(function (it) {
                 return _this3.makeLayer(it);
             }));
         }
     }, {
         key: 'makeArtBoard',
         value: function makeArtBoard(artboard) {
-            return html(_templateObject2$3, artboard.id, artboard.title, artboard.toString(), artboard.title);
+            return html(_templateObject3$1, artboard.id, artboard.title, artboard.toString(), artboard.id, artboard.title);
         }
     }, {
         key: LOAD('$artboardArea'),
@@ -24874,7 +24123,9 @@ var CanvasView = function (_UIElement) {
             var list = project.artboards;
 
             return list.map(function (artboard) {
-                return artboard.allLayers.map(function (layer) {
+                return artboard.allLayers.filter(function (layer) {
+                    return !layer.isLayoutItem();
+                }).map(function (layer) {
                     return _this5.makeLayer(layer);
                 });
             });
@@ -24884,60 +24135,54 @@ var CanvasView = function (_UIElement) {
         value: function refresh() {
             this.setBackgroundColor();
             this.load();
+
+            this.refreshAllLayers();
+            editor$1.selection.initRect();
             this.setItemResizer();
             this.removeGuideLine();
         }
     }, {
         key: 'cacheSelectedItem',
-        value: function cacheSelectedItem($target) {
+        value: function cacheSelectedItem() {
 
-            if ($target) {
-                this.item = editor$1.get($target.attr('item-id'));
-                this.$item = $target;
-                this.item.select();
+            if (this.item && this.item.isLayoutItem()) {
+                this.itemPositionCalc.clear();
             } else {
-                this.item = editor$1.selection.current;
-                this.$item = this.$el.$('[item-id="' + this.item.id + '"]');
+                this.itemPositionCalc.initialize(this.direction);
             }
-
-            this.x = +this.item.screenX.clone();
-            this.y = +this.item.screenY.clone();
-            this.width = +this.item.width.clone();
-            this.height = +this.item.height.clone();
-            this.x2 = this.x + this.width;
-            this.y2 = this.y + this.height;
-
-            this.itemPositionCalc.initialize(this.direction);
         }
     }, {
         key: 'selectItem',
-        value: function selectItem($target) {
-            this.cacheSelectedItem($target);
+        value: function selectItem() {
+            this.cacheSelectedItem();
             this.removeGuideLine();
         }
     }, {
         key: POINTERSTART('$artboardArea .artboard-title') + MOVE('moveArtBoard') + END('moveEndArtBoard'),
         value: function value$$1(e) {
-            this.targetXY = e.xy;
-            this.$artboard = e.$delegateTarget.closest('artboard');
-            this.artboard = editor$1.get(this.$artboard.attr('item-id'));
-            this.artboard.select();
-            this.refs.$itemResizer.addClass('artboard').removeClass('layer');
+            this.selectMode = 'artboard';
+
+            this.item = editor$1.get(e.$delegateTarget.attr('artboard-id'));
+            this.item.select();
             this.selectItem();
         }
     }, {
         key: 'moveEndArtBoard',
         value: function moveEndArtBoard() {
-            this.artboard.select();
+            this.item.select();
             this.setItemResizer();
         }
     }, {
-        key: POINTERSTART('$layerArea .layer') + MOVE('moveLayer') + END('moveEndLayer'),
+        key: POINTERSTART('$layerArea .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer'),
         value: function value$$1(e) {
-            this.targetXY = e.xy;
-            this.$layer = e.$delegateTarget;
-            this.selectItem(this.$layer);
-            this.refs.$itemResizer.addClass('layer').removeClass('artboard');
+
+            this.selectMode = 'layer';
+            this.direction = Segment.MOVE;
+            this.item = editor$1.get(e.$delegateTarget.attr('item-id'));
+            this.item.select();
+            this.selectItem();
+
+            this.isLayoutItem = this.item.isLayoutItem();
         }
     }, {
         key: 'moveEndLayer',
@@ -24946,29 +24191,23 @@ var CanvasView = function (_UIElement) {
             this.setItemResizer();
         }
     }, {
-        key: POINTERSTART('$dragArea') + MOVE('dragArea') + END('dragAreaEnd'),
+        key: POINTERSTART('$dragArea') + PREVENT + STOP + MOVE('dragArea') + END('dragAreaEnd'),
         value: function value$$1(e) {
-            this.targetXY = e.xy;
+            this.selectMode = 'drag';
             this.offsetX = e.offsetX;
             this.offsetY = e.offsetY;
             this.removeGuideLine();
         }
     }, {
-        key: POINTERSTART('$itemResizer button') + SELF + MOVE('moveResize'),
+        key: POINTERSTART('$itemResizer button') + SELF + MOVE('moveResize') + END('moveResizeEnd'),
         value: function value$$1(e) {
-            this.targetXY = e.xy;
             this.$target = e.$delegateTarget;
             this.direction = this.$target.attr('data-value');
             this.cacheSelectedItem();
         }
     }, {
         key: 'getDragRect',
-        value: function getDragRect() {
-            var pos = editor$1.config.get('pos');
-
-            var dx = pos.x - this.targetXY.x;
-            var dy = pos.y - this.targetXY.y;
-
+        value: function getDragRect(dx, dy) {
             var x = dx > -1 ? this.offsetX : this.offsetX + dx;
             var y = dy > -1 ? this.offsetY : this.offsetY + dy;
 
@@ -24986,8 +24225,8 @@ var CanvasView = function (_UIElement) {
         }
     }, {
         key: 'getDragCSS',
-        value: function getDragCSS() {
-            var rect = this.getDragRect();
+        value: function getDragCSS(dx, dy) {
+            var rect = this.getDragRect(dx, dy);
 
             return {
                 left: rect.x,
@@ -24998,26 +24237,21 @@ var CanvasView = function (_UIElement) {
         }
     }, {
         key: 'dragArea',
-        value: function dragArea() {
-            this.refs.$dragAreaView.css(this.getDragCSS());
+        value: function dragArea(dx, dy) {
+            this.refs.$dragAreaView.css(this.getDragCSS(dx, dy));
         }
     }, {
         key: 'dragAreaEnd',
-        value: function dragAreaEnd() {
+        value: function dragAreaEnd(dx, dy) {
             this.refs.$dragAreaView.css({ left: Length$1.px(-10000) });
-            editor$1.selection.area(this.getDragRect());
+            editor$1.selection.area(this.getDragRect(dx, dy));
+            this.itemPositionCalc.initialize(this.direction);
             this.setItemResizer();
-
             editor$1.send(CHANGE_SELECTION, null, this);
         }
     }, {
         key: 'moveResize',
-        value: function moveResize() {
-            var pos = editor$1.config.get('pos');
-
-            var dx = pos.x - this.targetXY.x;
-            var dy = pos.y - this.targetXY.y;
-
+        value: function moveResize(dx, dy) {
             var guideList = this.itemPositionCalc.calculate(dx, dy);
             this.setGuideLine(guideList);
 
@@ -25026,60 +24260,115 @@ var CanvasView = function (_UIElement) {
             this.emit(CHANGE_RECT);
         }
     }, {
-        key: 'matchPosition',
-        value: function matchPosition(guideList) {
+        key: 'moveResizeEnd',
+        value: function moveResizeEnd() {
             var _this6 = this;
 
             editor$1.selection.items.forEach(function (item) {
-                _this6.itemPositionCalc.recover(item);
-                _this6.getCachedLayerElement(item.id).css(item.toBoundCSS());
+                _this6.refreshLayerOffset(item);
+            });
+        }
+    }, {
+        key: 'matchPosition',
+        value: function matchPosition() {
+            var _this7 = this;
+
+            editor$1.selection.items.forEach(function (item) {
+                _this7.itemPositionCalc.recover(item);
+                _this7.getCachedLayerElement(item.id).css(item.toBoundCSS());
             });
 
             this.setItemResizer();
         }
     }, {
         key: 'movePosition',
-        value: function movePosition() {
-            var pos = editor$1.config.get('pos');
-
-            var dx = pos.x - this.targetXY.x;
-            var dy = pos.y - this.targetXY.y;
-
+        value: function movePosition(dx, dy) {
             this.itemPositionCalc.calculateMove(dx, dy);
 
             this.matchPosition();
         }
     }, {
         key: 'moveArtBoard',
-        value: function moveArtBoard() {
-            this.movePosition();
+        value: function moveArtBoard(dx, dy) {
+            this.movePosition(dx, dy);
             this.refreshLayerPosition(this.item);
             editor$1.send(CHANGE_RECT, this.item, this);
         }
     }, {
         key: 'moveLayer',
-        value: function moveLayer() {
-            this.movePosition();
-            editor$1.send(CHANGE_RECT, this.item, this);
+        value: function moveLayer(dx, dy) {
+
+            if (!this.isLayoutItem) {
+                this.movePosition(dx, dy);
+
+                editor$1.send(CHANGE_RECT, this.item, this);
+            }
+        }
+    }, {
+        key: 'refreshLayerOffset',
+        value: function refreshLayerOffset(item) {
+            var _this8 = this;
+
+            var $el = this.getCachedLayerElement(item.id);
+
+            item.offset = $el.offsetRect();
+
+            item.children.forEach(function (child) {
+                _this8.refreshLayerOffset(child);
+            });
+        }
+    }, {
+        key: 'refreshLayerOne',
+        value: function refreshLayerOne(item) {
+            var _this9 = this;
+
+            var $el = this.getCachedLayerElement(item.id);
+
+            var content = item.content || EMPTY_STRING;
+            $el.$('.text-layer').html(content);
+            $el.cssText(item.toBoundString());
+            $el.attr('data-layout-item', item.isLayoutItem() ? 'true' : 'false');
+            $el.attr('data-has-layout', item.hasLayout() ? 'true' : 'false');
+
+            item.offset = $el.offsetRect();
+
+            item.children.forEach(function (child) {
+                _this9.refreshLayerOne(child);
+            });
+
+            this.refreshLayerOffset(item);
         }
     }, {
         key: 'refreshLayer',
         value: function refreshLayer() {
-            var _this7 = this;
+            var _this10 = this;
 
             editor$1.selection.layers.forEach(function (item) {
-                var $el = _this7.getCachedLayerElement(item.id);
-
-                var content = item.content || EMPTY_STRING;
-                $el.$('.text-layer').html(content);
-                $el.cssText(item.toBoundString());
+                _this10.refreshLayerOne(item);
             });
+        }
+    }, {
+        key: 'refreshAllLayers',
+        value: function refreshAllLayers() {
+            var _this11 = this;
+
+            var project = editor$1.selection.currentProject;
+            if (project) {
+                project.artboards.forEach(function (artboard) {
+                    artboard.allLayers.forEach(function (layer) {
+                        _this11.refreshLayerOne(layer);
+                    });
+                });
+            }
         }
     }, {
         key: 'setBackgroundColor',
         value: function setBackgroundColor() {
 
-            var canvasCSS = { width: Length$1.px(2000), height: Length$1.px(2000) };
+            var canvasCSS = {
+                width: Length$1.px(editor$1.config.get('canvas.width')),
+                height: Length$1.px(editor$1.config.get('canvas.height'))
+            };
 
             this.refs.$panel.css(canvasCSS);
         }
@@ -25091,90 +24380,41 @@ var CanvasView = function (_UIElement) {
     }, {
         key: 'setGuideLine',
         value: function setGuideLine(list) {
-            if (!list.length) {
-                this.removeGuideLine();
-                return;
-            }
-
-            var layer = new Layer();
-
-            var lineWidth = Length$1.px(1.5);
-
-            list.forEach(function (it) {
-
-                var target = it.B;
-
-                if (isNotUndefined(it.ax)) {
-
-                    var background = layer.addBackgroundImage(new BackgroundImage());
-                    background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                    background.repeat = 'no-repeat';
-                    background.width = lineWidth;
-                    background.height = it.A.height;
-                    background.x = Length$1.px(it.bx - 1);
-                    background.y = it.A.screenY;
-
-                    if (target instanceof Layer) {
-                        var background = layer.addBackgroundImage(new BackgroundImage());
-                        background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                        background.repeat = 'no-repeat';
-                        background.width = lineWidth;
-                        background.height = target.height;
-                        background.x = Length$1.px(it.bx - 1);
-                        background.y = target.screenY;
-                    }
-
-                    var minY = Length$1.min(target.screenY, it.A.screenY);
-                    var maxY = Length$1.max(target.screenY2, it.A.screenY2);
-
-                    var background = layer.addBackgroundImage(new BackgroundImage());
-                    background.addGradient(new StaticGradient({ color: '#4877ff' }));
-                    background.repeat = 'no-repeat';
-                    background.width = lineWidth;
-                    background.height = Length$1.px(maxY.value - minY.value);
-                    background.x = Length$1.px(it.bx - 1);
-                    background.y = minY;
-                } else {
-                    var background = layer.addBackgroundImage(new BackgroundImage());
-                    background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                    background.repeat = 'no-repeat';
-                    background.width = it.A.width;
-                    background.height = lineWidth;
-                    background.x = it.A.screenX;
-                    background.y = Length$1.px(it.by);
-
-                    var minX = Length$1.min(target.screenX, it.A.screenX);
-                    var maxX = Length$1.max(target.screenX2, it.A.screenX2);
-
-                    var background = layer.addBackgroundImage(new BackgroundImage());
-                    background.addGradient(new StaticGradient({ color: '#4877ff' }));
-                    background.repeat = 'no-repeat';
-                    background.width = Length$1.px(maxX.value - minX.value);
-                    background.height = lineWidth;
-                    background.x = minX;
-                    background.y = Length$1.px(it.by);
-                }
-            });
-
-            layer.remove();
-
-            var css = layer.toBackgroundImageCSS();
-
-            this.refs.$guide.cssText(CSS_TO_STRING(css));
+            this.refs.$guide.cssText(CSS_TO_STRING(createGuideLine(list)));
         }
     }, {
         key: 'setItemResizer',
         value: function setItemResizer() {
+            var current = editor$1.selection.current;
+            if (current) {
+                if (current.isLayoutItem()) {
+                    this.refs.$itemResizer.attr('data-rect', 'true');
+                } else {
+                    this.refs.$itemResizer.attr('data-rect', 'false');
+                }
+                this.refs.$itemResizer.attr('data-mode', current.itemType);
+                this.refs.$itemResizer.attr('data-layout', current.display.type);
+            }
+
+            if (current && current.isLayoutItem()) {
+                this.refs.$itemResizer.css(current.screen);
+                return;
+            }
 
             if (editor$1.selection.artboard || editor$1.selection.layer) {
-                var current = editor$1.selection.currentRect;
-                if (current) {
+
+                var current = editor$1.selection.current;
+                var currentRect = editor$1.selection.currentRect;
+
+                if (currentRect && !current.isLayoutItem()) {
                     this.refs.$itemResizer.css({
-                        left: current.screenX,
-                        top: current.screenY,
-                        width: current.width,
-                        height: current.height
+                        left: currentRect.screenX,
+                        top: currentRect.screenY,
+                        width: currentRect.width,
+                        height: currentRect.height
                     });
+                } else {
+                    this.refs.$itemResizer.css({ left: '-10000px' });
                 }
             } else {
                 this.refs.$itemResizer.css({ left: '-10000px' });
@@ -25192,6 +24432,7 @@ var CanvasView = function (_UIElement) {
         key: EVENT(CHANGE_LAYER),
         value: function value$$1() {
             this.refreshLayer();
+            this.setItemResizer();
         }
     }, {
         key: EVENT(CHANGE_RECT),
@@ -25207,10 +24448,14 @@ var CanvasView = function (_UIElement) {
 
             var item = editor$1.selection.current;
             if (item) {
-                var $item = this.refs.$canvas.$('[item-id="' + item.id + '"]');
+                var $item = this.getCachedLayerElement(item.id);
                 if (!$item) {
                     this.refresh();
-                } else {}
+                } else {
+                    this.item = item;
+                    this.selectItem();
+                    editor$1.selection.initRect();
+                }
 
                 this.setItemResizer();
             } else {
@@ -26044,7 +25289,7 @@ var _DEFINED_POSITIONS$2;
 
 var DEFINED_POSITIONS$2 = (_DEFINED_POSITIONS$2 = {}, defineProperty(_DEFINED_POSITIONS$2, 'center', true), defineProperty(_DEFINED_POSITIONS$2, 'top', true), defineProperty(_DEFINED_POSITIONS$2, 'left', true), defineProperty(_DEFINED_POSITIONS$2, 'right', true), defineProperty(_DEFINED_POSITIONS$2, 'bottom', true), _DEFINED_POSITIONS$2);
 
-var DEFINED_ANGLES$3 = {
+var DEFINED_ANGLES$2 = {
     'to top': 0,
     'to top right': 45,
     'to right': 90,
@@ -26072,7 +25317,7 @@ var ConicGradient = function (_Gradient) {
             return get$1(ConicGradient.prototype.__proto__ || Object.getPrototypeOf(ConicGradient.prototype), "getDefaultObject", this).call(this, _extends({
                 type: 'conic-gradient',
                 angle: 0,
-                radialPosition: [Position$1.CENTER, Position$1.CENTER]
+                radialPosition: [Position.CENTER, Position.CENTER]
             }, obj));
         }
     }, {
@@ -26134,7 +25379,7 @@ var ConicGradient = function (_Gradient) {
             conicPosition = DEFINED_POSITIONS$2[conicPosition] ? conicPosition : conicPosition.join(WHITE_STRING$1);
 
             if (isNotUndefined(conicAngle)) {
-                conicAngle = +(DEFINED_ANGLES$3[conicAngle] || conicAngle);
+                conicAngle = +(DEFINED_ANGLES$2[conicAngle] || conicAngle);
                 opt.push("from " + conicAngle + "deg");
             }
 
@@ -26633,7 +25878,7 @@ var Directory = function (_Item) {
     return Directory;
 }(Item);
 
-var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\"> ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\"> ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "]);
+var _templateObject$18 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\" data-label='", "'> ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\" data-label='", "'> ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "]);
 var _templateObject2$4 = taggedTemplateLiteral(["<div class='tree-children'>\n                ", "\n            </div>"], ["<div class='tree-children'>\n                ", "\n            </div>"]);
 
 var LayerListView = function (_UIElement) {
@@ -26680,7 +25925,13 @@ var LayerListView = function (_UIElement) {
                 iconString = "<span class='icon-" + item.type + "'></span>";
             }
 
-            return html(_templateObject$18, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
+            var label = '';
+            var display = item.display.type;
+            if (display == 'flex' || display == 'grid') {
+                label = display;
+            }
+
+            return html(_templateObject$18, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", label, item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
                 return _this2.makeItem(child, depth + 1);
             })));
         }
@@ -26706,7 +25957,6 @@ var LayerListView = function (_UIElement) {
     }, {
         key: "refresh",
         value: function refresh() {
-            console.log('load');
             this.load();
         }
     }, {
@@ -26727,6 +25977,28 @@ var LayerListView = function (_UIElement) {
         key: EVENT(CHANGE_EDITOR),
         value: function value$$1() {
             this.refresh();
+        }
+    }, {
+        key: "refreshLayer",
+        value: function refreshLayer() {
+            var _this4 = this;
+
+            editor$1.selection.items.forEach(function (item) {
+                var $item = _this4.refs.$layerList.$("[item-id=\"" + item.id + "\"]");
+                if ($item) {
+                    var label = '';
+                    var display = item.display.type;
+                    if (display == 'flex' || display == 'grid') {
+                        label = display;
+                    }
+                    $item.$('.item-title').attr('data-label', label);
+                }
+            });
+        }
+    }, {
+        key: EVENT(CHANGE_LAYER, CHANGE_RECT),
+        value: function value$$1() {
+            this.refreshLayer();
         }
     }, {
         key: EVENT(CHANGE_SELECTION),
@@ -27335,7 +26607,6 @@ var CSSEditor$1 = function (_UIElement) {
                 ExportWindow: ExportWindow,
                 CanvasView: CanvasView,
                 FeatureControl: FeatureControl,
-                SubFeatureControl: SubFeatureControl,
                 TimelineSplitter: TimelineSplitter,
                 Timeline: Timeline
             };

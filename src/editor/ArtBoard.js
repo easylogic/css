@@ -41,6 +41,19 @@ export class ArtBoard extends Item {
         return json
     } 
 
+
+    hasLayout () {
+        var displayType = this.json.display.type
+
+        switch(displayType) {
+        case 'flex': 
+        case 'grid':
+            return true; 
+        default: 
+            return false; 
+        }
+    }
+
     getDefaultTitle () { return 'ArtBoard' }
      
 
@@ -52,10 +65,14 @@ export class ArtBoard extends Item {
         return this.search({itemType: 'layer'})
     }        
 
+    isLayoutItem () {
+        return false;
+    }
 
     traverse (item, results, hasLayoutItem) {
         if (item.isAttribute()) return; 
         if (!hasLayoutItem && item.isLayoutItem()) return; 
+        if (item.parent().itemType == 'layer') return; 
         results.push(item);
 
         item.children.forEach(child => {
@@ -77,8 +94,11 @@ export class ArtBoard extends Item {
         return this.tree().filter(it => it.itemType == 'directory'); 
     }
 
+    /**
+     * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
+     */
     get allLayers () {
-        return this.tree(true).filter(it => it.itemType == 'layer'); 
+        return this.tree().filter(it => it.itemType == 'layer'); 
     }
 
     get texts () {

@@ -1,4 +1,6 @@
 import { Property } from "../Property";
+import { Length } from "../unit/Length";
+import { WHITE_STRING } from "../../util/css/types";
 
 export class Display extends Property {
 
@@ -99,8 +101,48 @@ export class GridDisplay extends Display {
     getDefaultObject (obj = {}) {
         return super.getDefaultObject({
             type: 'grid',
-            display: 'grid'
+            display: 'grid',
+            gap: Length.px(0),
+            rowGap: Length.px(0),
+            columnGap: Length.px(0),
+            columns: [],
+            rows: [],
+            areas: [],
         })
+    }
+
+
+    toCSS () {
+        var json = this.json;
+        var css = {
+            display: 'grid'
+        }
+
+        if (json.gap.value > 0) {
+            css['grid-gap'] = json.gap
+        }
+
+        if (json.rowGap.value > 0) {
+            css['grid-row-gap'] = json.rowGap
+        }        
+
+        if (json.columnGap.value > 0) {
+            css['grid-column-gap'] = json.columnGap
+        }                
+
+        if (json.columns.length) {
+            css['grid-template-columns'] = json.columns.join(WHITE_STRING)
+        }
+
+        if (json.rows.length) {
+            css['grid-template-rows'] = json.rows.join(WHITE_STRING)
+        }        
+
+        if (json.areas.length) {
+            css['grid-template-areas'] = json.areas.map(it => `"${it.join(WHITE_STRING)}"`).join(WHITE_STRING)
+        }
+
+        return css;
     }
 }
 
