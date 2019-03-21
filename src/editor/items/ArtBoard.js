@@ -1,10 +1,10 @@
-import { Item } from "./Item";
-import { EMPTY_STRING } from "../util/css/types";
-import { CSS_TO_STRING, CSS_SORTING } from "../util/css/make";
-import { Length } from "./unit/Length";
-import { BlockDisplay, Display } from "./css-property/Display";
+import { EMPTY_STRING } from "../../util/css/types";
+import { CSS_TO_STRING, CSS_SORTING } from "../../util/css/make";
+import { Length } from "../unit/Length";
+import { BlockDisplay, Display } from "../css-property/Display";
+import { GroupItem } from "./GroupItem";
 
-export class ArtBoard extends Item {
+export class ArtBoard extends GroupItem {
 
     getDefaultObject (obj = {}) {
         return super.getDefaultObject({ 
@@ -41,19 +41,6 @@ export class ArtBoard extends Item {
         return json
     } 
 
-
-    hasLayout () {
-        var displayType = this.json.display.type
-
-        switch(displayType) {
-        case 'flex': 
-        case 'grid':
-            return true; 
-        default: 
-            return false; 
-        }
-    }
-
     getDefaultTitle () { return 'ArtBoard' }
      
 
@@ -61,18 +48,18 @@ export class ArtBoard extends Item {
         return this.search({itemType: 'directory'})
     }    
 
-    get layers () {
-        return this.search({itemType: 'layer'})
-    }        
-
-    isLayoutItem () {
-        return false;
+    get allDirectories () {
+        return this.tree().filter(it => it.itemType == 'directory'); 
     }
 
+
+
     traverse (item, results, hasLayoutItem) {
+        var parentItemType = item.parent().itemType;
         if (item.isAttribute()) return; 
-        if (!hasLayoutItem && item.isLayoutItem()) return; 
-        if (item.parent().itemType == 'layer') return; 
+        if (parentItemType == 'layer') return;         
+        if (!hasLayoutItem && item.isLayoutItem() && !item.isRootItem()) return; 
+
         results.push(item);
 
         item.children.forEach(child => {
@@ -90,9 +77,6 @@ export class ArtBoard extends Item {
         return results
     }
 
-    get allDirectories () {
-        return this.tree().filter(it => it.itemType == 'directory'); 
-    }
 
     /**
      * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
@@ -114,6 +98,10 @@ export class ArtBoard extends Item {
         return CSS_TO_STRING(this.toCSS())
     }
 
+    toBoundString () {
+        return CSS_TO_STRING(this.toBoundCSS())
+    }    
+
 
     toCSS () {
         var json = this.json ; 
@@ -128,13 +116,20 @@ export class ArtBoard extends Item {
         return CSS_SORTING({
             ...css,
             ...this.toBoundCSS(),
-            ...this.toLayoutCSS(),
+            ...this.toDisplayCSS(),
             ...this.toPerspectiveCSS()
         }); 
 
     }
 
-    toLayoutCSS () { 
+    toBoundString () {
+        return CSS_TO_STRING({
+            position: 'absolute',            
+            ...this.toBoundCSS()
+        })
+    }
+
+    toDisplayCSS () { 
         return this.json.display.toCSS()
     }
 

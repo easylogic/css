@@ -1,6 +1,6 @@
 import { UNIT_DEG, UNIT_PERCENT, UNIT_COLOR, UNIT_PX } from "../../util/css/types";
 import { Length } from "../unit/Length";
-import { Property } from "../Property";
+import { Property } from "../items/Property";
 
 export class Filter extends Property {
 

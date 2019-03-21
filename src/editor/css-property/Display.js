@@ -1,4 +1,4 @@
-import { Property } from "../Property";
+import { Property } from "../items/Property";
 import { Length } from "../unit/Length";
 import { WHITE_STRING } from "../../util/css/types";
 
@@ -16,6 +16,17 @@ export class Display extends Property {
         }
     }
 
+    isLayout () {
+        return false; 
+    }
+
+}
+
+export class LayoutDisplay extends Display {
+
+    isLayout() {
+        return true;
+    }
 }
 
 export class InlineDisplay extends Display {
@@ -45,7 +56,7 @@ export class BlockDisplay extends Display {
     }
 }
 
-export class FlexDisplay extends Display {
+export class FlexDisplay extends LayoutDisplay {
     getDefaultObject (obj = {}) {
         return super.getDefaultObject({
             type: 'flex',
@@ -95,9 +106,10 @@ export class FlexDisplay extends Display {
 
         return css;
     }
+
 }
 
-export class GridDisplay extends Display {
+export class GridDisplay extends LayoutDisplay {
     getDefaultObject (obj = {}) {
         return super.getDefaultObject({
             type: 'grid',
@@ -105,8 +117,8 @@ export class GridDisplay extends Display {
             gap: Length.px(0),
             rowGap: Length.px(0),
             columnGap: Length.px(0),
-            columns: [],
-            rows: [],
+            columns: [Length.fr(1)],
+            rows: [Length.fr(1)],
             areas: [],
         })
     }
@@ -147,7 +159,7 @@ export class GridDisplay extends Display {
 }
 
 const DisplayClassName = {
-    'inline' : InlineDisplay,
+    'inline': InlineDisplay,
     'inline-block': InlineBlockDisplay,
     'block': BlockDisplay,
     'flex': FlexDisplay,

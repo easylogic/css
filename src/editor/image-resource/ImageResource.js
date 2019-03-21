@@ -1,4 +1,4 @@
-import { Property } from "../Property";
+import { Property } from "../items/Property";
 
 export class ImageResource extends Property {
     getDefaultObject(obj = {}) {

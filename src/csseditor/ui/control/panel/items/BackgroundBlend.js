@@ -5,7 +5,7 @@ import { EVENT } from '../../../../../util/UIElement';
 import { CHANGE } from '../../../../../util/Event';
 import { html } from '../../../../../util/functions/func';
 import { editor } from '../../../../../editor/editor';
-import { BLEND_LIST } from '../../../../../editor/Layer';
+import { BLEND_LIST } from '../../../../../editor/items/Layer';
 
 export default class BackgroundBlend extends BasePropertyItem {
 

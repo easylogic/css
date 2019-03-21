@@ -1,4 +1,4 @@
-import { Layer } from "../Layer";
+import { Layer } from "../items/Layer";
 import { Length } from "../unit/Length";
 
 export class Circle extends Layer {

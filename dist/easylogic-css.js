@@ -8739,6 +8739,16 @@ var Length$1 = function () {
             return new Length(+value, 'deg');
         }
     }, {
+        key: 'fr',
+        value: function fr(value) {
+            return new Length(+value, 'fr');
+        }
+    }, {
+        key: 'auto',
+        value: function auto() {
+            return Length.string('auto');
+        }
+    }, {
         key: 'parse',
         value: function parse(obj) {
 
@@ -8847,16 +8857,12 @@ var ADD_TIMELINE = 'ADD_TIMELINE';
 var SELECT_TAB_LAYER = 'SELECT_TAB_LAYER';
 var SELECT_TAB_IMAGE = 'SELECT_TAB_IMAGE';
 
-var Item = function () {
-    function Item() {
+var RectItem = function () {
+    function RectItem(json) {
         var _this = this;
 
-        var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        classCallCheck(this, Item);
+        classCallCheck(this, RectItem);
 
-        if (json instanceof Item) {
-            json = json.toJSON();
-        }
         this.json = this.convert(_extends({}, this.getDefaultObject(), json));
 
         return new Proxy(this, {
@@ -8877,12 +8883,6 @@ var Item = function () {
                 }
             },
             set: function set$$1(target, key, value) {
-
-                // Dom 객체가 오면 자동으로 입력 해줌 
-                if (value instanceof Dom) {
-                    value = value.realVal();
-                }
-
                 if (_this.checkField(key, value)) {
                     target.json[key] = value;
                 } else {
@@ -8894,371 +8894,45 @@ var Item = function () {
         });
     }
 
-    createClass(Item, [{
-        key: "getDefaultTitle",
-        value: function getDefaultTitle() {
-            return 'Item';
-        }
-
-        /**
-         * getter .name
-         */
-
-    }, {
-        key: "isAttribute",
+    //////////////////////
+    //
+    // getters 
+    //
+    ///////////////////////
 
 
-        /**
-         * check attribute object 
-         */
-        value: function isAttribute() {
-            return false;
-        }
+    createClass(RectItem, [{
+        key: "clone",
 
-        /**
-         * when json is loaded, json object is be a new instance 
-         * 
-         * @param {*} json 
-         */
-
-    }, {
-        key: "convert",
-        value: function convert(json) {
-            if (isUndefined$1(json.id)) {
-                json.id = uuidShort();
-            }
-            return json;
-        }
-
-        /**
-         * defence to set invalid key-value  
-         * 
-         * @param {*} key 
-         * @param {*} value 
-         */
-
-    }, {
-        key: "checkField",
-        value: function checkField(key, value) {
-            return true;
-        }
-
-        /**
-         * search children by searchObj
-         * 
-         * @param {object} searchObj 
-         */
-
-    }, {
-        key: "search",
-        value: function search() {
-            var searchObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            return editor$1.search(_extends({ parentId: this.id }, searchObj));
-        }
-
-        /**
-         * search first one by searchObj 
-         * @param {object} searchObj 
-         */
-
-    }, {
-        key: "one",
-        value: function one(searchObj) {
-            return this.search(searchObj)[0];
-        }
 
         /**
          * clone Item 
          */
-
-    }, {
-        key: "clone",
         value: function clone$$1() {
-            var isNew = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
             var json = JSON.parse(JSON.stringify(this.json));
-            if (isNew) delete json.id;
 
-            var ItemClass = this.constructor;
-
-            return new ItemClass(json);
+            return new RectItem(json);
         }
-
-        /**
-         * 
-         * @param {string} itemType 
-         * @param {Item} item   Item instance 
-         * @param {string} sortType  sort parent's children by sortType 
-         */
-
-    }, {
-        key: "addItem",
-        value: function addItem(itemType, item, sortType) {
-            if (item.itemType != itemType) {
-                throw new Error("Only " + itemType + " is able to add in " + this.json.type);
-            }
-
-            var newItem = editor$1.add(this.id, item);
-
-            if (isUndefined$1(sortType)) {
-                this.sort();
-            } else {
-                this.sort(sortType);
-            }
-
-            return newItem;
-        }
-
-        /**
-         * addItem alias 
-         * 
-         * @param {*} item 
-         */
-
-    }, {
-        key: "add",
-        value: function add(item) {
-            return this.addItem(item.itemType, item, item.itemType);
-        }
-
-        /**
-         * set json content 
-         * 
-         * @param {object} obj 
-         */
-
-    }, {
-        key: "reset",
-        value: function reset(obj) {
-
-            if (obj instanceof Item) {
-                obj = obj.toJSON();
-            }
-
-            this.json = this.convert(_extends({}, this.json, obj));
-        }
-
-        /**
-         * select item 
-         */
-
-    }, {
-        key: "select",
-        value: function select() {
-            editor$1.selection.select(this.id);
-        }
-
-        //////////////////////
-        //
-        // getters 
-        //
-        ///////////////////////
-
     }, {
         key: "getDefaultObject",
-
-
-        /**
-         * define defaut object for item 
-         * 
-         * @param {object} obj 
-         */
         value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            return _extends({
-                id: uuidShort(),
-                index: Number.MAX_SAFE_INTEGER,
-                visible: true,
-                lock: false
-            }, obj);
-        }
-
-        /**
-         * toggle item's attribute 
-         * 
-         * @param {*} field 
-         * @param {*} toggleValue 
-         */
-
-    }, {
-        key: "toggle",
-        value: function toggle(field, toggleValue) {
-            if (isUndefined$1(toggleValue)) {
-                this.json[field] = !this.json[field];
-            } else {
-                this.json[field] = !!toggleValue;
-            }
-        }
-
-        /**
-         * convert to json 
-         */
-
-    }, {
-        key: "toJSON",
-        value: function toJSON() {
-            return this.json;
-        }
-
-        /**
-         * check item type 
-         * 
-         * @param {string} itemType 
-         */
-
-    }, {
-        key: "is",
-        value: function is(itemType) {
-            return this.json.itemType == itemType;
-        }
-
-        /**
-         * remove item 
-         */
-
-    }, {
-        key: "remove",
-        value: function remove() {
-            var isDeleteChildren = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-            editor$1.remove(this.id, isDeleteChildren);
-        }
-
-        /**
-         * remove children for item 
-         * 
-         * @param {string} itemType 
-         */
-
-    }, {
-        key: "clear",
-        value: function clear(itemType) {
-
-            if (isNotUndefined(itemType)) {
-                this.search({ itemType: itemType }).forEach(function (c) {
-                    return c.remove();
-                });
-            } else {
-                editor$1.removeChildren(this.id, this);
-            }
-        }
-
-        /**
-         * get parent item instance 
-         */
-
-    }, {
-        key: "parent",
-        value: function parent() {
-            return editor$1.get(this.parentId);
-        }
-
-        /**
-         * sorting children 
-         * 
-         * @param {string} itemType 
-         */
-
-    }, {
-        key: "sort",
-        value: function sort(itemType) {
-            var children = this.children;
-
-            if (itemType) {
-                children = children.filter(function (it) {
-                    return it.itemType === itemType;
-                });
-            }
-
-            children.sort(function (a, b) {
-                if (a.index === b.index) return 0;
-                return a.index > b.index ? 1 : -1;
-            });
-
-            children.forEach(function (it, index) {
-                it.index = index * 100;
-            });
-        }
-    }, {
-        key: "copy",
-        value: function copy() {
-            return editor$1.copy(this.id);
-        }
-    }, {
-        key: "insertLast",
-        value: function insertLast(source) {
-
-            var selfParent = this.parent();
-            var sourceParent = source.parent();
-
-            source.parentId = this.json.parentId;
-            source.index = this.json.index + 1;
-
-            selfParent.sort();
-            sourceParent.sort();
-        }
-
-        /**
-         * get hirachy path s
-         */
-
-    }, {
-        key: "path",
-        value: function path(parentId) {
-            var path = [];
-            var currentId = parentId || this.parentId;
-            do {
-                var item = editor$1.get(currentId);
-                if (item) {
-                    path.push(item);
-                }
-
-                currentId = item ? item.parentId : this.json.parentId;
-            } while (currentId);
-
-            return path;
-        }
-    }, {
-        key: "checkInArea",
-        value: function checkInArea(area) {
-
-            if (area.width.value === 0) {
-                return false;
-            }
-            if (area.height.value === 0) {
-                return false;
-            }
-            if (area.x2.value < this.screenX.value) {
-                return false;
-            }
-            if (area.y2.value < this.screenY.value) {
-                return false;
-            }
-            if (area.x.value > this.screenX2.value) {
-                return false;
-            }
-            if (area.y.value > this.screenY2.value) {
-                return false;
-            }
-
-            return true;
-        }
-    }, {
-        key: "toBoundCSS",
-        value: function toBoundCSS() {
             return {
-                top: "" + this.json.y,
-                left: "" + this.json.x,
-                width: "" + this.json.width,
-                height: "" + this.json.height
+                x: Length$1.px(0),
+                y: Length$1.px(0),
+                width: Length$1.px(0),
+                height: Length$1.px(0)
             };
         }
     }, {
-        key: "title",
-        get: function get$$1() {
-            return "" + (this.json.name || this.getDefaultTitle());
+        key: "convert",
+        value: function convert(json) {
+
+            json.width = Length$1.parse(json.width);
+            json.height = Length$1.parse(json.height);
+            json.x = Length$1.parse(json.x);
+            json.y = Length$1.parse(json.y);
+
+            return json;
         }
     }, {
         key: "screenX",
@@ -9281,6 +8955,16 @@ var Item = function () {
             return Length$1.px(this.screenY.value + this.json.height.value);
         }
     }, {
+        key: "screenWidth",
+        get: function get$$1() {
+            return this.json.width;
+        }
+    }, {
+        key: "screenHeight",
+        get: function get$$1() {
+            return this.json.height;
+        }
+    }, {
         key: "centerX",
         get: function get$$1() {
             var half = 0;
@@ -9299,97 +8983,19 @@ var Item = function () {
 
             return Length$1.px(this.screenY.value + half);
         }
-
-        /**
-         * check selection status for item  
-         */
-
     }, {
-        key: "selected",
+        key: "screen",
         get: function get$$1() {
-            return editor$1.selection.check(this.id);
-        }
-    }, {
-        key: "selectedOne",
-        get: function get$$1() {
-            return editor$1.selection.checkOne(this.id);
-        }
-
-        /**
-         * get id 
-         */
-
-    }, {
-        key: "id",
-        get: function get$$1() {
-            return this.json.id;
-        }
-
-        /** get parentId */
-
-    }, {
-        key: "parentId",
-        get: function get$$1() {
-            return this.json.parentId;
-        }
-
-        /**
-         * get children 
-         */
-
-    }, {
-        key: "children",
-        get: function get$$1() {
-            var children = editor$1.children(this.id);
-            children.sort(function (a, b) {
-                if (a.index === b.index) return 0;
-
-                return a.index > b.index ? 1 : -1;
-            });
-            return children;
-        }
-    }, {
-        key: "childrenIds",
-        get: function get$$1() {
-            return editor$1.childrenIds(this.id);
-        }
-    }]);
-    return Item;
-}();
-
-var RectItem = function (_Item) {
-    inherits(RectItem, _Item);
-
-    function RectItem() {
-        classCallCheck(this, RectItem);
-        return possibleConstructorReturn(this, (RectItem.__proto__ || Object.getPrototypeOf(RectItem)).apply(this, arguments));
-    }
-
-    createClass(RectItem, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            return get$1(RectItem.prototype.__proto__ || Object.getPrototypeOf(RectItem.prototype), "getDefaultObject", this).call(this, {
-                x: Length$1.px(0),
-                y: Length$1.px(0),
-                width: Length$1.px(0),
-                height: Length$1.px(0)
-            });
-        }
-    }, {
-        key: "convert",
-        value: function convert(json) {
-            json = get$1(RectItem.prototype.__proto__ || Object.getPrototypeOf(RectItem.prototype), "convert", this).call(this, json);
-
-            json.width = Length$1.parse(json.width);
-            json.height = Length$1.parse(json.height);
-            json.x = Length$1.parse(json.x);
-            json.y = Length$1.parse(json.y);
-
-            return json;
+            return {
+                left: this.screenX,
+                top: this.screenY,
+                width: this.screenWidth,
+                height: this.screenHeight
+            };
         }
     }]);
     return RectItem;
-}(Item);
+}();
 
 var Selection = function () {
     function Selection(editor) {
@@ -9400,7 +9006,7 @@ var Selection = function () {
         this._mode = '';
         this._ids = [];
         this._idSet = new Set();
-        this.currentRect = new RectItem();
+        this.currentRect = null;
     }
 
     createClass(Selection, [{
@@ -9557,7 +9163,7 @@ var Selection = function () {
             });
 
             this._ids = args.map(function (it) {
-                if (it instanceof Item) {
+                if (it.id) {
                     return it.id;
                 }
 
@@ -9579,6 +9185,7 @@ var Selection = function () {
 
             if (this._ids.length) {
                 var parents = this.editor.get(this._ids[0]).path();
+
                 this._colorstep = parents.filter(function (it) {
                     return it.itemType === 'colorstep';
                 })[0];
@@ -9635,12 +9242,7 @@ var Selection = function () {
         key: "initRect",
         value: function initRect() {
             var rect = this.rect();
-            this.currentRect.reset({
-                x: rect.x,
-                y: rect.y,
-                width: rect.width,
-                height: rect.height
-            });
+            this.currentRect = rect;
         }
     }, {
         key: "rect",
@@ -10250,6 +9852,434 @@ var Name = function (_BasePropertyItem) {
     }]);
     return Name;
 }(BasePropertyItem);
+
+var Item = function () {
+    function Item() {
+        var _this = this;
+
+        var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        classCallCheck(this, Item);
+
+        if (json instanceof Item) {
+            json = json.toJSON();
+        }
+        this.json = this.convert(_extends({}, this.getDefaultObject(), json));
+
+        return new Proxy(this, {
+            get: function get$$1(target, key) {
+                var originMethod = target[key];
+                if (isFunction(originMethod)) {
+                    // method tracking
+                    return function () {
+                        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                            args[_key] = arguments[_key];
+                        }
+
+                        return originMethod.apply(target, args);
+                    };
+                } else {
+                    // getter or json property 
+                    return originMethod || target.json[key];
+                }
+            },
+            set: function set$$1(target, key, value) {
+
+                // Dom 객체가 오면 자동으로 입력 해줌 
+                if (value.realVal && isFunction(value.realVal)) {
+                    value = value.realVal();
+                }
+
+                if (_this.checkField(key, value)) {
+                    target.json[key] = value;
+                } else {
+                    throw new Error(value + " is invalid as " + key + " property value.");
+                }
+
+                return true;
+            }
+        });
+    }
+
+    /***********************************
+     *  
+     * override 
+     * 
+     **********************************/
+
+    createClass(Item, [{
+        key: "getDefaultTitle",
+        value: function getDefaultTitle() {
+            return 'Item';
+        }
+
+        /**
+         * check attribute object 
+         */
+
+    }, {
+        key: "isAttribute",
+        value: function isAttribute() {
+            return false;
+        }
+
+        /***********************************
+         *  
+         * getter 
+         * 
+         **********************************/
+
+    }, {
+        key: "select",
+
+
+        /***********************************
+         *  
+         * action 
+         * 
+         **********************************/
+
+        /**
+         * select item 
+         */
+        value: function select() {
+            editor$1.selection.select(this.id);
+        }
+
+        /**
+         * when json is loaded, json object is be a new instance 
+         * 
+         * @param {*} json 
+         */
+
+    }, {
+        key: "convert",
+        value: function convert(json) {
+            if (isUndefined$1(json.id)) {
+                json.id = uuidShort();
+            }
+            return json;
+        }
+
+        /**
+         * defence to set invalid key-value  
+         * 
+         * @param {*} key 
+         * @param {*} value 
+         */
+
+    }, {
+        key: "checkField",
+        value: function checkField(key, value) {
+            return true;
+        }
+
+        /**
+         * search children by searchObj
+         * 
+         * @param {object} searchObj 
+         */
+
+    }, {
+        key: "search",
+        value: function search() {
+            var searchObj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return editor$1.search(_extends({ parentId: this.id }, searchObj));
+        }
+
+        /**
+         * search first one by searchObj 
+         * @param {object} searchObj 
+         */
+
+    }, {
+        key: "one",
+        value: function one(searchObj) {
+            return this.search(searchObj)[0];
+        }
+
+        /**
+         * clone Item 
+         */
+
+    }, {
+        key: "clone",
+        value: function clone$$1() {
+            var isNew = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+            var json = JSON.parse(JSON.stringify(this.json));
+            if (isNew) delete json.id;
+
+            var ItemClass = this.constructor;
+
+            return new ItemClass(json);
+        }
+
+        /**
+         * 
+         * @param {string} itemType 
+         * @param {Item} item   Item instance 
+         * @param {string} sortType  sort parent's children by sortType 
+         */
+
+    }, {
+        key: "addItem",
+        value: function addItem(itemType, item, sortType) {
+            if (item.itemType != itemType) {
+                throw new Error("Only " + itemType + " is able to add in " + this.json.type);
+            }
+
+            var newItem = editor$1.add(this.id, item);
+
+            if (isUndefined$1(sortType)) {
+                this.sort();
+            } else {
+                this.sort(sortType);
+            }
+
+            return newItem;
+        }
+
+        /**
+         * addItem alias 
+         * 
+         * @param {*} item 
+         */
+
+    }, {
+        key: "add",
+        value: function add(item) {
+            return this.addItem(item.itemType, item, item.itemType);
+        }
+
+        /**
+         * set json content 
+         * 
+         * @param {object} obj 
+         */
+
+    }, {
+        key: "reset",
+        value: function reset(obj) {
+
+            if (obj instanceof Item) {
+                obj = obj.toJSON();
+            }
+
+            this.json = this.convert(_extends({}, this.json, obj));
+        }
+
+        /**
+         * define defaut object for item 
+         * 
+         * @param {object} obj 
+         */
+
+    }, {
+        key: "getDefaultObject",
+        value: function getDefaultObject() {
+            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            return _extends({
+                id: uuidShort(),
+                index: Number.MAX_SAFE_INTEGER,
+                visible: true,
+                lock: false
+            }, obj);
+        }
+
+        /**
+         * toggle item's attribute 
+         * 
+         * @param {*} field 
+         * @param {*} toggleValue 
+         */
+
+    }, {
+        key: "toggle",
+        value: function toggle(field, toggleValue) {
+            if (isUndefined$1(toggleValue)) {
+                this.json[field] = !this.json[field];
+            } else {
+                this.json[field] = !!toggleValue;
+            }
+        }
+
+        /**
+         * convert to json 
+         */
+
+    }, {
+        key: "toJSON",
+        value: function toJSON() {
+            return this.json;
+        }
+
+        /**
+         * check item type 
+         * 
+         * @param {string} itemType 
+         */
+
+    }, {
+        key: "is",
+        value: function is(itemType) {
+            return this.json.itemType == itemType;
+        }
+
+        /**
+         * remove item 
+         */
+
+    }, {
+        key: "remove",
+        value: function remove() {
+            var isDeleteChildren = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+            editor$1.remove(this.id, isDeleteChildren);
+        }
+
+        /**
+         * remove children for item 
+         * 
+         * @param {string} itemType 
+         */
+
+    }, {
+        key: "clear",
+        value: function clear(itemType) {
+
+            if (isNotUndefined(itemType)) {
+                this.search({ itemType: itemType }).forEach(function (c) {
+                    return c.remove();
+                });
+            } else {
+                editor$1.removeChildren(this.id, this);
+            }
+        }
+
+        /**
+         * get parent item instance 
+         */
+
+    }, {
+        key: "parent",
+        value: function parent() {
+            return editor$1.get(this.parentId);
+        }
+
+        /**
+         * sorting children 
+         * 
+         * @param {string} itemType 
+         */
+
+    }, {
+        key: "sort",
+        value: function sort(itemType) {
+            var children = this.children;
+
+            if (itemType) {
+                children = children.filter(function (it) {
+                    return it.itemType === itemType;
+                });
+            }
+
+            children.sort(function (a, b) {
+                if (a.index === b.index) return 0;
+                return a.index > b.index ? 1 : -1;
+            });
+
+            children.forEach(function (it, index) {
+                it.index = index * 100;
+            });
+        }
+    }, {
+        key: "copy",
+        value: function copy() {
+            return editor$1.copy(this.id);
+        }
+    }, {
+        key: "insertLast",
+        value: function insertLast(source) {
+
+            var selfParent = this.parent();
+            var sourceParent = source.parent();
+
+            source.parentId = this.json.parentId;
+            source.index = this.json.index + 1;
+
+            selfParent.sort();
+            sourceParent.sort();
+        }
+
+        /**
+         * get hirachy path s
+         */
+
+    }, {
+        key: "path",
+        value: function path(parentId) {
+            var path = [];
+            var currentId = isNotUndefined(parentId) ? parentId : this.parentId;
+
+            if (!parentId) {
+                path = [editor$1.get(this.json.id)];
+            }
+
+            do {
+                var item = editor$1.get(currentId);
+                if (item) {
+                    path.push(item);
+                }
+
+                currentId = item ? item.parentId : this.json.parentId;
+            } while (currentId);
+
+            return path;
+        }
+    }, {
+        key: "title",
+        get: function get$$1() {
+            return "" + (this.json.name || this.getDefaultTitle());
+        }
+
+        /**
+         * get id 
+         */
+
+    }, {
+        key: "id",
+        get: function get$$1() {
+            return this.json.id;
+        }
+
+        /** get parentId */
+
+    }, {
+        key: "parentId",
+        get: function get$$1() {
+            return this.json.parentId;
+        }
+
+        /**
+         * get children 
+         */
+
+    }, {
+        key: "children",
+        get: function get$$1() {
+            var children = editor$1.children(this.id);
+            children.sort(function (a, b) {
+                if (a.index === b.index) return 0;
+
+                return a.index > b.index ? 1 : -1;
+            });
+            return children;
+        }
+    }]);
+    return Item;
+}();
 
 var bezierList = [[0, 0, 1, 1, 'linear'], [0.25, 0.1, 0.25, 1, 'ease'], [0.42, 0, 1, 1, 'ease-in'], [0.47, 0, 0.745, 0.715, 'ease-in-sine'], [0.55, 0.085, 0.68, 0.53, 'ease-in-quad'], [0.55, 0.055, 0.675, 0.19, 'ease-in-cubic'], [0.895, 0.03, 0.685, 0.22, 'ease-in-quart'], [0.755, 0.05, 0.855, 0.06, 'ease-in-quint'], [0.95, 0.05, 0.795, 0.035, 'ease-in-expo'], [0.60, 0.04, 0.98, 0.335, 'ease-in-circ'], [0.60, -0.28, 0.735, 0.045, 'ease-in-back'], [0.42, 0, 0.58, 1, 'ease-in-out'], [0.445, 0.05, 0.55, 0.95, 'ease-in-out-sine'], [0.455, 0.03, 0.515, 0.955, 'ease-in-out-quad'], [0.645, 0.045, 0.355, 1, 'ease-in-out-cubic'], [0.77, 0, 0.175, 1, 'ease-in-out-quart'], [0.86, 0, 0.07, 1, 'ease-in-out-quint'], [1, 0, 0, 1, 'ease-in-out-expo'], [0.785, 0.135, 0.15, 0.86, 'ease-in-out-circ'], [0.68, -0.55, 0.265, 1.55, 'ease-in-out-back'], [0, 0, 0.58, 1, 'ease-out'], [0.39, 0.575, 0.565, 1, 'ease-out-sine'], [0.25, 0.46, 0.45, 0.94, 'ease-out-quad'], [0.215, 0.61, 0.355, 1, 'ease-out-cubic'], [0.165, 0.84, 0.44, 1, 'ease-out-quart'], [0.23, 1, 0.32, 1, 'ease-out-quint'], [0.19, 1, 0.22, 1, 'ease-out-expo'], [0.075, 0.82, 0.165, 1, 'ease-out-circ'], [0.175, 0.885, 0.32, 1.275, 'ease-out-back']];
 
@@ -13996,12 +14026,34 @@ var Display = function (_Property) {
                 'display': this.json.display
             };
         }
+    }, {
+        key: "isLayout",
+        value: function isLayout() {
+            return false;
+        }
     }]);
     return Display;
 }(Property);
 
-var InlineDisplay = function (_Display) {
-    inherits(InlineDisplay, _Display);
+var LayoutDisplay = function (_Display) {
+    inherits(LayoutDisplay, _Display);
+
+    function LayoutDisplay() {
+        classCallCheck(this, LayoutDisplay);
+        return possibleConstructorReturn(this, (LayoutDisplay.__proto__ || Object.getPrototypeOf(LayoutDisplay)).apply(this, arguments));
+    }
+
+    createClass(LayoutDisplay, [{
+        key: "isLayout",
+        value: function isLayout() {
+            return true;
+        }
+    }]);
+    return LayoutDisplay;
+}(Display);
+
+var InlineDisplay = function (_Display2) {
+    inherits(InlineDisplay, _Display2);
 
     function InlineDisplay() {
         classCallCheck(this, InlineDisplay);
@@ -14020,8 +14072,8 @@ var InlineDisplay = function (_Display) {
     return InlineDisplay;
 }(Display);
 
-var InlineBlockDisplay = function (_Display2) {
-    inherits(InlineBlockDisplay, _Display2);
+var InlineBlockDisplay = function (_Display3) {
+    inherits(InlineBlockDisplay, _Display3);
 
     function InlineBlockDisplay() {
         classCallCheck(this, InlineBlockDisplay);
@@ -14040,8 +14092,8 @@ var InlineBlockDisplay = function (_Display2) {
     return InlineBlockDisplay;
 }(Display);
 
-var BlockDisplay = function (_Display3) {
-    inherits(BlockDisplay, _Display3);
+var BlockDisplay = function (_Display4) {
+    inherits(BlockDisplay, _Display4);
 
     function BlockDisplay() {
         classCallCheck(this, BlockDisplay);
@@ -14060,8 +14112,8 @@ var BlockDisplay = function (_Display3) {
     return BlockDisplay;
 }(Display);
 
-var FlexDisplay = function (_Display4) {
-    inherits(FlexDisplay, _Display4);
+var FlexDisplay = function (_LayoutDisplay) {
+    inherits(FlexDisplay, _LayoutDisplay);
 
     function FlexDisplay() {
         classCallCheck(this, FlexDisplay);
@@ -14122,10 +14174,10 @@ var FlexDisplay = function (_Display4) {
         }
     }]);
     return FlexDisplay;
-}(Display);
+}(LayoutDisplay);
 
-var GridDisplay = function (_Display5) {
-    inherits(GridDisplay, _Display5);
+var GridDisplay = function (_LayoutDisplay2) {
+    inherits(GridDisplay, _LayoutDisplay2);
 
     function GridDisplay() {
         classCallCheck(this, GridDisplay);
@@ -14141,8 +14193,8 @@ var GridDisplay = function (_Display5) {
                 gap: Length$1.px(0),
                 rowGap: Length$1.px(0),
                 columnGap: Length$1.px(0),
-                columns: [],
-                rows: [],
+                columns: [Length$1.fr(1)],
+                rows: [Length$1.fr(1)],
                 areas: []
             });
         }
@@ -14184,7 +14236,7 @@ var GridDisplay = function (_Display5) {
         }
     }]);
     return GridDisplay;
-}(Display);
+}(LayoutDisplay);
 
 var DisplayClassName = {
     'inline': InlineDisplay,
@@ -14200,10 +14252,208 @@ Display.parse = function (obj) {
     return new DisplayClass(obj);
 };
 
+var MovableItem = function (_Item) {
+    inherits(MovableItem, _Item);
+
+    function MovableItem() {
+        classCallCheck(this, MovableItem);
+        return possibleConstructorReturn(this, (MovableItem.__proto__ || Object.getPrototypeOf(MovableItem)).apply(this, arguments));
+    }
+
+    createClass(MovableItem, [{
+        key: "checkInArea",
+        value: function checkInArea(area) {
+
+            if (area.width.value === 0) {
+                return false;
+            }
+            if (area.height.value === 0) {
+                return false;
+            }
+            if (area.x2.value < this.screenX.value) {
+                return false;
+            }
+            if (area.y2.value < this.screenY.value) {
+                return false;
+            }
+            if (area.x.value > this.screenX2.value) {
+                return false;
+            }
+            if (area.y.value > this.screenY2.value) {
+                return false;
+            }
+
+            return true;
+        }
+    }, {
+        key: "toBoundCSS",
+        value: function toBoundCSS() {
+            return {
+                top: "" + this.json.y,
+                left: "" + this.json.x,
+                width: "" + this.json.width,
+                height: "" + this.json.height
+            };
+        }
+    }, {
+        key: "screenX",
+
+
+        //////////////////////
+        //
+        // getters 
+        //
+        ///////////////////////
+
+
+        get: function get() {
+            return this.json.x;
+        }
+    }, {
+        key: "screenY",
+        get: function get() {
+            return this.json.y;
+        }
+    }, {
+        key: "screenX2",
+        get: function get() {
+            return Length$1.px(this.screenX.value + this.json.width.value);
+        }
+    }, {
+        key: "screenY2",
+        get: function get() {
+            return Length$1.px(this.screenY.value + this.json.height.value);
+        }
+    }, {
+        key: "screenWidth",
+        get: function get() {
+            return this.json.width;
+        }
+    }, {
+        key: "screenHeight",
+        get: function get() {
+            return this.json.height;
+        }
+
+        /**
+         * 화면상의 순수 위치 (left, top, width, height)
+         * 
+         * 상위 Layer 가 flex, grid 를 가지면 하위는 dom 기준으로 자동으로 연산 ..  
+         * 
+         */
+
+    }, {
+        key: "screen",
+        get: function get() {
+            return {
+                left: this.screenX,
+                top: this.screenY,
+                width: this.screenWidth,
+                height: this.screenHeight
+            };
+        }
+    }, {
+        key: "centerX",
+        get: function get() {
+            var half = 0;
+            if (this.json.width.value != 0) {
+                half = Math.floor(this.json.width.value / 2);
+            }
+            return Length$1.px(this.screenX.value + half);
+        }
+    }, {
+        key: "centerY",
+        get: function get() {
+            var half = 0;
+            if (this.json.height.value != 0) {
+                half = Math.floor(this.json.height.value / 2);
+            }
+
+            return Length$1.px(this.screenY.value + half);
+        }
+
+        /**
+         * check selection status for item  
+         */
+
+    }, {
+        key: "selected",
+        get: function get() {
+            return editor$1.selection.check(this.id);
+        }
+    }, {
+        key: "selectedOne",
+        get: function get() {
+            return editor$1.selection.checkOne(this.id);
+        }
+    }]);
+    return MovableItem;
+}(Item);
+
+var GroupItem = function (_MovableItem) {
+    inherits(GroupItem, _MovableItem);
+
+    function GroupItem() {
+        classCallCheck(this, GroupItem);
+        return possibleConstructorReturn(this, (GroupItem.__proto__ || Object.getPrototypeOf(GroupItem)).apply(this, arguments));
+    }
+
+    createClass(GroupItem, [{
+        key: 'isLayoutItem',
+        value: function isLayoutItem() {
+            return false;
+        }
+    }, {
+        key: 'changeDisplay',
+        value: function changeDisplay(newDisplay) {
+            var oldDisplay = this.json.display;
+
+            if (oldDisplay.isLayout() && !newDisplay.isLayout()) {
+                // flex, grid => inline, inline-block. block 으로 변화 
+                // 실제 offset 데이타를 x,y,width, height 로 변환해서 등록 
+                this.layers.forEach(function (layer) {
+                    return layer.changeOffsetToPosition();
+                });
+            }
+
+            this.json.display = newDisplay;
+        }
+    }, {
+        key: 'hasLayout',
+        value: function hasLayout() {
+            var displayType = this.json.display.type;
+
+            switch (displayType) {
+                case 'flex':
+                case 'grid':
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }, {
+        key: 'refreshItem',
+        value: function refreshItem(callback) {
+
+            callback && callback(this);
+
+            this.children.forEach(function (child) {
+                child.refreshItem(callback);
+            });
+        }
+    }, {
+        key: 'layers',
+        get: function get() {
+            return this.search({ itemType: 'layer' });
+        }
+    }]);
+    return GroupItem;
+}(MovableItem);
+
 var BLEND_LIST = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
 
-var Layer = function (_Item) {
-    inherits(Layer, _Item);
+var Layer = function (_GroupItem) {
+    inherits(Layer, _GroupItem);
 
     function Layer() {
         classCallCheck(this, Layer);
@@ -14227,6 +14477,14 @@ var Layer = function (_Item) {
             var parent = this.parent();
 
             return parent.hasLayout(); // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다. 
+        }
+    }, {
+        key: "isRootItem",
+        value: function isRootItem() {
+            var parent = this.parent();
+
+            // 상위 객체가 artboard 나 directory 는 처음 시작하는 존재라고 본다. 
+            return parent.itemType == 'artboard' || parent.itemType == 'directory';
         }
     }, {
         key: "add",
@@ -14307,7 +14565,7 @@ var Layer = function (_Item) {
                 itemType: 'layer',
                 width: Length$1.px(400),
                 height: Length$1.px(300),
-                backgroundColor: 'rgba(222, 222, 222, 1)',
+                backgroundColor: 'rgba(222, 222, 222, 0.3)',
                 position: 'absolute',
                 x: Length$1.px(0),
                 y: Length$1.px(0),
@@ -14343,7 +14601,7 @@ var Layer = function (_Item) {
 
             return path.filter(function (it) {
                 if (it.itemType == 'layer') {
-                    if (it.display.type == 'block') return true;else if (it.display.type == 'inline-block') return true;else if (it.display.type == 'inline') return true;
+                    return !it.isLayoutItem(); // 좌표 설정이 있는 layer 만 부모로 해서 offset 설정 
                 } else if (it.itemType == 'artboard') {
                     return true;
                 }
@@ -14367,27 +14625,20 @@ var Layer = function (_Item) {
             })[0];
         }
     }, {
-        key: "hasLayout",
-        value: function hasLayout() {
-            var displayType = this.json.display.type;
-
-            switch (displayType) {
-                case 'flex':
-                case 'grid':
-                    return true;
-                default:
-                    return false;
-            }
+        key: "changeOffsetToPosition",
+        value: function changeOffsetToPosition() {
+            var offset = this.json.offset;
+            this.reset({
+                x: Length$1.px(offset.left),
+                y: Length$1.px(offset.top),
+                width: Length$1.px(offset.width),
+                height: Length$1.px(offset.height)
+            });
         }
     }, {
         key: "toString",
         value: function toString() {
             return CSS_TO_STRING(this.toCSS());
-        }
-    }, {
-        key: "toBoundString",
-        value: function toBoundString() {
-            return CSS_TO_STRING(this.toCSS(true));
         }
     }, {
         key: "toClipPathCSS",
@@ -14624,8 +14875,8 @@ var Layer = function (_Item) {
         }
     }, {
         key: "toDefaultCSS",
-        value: function toDefaultCSS(isBound) {
-            var css = _extends({}, this.toBoundCSS(isBound));
+        value: function toDefaultCSS() {
+            var css = _extends({}, this.toBoundCSS());
             var json = this.json;
 
             css['box-sizing'] = json.boxSizing || 'border-box';
@@ -14652,14 +14903,24 @@ var Layer = function (_Item) {
     }, {
         key: "toBoundCSS",
         value: function toBoundCSS() {
-            var isBound = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
             var json = this.json;
             var parent = this.parent();
 
+            var height = parent.screenHeight.value;
+            var width = parent.screenWidth.value;
+
             if (parent.display.type == 'flex') {
                 return {
+
+                    // TODO: 어찌 할꼬? 
+                    // bounding 을 너무 다양하게 할 수 있다. 
+                    // 다만 내부의 요소를 공통으로 묶을 것인지 개별로 설정할 것인지 
+                    // 디장인에서 flex 같은 레이아웃을 많이 쓰는가? 
+                    // 최소 고정 크기로 해야할 듯 
                     flex: (json.flexGrow || 1) + " " + (json.flexShrink || 1) + " " + (json.flexBasis || 'auto')
+                    // width: Length.px(minSize),
+                    // height: Length.px(minSize),
+                    // display: 'inline-block'
                 };
             } else if (parent.display.type == 'grid') {
                 return {
@@ -14667,13 +14928,10 @@ var Layer = function (_Item) {
                 };
             }
 
-            // isBound 가 true 이고  상위 
-            var isBoundRect = isBound && parent.itemType != 'layer';
-
             return {
                 position: json.position,
-                left: isBoundRect === false ? json.x : this.screenX,
-                top: isBoundRect === false ? json.y : this.screenY,
+                left: json.x,
+                top: json.y,
                 width: json.width,
                 height: json.height
             };
@@ -14681,10 +14939,8 @@ var Layer = function (_Item) {
     }, {
         key: "toCSS",
         value: function toCSS() {
-            var isBound = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-
-            var results = _extends({}, this.toDefaultCSS(isBound), this.toBorderWidthCSS(), this.toBorderRadiusCSS(), this.toBorderColorCSS(), this.toBorderStyleCSS(), this.toTransformCSS(), this.toDisplayCSS(), this.toClipPathCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toFontCSS(), this.toBoxShadowCSS(), this.toTextShadowCSS(), this.toBackgroundImageCSS());
+            var results = _extends({}, this.toDefaultCSS(), this.toBorderWidthCSS(), this.toBorderRadiusCSS(), this.toBorderColorCSS(), this.toBorderStyleCSS(), this.toTransformCSS(), this.toDisplayCSS(), this.toClipPathCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toFontCSS(), this.toBoxShadowCSS(), this.toTextShadowCSS(), this.toBackgroundImageCSS());
 
             return CSS_FILTERING(cleanObject(results));
         }
@@ -14726,12 +14982,12 @@ var Layer = function (_Item) {
     }, {
         key: "screenX",
         get: function get$$1() {
-
+            var offsetParent = editor$1.get(this.json.parentPosition);
             if (this.isLayoutItem()) {
-                return Length$1.px(this.parent().screenX.value + this.json.offset.left);
+                return Length$1.px(offsetParent.screenX.value + this.json.offset.left);
             }
 
-            return Length$1.px(editor$1.get(this.json.parentPosition).screenX.value + this.json.x.value);
+            return Length$1.px(offsetParent.screenX.value + this.json.x.value);
         }
     }, {
         key: "screenX2",
@@ -14741,12 +14997,13 @@ var Layer = function (_Item) {
     }, {
         key: "screenY",
         get: function get$$1() {
+            var offsetParent = editor$1.get(this.json.parentPosition);
 
             if (this.isLayoutItem()) {
-                return Length$1.px(this.parent().screenY.value + this.json.offset.top);
+                return Length$1.px(offsetParent.screenY.value + this.json.offset.top);
             }
 
-            return Length$1.px(editor$1.get(this.json.parentPosition).screenY.value + this.json.y.value);
+            return Length$1.px(offsetParent.screenY.value + this.json.y.value);
         }
     }, {
         key: "screenY2",
@@ -14773,27 +15030,9 @@ var Layer = function (_Item) {
 
             return this.json.height;
         }
-
-        /**
-         * 화면상의 순수 위치 (left, top, width, height)
-         * 
-         * 상위 Layer 가 flex, grid 를 가지면 하위는 dom 기준으로 자동으로 연산 ..  
-         * 
-         */
-
-    }, {
-        key: "screen",
-        get: function get$$1() {
-            return {
-                left: this.screenX,
-                top: this.screenY,
-                width: this.screenWidth,
-                height: this.screenHeight
-            };
-        }
     }]);
     return Layer;
-}(Item);
+}(GroupItem);
 
 var _templateObject$4 = taggedTemplateLiteral(['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        '], ['\n        <div class=\'property-item blend show\'>\n            <div class=\'items max-height\'>         \n                <div>\n                    <label>Blend</label>\n                    <div class=\'size-list full-size\' ref="$size">\n                        <select ref="$blend">\n                        ', '\n                        </select>\n                    </div>\n                </div>\n            </div>\n        </div>\n        ']);
 
@@ -20074,8 +20313,8 @@ var BaseProperty = function (_UIElement) {
     return BaseProperty;
 }(UIElement);
 
-var ArtBoard = function (_Item) {
-    inherits(ArtBoard, _Item);
+var ArtBoard = function (_GroupItem) {
+    inherits(ArtBoard, _GroupItem);
 
     function ArtBoard() {
         classCallCheck(this, ArtBoard);
@@ -20122,36 +20361,20 @@ var ArtBoard = function (_Item) {
             return json;
         }
     }, {
-        key: "hasLayout",
-        value: function hasLayout() {
-            var displayType = this.json.display.type;
-
-            switch (displayType) {
-                case 'flex':
-                case 'grid':
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    }, {
         key: "getDefaultTitle",
         value: function getDefaultTitle() {
             return 'ArtBoard';
-        }
-    }, {
-        key: "isLayoutItem",
-        value: function isLayoutItem() {
-            return false;
         }
     }, {
         key: "traverse",
         value: function traverse(item, results, hasLayoutItem) {
             var _this2 = this;
 
+            var parentItemType = item.parent().itemType;
             if (item.isAttribute()) return;
-            if (!hasLayoutItem && item.isLayoutItem()) return;
-            if (item.parent().itemType == 'layer') return;
+            if (parentItemType == 'layer') return;
+            if (!hasLayoutItem && item.isLayoutItem() && !item.isRootItem()) return;
+
             results.push(item);
 
             item.children.forEach(function (child) {
@@ -20171,10 +20394,20 @@ var ArtBoard = function (_Item) {
 
             return results;
         }
+
+        /**
+         * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
+         */
+
     }, {
         key: "toString",
         value: function toString() {
             return CSS_TO_STRING(this.toCSS());
+        }
+    }, {
+        key: "toBoundString",
+        value: function toBoundString() {
+            return CSS_TO_STRING(this.toBoundCSS());
         }
     }, {
         key: "toCSS",
@@ -20187,11 +20420,18 @@ var ArtBoard = function (_Item) {
                 'background-color': json.backgroundColor
             };
 
-            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toLayoutCSS(), this.toPerspectiveCSS()));
+            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toDisplayCSS(), this.toPerspectiveCSS()));
         }
     }, {
-        key: "toLayoutCSS",
-        value: function toLayoutCSS() {
+        key: "toBoundString",
+        value: function toBoundString() {
+            return CSS_TO_STRING(_extends({
+                position: 'absolute'
+            }, this.toBoundCSS()));
+        }
+    }, {
+        key: "toDisplayCSS",
+        value: function toDisplayCSS() {
             return this.json.display.toCSS();
         }
     }, {
@@ -20228,22 +20468,12 @@ var ArtBoard = function (_Item) {
             return this.search({ itemType: 'directory' });
         }
     }, {
-        key: "layers",
-        get: function get() {
-            return this.search({ itemType: 'layer' });
-        }
-    }, {
         key: "allDirectories",
         get: function get() {
             return this.tree().filter(function (it) {
                 return it.itemType == 'directory';
             });
         }
-
-        /**
-         * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
-         */
-
     }, {
         key: "allLayers",
         get: function get() {
@@ -20263,7 +20493,7 @@ var ArtBoard = function (_Item) {
         }
     }]);
     return ArtBoard;
-}(Item);
+}(GroupItem);
 
 var BoundProperty = function (_BaseProperty) {
     inherits(BoundProperty, _BaseProperty);
@@ -20276,7 +20506,7 @@ var BoundProperty = function (_BaseProperty) {
     createClass(BoundProperty, [{
         key: "getBody",
         value: function getBody() {
-            return "\n            <div class='property-item display-manager'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class='items display-list' ref='$displayList' selected-type='inline'>\n                    <div class='display' display-type='inline'>INLINE</div>\n                    <div class='display' display-type='inline-block'>INLINE <br /> BLOCK</div>\n                    <div class='display' display-type='block'>BLOCK</div>\n                    <div class='display' display-type='flex'>FLEX</div>\n                    <div class='display' display-type='grid'>GRID</div>\n                </div>\n            </div>\n        ";
+            return "\n            <div class='property-item display-manager'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class='items display-list' ref='$displayList' selected-type='inline'>\n                    <div class='display' display-type='block'>BLOCK</div>\n                    <div class='display' display-type='flex'>FLEX</div>\n                    <div class='display' display-type='grid'>GRID</div>\n                </div>\n                <div class='items flex-list' ref='$flexList' selected-type='row'>\n                    <div class='display' display-type='row'>row</div>\n                    <div class='display' display-type='row-reverse'>row-reverse</div>\n                    <div class='display' display-type='column'>column</div>\n                    <div class='display' display-type='column-reverse'>column-reverse</div>\n                </div>                \n                <div class='items flex-wrap' ref='$flexWrap' selected-type='row'>\n                    <div class='display' display-type='nowrap'>nowrap</div>\n                    <div class='display' display-type='wrap'>wrap</div>\n                    <div class='display' display-type='wrap-reverse'>wrap-reverse</div>\n                </div>                             \n                <div class='items justify-content' ref='$justifyContent' selected-type='flex-start'>\n                    <div class='display' display-type='flex-start'>flex-start</div>\n                    <div class='display' display-type='flex-end'>flex-end</div>\n                    <div class='display' display-type='center'>center</div>\n                    <div class='display' display-type='space-between'>space-between</div>\n                    <div class='display' display-type='space-around'>space-around</div>\n                </div>                                                \n            </div> \n        ";
         }
     }, {
         key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -20296,6 +20526,62 @@ var BoundProperty = function (_BaseProperty) {
 
             if (item.display) {
                 this.refs.$displayList.attr('selected-type', item.display.type);
+
+                if (item.display.type == 'flex') {
+                    this.refs.$flexList.attr('selected-type', item.display.direction);
+                    this.refs.$justifyContent.attr('selected-type', item.display.justifyContent);
+                }
+            }
+        }
+    }, {
+        key: CLICK('$justifyContent .display'),
+        value: function value(e) {
+            var display = e.$delegateTarget.attr('display-type');
+            var current = editor$1.selection.current;
+
+            if (current) {
+                this.refs.$justifyContent.attr('selected-type', display);
+                current.display.justifyContent = display;
+
+                if (current instanceof ArtBoard) {
+                    this.emit(CHANGE_ARTBOARD);
+                } else if (current instanceof Layer) {
+                    this.emit(CHANGE_LAYER);
+                }
+            }
+        }
+    }, {
+        key: CLICK('$flexList .display'),
+        value: function value(e) {
+            var display = e.$delegateTarget.attr('display-type');
+            var current = editor$1.selection.current;
+
+            if (current) {
+                this.refs.$flexList.attr('selected-type', display);
+                current.display.direction = display;
+
+                if (current instanceof ArtBoard) {
+                    this.emit(CHANGE_ARTBOARD);
+                } else if (current instanceof Layer) {
+                    this.emit(CHANGE_LAYER);
+                }
+            }
+        }
+    }, {
+        key: CLICK('$flexWrap .display'),
+        value: function value(e) {
+            var display = e.$delegateTarget.attr('display-type');
+            var current = editor$1.selection.current;
+
+            if (current) {
+                this.refs.$flexWrap.attr('selected-type', display);
+                current.display.wrap = display;
+
+                if (current instanceof ArtBoard) {
+                    this.emit(CHANGE_ARTBOARD);
+                } else if (current instanceof Layer) {
+                    this.emit(CHANGE_LAYER);
+                }
             }
         }
     }, {
@@ -20306,11 +20592,11 @@ var BoundProperty = function (_BaseProperty) {
 
             if (current) {
                 this.refs.$displayList.attr('selected-type', display);
+                current.changeDisplay(Display.parse({ type: display }));
+
                 if (current instanceof ArtBoard) {
-                    current.display = Display.parse({ type: display });
                     this.emit(CHANGE_ARTBOARD);
                 } else if (current instanceof Layer) {
-                    current.display = Display.parse({ type: display });
                     this.emit(CHANGE_LAYER);
                 }
             }
@@ -20884,7 +21170,7 @@ var start = function start(opt) {
             value: function initBodyMoves() {
                 this.moves = new Set();
                 this.ends = new Set();
-                this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 10);
+                this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 15);
             }
         }, {
             key: "loopBodyMoves",
@@ -23494,13 +23780,13 @@ var Guide = function () {
             var project = editor$1.selection.currentProject;
             this.checkLayers = [];
             if (project) {
-                if (this.cachedItems[0] instanceof ArtBoard) {
+                if (this.cachedItems.length && this.cachedItems[0].itemType == 'artboard') {
                     this.checkLayers = project.artboards.filter(function (item) {
                         return !_this.cachedItems[item.id];
                     });
                 } else {
                     this.checkLayers = project.allItems.filter(function (item) {
-                        return !_this.cachedItems[item.id];
+                        return !_this.cachedItems[item.id] && !item.isLayoutItem();
                     });
                 }
             }
@@ -23920,45 +24206,24 @@ var ItemPositionCalc = function () {
     return ItemPositionCalc;
 }();
 
-var StaticGradient = function (_Gradient) {
-    inherits(StaticGradient, _Gradient);
-
-    function StaticGradient() {
-        classCallCheck(this, StaticGradient);
-        return possibleConstructorReturn(this, (StaticGradient.__proto__ || Object.getPrototypeOf(StaticGradient)).apply(this, arguments));
-    }
-
-    createClass(StaticGradient, [{
-        key: 'getDefaultObject',
-        value: function getDefaultObject() {
-            return get$1(StaticGradient.prototype.__proto__ || Object.getPrototypeOf(StaticGradient.prototype), 'getDefaultObject', this).call(this, {
-                type: 'static-gradient',
-                static: true,
-                color: 'rgba(0, 0, 0, 0)'
-            });
-        }
-    }, {
-        key: 'toString',
-        value: function toString() {
-            return 'linear-gradient(to right, ' + this.json.color + ', ' + this.json.color + ')';
-        }
-    }, {
-        key: 'isStatic',
-        value: function isStatic() {
-            return true;
-        }
-    }]);
-    return StaticGradient;
-}(Gradient);
-
-var _templateObject$16 = taggedTemplateLiteral(['<div class=\'item-resizer\' ref="$itemResizer">\n                ', '\n        </div>'], ['<div class=\'item-resizer\' ref="$itemResizer">\n                ', '\n        </div>']);
+var _templateObject$16 = taggedTemplateLiteral(['\n            <div class=\'item-resizer select-view\' ref="$itemResizer">\n                ', '\n            </div>\n            <div class=\'item-resizer parent-view\' ref="$parentItemResizer">\n                <div class=\'grid-row-handler\' data-count="0" ref="$parentItemResizerRow"></div>\n                <div class=\'grid-column-handler\' data-count="0" ref="$parentItemResizerColumn"></div>\n            </div>            \n        '], ['\n            <div class=\'item-resizer select-view\' ref="$itemResizer">\n                ', '\n            </div>\n            <div class=\'item-resizer parent-view\' ref="$parentItemResizer">\n                <div class=\'grid-row-handler\' data-count="0" ref="$parentItemResizerRow"></div>\n                <div class=\'grid-column-handler\' data-count="0" ref="$parentItemResizerColumn"></div>\n            </div>            \n        ']);
 var _templateObject2$3 = taggedTemplateLiteral(['\n            <div \n                class=\'layer\' \n                item-id="', '" \n                style="', '" \n                title="', '" \n                data-layout-item="', '"\n                data-has-layout="', '"\n                >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>'], ['\n            <div \n                class=\'layer\' \n                item-id="', '" \n                style="', '" \n                title="', '" \n                data-layout-item="', '"\n                data-has-layout="', '"\n                >\n                ', '\n                <div class=\'text-layer\' style="pointer-events: none;"></div>\n            </div>']);
-var _templateObject3$1 = taggedTemplateLiteral(['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' artboard-id="', '">', '</div>\n            </div>\n        '], ['\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' artboard-id="', '">', '</div>\n            </div>\n        ']);
+var _templateObject3$1 = taggedTemplateLiteral(['\n            <div  \n                class=\'artboard-background\' \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' artboard-id="', '">', '</div>\n            </div>\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                ', '\n            </div>\n        '], ['\n            <div  \n                class=\'artboard-background\' \n                style=\'', ';\'>\n                    <div class=\'artboard-title\' artboard-id="', '">', '</div>\n            </div>\n            <div  \n                class=\'artboard\' \n                item-id="', '" \n                title="', '" \n                style=\'', ';\'>\n                ', '\n            </div>\n        ']);
+
+function createBackgroundImage(color$$1, x, y, width, height) {
+    return {
+        'background-image': 'linear-gradient(to right, ' + color$$1 + ', ' + color$$1 + ')',
+        'background-size': width + ' ' + height,
+        'background-position': x + ' ' + y,
+        'background-repeat': 'no-repeat'
+    };
+}
 
 function createGuideLine(list) {
-    var layer = new Layer();
 
     var lineWidth = Length$1.px(1.5);
+
+    var images = [];
 
     list.forEach(function (it) {
 
@@ -23966,59 +24231,35 @@ function createGuideLine(list) {
 
         if (isNotUndefined(it.ax)) {
 
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#e600ff' }));
-            background.repeat = 'no-repeat';
-            background.width = lineWidth;
-            background.height = it.A.height;
-            background.x = Length$1.px(it.bx - 1);
-            background.y = it.A.screenY;
+            images.push(createBackgroundImage('#e600ff', Length$1.px(it.bx - 1), it.A.screenY, lineWidth, it.A.height));
 
             if (target instanceof Layer) {
-                var background = layer.addBackgroundImage(new BackgroundImage());
-                background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                background.repeat = 'no-repeat';
-                background.width = lineWidth;
-                background.height = target.height;
-                background.x = Length$1.px(it.bx - 1);
-                background.y = target.screenY;
+                images.push(createBackgroundImage('#e600ff', Length$1.px(it.bx - 1), target.screenY, lineWidth, target.height));
             }
 
             var minY = Length$1.min(target.screenY, it.A.screenY);
             var maxY = Length$1.max(target.screenY2, it.A.screenY2);
 
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#4877ff' }));
-            background.repeat = 'no-repeat';
-            background.width = lineWidth;
-            background.height = Length$1.px(maxY.value - minY.value);
-            background.x = Length$1.px(it.bx - 1);
-            background.y = minY;
+            images.push(createBackgroundImage('#4877ff', Length$1.px(it.bx - 1), minY, lineWidth, Length$1.px(maxY.value - minY.value)));
         } else {
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#e600ff' }));
-            background.repeat = 'no-repeat';
-            background.width = it.A.width;
-            background.height = lineWidth;
-            background.x = it.A.screenX;
-            background.y = Length$1.px(it.by);
+            images.push(createBackgroundImage('#e600ff', it.A.screenX, Length$1.px(it.by), it.A.width, lineWidth));
 
             var minX = Length$1.min(target.screenX, it.A.screenX);
             var maxX = Length$1.max(target.screenX2, it.A.screenX2);
 
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#4877ff' }));
-            background.repeat = 'no-repeat';
-            background.width = Length$1.px(maxX.value - minX.value);
-            background.height = lineWidth;
-            background.x = minX;
-            background.y = Length$1.px(it.by);
+            images.push(createBackgroundImage('#4877ff', minX, Length$1.px(it.by), Length$1.px(maxX.value - minX.value), lineWidth));
         }
     });
 
-    layer.remove();
+    var results = {};
+    images.forEach(function (item) {
+        keyEach(item, function (key, value$$1) {
+            if (!results[key]) results[key] = [];
+            results[key].push(value$$1);
+        });
+    });
 
-    return layer.toBackgroundImageCSS();
+    return combineKeyArray(results);
 }
 
 var CanvasView = function (_UIElement) {
@@ -24048,12 +24289,13 @@ var CanvasView = function (_UIElement) {
     }, {
         key: 'template',
         value: function template() {
-            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-scroll-panel" style="position:relative" ref="$panel">\n                        <div class="page-canvas" ref="$canvas">\n                            <div class=\'area drag-area\' ref="$dragArea"></div>\n                            <div class=\'area artboard-area\' ref="$artboardArea"></div>\n                            <div class=\'area layer-area\' ref="$layerArea"></div>\n                        </div>          \n                        <div class="page-selection">\n                            <div class=\'page-guide-line\' ref="$guide"></div>\n                            ' + this.makeResizer() + '\n                            <div class="drag-area-view" ref="$dragAreaView"></div>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
+            return '\n            <div class=\'page-view\'>\n                <div class=\'page-content\' ref="$board">\n                    <div class="page-scroll-panel" style="position:relative" ref="$panel">\n                        <div class="page-canvas" ref="$canvas">\n                            <div class=\'area drag-area\' ref="$dragArea"></div>\n                            <div class=\'area artboard-area\' ref="$artboardArea"></div>\n                        </div>          \n                        <div class="page-selection">\n                            <div class=\'page-guide-line\' ref="$guide"></div>\n                            ' + this.makeResizer() + '\n                            <div class="drag-area-view" ref="$dragAreaView"></div>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ';
         }
     }, {
         key: 'initializeLayerCache',
         value: function initializeLayerCache() {
             this.layerItems = {};
+            this.titleItems = {};
         }
     }, {
         key: 'getCachedLayerElement',
@@ -24068,39 +24310,44 @@ var CanvasView = function (_UIElement) {
             return this.layerItems[id];
         }
     }, {
-        key: 'refreshLayerPosition',
-        value: function refreshLayerPosition(item) {
-            var _this2 = this;
+        key: 'getCachedTitleElement',
+        value: function getCachedTitleElement(id) {
 
-            if (item instanceof ArtBoard) {
-                item.allLayers.forEach(function (layer) {
-                    var $el = _this2.getCachedLayerElement(layer.id);
-                    if ($el) $el.css(layer.toBoundCSS());
-                });
+            if (!this.titleItems[id]) {
+                var $el = this.$el.$('[artboard-id="' + id + '"]');
+
+                this.titleItems[id] = $el;
             }
+
+            return this.titleItems[id];
         }
     }, {
         key: 'makeLayer',
         value: function makeLayer(layer) {
-            var _this3 = this;
+            var _this2 = this;
 
             var children = layer.children;
             var isLayoutItem = layer.isLayoutItem() ? 'true' : 'false';
             var hasLayout = layer.hasLayout();
-            return html(_templateObject2$3, layer.id, layer.toBoundString(), layer.title, isLayoutItem, hasLayout, children.map(function (it) {
-                return _this3.makeLayer(it);
+            return html(_templateObject2$3, layer.id, layer.toString(), layer.title, isLayoutItem, hasLayout, children.map(function (it) {
+                return _this2.makeLayer(it);
             }));
         }
     }, {
         key: 'makeArtBoard',
         value: function makeArtBoard(artboard) {
-            return html(_templateObject3$1, artboard.id, artboard.title, artboard.toString(), artboard.id, artboard.title);
+            var _this3 = this;
+
+            return html(_templateObject3$1, artboard.toBoundString(), artboard.id, artboard.title, artboard.id, artboard.title, artboard.toString(), artboard.allLayers.map(function (layer) {
+                return _this3.makeLayer(layer);
+            }));
         }
     }, {
         key: LOAD('$artboardArea'),
         value: function value$$1() {
             var _this4 = this;
 
+            this.initializeLayerCache();
             var project = editor$1.selection.currentProject;
             if (!project) return EMPTY_STRING;
 
@@ -24108,26 +24355,6 @@ var CanvasView = function (_UIElement) {
 
             return list.map(function (artboard) {
                 return _this4.makeArtBoard(artboard);
-            });
-        }
-    }, {
-        key: LOAD('$layerArea'),
-        value: function value$$1() {
-            var _this5 = this;
-
-            var project = editor$1.selection.currentProject;
-            if (!project) return EMPTY_STRING;
-
-            this.initializeLayerCache();
-
-            var list = project.artboards;
-
-            return list.map(function (artboard) {
-                return artboard.allLayers.filter(function (layer) {
-                    return !layer.isLayoutItem();
-                }).map(function (layer) {
-                    return _this5.makeLayer(layer);
-                });
             });
         }
     }, {
@@ -24162,18 +24389,13 @@ var CanvasView = function (_UIElement) {
         value: function value$$1(e) {
             this.selectMode = 'artboard';
 
+            this.$artboardTitleContainer = e.$delegateTarget.parent();
             this.item = editor$1.get(e.$delegateTarget.attr('artboard-id'));
             this.item.select();
             this.selectItem();
         }
     }, {
-        key: 'moveEndArtBoard',
-        value: function moveEndArtBoard() {
-            this.item.select();
-            this.setItemResizer();
-        }
-    }, {
-        key: POINTERSTART('$layerArea .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer'),
+        key: POINTERSTART('$artboardArea .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer'),
         value: function value$$1(e) {
 
             this.selectMode = 'layer';
@@ -24183,6 +24405,12 @@ var CanvasView = function (_UIElement) {
             this.selectItem();
 
             this.isLayoutItem = this.item.isLayoutItem();
+        }
+    }, {
+        key: 'moveEndArtBoard',
+        value: function moveEndArtBoard() {
+            this.item.select();
+            this.setItemResizer();
         }
     }, {
         key: 'moveEndLayer',
@@ -24262,21 +24490,31 @@ var CanvasView = function (_UIElement) {
     }, {
         key: 'moveResizeEnd',
         value: function moveResizeEnd() {
-            var _this6 = this;
+            var _this5 = this;
 
             editor$1.selection.items.forEach(function (item) {
-                _this6.refreshLayerOffset(item);
+                _this5.refreshLayerOffset(item);
             });
+        }
+    }, {
+        key: 'matchArtboardTitlePosition',
+        value: function matchArtboardTitlePosition(item) {
+            var $title = this.getCachedTitleElement(item.id);
+            if ($title) {
+                $title.parent().cssText(item.toBoundString());
+            }
         }
     }, {
         key: 'matchPosition',
         value: function matchPosition() {
-            var _this7 = this;
 
-            editor$1.selection.items.forEach(function (item) {
-                _this7.itemPositionCalc.recover(item);
-                _this7.getCachedLayerElement(item.id).css(item.toBoundCSS());
-            });
+            var items = editor$1.selection.items;
+            for (var i = 0, len = items.length; i < len; i++) {
+                var item = items[i];
+                this.itemPositionCalc.recover(item);
+                this.getCachedLayerElement(item.id).css(item.toBoundCSS());
+                this.matchArtboardTitlePosition(item);
+            }
 
             this.setItemResizer();
         }
@@ -24291,7 +24529,7 @@ var CanvasView = function (_UIElement) {
         key: 'moveArtBoard',
         value: function moveArtBoard(dx, dy) {
             this.movePosition(dx, dy);
-            this.refreshLayerPosition(this.item);
+            this.matchArtboardTitlePosition(this.item);
             editor$1.send(CHANGE_RECT, this.item, this);
         }
     }, {
@@ -24307,33 +24545,33 @@ var CanvasView = function (_UIElement) {
     }, {
         key: 'refreshLayerOffset',
         value: function refreshLayerOffset(item) {
-            var _this8 = this;
+            var _this6 = this;
 
             var $el = this.getCachedLayerElement(item.id);
 
             item.offset = $el.offsetRect();
 
             item.children.forEach(function (child) {
-                _this8.refreshLayerOffset(child);
+                _this6.refreshLayerOffset(child);
             });
         }
     }, {
         key: 'refreshLayerOne',
         value: function refreshLayerOne(item) {
-            var _this9 = this;
+            var _this7 = this;
 
             var $el = this.getCachedLayerElement(item.id);
 
             var content = item.content || EMPTY_STRING;
             $el.$('.text-layer').html(content);
-            $el.cssText(item.toBoundString());
+            $el.cssText(item.toString());
             $el.attr('data-layout-item', item.isLayoutItem() ? 'true' : 'false');
             $el.attr('data-has-layout', item.hasLayout() ? 'true' : 'false');
 
             item.offset = $el.offsetRect();
 
             item.children.forEach(function (child) {
-                _this9.refreshLayerOne(child);
+                _this7.refreshLayerOne(child);
             });
 
             this.refreshLayerOffset(item);
@@ -24341,11 +24579,35 @@ var CanvasView = function (_UIElement) {
     }, {
         key: 'refreshLayer',
         value: function refreshLayer() {
-            var _this10 = this;
+            var _this8 = this;
 
             editor$1.selection.layers.forEach(function (item) {
-                _this10.refreshLayerOne(item);
+                _this8.refreshLayerOne(item);
             });
+        }
+    }, {
+        key: 'refreshArtBoard',
+        value: function refreshArtBoard() {
+            var _this9 = this;
+
+            editor$1.selection.artboards.forEach(function (item) {
+                _this9.refreshArtBoardOne(item);
+            });
+        }
+    }, {
+        key: 'refreshArtBoardOne',
+        value: function refreshArtBoardOne(item) {
+            var _this10 = this;
+
+            var $el = this.getCachedLayerElement(item.id);
+
+            $el.cssText(item.toString());
+
+            item.allLayers.forEach(function (layer) {
+                _this10.refreshLayerOne(layer);
+            });
+
+            this.refreshLayerOffset(item);
         }
     }, {
         key: 'refreshAllLayers',
@@ -24355,9 +24617,7 @@ var CanvasView = function (_UIElement) {
             var project = editor$1.selection.currentProject;
             if (project) {
                 project.artboards.forEach(function (artboard) {
-                    artboard.allLayers.forEach(function (layer) {
-                        _this11.refreshLayerOne(layer);
-                    });
+                    _this11.refreshArtBoardOne(artboard);
                 });
             }
         }
@@ -24383,6 +24643,40 @@ var CanvasView = function (_UIElement) {
             this.refs.$guide.cssText(CSS_TO_STRING(createGuideLine(list)));
         }
     }, {
+        key: 'makeGridUnit',
+        value: function makeGridUnit(items) {
+            return items.map(function (it, index) {
+                return '<div class=\'grid-item grid-item-index-' + index + '\'>\n                        <div class=\'grid-item-value\'>\n                            <button class=\'add-left\'></button>\n                            <input type=\'number\' value="' + it.value + '" />\n                            <div class=\'unit\'>' + it.unit + '</div>\n                            <button class=\'add-right\'></button>\n                        </div>\n                        <div class=\'draggable-buttons\'>\n                            <button type="button" class=\'first\'></button>\n                            <button type="button" class=\'second\'></button>\n                        </div>                        \n                    </div>';
+            }).join(EMPTY_STRING);
+        }
+    }, {
+        key: 'setParentItemResizer',
+        value: function setParentItemResizer(screen, current) {
+            this.refs.$parentItemResizer.css(screen);
+            this.refs.$parentItemResizer.attr('data-mode', current.itemType);
+            this.refs.$parentItemResizer.attr('data-layout', current.display.type);
+
+            if (current.display.type == 'flex') {
+                this.refs.$parentItemResizer.attr('data-flex-direction', current.display.direction);
+            } else if (current.display.type == 'grid') {
+                var rows = current.display.rows;
+                var count = +this.refs.$parentItemResizerRow.attr('data-count');
+                if (count != rows.length) {
+                    // 세로 
+                    this.refs.$parentItemResizerRow.cssText('\n                    grid-template-rows: ' + rows.join(WHITE_STRING$1) + ';\n                    grid-template-columns: 1fr;\n                ');
+                    this.refs.$parentItemResizerRow.html(this.makeGridUnit(rows));
+                }
+
+                var columns = current.display.columns;
+                count = +this.refs.$parentItemResizerColumn.attr('data-count');
+                if (count != columns.length) {
+                    // 가로 
+                    this.refs.$parentItemResizerColumn.cssText('\n                    grid-template-columns: ' + columns.join(WHITE_STRING$1) + ';\n                    grid-template-rows: 1fr;\n                ');
+                    this.refs.$parentItemResizerColumn.html(this.makeGridUnit(columns));
+                }
+            }
+        }
+    }, {
         key: 'setItemResizer',
         value: function setItemResizer() {
             var current = editor$1.selection.current;
@@ -24397,9 +24691,18 @@ var CanvasView = function (_UIElement) {
             }
 
             if (current && current.isLayoutItem()) {
+
                 this.refs.$itemResizer.css(current.screen);
+
+                var parent = current.parent();
+                if (parent && parent.screen) {
+                    this.setParentItemResizer(parent.screen, parent);
+                }
+
                 return;
             }
+
+            this.refs.$parentItemResizer.css({ left: '-10000px' });
 
             if (editor$1.selection.artboard || editor$1.selection.layer) {
 
@@ -24413,6 +24716,10 @@ var CanvasView = function (_UIElement) {
                         width: currentRect.width,
                         height: currentRect.height
                     });
+
+                    if (current.hasLayout()) {
+                        this.setParentItemResizer(currentRect.screen, current);
+                    }
                 } else {
                     this.refs.$itemResizer.css({ left: '-10000px' });
                 }
@@ -24423,7 +24730,9 @@ var CanvasView = function (_UIElement) {
     }, {
         key: EVENT(CHANGE_ARTBOARD),
         value: function value$$1() {
-            this.setBackgroundColor();
+            // this.setBackgroundColor(); 
+            this.refreshArtBoard();
+            this.setItemResizer();
         }
 
         // indivisual layer effect 
@@ -24854,8 +25163,8 @@ var Rect = function (_Layer) {
     return Rect;
 }(Layer);
 
-var Project = function (_Item) {
-    inherits(Project, _Item);
+var Project = function (_MovableItem) {
+    inherits(Project, _MovableItem);
 
     function Project() {
         classCallCheck(this, Project);
@@ -24919,6 +25228,11 @@ var Project = function (_Item) {
             });
         }
     }, {
+        key: 'artboard',
+        get: function get() {
+            return this.artboards[0];
+        }
+    }, {
         key: 'layers',
         get: function get() {
             var results = [];
@@ -24940,7 +25254,7 @@ var Project = function (_Item) {
         }
     }]);
     return Project;
-}(Item);
+}(MovableItem);
 
 var AddRect = function (_MenuItem) {
     inherits(AddRect, _MenuItem);
@@ -24975,6 +25289,9 @@ var AddRect = function (_MenuItem) {
             }
 
             var artboard = project.artboard || editor$1.selection.currentArtBoard;
+
+            console.log(editor$1.selection.items);
+            console.log(project.artboard, editor$1.selection.currentArtBoard);
             if (!artboard) {
                 artboard = project.add(new ArtBoard({ name: 'New ArtBoard' }));
                 artboard.select();
@@ -24982,7 +25299,10 @@ var AddRect = function (_MenuItem) {
 
             var current = editor$1.selection.current;
 
-            var layer = current.add(new Rect());
+            var layer = current.add(new Rect({
+                width: Length$1.px(100),
+                height: Length$1.px(100)
+            }));
             layer.select();
 
             this.emit(CHANGE_EDITOR);
@@ -25056,6 +25376,7 @@ var AddCircle = function (_MenuItem) {
     }, {
         key: "add",
         value: function add() {
+
             var project = editor$1.selection.currentProject;
             if (!project) {
                 project = editor$1.addProject(new Project({ name: 'New Project' }));
@@ -25996,7 +26317,7 @@ var LayerListView = function (_UIElement) {
             });
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_RECT),
+        key: EVENT(CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD),
         value: function value$$1() {
             this.refreshLayer();
         }

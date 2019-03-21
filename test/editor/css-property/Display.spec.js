@@ -52,3 +52,7 @@ test('Display - FlexDisplay - flex-wrap' , () => {
     display.wrap = 'wrap'
     expect(display + "").toEqual('display: flex;flex-wrap: wrap')
 })
+
+test('Display - GridDisplay', () => {
+    
+})

@@ -1,7 +1,6 @@
 import { editor } from "../editor";
 import { Segment } from "./Segment";
 import { isNotUndefined } from "../../util/functions/func";
-import { ArtBoard } from "../ArtBoard";
 
 var MAX_DIST = 1; 
 
@@ -23,10 +22,10 @@ export class Guide {
         var project = editor.selection.currentProject;
         this.checkLayers = []
         if (project) {
-            if (this.cachedItems[0] instanceof ArtBoard) {
+            if (this.cachedItems.length && this.cachedItems[0].itemType == 'artboard') {
                 this.checkLayers = project.artboards.filter(item => !this.cachedItems[item.id])
             } else {
-                this.checkLayers = project.allItems.filter(item => !this.cachedItems[item.id])
+                this.checkLayers = project.allItems.filter(item => !this.cachedItems[item.id] && !item.isLayoutItem())
             }
 
         }

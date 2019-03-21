@@ -1,6 +1,6 @@
 import { Length } from "../unit/Length";
 import { EMPTY_STRING } from "../../util/css/types";
-import { Property } from "../Property";
+import { Property } from "../items/Property";
 
 export class ClipPath extends Property {
 

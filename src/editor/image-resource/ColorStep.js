@@ -1,4 +1,4 @@
-import { Item } from "../Item";
+import { Item } from "../items/Item";
 import { Length } from "../unit/Length";
 export class ColorStep extends Item {
 

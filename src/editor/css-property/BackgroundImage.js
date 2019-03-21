@@ -1,6 +1,6 @@
 import { Length, Position } from "../unit/Length";
 import { keyMap } from "../../util/functions/func";
-import { Property } from "../Property";
+import { Property } from "../items/Property";
 import { Gradient } from "../image-resource/Gradient";
 
 const RepeatList = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y']

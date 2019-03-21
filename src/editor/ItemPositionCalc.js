@@ -1,7 +1,6 @@
 import { editor } from "./editor";
-import { Layer } from "./Layer";
+import { Layer } from "./items/Layer";
 import { keyEach } from "../util/functions/func";
-import { RectItem } from "./RectItem";
 import { Guide } from "./util/Guide";
 import { Segment } from "./util/Segment";
 
@@ -43,21 +42,21 @@ export class ItemPositionCalc {
     }
 
     recover (item) {
-        let {xDistRate, x2DistRate} = this.cachedPosition[item.id].x
-        let {yDistRate, y2DistRate} = this.cachedPosition[item.id].y
+        const {xDistRate, x2DistRate} = this.cachedPosition[item.id].x
+        const {yDistRate, y2DistRate} = this.cachedPosition[item.id].y
 
-        var minX = this.newRect.screenX.value; 
-        var maxX = this.newRect.screenX2.value; 
-        var minY = this.newRect.screenY.value; 
-        var maxY = this.newRect.screenY2.value; 
+        const minX = this.newRect.screenX.value; 
+        const maxX = this.newRect.screenX2.value; 
+        const minY = this.newRect.screenY.value; 
+        const maxY = this.newRect.screenY2.value; 
 
-        var totalWidth = maxX - minX; 
-        var xr = totalWidth * xDistRate;
-        var x2r = totalWidth * x2DistRate; 
+        const totalWidth = maxX - minX; 
+        const xr = totalWidth * xDistRate;
+        const x2r = totalWidth * x2DistRate; 
 
-        var totalHeight = maxY - minY; 
-        var yr = totalHeight * yDistRate;
-        var y2r = totalHeight * y2DistRate;         
+        const totalHeight = maxY - minY; 
+        const yr = totalHeight * yDistRate;
+        const y2r = totalHeight * y2DistRate;
 
         this.setX(item, minX, maxX, xr, x2r);
         this.setY(item, minY, maxY, yr, y2r);

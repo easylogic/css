@@ -1,5 +1,15 @@
 
 &.display-manager {
+
+   
+    .display {
+        display: block; 
+        flex: 1 1 auto;
+        box-sizing: border-box;
+        padding: 5px;
+        text-align: center;
+    }
+
     .display-list {
         display: flex; 
         height: 30px;
@@ -13,14 +23,55 @@
             }    
         }
 
+    }
 
-        .display {
-            display: block; 
-            flex: 1 1 auto;
-            box-sizing: border-box;
-            padding: 5px;
-            text-align: center;
+    .flex-list {
+        display: flex; 
+        height: 30px;
+        box-sizing: border-box;
+
+        @each $flex-direction in row, row-reverse, column, column-reverse {
+            &[selected-type="#{$flex-direction}"] {
+                .display[display-type="#{$flex-direction}"] {
+                    background-color: #ececec;
+                }
+            }    
         }
+
+    }
+
+
+    .flex-wrap {
+        display: flex; 
+        height: 30px;
+        box-sizing: border-box;
+
+        @each $flex-wrap in nowrap, wrap, wrap-reverse {
+            &[selected-type="#{$flex-wrap}"] {
+                .display[display-type="#{$flex-wrap}"] {
+                    background-color: #ececec;
+                }
+            }    
+        }
+
+
+    }
+
+
+    .justify-content {
+        display: flex; 
+        height: 30px;
+        box-sizing: border-box;
+
+        @each $justify-content in flex-start, flex-end, center, space-between, space-around {
+            &[selected-type="#{$justify-content}"] {
+                .display[display-type="#{$justify-content}"] {
+                    background-color: #ececec;
+                }
+            }    
+        }
+
+
     }
 
 }

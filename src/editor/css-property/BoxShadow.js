@@ -1,6 +1,6 @@
 import { EMPTY_STRING } from "../../util/css/types";
 import { Length } from "../unit/Length";
-import { Property } from "../Property";
+import { Property } from "../items/Property";
 
 export class BoxShadow extends Property {
 

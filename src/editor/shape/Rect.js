@@ -1,4 +1,4 @@
-import { Layer } from "../Layer";
+import { Layer } from "../items/Layer";
 
 export class Rect extends Layer {
 

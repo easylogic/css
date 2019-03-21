@@ -3,7 +3,7 @@ import { LOAD, CLICK, SELF } from "../../../../util/Event";
 import { CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION} from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { editor } from "../../../../editor/editor";
-import { Project } from "../../../../editor/Project";
+import { Project } from "../../../../editor/items/Project";
 import icon from "../../icon/icon";
 
 export default class ProjectListView extends UIElement {

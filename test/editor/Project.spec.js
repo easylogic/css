@@ -1,6 +1,6 @@
 import { editor } from "../../src/editor/editor";
-import { Project } from "../../src/editor/Project";
-import { ArtBoard } from "../../src/editor/ArtBoard";
+import { Project } from "../../src/editor/items/Project";
+import { ArtBoard } from "../../src/editor/items/ArtBoard";
 
 beforeEach(() => {
     editor.clear()

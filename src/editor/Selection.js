@@ -1,7 +1,6 @@
 import { Length } from "./unit/Length";
 import { CHANGE_SELECTION } from "../csseditor/types/event";
-import { RectItem } from "./RectItem";
-import { Item } from "./Item";
+import { RectItem } from "./items/RectItem";
 
 export class Selection {
     constructor(editor) {
@@ -10,7 +9,7 @@ export class Selection {
         this._mode = ''; 
         this._ids = []
         this._idSet = new Set()
-        this.currentRect = new RectItem();
+        this.currentRect = null;
     }
 
     initialize () {
@@ -173,7 +172,7 @@ export class Selection {
         }).every(it => it);
 
         this._ids = args.map(it => {
-            if (it instanceof Item) {
+            if (it.id) {
                 return it.id; 
             }
 
@@ -193,6 +192,7 @@ export class Selection {
 
         if (this._ids.length) {
             var parents = this.editor.get(this._ids[0]).path()
+
             this._colorstep = parents.filter(it => it.itemType === 'colorstep')[0]
             this._image = parents.filter(it => it.itemType === 'image-resource')[0]
             this._backgroundImage = parents.filter(it => it.itemType === 'background-image')[0]
@@ -200,6 +200,7 @@ export class Selection {
             this._directory = parents.filter(it => it.itemType === 'directory')[0]
             this._artboard = parents.filter(it => it.itemType === 'artboard')[0]
             this._project = parents.filter(it => it.itemType === 'project')[0]
+
         } else {
             this._colorstep = null
             this._image = null
@@ -230,12 +231,7 @@ export class Selection {
 
     initRect () {
         var rect = this.rect();
-        this.currentRect.reset({
-            x: rect.x,
-            y: rect.y,
-            width: rect.width,
-            height: rect.height
-        })
+        this.currentRect = rect
     }
 
     rect () {

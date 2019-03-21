@@ -7,24 +7,31 @@ import {
     CHANGE_RECT,
     CHANGE_LAYER
 } from '../../types/event';
-import { EMPTY_STRING } from '../../../util/css/types';
+import { EMPTY_STRING, WHITE_STRING } from '../../../util/css/types';
 import { LOAD, POINTERSTART, MOVE, END, SELF, PREVENT, STOP } from '../../../util/Event';
 import { editor } from '../../../editor/editor';
 import { Length } from '../../../editor/unit/Length';
-import { html, isNotUndefined } from '../../../util/functions/func';
-import { ArtBoard } from '../../../editor/ArtBoard';
-import { Layer } from '../../../editor/Layer';
+import { html, isNotUndefined, combineKeyArray, keyEach } from '../../../util/functions/func';
+import { Layer } from '../../../editor/items/Layer';
 import { ItemPositionCalc } from '../../../editor/ItemPositionCalc';
-import { BackgroundImage } from '../../../editor/css-property/BackgroundImage';
-import { StaticGradient } from '../../../editor/image-resource/StaticGradient';
 import { CSS_TO_STRING } from '../../../util/css/make';
 import { Segment } from '../../../editor/util/Segment';
 
 
+function createBackgroundImage (color, x, y, width, height) {
+    return {
+        'background-image': `linear-gradient(to right, ${color}, ${color})`,
+        'background-size' : `${width} ${height}`,
+        'background-position' : `${x} ${y}`,
+        'background-repeat': 'no-repeat'
+    }
+}
+
 function createGuideLine (list) {
-    var layer = new Layer();
 
     const lineWidth = Length.px(1.5); 
+
+    var images = []
 
     list.forEach(it => {
 
@@ -32,61 +39,38 @@ function createGuideLine (list) {
 
         if (isNotUndefined(it.ax)) {
 
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#e600ff' }));
-            background.repeat = 'no-repeat' 
-            background.width = lineWidth
-            background.height = it.A.height;
-            background.x = Length.px(it.bx-1)
-            background.y = it.A.screenY;       
+            images.push(createBackgroundImage('#e600ff', Length.px(it.bx-1), it.A.screenY, lineWidth, it.A.height))
+
             
             if (target instanceof Layer) {
-                var background = layer.addBackgroundImage(new BackgroundImage());
-                background.addGradient(new StaticGradient({ color: '#e600ff' }));
-                background.repeat = 'no-repeat' 
-                background.width = lineWidth
-                background.height = target.height;
-                background.x = Length.px(it.bx-1)
-                background.y = target.screenY;                           
+                images.push(createBackgroundImage('#e600ff', Length.px(it.bx-1), target.screenY, lineWidth, target.height))
             }
 
             var minY = Length.min(target.screenY, it.A.screenY);
             var maxY = Length.max(target.screenY2, it.A.screenY2);
 
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#4877ff' }));
-            background.repeat = 'no-repeat' 
-            background.width = lineWidth
-            background.height = Length.px(maxY.value - minY.value); 
-            background.x = Length.px(it.bx-1)
-            background.y = minY
+            images.push(createBackgroundImage('#4877ff', Length.px(it.bx-1), minY, lineWidth, Length.px(maxY.value - minY.value)))            
 
         } else {
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#e600ff' }));
-            background.repeat = 'no-repeat' 
-            background.width = it.A.width
-            background.height = lineWidth
-            background.x = it.A.screenX;
-            background.y = Length.px(it.by)             
+            images.push(createBackgroundImage('#e600ff', it.A.screenX, Length.px(it.by), it.A.width, lineWidth))            
 
             var minX = Length.min(target.screenX, it.A.screenX);
             var maxX = Length.max(target.screenX2, it.A.screenX2);
 
-            var background = layer.addBackgroundImage(new BackgroundImage());
-            background.addGradient(new StaticGradient({ color: '#4877ff' }));
-            background.repeat = 'no-repeat' 
-            background.width = Length.px(maxX.value - minX.value); 
-            background.height = lineWidth
-            background.x = minX;
-            background.y = Length.px(it.by)
+            images.push(createBackgroundImage('#4877ff', minX, Length.px(it.by), Length.px(maxX.value - minX.value), lineWidth))            
         }
 
     })
-    
-    layer.remove()
 
-    return layer.toBackgroundImageCSS(); 
+    var results = {}
+    images.forEach(item => {
+        keyEach(item, (key, value) => {
+            if (!results[key]) results[key] = []
+            results[key].push(value);
+        })
+    })
+
+    return combineKeyArray(results);
 }
 
 
@@ -102,11 +86,17 @@ export default class CanvasView extends UIElement {
 
 
     makeResizer () {
-        return html`<div class='item-resizer' ref="$itemResizer">
+        return html`
+            <div class='item-resizer select-view' ref="$itemResizer">
                 ${Segment.LIST.map(seg => {
                     return `<button type="button" class='segment' data-value="${seg}"></button>`
                 })}
-        </div>`
+            </div>
+            <div class='item-resizer parent-view' ref="$parentItemResizer">
+                <div class='grid-row-handler' data-count="0" ref="$parentItemResizerRow"></div>
+                <div class='grid-column-handler' data-count="0" ref="$parentItemResizerColumn"></div>
+            </div>            
+        `
     }    
 
     template () {
@@ -117,7 +107,6 @@ export default class CanvasView extends UIElement {
                         <div class="page-canvas" ref="$canvas">
                             <div class='area drag-area' ref="$dragArea"></div>
                             <div class='area artboard-area' ref="$artboardArea"></div>
-                            <div class='area layer-area' ref="$layerArea"></div>
                         </div>          
                         <div class="page-selection">
                             <div class='page-guide-line' ref="$guide"></div>
@@ -133,6 +122,7 @@ export default class CanvasView extends UIElement {
 
     initializeLayerCache () {
         this.layerItems = {} 
+        this.titleItems = {} 
     }
 
     getCachedLayerElement (id) {
@@ -146,15 +136,16 @@ export default class CanvasView extends UIElement {
         return this.layerItems[id]
     }
 
-    refreshLayerPosition (item) {
-        if (item instanceof ArtBoard) {
-            item.allLayers.forEach(layer => {
-                var $el = this.getCachedLayerElement(layer.id);
-                if ($el) $el.css(layer.toBoundCSS());
-            })
-        }
-    }
+    getCachedTitleElement (id) {
 
+        if (!this.titleItems[id]) {
+            var $el = this.$el.$(`[artboard-id="${id}"]`);
+
+            this.titleItems[id] = $el; 
+        }
+
+        return this.titleItems[id]
+    }    
 
     makeLayer (layer) {
         var children = layer.children;
@@ -164,7 +155,7 @@ export default class CanvasView extends UIElement {
             <div 
                 class='layer' 
                 item-id="${layer.id}" 
-                style="${layer.toBoundString()}" 
+                style="${layer.toString()}" 
                 title="${layer.title}" 
                 data-layout-item="${isLayoutItem}"
                 data-has-layout="${hasLayout}"
@@ -177,17 +168,22 @@ export default class CanvasView extends UIElement {
     makeArtBoard (artboard) {
         return html`
             <div  
+                class='artboard-background' 
+                style='${artboard.toBoundString()};'>
+                    <div class='artboard-title' artboard-id="${artboard.id}">${artboard.title}</div>
+            </div>
+            <div  
                 class='artboard' 
                 item-id="${artboard.id}" 
                 title="${artboard.title}" 
                 style='${artboard.toString()};'>
-                    <div class='artboard-title' artboard-id="${artboard.id}">${artboard.title}</div>
+                ${artboard.allLayers.map(layer => this.makeLayer(layer))}
             </div>
         `
     }
 
     [LOAD('$artboardArea')] () {
-        
+        this.initializeLayerCache();
         var project = editor.selection.currentProject
         if (!project) return EMPTY_STRING; 
 
@@ -197,22 +193,7 @@ export default class CanvasView extends UIElement {
             return this.makeArtBoard(artboard)
         });
     }
-    
-    [LOAD('$layerArea')] () {
-        
-        var project = editor.selection.currentProject        
-        if (!project) return EMPTY_STRING; 
-
-        this.initializeLayerCache();
-
-        var list = project.artboards;
-
-        return list.map( (artboard ) => {
-            return artboard.allLayers.filter(layer => !layer.isLayoutItem()).map(layer => {
-                return this.makeLayer(layer)
-            })
-        });
-    }    
+     
 
     refresh () {
         this.setBackgroundColor();
@@ -242,17 +223,13 @@ export default class CanvasView extends UIElement {
     [POINTERSTART('$artboardArea .artboard-title') + MOVE('moveArtBoard') + END('moveEndArtBoard')] (e) {
         this.selectMode = 'artboard'
 
+        this.$artboardTitleContainer = e.$delegateTarget.parent();
         this.item = editor.get(e.$delegateTarget.attr('artboard-id'))
         this.item.select();
         this.selectItem();
     }
 
-    moveEndArtBoard () {
-        this.item.select();
-        this.setItemResizer();
-    }
-
-    [POINTERSTART('$layerArea .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer')] (e) {
+    [POINTERSTART('$artboardArea .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer')] (e) {
         
         this.selectMode = 'layer'
         this.direction = Segment.MOVE;
@@ -262,6 +239,11 @@ export default class CanvasView extends UIElement {
 
         this.isLayoutItem = this.item.isLayoutItem()
 
+    }    
+
+    moveEndArtBoard () {
+        this.item.select();
+        this.setItemResizer();
     }
 
     moveEndLayer () {
@@ -340,12 +322,23 @@ export default class CanvasView extends UIElement {
         })
     }
 
+    matchArtboardTitlePosition (item) {
+        var $title = this.getCachedTitleElement(item.id);
+        if ($title) {
+            $title.parent().cssText(item.toBoundString())
+        }
+    }
+
     matchPosition () {
-        editor.selection.items.forEach(item => {
+
+        var items = editor.selection.items;
+        for(var i = 0, len = items.length; i < len; i++) {
+            var item = items[i];
             this.itemPositionCalc.recover(item);
             this.getCachedLayerElement(item.id).css(item.toBoundCSS());
-        })
-        
+            this.matchArtboardTitlePosition (item)
+        }
+
         this.setItemResizer();
     }
 
@@ -358,7 +351,7 @@ export default class CanvasView extends UIElement {
 
     moveArtBoard (dx, dy) {
        this.movePosition(dx, dy);
-       this.refreshLayerPosition(this.item);       
+       this.matchArtboardTitlePosition (this.item)
        editor.send(CHANGE_RECT, this.item, this);       
     }
 
@@ -387,7 +380,7 @@ export default class CanvasView extends UIElement {
 
         var content = item.content || EMPTY_STRING;
         $el.$('.text-layer').html(content)            
-        $el.cssText(item.toBoundString())
+        $el.cssText(item.toString())
         $el.attr('data-layout-item', item.isLayoutItem() ? 'true' : 'false')
         $el.attr('data-has-layout', item.hasLayout() ? 'true' : 'false')
 
@@ -407,16 +400,33 @@ export default class CanvasView extends UIElement {
 
     } 
 
+    refreshArtBoard () {
+        editor.selection.artboards.forEach(item => {
+            this.refreshArtBoardOne(item);
+        })
+
+    }     
+
+    refreshArtBoardOne (item) {
+        var $el = this.getCachedLayerElement(item.id); 
+
+        $el.cssText(item.toString())
+
+        item.allLayers.forEach(layer => {
+            this.refreshLayerOne(layer);
+        })
+
+        this.refreshLayerOffset(item)
+    }
+
     refreshAllLayers () {
+
         var project = editor.selection.currentProject;
         if (project) {
             project.artboards.forEach(artboard => {
-                artboard.allLayers.forEach(layer => {
-                    this.refreshLayerOne(layer);
-                })
+                this.refreshArtBoardOne(artboard);
             })
         }
-
     }
  
     setBackgroundColor() {
@@ -437,6 +447,53 @@ export default class CanvasView extends UIElement {
         this.refs.$guide.cssText(CSS_TO_STRING(createGuideLine(list)));
     }
 
+    makeGridUnit (items) {
+        return items.map((it, index) => {
+            return `<div class='grid-item grid-item-index-${index}'>
+                        <div class='grid-item-value'>
+                            <button class='add-left'></button>
+                            <input type='number' value="${it.value}" />
+                            <div class='unit'>${it.unit}</div>
+                            <button class='add-right'></button>
+                        </div>
+                        <div class='draggable-buttons'>
+                            <button type="button" class='first'></button>
+                            <button type="button" class='second'></button>
+                        </div>                        
+                    </div>`
+        }).join(EMPTY_STRING)
+    }
+
+    setParentItemResizer (screen, current) {
+        this.refs.$parentItemResizer.css(screen);
+        this.refs.$parentItemResizer.attr('data-mode', current.itemType)            
+        this.refs.$parentItemResizer.attr('data-layout',current.display.type)
+
+        if (current.display.type == 'flex') {
+            this.refs.$parentItemResizer.attr('data-flex-direction',current.display.direction)
+        } else if (current.display.type == 'grid') {
+            var rows = current.display.rows
+            var count = +this.refs.$parentItemResizerRow.attr('data-count')
+            if (count != rows.length) {     // 세로 
+                this.refs.$parentItemResizerRow.cssText(`
+                    grid-template-rows: ${rows.join(WHITE_STRING)};
+                    grid-template-columns: 1fr;
+                `)
+                this.refs.$parentItemResizerRow.html(this.makeGridUnit(rows))
+            }
+
+            var columns = current.display.columns;
+            count = +this.refs.$parentItemResizerColumn.attr('data-count')
+            if (count != columns.length) {  // 가로 
+                this.refs.$parentItemResizerColumn.cssText(`
+                    grid-template-columns: ${columns.join(WHITE_STRING)};
+                    grid-template-rows: 1fr;
+                `)                
+                this.refs.$parentItemResizerColumn.html(this.makeGridUnit(columns))
+            }
+        }
+    }
+
     setItemResizer () {
         var current = editor.selection.current;
         if (current) {
@@ -450,9 +507,18 @@ export default class CanvasView extends UIElement {
         } 
         
         if (current && current.isLayoutItem()) {
+
             this.refs.$itemResizer.css(current.screen)
+
+            var parent = current.parent();
+            if (parent && parent.screen) {
+                this.setParentItemResizer(parent.screen, parent);                                
+            }
+            
             return; 
         }
+
+        this.refs.$parentItemResizer.css({ left: '-10000px'});     
 
         if (editor.selection.artboard || editor.selection.layer) {
 
@@ -466,6 +532,11 @@ export default class CanvasView extends UIElement {
                     width: currentRect.width,
                     height: currentRect.height
                 })
+
+                if (current.hasLayout()) {
+                    this.setParentItemResizer(currentRect.screen, current);
+                } 
+
             } else {
                 this.refs.$itemResizer.css({ left: '-10000px'})    
             }
@@ -477,7 +548,12 @@ export default class CanvasView extends UIElement {
 
     [EVENT(
         CHANGE_ARTBOARD
-    )] () { this.setBackgroundColor(); }
+    )] () { 
+        // this.setBackgroundColor(); 
+        this.refreshArtBoard();
+        this.setItemResizer();
+    }
+
 
 
     // indivisual layer effect 
@@ -491,7 +567,6 @@ export default class CanvasView extends UIElement {
         var guideList = this.itemPositionCalc.calculateGuide()
         this.setGuideLine(guideList);
         this.matchPosition()
-
     }
 
     [EVENT(CHANGE_SELECTION)] () {

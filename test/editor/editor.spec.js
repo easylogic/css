@@ -1,7 +1,7 @@
 import { editor } from "../../src/editor/editor";
-import { Project } from "../../src/editor/Project";
-import { ArtBoard } from "../../src/editor/ArtBoard";
-import { Layer } from "../../src/editor/Layer";
+import { Project } from "../../src/editor/items/Project";
+import { ArtBoard } from "../../src/editor/items/ArtBoard";
+import { Layer } from "../../src/editor/items/Layer";
 
 beforeEach(() => {
     editor.removeChildren()

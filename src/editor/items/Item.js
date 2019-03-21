@@ -1,8 +1,6 @@
-import { uuidShort, uuid } from "../util/functions/math";
-import { isFunction, isUndefined, isNotUndefined } from "../util/functions/func";
-import { editor } from "./editor";
-import Dom from "../util/Dom";
-import { Length } from "./unit/Length";
+import { uuidShort, uuid } from "../../util/functions/math";
+import { isFunction, isUndefined, isNotUndefined } from "../../util/functions/func";
+import { editor } from "../editor";
 
 export class Item {
 
@@ -27,7 +25,7 @@ export class Item {
             set: (target, key, value) => {
 
                 // Dom 객체가 오면 자동으로 입력 해줌 
-                if (value instanceof Dom) {
+                if (value.realVal && isFunction(value.realVal)) {
                     value = value.realVal()
                 }
 
@@ -42,14 +40,13 @@ export class Item {
         })
     }
 
-    getDefaultTitle () { return 'Item' }
+    /***********************************
+     *  
+     * override 
+     * 
+     **********************************/
 
-    /**
-     * getter .name
-     */
-    get title () {
-        return `${this.json.name || this.getDefaultTitle()}`
-    }    
+    getDefaultTitle () { return 'Item' }
 
     /**
      * check attribute object 
@@ -57,6 +54,52 @@ export class Item {
     isAttribute () {
         return false; 
     }
+
+
+    /***********************************
+     *  
+     * getter 
+     * 
+     **********************************/
+
+    get title () {
+        return `${this.json.name || this.getDefaultTitle()}`
+    }    
+
+
+    /**
+     * get id 
+     */
+    get id() { return this.json.id; }
+
+    /** get parentId */
+    get parentId () { return this.json.parentId }
+
+    /**
+     * get children 
+     */
+    get children () { 
+        var children = editor.children(this.id) 
+        children.sort( (a, b) => {
+            if (a.index === b.index) return 0;
+
+            return a.index > b.index ? 1 : -1; 
+        })
+        return children;
+    }
+
+    /***********************************
+     *  
+     * action 
+     * 
+     **********************************/
+
+    /**
+     * select item 
+     */
+    select() { 
+        editor.selection.select(this.id) 
+    }    
 
     /**
      * when json is loaded, json object is be a new instance 
@@ -154,73 +197,6 @@ export class Item {
         this.json = this.convert({...this.json, ...obj})
     }
     
-    /**
-     * select item 
-     */
-    select() { 
-        editor.selection.select(this.id) 
-    }
-
-    //////////////////////
-    //
-    // getters 
-    //
-    ///////////////////////
-    get screenX () { return this.json.x }
-    get screenY () { return this.json.y }
-    get screenX2 () { return Length.px(this.screenX.value + this.json.width.value) }
-    get screenY2 () { 
-        return Length.px(this.screenY.value + this.json.height.value) 
-    }    
-    get centerX () { 
-        var half = 0; 
-        if (this.json.width.value != 0) {
-            half = Math.floor(this.json.width.value / 2)
-        }
-        return Length.px(this.screenX.value + half) 
-    }
-    get centerY () { 
-        var half = 0; 
-        if (this.json.height.value != 0) {
-            half = Math.floor(this.json.height.value / 2)
-        }
-        
-        return Length.px(this.screenY.value + half) 
-    }    
-
-    /**
-     * check selection status for item  
-     */
-    get selected () { 
-        return editor.selection.check(this.id); 
-    }
-
-    get selectedOne () {
-        return editor.selection.checkOne(this.id);
-    }
-
-    /**
-     * get id 
-     */
-    get id() { return this.json.id; }
-
-    /** get parentId */
-    get parentId () { return this.json.parentId }
-
-    /**
-     * get children 
-     */
-    get children () { 
-        var children = editor.children(this.id) 
-        children.sort( (a, b) => {
-            if (a.index === b.index) return 0;
-
-            return a.index > b.index ? 1 : -1; 
-        })
-        return children;
-    }
-    get childrenIds() { return editor.childrenIds(this.id); }
-
     /**
      * define defaut object for item 
      * 
@@ -340,7 +316,12 @@ export class Item {
      */
     path (parentId) {
         var path = [];
-        var currentId = parentId || this.parentId; 
+        var currentId =  isNotUndefined(parentId) ? parentId :  this.parentId; 
+
+        if (!parentId) {
+            path = [editor.get(this.json.id)]
+        }
+
         do {
             var item = editor.get(currentId);
             if (item) {
@@ -353,25 +334,4 @@ export class Item {
         return path;
     }
 
-
-    checkInArea (area) {
-
-        if (area.width.value === 0) {return false; }
-        if (area.height.value === 0) {return false; } 
-        if (area.x2.value < this.screenX.value) { return false; }
-        if (area.y2.value < this.screenY.value) { return false; }
-        if (area.x.value > this.screenX2.value) { return false; }
-        if (area.y.value > this.screenY2.value) { return false; }
-
-        return true;
-    }
-
-    toBoundCSS() {
-        return {
-            top: `${this.json.y}`,
-            left: `${this.json.x}`,
-            width: `${this.json.width}`,
-            height: `${this.json.height}`
-        }
-    }
 }

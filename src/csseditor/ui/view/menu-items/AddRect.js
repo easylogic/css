@@ -1,11 +1,10 @@
 import MenuItem from "./MenuItem";
 import { editor } from "../../../../editor/editor";
 import { Rect } from "../../../../editor/shape/Rect";
-import { Project } from "../../../../editor/Project";
-import { ArtBoard } from "../../../../editor/ArtBoard";
+import { Project } from "../../../../editor/items/Project";
+import { ArtBoard } from "../../../../editor/items/ArtBoard";
 import { CHANGE_EDITOR } from "../../../types/event";
-
-let a = 0; 
+import { Length } from "../../../../editor/unit/Length";
 
 export default class AddRect extends MenuItem {
     getIcon() { return 'rect'; }
@@ -22,6 +21,9 @@ export default class AddRect extends MenuItem {
         }
 
         var artboard = project.artboard || editor.selection.currentArtBoard; 
+
+        console.log(editor.selection.items);
+        console.log(project.artboard, editor.selection.currentArtBoard);
         if (!artboard) {
             artboard = project.add(new ArtBoard({ name: 'New ArtBoard'}));
             artboard.select()
@@ -29,7 +31,10 @@ export default class AddRect extends MenuItem {
 
         var current = editor.selection.current; 
 
-        var layer = current.add(new Rect())
+        var layer = current.add(new Rect({
+            width: Length.px(100),
+            height: Length.px(100)
+        }))
         layer.select();      
 
         this.emit(CHANGE_EDITOR);

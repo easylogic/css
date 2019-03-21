@@ -4,8 +4,8 @@ import { CHANGE_RECT, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_ARTB
 import { INPUT, CLICK } from "../../../../../util/Event";
 import { editor } from "../../../../../editor/editor";
 import { Length } from "../../../../../editor/unit/Length";
-import { Layer } from "../../../../../editor/Layer";
-import {ArtBoard} from '../../../../../editor/ArtBoard';
+import { Layer } from "../../../../../editor/items/Layer";
+import {ArtBoard} from '../../../../../editor/items/ArtBoard';
 import { Display } from "../../../../../editor/css-property/Display";
 
 export default class BoundProperty extends BaseProperty {
@@ -44,13 +44,29 @@ export default class BoundProperty extends BaseProperty {
                     </div>
                 </div>
                 <div class='items display-list' ref='$displayList' selected-type='inline'>
-                    <div class='display' display-type='inline'>INLINE</div>
-                    <div class='display' display-type='inline-block'>INLINE <br /> BLOCK</div>
                     <div class='display' display-type='block'>BLOCK</div>
                     <div class='display' display-type='flex'>FLEX</div>
                     <div class='display' display-type='grid'>GRID</div>
                 </div>
-            </div>
+                <div class='items flex-list' ref='$flexList' selected-type='row'>
+                    <div class='display' display-type='row'>row</div>
+                    <div class='display' display-type='row-reverse'>row-reverse</div>
+                    <div class='display' display-type='column'>column</div>
+                    <div class='display' display-type='column-reverse'>column-reverse</div>
+                </div>                
+                <div class='items flex-wrap' ref='$flexWrap' selected-type='row'>
+                    <div class='display' display-type='nowrap'>nowrap</div>
+                    <div class='display' display-type='wrap'>wrap</div>
+                    <div class='display' display-type='wrap-reverse'>wrap-reverse</div>
+                </div>                             
+                <div class='items justify-content' ref='$justifyContent' selected-type='flex-start'>
+                    <div class='display' display-type='flex-start'>flex-start</div>
+                    <div class='display' display-type='flex-end'>flex-end</div>
+                    <div class='display' display-type='center'>center</div>
+                    <div class='display' display-type='space-between'>space-between</div>
+                    <div class='display' display-type='space-around'>space-around</div>
+                </div>                                                
+            </div> 
         `
     }
 
@@ -74,8 +90,64 @@ export default class BoundProperty extends BaseProperty {
 
         if (item.display) {
             this.refs.$displayList.attr('selected-type', item.display.type);
+
+            if (item.display.type == 'flex') {
+                this.refs.$flexList.attr('selected-type', item.display.direction);
+                this.refs.$justifyContent.attr('selected-type', item.display.justifyContent);
+            }
+        }
+
+    }
+
+    [CLICK('$justifyContent .display')] (e) {
+        var display = e.$delegateTarget.attr('display-type')
+        var current = editor.selection.current;
+
+        if (current) {
+            this.refs.$justifyContent.attr('selected-type', display);
+            current.display.justifyContent = display;
+ 
+            if (current instanceof ArtBoard) {
+                this.emit(CHANGE_ARTBOARD);
+            } else if (current instanceof Layer) {
+                this.emit(CHANGE_LAYER);
+            }
         }
     }
+
+    [CLICK('$flexList .display')] (e) {
+        var display = e.$delegateTarget.attr('display-type')
+        var current = editor.selection.current;
+
+        if (current) {
+            this.refs.$flexList.attr('selected-type', display);
+            current.display.direction = display;
+
+            if (current instanceof ArtBoard) {
+                this.emit(CHANGE_ARTBOARD);
+            } else if (current instanceof Layer) {
+                this.emit(CHANGE_LAYER);
+            }
+        }
+    }
+
+
+    [CLICK('$flexWrap .display')] (e) {
+        var display = e.$delegateTarget.attr('display-type')
+        var current = editor.selection.current;
+
+        if (current) {
+            this.refs.$flexWrap.attr('selected-type', display);
+            current.display.wrap = display;
+
+            if (current instanceof ArtBoard) {
+                this.emit(CHANGE_ARTBOARD);
+            } else if (current instanceof Layer) {
+                this.emit(CHANGE_LAYER);
+            }
+        }
+    }
+
 
     [CLICK('$displayList .display')] (e) {
         var display = e.$delegateTarget.attr('display-type')
@@ -83,15 +155,15 @@ export default class BoundProperty extends BaseProperty {
 
         if (current) {
             this.refs.$displayList.attr('selected-type', display);
+            current.changeDisplay(Display.parse({type: display}))
+
             if (current instanceof ArtBoard) {
-                current.display = Display.parse({type: display}); 
                 this.emit(CHANGE_ARTBOARD);
             } else if (current instanceof Layer) {
-                current.display = Display.parse({type: display}); 
                 this.emit(CHANGE_LAYER);
             }
         }
-    }
+    }    
  
     [CLICK('$rect')] (e) {
         var widthValue = this.refs.$width.int()

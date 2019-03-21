@@ -39,7 +39,7 @@ export const start = (opt) => {
         initBodyMoves () {
             this.moves = new Set()
             this.ends = new Set();
-            this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 10);
+            this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 15);
         }
 
         loopBodyMoves () {

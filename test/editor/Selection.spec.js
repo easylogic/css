@@ -1,7 +1,7 @@
 import { editor } from "../../src/editor/editor";
-import { ArtBoard } from "../../src/editor/ArtBoard";
-import { Project } from "../../src/editor/Project";
-import { Layer } from "../../src/editor/Layer";
+import { ArtBoard } from "../../src/editor/items/ArtBoard";
+import { Project } from "../../src/editor/items/Project";
+import { Layer } from "../../src/editor/items/Layer";
 import { URLImageResource } from "../../src/editor/image-resource/URLImageResource";
 import { BackgroundImage } from "../../src/editor/css-property/BackgroundImage";
 

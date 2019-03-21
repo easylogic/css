@@ -1,14 +1,13 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP, PREVENT } from "../../../../util/Event";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_RECT } from "../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD } from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { html, isUndefined } from "../../../../util/functions/func";
 import { editor } from "../../../../editor/editor";
-import { ArtBoard } from "../../../../editor/ArtBoard";
-import { Directory } from "../../../../editor/Directory";
+import { ArtBoard } from "../../../../editor/items/ArtBoard";
+import { Directory } from "../../../../editor/items/Directory";
 import icon from "../../icon/icon";
-import Dom from "../../../../util/Dom";
-import { Layer } from "../../../../editor/Layer";
+import { Layer } from "../../../../editor/items/Layer";
 
 export default class LayerListView extends UIElement {
 
@@ -132,7 +131,11 @@ export default class LayerListView extends UIElement {
         })
     }
 
-    [EVENT(CHANGE_LAYER, CHANGE_RECT)] () {
+    [EVENT(
+        CHANGE_LAYER, 
+        CHANGE_RECT, 
+        CHANGE_ARTBOARD
+    )] () {
         this.refreshLayer();
     }
 

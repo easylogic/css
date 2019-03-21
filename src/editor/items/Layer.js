@@ -1,15 +1,15 @@
-import { combineKeyArray, cleanObject, keyEach } from "../util/functions/func";
-import { CSS_TO_STRING, CSS_FILTERING } from "../util/css/make"; 
-import { Length } from "./unit/Length";
-import { NoneClipPath, ClipPath } from "./css-property/ClipPath";
-import { Item } from "./Item";
-import { Filter } from "./css-property/Filter";
-import { BackdropFilter } from "./css-property/BackdropFilter";
-import { BackgroundImage } from "./css-property/BackgroundImage";
-import { BoxShadow } from "./css-property/BoxShadow";
-import { TextShadow } from "./css-property/TextShadow";
-import { Display, BlockDisplay } from "./css-property/Display";
-import { editor } from "./editor";
+import { combineKeyArray, cleanObject, keyEach } from "../../util/functions/func";
+import { CSS_TO_STRING, CSS_FILTERING } from "../../util/css/make"; 
+import { Length } from "../unit/Length";
+import { NoneClipPath, ClipPath } from "../css-property/ClipPath";
+import { Filter } from "../css-property/Filter";
+import { BackdropFilter } from "../css-property/BackdropFilter";
+import { BackgroundImage } from "../css-property/BackgroundImage";
+import { BoxShadow } from "../css-property/BoxShadow";
+import { TextShadow } from "../css-property/TextShadow";
+import { Display, BlockDisplay } from "../css-property/Display";
+import { editor } from "../editor";
+import { GroupItem } from "./GroupItem";
 
 export const BLEND_LIST = [
     'normal', 'multiply', 'screen', 'overlay', 'darken', 
@@ -18,7 +18,7 @@ export const BLEND_LIST = [
     'saturation', 'color', 'luminosity'
 ]
 
-export class Layer extends Item {
+export class Layer extends GroupItem {
 
     getDefaultTitle () { 
         return 'Layer' 
@@ -32,6 +32,13 @@ export class Layer extends Item {
         var parent = this.parent()
 
         return parent.hasLayout();      // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다. 
+    }
+
+    isRootItem () {
+        var parent = this.parent();
+
+        // 상위 객체가 artboard 나 directory 는 처음 시작하는 존재라고 본다. 
+        return parent.itemType == 'artboard' || parent.itemType == 'directory'
     }
 
     add (layer) {
@@ -100,7 +107,7 @@ export class Layer extends Item {
             itemType: 'layer',
             width: Length.px(400),
             height: Length.px(300),
-            backgroundColor: 'rgba(222, 222, 222, 1)',
+            backgroundColor: 'rgba(222, 222, 222, 0.3)',
             position: 'absolute',
             x: Length.px(0),
             y: Length.px(0),
@@ -133,9 +140,7 @@ export class Layer extends Item {
 
         return path.filter(it => {
             if (it.itemType == 'layer') {
-                if (it.display.type == 'block') return true; 
-                else if (it.display.type == 'inline-block') return true; 
-                else if (it.display.type == 'inline') return true; 
+                return !it.isLayoutItem();  // 좌표 설정이 있는 layer 만 부모로 해서 offset 설정 
             } else if (it.itemType == 'artboard') { 
                 return true;             
             }
@@ -158,25 +163,13 @@ export class Layer extends Item {
         })[0]
     }
 
-    hasLayout () {
-        var displayType = this.json.display.type
-
-        switch(displayType) {
-        case 'flex': 
-        case 'grid':
-            return true; 
-        default: 
-            return false; 
-        }
-    }
-
     get screenX () { 
-
+        const offsetParent = editor.get(this.json.parentPosition);
         if (this.isLayoutItem()) {
-            return Length.px(this.parent().screenX.value + this.json.offset.left);    
+            return Length.px(offsetParent.screenX.value + this.json.offset.left);    
         }
 
-        return Length.px(editor.get(this.json.parentPosition).screenX.value + this.json.x.value);
+        return Length.px(offsetParent.screenX.value + this.json.x.value);
     }
 
     get screenX2 () {
@@ -184,12 +177,13 @@ export class Layer extends Item {
     }    
 
     get screenY () { 
+        const offsetParent = editor.get(this.json.parentPosition);
 
         if (this.isLayoutItem()) {
-            return Length.px(this.parent().screenY.value + this.json.offset.top);    
+            return Length.px(offsetParent.screenY.value + this.json.offset.top);
         }
 
-        return Length.px(editor.get(this.json.parentPosition).screenY.value + this.json.y.value);
+        return Length.px(offsetParent.screenY.value + this.json.y.value);
     }
 
     get screenY2 () {
@@ -214,23 +208,17 @@ export class Layer extends Item {
         return this.json.height; 
     }    
 
-    /**
-     * 화면상의 순수 위치 (left, top, width, height)
-     * 
-     * 상위 Layer 가 flex, grid 를 가지면 하위는 dom 기준으로 자동으로 연산 ..  
-     * 
-     */
-    get screen () {
-        return {
-            left: this.screenX,
-            top: this.screenY,
-            width: this.screenWidth,
-            height: this.screenHeight
-        }
+    changeOffsetToPosition () {
+        var offset = this.json.offset; 
+        this.reset({
+            x: Length.px(offset.left),
+            y: Length.px(offset.top),
+            width: Length.px(offset.width),
+            height: Length.px(offset.height),
+        })
     }
 
     toString () { return CSS_TO_STRING(this.toCSS()); }
-    toBoundString () { return CSS_TO_STRING(this.toCSS(true)); }
 
     toClipPathCSS() {
         return this.json.clippath.toCSS()
@@ -439,9 +427,9 @@ export class Layer extends Item {
         }
     }
 
-    toDefaultCSS (isBound) {
+    toDefaultCSS () {
         var css = {
-            ...this.toBoundCSS(isBound)
+            ...this.toBoundCSS()
         };
         var json = this.json; 
 
@@ -467,13 +455,27 @@ export class Layer extends Item {
         return css; 
     }
 
-    toBoundCSS(isBound = true) {
+    toBoundCSS() {
         var json = this.json;
         var parent = this.parent()
 
+        var height = parent.screenHeight.value;
+        var width = parent.screenWidth.value;
+
+        var minSize = Math.min(height, width, 100);
+
         if (parent.display.type == 'flex') {
             return {
-                flex: `${json.flexGrow || 1} ${json.flexShrink || 1} ${json.flexBasis ||'auto'}` 
+
+                // TODO: 어찌 할꼬? 
+                // bounding 을 너무 다양하게 할 수 있다. 
+                // 다만 내부의 요소를 공통으로 묶을 것인지 개별로 설정할 것인지 
+                // 디장인에서 flex 같은 레이아웃을 많이 쓰는가? 
+                // 최소 고정 크기로 해야할 듯 
+                flex: `${json.flexGrow || 1} ${json.flexShrink || 1} ${json.flexBasis ||'auto'}`,
+                // width: Length.px(minSize),
+                // height: Length.px(minSize),
+                // display: 'inline-block'
             }
         } else if (parent.display.type == 'grid') {
             return {
@@ -481,22 +483,19 @@ export class Layer extends Item {
             }
         }
 
-        // isBound 가 true 이고  상위 
-        var isBoundRect = isBound && parent.itemType != 'layer'
-
         return {
             position: json.position,
-            left: isBoundRect === false ? json.x : this.screenX, 
-            top: isBoundRect === false ? json.y : this.screenY, 
+            left: json.x, 
+            top: json.y, 
             width: json.width, 
             height: json.height  
         }
     }
 
-    toCSS (isBound = false) {
+    toCSS () {
     
         var results = {
-            ...this.toDefaultCSS(isBound), 
+            ...this.toDefaultCSS(), 
             ...this.toBorderWidthCSS(),
             ...this.toBorderRadiusCSS(),
             ...this.toBorderColorCSS(),

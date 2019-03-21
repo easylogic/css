@@ -60,7 +60,9 @@ export class Length {
     static px (value) { return new Length(+value, 'px'); }
     static em (value) { return new Length(+value, 'em'); }
     static percent (value) { return new Length(+value, '%');  }   
-    static deg(value) { return new Length(+value, 'deg'); }    
+    static deg(value) { return new Length(+value, 'deg'); }  
+    static fr(value) { return new Length(+value, 'fr'); }
+    static auto () { return Length.string('auto'); }
     static parse (obj) {
 
         if (isString(obj)) {

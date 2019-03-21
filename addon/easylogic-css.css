@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* codemirror colorview */
 .codemirror-colorview {
   border: 1px solid #cecece;
@@ -3558,26 +3559,199 @@ html, body {
       top: 0px;
       overflow: auto;
       background-color: rgba(236, 236, 236, 0.3); }
+    .csseditor .page-view .page-canvas {
+      position: relative;
+      width: 100%;
+      height: 100%; }
+      .csseditor .page-view .page-canvas .area {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px; }
+      .csseditor .page-view .page-canvas .artboard-area {
+        pointer-events: none; }
+        .csseditor .page-view .page-canvas .artboard-area .artboard-title {
+          cursor: pointer;
+          position: absolute;
+          bottom: 100%;
+          left: 0px;
+          right: 0px;
+          display: inline-block;
+          pointer-events: all; }
+        .csseditor .page-view .page-canvas .artboard-area .artboard {
+          -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25);
+                  box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25); }
+        .csseditor .page-view .page-canvas .artboard-area .layer {
+          pointer-events: all; }
+          .csseditor .page-view .page-canvas .artboard-area .layer.selected[data-layout-item='true'] {
+            -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+                    box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25); }
+          .csseditor .page-view .page-canvas .artboard-area .layer[data-has-layout="true"] .text-layer {
+            display: none; }
+    .csseditor .page-view .page-selection {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      pointer-events: none; }
+      .csseditor .page-view .page-selection .drag-area-view {
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        -webkit-box-shadow: inset 0 0 0 1px rgba(181, 181, 181, 0.5);
+                box-shadow: inset 0 0 0 1px rgba(181, 181, 181, 0.5);
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.466); }
+    .csseditor .page-view .page-guide-line {
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      pointer-events: none; }
+    .csseditor .page-view .dropzone {
+      display: none; }
     .csseditor .page-view .item-resizer {
       position: absolute;
       left: -10000px;
       top: -10000px;
       width: 0px;
       height: 0px;
-      -webkit-box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1);
-              box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1); }
+      -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
+              box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
+      .csseditor .page-view .item-resizer.parent-view .grid-column-handler {
+        position: absolute;
+        pointer-events: all;
+        display: none;
+        left: 0px;
+        right: 0px;
+        height: 24px;
+        -webkit-transform: translateY(-25px);
+                transform: translateY(-25px); }
+        .csseditor .page-view .item-resizer.parent-view .grid-column-handler .grid-item {
+          border: 1px solid #cccccc;
+          border-bottom: 0px; }
+      .csseditor .page-view .item-resizer.parent-view .grid-row-handler {
+        position: absolute;
+        pointer-events: all;
+        display: none;
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
+        min-width: 60px;
+        -webkit-transform: translateX(-25px);
+                transform: translateX(-25px); }
+        .csseditor .page-view .item-resizer.parent-view .grid-row-handler .grid-item {
+          border: 1px solid #cccccc;
+          border-right: 0px; }
+          .csseditor .page-view .item-resizer.parent-view .grid-row-handler .grid-item .grid-item-value {
+            display: block; }
+      .csseditor .page-view .item-resizer.parent-view .grid-item {
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        position: relative; }
+        .csseditor .page-view .item-resizer.parent-view .grid-item .draggable-buttons button {
+          background-color: rgba(255, 255, 255, 0.5); }
+        .csseditor .page-view .item-resizer.parent-view .grid-item .draggable-buttons .first {
+          position: absolute;
+          left: 0px;
+          top: 50%;
+          -webkit-transform: translateY(-50%);
+                  transform: translateY(-50%); }
+        .csseditor .page-view .item-resizer.parent-view .grid-item .draggable-buttons .second {
+          position: absolute;
+          right: 0px;
+          top: 50%;
+          -webkit-transform: translateY(-50%);
+                  transform: translateY(-50%); }
+        .csseditor .page-view .item-resizer.parent-view .grid-item .grid-item-value {
+          text-align: center;
+          position: relative;
+          min-width: 80px;
+          display: grid;
+          grid-template-columns: 1fr 2fr 1fr 1fr; }
+          .csseditor .page-view .item-resizer.parent-view .grid-item .grid-item-value input {
+            width: 20px;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            border: 0px;
+            background-color: transparent;
+            border-bottom: 1px solid #cccccc; }
+          .csseditor .page-view .item-resizer.parent-view .grid-item .grid-item-value button {
+            position: relative;
+            left: auto;
+            top: auto;
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            width: 12px;
+            height: 12px;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            border: 1px solid #cccccc;
+            display: inline-block;
+            vertical-align: middle; }
+      .csseditor .page-view .item-resizer.parent-view[data-layout='grid'] .grid-column-handler {
+        display: grid; }
+      .csseditor .page-view .item-resizer.parent-view[data-layout='grid'] .grid-row-handler {
+        display: grid; }
+      .csseditor .page-view .item-resizer.parent-view:before {
+        color: #01a270;
+        display: none;
+        font-size: 15px;
+        position: absolute; }
+      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="column"]:before {
+        content: '⇣';
+        display: inline-block;
+        right: -17px;
+        top: 3px; }
+      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="column-reverse"]:before {
+        content: '⇡';
+        display: inline-block;
+        right: -17px;
+        top: 3px; }
+      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="row"]:before {
+        content: '⇢';
+        display: inline-block;
+        right: 3px;
+        bottom: 100%; }
+      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="row-reverse"]:before {
+        content: '⇠';
+        display: inline-block;
+        right: 3px;
+        bottom: 100%; }
       .csseditor .page-view .item-resizer[data-mode='artboard'] button[data-value='move'] {
         display: none; }
       .csseditor .page-view .item-resizer[data-mode='layer'][data-rect="true"] {
         background-color: rgba(0, 0, 0, 0.1); }
         .csseditor .page-view .item-resizer[data-mode='layer'][data-rect="true"] button {
           display: none; }
-      .csseditor .page-view .item-resizer[data-layout='flex'] button {
-        background-color: #01a270;
-        border-color: #01a270; }
-      .csseditor .page-view .item-resizer[data-layout='grid'] button {
-        background-color: red;
-        border-color: red; }
+      .csseditor .page-view .item-resizer[data-layout='flex'] {
+        -webkit-box-shadow: 0 0 0 1px rgba(1, 162, 112, 0.5) !important;
+                box-shadow: 0 0 0 1px rgba(1, 162, 112, 0.5) !important; }
+        .csseditor .page-view .item-resizer[data-layout='flex'] button {
+          background-color: #01a270;
+          border-color: #01a270; }
+      .csseditor .page-view .item-resizer[data-layout='grid'] {
+        -webkit-box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.5) !important;
+                box-shadow: 0 0 0 1px rgba(255, 0, 0, 0.5) !important; }
+        .csseditor .page-view .item-resizer[data-layout='grid'] button {
+          background-color: red;
+          border-color: red; }
       .csseditor .page-view .item-resizer button {
         pointer-events: all;
         padding: 0px;
@@ -3653,300 +3827,6 @@ html, body {
           -webkit-transform: translateX(-100%) translateY(-100%);
                   transform: translateX(-100%) translateY(-100%);
           cursor: nwse-resize; }
-    .csseditor .page-view .page-canvas {
-      position: relative;
-      width: 100%;
-      height: 100%; }
-      .csseditor .page-view .page-canvas .area {
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        top: 0px;
-        bottom: 0px; }
-      .csseditor .page-view .page-canvas .artboard-area {
-        pointer-events: none; }
-        .csseditor .page-view .page-canvas .artboard-area .artboard-title {
-          cursor: pointer;
-          position: absolute;
-          bottom: 100%;
-          left: 0px;
-          right: 0px;
-          display: inline-block;
-          pointer-events: all; }
-        .csseditor .page-view .page-canvas .artboard-area .artboard {
-          -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25);
-                  box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.25); }
-      .csseditor .page-view .page-canvas .layer-area {
-        pointer-events: none; }
-        .csseditor .page-view .page-canvas .layer-area .layer {
-          pointer-events: all; }
-          .csseditor .page-view .page-canvas .layer-area .layer.selected[data-layout-item='true'] {
-            -webkit-box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
-                    box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25); }
-          .csseditor .page-view .page-canvas .layer-area .layer[data-has-layout="true"] .text-layer {
-            display: none; }
-    .csseditor .page-view .page-selection {
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      right: 0px;
-      bottom: 0px;
-      pointer-events: none; }
-      .csseditor .page-view .page-selection .drag-area-view {
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        -webkit-box-shadow: inset 0 0 0 1px rgba(181, 181, 181, 0.5);
-                box-shadow: inset 0 0 0 1px rgba(181, 181, 181, 0.5);
-        position: absolute;
-        background-color: rgba(255, 255, 255, 0.466); }
-    .csseditor .page-view .page-guide-line {
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      right: 0px;
-      bottom: 0px;
-      pointer-events: none; }
-    .csseditor .page-view .dropzone {
-      display: none; }
-    .csseditor .page-view .predefined-page-resizer {
-      display: none;
-      text-align: center;
-      pointer-events: none;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 10;
-      -webkit-box-shadow: 0 0 0 1px #cccccc;
-              box-shadow: 0 0 0 1px #cccccc; }
-      .csseditor .page-view .predefined-page-resizer button {
-        padding: 0px;
-        background-color: white;
-        border: 1px solid #b3b3b3;
-        -webkit-appearance: none;
-           -moz-appearance: none;
-                appearance: none;
-        outline: none;
-        cursor: pointer;
-        position: absolute;
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        pointer-events: all;
-        border-radius: 50%;
-        /* linear */ }
-        .csseditor .page-view .predefined-page-resizer button:hover {
-          background-color: rgba(255, 255, 255, 0.5); }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to top'] {
-          top: -6px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
-          cursor: n-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to top right'] {
-          top: -6px;
-          right: -6px;
-          cursor: ne-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to right'] {
-          top: 50%;
-          right: -6px;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%);
-          cursor: e-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to bottom right'] {
-          bottom: -6px;
-          right: -6px;
-          cursor: se-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to bottom'] {
-          bottom: -6px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
-          cursor: s-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to bottom left'] {
-          left: -6px;
-          bottom: -6px;
-          cursor: sw-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to left'] {
-          top: 50%;
-          left: -6px;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%);
-          cursor: w-resize; }
-        .csseditor .page-view .predefined-page-resizer button[data-value='to top left'] {
-          top: -6px;
-          left: -6px;
-          cursor: nw-resize; }
-    .csseditor .page-view .predefined-group-resizer {
-      display: none;
-      text-align: center;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 100; }
-      .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer {
-        display: block;
-        text-align: center;
-        position: absolute;
-        pointer-events: none;
-        -webkit-box-shadow: 0 0 0 1px rgba(95, 128, 222, 0.3);
-                box-shadow: 0 0 0 1px rgba(95, 128, 222, 0.3); }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer:before {
-          position: absolute;
-          bottom: 100%;
-          display: inline-block;
-          content: attr(title);
-          left: 0px;
-          color: black;
-          font-size: 12px;
-          min-width: 200px;
-          text-align: left;
-          pointer-events: none;
-          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer.image > * {
-          display: none; }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer.image > .image-panel {
-          display: block;
-          position: absolute;
-          top: 0px;
-          left: 0px;
-          right: 0px;
-          bottom: 0px; }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer .event-panel {
-          pointer-events: all;
-          position: absolute;
-          top: 0px;
-          left: 0px;
-          right: 0px;
-          bottom: 0px; }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer .guide-horizontal {
-          position: absolute;
-          width: 1px;
-          left: 50%;
-          -webkit-transform: translateX(-50%);
-                  transform: translateX(-50%);
-          top: -10px;
-          bottom: -10px;
-          background-color: rgba(95, 128, 222, 0.3);
-          display: none; }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer .guide-vertical {
-          position: absolute;
-          height: 1px;
-          top: 50%;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%);
-          left: -10px;
-          right: -10px;
-          background-color: rgba(95, 128, 222, 0.3);
-          display: none; }
-        .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button {
-          pointer-events: all;
-          padding: 0px;
-          background-color: white;
-          border: 1px solid #5f80de;
-          -webkit-appearance: none;
-             -moz-appearance: none;
-                  appearance: none;
-          outline: none;
-          cursor: pointer;
-          position: absolute;
-          display: inline-block;
-          width: 10px;
-          height: 10px;
-          border-radius: 100%;
-          -webkit-box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
-                  box-shadow: 1px 1px 1px 0px rgba(0, 0, 0, 0.3);
-          /* linear */ }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to top'] {
-            top: -6px;
-            left: 50%;
-            -webkit-transform: translateX(-50%);
-                    transform: translateX(-50%);
-            cursor: n-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to top right'] {
-            top: -6px;
-            right: -6px;
-            cursor: ne-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to right'] {
-            top: 50%;
-            right: -6px;
-            -webkit-transform: translateY(-50%);
-                    transform: translateY(-50%);
-            cursor: e-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to bottom right'] {
-            bottom: -6px;
-            right: -6px;
-            cursor: se-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to bottom'] {
-            bottom: -6px;
-            left: 50%;
-            -webkit-transform: translateX(-50%);
-                    transform: translateX(-50%);
-            cursor: s-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to bottom left'] {
-            left: -6px;
-            bottom: -6px;
-            cursor: sw-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to left'] {
-            top: 50%;
-            left: -6px;
-            -webkit-transform: translateY(-50%);
-                    transform: translateY(-50%);
-            cursor: w-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='to top left'] {
-            top: -6px;
-            left: -6px;
-            cursor: nw-resize; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='move'] {
-            left: 50%;
-            top: 50%;
-            -webkit-transform: translateX(-50%) translateY(-50%);
-                    transform: translateX(-50%) translateY(-50%);
-            cursor: move; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='rotate'] {
-            width: 14px;
-            height: 14px;
-            left: 50%;
-            top: -30px;
-            -webkit-transform: translateX(-50%);
-                    transform: translateX(-50%);
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 50%; }
-            .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='rotate']:before {
-              position: absolute;
-              content: "";
-              left: 50%;
-              top: 50%;
-              width: 7px;
-              height: 7px;
-              -webkit-transform: translateX(-50%) translateY(-50%);
-                      transform: translateX(-50%) translateY(-50%);
-              border-radius: 50%;
-              border: 1px solid rgba(0, 0, 0, 0.8); }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius'], .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius top left'], .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius top right'], .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius bottom left'], .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius bottom right'] {
-            background-color: rgba(255, 255, 0, 0.637);
-            border: 1px solid #83831a;
-            border-radius: 50%; }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius'], .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius top left'] {
-            top: -18px;
-            left: -6px;
-            -webkit-transform: translateX(-50%);
-                    transform: translateX(-50%); }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius top right'] {
-            top: -27px;
-            right: -6px;
-            -webkit-transform: translateX(50%);
-                    transform: translateX(50%); }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius bottom left'] {
-            bottom: -18px;
-            left: -6px;
-            -webkit-transform: translateX(-50%);
-                    transform: translateX(-50%); }
-          .csseditor .page-view .predefined-group-resizer .predefined-layer-resizer button[data-value='radius bottom right'] {
-            bottom: -27px;
-            right: -6px;
-            -webkit-transform: translateX(50%);
-                    transform: translateX(50%); }
     .csseditor .page-view .layer-shape-editor {
       text-align: center;
       position: absolute;
@@ -4066,19 +3946,6 @@ html, body {
             background-color: rgba(255, 0, 0, 0.8); }
           .csseditor .page-view .layer-shape-editor .layer-shape-polygon-editor > .drag-item.end {
             background-color: rgba(0, 0, 255, 0.8); }
-    .csseditor .page-view .move-guide {
-      position: absolute;
-      left: 0px;
-      right: 0px;
-      bottom: 0px;
-      top: 0px;
-      pointer-events: none;
-      -webkit-transform: translateX(-1px) translateY(-1px);
-              transform: translateX(-1px) translateY(-1px); }
-      .csseditor .page-view .move-guide .line {
-        position: absolute;
-        border-top: 1px solid #f9b8ff;
-        border-left: 1px solid #f9b8ff; }
     .csseditor .page-view .colorpicker-layer {
       position: absolute;
       right: 10px;
@@ -5584,6 +5451,15 @@ html, body {
         .csseditor .property > .property-body .property-item.image-sorting .step-align {
           display: inline-block;
           vertical-align: middle; }
+        .csseditor .property > .property-body .property-item.display-manager .display {
+          display: block;
+          -webkit-box-flex: 1;
+              -ms-flex: 1 1 auto;
+                  flex: 1 1 auto;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          padding: 5px;
+          text-align: center; }
         .csseditor .property > .property-body .property-item.display-manager .display-list {
           display: -webkit-box;
           display: -ms-flexbox;
@@ -5601,15 +5477,51 @@ html, body {
             background-color: #ececec; }
           .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="grid"] .display[display-type="grid"] {
             background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .display-list .display {
-            display: block;
-            -webkit-box-flex: 1;
-                -ms-flex: 1 1 auto;
-                    flex: 1 1 auto;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            padding: 5px;
-            text-align: center; }
+        .csseditor .property > .property-body .property-item.display-manager .flex-list {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          height: 30px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-list[selected-type="row"] .display[display-type="row"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-list[selected-type="row-reverse"] .display[display-type="row-reverse"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-list[selected-type="column"] .display[display-type="column"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-list[selected-type="column-reverse"] .display[display-type="column-reverse"] {
+            background-color: #ececec; }
+        .csseditor .property > .property-body .property-item.display-manager .flex-wrap {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          height: 30px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="nowrap"] .display[display-type="nowrap"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="wrap"] .display[display-type="wrap"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="wrap-reverse"] .display[display-type="wrap-reverse"] {
+            background-color: #ececec; }
+        .csseditor .property > .property-body .property-item.display-manager .justify-content {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          height: 30px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="flex-start"] .display[display-type="flex-start"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="flex-end"] .display[display-type="flex-end"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="center"] .display[display-type="center"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="space-between"] .display[display-type="space-between"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="space-around"] .display[display-type="space-around"] {
+            background-color: #ececec; }
   .csseditor .filter-list {
     display: -webkit-box !important;
     display: -ms-flexbox !important;

@@ -1,6 +1,6 @@
-import { Item } from "./Item";
+import { MovableItem } from "./MovableItem";
 
-export class Project extends Item {
+export class Project extends MovableItem {
 
     add (item) {
         if (item.itemType == 'artboard') {
@@ -13,6 +13,10 @@ export class Project extends Item {
 
     get artboards () {
         return this.children.filter(it => it.itemType === 'artboard');
+    }
+
+    get artboard () {
+        return this.artboards[0];
     }
 
     get layers () {

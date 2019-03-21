@@ -1,8 +1,8 @@
 import MenuItem from "./MenuItem";
 import { editor } from "../../../../editor/editor";
 import { Circle } from "../../../../editor/shape/Circle";
-import { Project } from "../../../../editor/Project";
-import { ArtBoard } from "../../../../editor/ArtBoard";
+import { Project } from "../../../../editor/items/Project";
+import { ArtBoard } from "../../../../editor/items/ArtBoard";
 import { CHANGE_EDITOR } from "../../../types/event";
 
 export default class AddCircle extends MenuItem {
@@ -15,6 +15,7 @@ export default class AddCircle extends MenuItem {
     }
 
     add () {
+
         var project = editor.selection.currentProject;
         if (!project) {
             project = editor.addProject(new Project({ name: 'New Project'}));
