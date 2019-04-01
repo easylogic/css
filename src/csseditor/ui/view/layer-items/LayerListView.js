@@ -1,6 +1,6 @@
 import UIElement, { EVENT } from "../../../../util/UIElement";
 import { LOAD, CLICK, SELF, DRAGSTART, DRAGEND, DRAGOVER, DROP, PREVENT } from "../../../../util/Event";
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD } from "../../../types/event";
+import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD, COPY_ITEMS } from "../../../types/event";
 import { EMPTY_STRING } from "../../../../util/css/types";
 import { html, isUndefined } from "../../../../util/functions/func";
 import { editor } from "../../../../editor/editor";
@@ -68,7 +68,7 @@ export default class LayerListView extends UIElement {
                 <div class="item-depth"></div>            
                 ${isGroup && `<div class='item-icon-group'>${icon.chevron_right}</div>`}
                 ${!isGroup && hasIcon && `<div class='item-icon'>${iconString}</div>`}
-                <div class="item-title" data-label='${label}'> ${item.title}</div> 
+                <div class="item-title" data-label='${label}'>${item.toGridString()} ${item.title}</div> 
                 <div class='item-tools'>          
                     ${hasLock && `<button type="button" class='lock-item ${lock}' title="Visible">${icon.lock}</button>`}
                     ${hasVisible && `<button type="button" class='visible-item ${visible}' title="Visible">${icon.visible}</button>`}
@@ -114,7 +114,8 @@ export default class LayerListView extends UIElement {
 
     // all effect 
     [EVENT(
-        CHANGE_EDITOR
+        CHANGE_EDITOR,
+        COPY_ITEMS
     )] () { this.refresh(); }
 
     refreshLayer() {
@@ -126,7 +127,10 @@ export default class LayerListView extends UIElement {
                 if (display == 'flex' || display == 'grid') {
                     label = display
                 }
-                $item.$('.item-title').attr('data-label', label);
+                var $title = $item.$('.item-title');
+                
+                $title.attr('data-label', label);
+                $title.text(`${item.toGridString()} ${item.title}`)
             }
         })
     }
@@ -178,11 +182,13 @@ export default class LayerListView extends UIElement {
         }
     }
 
+    removeSelectionItem() {
+        this.refs.$layerList.$$('.selected').forEach($el => $el.removeClass('selected'))
+    }
+
     toggleSelectedItem (id) {
-        var selected = this.refs.$layerList.$('.selected');
-        if (selected) {
-            selected.removeClass('selected')
-        }
+
+        this.removeSelectionItem()
 
         var item = this.refs.$layerList.$(`[item-id="${id}"]`);
         if (item) {
@@ -208,6 +214,7 @@ export default class LayerListView extends UIElement {
     [CLICK('$layerList .delete-item')] (e) {
         var {item} = this.getItem(e)
         item.remove()
+        editor.selection.refresh();
         editor.emit(CHANGE_EDITOR, null, this);
     } 
 

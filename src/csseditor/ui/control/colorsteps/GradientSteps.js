@@ -106,7 +106,6 @@ export default class GradientSteps extends UIElement {
     }
 
     refresh () {
-
         this.$el.toggle(this.isShow())
 
         var item = editor.selection.image;

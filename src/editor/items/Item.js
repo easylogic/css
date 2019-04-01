@@ -101,6 +101,10 @@ export class Item {
         editor.selection.select(this.id) 
     }    
 
+    initRect() {
+        editor.selection.initRect() 
+    }
+
     /**
      * when json is loaded, json object is be a new instance 
      * 

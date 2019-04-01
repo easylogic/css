@@ -11,7 +11,7 @@ export class MovableItem extends Item {
     //
     ///////////////////////
 
-    
+
     get screenX () { return this.json.x }
     get screenY () { return this.json.y }
     get screenX2 () { return Length.px(this.screenX.value + this.json.width.value) }
@@ -30,7 +30,7 @@ export class MovableItem extends Item {
      * 상위 Layer 가 flex, grid 를 가지면 하위는 dom 기준으로 자동으로 연산 ..  
      * 
      */
-    get screen () {
+    get screenRect () {
         return {
             left: this.screenX,
             top: this.screenY,

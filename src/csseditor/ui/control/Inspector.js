@@ -2,19 +2,21 @@ import UIElement, { EVENT } from "../../../util/UIElement";
 import { html } from "../../../util/functions/func";
 import { editor } from "../../../editor/editor";
 import { CHANGE_EDITOR } from "../../types/event";
+import property from "./panel/property/index";
 
-export default class FeatureControl extends UIElement {
+
+export default class Inspector extends UIElement {
 
     template () {
         return html`
             <div class='feature-control'>     
-            ${editor.inspector.keys.map(key => `<${key} />`)}
+            ${Object.keys(this.components()).map(key => `<${key} />`)}
             </div>
         `
     }
 
     components () {
-        return editor.inspector.components;
+        return property;
     }
 
     refresh() {

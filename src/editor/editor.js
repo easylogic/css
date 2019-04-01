@@ -1,14 +1,17 @@
 import { Config } from "./Config";
 import { Selection } from "./Selection";
 import { uuidShort } from "../util/functions/math";
-import { Inspector } from "./Inspector";
 
 const items = new Map();
-
+const linkedItems = new Map();
+ 
 
 function traverse (item, results, parentId) {
     var newItem = item.clone(true)
+    editor.set(newItem.id, newItem); 
+
     newItem.parentId = parentId; 
+    linkedItems[item.id] = newItem.id;     
     results.push(newItem);
 
     item.children.forEach(child => {
@@ -19,8 +22,11 @@ function traverse (item, results, parentId) {
 function tree (id) {
     var item = editor.get(id)
     var newItem = item.clone(true)
+    editor.set(newItem.id, newItem);
+
+    linkedItems[item.id] = newItem.id; 
     var results = [newItem] 
-    
+
     item.children.forEach(item => {
         traverse(item, results, newItem.id);
     })
@@ -28,13 +34,13 @@ function tree (id) {
     return results
 }
 
+
 export const EDITOR_ID = '';
 export const editor = new class {
 
     constructor () {
         this.config = new Config(this); 
         this.selection = new Selection(this)
-        this.inspector = new Inspector(this)
     }
 
     setStore($store) {
@@ -77,7 +83,6 @@ export const editor = new class {
     get projects () { return this.filter('project')}
     get artboards () { return this.filter('artboard')}    
     get layers () { return this.filter('layer') }
-    get groups () { return this.filter('group') }    
 
     /**
      * add item 
@@ -107,20 +112,44 @@ export const editor = new class {
         items.delete(id);
     }
 
-    copy (id) {
-        var data = tree(id, uuidShort());
+    copy (...args) {
+        
+        // 선택된 id 를 copy 한다. 
+        // 하위 자식도 카피한다. 
+        // 다만 하위 자식도 selection 에 들어 있을 수 있다. 
+        // 그래서 selection 에 들어있는 id 들에 대해서 path 를 미리 수집한다. 
+        // 수집한 패스에서 상위가 존재 하는 애들은 카피 패스에서 뺀다. 
+        // 이거 은근히 복잡한데? 
+        var ids = args.length ? args : this.selection.ids;
+        var checkIds = {} 
+        ids.forEach(id => { 
+            checkIds[id] = true;
+        }) 
 
-        data.forEach(it => {
-            this.set(it.id, it);
+        var copiedIds = ids.filter(id => {
+            var hasTreeParentNode = this.get(id).path().some(item => {
+                return item.id != id && checkIds[item.id]
+            });
+
+            return !hasTreeParentNode;
         })
 
-        if (data.length) {
-            data[0].index = data[0].index + 1; 
-            data[0].parent().sort();            
-        }
+        linkedItems.clear();
+        copiedIds.forEach(itemId => {
 
-        return data; 
+            var data = tree(itemId, uuidShort());
+    
+            if (data.length) {
+                data[0].index = data[0].index + 1; 
+                data[0].parent().sort();            
+            }
+        })
+
+        return ids.map(id => linkedItems[id])
+
     }
+
+
 
     clear () {
         items.clear()

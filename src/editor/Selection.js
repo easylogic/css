@@ -35,25 +35,12 @@ export class Selection {
     /**
      * get first item instance 
      */
-    get current () { return this.editor.get(this.ids[0]) }
+    get current () { 
+        var item = this.editor.get(this.ids[0]) 
+        if (!item) return null;
 
-    /**
-     * get colorstep list
-     */
-    get colorsteps () { return this.search('colorstep')}
-
-    /**
-     * get first colorstep 
-     */    
-    get colorstep () { return this.colorsteps[0] }
-    
-    get backgroundImages () { return this.search('background-image'); }    
-    get backgroundImage() { return this.backgroundImages[0]; }
-    get images () { return this.search('image-resource'); }
-    get image () { return this.images[0] }
-    get boxShadows () { return this.search('box-shadow'); }    
-    get textShadows () { return this.search('text-shadow'); }
-
+        return item.itemType == 'project' ? null : item; 
+    }
 
     get layers () { return this.search('layer'); }
     get layer() { return this.layers[0] }
@@ -64,9 +51,6 @@ export class Selection {
     get directories () { return this.search('directory') }
     get directory () { return this.directories[0] }
 
-    get currentColorStep () { return this._colorstep }
-    get currentImage() { return this._imageResource }
-    get currentBackgroundImage () { return this._backgroundImage; }
     get currentDirectory () { return this._directory }
     get currentArtBoard () { return this._artboard }
     get currentProject() { return this._project }
@@ -137,6 +121,9 @@ export class Selection {
         return this._ids.length > 0; 
     }
 
+    count () {
+        return this._ids.length;
+    }
 
     unitValues () {
         return this.items.map(item => {
@@ -186,6 +173,14 @@ export class Selection {
             this.editor.send(CHANGE_SELECTION);
         }
 
+        this.initRect();
+
+    }
+
+    refresh () {
+        this.select(...this._ids.filter(id => {
+            return this.editor.get(id)
+        }))
     }
 
     generateCache () {
@@ -193,27 +188,18 @@ export class Selection {
         if (this._ids.length) {
             var parents = this.editor.get(this._ids[0]).path()
 
-            this._colorstep = parents.filter(it => it.itemType === 'colorstep')[0]
-            this._image = parents.filter(it => it.itemType === 'image-resource')[0]
-            this._backgroundImage = parents.filter(it => it.itemType === 'background-image')[0]
             this._layer = parents.filter(it => it.itemType === 'layer')[0]
             this._directory = parents.filter(it => it.itemType === 'directory')[0]
             this._artboard = parents.filter(it => it.itemType === 'artboard')[0]
             this._project = parents.filter(it => it.itemType === 'project')[0]
 
         } else {
-            this._colorstep = null
-            this._image = null
-            this._backgroundImage = null
+
             this._layer = null
             this._directory = null
             this._artboard = null;
             this._project = null ;
         }
-    }
-
-    focus (item) {
-        // this.editor.send('focus', item);
     }
 
     area (rect) {
@@ -222,7 +208,7 @@ export class Selection {
         }).map(it => it.id);
 
         if (selectItems) {
-            this.select(...selectItems);            
+            this.select(...selectItems);           
         } else {
             var project = this.currentProject;
             project && project.select();                
@@ -230,8 +216,7 @@ export class Selection {
     }
 
     initRect () {
-        var rect = this.rect();
-        this.currentRect = rect
+        this.currentRect = this.rect();
     }
 
     rect () {
@@ -241,6 +226,8 @@ export class Selection {
         var maxY = Number.MIN_SAFE_INTEGER;
 
         this.items.forEach(item => {
+
+            if (!item.screenX) return;
 
             var x = item.screenX.value; 
             var y = item.screenY.value; 

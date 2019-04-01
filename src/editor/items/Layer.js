@@ -1,4 +1,4 @@
-import { combineKeyArray, cleanObject, keyEach } from "../../util/functions/func";
+import { combineKeyArray, cleanObject, keyEach, isNotUndefined } from "../../util/functions/func";
 import { CSS_TO_STRING, CSS_FILTERING } from "../../util/css/make"; 
 import { Length } from "../unit/Length";
 import { NoneClipPath, ClipPath } from "../css-property/ClipPath";
@@ -7,9 +7,10 @@ import { BackdropFilter } from "../css-property/BackdropFilter";
 import { BackgroundImage } from "../css-property/BackgroundImage";
 import { BoxShadow } from "../css-property/BoxShadow";
 import { TextShadow } from "../css-property/TextShadow";
-import { Display, BlockDisplay } from "../css-property/Display";
+import { Display } from "../css-property/Display";
 import { editor } from "../editor";
 import { GroupItem } from "./GroupItem";
+import { EMPTY_STRING } from "../../util/css/types";
 
 export const BLEND_LIST = [
     'normal', 'multiply', 'screen', 'overlay', 'darken', 
@@ -19,6 +20,29 @@ export const BLEND_LIST = [
 ]
 
 export class Layer extends GroupItem {
+
+
+    getDefaultObject (obj = {}) {
+        return super.getDefaultObject({
+            itemType: 'layer',
+            width: Length.px(400),
+            height: Length.px(300),
+            backgroundColor: 'rgba(222, 222, 222, 0.3)',
+            position: 'absolute',
+            x: Length.px(0),
+            y: Length.px(0),
+            rotate: 0,
+            filters: [],
+            backdropFilters: [],
+            backgroundImages: [],
+            boxShadows: [],
+            textShadows: [], 
+            clippath: new NoneClipPath(),
+            display: Display.parse({ display: 'block' }),
+            offset: { left: 0, top: 0, width: 400, height: 300 },       // real dom offset cache 
+            ...obj
+        })
+    }
 
     getDefaultTitle () { 
         return 'Layer' 
@@ -33,6 +57,7 @@ export class Layer extends GroupItem {
 
         return parent.hasLayout();      // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다. 
     }
+
 
     isRootItem () {
         var parent = this.parent();
@@ -88,7 +113,7 @@ export class Layer extends GroupItem {
         json.x = Length.parse(json.x)
         json.y = Length.parse(json.y)
         json.width = Length.parse(json.width)
-        json.height = Length.parse(json.height)        
+        json.height = Length.parse(json.height)
 
         if (json.clippath) json.clippath = ClipPath.parse(json.clippath)
         if (json.display) json.display = Display.parse(json.display)
@@ -99,30 +124,14 @@ export class Layer extends GroupItem {
         json.boxShadows = json.boxShadows.map(f => BoxShadow.parse(f));
         json.textShadows = json.textShadows.map(f => TextShadow.parse(f));
  
+        // copy 할 때 자동으로 체크 
+        if (json.parentId) {
+            json.parentPosition = this.getParentPosition(json.parentId).id;
+        }
+
         return json
     }
 
-    getDefaultObject (obj = {}) {
-        return super.getDefaultObject({
-            itemType: 'layer',
-            width: Length.px(400),
-            height: Length.px(300),
-            backgroundColor: 'rgba(222, 222, 222, 0.3)',
-            position: 'absolute',
-            x: Length.px(0),
-            y: Length.px(0),
-            rotate: 0,
-            filters: [],
-            backdropFilters: [],
-            backgroundImages: [],
-            boxShadows: [],
-            textShadows: [], 
-            clippath: new NoneClipPath(),
-            display: new BlockDisplay(),
-            offset: { left: 0, top: 0, width: 400, height: 300 },       // real dom offset cache 
-            ...obj
-        })
-    }
 
     checkField(key, value) {
         if (key === 'parentId') {
@@ -455,6 +464,31 @@ export class Layer extends GroupItem {
         return css; 
     }
 
+    setGridRowColumn (rowStart, columnStart, rowEnd, columnEnd) {
+        this.json.gridRowStart = rowStart;
+        this.json.gridRowEnd = rowEnd + 1;
+        this.json.gridColumnStart = columnStart;
+        this.json.gridColumnEnd = columnEnd + 1;
+    }
+
+    initGridRowColumn (row, column) {
+        this.setGridRowColumn(row, column, row, column);
+    }
+
+    toGridString () {
+        const {gridRowEnd, gridRowStart, gridColumnEnd, gridColumnStart} = this.json; 
+        if (!gridRowEnd) return EMPTY_STRING
+
+        var distRow = gridRowEnd - gridRowStart 
+        var distColumn = gridColumnEnd - gridColumnStart 
+
+        if (distRow == 1 && distColumn == 1) {
+            return `(${gridRowStart}, ${gridColumnStart})`
+        }
+
+        return `(${gridRowStart}, ${gridColumnStart}) -> (${gridRowEnd}, ${gridColumnEnd})`
+    }
+
     toBoundCSS() {
         var json = this.json;
         var parent = this.parent()
@@ -478,9 +512,13 @@ export class Layer extends GroupItem {
                 // display: 'inline-block'
             }
         } else if (parent.display.type == 'grid') {
-            return {
-                // 
-            }
+            const css = {}
+            if (isNotUndefined(json.gridRowStart)) { css['grid-row-start'] = json.gridRowStart; }
+            if (isNotUndefined(json.gridRowEnd)) { css['grid-row-end'] = json.gridRowEnd; }
+            if (isNotUndefined(json.gridColumnStart)) { css['grid-column-start'] = json.gridColumnStart; }
+            if (isNotUndefined(json.gridColumnEnd)) { css['grid-column-end'] = json.gridColumnEnd; }
+
+            return css;
         }
 
         return {

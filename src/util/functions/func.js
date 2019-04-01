@@ -1,35 +1,17 @@
 import { EMPTY_STRING, WHITE_STRING } from "../css/types";
-import { cloneBitmap } from "../filter/functions";
 
 export function debounce (callback, delay) {
 
     var t = undefined;
 
-    return function (...args) {
+    return function ($1, $2, $3, $4, $5) {
         if (t) {
             clearTimeout(t);
         }
 
         t = setTimeout(function () {
-            callback(...args);
+            callback($1, $2, $3, $4, $5);
         }, delay || 300);
-    }
-}
-
-// refer to https://jbee.io/web/optimize-scroll-event/
-export function fit(callback) {
-    let tick = false; 
-
-    return function () {
-        if (tick) {
-            return;
-        }
-
-        tick = true 
-        return requestAnimationFrame( () => {
-            tick = false; 
-            return callback()
-        })
     }
 }
 
@@ -61,7 +43,7 @@ export function defaultValue (value, defaultValue) {
 }
 
 export function isUndefined (value) {
-    return typeof value == 'undefined' || value == null;
+    return typeof value == 'undefined' || value === null;
 }
 
 export function isNotUndefined (value) {

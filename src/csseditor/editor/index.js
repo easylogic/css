@@ -1,4 +1,3 @@
-import FeatureControl from '../ui/control/FeatureControl';
 
 import LayerToolbar from '../ui/view/LayerToolbar';
 import ExportWindow from '../ui/window/ExportWindow';
@@ -17,7 +16,8 @@ import UIElement, { EVENT } from '../../util/UIElement';
 import { RESIZE, DEBOUNCE } from '../../util/Event';
 import { RESIZE_WINDOW, TOGGLE_TIMELINE, CHANGE_HEIGHT_TIMELINE, INIT_HEIGHT_TIMELINE } from '../types/ToolTypes';
 import TimelineSplitter from '../ui/control/timeline/TimelineSplitter';
- 
+import Inspector from '../ui/control/Inspector';
+
 export default class CSSEditor extends UIElement {
 
     afterRender() { 
@@ -39,12 +39,12 @@ export default class CSSEditor extends UIElement {
                     </div>
                     <div class="layout-body">
                         <LayerToolbar />
-                        <VerticalColorStep />
+                        <!-- <VerticalColorStep /> -->
                         <CanvasView />
                     </div>                
                     <div class="layout-right">
                         <Alignment />
-                        <FeatureControl />
+                        <Inspector />
                     </div>
                 </div>
                 <div class="layout-footer" ref="$footer">
@@ -63,6 +63,7 @@ export default class CSSEditor extends UIElement {
         return { 
             HotKey,
             Alignment,
+            Inspector,
             SelectLayerView,
             ToolMenu,
             LayerToolbar,
@@ -70,7 +71,6 @@ export default class CSSEditor extends UIElement {
             DropView,
             ExportWindow,
             CanvasView,
-            FeatureControl, 
             TimelineSplitter,
             Timeline
         }
@@ -127,14 +127,6 @@ export default class CSSEditor extends UIElement {
     [EVENT(TOGGLE_TIMELINE)] () {
         this.$el.toggleClass('show-timeline')
     } 
-
-    [EVENT('togglePagePanel')] () {
-        this.$el.toggleClass('has-page-panel')
-    }
-
-    [EVENT('toggleLayerPanel')] () {
-        this.$el.toggleClass('has-layer-panel')
-    }
 
     [RESIZE('window') + DEBOUNCE(100)] (e) {
         this.emit(RESIZE_WINDOW)

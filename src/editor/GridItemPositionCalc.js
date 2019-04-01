@@ -1,63 +1,19 @@
 import { editor } from "./editor";
 import { Layer } from "./items/Layer";
-import { keyEach } from "../util/functions/func";
-import { Guide } from "./util/Guide";
 import { Segment } from "./util/Segment";
 
-class ItemPositionCalc {
-    constructor() {
-        this.guide = new Guide()  
-    }
+class GridItemPositionCalc {
 
     clear () {
         this.direction = null; 
-        this.cachedSelectionItems = {}
-        this.cachedPosition = {}
         this.newRect = null;
         this.rect = null; 
-        this.guide.clear()
     }
 
     initialize (direction) {
         this.direction = direction || editor.config.get('selection.direction');
-        this.cachedSelectionItems = {}
-        editor.selection.items.map(it => it.clone()).forEach(it => {
-            this.cachedSelectionItems[it.id] = it; 
-        });
-
-        this.newRect = editor.selection.currentRect;
+        this.newRect = editor.selection.rect();
         this.rect = this.newRect.clone();
-
-        this.cachedPosition = {}
-        keyEach(this.cachedSelectionItems, (id, item) => {
-            this.cachedPosition[id] = {
-                x : this.setupX(item),
-                y : this.setupY(item)
-            }
-        })
-
-        this.guide.initialize(this.newRect, this.cachedSelectionItems, this.direction);
-    }
-
-    recover (item) {
-        const {xDistRate, x2DistRate} = this.cachedPosition[item.id].x
-        const {yDistRate, y2DistRate} = this.cachedPosition[item.id].y
-
-        const minX = this.newRect.screenX.value; 
-        const maxX = this.newRect.screenX2.value; 
-        const minY = this.newRect.screenY.value; 
-        const maxY = this.newRect.screenY2.value; 
-
-        const totalWidth = maxX - minX; 
-        const xr = totalWidth * xDistRate;
-        const x2r = totalWidth * x2DistRate; 
-
-        const totalHeight = maxY - minY; 
-        const yr = totalHeight * yDistRate;
-        const y2r = totalHeight * y2DistRate;
-
-        this.setX(item, minX, maxX, xr, x2r);
-        this.setY(item, minY, maxY, yr, y2r);
     }
 
     calculate (dx, dy) {
@@ -74,16 +30,7 @@ class ItemPositionCalc {
             if (Segment.isLeft(direction)) { this.calculateLeft(dx, dy, {isAlt}); }
         }
 
-        return this.calculateGuide();
     }
-
-    calculateGuide () {
-        // TODO change newRect values 
-        var list = this.guide.calculate(2)
-
-        return list; 
-    }
-
 
     setupX (cacheItem) {
         var minX = this.rect.screenX.value; 
@@ -228,4 +175,4 @@ class ItemPositionCalc {
 
 }
 
-export const itemPositionCalc = new ItemPositionCalc()
+export const gridItemPositionCalc = new GridItemPositionCalc()

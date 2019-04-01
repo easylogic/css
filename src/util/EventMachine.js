@@ -8,7 +8,7 @@ import Event, {
 } from './Event'
 import Dom from './Dom'
 import State from './State'
-import { debounce, isFunction, isArray, html, keyEach, fit, isNotUndefined } from './functions/func';
+import { debounce, isFunction, isArray, html, keyEach, isNotUndefined } from './functions/func';
 import { EMPTY_STRING } from './css/types';
 import { ADD_BODY_MOUSEMOVE, ADD_BODY_MOUSEUP } from '../csseditor/types/ToolTypes';
 
@@ -43,7 +43,9 @@ const makeCallback = (context, eventObject, callback) => {
 const makeDefaultCallback = (context, eventObject, callback) => {
   return (e) => {
     var returnValue = runEventCallback(context, e, eventObject, callback);
-    if (!isNotUndefined(returnValue))  return returnValue;
+    if (isNotUndefined(returnValue))  {
+      return returnValue;
+    }
   }
 }
 
@@ -56,7 +58,9 @@ const makeDelegateCallback = (context, eventObject, callback) => {
       e.$delegateTarget = new Dom(delegateTarget);
 
       var returnValue = runEventCallback(context, e, eventObject, callback);
-      if (!isNotUndefined(returnValue))  return returnValue;
+      if (isNotUndefined(returnValue))  {
+        return returnValue;
+      }
     } 
 
   }
@@ -65,15 +69,17 @@ const makeDelegateCallback = (context, eventObject, callback) => {
 const runEventCallback = (context, e, eventObject, callback) => {
   e.xy = Event.posXY(e)
 
-  eventObject.beforeMethods.every(before => {
-    return context[before.target].call(context, before.param, e);
-  })
+  if (eventObject.beforeMethods.length) {
+    eventObject.beforeMethods.every(before => {
+      return context[before.target].call(context, e, before.param);
+    })  
+  }
 
   if (checkEventType(context, e, eventObject)) {
     var returnValue = callback(e, e.$delegateTarget, e.xy);
 
     if (eventObject.afterMethods.length) {
-      eventObject.afterMethods.forEach(after => context[after.target].call(context, after.param, e))
+      eventObject.afterMethods.forEach(after => context[after.target].call(context, e, after.param))
     } 
 
     return returnValue; 
@@ -84,16 +90,13 @@ const runEventCallback = (context, e, eventObject, callback) => {
 const checkEventType = (context, e, eventObject )  => {
 
   // 특정 keycode 를 가지고 있는지 체크 
-  // keyup.pagedown  이라고 정의하면 pagedown 키를 눌렀을때만 동작 함 
   var hasKeyCode = true; 
   if (eventObject.codes.length) {
-
     hasKeyCode =  (
       e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false
     ) || (
       e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false
-    )        
-    
+    )      
   }
 
   // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
@@ -129,85 +132,49 @@ const getDefaultDomElement = (context, dom) => {
   return el;
 }
 
-const getDefaultEventObject = (context, eventName, checkMethodFilters) => {
-  let arr = checkMethodFilters
-  const checkMethodList = arr.filter(code => {
-      return !!context[code];
-  });
+const splitMethodByKeyword = (arr, keyword) => {
 
-  const afters = arr.filter(code => {
-    return code.indexOf('after(') > -1; 
-  })
-
-  const afterMethods = afters.map(code => {
-    var [target, param] = code.split('after(')[1].split(')')[0].trim().split(' ')
+  var filterKeys = arr.filter(code => code.indexOf(`${keyword}(`) > -1)
+  var filterMaps = filterKeys.map(code => {
+    var [target, param] = code.split(`${keyword}(`)[1].split(')')[0].trim().split(' ')
 
     return {target, param}
   })
 
-  const befores = arr.filter(code => {
-    return code.indexOf('before(') > -1; 
-  })
-
-  const beforeMethods = befores.map(code => {
-    var [target, param] = code.split('before(')[1].split(')')[0].trim().split(' ')
-
-    return {target, param}
-  })  
-
-  // TODO: split debounce check code 
-  const delay = arr.filter(code => {
-    if (code.indexOf('debounce(')  > -1) {
-      return true; 
-    } 
-    return false; 
-  })
-
-  let debounceTime = 0; 
-  if (delay.length) {
-    debounceTime = getDebounceTime(delay[0]);
-  }
-
-  // capture 
-  const capturing = arr.filter(code => code.indexOf('capture') > -1)
-  let useCapture = !!capturing.length; 
-  
-  arr = arr.filter(code => {
-    return checkMethodList.includes(code) === false 
-          && delay.includes(code) === false 
-          && afters.includes(code) === false
-          && befores.includes(code) === false
-          && capturing.includes(code) === false
-  }).map(code => {
-    return code.toLowerCase() 
-  });
-
-  // TODO: split debounce check code     
-
-  return {
-    eventName,
-    codes : arr,
-    useCapture,
-    afterMethods, 
-    beforeMethods,
-    debounce: debounceTime,
-    checkMethodList: checkMethodList
-  }
+  return [filterKeys, filterMaps]
 }
 
-const getDebounceTime = (code) => {
-  var debounceTime = 0;
-  if (code.indexOf('debounce(')  > -1) {
-    debounceTime = +(code.replace('debounce(', EMPTY_STRING).replace(')', EMPTY_STRING));
-  } 
+const getDefaultEventObject = (context, eventName, checkMethodFilters) => {
+  let arr = checkMethodFilters
 
-  return debounceTime 
+  // context 에 속한 변수나 메소드 리스트 체크 
+  const checkMethodList = arr.filter(code => !!context[code]);
+
+  // 이벤트 정의 시점에 적용 되어야 하는 것들은 모두 method() 화 해서 정의한다.  
+  const [afters, afterMethods] = splitMethodByKeyword(arr, 'after')
+  const [befores, beforeMethods] = splitMethodByKeyword(arr, 'before')
+  const [debounces, debounceMethods] = splitMethodByKeyword(arr, 'debounce')
+  const [captures] = splitMethodByKeyword(arr, 'capture')
+
+  // 위의 5개 필터 이외에 있는 코드들은 keycode 로 인식한다. 
+  const filteredList = [
+    ...checkMethodList, 
+    ...afters, 
+    ...befores, 
+    ...debounces, 
+    ...captures
+  ]
+
+  var codes = arr.filter(code => !filteredList.includes(code))
+                 .map(code => code.toLowerCase())
+
+  return { eventName, codes, captures, afterMethods, beforeMethods, debounceMethods, checkMethodList }
 }
 
 const addEvent = (context, eventObject, callback) => {
   eventObject.callback = makeCallback(context, eventObject, callback)
   context.addBinding(eventObject);
-  Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, eventObject.useCapture)
+  Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, !!eventObject.captures.length)
 }
 
 const bindingEvent = (context, [ eventName, dom, ...delegate], checkMethodFilters, callback) => {
@@ -216,8 +183,9 @@ const bindingEvent = (context, [ eventName, dom, ...delegate], checkMethodFilter
   eventObject.dom = getDefaultDomElement(context, dom);
   eventObject.delegate = delegate.join(SAPARATOR);
 
-  if (eventObject.debounce) {
-    callback = debounce(callback, eventObject.debounce)
+  if (eventObject.debounceMethods.length) {
+    var debounceTime = +(eventObject.debounceMethods[0].target)
+    callback = debounce(callback, debounceTime)
   } 
 
   addEvent(context, eventObject, callback);
@@ -281,7 +249,6 @@ export default class EventMachine {
     }
 
     html = html.trim();
-
     const list = TEMP_DIV.html(html).children()
 
     list.forEach($el => {
@@ -355,8 +322,25 @@ export default class EventMachine {
     this._loadMethods.forEach(callbackName => {
       const elName = callbackName.split(LOAD_SAPARATOR)[1]
       if (this.refs[elName]) { 
-        const fragment = this.parseTemplate(this[callbackName].call(this), true);
-        this.refs[elName].html(fragment)
+
+        var oldTemplate = this[callbackName].t || EMPTY_STRING
+        var newTemplate = this[callbackName].call(this);
+
+        if (isArray(newTemplate)) {
+          newTemplate = newTemplate.join(EMPTY_STRING)
+        }
+
+        // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다. 
+        if (oldTemplate != newTemplate) {
+          this[callbackName].t = newTemplate;
+          const fragment = this.parseTemplate(newTemplate, true);
+
+          // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다. 
+          // 이건 비교 알고리즘을 넣어도 괜찮을 듯 
+          this.refs[elName].htmlDiff(fragment) 
+
+        }
+
       }
     })
 
@@ -448,6 +432,15 @@ export default class EventMachine {
   isCtrlKey (e) { return e.ctrlKey }
   isShiftKey (e) { return e.shiftKey }
   isMetaKey (e) { return e.metaKey }
+
+  /* magic check method */ 
+
+  /** before check method */
+
+
+  /** before check method */
+
+  /* after check method */ 
   preventDefault(e) { 
     e.preventDefault()
     return true; 
@@ -458,16 +451,13 @@ export default class EventMachine {
     return true; 
   }
 
-  /* magic check method */ 
-
-  /* after check method */ 
-  bodyMouseMove (methodName, e) {
+  bodyMouseMove (e, methodName) {
     if (this[methodName]) {
       this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this, e.xy)
     }
   }
 
-  bodyMouseUp (methodName, e) {
+  bodyMouseUp (e, methodName) {
     if (this[methodName]) {
       this.emit(ADD_BODY_MOUSEUP, this[methodName], this, e.xy)
     }    

@@ -9,6 +9,7 @@ import {editor} from '../editor/editor'
 import { debounce } from "./functions/func";
 
 const EMPTY_POS = {x: 0, y : 0}
+const MOVE_CHECK_MS = 10; 
 
 export const start = (opt) => {
     class App extends UIElement {
@@ -39,7 +40,17 @@ export const start = (opt) => {
         initBodyMoves () {
             this.moves = new Set()
             this.ends = new Set();
-            this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), 15);
+
+            this.modifyBodyMoveSecond(MOVE_CHECK_MS);
+        }
+
+        modifyBodyMoveSecond (ms = MOVE_CHECK_MS) {
+            editor.config.set('body.move.ms', ms);
+            this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), editor.config.get('body.move.ms'));
+        }
+
+        [EVENT('modifyBodyMoveSeconds')] (ms) {
+            this.modifyBodyMoveSecond(ms);
         }
 
         loopBodyMoves () {
@@ -49,7 +60,11 @@ export const start = (opt) => {
 
             if (isRealMoved && this.moves.size) {
                 this.moves.forEach(v => {
-                    v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
+                    var dx = pos.x - v.xy.x;
+                    var dy = pos.y - v.xy.y;
+                    if (dx != 0 || dy != 0) {   //  변화가 있을 때만 호출 한다. 
+                        v.func.call(v.context, dx, dy);
+                    }
                 })
             }
             requestAnimationFrame(this.funcBodyMoves)
@@ -95,10 +110,10 @@ export const start = (opt) => {
 
         [POINTERMOVE('document')] (e) {
             var oldPos = editor.config.get('pos') || EMPTY_POS;
-            var newPos = Event.pos(e) || EMPTY_POS;
+            var newPos = e.xy || EMPTY_POS;
 
             this.bodyMoved = !(oldPos.x == newPos.x && oldPos.y == newPos.y);  
-            editor.config.set('bodyEvent', e);
+            editor.config.set('bodyEvent', e);       
             editor.config.set('pos', newPos);
             editor.config.set('oldPos', oldPos);
 
@@ -108,7 +123,7 @@ export const start = (opt) => {
         }
 
         [POINTEREND('document')] (e) {
-            var newPos = Event.pos(e) || EMPTY_POS;
+            var newPos = e.xy || EMPTY_POS;
             editor.config.set('bodyEvent', e);
             editor.config.set('pos', newPos);
             this.removeBodyMoves()

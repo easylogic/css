@@ -147,11 +147,15 @@ export default class BaseStore {
 
     sendMessage (source, event, $2, $3, $4, $5) {
         setTimeout(() => {
-            this.cachedCallback[event].forEach(f => {
+            var list = this.cachedCallback[event];
+            
+            for(var i = 0, len = list.length; i < len; i++) {
+                var f = list[i];
                 if (f.originalCallback.source != source) {
+                    // console.log(f);
                     f.callback($2, $3, $4, $5);
                 }
-            })
+            }
         }, 0)
     }
 

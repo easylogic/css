@@ -7,7 +7,7 @@ export default class VerticalColorStep extends UIElement {
 
     components () {
         return {
-            GradientSteps
+            // GradientSteps
         }
     }
 
@@ -29,7 +29,9 @@ export default class VerticalColorStep extends UIElement {
     [EVENT(
         CHANGE_EDITOR,
         CHANGE_SELECTION
-    )] () { this.refresh() }
+    )] () { 
+        // this.refresh() 
+    }
 
     isShow () {
         var item = editor.selection.backgroundImage;

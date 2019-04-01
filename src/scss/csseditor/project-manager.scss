@@ -5,15 +5,10 @@ $button-size: 24px;
 $layer-item-padding: 4px;
 
 .project-list-view {
-    display: none;
-    position: absolute;
-    left: 0px;
-    right : 0px;
-    top: 0px;
-    bottom: 0px;
-    overflow: auto;
     border-bottom: 1px solid $border-color;
     box-sizing: border-box; 
+    display: flex;
+    flex-direction: column;
     
     .project-toolbar {
         display: flex;
@@ -21,6 +16,7 @@ $layer-item-padding: 4px;
         box-sizing: border-box; 
         height: 30px;      
         padding:5px 10px;
+        flex: none; 
 
         > .title {
             flex:none;
@@ -69,8 +65,10 @@ $layer-item-padding: 4px;
     }
 
     .project-list {
-
+        flex: 1 1 auto;
         background-color: white; 
+        overflow: auto;
+        box-sizing: border-box;
         button {
             display:block;
             height: 80px;

@@ -9,12 +9,14 @@ $tree-item-row-height: 30px;
 .layer-list-view {
     position: relative;
     flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
+    display: block;
 
         
     .layer-list-toolbar {
-        flex: none; 
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
         display: flex;
         border-bottom: 1px solid $border-color;
         box-sizing: border-box; 
@@ -79,9 +81,14 @@ $tree-item-row-height: 30px;
     }
 
     .layer-list {
-        flex: 1 1 auto;
+        position: absolute;
+        left: 0px;
+        top: 30px;
+        right: 0px;
+        bottom: 0px;
         overflow: auto; 
-        position: relative;    
+        display: block;   
+        pointer-events: all;
         
         button {
             display: inline-block;      
@@ -108,7 +115,8 @@ $tree-item-row-height: 30px;
             position: relative;
             overflow: hidden;
             line-height: 1.5;
-            padding: 5px 5px;
+            padding: 5px;
+            padding-right: 15px;
             pointer-events: all; 
             box-sizing: border-box;
             height: $tree-item-row-height; 

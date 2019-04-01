@@ -1,5 +1,6 @@
 import { px, EMPTY_STRING, WHITE_STRING } from "./css/types";
 import { isString, isUndefined, isNotString, isFunction, keyEach, isNotUndefined } from "./functions/func";
+import { DomDiff } from "./DomDiff";
 
 let counter = 0;
 let cached = [];
@@ -35,6 +36,11 @@ export default class Dom {
 
     static getScrollLeft () {
         return Math.max(window.pageXOffset, document.documentElement.scrollLeft, document.body.scrollLeft)
+    }
+
+    static parse (html) {
+        var parser = DOMParser();
+        return parser.parseFromString(html, 'text/htmll');
     }
 
     attr (key, value) {
@@ -120,6 +126,13 @@ export default class Dom {
     
     }
 
+    onlyOneClass (cls) {
+        var parent = this.parent()
+        var selected = parent.$(`.${cls}`);
+        if (selected) selected.removeClass(cls);
+        this.addClass(cls);
+    }
+
     toggleClass (cls, isForce) {
 
         this.el.classList.toggle(cls, isForce);
@@ -156,6 +169,17 @@ export default class Dom {
         }
 
         return this;
+    }
+
+    htmlDiff (fragment) {
+        if (!this.fragment) {
+
+            this.empty().append(fragment);
+            this.fragment = true;
+        } else {
+            // go diff 
+            DomDiff(this.el, fragment); 
+        }
     }
 
     find (selector) {
@@ -199,6 +223,9 @@ export default class Dom {
         this.append($dom.createChildrenFragment());
     }
 
+    /**
+     * create document fragment with children dom 
+     */
     createChildrenFragment () {
         const list = this.children()
     
@@ -259,11 +286,12 @@ export default class Dom {
             if (isString( key )) {
                 return getComputedStyle(this.el)[key];
             } else {
-                var keys = key || {};
+                var keys = Object.keys(key || {})
 
-                keyEach(keys, (k, value) => {
-                    this.el.style[k] = value;
-                })
+                for(var i = 0, len = keys.length; i < len; i++) {
+                    var k = keys[i]
+                    this.el.style[k] = key[k]; 
+                }
             }     
         }
     
@@ -275,7 +303,9 @@ export default class Dom {
             return this.el.style.cssText;
         }
 
-        this.el.style.cssText = value;
+        if (value != this.el.style.cssText) {
+            this.el.style.cssText = value;
+        }
 
         return this; 
     }
@@ -569,6 +599,22 @@ export default class Dom {
         return this; 
     }
 
+    select() {
+        this.el.select();
+        return this;
+    }
+
+    blur () {
+        this.el.blur();
+
+        return this; 
+    }
+
+    select () {
+        this.el.select();
+
+        return this; 
+    }
 
     // canvas functions 
 

@@ -36,6 +36,24 @@ const bottom = {
     [SEGMENT_TYPE_BOTTOM_RIGHT]: true
 }
 
+const X_DIRECTION_NUMBER = {
+    [SEGMENT_TYPE_RIGHT] : 2,
+    [SEGMENT_TYPE_TOP_RIGHT] : 2,
+    [SEGMENT_TYPE_BOTTOM_RIGHT] : 2,
+    [SEGMENT_TYPE_LEFT] : 0,
+    [SEGMENT_TYPE_TOP_LEFT] : 0,
+    [SEGMENT_TYPE_BOTTOM_LEFT] : 0
+}
+
+const Y_DIRECTION_NUMBER = {
+    [SEGMENT_TYPE_BOTTOM] : 2,
+    [SEGMENT_TYPE_BOTTOM_LEFT] : 2,
+    [SEGMENT_TYPE_BOTTOM_RIGHT] : 2,
+    [SEGMENT_TYPE_TOP] : 0,
+    [SEGMENT_TYPE_TOP_LEFT] : 0,
+    [SEGMENT_TYPE_TOP_RIGHT] : 0
+}
+
 
 export class Segment {
     static isMove (direction) { return move[direction]; }
@@ -43,6 +61,9 @@ export class Segment {
     static isRight (direction) { return right[direction]; }
     static isBottom (direction) { return bottom[direction]; }
     static isLeft (direction) { return left[direction]; }
+    static getXDirection (direction) { return X_DIRECTION_NUMBER[direction] }
+    static getYDirection (direction) { return Y_DIRECTION_NUMBER[direction] }
+
 }
 
 

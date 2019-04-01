@@ -41,9 +41,7 @@ class UIElement extends EventMachine {
         this.initializeStoreEvent();
     }
 
-    created() {
-
-    }
+    created() {}
 
     getRealEventName(e, s = PREFIX) {
         var startIndex = e.indexOf(s);

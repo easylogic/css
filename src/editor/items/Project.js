@@ -31,7 +31,7 @@ export class Project extends MovableItem {
     get allItems () {
         var results = [] 
         this.artboards.forEach((artboard) => {
-            results.push(artboard, ...artboard.allLayers);
+            results.push(artboard, ...artboard.tree());
         })
 
         return results;
@@ -55,6 +55,10 @@ export class Project extends MovableItem {
         })
 
         return results; 
+    }
+
+    hasLayout () {
+        return false; 
     }
 
     getDefaultTitle () { return 'New Project' }    

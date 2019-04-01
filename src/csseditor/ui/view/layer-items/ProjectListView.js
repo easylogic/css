@@ -71,6 +71,15 @@ export default class ProjectListView extends UIElement {
     [CLICK('$addProject')] (e) {
         var project = editor.addProject(new Project({ name: 'New Project'}))
         project.select();
-        editor.send(CHANGE_EDITOR);
+        this.refresh();
+        this.emit(CHANGE_EDITOR);
+    }
+
+    [CLICK('$el .tree-item')] (e) {
+        var id = e.$delegateTarget.attr('item-id');
+        var project = editor.get(id);
+        project.select();
+        this.refreshSelection()
+        this.emit(CHANGE_EDITOR);
     }
 } 

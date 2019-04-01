@@ -1,5 +1,8 @@
 import { MovableItem } from "./MovableItem";
 
+const isLayout = (type) => {
+    return type == 'flex' || type == 'grid'
+}
 
 export class GroupItem extends MovableItem {
 
@@ -11,28 +14,20 @@ export class GroupItem extends MovableItem {
         return false;
     }
     
-    changeDisplay (newDisplay) {
-        var oldDisplay = this.json.display;
+    changeDisplay (newDisplayType) {
+        var oldDisplayType = this.json.display.type;
 
-        if (oldDisplay.isLayout() && !newDisplay.isLayout()) {
+        if (isLayout(oldDisplayType) && !isLayout(newDisplayType)){
             // flex, grid => inline, inline-block. block 으로 변화 
             // 실제 offset 데이타를 x,y,width, height 로 변환해서 등록 
             this.layers.forEach(layer => layer.changeOffsetToPosition())
         } 
 
-        this.json.display = newDisplay;
+        this.json.display.type = newDisplayType
     }
 
     hasLayout () {
-        var displayType = this.json.display.type
-
-        switch(displayType) {
-        case 'flex': 
-        case 'grid':
-            return true; 
-        default: 
-            return false; 
-        }
+        return this.json.display.isLayout()
     }
 
     refreshItem (callback) {

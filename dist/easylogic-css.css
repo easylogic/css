@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /* codemirror colorview */
 .codemirror-colorview {
   border: 1px solid #cecece;
@@ -1549,24 +1548,20 @@ html, body {
                 flex: none;
         border-bottom: 1px solid #cccccc; }
   .csseditor .outline {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
-            flex-direction: column;
-    height: 100%; }
+            flex-direction: column; }
     .csseditor .outline > .project-list-view {
-      position: relative;
-      left: auto;
-      right: auto;
-      top: auto;
-      bottom: auto;
-      width: 100%;
       height: 200px;
-      overflow: auto;
-      display: block;
       -webkit-box-flex: 0;
           -ms-flex: none;
               flex: none; }
@@ -1717,16 +1712,16 @@ html, body {
           width: 100% !important;
           height: 100% !important; }
   .csseditor .project-list-view {
-    display: none;
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    bottom: 0px;
-    overflow: auto;
     border-bottom: 1px solid #cccccc;
     -webkit-box-sizing: border-box;
-            box-sizing: border-box; }
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column; }
     .csseditor .project-list-view .project-toolbar {
       display: -webkit-box;
       display: -ms-flexbox;
@@ -1735,7 +1730,10 @@ html, body {
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       height: 30px;
-      padding: 5px 10px; }
+      padding: 5px 10px;
+      -webkit-box-flex: 0;
+          -ms-flex: none;
+              flex: none; }
       .csseditor .project-list-view .project-toolbar > .title {
         -webkit-box-flex: 0;
             -ms-flex: none;
@@ -1781,7 +1779,13 @@ html, body {
           width: 100%;
           height: 100%; }
     .csseditor .project-list-view .project-list {
-      background-color: white; }
+      -webkit-box-flex: 1;
+          -ms-flex: 1 1 auto;
+              flex: 1 1 auto;
+      background-color: white;
+      overflow: auto;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
       .csseditor .project-list-view .project-list button {
         display: block;
         height: 80px;
@@ -1823,17 +1827,12 @@ html, body {
     -webkit-box-flex: 1;
         -ms-flex: 1 1 auto;
             flex: 1 1 auto;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column; }
+    display: block; }
     .csseditor .layer-list-view .layer-list-toolbar {
-      -webkit-box-flex: 0;
-          -ms-flex: none;
-              flex: none;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      right: 0px;
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -1892,11 +1891,14 @@ html, body {
     .csseditor .layer-list-view.dragging .item-title {
       pointer-events: none; }
     .csseditor .layer-list-view .layer-list {
-      -webkit-box-flex: 1;
-          -ms-flex: 1 1 auto;
-              flex: 1 1 auto;
+      position: absolute;
+      left: 0px;
+      top: 30px;
+      right: 0px;
+      bottom: 0px;
       overflow: auto;
-      position: relative; }
+      display: block;
+      pointer-events: all; }
       .csseditor .layer-list-view .layer-list button {
         display: inline-block;
         vertical-align: middle;
@@ -1923,7 +1925,8 @@ html, body {
         position: relative;
         overflow: hidden;
         line-height: 1.5;
-        padding: 5px 5px;
+        padding: 5px;
+        padding-right: 15px;
         pointer-events: all;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
@@ -3589,6 +3592,42 @@ html, body {
                     box-shadow: inset 0px 0px 5px 0px rgba(0, 0, 0, 0.25); }
           .csseditor .page-view .page-canvas .artboard-area .layer[data-has-layout="true"] .text-layer {
             display: none; }
+          .csseditor .page-view .page-canvas .artboard-area .layer:hover {
+            -webkit-box-shadow: 0px 0px 0px 1px #00500d;
+                    box-shadow: 0px 0px 0px 1px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-root-item='true'] {
+              -webkit-box-shadow: 0px 0px 0px 1px #003ce0;
+                      box-shadow: 0px 0px 0px 1px #003ce0; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="1"] {
+              -webkit-box-shadow: 0px 0px 0px 0.4px rgba(0, 80, 13, 0.3);
+                      box-shadow: 0px 0px 0px 0.4px rgba(0, 80, 13, 0.3); }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="2"] {
+              -webkit-box-shadow: 0px 0px 0px 0.8px rgba(0, 80, 13, 0.6);
+                      box-shadow: 0px 0px 0px 0.8px rgba(0, 80, 13, 0.6); }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="3"] {
+              -webkit-box-shadow: 0px 0px 0px 1.2px rgba(0, 80, 13, 0.9);
+                      box-shadow: 0px 0px 0px 1.2px rgba(0, 80, 13, 0.9); }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="4"] {
+              -webkit-box-shadow: 0px 0px 0px 1.6px #00500d;
+                      box-shadow: 0px 0px 0px 1.6px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="5"] {
+              -webkit-box-shadow: 0px 0px 0px 2px #00500d;
+                      box-shadow: 0px 0px 0px 2px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="6"] {
+              -webkit-box-shadow: 0px 0px 0px 2.4px #00500d;
+                      box-shadow: 0px 0px 0px 2.4px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="7"] {
+              -webkit-box-shadow: 0px 0px 0px 2.8px #00500d;
+                      box-shadow: 0px 0px 0px 2.8px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="8"] {
+              -webkit-box-shadow: 0px 0px 0px 3.2px #00500d;
+                      box-shadow: 0px 0px 0px 3.2px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="9"] {
+              -webkit-box-shadow: 0px 0px 0px 3.6px #00500d;
+                      box-shadow: 0px 0px 0px 3.6px #00500d; }
+            .csseditor .page-view .page-canvas .artboard-area .layer:hover[data-depth="10"] {
+              -webkit-box-shadow: 0px 0px 0px 4px #00500d;
+                      box-shadow: 0px 0px 0px 4px #00500d; }
     .csseditor .page-view .page-selection {
       position: absolute;
       left: 0px;
@@ -3618,128 +3657,12 @@ html, body {
       top: -10000px;
       width: 0px;
       height: 0px;
-      -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
-              box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
       -webkit-box-sizing: border-box;
               box-sizing: border-box; }
-      .csseditor .page-view .item-resizer.parent-view .grid-column-handler {
-        position: absolute;
-        pointer-events: all;
-        display: none;
-        left: 0px;
-        right: 0px;
-        height: 24px;
-        -webkit-transform: translateY(-25px);
-                transform: translateY(-25px); }
-        .csseditor .page-view .item-resizer.parent-view .grid-column-handler .grid-item {
-          border: 1px solid #cccccc;
-          border-bottom: 0px; }
-      .csseditor .page-view .item-resizer.parent-view .grid-row-handler {
-        position: absolute;
-        pointer-events: all;
-        display: none;
-        left: 0px;
-        top: 0px;
-        bottom: 0px;
-        min-width: 60px;
-        -webkit-transform: translateX(-25px);
-                transform: translateX(-25px); }
-        .csseditor .page-view .item-resizer.parent-view .grid-row-handler .grid-item {
-          border: 1px solid #cccccc;
-          border-right: 0px; }
-          .csseditor .page-view .item-resizer.parent-view .grid-row-handler .grid-item .grid-item-value {
-            display: block; }
-      .csseditor .page-view .item-resizer.parent-view .grid-item {
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
-        position: relative; }
-        .csseditor .page-view .item-resizer.parent-view .grid-item .draggable-buttons button {
-          background-color: rgba(255, 255, 255, 0.5); }
-        .csseditor .page-view .item-resizer.parent-view .grid-item .draggable-buttons .first {
-          position: absolute;
-          left: 0px;
-          top: 50%;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%); }
-        .csseditor .page-view .item-resizer.parent-view .grid-item .draggable-buttons .second {
-          position: absolute;
-          right: 0px;
-          top: 50%;
-          -webkit-transform: translateY(-50%);
-                  transform: translateY(-50%); }
-        .csseditor .page-view .item-resizer.parent-view .grid-item .grid-item-value {
-          text-align: center;
-          position: relative;
-          min-width: 80px;
-          display: grid;
-          grid-template-columns: 1fr 2fr 1fr 1fr; }
-          .csseditor .page-view .item-resizer.parent-view .grid-item .grid-item-value input {
-            width: 20px;
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            border: 0px;
-            background-color: transparent;
-            border-bottom: 1px solid #cccccc; }
-          .csseditor .page-view .item-resizer.parent-view .grid-item .grid-item-value button {
-            position: relative;
-            left: auto;
-            top: auto;
-            -webkit-appearance: none;
-               -moz-appearance: none;
-                    appearance: none;
-            background-color: rgba(255, 255, 255, 0.5);
-            width: 12px;
-            height: 12px;
-            -webkit-box-sizing: border-box;
-                    box-sizing: border-box;
-            border: 1px solid #cccccc;
-            display: inline-block;
-            vertical-align: middle; }
-      .csseditor .page-view .item-resizer.parent-view[data-layout='grid'] .grid-column-handler {
-        display: grid; }
-      .csseditor .page-view .item-resizer.parent-view[data-layout='grid'] .grid-row-handler {
-        display: grid; }
-      .csseditor .page-view .item-resizer.parent-view:before {
-        color: #01a270;
-        display: none;
-        font-size: 15px;
-        position: absolute; }
-      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="column"]:before {
-        content: '⇣';
-        display: inline-block;
-        right: -17px;
-        top: 3px; }
-      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="column-reverse"]:before {
-        content: '⇡';
-        display: inline-block;
-        right: -17px;
-        top: 3px; }
-      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="row"]:before {
-        content: '⇢';
-        display: inline-block;
-        right: 3px;
-        bottom: 100%; }
-      .csseditor .page-view .item-resizer.parent-view[data-flex-direction="row-reverse"]:before {
-        content: '⇠';
-        display: inline-block;
-        right: 3px;
-        bottom: 100%; }
       .csseditor .page-view .item-resizer[data-mode='artboard'] button[data-value='move'] {
         display: none; }
       .csseditor .page-view .item-resizer[data-mode='layer'][data-rect="true"] {
         background-color: rgba(0, 0, 0, 0.1); }
-        .csseditor .page-view .item-resizer[data-mode='layer'][data-rect="true"] button {
-          display: none; }
       .csseditor .page-view .item-resizer[data-layout='flex'] {
         -webkit-box-shadow: 0 0 0 1px rgba(1, 162, 112, 0.5) !important;
                 box-shadow: 0 0 0 1px rgba(1, 162, 112, 0.5) !important; }
@@ -3827,6 +3750,228 @@ html, body {
           -webkit-transform: translateX(-100%) translateY(-100%);
                   transform: translateX(-100%) translateY(-100%);
           cursor: nwse-resize; }
+    .csseditor .page-view .grid-layout-editor {
+      position: absolute;
+      left: -10000px;
+      top: -10000px;
+      width: 0px;
+      height: 0px;
+      -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box; }
+      .csseditor .page-view .grid-layout-editor .grid-item {
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        text-align: center;
+        line-height: 1.9;
+        position: relative;
+        display: inline-block;
+        background-color: #006be6;
+        color: white;
+        border-radius: 3px;
+        cursor: pointer; }
+        .csseditor .page-view .grid-layout-editor .grid-item:hover {
+          background-color: #af0303; }
+        .csseditor .page-view .grid-layout-editor .grid-item .column {
+          position: absolute;
+          display: inline-block;
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          background-color: transparent;
+          border: 0px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          height: 100%;
+          color: white;
+          left: 50%;
+          top: 50%;
+          -webkit-transform: translateX(-50%) translateY(-50%);
+                  transform: translateX(-50%) translateY(-50%); }
+          .csseditor .page-view .grid-layout-editor .grid-item .column + .delete {
+            position: absolute;
+            display: inline-block;
+            left: 50%;
+            top: 100%;
+            -webkit-transform: translateX(-50%) translateY(-50%);
+                    transform: translateX(-50%) translateY(-50%); }
+          .csseditor .page-view .grid-layout-editor .grid-item .column:focus {
+            background-color: white;
+            color: #333;
+            padding: 0px 5px; }
+        .csseditor .page-view .grid-layout-editor .grid-item .row {
+          position: absolute;
+          display: inline-block;
+          left: 50%;
+          top: 50%;
+          -webkit-transform: translateY(-50%) translateX(-50%) rotate(270deg);
+                  transform: translateY(-50%) translateX(-50%) rotate(270deg);
+          -webkit-transform-origin: center center;
+                  transform-origin: center center; }
+          .csseditor .page-view .grid-layout-editor .grid-item .row:focus {
+            -webkit-transform: translateY(-50%) translateX(-50%);
+                    transform: translateY(-50%) translateX(-50%);
+            background-color: white;
+            color: #333;
+            padding: 0px 5px; }
+      .csseditor .page-view .grid-layout-editor .column-editor {
+        position: absolute;
+        pointer-events: all;
+        left: 0px;
+        right: 0px;
+        height: 25px;
+        top: -1px;
+        -webkit-transform: translateY(-25px);
+                transform: translateY(-25px);
+        display: grid; }
+        .csseditor .page-view .grid-layout-editor .column-editor .grid-item {
+          margin-bottom: 2px; }
+          .csseditor .page-view .grid-layout-editor .column-editor .grid-item.selected {
+            background-color: black; }
+      .csseditor .page-view .grid-layout-editor .add-column {
+        position: absolute;
+        pointer-events: all;
+        right: -27px;
+        top: -27px;
+        display: inline-block;
+        background-color: white;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        width: 25px;
+        height: 25px;
+        outline: none;
+        cursor: pointer; }
+      .csseditor .page-view .grid-layout-editor .column-gap-editor {
+        position: absolute;
+        left: 0px;
+        top: -50px;
+        display: inline-block;
+        pointer-events: all; }
+        .csseditor .page-view .grid-layout-editor .column-gap-editor label, .csseditor .page-view .grid-layout-editor .column-gap-editor input {
+          vertical-align: middle; }
+        .csseditor .page-view .grid-layout-editor .column-gap-editor input {
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          display: inline-block;
+          min-width: 30px;
+          width: 50px;
+          background-color: white;
+          border: 1px solid #cccccc;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+      .csseditor .page-view .grid-layout-editor .row-gap-editor {
+        position: absolute;
+        left: 150px;
+        top: -50px;
+        display: inline-block;
+        pointer-events: all; }
+        .csseditor .page-view .grid-layout-editor .row-gap-editor label, .csseditor .page-view .grid-layout-editor .row-gap-editor input {
+          vertical-align: middle; }
+        .csseditor .page-view .grid-layout-editor .row-gap-editor input {
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          display: inline-block;
+          min-width: 30px;
+          width: 50px;
+          background-color: white;
+          border: 1px solid #cccccc;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box; }
+      .csseditor .page-view .grid-layout-editor .row-editor {
+        position: absolute;
+        pointer-events: all;
+        left: -1px;
+        top: 0px;
+        bottom: 0px;
+        min-width: 25px;
+        -webkit-transform: translateX(-25px);
+                transform: translateX(-25px);
+        display: grid; }
+        .csseditor .page-view .grid-layout-editor .row-editor .grid-item {
+          margin-right: 2px; }
+          .csseditor .page-view .grid-layout-editor .row-editor .grid-item.selected {
+            background-color: black; }
+      .csseditor .page-view .grid-layout-editor .add-row {
+        position: absolute;
+        pointer-events: all;
+        bottom: -27px;
+        left: -27px;
+        display: inline-block;
+        background-color: white;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        width: 25px;
+        height: 25px;
+        outline: none;
+        cursor: pointer; }
+      .csseditor .page-view .grid-layout-editor .move-layout {
+        position: absolute;
+        pointer-events: all;
+        top: -27px;
+        left: -27px;
+        display: inline-block;
+        background-color: white;
+        -webkit-appearance: none;
+           -moz-appearance: none;
+                appearance: none;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+        width: 25px;
+        height: 25px;
+        outline: none;
+        cursor: move; }
+      .csseditor .page-view .grid-layout-editor .preview {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        display: grid; }
+        .csseditor .page-view .grid-layout-editor .preview .preview-item {
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          border: 1px dashed rgba(128, 128, 128, 0.1);
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: column;
+                  flex-direction: column;
+          -webkit-box-align: center;
+              -ms-flex-align: center;
+                  align-items: center;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
+          overflow: hidden; }
+          .csseditor .page-view .grid-layout-editor .preview .preview-item:before {
+            content: attr(data-area);
+            text-align: center;
+            font-size: 10px;
+            color: #cccccc; }
+          .csseditor .page-view .grid-layout-editor .preview .preview-item::after {
+            content: attr(data-row) " / " attr(data-column);
+            text-align: center;
+            font-size: 10px;
+            color: #cccccc; }
+          .csseditor .page-view .grid-layout-editor .preview .preview-item.virtual-select {
+            background-color: rgba(235, 106, 235, 0.5); }
     .csseditor .page-view .layer-shape-editor {
       text-align: center;
       position: absolute;

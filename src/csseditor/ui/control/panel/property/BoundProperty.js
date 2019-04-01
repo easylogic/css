@@ -1,6 +1,6 @@
 import BaseProperty from "./BaseProperty";
 import { EVENT } from "../../../../../util/UIElement";
-import { CHANGE_RECT, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_ARTBOARD } from "../../../../types/event";
+import { CHANGE_RECT, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_INSPECTOR } from "../../../../types/event";
 import { INPUT, CLICK } from "../../../../../util/Event";
 import { editor } from "../../../../../editor/editor";
 import { Length } from "../../../../../editor/unit/Length";
@@ -107,11 +107,7 @@ export default class BoundProperty extends BaseProperty {
             this.refs.$justifyContent.attr('selected-type', display);
             current.display.justifyContent = display;
  
-            if (current instanceof ArtBoard) {
-                this.emit(CHANGE_ARTBOARD);
-            } else if (current instanceof Layer) {
-                this.emit(CHANGE_LAYER);
-            }
+            this.emit(CHANGE_INSPECTOR);
         }
     }
 
@@ -123,11 +119,7 @@ export default class BoundProperty extends BaseProperty {
             this.refs.$flexList.attr('selected-type', display);
             current.display.direction = display;
 
-            if (current instanceof ArtBoard) {
-                this.emit(CHANGE_ARTBOARD);
-            } else if (current instanceof Layer) {
-                this.emit(CHANGE_LAYER);
-            }
+            this.emit(CHANGE_INSPECTOR);
         }
     }
 
@@ -140,11 +132,7 @@ export default class BoundProperty extends BaseProperty {
             this.refs.$flexWrap.attr('selected-type', display);
             current.display.wrap = display;
 
-            if (current instanceof ArtBoard) {
-                this.emit(CHANGE_ARTBOARD);
-            } else if (current instanceof Layer) {
-                this.emit(CHANGE_LAYER);
-            }
+            this.emit(CHANGE_INSPECTOR);
         }
     }
 
@@ -155,13 +143,9 @@ export default class BoundProperty extends BaseProperty {
 
         if (current) {
             this.refs.$displayList.attr('selected-type', display);
-            current.changeDisplay(Display.parse({type: display}))
+            current.changeDisplay(display)
 
-            if (current instanceof ArtBoard) {
-                this.emit(CHANGE_ARTBOARD);
-            } else if (current instanceof Layer) {
-                this.emit(CHANGE_LAYER);
-            }
+            this.emit(CHANGE_INSPECTOR);
         }
     }    
  

@@ -16,7 +16,7 @@ Position.RIGHT = 'right'
 Position.LEFT = 'left'
 Position.BOTTOM = 'bottom'
 
-const CSS_UNIT_REG = /([\d.]+)(px|pt|em|deg|vh|vw|%)/ig
+const CSS_UNIT_REG = /([\d.]+)(px|pt|fr|em|deg|vh|vw|%)/ig
 
 export class Length {
     constructor(value = '', unit = '') {
@@ -63,16 +63,35 @@ export class Length {
     static deg(value) { return new Length(+value, 'deg'); }  
     static fr(value) { return new Length(+value, 'fr'); }
     static auto () { return Length.string('auto'); }
+
+    /**
+     * return calc()  css fuction string 
+     * 
+     * Length.calc(`${Length.percent(100)} - ${Length.px(10)}`)
+     * 
+     * @param {*} str 
+     */
+    static calc (str) { 
+        return new Length(str, 'calc');
+    }
+
     static parse (obj) {
 
         if (isString(obj)) {
-            var arr = obj.replace(CSS_UNIT_REG, '$1 $2').split(' ');
-            var isNumberString = (+arr[0]) == (arr[0])
-            if (isNumberString) {
-                return new Length(+arr[0], arr[1])
+
+            if (obj.indexOf('calc(') > -1) {
+                return new Length(obj.split('calc(')[1].split(')')[0], 'calc')
             } else {
-                return new Length(arr[0])
+
+                var arr = obj.replace(CSS_UNIT_REG, '$1 $2').split(' ');
+                var isNumberString = (+arr[0]) == (arr[0])
+                if (isNumberString) {
+                    return new Length(+arr[0], arr[1])
+                } else {
+                    return new Length(arr[0])
+                }
             }
+
         } 
 
         if (obj instanceof Length) {
@@ -134,7 +153,16 @@ export class Length {
 
         return Length.string(obj)
     }
-    toString() {return this.value + this.unit; }    
+    toString() {
+        if (this.isCalc()) {
+            return `calc(${this.value})`;
+        }
+
+        return this.value + this.unit; 
+    }   
+    
+    isCalc () { return this.unit == 'calc'  }
+    isFr () { return this.unit == 'fr' }
     isPercent () { return this.unit == '%'  }
     isPx () { return this.unit == 'px' }
     isEm () { return this.unit == 'em' }

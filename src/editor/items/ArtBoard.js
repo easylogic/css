@@ -1,7 +1,7 @@
 import { EMPTY_STRING } from "../../util/css/types";
 import { CSS_TO_STRING, CSS_SORTING } from "../../util/css/make";
 import { Length } from "../unit/Length";
-import { BlockDisplay, Display } from "../css-property/Display";
+import { Display } from "../css-property/Display";
 import { GroupItem } from "./GroupItem";
 
 export class ArtBoard extends GroupItem {
@@ -17,7 +17,7 @@ export class ArtBoard extends GroupItem {
             y: Length.px(100),
             perspectiveOriginPositionX: Length.percent(0),
             perspectiveOriginPositionY: Length.percent(0),
-            display: new BlockDisplay(),
+            display: Display.parse({display: 'block'}),
             ...obj 
         })
     }
@@ -52,12 +52,25 @@ export class ArtBoard extends GroupItem {
         return this.tree().filter(it => it.itemType == 'directory'); 
     }
 
+    /**
+     * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
+     */
+    get allLayers () {
+        return this.tree().filter(it => it.itemType == 'layer'); 
+    }
+
+    /** root item 만 조회  */
+    get rootItems () {
+        return this.tree().filter(it => it.isRootItem()); 
+    }
+     
+
 
 
     traverse (item, results, hasLayoutItem) {
-        var parentItemType = item.parent().itemType;
+        // var parentItemType = item.parent().itemType;
         if (item.isAttribute()) return; 
-        if (parentItemType == 'layer') return;         
+        // if (parentItemType == 'layer') return;         
         if (!hasLayoutItem && item.isLayoutItem() && !item.isRootItem()) return; 
 
         results.push(item);
@@ -77,21 +90,6 @@ export class ArtBoard extends GroupItem {
         return results
     }
 
-
-    /**
-     * arboard 를 부모로 하고 절대좌표르 가진 layer 만 조회  
-     */
-    get allLayers () {
-        return this.tree().filter(it => it.itemType == 'layer'); 
-    }
-
-    get texts () {
-        return this.search({itemType: 'layer', type: 'text'})
-    }            
-
-    get images () {
-        return this.search({itemType: 'layer', type: 'image'})
-    }                
 
 
     toString () {
@@ -158,5 +156,9 @@ export class ArtBoard extends GroupItem {
         sourceParent.sort();
         this.sort();
 
+    }
+
+    toGridString () {
+        return '';
     }
 }

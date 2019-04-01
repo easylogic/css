@@ -18,7 +18,9 @@ export default class ColorSteps extends BasePropertyItem {
     }
 
     components() {
-        return { GradientSteps }
+        return { 
+            // GradientSteps 
+        }
     }
 
     refresh () {

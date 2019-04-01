@@ -45,7 +45,7 @@ const CHECK_TOUCH_PATTERN = 'touch(start|move|end)';
 const CHECK_KEY_PATTERN = 'key(down|up|press)';
 const CHECK_DRAGDROP_PATTERN = 'drag|drop|drag(start|over|enter|leave|exit|end)';
 const CHECK_CONTEXT_PATTERN = 'contextmenu';
-const CHECK_INPUT_PATTERN = 'change|input';
+const CHECK_INPUT_PATTERN = 'change|input|focus|blur|focus(in|out)';
 const CHECK_CLIPBOARD_PATTERN = 'paste';
 const CHECK_BEHAVIOR_PATTERN = 'resize|scroll|wheel|mousewheel|DOMMouseScroll';
 
@@ -105,6 +105,10 @@ export const DRAGEND = DOM_EVENT_MAKE('dragend')
 export const CONTEXTMENU = DOM_EVENT_MAKE('contextmenu')
 export const CHANGE = DOM_EVENT_MAKE('change')
 export const INPUT = DOM_EVENT_MAKE('input')
+export const FOCUS = DOM_EVENT_MAKE('focus')
+export const FOCUSIN = DOM_EVENT_MAKE('focusin')
+export const FOCUSOUT = DOM_EVENT_MAKE('focusout')
+export const BLUR = DOM_EVENT_MAKE('blur')
 export const PASTE = DOM_EVENT_MAKE('paste')
 export const RESIZE = DOM_EVENT_MAKE('resize')
 export const SCROLL = DOM_EVENT_MAKE('scroll')
@@ -155,16 +159,21 @@ export const SHIFT = CHECKER('isShiftKey')
 export const META = CHECKER('isMetaKey')
 export const CONTROL = CHECKER('isCtrlKey')
 export const SELF = CHECKER('self');
-export const CAPTURE = CHECKER('capture');
+
 export const FIT = CHECKER('fit')
 export const PASSIVE = CHECKER('passive');
-export const PREVENT = CHECKER(`preventDefault`)
-export const STOP = CHECKER(`stopPropagation`)
 
 
+
+// event config method 
 export const DEBOUNCE = (debounce = 100) => {
     return CHECKER(`debounce(${debounce})`)
 }
+
+export const CAPTURE = CHECKER('capture()');
+// event config method 
+
+// before method 
 
 // after method 
 export const MOVE = (method = 'move') => {
@@ -173,6 +182,9 @@ export const MOVE = (method = 'move') => {
 export const END = (method = 'end') => {
     return AFTER(`bodyMouseUp ${method}`)
 } 
+
+export const PREVENT = AFTER(`preventDefault`)
+export const STOP = AFTER(`stopPropagation`)
 
 
 // Predefined LOADER

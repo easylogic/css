@@ -1,6 +1,7 @@
 
 import { Length } from "../unit/Length";
 import { isFunction } from "../../util/functions/func";
+import { Item } from "./Item";
 
 export class RectItem {
 
@@ -59,13 +60,17 @@ export class RectItem {
         return Length.px(this.screenY.value + half) 
     }    
 
-    get screen () {
+    get screenRect () {
         return {
             left: this.screenX,
             top: this.screenY,
             width: this.screenWidth,
             height: this.screenHeight
         }
+    }
+
+    toString() {
+        return JSON.stringify(this.screenRect);
     }
 
     /**
@@ -86,6 +91,20 @@ export class RectItem {
         }
     }
 
+    /**
+     * set json content 
+     * 
+     * @param {object} obj 
+     */
+    reset (obj) {
+
+        if (obj instanceof Item) {
+            obj = obj.toJSON()
+        }
+
+        this.json = this.convert({...this.json, ...obj})
+    }
+
     convert (json) {
 
         json.width = Length.parse(json.width)
@@ -95,4 +114,29 @@ export class RectItem {
 
         return json
     } 
+
+
+    checkInArea (area) {
+
+        if (area.width.value === 0) {return false; }
+        if (area.height.value === 0) {return false; } 
+        if (area.screenX2.value < this.screenX.value) { return false; }
+        if (area.screenY2.value < this.screenY.value) { return false; }
+        if (area.screenX.value > this.screenX2.value) { return false; }
+        if (area.screenY.value > this.screenY2.value) { return false; }
+
+        return true;
+    }
+
+    checkInOffset (offset) {
+        if (offset.width.value === 0) {return false; }
+        if (offset.height.value === 0) {return false; } 
+
+        if (this.screenX.value > offset.width + offset.left) return false;
+        if (this.screenX2.value < offset.left) return false;
+        if (this.screenY.value > offset.height + offset.top) return false;
+        if (this.screenY2.value < offset.top) return false;
+
+        return true;
+    }
 }

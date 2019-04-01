@@ -22,8 +22,6 @@ export default class AddRect extends MenuItem {
 
         var artboard = project.artboard || editor.selection.currentArtBoard; 
 
-        console.log(editor.selection.items);
-        console.log(project.artboard, editor.selection.currentArtBoard);
         if (!artboard) {
             artboard = project.add(new ArtBoard({ name: 'New ArtBoard'}));
             artboard.select()

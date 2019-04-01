@@ -47,6 +47,18 @@ export class Guide {
             })
         })
 
+        if (results.length) {
+
+            var x = Segment.getXDirection(this.direction);
+
+            var newResults = results.filter(it => it.source == x);
+            if (newResults.length) {
+                return newResults;
+            }
+
+            return [results[0]]
+        }
+
         return results;
     }
 
@@ -55,6 +67,7 @@ export class Guide {
         var BY = [B.screenY.value, B.centerY.value, B.screenY2.value]
 
         var results = []
+
         AY.forEach( (ay, source) => {
             BY.forEach( (by, target) => {
                 var isSnap = Math.abs(ay - by) <= dist;
@@ -66,27 +79,48 @@ export class Guide {
             })
         })
 
+        if (results.length) {       // 중첩된 것중에 하나만 표시 한다. 
+            var y = Segment.getYDirection(this.direction);
+
+            var newResults = results.filter(it => it.source == y);
+            if (newResults.length) {
+                return newResults;
+            }
+
+            return [results[0]]
+        }        
+
         return results;
     }    
 
     compare (A, B, dist = MAX_DIST) {
 
-        var xCheckList = this.compareX(A, B, dist);
+        //체크 항목중 하나만 , 결국 x,y 축 하나씩만 
+        var xCheckList = this.compareX(A, B, dist);    
         var yCheckList = this.compareY(A, B, dist);
 
-        return [...xCheckList, ...yCheckList];
+        return {
+            x: xCheckList,
+            y: yCheckList
+        };
     }
 
     getLayers (dist = MAX_DIST) {
 
         var layers = this.checkLayers;
-        var points = []
+        var xpoints = []
+        var ypoints = []
 
         layers.forEach(B => {
-            points.push(...this.compare(this.rect, B, dist));
+            const obj = this.compare(this.rect, B, dist);
+            xpoints.push(...obj.x);
+            ypoints.push(...obj.y);
         })
 
-        return points
+        xpoints = xpoints.filter((_, index) => index == 0)
+        ypoints = ypoints.filter((_, index) => index == 0)
+
+        return [...xpoints, ...ypoints]
 
     } 
 
